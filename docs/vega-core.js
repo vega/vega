@@ -1,432 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-array'), require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-geo'), require('d3-format'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'd3-array', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-geo', 'd3-format', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
-	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
-}(this, (function (exports,d3Array,d3Request,d3Dsv,topojson,d3TimeFormat,d3Shape,d3Path,$,_,$$1,d3Geo,d3Format,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
-
-var version = "3.0.0-rc5";
-
-var bin$1 = function(_$$1) {
-  // determine range
-  var maxb = _$$1.maxbins || 20,
-      base = _$$1.base || 10,
-      logb = Math.log(base),
-      div  = _$$1.divide || [5, 2],
-      min$$1  = _$$1.extent[0],
-      max$$1  = _$$1.extent[1],
-      span = max$$1 - min$$1,
-      step, level, minstep, precision, v, i, n, eps;
-
-  if (_$$1.step) {
-    // if step size is explicitly given, use that
-    step = _$$1.step;
-  } else if (_$$1.steps) {
-    // if provided, limit choice to acceptable step sizes
-    v = span / maxb;
-    for (i=0, n=_$$1.steps.length; i < n && _$$1.steps[i] < v; ++i);
-    step = _$$1.steps[Math.max(0, i-1)];
-  } else {
-    // else use span to determine step size
-    level = Math.ceil(Math.log(maxb) / logb);
-    minstep = _$$1.minstep || 0;
-    step = Math.max(
-      minstep,
-      Math.pow(base, Math.round(Math.log(span) / logb) - level)
-    );
-
-    // increase step size if too many bins
-    while (Math.ceil(span/step) > maxb) { step *= base; }
-
-    // decrease step size if allowed
-    for (i=0, n=div.length; i<n; ++i) {
-      v = step / div[i];
-      if (v >= minstep && span / v <= maxb) step = v;
-    }
-  }
-
-  // update precision, min and max
-  v = Math.log(step);
-  precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
-  eps = Math.pow(base, -precision - 1);
-  if (_$$1.nice || _$$1.nice === undefined) {
-    v = Math.floor(min$$1 / step + eps) * step;
-    min$$1 = min$$1 < v ? v - step : v;
-    max$$1 = Math.ceil(max$$1 / step) * step;
-  }
-
-  return {
-    start: min$$1,
-    stop:  max$$1,
-    step:  step
-  };
-};
-
-var numbers = function(array, f) {
-  var numbers = [],
-      n = array.length,
-      i = -1, a;
-
-  if (f == null) {
-    while (++i < n) if (!isNaN(a = number(array[i]))) numbers.push(a);
-  } else {
-    while (++i < n) if (!isNaN(a = number(f(array[i], i, array)))) numbers.push(a);
-  }
-  return numbers;
-};
-
-function number(x) {
-  return x === null ? NaN : +x;
-}
-
-var bootstrapCI = function(array, samples, alpha, f) {
-  var values = numbers(array, f),
-      n = values.length,
-      m = samples,
-      a, i, j, mu;
-
-  for (j=0, mu=Array(m); j<m; ++j) {
-    for (a=0, i=0; i<n; ++i) {
-      a += values[~~(Math.random() * n)];
-    }
-    mu[j] = a / n;
-  }
-
-  return [
-    d3Array.quantile(mu.sort(d3Array.ascending), alpha/2),
-    d3Array.quantile(mu, 1-(alpha/2))
-  ];
-};
-
-var integer = function(min$$1, max$$1) {
-  if (max$$1 == null) {
-    max$$1 = min$$1;
-    min$$1 = 0;
-  }
-
-  var dist = {},
-      a, b, d;
-
-  dist.min = function(_$$1) {
-    if (arguments.length) {
-      a = _$$1 || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return a;
-    }
-  };
-
-  dist.max = function(_$$1) {
-    if (arguments.length) {
-      b = _$$1 || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return b;
-    }
-  };
-
-  dist.sample = function() {
-    return a + Math.floor(d * Math.random());
-  };
-
-  dist.pdf = function(x) {
-    return (x === Math.floor(x) && x >= a && x < b) ? 1 / d : 0;
-  };
-
-  dist.cdf = function(x) {
-    var v = Math.floor(x);
-    return v < a ? 0 : v >= b ? 1 : (v - a + 1) / d;
-  };
-
-  dist.icdf = function(p) {
-    return (p >= 0 && p <= 1) ? a - 1 + Math.floor(p * d) : NaN;
-  };
-
-  return dist.min(min$$1).max(max$$1);
-};
-
-var randomNormal = function(mean$$1, stdev) {
-  var mu,
-      sigma,
-      next = NaN,
-      dist = {};
-
-  dist.mean = function(_$$1) {
-    if (arguments.length) {
-      mu = _$$1 || 0;
-      next = NaN;
-      return dist;
-    } else {
-      return mu;
-    }
-  };
-
-  dist.stdev = function(_$$1) {
-    if (arguments.length) {
-      sigma = _$$1 == null ? 1 : _$$1;
-      next = NaN;
-      return dist;
-    } else {
-      return sigma;
-    }
-  };
-
-  dist.sample = function() {
-    var x = 0, y = 0, rds, c;
-    if (next === next) {
-      x = next;
-      next = NaN;
-      return x;
-    }
-    do {
-      x = Math.random() * 2 - 1;
-      y = Math.random() * 2 - 1;
-      rds = x * x + y * y;
-    } while (rds === 0 || rds > 1);
-    c = Math.sqrt(-2 * Math.log(rds) / rds); // Box-Muller transform
-    next = mu + y * c * sigma;
-    return mu + x * c * sigma;
-  };
-
-  dist.pdf = function(x) {
-    var exp = Math.exp(Math.pow(x-mu, 2) / (-2 * Math.pow(sigma, 2)));
-    return (1 / (sigma * Math.sqrt(2*Math.PI))) * exp;
-  };
-
-  // Approximation from West (2009)
-  // Better Approximations to Cumulative Normal Functions
-  dist.cdf = function(x) {
-    var cd,
-        z = (x - mu) / sigma,
-        Z = Math.abs(z);
-    if (Z > 37) {
-      cd = 0;
-    } else {
-      var sum$$1, exp = Math.exp(-Z*Z/2);
-      if (Z < 7.07106781186547) {
-        sum$$1 = 3.52624965998911e-02 * Z + 0.700383064443688;
-        sum$$1 = sum$$1 * Z + 6.37396220353165;
-        sum$$1 = sum$$1 * Z + 33.912866078383;
-        sum$$1 = sum$$1 * Z + 112.079291497871;
-        sum$$1 = sum$$1 * Z + 221.213596169931;
-        sum$$1 = sum$$1 * Z + 220.206867912376;
-        cd = exp * sum$$1;
-        sum$$1 = 8.83883476483184e-02 * Z + 1.75566716318264;
-        sum$$1 = sum$$1 * Z + 16.064177579207;
-        sum$$1 = sum$$1 * Z + 86.7807322029461;
-        sum$$1 = sum$$1 * Z + 296.564248779674;
-        sum$$1 = sum$$1 * Z + 637.333633378831;
-        sum$$1 = sum$$1 * Z + 793.826512519948;
-        sum$$1 = sum$$1 * Z + 440.413735824752;
-        cd = cd / sum$$1;
-      } else {
-        sum$$1 = Z + 0.65;
-        sum$$1 = Z + 4 / sum$$1;
-        sum$$1 = Z + 3 / sum$$1;
-        sum$$1 = Z + 2 / sum$$1;
-        sum$$1 = Z + 1 / sum$$1;
-        cd = exp / sum$$1 / 2.506628274631;
-      }
-    }
-    return z > 0 ? 1 - cd : cd;
-  };
-
-  // Approximation of Probit function using inverse error function.
-  dist.icdf = function(p) {
-    if (p <= 0 || p >= 1) return NaN;
-    var x = 2*p - 1,
-        v = (8 * (Math.PI - 3)) / (3 * Math.PI * (4-Math.PI)),
-        a = (2 / (Math.PI*v)) + (Math.log(1 - Math.pow(x,2)) / 2),
-        b = Math.log(1 - (x*x)) / v,
-        s = (x > 0 ? 1 : -1) * Math.sqrt(Math.sqrt((a*a) - b) - a);
-    return mu + sigma * Math.SQRT2 * s;
-  };
-
-  return dist.mean(mean$$1).stdev(stdev);
-};
-
-var quartiles = function(array, f) {
-  var values = numbers(array, f);
-
-  return [
-    d3Array.quantile(values.sort(d3Array.ascending), 0.25),
-    d3Array.quantile(values, 0.50),
-    d3Array.quantile(values, 0.75)
-  ];
-};
-
-// TODO: support for additional kernels?
-var randomKDE = function(support, bandwidth) {
-  var kernel = randomNormal(),
-      dist = {},
-      n = 0;
-
-  dist.data = function(_$$1) {
-    if (arguments.length) {
-      support = _$$1;
-      n = _$$1 ? _$$1.length : 0;
-      return dist.bandwidth(bandwidth);
-    } else {
-      return support;
-    }
-  };
-
-  dist.bandwidth = function(_$$1) {
-    if (!arguments.length) return bandwidth;
-    bandwidth = _$$1;
-    if (!bandwidth && support) bandwidth = estimateBandwidth(support);
-    return dist;
-  };
-
-  dist.sample = function() {
-    return support[~~(Math.random() * n)] + bandwidth * kernel.sample();
-  };
-
-  dist.pdf = function(x) {
-    for (var y=0, i=0; i<n; ++i) {
-      y += kernel.pdf((x - support[i]) / bandwidth);
-    }
-    return y / bandwidth / n;
-  };
-
-  dist.cdf = function(x) {
-    for (var y=0, i=0; i<n; ++i) {
-      y += kernel.cdf((x - support[i]) / bandwidth);
-    }
-    return y / n;
-  };
-
-  dist.icdf = function() {
-    throw Error('KDE icdf not supported.');
-  };
-
-  return dist.data(support);
-};
-
-// Scott, D. W. (1992) Multivariate Density Estimation:
-// Theory, Practice, and Visualization. Wiley.
-function estimateBandwidth(array) {
-  var n = array.length,
-      q = quartiles(array),
-      h = (q[2] - q[0]) / 1.34;
-  return 1.06 * Math.min(Math.sqrt(d3Array.variance(array)), h) * Math.pow(n, -0.2);
-}
-
-var randomMixture = function(dists, weights) {
-  var dist = {}, m = 0, w;
-
-  function normalize(x) {
-    var w = [], sum$$1 = 0, i;
-    for (i=0; i<m; ++i) { sum$$1 += (w[i] = (x[i]==null ? 1 : +x[i])); }
-    for (i=0; i<m; ++i) { w[i] /= sum$$1; }
-    return w;
-  }
-
-  dist.weights = function(_$$1) {
-    if (arguments.length) {
-      w = normalize(weights = (_$$1 || []));
-      return dist;
-    }
-    return weights;
-  };
-
-  dist.distributions = function(_$$1) {
-    if (arguments.length) {
-      if (_$$1) {
-        m = _$$1.length;
-        dists = _$$1;
-      } else {
-        m = 0;
-        dists = [];
-      }
-      return dist.weights(weights);
-    }
-    return dists;
-  };
-
-  dist.sample = function() {
-    var r = Math.random(),
-        d = dists[m-1],
-        v = w[0],
-        i = 0;
-
-    // first select distribution
-    for (; i<m-1; v += w[++i]) {
-      if (r < v) { d = dists[i]; break; }
-    }
-    // then sample from it
-    return d.sample();
-  };
-
-  dist.pdf = function(x) {
-    for (var p=0, i=0; i<m; ++i) {
-      p += w[i] * dists[i].pdf(x);
-    }
-    return p;
-  };
-
-  dist.cdf = function(x) {
-    for (var p=0, i=0; i<m; ++i) {
-      p += w[i] * dists[i].cdf(x);
-    }
-    return p;
-  };
-
-  dist.icdf = function() {
-    throw Error('Mixture icdf not supported.');
-  };
-
-  return dist.distributions(dists).weights(weights);
-};
-
-var randomUniform = function(min$$1, max$$1) {
-  if (max$$1 == null) {
-    max$$1 = (min$$1 == null ? 1 : min$$1);
-    min$$1 = 0;
-  }
-
-  var dist = {},
-      a, b, d;
-
-  dist.min = function(_$$1) {
-    if (arguments.length) {
-      a = _$$1 || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return a;
-    }
-  };
-
-  dist.max = function(_$$1) {
-    if (arguments.length) {
-      b = _$$1 || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return b;
-    }
-  };
-
-  dist.sample = function() {
-    return a + d * Math.random();
-  };
-
-  dist.pdf = function(x) {
-    return (x >= a && x <= b) ? 1 / d : 0;
-  };
-
-  dist.cdf = function(x) {
-    return x < a ? 0 : x > b ? 1 : (x - a) / d;
-  };
-
-  dist.icdf = function(p) {
-    return (p >= 0 && p <= 1) ? a + p * d : NaN;
-  };
-
-  return dist.min(min$$1).max(max$$1);
-};
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-array'), require('d3-shape'), require('d3-path'), require('d3-format'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-geo'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-array', 'd3-shape', 'd3-path', 'd3-format', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-geo', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
+	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
+}(this, (function (exports,d3Request,d3Dsv,topojson,d3TimeFormat,d3Array,d3Shape,d3Path,d3Format,$,_,$$1,d3Geo,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
 var accessor = function(fn, fields, name) {
   fn.fields = fields || [];
@@ -948,6 +524,732 @@ var visitArray = function(array, filter, visitor) {
   }
 };
 
+function UniqueList(idFunc) {
+  var $$$1 = idFunc || identity,
+      list = [],
+      ids = {};
+
+  list.add = function(_$$1) {
+    var id$$1 = $$$1(_$$1);
+    if (!ids[id$$1]) {
+      ids[id$$1] = 1;
+      list.push(_$$1);
+    }
+    return list;
+  };
+
+  list.remove = function(_$$1) {
+    var id$$1 = $$$1(_$$1), idx;
+    if (ids[id$$1]) {
+      ids[id$$1] = 0;
+      if ((idx = list.indexOf(_$$1)) >= 0) {
+        list.splice(idx, 1);
+      }
+    }
+    return list;
+  };
+
+  return list;
+}
+
+var TUPLE_ID_KEY = Symbol('vega_id');
+var TUPLE_ID = 1;
+
+/**
+ * Resets the internal tuple id counter to one.
+ */
+
+
+/**
+ * Checks if an input value is a registered tuple.
+ * @param {*} t - The value to check.
+ * @return {boolean} True if the input is a tuple, false otherwise.
+ */
+function isTuple(t) {
+  return !!(t && tupleid(t));
+}
+
+/**
+ * Returns the id of a tuple.
+ * @param {object} t - The input tuple.
+ * @return {*} the tuple id.
+ */
+function tupleid(t) {
+  return t[TUPLE_ID_KEY];
+}
+
+/**
+ * Sets the id of a tuple.
+ * @param {object} t - The input tuple.
+ * @param {*} id - The id value to set.
+ * @return {object} the input tuple.
+ */
+function setid(t, id) {
+  t[TUPLE_ID_KEY] = id;
+  return t;
+}
+
+/**
+ * Ingest an object or value as a data tuple.
+ * If the input value is an object, an id field will be added to it. For
+ * efficiency, the input object is modified directly. A copy is not made.
+ * If the input value is a literal, it will be wrapped in a new object
+ * instance, with the value accessible as the 'data' property.
+ * @param datum - The value to ingest.
+ * @return {object} The ingested data tuple.
+ */
+function ingest(datum) {
+  var t = (datum === Object(datum)) ? datum : {data: datum};
+  return tupleid(t) ? t : setid(t, TUPLE_ID++);
+}
+
+/**
+ * Given a source tuple, return a derived copy.
+ * @param {object} t - The source tuple.
+ * @return {object} The derived tuple.
+ */
+function derive(t) {
+  return rederive(t, ingest({}));
+}
+
+/**
+ * Rederive a derived tuple by copying values from the source tuple.
+ * @param {object} t - The source tuple.
+ * @param {object} d - The derived tuple.
+ * @return {object} The derived tuple.
+ */
+function rederive(t, d) {
+  for (var k in t) d[k] = t[k];
+  return d;
+}
+
+/**
+ * Replace an existing tuple with a new tuple.
+ * @param {object} t - The existing data tuple.
+ * @param {object} d - The new tuple that replaces the old.
+ * @return {object} The new tuple.
+ */
+function replace(t, d) {
+  return setid(d, tupleid(t));
+}
+
+function isChangeSet(v) {
+  return v && v.constructor === changeset;
+}
+
+function changeset() {
+  var add = [],  // insert tuples
+      rem = [],  // remove tuples
+      mod = [],  // modify tuples
+      remp = [], // remove by predicate
+      modp = [], // modify by predicate
+      reflow = false;
+
+  return {
+    constructor: changeset,
+    insert: function(t) {
+      var d = array(t), i = 0, n = d.length;
+      for (; i<n; ++i) add.push(d[i]);
+      return this;
+    },
+    remove: function(t) {
+      var a = isFunction(t) ? remp : rem,
+          d = array(t), i = 0, n = d.length;
+      for (; i<n; ++i) a.push(d[i]);
+      return this;
+    },
+    modify: function(t, field$$1, value) {
+      var m = {field: field$$1, value: constant(value)};
+      if (isFunction(t)) {
+        m.filter = t;
+        modp.push(m);
+      } else {
+        m.tuple = t;
+        mod.push(m);
+      }
+      return this;
+    },
+    encode: function(t, set) {
+      if (isFunction(t)) modp.push({filter: t, field: set});
+      else mod.push({tuple: t, field: set});
+      return this;
+    },
+    reflow: function() {
+      reflow = true;
+      return this;
+    },
+    pulse: function(pulse, tuples) {
+      var out, i, n, m, f, t, id$$1;
+
+      // add
+      for (i=0, n=add.length; i<n; ++i) {
+        pulse.add.push(ingest(add[i]));
+      }
+
+      // remove
+      for (out={}, i=0, n=rem.length; i<n; ++i) {
+        t = rem[i];
+        out[tupleid(t)] = t;
+      }
+      for (i=0, n=remp.length; i<n; ++i) {
+        f = remp[i];
+        tuples.forEach(function(t) {
+          if (f(t)) out[tupleid(t)] = t;
+        });
+      }
+      for (id$$1 in out) pulse.rem.push(out[id$$1]);
+
+      // modify
+      function modify(t, f, v) {
+        if (v) t[f] = v(t); else pulse.encode = f;
+        if (!reflow) out[tupleid(t)] = t;
+      }
+      for (out={}, i=0, n=mod.length; i<n; ++i) {
+        m = mod[i];
+        modify(m.tuple, m.field, m.value);
+        pulse.modifies(m.field);
+      }
+      for (i=0, n=modp.length; i<n; ++i) {
+        m = modp[i];
+        f = m.filter;
+        tuples.forEach(function(t) {
+          if (f(t)) modify(t, m.field, m.value);
+        });
+        pulse.modifies(m.field);
+      }
+
+      // reflow?
+      if (reflow) {
+        pulse.mod = rem.length || remp.length
+          ? tuples.filter(function(t) { return out.hasOwnProperty(tupleid(t)); })
+          : tuples.slice();
+      } else {
+        for (id$$1 in out) pulse.mod.push(out[id$$1]);
+      }
+
+      return pulse;
+    }
+  };
+}
+
+var CACHE = '_:mod:_';
+
+/**
+ * Hash that tracks modifications to assigned values.
+ * Callers *must* use the set method to update values.
+ */
+function Parameters() {
+  Object.defineProperty(this, CACHE, {writable:true, value: {}});
+}
+
+var prototype$2 = Parameters.prototype;
+
+/**
+ * Set a parameter value. If the parameter value changes, the parameter
+ * will be recorded as modified.
+ * @param {string} name - The parameter name.
+ * @param {number} index - The index into an array-value parameter. Ignored if
+ *   the argument is undefined, null or less than zero.
+ * @param {*} value - The parameter value to set.
+ * @param {boolean} [force=false] - If true, records the parameter as modified
+ *   even if the value is unchanged.
+ * @return {Parameters} - This parameter object.
+ */
+prototype$2.set = function(name, index, value, force) {
+  var o = this,
+      v = o[name],
+      mod = o[CACHE];
+
+  if (index != null && index >= 0) {
+    if (v[index] !== value || force) {
+      v[index] = value;
+      mod[index + ':' + name] = -1;
+      mod[name] = -1;
+    }
+  } else if (v !== value || force) {
+    o[name] = value;
+    mod[name] = isArray(value) ? 1 + value.length : -1;
+  }
+
+  return o;
+};
+
+/**
+ * Tests if one or more parameters has been modified. If invoked with no
+ * arguments, returns true if any parameter value has changed. If the first
+ * argument is array, returns trues if any parameter name in the array has
+ * changed. Otherwise, tests if the given name and optional array index has
+ * changed.
+ * @param {string} name - The parameter name to test.
+ * @param {number} [index=undefined] - The parameter array index to test.
+ * @return {boolean} - Returns true if a queried parameter was modified.
+ */
+prototype$2.modified = function(name, index) {
+  var mod = this[CACHE], k;
+  if (!arguments.length) {
+    for (k in mod) { if (mod[k]) return true; }
+    return false;
+  } else if (isArray(name)) {
+    for (k=0; k<name.length; ++k) {
+      if (mod[name[k]]) return true;
+    }
+    return false;
+  }
+  return (index != null && index >= 0)
+    ? (index + 1 < mod[name] || !!mod[index + ':' + name])
+    : !!mod[name];
+};
+
+/**
+ * Clears the modification records. After calling this method,
+ * all parameters are considered unmodified.
+ */
+prototype$2.clear = function() {
+  this[CACHE] = {};
+  return this;
+};
+
+var OP_ID = 0;
+var PULSE = 'pulse';
+var NO_PARAMS = new Parameters();
+
+// Boolean Flags
+var SKIP     = 1;
+var MODIFIED = 2;
+
+/**
+ * An Operator is a processing node in a dataflow graph.
+ * Each operator stores a value and an optional value update function.
+ * Operators can accept a hash of named parameters. Parameter values can
+ * either be direct (JavaScript literals, arrays, objects) or indirect
+ * (other operators whose values will be pulled dynamically). Operators
+ * included as parameters will have this operator added as a dependency.
+ * @constructor
+ * @param {*} [init] - The initial value for this operator.
+ * @param {function(object, Pulse)} [update] - An update function. Upon
+ *   evaluation of this operator, the update function will be invoked and the
+ *   return value will be used as the new value of this operator.
+ * @param {object} [params] - The parameters for this operator.
+ * @param {boolean} [react=true] - Flag indicating if this operator should
+ *   listen for changes to upstream operators included as parameters.
+ * @see parameters
+ */
+function Operator(init, update, params, react) {
+  this.id = ++OP_ID;
+  this.value = init;
+  this.stamp = -1;
+  this.rank = -1;
+  this.qrank = -1;
+  this.flags = 0;
+
+  if (update) {
+    this._update = update;
+  }
+  if (params) this.parameters(params, react);
+}
+
+var prototype$1 = Operator.prototype;
+
+/**
+ * Returns a list of target operators dependent on this operator.
+ * If this list does not exist, it is created and then returned.
+ * @return {UniqueList}
+ */
+prototype$1.targets = function() {
+  return this._targets || (this._targets = UniqueList(id));
+};
+
+/**
+ * Sets the value of this operator.
+ * @param {*} value - the value to set.
+ * @return {Number} Returns 1 if the operator value has changed
+ *   according to strict equality, returns 0 otherwise.
+ */
+prototype$1.set = function(value) {
+  if (this.value !== value) {
+    this.value = value;
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
+function flag(bit) {
+  return function(state) {
+    var f = this.flags;
+    if (arguments.length === 0) return !!(f & bit);
+    this.flags = state ? (f | bit) : (f & ~bit);
+    return this;
+  };
+}
+
+/**
+ * Indicates that operator evaluation should be skipped on the next pulse.
+ * This operator will still propagate incoming pulses, but its update function
+ * will not be invoked. The skip flag is reset after every pulse, so calling
+ * this method will affect processing of the next pulse only.
+ */
+prototype$1.skip = flag(SKIP);
+
+/**
+ * Indicates that this operator's value has been modified on its most recent
+ * pulse. Normally modification is checked via strict equality; however, in
+ * some cases it is more efficient to update the internal state of an object.
+ * In those cases, the modified flag can be used to trigger propagation. Once
+ * set, the modification flag persists across pulses until unset. The flag can
+ * be used with the last timestamp to test if a modification is recent.
+ */
+prototype$1.modified = flag(MODIFIED);
+
+/**
+ * Sets the parameters for this operator. The parameter values are analyzed for
+ * operator instances. If found, this operator will be added as a dependency
+ * of the parameterizing operator. Operator values are dynamically marshalled
+ * from each operator parameter prior to evaluation. If a parameter value is
+ * an array, the array will also be searched for Operator instances. However,
+ * the search does not recurse into sub-arrays or object properties.
+ * @param {object} params - A hash of operator parameters.
+ * @param {boolean} [react=true] - A flag indicating if this operator should
+ *   automatically update (react) when parameter values change. In other words,
+ *   this flag determines if the operator registers itself as a listener on
+ *   any upstream operators included in the parameters.
+ * @return {Operator[]} - An array of upstream dependencies.
+ */
+prototype$1.parameters = function(params, react) {
+  react = react !== false;
+  var self = this,
+      argval = (self._argval = self._argval || new Parameters()),
+      argops = (self._argops = self._argops || []),
+      deps = [],
+      name, value, n, i;
+
+  function add(name, index, value) {
+    if (value instanceof Operator) {
+      if (value !== self) {
+        if (react) value.targets().add(self);
+        deps.push(value);
+      }
+      argops.push({op:value, name:name, index:index});
+    } else {
+      argval.set(name, index, value);
+    }
+  }
+
+  for (name in params) {
+    value = params[name];
+
+    if (name === PULSE) {
+      array(value).forEach(function(op) {
+        if (!(op instanceof Operator)) {
+          error$1('Pulse parameters must be operator instances.');
+        } else if (op !== self) {
+          op.targets().add(self);
+          deps.push(op);
+        }
+      });
+      self.source = value;
+    } else if (isArray(value)) {
+      argval.set(name, -1, Array(n = value.length));
+      for (i=0; i<n; ++i) add(name, i, value[i]);
+    } else {
+      add(name, -1, value);
+    }
+  }
+
+  this.marshall().clear(); // initialize values
+  return deps;
+};
+
+/**
+ * Internal method for marshalling parameter values.
+ * Visits each operator dependency to pull the latest value.
+ * @return {Parameters} A Parameters object to pass to the update function.
+ */
+prototype$1.marshall = function(stamp) {
+  var argval = this._argval || NO_PARAMS,
+      argops = this._argops, item, i, n, op, mod;
+
+  if (argops && (n = argops.length)) {
+    for (i=0; i<n; ++i) {
+      item = argops[i];
+      op = item.op;
+      mod = op.modified() && op.stamp === stamp;
+      argval.set(item.name, item.index, op.value, mod);
+    }
+  }
+  return argval;
+};
+
+/**
+ * Delegate method to perform operator processing.
+ * Subclasses can override this method to perform custom processing.
+ * By default, it marshalls parameters and calls the update function
+ * if that function is defined. If the update function does not
+ * change the operator value then StopPropagation is returned.
+ * If no update function is defined, this method does nothing.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return The output pulse or StopPropagation. A falsy return value
+ *   (including undefined) will let the input pulse pass through.
+ */
+prototype$1.evaluate = function(pulse) {
+  if (this._update) {
+    var params = this.marshall(pulse.stamp),
+        v = this._update(params, pulse);
+
+    params.clear();
+    if (v !== this.value) {
+      this.value = v;
+    } else if (!this.modified()) {
+      return pulse.StopPropagation;
+    }
+  }
+};
+
+/**
+ * Run this operator for the current pulse. If this operator has already
+ * been run at (or after) the pulse timestamp, returns StopPropagation.
+ * Internally, this method calls {@link evaluate} to perform processing.
+ * If {@link evaluate} returns a falsy value, the input pulse is returned.
+ * This method should NOT be overridden, instead overrride {@link evaluate}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return the output pulse for this operator (or StopPropagation)
+ */
+prototype$1.run = function(pulse) {
+  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  var rv;
+  if (this.skip()) {
+    this.skip(false);
+    rv = 0;
+  } else {
+    rv = this.evaluate(pulse);
+  }
+  this.stamp = pulse.stamp;
+  this.pulse = rv;
+  return rv || pulse;
+};
+
+/**
+ * Add an operator to the dataflow graph. This function accepts a
+ * variety of input argument types. The basic signature supports an
+ * initial value, update function and parameters. If the first parameter
+ * is an Operator instance, it will be added directly. If it is a
+ * constructor for an Operator subclass, a new instance will be instantiated.
+ * Otherwise, if the first parameter is a function instance, it will be used
+ * as the update function and a null initial value is assumed.
+ * @param {*} init - One of: the operator to add, the initial value of
+ *   the operator, an operator class to instantiate, or an update function.
+ * @param {function} [update] - The operator update function.
+ * @param {object} [params] - The operator parameters.
+ * @param {boolean} [react=true] - Flag indicating if this operator should
+ *   listen for changes to upstream operators included as parameters.
+ * @return {Operator} - The added operator.
+ */
+var add = function(init, update, params, react) {
+  var shift = 1,
+    op;
+
+  if (init instanceof Operator) {
+    op = init;
+  } else if (init && init.prototype instanceof Operator) {
+    op = new init();
+  } else if (isFunction(init)) {
+    op = new Operator(null, init);
+  } else {
+    shift = 0;
+    op = new Operator(init, update);
+  }
+
+  this.rank(op);
+  if (shift) {
+    react = params;
+    params = update;
+  }
+  if (params) this.connect(op, op.parameters(params, react));
+  this.touch(op);
+
+  return op;
+};
+
+/**
+ * Connect a target operator as a dependent of source operators.
+ * If necessary, this method will rerank the target operator and its
+ * dependents to ensure propagation proceeds in a topologically sorted order.
+ * @param {Operator} target - The target operator.
+ * @param {Array<Operator>} - The source operators that should propagate
+ *   to the target operator.
+ */
+var connect = function(target, sources) {
+  var targetRank = target.rank, i, n;
+
+  for (i=0, n=sources.length; i<n; ++i) {
+    if (targetRank < sources[i].rank) {
+      this.rerank(target);
+      return;
+    }
+  }
+};
+
+var STREAM_ID = 0;
+
+/**
+ * Models an event stream.
+ * @constructor
+ * @param {function(Object, number): boolean} [filter] - Filter predicate.
+ *   Events pass through when truthy, events are suppressed when falsy.
+ * @param {function(Object): *} [apply] - Applied to input events to produce
+ *   new event values.
+ * @param {function(Object)} [receive] - Event callback function to invoke
+ *   upon receipt of a new event. Use to override standard event processing.
+ */
+function EventStream(filter, apply, receive) {
+  this.id = ++STREAM_ID;
+  this.value = null;
+  if (receive) this.receive = receive;
+  if (filter) this._filter = filter;
+  if (apply) this._apply = apply;
+}
+
+/**
+ * Creates a new event stream instance with the provided
+ * (optional) filter, apply and receive functions.
+ * @param {function(Object, number): boolean} [filter] - Filter predicate.
+ *   Events pass through when truthy, events are suppressed when falsy.
+ * @param {function(Object): *} [apply] - Applied to input events to produce
+ *   new event values.
+ * @see EventStream
+ */
+function stream(filter, apply, receive) {
+  return new EventStream(filter, apply, receive);
+}
+
+var prototype$3 = EventStream.prototype;
+
+prototype$3._filter = truthy;
+
+prototype$3._apply = identity;
+
+prototype$3.targets = function() {
+  return this._targets || (this._targets = UniqueList(id));
+};
+
+prototype$3.consume = function(_$$1) {
+  if (!arguments.length) return !!this._consume;
+  this._consume = !!_$$1;
+  return this;
+};
+
+prototype$3.receive = function(evt) {
+  if (this._filter(evt)) {
+    var val = (this.value = this._apply(evt)),
+        trg = this._targets,
+        n = trg ? trg.length : 0,
+        i = 0;
+
+    for (; i<n; ++i) trg[i].receive(val);
+
+    if (this._consume) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
+  }
+};
+
+prototype$3.filter = function(filter) {
+  var s = stream(filter);
+  this.targets().add(s);
+  return s;
+};
+
+prototype$3.apply = function(apply) {
+  var s = stream(null, apply);
+  this.targets().add(s);
+  return s;
+};
+
+prototype$3.merge = function() {
+  var s = stream();
+
+  this.targets().add(s);
+  for (var i=0, n=arguments.length; i<n; ++i) {
+    arguments[i].targets().add(s);
+  }
+
+  return s;
+};
+
+prototype$3.throttle = function(pause) {
+  var t = -1;
+  return this.filter(function() {
+    var now = Date.now();
+    if ((now - t) > pause) {
+      t = now;
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+};
+
+prototype$3.debounce = function(delay) {
+  var s = stream();
+
+  this.targets().add(stream(null, null,
+    debounce(delay, function(e) {
+      var df = e.dataflow;
+      s.receive(e);
+      if (df && df.run) df.run();
+    })
+  ));
+
+  return s;
+};
+
+prototype$3.between = function(a, b) {
+  var active = false;
+  a.targets().add(stream(null, null, function() { active = true; }));
+  b.targets().add(stream(null, null, function() { active = false; }));
+  return this.filter(function() { return active; });
+};
+
+/**
+ * Create a new event stream from an event source.
+ * @param {object} source - The event source to monitor. The input must
+ *  support the addEventListener method.
+ * @param {string} type - The event type.
+ * @param {function(object): boolean} [filter] - Event filter function.
+ * @param {function(object): *} [apply] - Event application function.
+ *   If provided, this function will be invoked and the result will be
+ *   used as the downstream event value.
+ * @return {EventStream}
+ */
+var events = function(source, type, filter, apply) {
+  var df = this,
+      s = stream(filter, apply),
+      send = function(e) {
+        e.dataflow = df;
+        try {
+          s.receive(e);
+        } catch (error) {
+          df.error(error);
+        } finally {
+          df.run();
+        }
+      },
+      sources;
+
+  if (typeof source === 'string' && typeof document !== 'undefined') {
+    sources = document.querySelectorAll(source);
+  } else {
+    sources = array(source);
+  }
+
+  for (var i=0, n=sources.length; i<n; ++i) {
+    sources[i].addEventListener(type, send);
+  }
+
+  return s;
+};
+
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
 var protocol_re = /^([A-Za-z]+:)?\/\//;
@@ -1313,18 +1615,4488 @@ function parse(data, types, dateParse) {
   }
 }
 
+function ingest$1(target, data, format$$1) {
+  return this.pulse(target, this.changeset().insert(read(data, format$$1)));
+}
+
+function loadPending(df) {
+  var accept, reject,
+      pending = new Promise(function(a, r) {
+        accept = a;
+        reject = r;
+      });
+
+  pending.requests = 0;
+
+  pending.done = function() {
+    if (--pending.requests === 0) {
+      df.runAfter(function() {
+        df._pending = null;
+        try {
+          df.run();
+          accept(df);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+  };
+
+  return (df._pending = pending);
+}
+
+function request$1(target, url, format$$1) {
+  var df = this,
+      pending = df._pending || loadPending(df);
+
+  pending.requests += 1;
+
+  df.loader()
+    .load(url, {context:'dataflow'})
+    .then(
+      function(data) { df.ingest(target, data, format$$1); },
+      function(error) { df.error('Loading failed', url, error); })
+    .catch(
+      function(error) { df.error('Data ingestion failed', url, error); })
+    .then(pending.done, pending.done);
+}
+
+var SKIP$1 = {skip: true};
+
+/**
+ * Perform operator updates in response to events. Applies an
+ * update function to compute a new operator value. If the update function
+ * returns a {@link ChangeSet}, the operator will be pulsed with those tuple
+ * changes. Otherwise, the operator value will be updated to the return value.
+ * @param {EventStream|Operator} source - The event source to react to.
+ *   This argument can be either an EventStream or an Operator.
+ * @param {Operator|function(object):Operator} target - The operator to update.
+ *   This argument can either be an Operator instance or (if the source
+ *   argument is an EventStream), a function that accepts an event object as
+ *   input and returns an Operator to target.
+ * @param {function(Parameters,Event): *} [update] - Optional update function
+ *   to compute the new operator value, or a literal value to set. Update
+ *   functions expect to receive a parameter object and event as arguments.
+ *   This function can either return a new operator value or (if the source
+ *   argument is an EventStream) a {@link ChangeSet} instance to pulse
+ *   the target operator with tuple changes.
+ * @param {object} [params] - The update function parameters.
+ * @param {object} [options] - Additional options hash. If not overridden,
+ *   updated operators will be skipped by default.
+ * @param {boolean} [options.skip] - If true, the operator will
+ *  be skipped: it will not be evaluated, but its dependents will be.
+ * @param {boolean} [options.force] - If true, the operator will
+ *   be re-evaluated even if its value has not changed.
+ * @return {Dataflow}
+ */
+var on = function(source, target, update, params, options) {
+  var fn = source instanceof Operator ? onOperator : onStream;
+  fn(this, source, target, update, params, options);
+  return this;
+};
+
+function onStream(df, stream, target, update, params, options) {
+  var opt = extend({}, options, SKIP$1), func, op;
+
+  if (!isFunction(target)) target = constant(target);
+
+  if (update === undefined) {
+    func = function(e) {
+      df.touch(target(e));
+    };
+  } else if (isFunction(update)) {
+    op = new Operator(null, update, params, false);
+    func = function(e) {
+      var v, t = target(e);
+      op.evaluate(e);
+      isChangeSet(v = op.value) ? df.pulse(t, v, options) : df.update(t, v, opt);
+    };
+  } else {
+    func = function(e) {
+      df.update(target(e), update, opt);
+    };
+  }
+
+  stream.apply(func);
+}
+
+function onOperator(df, source, target, update, params, options) {
+  var func, op;
+
+  if (update === undefined) {
+    op = target;
+  } else {
+    func = isFunction(update) ? update : constant(update);
+    update = !target ? func : function(_$$1, pulse) {
+      var value = func(_$$1, pulse);
+      return target.skip()
+        ? value
+        : (target.skip(true).value = value);
+    };
+
+    op = new Operator(null, update, params, false);
+    op.modified(options && options.force);
+    op.rank = 0;
+
+    if (target) {
+      op.skip(true); // skip first invocation
+      op.value = target.value;
+      op.targets().add(target);
+    }
+  }
+
+  source.targets().add(op);
+}
+
+/**
+ * Assigns a rank to an operator. Ranks are assigned in increasing order
+ * by incrementing an internal rank counter.
+ * @param {Operator} op - The operator to assign a rank.
+ */
+function rank(op) {
+  op.rank = ++this._rank;
+}
+
+/**
+ * Re-ranks an operator and all downstream target dependencies. This
+ * is necessary when upstream depencies of higher rank are added to
+ * a target operator.
+ * @param {Operator} op - The operator to re-rank.
+ */
+function rerank(op) {
+  var queue = [op],
+      cur, list, i;
+
+  while (queue.length) {
+    this.rank(cur = queue.pop());
+    if (list = cur._targets) {
+      for (i=list.length; --i >= 0;) {
+        queue.push(cur = list[i]);
+        if (cur === op) this.error('Cycle detected in dataflow graph.');
+      }
+    }
+  }
+}
+
+/**
+ * Sentinel value indicating pulse propagation should stop.
+ */
+var StopPropagation = {};
+
+// Pulse visit type flags
+var ADD       = (1 << 0);
+var REM       = (1 << 1);
+var MOD       = (1 << 2);
+var ADD_REM   = ADD | REM;
+var ADD_MOD   = ADD | MOD;
+var ALL       = ADD | REM | MOD;
+var REFLOW    = (1 << 3);
+var SOURCE    = (1 << 4);
+var NO_SOURCE = (1 << 5);
+var NO_FIELDS = (1 << 6);
+
+/**
+ * A Pulse enables inter-operator communication during a run of the
+ * dataflow graph. In addition to the current timestamp, a pulse may also
+ * contain a change-set of added, removed or modified data tuples, as well as
+ * a pointer to a full backing data source. Tuple change sets may not
+ * be fully materialized; for example, to prevent needless array creation
+ * a change set may include larger arrays and corresponding filter functions.
+ * The pulse provides a {@link visit} method to enable proper and efficient
+ * iteration over requested data tuples.
+ *
+ * In addition, each pulse can track modification flags for data tuple fields.
+ * Responsible transform operators should call the {@link modifies} method to
+ * indicate changes to data fields. The {@link modified} method enables
+ * querying of this modification state.
+ *
+ * @constructor
+ * @param {Dataflow} dataflow - The backing dataflow instance.
+ * @param {number} stamp - The current propagation timestamp.
+ * @param {string} [encode] - An optional encoding set name, which is then
+ *   accessible as Pulse.encode. Operators can respond to (or ignore) this
+ *   setting as appropriate. This parameter can be used in conjunction with
+ *   the Encode transform in the vega-encode module.
+ */
+function Pulse(dataflow, stamp, encode) {
+  this.dataflow = dataflow;
+  this.stamp = stamp == null ? -1 : stamp;
+  this.add = [];
+  this.rem = [];
+  this.mod = [];
+  this.fields = null;
+  this.encode = encode || null;
+}
+
+var prototype$4 = Pulse.prototype;
+
+/**
+ * Sentinel value indicating pulse propagation should stop.
+ */
+prototype$4.StopPropagation = StopPropagation;
+
+/**
+ * Boolean flag indicating ADD (added) tuples.
+ */
+prototype$4.ADD = ADD;
+
+/**
+ * Boolean flag indicating REM (removed) tuples.
+ */
+prototype$4.REM = REM;
+
+/**
+ * Boolean flag indicating MOD (modified) tuples.
+ */
+prototype$4.MOD = MOD;
+
+/**
+ * Boolean flag indicating ADD (added) and REM (removed) tuples.
+ */
+prototype$4.ADD_REM = ADD_REM;
+
+/**
+ * Boolean flag indicating ADD (added) and MOD (modified) tuples.
+ */
+prototype$4.ADD_MOD = ADD_MOD;
+
+/**
+ * Boolean flag indicating ADD, REM and MOD tuples.
+ */
+prototype$4.ALL = ALL;
+
+/**
+ * Boolean flag indicating all tuples in a data source
+ * except for the ADD, REM and MOD tuples.
+ */
+prototype$4.REFLOW = REFLOW;
+
+/**
+ * Boolean flag indicating a 'pass-through' to a
+ * backing data source, ignoring ADD, REM and MOD tuples.
+ */
+prototype$4.SOURCE = SOURCE;
+
+/**
+ * Boolean flag indicating that source data should be
+ * suppressed when creating a forked pulse.
+ */
+prototype$4.NO_SOURCE = NO_SOURCE;
+
+/**
+ * Boolean flag indicating that field modifications should be
+ * suppressed when creating a forked pulse.
+ */
+prototype$4.NO_FIELDS = NO_FIELDS;
+
+/**
+ * Creates a new pulse based on the values of this pulse.
+ * The dataflow, time stamp and field modification values are copied over.
+ * By default, new empty ADD, REM and MOD arrays are created.
+ * @param {number} flags - Integer of boolean flags indicating which (if any)
+ *   tuple arrays should be copied to the new pulse. The supported flag values
+ *   are ADD, REM and MOD. Array references are copied directly: new array
+ *   instances are not created.
+ * @return {Pulse} - The forked pulse instance.
+ * @see init
+ */
+prototype$4.fork = function(flags) {
+  return new Pulse(this.dataflow).init(this, flags);
+};
+
+/**
+ * Returns a pulse that adds all tuples from a backing source. This is
+ * useful for cases where operators are added to a dataflow after an
+ * upstream data pipeline has already been processed, ensuring that
+ * new operators can observe all tuples within a stream.
+ * @return {Pulse} - A pulse instance with all source tuples included
+ *   in the add array. If the current pulse already has all source
+ *   tuples in its add array, it is returned directly. If the current
+ *   pulse does not have a backing source, it is returned directly.
+ */
+prototype$4.addAll = function() {
+  var p = this;
+  if (!this.source || this.source.length === this.add.length) {
+    return p;
+  } else {
+    p = new Pulse(this.dataflow).init(this);
+    p.add = p.source;
+    return p;
+  }
+};
+
+/**
+ * Initialize this pulse based on the values of another pulse. This method
+ * is used internally by {@link fork} to initialize a new forked tuple.
+ * The dataflow, time stamp and field modification values are copied over.
+ * By default, new empty ADD, REM and MOD arrays are created.
+ * @param {Pulse} src - The source pulse to copy from.
+ * @param {number} flags - Integer of boolean flags indicating which (if any)
+ *   tuple arrays should be copied to the new pulse. The supported flag values
+ *   are ADD, REM and MOD. Array references are copied directly: new array
+ *   instances are not created. By default, source data arrays are copied
+ *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
+ * @return {Pulse} - Returns this Pulse instance.
+ */
+prototype$4.init = function(src, flags) {
+  var p = this;
+  p.stamp = src.stamp;
+  p.encode = src.encode;
+
+  if (src.fields && !(flags & NO_FIELDS)) p.fields = src.fields;
+
+  if (flags & ADD) {
+    p.addF = src.addF;
+    p.add = src.add;
+  } else {
+    p.addF = null;
+    p.add = [];
+  }
+
+  if (flags & REM) {
+    p.remF = src.remF;
+    p.rem = src.rem;
+  } else {
+    p.remF = null;
+    p.rem = [];
+  }
+
+  if (flags & MOD) {
+    p.modF = src.modF;
+    p.mod = src.mod;
+  } else {
+    p.modF = null;
+    p.mod = [];
+  }
+
+  if (flags & NO_SOURCE) {
+    p.srcF = null;
+    p.source = null;
+  } else {
+    p.srcF = src.srcF;
+    p.source = src.source;
+  }
+
+  return p;
+};
+
+/**
+ * Schedules a function to run after pulse propagation completes.
+ * @param {function} func - The function to run.
+ */
+prototype$4.runAfter = function(func) {
+  this.dataflow.runAfter(func);
+};
+
+/**
+ * Indicates if tuples have been added, removed or modified.
+ * @param {number} [flags] - The tuple types (ADD, REM or MOD) to query.
+ *   Defaults to ALL, returning true if any tuple type has changed.
+ * @return {boolean} - Returns true if one or more queried tuple types have
+ *   changed, false otherwise.
+ */
+prototype$4.changed = function(flags) {
+  var f = flags || ALL;
+  return ((f & ADD) && this.add.length)
+      || ((f & REM) && this.rem.length)
+      || ((f & MOD) && this.mod.length);
+};
+
+/**
+ * Forces a "reflow" of tuple values, such that all tuples in the backing
+ * source are added to the MOD set, unless already present in the ADD set.
+ * @param {boolean} [fork=false] - If true, returns a forked copy of this
+ *   pulse, and invokes reflow on that derived pulse.
+ * @return {Pulse} - The reflowed pulse instance.
+ */
+prototype$4.reflow = function(fork) {
+  if (fork) return this.fork(ALL).reflow();
+
+  var len = this.add.length,
+      src = this.source && this.source.length;
+  if (src && src !== len) {
+    this.mod = this.source;
+    if (len) this.filter(MOD, filter(this, ADD));
+  }
+  return this;
+};
+
+/**
+ * Marks one or more data field names as modified to assist dependency
+ * tracking and incremental processing by transform operators.
+ * @param {string|Array<string>} _ - The field(s) to mark as modified.
+ * @return {Pulse} - This pulse instance.
+ */
+prototype$4.modifies = function(_$$1) {
+  var fields = array(_$$1),
+      hash = this.fields || (this.fields = {});
+  fields.forEach(function(f) { hash[f] = true; });
+  return this;
+};
+
+/**
+ * Checks if one or more data fields have been modified during this pulse
+ * propagation timestamp.
+ * @param {string|Array<string>} _ - The field(s) to check for modified.
+ * @return {boolean} - Returns true if any of the provided fields has been
+ *   marked as modified, false otherwise.
+ */
+prototype$4.modified = function(_$$1) {
+  var fields = this.fields;
+  return !(this.mod.length && fields) ? false
+    : !arguments.length ? !!fields
+    : isArray(_$$1) ? _$$1.some(function(f) { return fields[f]; })
+    : fields[_$$1];
+};
+
+/**
+ * Adds a filter function to one more tuple sets. Filters are applied to
+ * backing tuple arrays, to determine the actual set of tuples considered
+ * added, removed or modified. They can be used to delay materialization of
+ * a tuple set in order to avoid expensive array copies. In addition, the
+ * filter functions can serve as value transformers: unlike standard predicate
+ * function (which return boolean values), Pulse filters should return the
+ * actual tuple value to process. If a tuple set is already filtered, the
+ * new filter function will be appended into a conjuntive ('and') query.
+ * @param {number} flags - Flags indicating the tuple set(s) to filter.
+ * @param {function(*):object} filter - Filter function that will be applied
+ *   to the tuple set array, and should return a data tuple if the value
+ *   should be included in the tuple set, and falsy (or null) otherwise.
+ * @return {Pulse} - Returns this pulse instance.
+ */
+prototype$4.filter = function(flags, filter) {
+  var p = this;
+  if (flags & ADD) p.addF = addFilter(p.addF, filter);
+  if (flags & REM) p.remF = addFilter(p.remF, filter);
+  if (flags & MOD) p.modF = addFilter(p.modF, filter);
+  if (flags & SOURCE) p.srcF = addFilter(p.srcF, filter);
+  return p;
+};
+
+function addFilter(a, b) {
+  return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
+}
+
+/**
+ * Materialize one or more tuple sets in this pulse. If the tuple set(s) have
+ * a registered filter function, it will be applied and the tuple set(s) will
+ * be replaced with materialized tuple arrays.
+ * @param {number} flags - Flags indicating the tuple set(s) to materialize.
+ * @return {Pulse} - Returns this pulse instance.
+ */
+prototype$4.materialize = function(flags) {
+  flags = flags || ALL;
+  var p = this;
+  if ((flags & ADD) && p.addF) {
+    p.add = materialize(p.add, p.addF);
+    p.addF = null;
+  }
+  if ((flags & REM) && p.remF) {
+    p.rem = materialize(p.rem, p.remF);
+    p.remF = null;
+  }
+  if ((flags & MOD) && p.modF) {
+    p.mod = materialize(p.mod, p.modF);
+    p.modF = null;
+  }
+  if ((flags & SOURCE) && p.srcF) {
+    p.source = p.source.filter(p.srcF);
+    p.srcF = null;
+  }
+  return p;
+};
+
+function materialize(data, filter) {
+  var out = [];
+  visitArray(data, filter, function(_$$1) { out.push(_$$1); });
+  return out;
+}
+
+function filter(pulse, flags) {
+  var map = {};
+  pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
+  return function(t) { return map[tupleid(t)] ? null : t; };
+}
+
+/**
+ * Visit one or more tuple sets in this pulse.
+ * @param {number} flags - Flags indicating the tuple set(s) to visit.
+ *   Legal values are ADD, REM, MOD and SOURCE (if a backing data source
+ *   has been set).
+ * @param {function(object):*} - Visitor function invoked per-tuple.
+ * @return {Pulse} - Returns this pulse instance.
+ */
+prototype$4.visit = function(flags, visitor) {
+  var p = this, v = visitor, src, sum$$1;
+
+  if (flags & SOURCE) {
+    visitArray(p.source, p.srcF, v);
+    return p;
+  }
+
+  if (flags & ADD) visitArray(p.add, p.addF, v);
+  if (flags & REM) visitArray(p.rem, p.remF, v);
+  if (flags & MOD) visitArray(p.mod, p.modF, v);
+
+  if ((flags & REFLOW) && (src = p.source)) {
+    sum$$1 = p.add.length + p.mod.length;
+    if (sum$$1 === src.length) {
+      // do nothing
+    } else if (sum$$1) {
+      visitArray(src, filter(p, ADD_MOD), v);
+    } else {
+      // if no add/rem/mod tuples, visit source
+      visitArray(src, p.srcF, v);
+    }
+  }
+
+  return p;
+};
+
+/**
+ * Represents a set of multiple pulses. Used as input for operators
+ * that accept multiple pulses at a time. Contained pulses are
+ * accessible via the public "pulses" array property. This pulse doe
+ * not carry added, removed or modified tuples directly. However,
+ * the visit method can be used to traverse all such tuples contained
+ * in sub-pulses with a timestamp matching this parent multi-pulse.
+ * @constructor
+ * @param {Dataflow} dataflow - The backing dataflow instance.
+ * @param {number} stamp - The timestamp.
+ * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
+ */
+function MultiPulse(dataflow, stamp, pulses, encode) {
+  var p = this,
+      c = 0,
+      pulse, hash, i, n, f;
+
+  this.dataflow = dataflow;
+  this.stamp = stamp;
+  this.fields = null;
+  this.encode = encode || null;
+  this.pulses = pulses;
+
+  for (i=0, n=pulses.length; i<n; ++i) {
+    pulse = pulses[i];
+    if (pulse.stamp !== stamp) continue;
+
+    if (pulse.fields) {
+      hash = p.fields || (p.fields = {});
+      for (f in pulse.fields) { hash[f] = 1; }
+    }
+
+    if (pulse.changed(p.ADD)) c |= p.ADD;
+    if (pulse.changed(p.REM)) c |= p.REM;
+    if (pulse.changed(p.MOD)) c |= p.MOD;
+  }
+
+  this.changes = c;
+}
+
+var prototype$5 = inherits(MultiPulse, Pulse);
+
+/**
+ * Creates a new pulse based on the values of this pulse.
+ * The dataflow, time stamp and field modification values are copied over.
+ * @return {Pulse}
+ */
+prototype$5.fork = function() {
+  if (arguments.length && (arguments[0] & Pulse.prototype.ALL)) {
+    error$1('MultiPulse fork does not support tuple change sets.');
+  }
+  return new Pulse(this.dataflow).init(this, 0);
+};
+
+prototype$5.changed = function(flags) {
+  return this.changes & flags;
+};
+
+prototype$5.modified = function(_$$1) {
+  var p = this, fields = p.fields;
+  return !(fields && (p.changes & p.MOD)) ? 0
+    : isArray(_$$1) ? _$$1.some(function(f) { return fields[f]; })
+    : fields[_$$1];
+};
+
+prototype$5.filter = function() {
+  error$1('MultiPulse does not support filtering.');
+};
+
+prototype$5.materialize = function() {
+  error$1('MultiPulse does not support materialization.');
+};
+
+prototype$5.visit = function(flags, visitor) {
+  var p = this,
+      pulses = p.pulses,
+      n = pulses.length,
+      i = 0;
+
+  if (flags & p.SOURCE) {
+    for (; i<n; ++i) {
+      pulses[i].visit(flags, visitor);
+    }
+  } else {
+    for (; i<n; ++i) {
+      if (pulses[i].stamp === p.stamp) {
+        pulses[i].visit(flags, visitor);
+      }
+    }
+  }
+
+  return p;
+};
+
+/**
+ * Runs the dataflow. This method will increment the current timestamp
+ * and process all updated, pulsed and touched operators. When run for
+ * the first time, all registered operators will be processed. If there
+ * are pending data loading operations, this method will return immediately
+ * without evaluating the dataflow. Instead, the dataflow will be
+ * asynchronously invoked when data loading completes. To track when dataflow
+ * evaluation completes, use the {@link runAsync} method instead.
+ * @param {string} [encode] - The name of an encoding set to invoke during
+ *   propagation. This value is added to generated Pulse instances;
+ *   operators can then respond to (or ignore) this setting as appropriate.
+ *   This parameter can be used in conjunction with the Encode transform in
+ *   the vega-encode module.
+ */
+function run(encode) {
+  var df = this,
+      count = 0,
+      level = df.logLevel(),
+      op, next, dt, error;
+
+  if (df._pending) {
+    df.info('Awaiting requests, delaying dataflow run.');
+    return 0;
+  }
+
+  if (df._pulse) {
+    df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
+    return 0;
+  }
+
+  if (!df._touched.length) {
+    df.info('Dataflow invoked, but nothing to do.');
+    return 0;
+  }
+
+  df._pulse = new Pulse(df, ++df._clock, encode);
+
+  if (level >= Info) {
+    dt = Date.now();
+    df.debug('-- START PROPAGATION (' + df._clock + ') -----');
+  }
+
+  // initialize queue, reset touched operators
+  df._touched.forEach(function(op) { df._enqueue(op, true); });
+  df._touched = UniqueList(id);
+
+  try {
+    while (df._heap.size() > 0) {
+      op = df._heap.pop();
+
+      // re-queue if rank changes
+      if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
+
+      // otherwise, evaluate the operator
+      next = op.run(df._getPulse(op, encode));
+
+      if (level >= Debug) {
+        df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
+      }
+
+      // propagate the pulse
+      if (next !== StopPropagation) {
+        df._pulse = next;
+        if (op._targets) op._targets.forEach(function(op) { df._enqueue(op); });
+      }
+
+      // increment visit counter
+      ++count;
+    }
+  } catch (err) {
+    error = err;
+  }
+
+  // reset pulse map
+  df._pulses = {};
+  df._pulse = null;
+
+  if (level >= Info) {
+    dt = Date.now() - dt;
+    df.info('> Pulse ' + df._clock + ': ' + count + ' operators; ' + dt + 'ms');
+  }
+
+  if (error) {
+    df._postrun = [];
+    df.error(error);
+  }
+
+  if (df._onrun) {
+    try { df._onrun(df, count, error); } catch (err) { df.error(err); }
+  }
+
+  // invoke callbacks queued via runAfter
+  if (df._postrun.length) {
+    var postrun = df._postrun;
+    df._postrun = [];
+    postrun.forEach(function(f) {
+      try { f(df); } catch (err) { df.error(err); }
+    });
+  }
+
+  return count;
+}
+
+/**
+ * Runs the dataflow and returns a Promise that resolves when the
+ * propagation cycle completes. The standard run method may exit early
+ * if there are pending data loading operations. In contrast, this
+ * method returns a Promise to allow callers to receive notification
+ * when dataflow evaluation completes.
+ * @return {Promise} - A promise that resolves to this dataflow.
+ */
+function runAsync() {
+  return this._pending || Promise.resolve(this.run());
+}
+
+/**
+ * Schedules a callback function to be invoked after the current pulse
+ * propagation completes. If no propagation is currently occurring,
+ * the function is invoked immediately.
+ * @param {function(Dataflow)} callback - The callback function to run.
+ *   The callback will be invoked with this Dataflow instance as its
+ *   sole argument.
+ * @param {boolean} enqueue - A boolean flag indicating that the
+ *   callback should be queued up to run after the next propagation
+ *   cycle, suppressing immediate invovation when propagation is not
+ *   currently occurring.
+ */
+function runAfter(callback, enqueue) {
+  if (this._pulse || enqueue) {
+    // pulse propagation is currently running, queue to run after
+    this._postrun.push(callback);
+  } else {
+    // pulse propagation already complete, invoke immediately
+    try { callback(this); } catch (err) { this.error(err); }
+  }
+}
+
+/**
+ * Enqueue an operator into the priority queue for evaluation. The operator
+ * will be enqueued if it has no registered pulse for the current cycle, or if
+ * the force argument is true. Upon enqueue, this method also sets the
+ * operator's qrank to the current rank value.
+ * @param {Operator} op - The operator to enqueue.
+ * @param {boolean} [force] - A flag indicating if the operator should be
+ *   forceably added to the queue, even if it has already been previously
+ *   enqueued during the current pulse propagation. This is useful when the
+ *   dataflow graph is dynamically modified and the operator rank changes.
+ */
+function enqueue(op, force) {
+  var p = !this._pulses[op.id];
+  if (p) this._pulses[op.id] = this._pulse;
+  if (p || force) {
+    op.qrank = op.rank;
+    this._heap.push(op);
+  }
+}
+
+/**
+ * Provide a correct pulse for evaluating an operator. If the operator has an
+ * explicit source operator, we will try to pull the pulse(s) from it.
+ * If there is an array of source operators, we build a multi-pulse.
+ * Otherwise, we return a current pulse with correct source data.
+ * If the pulse is the pulse map has an explicit target set, we use that.
+ * Else if the pulse on the upstream source operator is current, we use that.
+ * Else we use the pulse from the pulse map, but copy the source tuple array.
+ * @param {Operator} op - The operator for which to get an input pulse.
+ * @param {string} [encode] - An (optional) encoding set name with which to
+ *   annotate the returned pulse. See {@link run} for more information.
+ */
+function getPulse(op, encode) {
+  var s = op.source,
+      stamp = this._clock,
+      p;
+
+  if (s && isArray(s)) {
+    p = s.map(function(_$$1) { return _$$1.pulse; });
+    return new MultiPulse(this, stamp, p, encode);
+  } else {
+    s = s && s.pulse;
+    p = this._pulses[op.id];
+    if (s && s !== StopPropagation) {
+      if (s.stamp === stamp && p.target !== op) p = s;
+      else p.source = s.source;
+    }
+    return p;
+  }
+}
+
+var NO_OPT = {skip: false, force: false};
+
+/**
+ * Touches an operator, scheduling it to be evaluated. If invoked outside of
+ * a pulse propagation, the operator will be evaluated the next time this
+ * dataflow is run. If invoked in the midst of pulse propagation, the operator
+ * will be queued for evaluation if and only if the operator has not yet been
+ * evaluated on the current propagation timestamp.
+ * @param {Operator} op - The operator to touch.
+ * @param {object} [options] - Additional options hash.
+ * @param {boolean} [options.skip] - If true, the operator will
+ *   be skipped: it will not be evaluated, but its dependents will be.
+ * @return {Dataflow}
+ */
+function touch(op, options) {
+  var opt = options || NO_OPT;
+  if (this._pulse) {
+    // if in midst of propagation, add to priority queue
+    this._enqueue(op);
+  } else {
+    // otherwise, queue for next propagation
+    this._touched.add(op);
+  }
+  if (opt.skip) op.skip(true);
+  return this;
+}
+
+/**
+ * Updates the value of the given operator.
+ * @param {Operator} op - The operator to update.
+ * @param {*} value - The value to set.
+ * @param {object} [options] - Additional options hash.
+ * @param {boolean} [options.force] - If true, the operator will
+ *   be re-evaluated even if its value has not changed.
+ * @param {boolean} [options.skip] - If true, the operator will
+ *   be skipped: it will not be evaluated, but its dependents will be.
+ * @return {Dataflow}
+ */
+function update(op, value, options) {
+  var opt = options || NO_OPT;
+  if (op.set(value) || opt.force) {
+    this.touch(op, opt);
+  }
+  return this;
+}
+
+/**
+ * Pulses an operator with a changeset of tuples. If invoked outside of
+ * a pulse propagation, the pulse will be applied the next time this
+ * dataflow is run. If invoked in the midst of pulse propagation, the pulse
+ * will be added to the set of active pulses and will be applied if and
+ * only if the target operator has not yet been evaluated on the current
+ * propagation timestamp.
+ * @param {Operator} op - The operator to pulse.
+ * @param {ChangeSet} value - The tuple changeset to apply.
+ * @param {object} [options] - Additional options hash.
+ * @param {boolean} [options.skip] - If true, the operator will
+ *   be skipped: it will not be evaluated, but its dependents will be.
+ * @return {Dataflow}
+ */
+function pulse(op, changeset, options) {
+  this.touch(op, options || NO_OPT);
+
+  var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
+      t = op.pulse && op.pulse.source || [];
+  p.target = op;
+  this._pulses[op.id] = changeset.pulse(p, t);
+
+  return this;
+}
+
+function Heap(comparator) {
+  this.cmp = comparator;
+  this.nodes = [];
+}
+
+var prototype$6 = Heap.prototype;
+
+prototype$6.size = function() {
+  return this.nodes.length;
+};
+
+prototype$6.clear = function() {
+  this.nodes = [];
+  return this;
+};
+
+prototype$6.peek = function() {
+  return this.nodes[0];
+};
+
+prototype$6.push = function(x) {
+  var array = this.nodes;
+  array.push(x);
+  return siftdown(array, 0, array.length-1, this.cmp);
+};
+
+prototype$6.pop = function() {
+  var array = this.nodes,
+      last = array.pop(),
+      item;
+
+  if (array.length) {
+    item = array[0];
+    array[0] = last;
+    siftup(array, 0, this.cmp);
+  } else {
+    item = last;
+  }
+  return item;
+};
+
+prototype$6.replace = function(item) {
+  var array = this.nodes,
+      retval = array[0];
+  array[0] = item;
+  siftup(array, 0, this.cmp);
+  return retval;
+};
+
+prototype$6.pushpop = function(item) {
+  var array = this.nodes, ref = array[0];
+  if (array.length && this.cmp(ref, item) < 0) {
+    array[0] = item;
+    item = ref;
+    siftup(array, 0, this.cmp);
+  }
+  return item;
+};
+
+function siftdown(array, start, idx, cmp) {
+  var item, parent, pidx;
+
+  item = array[idx];
+  while (idx > start) {
+    pidx = (idx - 1) >> 1;
+    parent = array[pidx];
+    if (cmp(item, parent) < 0) {
+      array[idx] = parent;
+      idx = pidx;
+      continue;
+    }
+    break;
+  }
+  return (array[idx] = item);
+}
+
+function siftup(array, idx, cmp) {
+  var start = idx,
+      end = array.length,
+      item = array[idx],
+      cidx = 2 * idx + 1, ridx;
+
+  while (cidx < end) {
+    ridx = cidx + 1;
+    if (ridx < end && cmp(array[cidx], array[ridx]) >= 0) {
+      cidx = ridx;
+    }
+    array[idx] = array[cidx];
+    idx = cidx;
+    cidx = 2 * idx + 1;
+  }
+  array[idx] = item;
+  return siftdown(array, start, idx, cmp);
+}
+
+/**
+ * A dataflow graph for reactive processing of data streams.
+ * @constructor
+ */
+function Dataflow() {
+  this._log = logger();
+  this.logLevel(Error$1);
+
+  this._clock = 0;
+  this._rank = 0;
+  this._loader = loader();
+
+  this._touched = UniqueList(id);
+  this._pulses = {};
+  this._pulse = null;
+
+  this._heap = new Heap(function(a, b) { return a.qrank - b.qrank; });
+  this._postrun = [];
+}
+
+var prototype = Dataflow.prototype;
+
+/**
+ * The current timestamp of this dataflow. This value reflects the
+ * timestamp of the previous dataflow run. The dataflow is initialized
+ * with a stamp value of 0. The initial run of the dataflow will have
+ * a timestap of 1, and so on. This value will match the
+ * {@link Pulse.stamp} property.
+ * @return {number} - The current timestamp value.
+ */
+prototype.stamp = function() {
+  return this._clock;
+};
+
+/**
+ * Gets or sets the loader instance to use for data file loading. A
+ * loader object must provide a "load" method for loading files and a
+ * "sanitize" method for checking URL/filename validity. Both methods
+ * should accept a URI and options hash as arguments, and return a Promise
+ * that resolves to the loaded file contents (load) or a hash containing
+ * sanitized URI data with the sanitized url assigned to the "href" property
+ * (sanitize).
+ * @param {object} _ - The loader instance to use.
+ * @return {object|Dataflow} - If no arguments are provided, returns
+ *   the current loader instance. Otherwise returns this Dataflow instance.
+ */
+prototype.loader = function(_$$1) {
+  if (arguments.length) {
+    this._loader = _$$1;
+    return this;
+  } else {
+    return this._loader;
+  }
+};
+
+/**
+ * Empty entry threshold for garbage cleaning. Map data structures will
+ * perform cleaning once the number of empty entries exceeds this value.
+ */
+prototype.cleanThreshold = 1e4;
+
+// OPERATOR REGISTRATION
+prototype.add = add;
+prototype.connect = connect;
+prototype.rank = rank;
+prototype.rerank = rerank;
+
+// OPERATOR UPDATES
+prototype.pulse = pulse;
+prototype.touch = touch;
+prototype.update = update;
+prototype.changeset = changeset;
+
+// DATA LOADING
+prototype.ingest = ingest$1;
+prototype.request = request$1;
+
+// EVENT HANDLING
+prototype.events = events;
+prototype.on = on;
+
+// PULSE PROPAGATION
+prototype.run = run;
+prototype.runAsync = runAsync;
+prototype.runAfter = runAfter;
+prototype._enqueue = enqueue;
+prototype._getPulse = getPulse;
+
+// LOGGING AND ERROR HANDLING
+
+function logMethod(method) {
+  return function() {
+    return this._log[method].apply(this, arguments);
+  };
+}
+
+/**
+ * Logs an error message. By default, logged messages are written to console
+ * output. The message will only be logged if the current log level is high
+ * enough to permit error messages.
+ */
+prototype.error = logMethod('error');
+
+/**
+ * Logs a warning message. By default, logged messages are written to console
+ * output. The message will only be logged if the current log level is high
+ * enough to permit warning messages.
+ */
+prototype.warn = logMethod('warn');
+
+/**
+ * Logs a information message. By default, logged messages are written to
+ * console output. The message will only be logged if the current log level is
+ * high enough to permit information messages.
+ */
+prototype.info = logMethod('info');
+
+/**
+ * Logs a debug message. By default, logged messages are written to console
+ * output. The message will only be logged if the current log level is high
+ * enough to permit debug messages.
+ */
+prototype.debug = logMethod('debug');
+
+/**
+ * Get or set the current log level. If an argument is provided, it
+ * will be used as the new log level.
+ * @param {number} [level] - Should be one of None, Warn, Info
+ * @return {number} - The current log level.
+ */
+prototype.logLevel = logMethod('level');
+
+/**
+ * Abstract class for operators that process data tuples.
+ * Subclasses must provide a {@link transform} method for operator processing.
+ * @constructor
+ * @param {*} [init] - The initial value for this operator.
+ * @param {object} [params] - The parameters for this operator.
+ * @param {Operator} [source] - The operator from which to receive pulses.
+ */
+function Transform(init, params) {
+  Operator.call(this, init, null, params);
+}
+
+var prototype$7 = inherits(Transform, Operator);
+
+/**
+ * Overrides {@link Operator.evaluate} for transform operators.
+ * Internally, this method calls {@link evaluate} to perform processing.
+ * If {@link evaluate} returns a falsy value, the input pulse is returned.
+ * This method should NOT be overridden, instead overrride {@link evaluate}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return the output pulse for this operator (or StopPropagation)
+ */
+prototype$7.run = function(pulse) {
+  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+
+  var rv;
+  if (this.skip()) {
+    this.skip(false);
+  } else {
+    rv = this.evaluate(pulse);
+  }
+  rv = rv || pulse;
+
+  if (rv !== pulse.StopPropagation) this.pulse = rv;
+  this.stamp = pulse.stamp;
+
+  return rv;
+};
+
+/**
+ * Overrides {@link Operator.evaluate} for transform operators.
+ * Marshalls parameter values and then invokes {@link transform}.
+ * @param {Pulse} pulse - the current dataflow pulse.
+ * @return {Pulse} The output pulse (or StopPropagation). A falsy return
+     value (including undefined) will let the input pulse pass through.
+ */
+prototype$7.evaluate = function(pulse) {
+  var params = this.marshall(pulse.stamp),
+      out = this.transform(params, pulse);
+  params.clear();
+  return out;
+};
+
+/**
+ * Process incoming pulses.
+ * Subclasses should override this method to implement transforms.
+ * @param {Parameters} _ - The operator parameter values.
+ * @param {Pulse} pulse - The current dataflow pulse.
+ * @return {Pulse} The output pulse (or StopPropagation). A falsy return
+ *   value (including undefined) will let the input pulse pass through.
+ */
+prototype$7.transform = function() {};
+
+var transforms = {};
+
+function definition(type) {
+  var t = transform(type);
+  return t && t.Definition || null;
+}
+
+function transform(type) {
+  type = type && type.toLowerCase();
+  return transforms.hasOwnProperty(type) ? transforms[type] : null;
+}
+
+// Utilities
+
+function multikey(f) {
+  return function(x) {
+    var n = f.length,
+        i = 1,
+        k = String(f[0](x));
+
+    for (; i<n; ++i) {
+      k += '|' + f[i](x);
+    }
+
+    return k;
+  };
+}
+
+function groupkey(fields) {
+  return !fields || !fields.length ? function() { return ''; }
+    : fields.length === 1 ? fields[0]
+    : multikey(fields);
+}
+
+function measureName(op, field$$1, as) {
+  return as || (op + (!field$$1 ? '' : '_' + field$$1));
+}
+
+var AggregateOps = {
+  'values': measure({
+    name: 'values',
+    init: 'cell.store = true;',
+    set:  'cell.data.values()', idx: -1
+  }),
+  'count': measure({
+    name: 'count',
+    set:  'cell.num'
+  }),
+  'missing': measure({
+    name: 'missing',
+    set:  'this.missing'
+  }),
+  'valid': measure({
+    name: 'valid',
+    set:  'this.valid'
+  }),
+  'sum': measure({
+    name: 'sum',
+    init: 'this.sum = 0;',
+    add:  'this.sum += v;',
+    rem:  'this.sum -= v;',
+    set:  'this.sum'
+  }),
+  'mean': measure({
+    name: 'mean',
+    init: 'this.mean = 0;',
+    add:  'var d = v - this.mean; this.mean += d / this.valid;',
+    rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
+    set:  'this.mean'
+  }),
+  'average': measure({
+    name: 'average',
+    set:  'this.mean',
+    req:  ['mean'], idx: 1
+  }),
+  'variance': measure({
+    name: 'variance',
+    init: 'this.dev = 0;',
+    add:  'this.dev += d * (v - this.mean);',
+    rem:  'this.dev -= d * (v - this.mean);',
+    set:  'this.valid > 1 ? this.dev / (this.valid-1) : 0',
+    req:  ['mean'], idx: 1
+  }),
+  'variancep': measure({
+    name: 'variancep',
+    set:  'this.valid > 1 ? this.dev / this.valid : 0',
+    req:  ['variance'], idx: 2
+  }),
+  'stdev': measure({
+    name: 'stdev',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : 0',
+    req:  ['variance'], idx: 2
+  }),
+  'stdevp': measure({
+    name: 'stdevp',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
+    req:  ['variance'], idx: 2
+  }),
+  'stderr': measure({
+    name: 'stderr',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
+    req:  ['variance'], idx: 2
+  }),
+  'distinct': measure({
+    name: 'distinct',
+    set:  'cell.data.distinct(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'ci0': measure({
+    name: 'ci0',
+    set:  'cell.data.ci0(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'ci1': measure({
+    name: 'ci1',
+    set:  'cell.data.ci1(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'median': measure({
+    name: 'median',
+    set:  'cell.data.q2(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'q1': measure({
+    name: 'q1',
+    set:  'cell.data.q1(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'q3': measure({
+    name: 'q3',
+    set:  'cell.data.q3(this.get)',
+    req:  ['values'], idx: 3
+  }),
+  'argmin': measure({
+    name: 'argmin',
+    init: 'this.argmin = null;',
+    add:  'if (v < this.min) this.argmin = t;',
+    rem:  'if (v <= this.min) this.argmin = null;',
+    set:  'this.argmin || cell.data.argmin(this.get)',
+    req:  ['min'], str: ['values'], idx: 3
+  }),
+  'argmax': measure({
+    name: 'argmax',
+    init: 'this.argmax = null;',
+    add:  'if (v > this.max) this.argmax = t;',
+    rem:  'if (v >= this.max) this.argmax = null;',
+    set:  'this.argmax || cell.data.argmax(this.get)',
+    req:  ['max'], str: ['values'], idx: 3
+  }),
+  'min': measure({
+    name: 'min',
+    init: 'this.min = null;',
+    add:  'if (v < this.min || this.min === null) this.min = v;',
+    rem:  'if (v <= this.min) this.min = NaN;',
+    set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
+    str:  ['values'], idx: 4
+  }),
+  'max': measure({
+    name: 'max',
+    init: 'this.max = null;',
+    add:  'if (v > this.max || this.max === null) this.max = v;',
+    rem:  'if (v >= this.max) this.max = NaN;',
+    set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
+    str:  ['values'], idx: 4
+  })
+};
+
+var ValidAggregateOps = Object.keys(AggregateOps);
+
+function createMeasure(op, name) {
+  return AggregateOps[op](name);
+}
+
+function measure(base) {
+  return function(out) {
+    var m = extend({init:'', add:'', rem:'', idx:0}, base);
+    m.out = out || base.name;
+    return m;
+  };
+}
+
+function compareIndex(a, b) {
+  return a.idx - b.idx;
+}
+
+function resolve(agg, stream) {
+  function collect(m, a) {
+    function helper(r) { if (!m[r]) collect(m, m[r] = AggregateOps[r]()); }
+    if (a.req) a.req.forEach(helper);
+    if (stream && a.str) a.str.forEach(helper);
+    return m;
+  }
+  var map = agg.reduce(
+    collect,
+    agg.reduce(function(m, a) {
+      m[a.name] = a;
+      return m;
+    }, {})
+  );
+  var values = [], key$$1;
+  for (key$$1 in map) values.push(map[key$$1]);
+  return values.sort(compareIndex);
+}
+
+function compileMeasures(agg, field$$1) {
+  var get = field$$1 || identity,
+      all = resolve(agg, true), // assume streaming removes may occur
+      init = 'var cell = this.cell; this.valid = 0; this.missing = 0;',
+      ctr = 'this.cell = cell; this.init();',
+      add = 'if(v==null){++this.missing; return;} if(v!==v) return; ++this.valid;',
+      rem = 'if(v==null){--this.missing; return;} if(v!==v) return; --this.valid;',
+      set = 'var cell = this.cell;';
+
+  all.forEach(function(a) {
+    init += a.init;
+    add += a.add;
+    rem += a.rem;
+  });
+  agg.slice().sort(compareIndex).forEach(function(a) {
+    set += 't[\'' + a.out + '\']=' + a.set + ';';
+  });
+  set += 'return t;';
+
+  ctr = Function('cell', ctr);
+  ctr.prototype.init = Function(init);
+  ctr.prototype.add = Function('v', 't', add);
+  ctr.prototype.rem = Function('v', 't', rem);
+  ctr.prototype.set = Function('t', set);
+  ctr.prototype.get = get;
+  ctr.fields = agg.map(function(_$$1) { return _$$1.out; });
+  return ctr;
+}
+
+var bin = function(_$$1) {
+  // determine range
+  var maxb = _$$1.maxbins || 20,
+      base = _$$1.base || 10,
+      logb = Math.log(base),
+      div  = _$$1.divide || [5, 2],
+      min$$1  = _$$1.extent[0],
+      max$$1  = _$$1.extent[1],
+      span = max$$1 - min$$1,
+      step, level, minstep, precision, v, i, n, eps;
+
+  if (_$$1.step) {
+    // if step size is explicitly given, use that
+    step = _$$1.step;
+  } else if (_$$1.steps) {
+    // if provided, limit choice to acceptable step sizes
+    v = span / maxb;
+    for (i=0, n=_$$1.steps.length; i < n && _$$1.steps[i] < v; ++i);
+    step = _$$1.steps[Math.max(0, i-1)];
+  } else {
+    // else use span to determine step size
+    level = Math.ceil(Math.log(maxb) / logb);
+    minstep = _$$1.minstep || 0;
+    step = Math.max(
+      minstep,
+      Math.pow(base, Math.round(Math.log(span) / logb) - level)
+    );
+
+    // increase step size if too many bins
+    while (Math.ceil(span/step) > maxb) { step *= base; }
+
+    // decrease step size if allowed
+    for (i=0, n=div.length; i<n; ++i) {
+      v = step / div[i];
+      if (v >= minstep && span / v <= maxb) step = v;
+    }
+  }
+
+  // update precision, min and max
+  v = Math.log(step);
+  precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+  eps = Math.pow(base, -precision - 1);
+  if (_$$1.nice || _$$1.nice === undefined) {
+    v = Math.floor(min$$1 / step + eps) * step;
+    min$$1 = min$$1 < v ? v - step : v;
+    max$$1 = Math.ceil(max$$1 / step) * step;
+  }
+
+  return {
+    start: min$$1,
+    stop:  max$$1,
+    step:  step
+  };
+};
+
+var numbers = function(array, f) {
+  var numbers = [],
+      n = array.length,
+      i = -1, a;
+
+  if (f == null) {
+    while (++i < n) if (!isNaN(a = number(array[i]))) numbers.push(a);
+  } else {
+    while (++i < n) if (!isNaN(a = number(f(array[i], i, array)))) numbers.push(a);
+  }
+  return numbers;
+};
+
+function number(x) {
+  return x === null ? NaN : +x;
+}
+
+var bootstrapCI = function(array, samples, alpha, f) {
+  var values = numbers(array, f),
+      n = values.length,
+      m = samples,
+      a, i, j, mu;
+
+  for (j=0, mu=Array(m); j<m; ++j) {
+    for (a=0, i=0; i<n; ++i) {
+      a += values[~~(Math.random() * n)];
+    }
+    mu[j] = a / n;
+  }
+
+  return [
+    d3Array.quantile(mu.sort(d3Array.ascending), alpha/2),
+    d3Array.quantile(mu, 1-(alpha/2))
+  ];
+};
+
+var integer = function(min$$1, max$$1) {
+  if (max$$1 == null) {
+    max$$1 = min$$1;
+    min$$1 = 0;
+  }
+
+  var dist = {},
+      a, b, d;
+
+  dist.min = function(_$$1) {
+    if (arguments.length) {
+      a = _$$1 || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return a;
+    }
+  };
+
+  dist.max = function(_$$1) {
+    if (arguments.length) {
+      b = _$$1 || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return b;
+    }
+  };
+
+  dist.sample = function() {
+    return a + Math.floor(d * Math.random());
+  };
+
+  dist.pdf = function(x) {
+    return (x === Math.floor(x) && x >= a && x < b) ? 1 / d : 0;
+  };
+
+  dist.cdf = function(x) {
+    var v = Math.floor(x);
+    return v < a ? 0 : v >= b ? 1 : (v - a + 1) / d;
+  };
+
+  dist.icdf = function(p) {
+    return (p >= 0 && p <= 1) ? a - 1 + Math.floor(p * d) : NaN;
+  };
+
+  return dist.min(min$$1).max(max$$1);
+};
+
+var randomNormal = function(mean$$1, stdev) {
+  var mu,
+      sigma,
+      next = NaN,
+      dist = {};
+
+  dist.mean = function(_$$1) {
+    if (arguments.length) {
+      mu = _$$1 || 0;
+      next = NaN;
+      return dist;
+    } else {
+      return mu;
+    }
+  };
+
+  dist.stdev = function(_$$1) {
+    if (arguments.length) {
+      sigma = _$$1 == null ? 1 : _$$1;
+      next = NaN;
+      return dist;
+    } else {
+      return sigma;
+    }
+  };
+
+  dist.sample = function() {
+    var x = 0, y = 0, rds, c;
+    if (next === next) {
+      x = next;
+      next = NaN;
+      return x;
+    }
+    do {
+      x = Math.random() * 2 - 1;
+      y = Math.random() * 2 - 1;
+      rds = x * x + y * y;
+    } while (rds === 0 || rds > 1);
+    c = Math.sqrt(-2 * Math.log(rds) / rds); // Box-Muller transform
+    next = mu + y * c * sigma;
+    return mu + x * c * sigma;
+  };
+
+  dist.pdf = function(x) {
+    var exp = Math.exp(Math.pow(x-mu, 2) / (-2 * Math.pow(sigma, 2)));
+    return (1 / (sigma * Math.sqrt(2*Math.PI))) * exp;
+  };
+
+  // Approximation from West (2009)
+  // Better Approximations to Cumulative Normal Functions
+  dist.cdf = function(x) {
+    var cd,
+        z = (x - mu) / sigma,
+        Z = Math.abs(z);
+    if (Z > 37) {
+      cd = 0;
+    } else {
+      var sum$$1, exp = Math.exp(-Z*Z/2);
+      if (Z < 7.07106781186547) {
+        sum$$1 = 3.52624965998911e-02 * Z + 0.700383064443688;
+        sum$$1 = sum$$1 * Z + 6.37396220353165;
+        sum$$1 = sum$$1 * Z + 33.912866078383;
+        sum$$1 = sum$$1 * Z + 112.079291497871;
+        sum$$1 = sum$$1 * Z + 221.213596169931;
+        sum$$1 = sum$$1 * Z + 220.206867912376;
+        cd = exp * sum$$1;
+        sum$$1 = 8.83883476483184e-02 * Z + 1.75566716318264;
+        sum$$1 = sum$$1 * Z + 16.064177579207;
+        sum$$1 = sum$$1 * Z + 86.7807322029461;
+        sum$$1 = sum$$1 * Z + 296.564248779674;
+        sum$$1 = sum$$1 * Z + 637.333633378831;
+        sum$$1 = sum$$1 * Z + 793.826512519948;
+        sum$$1 = sum$$1 * Z + 440.413735824752;
+        cd = cd / sum$$1;
+      } else {
+        sum$$1 = Z + 0.65;
+        sum$$1 = Z + 4 / sum$$1;
+        sum$$1 = Z + 3 / sum$$1;
+        sum$$1 = Z + 2 / sum$$1;
+        sum$$1 = Z + 1 / sum$$1;
+        cd = exp / sum$$1 / 2.506628274631;
+      }
+    }
+    return z > 0 ? 1 - cd : cd;
+  };
+
+  // Approximation of Probit function using inverse error function.
+  dist.icdf = function(p) {
+    if (p <= 0 || p >= 1) return NaN;
+    var x = 2*p - 1,
+        v = (8 * (Math.PI - 3)) / (3 * Math.PI * (4-Math.PI)),
+        a = (2 / (Math.PI*v)) + (Math.log(1 - Math.pow(x,2)) / 2),
+        b = Math.log(1 - (x*x)) / v,
+        s = (x > 0 ? 1 : -1) * Math.sqrt(Math.sqrt((a*a) - b) - a);
+    return mu + sigma * Math.SQRT2 * s;
+  };
+
+  return dist.mean(mean$$1).stdev(stdev);
+};
+
+var quartiles = function(array, f) {
+  var values = numbers(array, f);
+
+  return [
+    d3Array.quantile(values.sort(d3Array.ascending), 0.25),
+    d3Array.quantile(values, 0.50),
+    d3Array.quantile(values, 0.75)
+  ];
+};
+
+// TODO: support for additional kernels?
+var randomKDE = function(support, bandwidth) {
+  var kernel = randomNormal(),
+      dist = {},
+      n = 0;
+
+  dist.data = function(_$$1) {
+    if (arguments.length) {
+      support = _$$1;
+      n = _$$1 ? _$$1.length : 0;
+      return dist.bandwidth(bandwidth);
+    } else {
+      return support;
+    }
+  };
+
+  dist.bandwidth = function(_$$1) {
+    if (!arguments.length) return bandwidth;
+    bandwidth = _$$1;
+    if (!bandwidth && support) bandwidth = estimateBandwidth(support);
+    return dist;
+  };
+
+  dist.sample = function() {
+    return support[~~(Math.random() * n)] + bandwidth * kernel.sample();
+  };
+
+  dist.pdf = function(x) {
+    for (var y=0, i=0; i<n; ++i) {
+      y += kernel.pdf((x - support[i]) / bandwidth);
+    }
+    return y / bandwidth / n;
+  };
+
+  dist.cdf = function(x) {
+    for (var y=0, i=0; i<n; ++i) {
+      y += kernel.cdf((x - support[i]) / bandwidth);
+    }
+    return y / n;
+  };
+
+  dist.icdf = function() {
+    throw Error('KDE icdf not supported.');
+  };
+
+  return dist.data(support);
+};
+
+// Scott, D. W. (1992) Multivariate Density Estimation:
+// Theory, Practice, and Visualization. Wiley.
+function estimateBandwidth(array) {
+  var n = array.length,
+      q = quartiles(array),
+      h = (q[2] - q[0]) / 1.34;
+  return 1.06 * Math.min(Math.sqrt(d3Array.variance(array)), h) * Math.pow(n, -0.2);
+}
+
+var randomMixture = function(dists, weights) {
+  var dist = {}, m = 0, w;
+
+  function normalize(x) {
+    var w = [], sum$$1 = 0, i;
+    for (i=0; i<m; ++i) { sum$$1 += (w[i] = (x[i]==null ? 1 : +x[i])); }
+    for (i=0; i<m; ++i) { w[i] /= sum$$1; }
+    return w;
+  }
+
+  dist.weights = function(_$$1) {
+    if (arguments.length) {
+      w = normalize(weights = (_$$1 || []));
+      return dist;
+    }
+    return weights;
+  };
+
+  dist.distributions = function(_$$1) {
+    if (arguments.length) {
+      if (_$$1) {
+        m = _$$1.length;
+        dists = _$$1;
+      } else {
+        m = 0;
+        dists = [];
+      }
+      return dist.weights(weights);
+    }
+    return dists;
+  };
+
+  dist.sample = function() {
+    var r = Math.random(),
+        d = dists[m-1],
+        v = w[0],
+        i = 0;
+
+    // first select distribution
+    for (; i<m-1; v += w[++i]) {
+      if (r < v) { d = dists[i]; break; }
+    }
+    // then sample from it
+    return d.sample();
+  };
+
+  dist.pdf = function(x) {
+    for (var p=0, i=0; i<m; ++i) {
+      p += w[i] * dists[i].pdf(x);
+    }
+    return p;
+  };
+
+  dist.cdf = function(x) {
+    for (var p=0, i=0; i<m; ++i) {
+      p += w[i] * dists[i].cdf(x);
+    }
+    return p;
+  };
+
+  dist.icdf = function() {
+    throw Error('Mixture icdf not supported.');
+  };
+
+  return dist.distributions(dists).weights(weights);
+};
+
+var randomUniform = function(min$$1, max$$1) {
+  if (max$$1 == null) {
+    max$$1 = (min$$1 == null ? 1 : min$$1);
+    min$$1 = 0;
+  }
+
+  var dist = {},
+      a, b, d;
+
+  dist.min = function(_$$1) {
+    if (arguments.length) {
+      a = _$$1 || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return a;
+    }
+  };
+
+  dist.max = function(_$$1) {
+    if (arguments.length) {
+      b = _$$1 || 0;
+      d = b - a;
+      return dist;
+    } else {
+      return b;
+    }
+  };
+
+  dist.sample = function() {
+    return a + d * Math.random();
+  };
+
+  dist.pdf = function(x) {
+    return (x >= a && x <= b) ? 1 / d : 0;
+  };
+
+  dist.cdf = function(x) {
+    return x < a ? 0 : x > b ? 1 : (x - a) / d;
+  };
+
+  dist.icdf = function(p) {
+    return (p >= 0 && p <= 1) ? a + p * d : NaN;
+  };
+
+  return dist.min(min$$1).max(max$$1);
+};
+
+function TupleStore(key$$1) {
+  this._key = key$$1 ? field(key$$1) : tupleid;
+  this.reset();
+}
+
+var prototype$9 = TupleStore.prototype;
+
+prototype$9.reset = function() {
+  this._add = [];
+  this._rem = [];
+  this._ext = null;
+  this._get = null;
+  this._q = null;
+};
+
+prototype$9.add = function(v) {
+  this._add.push(v);
+};
+
+prototype$9.rem = function(v) {
+  this._rem.push(v);
+};
+
+prototype$9.values = function() {
+  this._get = null;
+  if (this._rem.length === 0) return this._add;
+
+  var a = this._add,
+      r = this._rem,
+      k = this._key,
+      n = a.length,
+      m = r.length,
+      x = Array(n - m),
+      map = {}, i, j, v;
+
+  // use unique key field to clear removed values
+  for (i=0; i<m; ++i) {
+    map[k(r[i])] = 1;
+  }
+  for (i=0, j=0; i<n; ++i) {
+    if (map[k(v = a[i])]) {
+      map[k(v)] = 0;
+    } else {
+      x[j++] = v;
+    }
+  }
+
+  this._rem = [];
+  return (this._add = x);
+};
+
+// memoizing statistics methods
+
+prototype$9.distinct = function(get) {
+  var v = this.values(),
+      n = v.length,
+      map = {},
+      count = 0, s;
+
+  while (--n >= 0) {
+    s = get(v[n]) + '';
+    if (!map.hasOwnProperty(s)) {
+      map[s] = 1;
+      ++count;
+    }
+  }
+
+  return count;
+};
+
+prototype$9.extent = function(get) {
+  if (this._get !== get || !this._ext) {
+    var v = this.values(),
+        i = extentIndex(v, get);
+    this._ext = [v[i[0]], v[i[1]]];
+    this._get = get;
+  }
+  return this._ext;
+};
+
+prototype$9.argmin = function(get) {
+  return this.extent(get)[0] || {};
+};
+
+prototype$9.argmax = function(get) {
+  return this.extent(get)[1] || {};
+};
+
+prototype$9.min = function(get) {
+  var m = this.extent(get)[0];
+  return m != null ? get(m) : +Infinity;
+};
+
+prototype$9.max = function(get) {
+  var m = this.extent(get)[1];
+  return m != null ? get(m) : -Infinity;
+};
+
+prototype$9.quartile = function(get) {
+  if (this._get !== get || !this._q) {
+    this._q = quartiles(this.values(), get);
+    this._get = get;
+  }
+  return this._q;
+};
+
+prototype$9.q1 = function(get) {
+  return this.quartile(get)[0];
+};
+
+prototype$9.q2 = function(get) {
+  return this.quartile(get)[1];
+};
+
+prototype$9.q3 = function(get) {
+  return this.quartile(get)[2];
+};
+
+prototype$9.ci = function(get) {
+  if (this._get !== get || !this._ci) {
+    this._ci = bootstrapCI(this.values(), 1000, 0.05, get);
+    this._get = get;
+  }
+  return this._ci;
+};
+
+prototype$9.ci0 = function(get) {
+  return this.ci(get)[0];
+};
+
+prototype$9.ci1 = function(get) {
+  return this.ci(get)[1];
+};
+
+/**
+ * Group-by aggregation operator.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+ * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
+ * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
+ * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
+ * @param {boolean} [params.cross=false] - A flag indicating that the full
+ *   cross-product of groupby values should be generated, including empty cells.
+ *   If true, the drop parameter is ignored and empty cells are retained.
+ * @param {boolean} [params.drop=true] - A flag indicating if empty cells should be removed.
+ */
+function Aggregate(params) {
+  Transform.call(this, null, params);
+
+  this._adds = []; // array of added output tuples
+  this._mods = []; // array of modified output tuples
+  this._alen = 0;  // number of active added tuples
+  this._mlen = 0;  // number of active modified tuples
+  this._drop = true;   // should empty aggregation cells be removed
+  this._cross = false; // produce full cross-product of group-by values
+
+  this._dims = [];   // group-by dimension accessors
+  this._dnames = []; // group-by dimension names
+
+  this._measures = []; // collection of aggregation monoids
+  this._countOnly = false; // flag indicating only count aggregation
+  this._counts = null; // collection of count fields
+  this._prev = null;   // previous aggregation cells
+
+  this._inputs = null;  // array of dependent input tuple field names
+  this._outputs = null; // array of output tuple field names
+}
+
+Aggregate.Definition = {
+  "type": "Aggregate",
+  "metadata": {"generates": true, "changes": true},
+  "params": [
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
+    { "name": "fields", "type": "field", "null": true, "array": true },
+    { "name": "as", "type": "string", "null": true, "array": true },
+    { "name": "drop", "type": "boolean", "default": true },
+    { "name": "cross", "type": "boolean", "default": false },
+    { "name": "key", "type": "field" }
+  ]
+};
+
+var prototype$8 = inherits(Aggregate, Transform);
+
+prototype$8.transform = function(_$$1, pulse) {
+  var aggr = this,
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      mod;
+
+  this.stamp = out.stamp;
+
+  if (this.value && ((mod = _$$1.modified()) || pulse.modified(this._inputs))) {
+    this._prev = this.value;
+    this.value = mod ? this.init(_$$1) : {};
+    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
+  } else {
+    this.value = this.value || this.init(_$$1);
+    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
+    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+  }
+
+  // Indicate output fields and return aggregate tuples.
+  out.modifies(this._outputs);
+
+  // Should empty cells be dropped?
+  aggr._drop = _$$1.drop !== false;
+
+  // If domain cross-product requested, generate empty cells as needed
+  // and ensure that empty cells are not dropped
+  if (_$$1.cross && aggr._dims.length > 1) {
+    aggr._drop = false;
+    this.cross();
+  }
+
+  return aggr.changes(out);
+};
+
+prototype$8.cross = function() {
+  var aggr = this,
+      curr = aggr.value,
+      dims = aggr._dnames,
+      vals = dims.map(function() { return {}; }),
+      n = dims.length;
+
+  // collect all group-by domain values
+  function collect(cells) {
+    var key$$1, i, t, v;
+    for (key$$1 in cells) {
+      t = cells[key$$1].tuple;
+      for (i=0; i<n; ++i) {
+        vals[i][(v = t[dims[i]])] = v;
+      }
+    }
+  }
+  collect(aggr._prev);
+  collect(curr);
+
+  // iterate over key cross-product, create cells as needed
+  function generate(base, tuple, index) {
+    var name = dims[index],
+        v = vals[index++],
+        k, key$$1;
+
+    for (k in v) {
+      tuple[name] = v[k];
+      key$$1 = base ? base + '|' + k : k;
+      if (index < n) generate(key$$1, tuple, index);
+      else if (!curr[key$$1]) aggr.cell(key$$1, tuple);
+    }
+  }
+  generate('', {}, 0);
+};
+
+prototype$8.init = function(_$$1) {
+  // initialize input and output fields
+  var inputs = (this._inputs = []),
+      outputs = (this._outputs = []),
+      inputMap = {};
+
+  function inputVisit(get) {
+    var fields = array(accessorFields(get)),
+        i = 0, n = fields.length, f;
+    for (; i<n; ++i) {
+      if (!inputMap[f=fields[i]]) {
+        inputMap[f] = 1;
+        inputs.push(f);
+      }
+    }
+  }
+
+  // initialize group-by dimensions
+  this._dims = array(_$$1.groupby);
+  this._dnames = this._dims.map(function(d) {
+    var dname = accessorName(d);
+    inputVisit(d);
+    outputs.push(dname);
+    return dname;
+  });
+  this.cellkey = _$$1.key ? _$$1.key : groupkey(this._dims);
+
+  // initialize aggregate measures
+  this._countOnly = true;
+  this._counts = [];
+  this._measures = [];
+
+  var fields = _$$1.fields || [null],
+      ops = _$$1.ops || ['count'],
+      as = _$$1.as || [],
+      n = fields.length,
+      map = {},
+      field$$1, op, m, mname, outname, i;
+
+  if (n !== ops.length) {
+    error$1('Unmatched number of fields and aggregate ops.');
+  }
+
+  for (i=0; i<n; ++i) {
+    field$$1 = fields[i];
+    op = ops[i];
+
+    if (field$$1 == null && op !== 'count') {
+      error$1('Null aggregate field specified.');
+    }
+    mname = accessorName(field$$1);
+    outname = measureName(op, mname, as[i]);
+    outputs.push(outname);
+
+    if (op === 'count') {
+      this._counts.push(outname);
+      continue;
+    }
+
+    m = map[mname];
+    if (!m) {
+      inputVisit(field$$1);
+      m = (map[mname] = []);
+      m.field = field$$1;
+      this._measures.push(m);
+    }
+
+    if (op !== 'count') this._countOnly = false;
+    m.push(createMeasure(op, outname));
+  }
+
+  this._measures = this._measures.map(function(m) {
+    return compileMeasures(m, m.field);
+  });
+
+  return {}; // aggregation cells (this.value)
+};
+
+// -- Cell Management -----
+
+prototype$8.cellkey = groupkey();
+
+prototype$8.cell = function(key$$1, t) {
+  var cell = this.value[key$$1];
+  if (!cell) {
+    cell = this.value[key$$1] = this.newcell(key$$1, t);
+    this._adds[this._alen++] = cell;
+  } else if (cell.num === 0 && this._drop && cell.stamp < this.stamp) {
+    cell.stamp = this.stamp;
+    this._adds[this._alen++] = cell;
+  } else if (cell.stamp < this.stamp) {
+    cell.stamp = this.stamp;
+    this._mods[this._mlen++] = cell;
+  }
+  return cell;
+};
+
+prototype$8.newcell = function(key$$1, t) {
+  var cell = {
+    key:   key$$1,
+    num:   0,
+    agg:   null,
+    tuple: this.newtuple(t, this._prev && this._prev[key$$1]),
+    stamp: this.stamp,
+    store: false
+  };
+
+  if (!this._countOnly) {
+    var measures = this._measures,
+        n = measures.length, i;
+
+    cell.agg = Array(n);
+    for (i=0; i<n; ++i) {
+      cell.agg[i] = new measures[i](cell);
+    }
+  }
+
+  if (cell.store) {
+    cell.data = new TupleStore();
+  }
+
+  return cell;
+};
+
+prototype$8.newtuple = function(t, p) {
+  var names = this._dnames,
+      dims = this._dims,
+      x = {}, i, n;
+
+  for (i=0, n=dims.length; i<n; ++i) {
+    x[names[i]] = dims[i](t);
+  }
+
+  return p ? replace(p.tuple, x) : ingest(x);
+};
+
+// -- Process Tuples -----
+
+prototype$8.add = function(t) {
+  var key$$1 = this.cellkey(t),
+      cell = this.cell(key$$1, t),
+      agg, i, n;
+
+  cell.num += 1;
+  if (this._countOnly) return;
+
+  if (cell.store) cell.data.add(t);
+
+  agg = cell.agg;
+  for (i=0, n=agg.length; i<n; ++i) {
+    agg[i].add(agg[i].get(t), t);
+  }
+};
+
+prototype$8.rem = function(t) {
+  var key$$1 = this.cellkey(t),
+      cell = this.cell(key$$1, t),
+      agg, i, n;
+
+  cell.num -= 1;
+  if (this._countOnly) return;
+
+  if (cell.store) cell.data.rem(t);
+
+  agg = cell.agg;
+  for (i=0, n=agg.length; i<n; ++i) {
+    agg[i].rem(agg[i].get(t), t);
+  }
+};
+
+prototype$8.celltuple = function(cell) {
+  var tuple = cell.tuple,
+      counts = this._counts,
+      agg, i, n;
+
+  // consolidate stored values
+  if (cell.store) {
+    cell.data.values();
+  }
+
+  // update tuple properties
+  for (i=0, n=counts.length; i<n; ++i) {
+    tuple[counts[i]] = cell.num;
+  }
+  if (!this._countOnly) {
+    agg = cell.agg;
+    for (i=0, n=agg.length; i<n; ++i) {
+      agg[i].set(tuple);
+    }
+  }
+
+  return tuple;
+};
+
+prototype$8.changes = function(out) {
+  var adds = this._adds,
+      mods = this._mods,
+      prev = this._prev,
+      drop = this._drop,
+      add = out.add,
+      rem = out.rem,
+      mod = out.mod,
+      cell, key$$1, i, n;
+
+  if (prev) for (key$$1 in prev) {
+    cell = prev[key$$1];
+    if (!drop || cell.num) rem.push(cell.tuple);
+  }
+
+  for (i=0, n=this._alen; i<n; ++i) {
+    add.push(this.celltuple(adds[i]));
+    adds[i] = null; // for garbage collection
+  }
+
+  for (i=0, n=this._mlen; i<n; ++i) {
+    cell = mods[i];
+    (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
+    mods[i] = null; // for garbage collection
+  }
+
+  this._alen = this._mlen = 0; // reset list of active cells
+  this._prev = null;
+  return out;
+};
+
+/**
+ * Generates a binning function for discretizing data.
+ * @constructor
+ * @param {object} params - The parameters for this operator. The
+ *   provided values should be valid options for the {@link bin} function.
+ * @param {function(object): *} params.field - The data field to bin.
+ */
+function Bin(params) {
+  Transform.call(this, null, params);
+}
+
+Bin.Definition = {
+  "type": "Bin",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "field", "type": "field", "required": true },
+    { "name": "anchor", "type": "number" },
+    { "name": "maxbins", "type": "number", "default": 20 },
+    { "name": "base", "type": "number", "default": 10 },
+    { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
+    { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+    { "name": "step", "type": "number" },
+    { "name": "steps", "type": "number", "array": true },
+    { "name": "minstep", "type": "number", "default": 0 },
+    { "name": "nice", "type": "boolean", "default": true },
+    { "name": "name", "type": "string" },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
+  ]
+};
+
+var prototype$10 = inherits(Bin, Transform);
+
+prototype$10.transform = function(_$$1, pulse) {
+  var bins = this._bins(_$$1),
+      start = bins.start,
+      step = bins.step,
+      as = _$$1.as || ['bin0', 'bin1'],
+      b0 = as[0],
+      b1 = as[1],
+      flag;
+
+  if (_$$1.modified()) {
+    pulse = pulse.reflow(true);
+    flag = pulse.SOURCE;
+  } else {
+    flag = pulse.modified(accessorFields(_$$1.field)) ? pulse.ADD_MOD : pulse.ADD;
+  }
+
+  pulse.visit(flag, function(t) {
+    var v = bins(t);
+    // minimum bin value (inclusive)
+    t[b0] = v;
+    // maximum bin value (exclusive)
+    // use convoluted math for better floating point agreement
+    // see https://github.com/vega/vega/issues/830
+    t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+  });
+
+  return pulse.modifies(as);
+};
+
+prototype$10._bins = function(_$$1) {
+  if (this.value && !_$$1.modified()) {
+    return this.value;
+  }
+
+  var field$$1 = _$$1.field,
+      bins  = bin(_$$1),
+      start = bins.start,
+      stop  = bins.stop,
+      step  = bins.step,
+      a, d;
+
+  if ((a = _$$1.anchor) != null) {
+    d = a - (start + step * Math.floor((a - start) / step));
+    start += d;
+    stop += d;
+  }
+
+  var f = function(t) {
+    var v = field$$1(t);
+    if (v == null) {
+      return null;
+    } else {
+      v = Math.max(start, Math.min(+v, stop - step));
+      return start + step * Math.floor((v - start) / step);
+    }
+  };
+
+  f.start = start;
+  f.stop = stop;
+  f.step = step;
+
+  return this.value = accessor(
+    f,
+    accessorFields(field$$1),
+    _$$1.name || 'bin_' + accessorName(field$$1)
+  );
+};
+
+var SortedList = function(idFunc, source, input) {
+  var $$$1 = idFunc,
+      data = source || [],
+      add = input || [],
+      rem = {},
+      cnt = 0;
+
+  return {
+    add: function(t) { add.push(t); },
+    remove: function(t) { rem[$$$1(t)] = ++cnt; },
+    size: function() { return data.length; },
+    data: function(compare$$1, resort) {
+      if (cnt) {
+        data = data.filter(function(t) { return !rem[$$$1(t)]; });
+        rem = {};
+        cnt = 0;
+      }
+      if (resort && compare$$1) {
+        data.sort(compare$$1);
+      }
+      if (add.length) {
+        data = compare$$1
+          ? merge(compare$$1, data, add.sort(compare$$1))
+          : data.concat(add);
+        add = [];
+      }
+      return data;
+    }
+  }
+};
+
+/**
+ * Collects all data tuples that pass through this operator.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(*,*): number} [params.sort] - An optional
+ *   comparator function for additionally sorting the collected tuples.
+ */
+function Collect(params) {
+  Transform.call(this, [], params);
+}
+
+Collect.Definition = {
+  "type": "Collect",
+  "metadata": {"source": true},
+  "params": [
+    { "name": "sort", "type": "compare" }
+  ]
+};
+
+var prototype$11 = inherits(Collect, Transform);
+
+prototype$11.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.ALL),
+      list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
+      sort = _$$1.sort,
+      mod = pulse.changed() || (sort &&
+            (_$$1.modified('sort') || pulse.modified(sort.fields)));
+
+  out.visit(out.REM, list.remove);
+
+  this.modified(mod);
+  this.value = out.source = list.data(sort, mod);
+  return out;
+};
+
+/**
+ * Generates a comparator function.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<string>} params.fields - The fields to compare.
+ * @param {Array<string>} [params.orders] - The sort orders.
+ *   Each entry should be one of "ascending" (default) or "descending".
+ */
+function Compare(params) {
+  Operator.call(this, null, update$1, params);
+}
+
+inherits(Compare, Operator);
+
+function update$1(_$$1) {
+  return (this.value && !_$$1.modified())
+    ? this.value
+    : compare(_$$1.fields, _$$1.orders);
+}
+
+/**
+ * Count regexp-defined pattern occurrences in a text field.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - An accessor for the text field.
+ * @param {string} [params.pattern] - RegExp string defining the text pattern.
+ * @param {string} [params.case] - One of 'lower', 'upper' or null (mixed) case.
+ * @param {string} [params.stopwords] - RegExp string of words to ignore.
+ */
+function CountPattern(params) {
+  Transform.call(this, null, params);
+}
+
+CountPattern.Definition = {
+  "type": "CountPattern",
+  "metadata": {"generates": true, "changes": true},
+  "params": [
+    { "name": "field", "type": "field", "required": true },
+    { "name": "case", "type": "enum", "values": ["upper", "lower", "mixed"], "default": "mixed" },
+    { "name": "pattern", "type": "string", "default": "[\\w\"]+" },
+    { "name": "stopwords", "type": "string", "default": "" },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["text", "count"] }
+  ]
+};
+
+function tokenize(text, tcase, match) {
+  switch (tcase) {
+    case 'upper': text = text.toUpperCase(); break;
+    case 'lower': text = text.toLowerCase(); break;
+  }
+  return text.match(match);
+}
+
+var prototype$12 = inherits(CountPattern, Transform);
+
+prototype$12.transform = function(_$$1, pulse) {
+  function process(update) {
+    return function(tuple) {
+      var tokens = tokenize(get(tuple), _$$1.case, match) || [], t;
+      for (var i=0, n=tokens.length; i<n; ++i) {
+        if (!stop.test(t = tokens[i])) update(t);
+      }
+    };
+  }
+
+  var init = this._parameterCheck(_$$1, pulse),
+      counts = this._counts,
+      match = this._match,
+      stop = this._stop,
+      get = _$$1.field,
+      as = _$$1.as || ['text', 'count'],
+      add = process(function(t) { counts[t] = 1 + (counts[t] || 0); }),
+      rem = process(function(t) { counts[t] -= 1; });
+
+  if (init) {
+    pulse.visit(pulse.SOURCE, add);
+  } else {
+    pulse.visit(pulse.ADD, add);
+    pulse.visit(pulse.REM, rem);
+  }
+
+  return this._finish(pulse, as); // generate output tuples
+};
+
+prototype$12._parameterCheck = function(_$$1, pulse) {
+  var init = false;
+
+  if (_$$1.modified('stopwords') || !this._stop) {
+    this._stop = new RegExp('^' + (_$$1.stopwords || '') + '$', 'i');
+    init = true;
+  }
+
+  if (_$$1.modified('pattern') || !this._match) {
+    this._match = new RegExp((_$$1.pattern || '[\\w\']+'), 'g');
+    init = true;
+  }
+
+  if (_$$1.modified('field') || pulse.modified(_$$1.field.fields)) {
+    init = true;
+  }
+
+  if (init) this._counts = {};
+  return init;
+};
+
+prototype$12._finish = function(pulse, as) {
+  var counts = this._counts,
+      tuples = this._tuples || (this._tuples = {}),
+      text = as[0],
+      count = as[1],
+      out = pulse.fork(),
+      w, t, c;
+
+  for (w in counts) {
+    t = tuples[w];
+    c = counts[w] || 0;
+    if (!t && c) {
+      tuples[w] = (t = ingest({}));
+      t[text] = w;
+      t[count] = c;
+      out.add.push(t);
+    } else if (c === 0) {
+      if (t) out.rem.push(t);
+      counts[w] = null;
+      tuples[w] = null;
+    } else if (t[count] !== c) {
+      t[count] = c;
+      out.mod.push(t);
+    }
+  }
+
+  return out.modifies(as);
+};
+
+/**
+ * Perform a cross-product of a tuple stream with itself.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object):boolean} [params.filter] - An optional filter
+ *   function for selectively including tuples in the cross product.
+ * @param {Array<string>} [params.as] - The names of the output fields.
+ */
+function Cross(params) {
+  Transform.call(this, null, params);
+}
+
+Cross.Definition = {
+  "type": "Cross",
+  "metadata": {"source": true, "generates": true, "changes": true},
+  "params": [
+    { "name": "filter", "type": "expr" },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
+  ]
+};
+
+var prototype$13 = inherits(Cross, Transform);
+
+prototype$13.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.NO_SOURCE),
+      data = this.value,
+      as = _$$1.as || ['a', 'b'],
+      a = as[0], b = as[1],
+      reset = !data
+          || pulse.changed(pulse.ADD_REM)
+          || _$$1.modified('as')
+          || _$$1.modified('filter');
+
+  if (reset) {
+    if (data) out.rem = data;
+    out.add = this.value = cross(pulse.source, a, b, _$$1.filter || truthy);
+  } else {
+    out.mod = data;
+  }
+
+  out.source = this.value;
+  return out.modifies(as);
+};
+
+function cross(input, a, b, filter) {
+  var data = [],
+      t = {},
+      n = input.length,
+      i = 0,
+      j, left;
+
+  for (; i<n; ++i) {
+    t[a] = left = input[i];
+    for (j=0; j<n; ++j) {
+      t[b] = input[j];
+      if (filter(t)) {
+        data.push(ingest(t));
+        t = {};
+        t[a] = left;
+      }
+    }
+  }
+
+  return data;
+}
+
+var Distributions = {
+  kde:     randomKDE,
+  mixture: randomMixture,
+  normal:  randomNormal,
+  uniform: randomUniform
+};
+
+var DISTRIBUTIONS = 'distributions';
+var FUNCTION = 'function';
+var FIELD = 'field';
+
+/**
+ * Parse a parameter object for a probability distribution.
+ * @param {object} def - The distribution parameter object.
+ * @param {function():Array<object>} - A method for requesting
+ *   source data. Used for distributions (such as KDE) that
+ *   require sample data points. This method will only be
+ *   invoked if the 'from' parameter for a target data source
+ *   is not provided. Typically this method returns backing
+ *   source data for a Pulse object.
+ * @return {object} - The output distribution object.
+ */
+function parse$1(def, data) {
+  var func = def[FUNCTION];
+  if (!Distributions.hasOwnProperty(func)) {
+    error$1('Unknown distribution function: ' + func);
+  }
+
+  var d = Distributions[func]();
+
+  for (var name in def) {
+    // if data field, extract values
+    if (name === FIELD) {
+      d.data((def.from || data()).map(def[name]));
+    }
+
+    // if distribution mixture, recurse to parse each definition
+    else if (name === DISTRIBUTIONS) {
+      d[name](def[name].map(function(_$$1) { return parse$1(_$$1, data); }));
+    }
+
+    // otherwise, simply set the parameter
+    else if (typeof d[name] === FUNCTION) {
+      d[name](def[name]);
+    }
+  }
+
+  return d;
+}
+
+/**
+ * Grid sample points for a probability density. Given a distribution and
+ * a sampling extent, will generate points suitable for plotting either
+ * PDF (probability density function) or CDF (cumulative distribution
+ * function) curves.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.distribution - The probability distribution. This
+ *   is an object parameter dependent on the distribution type.
+ * @param {string} [params.method='pdf'] - The distribution method to sample.
+ *   One of 'pdf' or 'cdf'.
+ * @param {Array<number>} [params.extent] - The [min, max] extent over which
+ *   to sample the distribution. This argument is required in most cases, but
+ *   can be omitted if the distribution (e.g., 'kde') supports a 'data' method
+ *   that returns numerical sample points from which the extent can be deduced.
+ * @param {number} [params.steps=100] - The number of sampling steps.
+ */
+function Density(params) {
+  Transform.call(this, null, params);
+}
+
+var distributions = [
+  {
+    "key": {"function": "normal"},
+    "params": [
+      { "name": "mean", "type": "number", "default": 0 },
+      { "name": "stdev", "type": "number", "default": 1 }
+    ]
+  },
+  {
+    "key": {"function": "uniform"},
+    "params": [
+      { "name": "min", "type": "number", "default": 0 },
+      { "name": "max", "type": "number", "default": 1 }
+    ]
+  },
+  {
+    "key": {"function": "kde"},
+    "params": [
+      { "name": "field", "type": "field", "required": true },
+      { "name": "from", "type": "data" },
+      { "name": "bandwidth", "type": "number", "default": 0 }
+    ]
+  }
+];
+
+var mixture = {
+  "key": {"function": "mixture"},
+  "params": [
+    { "name": "distributions", "type": "param", "array": true,
+      "params": distributions },
+    { "name": "weights", "type": "number", "array": true }
+  ]
+};
+
+Density.Definition = {
+  "type": "Density",
+  "metadata": {"generates": true, "source": true},
+  "params": [
+    { "name": "extent", "type": "number", "array": true, "length": 2 },
+    { "name": "steps", "type": "number", "default": 100 },
+    { "name": "method", "type": "string", "default": "pdf",
+      "values": ["pdf", "cdf"] },
+    { "name": "distribution", "type": "param",
+      "params": distributions.concat(mixture) },
+    { "name": "as", "type": "string", "array": true,
+      "default": ["value", "density"] }
+  ]
+};
+
+var prototype$14 = inherits(Density, Transform);
+
+prototype$14.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+
+  if (!this.value || pulse.changed() || _$$1.modified()) {
+    var dist = parse$1(_$$1.distribution, source(pulse)),
+        method = _$$1.method || 'pdf';
+
+    if (method !== 'pdf' && method !== 'cdf') {
+      error$1('Invalid density method: ' + method);
+    }
+    if (!_$$1.extent && !dist.data) {
+      error$1('Missing density extent parameter.');
+    }
+    method = dist[method];
+
+    var as = _$$1.as || ['value', 'density'],
+        domain = _$$1.extent || d3Array.extent(dist.data()),
+        step = (domain[1] - domain[0]) / (_$$1.steps || 100),
+        values = d3Array.range(domain[0], domain[1] + step/2, step)
+          .map(function(v) {
+            var tuple = {};
+            tuple[as[0]] = v;
+            tuple[as[1]] = method(v);
+            return ingest(tuple);
+          });
+
+    if (this.value) out.rem = this.value;
+    this.value = out.add = out.source = values;
+  }
+
+  return out;
+};
+
+function source(pulse) {
+  return function() { return pulse.materialize(pulse.SOURCE).source; };
+}
+
+/**
+ * Computes extents (min/max) for a data field.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The field over which to compute extends.
+ */
+function Extent(params) {
+  Transform.call(this, [+Infinity, -Infinity], params);
+}
+
+Extent.Definition = {
+  "type": "Extent",
+  "metadata": {},
+  "params": [
+    { "name": "field", "type": "field", "required": true }
+  ]
+};
+
+var prototype$15 = inherits(Extent, Transform);
+
+prototype$15.transform = function(_$$1, pulse) {
+  var extent$$1 = this.value,
+      field$$1 = _$$1.field,
+      min$$1 = extent$$1[0],
+      max$$1 = extent$$1[1],
+      flag = pulse.ADD,
+      mod;
+
+  mod = pulse.changed()
+     || pulse.modified(field$$1.fields)
+     || _$$1.modified('field');
+
+  if (mod) {
+    flag = pulse.SOURCE;
+    min$$1 = +Infinity;
+    max$$1 = -Infinity;
+  }
+
+  pulse.visit(flag, function(t) {
+    var v = field$$1(t);
+    if (v < min$$1) min$$1 = v;
+    if (v > max$$1) max$$1 = v;
+  });
+
+  this.value = [min$$1, max$$1];
+};
+
+/**
+ * Provides a bridge between a parent transform and a target subflow that
+ * consumes only a subset of the tuples that pass through the parent.
+ * @constructor
+ * @param {Pulse} pulse - A pulse to use as the value of this operator.
+ * @param {Transform} parent - The parent transform (typically a Facet instance).
+ * @param {Transform} target - A transform that receives the subflow of tuples.
+ */
+function Subflow(pulse, parent) {
+  Operator.call(this, pulse);
+  this.parent = parent;
+}
+
+var prototype$17 = inherits(Subflow, Operator);
+
+prototype$17.connect = function(target) {
+  this.targets().add(target);
+  return (target.source = this);
+};
+
+/**
+ * Add an 'add' tuple to the subflow pulse.
+ * @param {Tuple} t - The tuple being added.
+ */
+prototype$17.add = function(t) {
+  this.value.add.push(t);
+};
+
+/**
+ * Add a 'rem' tuple to the subflow pulse.
+ * @param {Tuple} t - The tuple being removed.
+ */
+prototype$17.rem = function(t) {
+  this.value.rem.push(t);
+};
+
+/**
+ * Add a 'mod' tuple to the subflow pulse.
+ * @param {Tuple} t - The tuple being modified.
+ */
+prototype$17.mod = function(t) {
+  this.value.mod.push(t);
+};
+
+/**
+ * Re-initialize this operator's pulse value.
+ * @param {Pulse} pulse - The pulse to copy from.
+ * @see Pulse.init
+ */
+prototype$17.init = function(pulse) {
+  this.value.init(pulse, pulse.NO_SOURCE);
+};
+
+/**
+ * Evaluate this operator. This method overrides the
+ * default behavior to simply return the contained pulse value.
+ * @return {Pulse}
+ */
+prototype$17.evaluate = function() {
+  // assert: this.value.stamp === pulse.stamp
+  return this.value;
+};
+
+/**
+ * Facets a dataflow into a set of subflows based on a key.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(Dataflow, string): Operator} params.subflow - A function
+ *   that generates a subflow of operators and returns its root operator.
+ * @param {function(object): *} params.key - The key field to facet by.
+ */
+function Facet(params) {
+  Transform.call(this, {}, params);
+  this._keys = fastmap(); // cache previously calculated key values
+
+  // keep track of active subflows, use as targets array for listeners
+  // this allows us to limit propagation to only updated subflows
+  var a = this._targets = [];
+  a.active = 0;
+  a.forEach = function(f) {
+    for (var i=0, n=a.active; i<n; ++i) f(a[i], i, a);
+  };
+}
+
+var prototype$16 = inherits(Facet, Transform);
+
+prototype$16.activate = function(flow) {
+  this._targets[this._targets.active++] = flow;
+};
+
+prototype$16.subflow = function(key$$1, flow, pulse, parent) {
+  var flows = this.value,
+      sf = flows.hasOwnProperty(key$$1) && flows[key$$1],
+      df, p;
+
+  if (!sf) {
+    p = parent || (p = this._group[key$$1]) && p.tuple;
+    df = pulse.dataflow;
+    sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
+      .connect(flow(df, key$$1, p));
+    flows[key$$1] = sf;
+    this.activate(sf);
+  } else if (sf.value.stamp < pulse.stamp) {
+    sf.init(pulse);
+    this.activate(sf);
+  }
+
+  return sf;
+};
+
+prototype$16.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      self = this,
+      key$$1 = _$$1.key,
+      flow = _$$1.subflow,
+      cache = this._keys,
+      rekey = _$$1.modified('key');
+
+  function subflow(key$$1) {
+    return self.subflow(key$$1, flow, pulse);
+  }
+
+  this._group = _$$1.group || {};
+  this._targets.active = 0; // reset list of active subflows
+
+  pulse.visit(pulse.REM, function(t) {
+    var id$$1 = tupleid(t),
+        k = cache.get(id$$1);
+    if (k !== undefined) {
+      cache.delete(id$$1);
+      subflow(k).rem(t);
+    }
+  });
+
+  pulse.visit(pulse.ADD, function(t) {
+    var k = key$$1(t);
+    cache.set(tupleid(t), k);
+    subflow(k).add(t);
+  });
+
+  if (rekey || pulse.modified(key$$1.fields)) {
+    pulse.visit(pulse.MOD, function(t) {
+      var id$$1 = tupleid(t),
+          k0 = cache.get(id$$1),
+          k1 = key$$1(t);
+      if (k0 === k1) {
+        subflow(k1).mod(t);
+      } else {
+        cache.set(id$$1, k1);
+        subflow(k0).rem(t);
+        subflow(k1).add(t);
+      }
+    });
+  } else if (pulse.changed(pulse.MOD)) {
+    pulse.visit(pulse.MOD, function(t) {
+      subflow(cache.get(tupleid(t))).mod(t);
+    });
+  }
+
+  if (rekey) {
+    pulse.visit(pulse.REFLOW, function(t) {
+      var id$$1 = tupleid(t),
+          k0 = cache.get(id$$1),
+          k1 = key$$1(t);
+      if (k0 !== k1) {
+        cache.set(id$$1, k1);
+        subflow(k0).rem(t);
+        subflow(k1).add(t);
+      }
+    });
+  }
+
+  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+  return pulse;
+};
+
+/**
+ * Generates one or more field accessor functions.
+ * If the 'name' parameter is an array, an array of field accessors
+ * will be created and the 'as' parameter will be ignored.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {string} params.name - The field name(s) to access.
+ * @param {string} params.as - The accessor function name.
+ */
+function Field(params) {
+  Operator.call(this, null, update$2, params);
+}
+
+inherits(Field, Operator);
+
+function update$2(_$$1) {
+  return (this.value && !_$$1.modified()) ? this.value
+    : isArray(_$$1.name) ? array(_$$1.name).map(function(f) { return field(f); })
+    : field(_$$1.name, _$$1.as);
+}
+
+/**
+ * Filters data tuples according to a predicate function.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.expr - The predicate expression function
+ *   that determines a tuple's filter status. Truthy values pass the filter.
+ */
+function Filter(params) {
+  Transform.call(this, fastmap(), params);
+}
+
+Filter.Definition = {
+  "type": "Filter",
+  "metadata": {"changes": true},
+  "params": [
+    { "name": "expr", "type": "expr", "required": true }
+  ]
+};
+
+var prototype$18 = inherits(Filter, Transform);
+
+prototype$18.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      cache = this.value, // cache ids of filtered tuples
+      output = pulse.fork(),
+      add = output.add,
+      rem = output.rem,
+      mod = output.mod,
+      test = _$$1.expr,
+      isMod = true;
+
+  pulse.visit(pulse.REM, function(t) {
+    var id$$1 = tupleid(t);
+    if (!cache.has(id$$1)) rem.push(t);
+    else cache.delete(id$$1);
+  });
+
+  pulse.visit(pulse.ADD, function(t) {
+    if (test(t, _$$1)) add.push(t);
+    else cache.set(tupleid(t), 1);
+  });
+
+  function revisit(t) {
+    var id$$1 = tupleid(t),
+        b = test(t, _$$1),
+        s = cache.get(id$$1);
+    if (b && s) {
+      cache.delete(id$$1);
+      add.push(t);
+    } else if (!b && !s) {
+      cache.set(id$$1, 1);
+      rem.push(t);
+    } else if (isMod && b && !s) {
+      mod.push(t);
+    }
+  }
+
+  pulse.visit(pulse.MOD, revisit);
+
+  if (_$$1.modified()) {
+    isMod = false;
+    pulse.visit(pulse.REFLOW, revisit);
+  }
+
+  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+  return output;
+};
+
+/**
+ * Folds one more tuple fields into multiple tuples in which the field
+ * name and values are available under new 'key' and 'value' fields.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.fields - An array of field accessors
+ *   for the tuple fields that should be folded.
+ */
+function Fold(params) {
+  Transform.call(this, {}, params);
+}
+
+Fold.Definition = {
+  "type": "Fold",
+  "metadata": {"generates": true, "changes": true},
+  "params": [
+    { "name": "fields", "type": "field", "array": true, "required": true },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
+  ]
+};
+
+var prototype$19 = inherits(Fold, Transform);
+
+function keyFunction(f) {
+  return f.fields.join('|');
+}
+
+prototype$19.transform = function(_$$1, pulse) {
+  var cache = this.value,
+      reset = _$$1.modified('fields'),
+      fields = _$$1.fields,
+      as = _$$1.as || ['key', 'value'],
+      key$$1 = as[0],
+      value = as[1],
+      keys = fields.map(keyFunction),
+      n = fields.length,
+      stamp = pulse.stamp,
+      out = pulse.fork(pulse.NO_SOURCE),
+      i = 0, mask = 0, id$$1;
+
+  function add(t) {
+    var f = (cache[tupleid(t)] = Array(n)); // create cache of folded tuples
+    for (var i=0, ft; i<n; ++i) { // for each key, derive folds
+      ft = (f[i] = derive(t));
+      ft[key$$1] = keys[i];
+      ft[value] = fields[i](t);
+      out.add.push(ft);
+    }
+  }
+
+  function mod(t) {
+    var f = cache[tupleid(t)]; // get cache of folded tuples
+    for (var i=0, ft; i<n; ++i) { // for each key, rederive folds
+      if (!(mask & (1 << i))) continue; // field is unchanged
+      ft = rederive(t, f[i], stamp);
+      ft[key$$1] = keys[i];
+      ft[value] = fields[i](t);
+      out.mod.push(ft);
+    }
+  }
+
+  if (reset) {
+    // on reset, remove all folded tuples and clear cache
+    for (id$$1 in cache) out.rem.push.apply(out.rem, cache[id$$1]);
+    cache = this.value = {};
+    pulse.visit(pulse.SOURCE, add);
+  } else {
+    pulse.visit(pulse.ADD, add);
+
+    for (; i<n; ++i) {
+      if (pulse.modified(fields[i].fields)) mask |= (1 << i);
+    }
+    if (mask) pulse.visit(pulse.MOD, mod);
+
+    pulse.visit(pulse.REM, function(t) {
+      var id$$1 = tupleid(t);
+      out.rem.push.apply(out.rem, cache[id$$1]);
+      cache[id$$1] = null;
+    });
+  }
+
+  return out.modifies(as);
+};
+
+/**
+ * Invokes a function for each data tuple and saves the results as a new field.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.expr - The formula function to invoke for each tuple.
+ * @param {string} params.as - The field name under which to save the result.
+ * @param {boolean} [params.initonly=false] - If true, the formula is applied to
+ *   added tuples only, and does not update in response to modifications.
+ */
+function Formula(params) {
+  Transform.call(this, null, params);
+}
+
+Formula.Definition = {
+  "type": "Formula",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "expr", "type": "expr", "required": true },
+    { "name": "as", "type": "string", "required": true },
+    { "name": "initonly", "type": "boolean" }
+  ]
+};
+
+var prototype$20 = inherits(Formula, Transform);
+
+prototype$20.transform = function(_$$1, pulse) {
+  var func = _$$1.expr,
+      as = _$$1.as,
+      mod = _$$1.modified(),
+      flag = _$$1.initonly ? pulse.ADD
+        : mod ? pulse.SOURCE
+        : pulse.modified(func.fields) ? pulse.ADD_MOD
+        : pulse.ADD;
+
+  function set(t) {
+    t[as] = func(t, _$$1);
+  }
+
+  if (mod) {
+    // parameters updated, need to reflow
+    pulse = pulse.materialize().reflow(true);
+  }
+
+  if (!_$$1.initonly) {
+    pulse.modifies(as);
+  }
+
+  return pulse.visit(flag, set);
+};
+
+/**
+ * Generates data tuples using a provided generator function.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(Parameters): object} params.generator - A tuple generator
+ *   function. This function is given the operator parameters as input.
+ *   Changes to any additional parameters will not trigger re-calculation
+ *   of previously generated tuples. Only future tuples are affected.
+ * @param {number} params.size - The number of tuples to produce.
+ */
+function Generate(params) {
+  Transform.call(this, [], params);
+}
+
+var prototype$21 = inherits(Generate, Transform);
+
+prototype$21.transform = function(_$$1, pulse) {
+  var data = this.value,
+      out = pulse.fork(pulse.ALL),
+      num = _$$1.size - data.length,
+      gen = _$$1.generator,
+      add, rem, t;
+
+  if (num > 0) {
+    // need more tuples, generate and add
+    for (add=[]; --num >= 0;) {
+      add.push(t = ingest(gen(_$$1)));
+      data.push(t);
+    }
+    out.add = out.add.length
+      ? out.materialize(out.ADD).add.concat(add)
+      : add;
+  } else {
+    // need fewer tuples, remove
+    rem = data.slice(0, -num);
+    out.rem = out.rem.length
+      ? out.materialize(out.REM).rem.concat(rem)
+      : rem;
+    data = data.slice(-num);
+  }
+
+  out.source = this.value = data;
+  return out;
+};
+
+var Methods = {
+  value: 'value',
+  median: d3Array.median,
+  mean: d3Array.mean,
+  min: d3Array.min,
+  max: d3Array.max
+};
+
+var Empty = [];
+
+/**
+ * Impute missing values.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The value field to impute.
+ * @param {Array<function(object): *>} [params.groupby] - An array of
+ *   accessors to determine series within which to perform imputation.
+ * @param {function(object): *} params.key - An accessor for a key value.
+ *   Each key value should be unique within a group. New tuples will be
+ *   imputed for any key values that are not found within a group.
+ * @param {Array<*>} [params.keyvals] - Optional array of required key
+ *   values. New tuples will be imputed for any key values that are not
+ *   found within a group. In addition, these values will be automatically
+ *   augmented with the key values observed in the input data.
+ * @param {string} [method='value'] - The imputation method to use. One of
+ *   'value', 'mean', 'median', 'max', 'min'.
+ * @param {*} [value=0] - The constant value to use for imputation
+ *   when using method 'value'.
+ */
+function Impute(params) {
+  Transform.call(this, [], params);
+}
+
+Impute.Definition = {
+  "type": "Impute",
+  "metadata": {"changes": true},
+  "params": [
+    { "name": "field", "type": "field", "required": true },
+    { "name": "key", "type": "field", "required": true },
+    { "name": "keyvals", "array": true },
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "method", "type": "enum", "default": "value",
+      "values": ["value", "mean", "median", "max", "min"] },
+    { "name": "value", "default": 0 }
+  ]
+};
+
+var prototype$22 = inherits(Impute, Transform);
+
+function getValue(_$$1) {
+  var m = _$$1.method || Methods.value, v;
+
+  if (Methods[m] == null) {
+    error$1('Unrecognized imputation method: ' + m);
+  } else if (m === Methods.value) {
+    v = _$$1.value !== undefined ? _$$1.value : 0;
+    return function() { return v; };
+  } else {
+    return Methods[m];
+  }
+}
+
+function getField(_$$1) {
+  var f = _$$1.field;
+  return function(t) { return t ? f(t) : NaN; };
+}
+
+prototype$22.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.ALL),
+      impute = getValue(_$$1),
+      field$$1 = getField(_$$1),
+      fName = accessorName(_$$1.field),
+      kName = accessorName(_$$1.key),
+      gNames = (_$$1.groupby || []).map(accessorName),
+      groups = partition$1(pulse.source, _$$1.groupby, _$$1.key, _$$1.keyvals),
+      curr = [],
+      prev = this.value,
+      m = groups.domain.length,
+      group, value, gVals, kVal, g, i, j, l, n, t;
+
+  for (g=0, l=groups.length; g<l; ++g) {
+    group = groups[g];
+    gVals = group.values;
+    value = NaN;
+
+    // add tuples for missing values
+    for (j=0; j<m; ++j) {
+      if (group[j] != null) continue;
+      kVal = groups.domain[j];
+
+      t = {_impute: true};
+      for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
+      t[kName] = kVal;
+      t[fName] = isNaN(value) ? (value = impute(group, field$$1)) : value;
+
+      curr.push(ingest(t));
+    }
+  }
+
+  // update pulse with imputed tuples
+  if (curr.length) out.add = out.materialize(out.ADD).add.concat(curr);
+  if (prev.length) out.rem = out.materialize(out.REM).rem.concat(prev);
+  this.value = curr;
+
+  return out;
+};
+
+function partition$1(data, groupby, key$$1, keyvals) {
+  var get = function(f) { return f(t); },
+      groups = [],
+      domain = keyvals ? keyvals.slice() : [],
+      kMap = {},
+      gMap = {}, gVals, gKey,
+      group, i, j, k, n, t;
+
+  domain.forEach(function(k, i) { kMap[k] = i + 1; });
+
+  for (i=0, n=data.length; i<n; ++i) {
+    t = data[i];
+    k = key$$1(t);
+    j = kMap[k] || (kMap[k] = domain.push(k));
+
+    gKey = (gVals = groupby ? groupby.map(get) : Empty) + '';
+    if (!(group = gMap[gKey])) {
+      group = (gMap[gKey] = []);
+      groups.push(group);
+      group.values = gVals;
+    }
+    group[j-1] = t;
+  }
+
+  groups.domain = domain;
+  return groups;
+}
+
+/**
+ * Extend input tuples with aggregate values.
+ * Calcuates aggregate values and joins them with the input stream.
+ * @constructor
+ */
+function JoinAggregate(params) {
+  Aggregate.call(this, params);
+}
+
+JoinAggregate.Definition = {
+  "type": "JoinAggregate",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "fields", "type": "field", "null": true, "array": true },
+    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
+    { "name": "as", "type": "string", "null": true, "array": true },
+    { "name": "key", "type": "field" }
+  ]
+};
+
+var prototype$23 = inherits(JoinAggregate, Aggregate);
+
+prototype$23.transform = function(_$$1, pulse) {
+  var aggr = this,
+      mod = _$$1.modified(),
+      cells;
+
+  // process all input tuples to calculate aggregates
+  if (aggr.value && (mod || pulse.modified(aggr._inputs))) {
+    cells = aggr.value = mod ? aggr.init(_$$1) : {};
+    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
+  } else {
+    cells = aggr.value = aggr.value || this.init(_$$1);
+    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
+    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+  }
+
+  // update aggregation cells
+  aggr.changes();
+
+  // write aggregate values to input tuples
+  pulse.visit(pulse.SOURCE, function(t) {
+    extend(t, cells[aggr.cellkey(t)].tuple);
+  });
+
+  return pulse.reflow(mod).modifies(this._outputs);
+};
+
+prototype$23.changes = function() {
+  var adds = this._adds,
+      mods = this._mods,
+      i, n;
+
+  for (i=0, n=this._alen; i<n; ++i) {
+    this.celltuple(adds[i]);
+    adds[i] = null; // for garbage collection
+  }
+
+  for (i=0, n=this._mlen; i<n; ++i) {
+    this.celltuple(mods[i]);
+    mods[i] = null; // for garbage collection
+  }
+
+  this._alen = this._mlen = 0; // reset list of active cells
+};
+
+/**
+ * Generates a key function.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<string>} params.fields - The field name(s) for the key function.
+ */
+function Key(params) {
+  Operator.call(this, null, update$3, params);
+}
+
+inherits(Key, Operator);
+
+function update$3(_$$1) {
+  return (this.value && !_$$1.modified()) ? this.value : key(_$$1.fields);
+}
+
+/**
+ * Extend tuples by joining them with values from a lookup table.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Map} params.index - The lookup table map.
+ * @param {Array<function(object): *} params.fields - The fields to lookup.
+ * @param {Array<string>} params.as - Output field names for each lookup value.
+ * @param {*} [params.default] - A default value to use if lookup fails.
+ */
+function Lookup(params) {
+  Transform.call(this, {}, params);
+}
+
+Lookup.Definition = {
+  "type": "Lookup",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "index", "type": "index", "params": [
+        {"name": "from", "type": "data", "required": true },
+        {"name": "key", "type": "field", "required": true }
+      ] },
+    { "name": "values", "type": "field", "array": true },
+    { "name": "fields", "type": "field", "array": true, "required": true },
+    { "name": "as", "type": "string", "array": true },
+    { "name": "default", "default": null }
+  ]
+};
+
+var prototype$24 = inherits(Lookup, Transform);
+
+prototype$24.transform = function(_$$1, pulse) {
+  var out = pulse,
+      as = _$$1.as,
+      keys = _$$1.fields,
+      index = _$$1.index,
+      values = _$$1.values,
+      defaultValue = _$$1.default==null ? null : _$$1.default,
+      reset = _$$1.modified(),
+      flag = reset ? pulse.SOURCE : pulse.ADD,
+      n = keys.length,
+      set, m, mods;
+
+  if (values) {
+    m = values.length;
+
+    if (n > 1 && !as) {
+      error$1('Multi-field lookup requires explicit "as" parameter.');
+    }
+    if (as && as.length !== n * m) {
+      error$1('The "as" parameter has too few output field names.');
+    }
+    as = as || values.map(accessorName);
+
+    set = function(t) {
+      for (var i=0, k=0, j, v; i<n; ++i) {
+        v = index.get(keys[i](t));
+        if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
+        else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+      }
+    };
+  } else {
+    if (!as) {
+      error$1('Missing output field names.');
+    }
+
+    set = function(t) {
+      for (var i=0, v; i<n; ++i) {
+        v = index.get(keys[i](t));
+        t[as[i]] = v==null ? defaultValue : v;
+      }
+    };
+  }
+
+  if (reset) {
+    out = pulse.reflow(true);
+  } else {
+    mods = keys.some(function(k) { return pulse.modified(k.fields); });
+    flag |= (mods ? pulse.MOD : 0);
+  }
+  pulse.visit(flag, set);
+
+  return out.modifies(as);
+};
+
+/**
+ * Computes global min/max extents over a collection of extents.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<Array<number>>} params.extents - The input extents.
+ */
+function MultiExtent(params) {
+  Operator.call(this, null, update$4, params);
+}
+
+inherits(MultiExtent, Operator);
+
+function update$4(_$$1) {
+  if (this.value && !_$$1.modified()) {
+    return this.value;
+  }
+
+  var min$$1 = +Infinity,
+      max$$1 = -Infinity,
+      ext = _$$1.extents,
+      i, n, e;
+
+  for (i=0, n=ext.length; i<n; ++i) {
+    e = ext[i];
+    if (e[0] < min$$1) min$$1 = e[0];
+    if (e[1] > max$$1) max$$1 = e[1];
+  }
+  return [min$$1, max$$1];
+}
+
+/**
+ * Merge a collection of value arrays.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<Array<*>>} params.values - The input value arrrays.
+ */
+function MultiValues(params) {
+  Operator.call(this, null, update$5, params);
+}
+
+inherits(MultiValues, Operator);
+
+function update$5(_$$1) {
+  return (this.value && !_$$1.modified())
+    ? this.value
+    : _$$1.values.reduce(function(data, _$$1) { return data.concat(_$$1); }, []);
+}
+
+/**
+ * Operator whose value is simply its parameter hash. This operator is
+ * useful for enabling reactive updates to values of nested objects.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ */
+function Params(params) {
+  Transform.call(this, null, params);
+}
+
+inherits(Params, Transform);
+
+Params.prototype.transform = function(_$$1, pulse) {
+  this.modified(_$$1.modified());
+  this.value = _$$1;
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
+};
+
+/**
+ * Partitions pre-faceted data into tuple subflows.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(Dataflow, string): Operator} params.subflow - A function
+ *   that generates a subflow of operators and returns its root operator.
+ * @param {function(object): Array<object>} params.field - The field
+ *   accessor for an array of subflow tuple objects.
+ */
+function PreFacet(params) {
+  Facet.call(this, params);
+}
+
+var prototype$25 = inherits(PreFacet, Facet);
+
+prototype$25.transform = function(_$$1, pulse) {
+  var self = this,
+      flow = _$$1.subflow,
+      field$$1 = _$$1.field;
+
+  if (_$$1.modified('field') || field$$1 && pulse.modified(accessorFields(field$$1))) {
+    error$1('PreFacet does not support field modification.');
+  }
+
+  this._targets.active = 0; // reset list of active subflows
+
+  pulse.visit(pulse.MOD, function(t) {
+    var sf = self.subflow(tupleid(t), flow, pulse, t);
+    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.mod(_$$1); }) : sf.mod(t);
+  });
+
+  pulse.visit(pulse.ADD, function(t) {
+    var sf = self.subflow(tupleid(t), flow, pulse, t);
+    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.add(ingest(_$$1)); }) : sf.add(t);
+  });
+
+  pulse.visit(pulse.REM, function(t) {
+    var sf = self.subflow(tupleid(t), flow, pulse, t);
+    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.rem(_$$1); }) : sf.rem(t);
+  });
+
+  return pulse;
+};
+
+/**
+ * Proxy the value of another operator as a pure signal value.
+ * Ensures no tuples are propagated.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {*} params.value - The value to proxy, becomes the value of this operator.
+ */
+function Proxy(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$26 = inherits(Proxy, Transform);
+
+prototype$26.transform = function(_$$1, pulse) {
+  this.value = _$$1.value;
+  return _$$1.modified('value')
+    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
+    : pulse.StopPropagation;
+};
+
+/**
+ * Relays a data stream between data processing pipelines.
+ * If the derive parameter is set, this transform will create derived
+ * copies of observed tuples. This provides derived data streams in which
+ * modifications to the tuples do not pollute an upstream data source.
+ * @param {object} params - The parameters for this operator.
+ * @param {number} [params.derive=false] - Boolean flag indicating if
+ *   the transform should make derived copies of incoming tuples.
+ * @constructor
+ */
+function Relay(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$27 = inherits(Relay, Transform);
+
+prototype$27.transform = function(_$$1, pulse) {
+  var out, lut;
+
+  if (this.value) {
+    lut = this.value;
+  } else {
+    out = pulse = pulse.addAll();
+    lut = this.value = {};
+  }
+
+  if (_$$1.derive) {
+    out = pulse.fork();
+
+    pulse.visit(pulse.REM, function(t) {
+      var id$$1 = tupleid(t);
+      out.rem.push(lut[id$$1]);
+      lut[id$$1] = null;
+    });
+
+    pulse.visit(pulse.ADD, function(t) {
+      var dt = derive(t);
+      lut[tupleid(t)] = dt;
+      out.add.push(dt);
+    });
+
+    pulse.visit(pulse.MOD, function(t) {
+      out.mod.push(rederive(t, lut[tupleid(t)]));
+    });
+  }
+
+  return out;
+};
+
+/**
+ * Samples tuples passing through this operator.
+ * Uses reservoir sampling to maintain a representative sample.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {number} [params.size=1000] - The maximum number of samples.
+ */
+function Sample(params) {
+  Transform.call(this, [], params);
+  this.count = 0;
+}
+
+Sample.Definition = {
+  "type": "Sample",
+  "metadata": {"source": true, "changes": true},
+  "params": [
+    { "name": "size", "type": "number", "default": 1000 }
+  ]
+};
+
+var prototype$28 = inherits(Sample, Transform);
+
+prototype$28.transform = function(_$$1, pulse) {
+  var out = pulse.fork(),
+      mod = _$$1.modified('size'),
+      num = _$$1.size,
+      res = this.value,
+      cnt = this.count,
+      cap = 0,
+      map = res.reduce(function(m, t) {
+        m[tupleid(t)] = 1;
+        return m;
+      }, {});
+
+  // sample reservoir update function
+  function update(t) {
+    var p, idx;
+
+    if (res.length < num) {
+      res.push(t);
+    } else {
+      idx = ~~(cnt * Math.random());
+      if (idx < res.length && idx >= cap) {
+        p = res[idx];
+        if (map[tupleid(p)]) out.rem.push(p); // eviction
+        res[idx] = t;
+      }
+    }
+    ++cnt;
+  }
+
+  if (pulse.rem.length) {
+    // find all tuples that should be removed, add to output
+    pulse.visit(pulse.REM, function(t) {
+      var id$$1 = tupleid(t);
+      if (map[id$$1]) {
+        map[id$$1] = -1;
+        out.rem.push(t);
+      }
+      --cnt;
+    });
+
+    // filter removed tuples out of the sample reservoir
+    res = res.filter(function(t) { return map[tupleid(t)] !== -1; });
+  }
+
+  if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
+    // replenish sample if backing data source is available
+    cap = cnt = res.length;
+    pulse.visit(pulse.SOURCE, function(t) {
+      // update, but skip previously sampled tuples
+      if (!map[tupleid(t)]) update(t);
+    });
+    cap = -1;
+  }
+
+  if (mod && res.length > num) {
+    for (var i=0, n=res.length-num; i<n; ++i) {
+      map[tupleid(res[i])] = -1;
+      out.rem.push(res[i]);
+    }
+    res = res.slice(n);
+  }
+
+  if (pulse.mod.length) {
+    // propagate modified tuples in the sample reservoir
+    pulse.visit(pulse.MOD, function(t) {
+      if (map[tupleid(t)]) out.mod.push(t);
+    });
+  }
+
+  if (pulse.add.length) {
+    // update sample reservoir
+    pulse.visit(pulse.ADD, update);
+  }
+
+  if (pulse.add.length || cap < 0) {
+    // output newly added tuples
+    out.add = res.filter(function(t) { return !map[tupleid(t)]; });
+  }
+
+  this.count = cnt;
+  this.value = out.source = res;
+  return out;
+};
+
+/**
+ * Generates data tuples for a specified sequence range of numbers.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {number} params.start - The first number in the sequence.
+ * @param {number} params.stop - The last number (exclusive) in the sequence.
+ * @param {number} [params.step=1] - The step size between numbers in the sequence.
+ */
+function Sequence(params) {
+  Transform.call(this, null, params);
+}
+
+Sequence.Definition = {
+  "type": "Sequence",
+  "metadata": {"generates": true, "source": true},
+  "params": [
+    { "name": "start", "type": "number", "required": true },
+    { "name": "stop", "type": "number", "required": true },
+    { "name": "step", "type": "number", "default": 1 }
+  ],
+  "output": ["value"]
+};
+
+var prototype$29 = inherits(Sequence, Transform);
+
+prototype$29.transform = function(_$$1, pulse) {
+  if (this.value && !_$$1.modified()) return;
+
+  var out = pulse.materialize().fork(pulse.MOD);
+
+  out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
+  out.source = this.value = d3Array.range(_$$1.start, _$$1.stop, _$$1.step || 1).map(ingest);
+  out.add = pulse.add.concat(this.value);
+  return out;
+};
+
+/**
+ * Propagates a new pulse without any tuples so long as the input
+ * pulse contains some added, removed or modified tuples.
+ * @param {object} params - The parameters for this operator.
+ * @constructor
+ */
+function Sieve(params) {
+  Transform.call(this, null, params);
+  this.modified(true); // always treat as modified
+}
+
+var prototype$30 = inherits(Sieve, Transform);
+
+prototype$30.transform = function(_$$1, pulse) {
+  this.value = pulse.source;
+  return pulse.changed()
+    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
+    : pulse.StopPropagation;
+};
+
+/**
+ * An index that maps from unique, string-coerced, field values to tuples.
+ * Assumes that the field serves as a unique key with no duplicate values.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The field accessor to index.
+ */
+function TupleIndex(params) {
+  Transform.call(this, fastmap(), params);
+}
+
+var prototype$31 = inherits(TupleIndex, Transform);
+
+prototype$31.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      field$$1 = _$$1.field,
+      index = this.value,
+      mod = true;
+
+  function set(t) { index.set(field$$1(t), t); }
+
+  if (_$$1.modified('field') || pulse.modified(field$$1.fields)) {
+    index.clear();
+    pulse.visit(pulse.SOURCE, set);
+  } else if (pulse.changed()) {
+    pulse.visit(pulse.REM, function(t) { index.delete(field$$1(t)); });
+    pulse.visit(pulse.ADD, set);
+  } else {
+    mod = false;
+  }
+
+  this.modified(mod);
+  if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
+  return pulse.fork();
+};
+
+/**
+ * Extracts an array of values. Assumes the source data has already been
+ * reduced as needed (e.g., by an upstream Aggregate transform).
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The domain field to extract.
+ * @param {function(*,*): number} [params.sort] - An optional
+ *   comparator function for sorting the values. The comparator will be
+ *   applied to backing tuples prior to value extraction.
+ */
+function Values(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$32 = inherits(Values, Transform);
+
+prototype$32.transform = function(_$$1, pulse) {
+  var run = !this.value
+    || _$$1.modified('field')
+    || _$$1.modified('sort')
+    || pulse.changed()
+    || (_$$1.sort && pulse.modified(_$$1.sort.fields));
+
+  if (run) {
+    this.value = (_$$1.sort
+      ? pulse.source.slice().sort(_$$1.sort)
+      : pulse.source).map(_$$1.field);
+  }
+};
+
+function WindowOp(op, field$$1, param, as) {
+  var fn = WindowOps[op](field$$1, param);
+  return {
+    init:   fn.init || zero,
+    update: function(w, t) { t[as] = fn.next(w); }
+  };
+}
+
+var WindowOps = {
+  row_number: function() {
+    return {
+      next: function(w) { return w.index + 1; }
+    };
+  },
+  rank: function() {
+    var rank;
+    return {
+      init: function() { rank = 1; },
+      next: function(w) {
+        var i = w.index,
+            data = w.data;
+        return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
+      }
+    };
+  },
+  dense_rank: function() {
+    var drank;
+    return {
+      init: function() { drank = 1; },
+      next: function(w) {
+        var i = w.index,
+            d = w.data;
+        return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
+      }
+    };
+  },
+  percent_rank: function() {
+    var rank = WindowOps.rank(),
+        next = rank.next;
+    return {
+      init: rank.init,
+      next: function(w) {
+        return (next(w) - 1) / (w.data.length - 1);
+      }
+    };
+  },
+  cume_dist: function() {
+    var cume;
+    return {
+      init: function() { cume = 0; },
+      next: function(w) {
+        var i = w.index,
+            d = w.data,
+            c = w.compare;
+        if (cume < i) {
+          while (i + 1 < d.length && !c(d[i], d[i + 1])) ++i;
+          cume = i;
+        }
+        return (1 + cume) / d.length;
+      }
+    };
+  },
+  ntile: function(field$$1, num) {
+    num = +num;
+    if (!(num > 0)) error$1('ntile num must be greater than zero.');
+    var cume = WindowOps.cume_dist(),
+        next = cume.next;
+    return {
+      init: cume.init,
+      next: function(w) { return Math.ceil(num * next(w)); }
+    };
+  },
+
+  lag: function(field$$1, offset) {
+    offset = +offset || 1;
+    return {
+      next: function(w) {
+        var i = w.index - offset;
+        return i >= 0 ? field$$1(w.data[i]) : null;
+      }
+    };
+  },
+  lead: function(field$$1, offset) {
+    offset = +offset || 1;
+    return {
+      next: function(w) {
+        var i = w.index + offset,
+            d = w.data;
+        return i < d.length ? field$$1(d[i]) : null;
+      }
+    };
+  },
+
+  first_value: function(field$$1) {
+    return {
+      next: function(w) { return field$$1(w.data[w.i0]); }
+    };
+  },
+  last_value: function(field$$1) {
+    return {
+      next: function(w) { return field$$1(w.data[w.i1 - 1]); }
+    }
+  },
+  nth_value: function(field$$1, nth) {
+    nth = +nth;
+    if (!(nth > 0)) error$1('nth_value nth must be greater than zero.');
+    return {
+      next: function(w) {
+        var i = w.i0 + (nth - 1);
+        return i < w.i1 ? field$$1(w.data[i]) : null;
+      }
+    }
+  }
+};
+
+var ValidWindowOps = Object.keys(WindowOps);
+
+function WindowState(_$$1) {
+  var self = this,
+      ops = array(_$$1.ops),
+      fields = array(_$$1.fields),
+      params = array(_$$1.params),
+      as = array(_$$1.as),
+      outputs = self.outputs = [],
+      windows = self.windows = [],
+      inputs = {},
+      map = {},
+      countOnly = true,
+      counts = [],
+      measures = [];
+
+  function visitInputs(f) {
+    array(accessorFields(f)).forEach(function(_$$1) { inputs[_$$1] = 1; });
+  }
+  visitInputs(_$$1.sort);
+
+  ops.forEach(function(op, i) {
+    var field$$1 = fields[i],
+        mname = accessorName(field$$1),
+        name = measureName(op, mname, as[i]);
+
+    visitInputs(field$$1);
+    outputs.push(name);
+
+    // Window operation
+    if (WindowOps.hasOwnProperty(op)) {
+      windows.push(WindowOp(op, fields[i], params[i], name));
+    }
+
+    // Aggregate operation
+    else {
+      if (field$$1 == null && op !== 'count') {
+        error$1('Null aggregate field specified.');
+      }
+      if (op === 'count') {
+        counts.push(name);
+        return;
+      }
+
+      countOnly = false;
+      var m = map[mname];
+      if (!m) {
+        m = (map[mname] = []);
+        m.field = field$$1;
+        measures.push(m);
+      }
+      m.push(createMeasure(op, name));
+    }
+  });
+
+  if (counts.length || measures.length) {
+    self.cell = cell(measures, counts, countOnly);
+  }
+
+  self.inputs = Object.keys(inputs);
+}
+
+var prototype$34 = WindowState.prototype;
+
+prototype$34.init = function() {
+  this.windows.forEach(function(_$$1) { _$$1.init(); });
+  if (this.cell) this.cell.init();
+};
+
+prototype$34.update = function(w, t) {
+  var self = this,
+      cell = self.cell,
+      wind = self.windows,
+      data = w.data,
+      m = wind && wind.length,
+      j;
+
+  if (cell) {
+    for (j=w.p0; j<w.i0; ++j) cell.rem(data[j]);
+    for (j=w.p1; j<w.i1; ++j) cell.add(data[j]);
+    cell.set(t);
+  }
+  for (j=0; j<m; ++j) wind[j].update(w, t);
+};
+
+function cell(measures, counts, countOnly) {
+  measures = measures.map(function(m) {
+    return compileMeasures(m, m.field);
+  });
+
+  var cell = {
+    num:   0,
+    agg:   null,
+    store: false,
+    count: counts
+  };
+
+  if (!countOnly) {
+    var n = measures.length,
+        a = cell.agg = Array(n),
+        i = 0;
+    for (; i<n; ++i) a[i] = new measures[i](cell);
+  }
+
+  if (cell.store) {
+    var store = cell.data = new TupleStore();
+  }
+
+  cell.add = function(t) {
+    cell.num += 1;
+    if (countOnly) return;
+    if (store) store.add(t);
+    for (var i=0; i<n; ++i) {
+      a[i].add(a[i].get(t), t);
+    }
+  };
+
+  cell.rem = function(t) {
+    cell.num -= 1;
+    if (countOnly) return;
+    if (store) store.rem(t);
+    for (var i=0; i<n; ++i) {
+      a[i].rem(a[i].get(t), t);
+    }
+  };
+
+  cell.set = function(t) {
+    var i, n;
+
+    // consolidate stored values
+    if (store) store.values();
+
+    // update tuple properties
+    for (i=0, n=counts.length; i<n; ++i) t[counts[i]] = cell.num;
+    if (!countOnly) for (i=0, n=a.length; i<n; ++i) a[i].set(t);
+  };
+
+  cell.init = function() {
+    cell.num = 0;
+    if (store) store.reset();
+    for (var i=0; i<n; ++i) a[i].init();
+  };
+
+  return cell;
+}
+
+/**
+ * Perform window calculations and write results to the input stream.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(*,*): number} [params.sort] - A comparator function for sorting tuples within a window.
+ * @param {Array<function(object): *>} [params.groupby] - An array of accessors by which to partition tuples into separate windows.
+ * @param {Array<string>} params.ops - An array of strings indicating window operations to perform.
+ * @param {Array<function(object): *>} [params.fields] - An array of accessors
+ *   for data fields to use as inputs to window operations.
+ * @param {Array<*>} [params.params] - An array of parameter values for window operations.
+ * @param {Array<string>} [params.as] - An array of output field names for window operations.
+ * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
+ * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
+ *   number alone, ignoring peers with identical sort values. If false (default),
+ *   the window boundaries will be adjusted to include peer values.
+ */
+function Window(params) {
+  Transform.call(this, {}, params);
+  this._mlen = 0;
+  this._mods = [];
+}
+
+Window.Definition = {
+  "type": "Window",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "sort", "type": "compare" },
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "ops", "type": "enum", "array": true, "values": ValidWindowOps.concat(ValidAggregateOps) },
+    { "name": "params", "type": "number", "null": true, "array": true },
+    { "name": "fields", "type": "field", "null": true, "array": true },
+    { "name": "as", "type": "string", "null": true, "array": true },
+    { "name": "frame", "type": "number", "null": true, "array": true, "length": 2, "default": [null, 0] },
+    { "name": "ignorePeers", "type": "boolean", "default": false }
+  ]
+};
+
+var prototype$33 = inherits(Window, Transform);
+
+prototype$33.transform = function(_$$1, pulse) {
+  var self = this,
+      state = self.state,
+      mod = _$$1.modified(),
+      i, n;
+
+  this.stamp = pulse.stamp;
+
+  // initialize window state
+  if (!state || mod) {
+    state = self.state = new WindowState(_$$1);
+  }
+
+  // retrieve group for a tuple
+  var key$$1 = groupkey(_$$1.groupby);
+  function group(t) { return self.group(key$$1(t)); }
+
+  // partition input tuples
+  if (mod || pulse.modified(state.inputs)) {
+    self.value = {};
+    pulse.visit(pulse.SOURCE, function(t) { group(t).add(t); });
+  } else {
+    pulse.visit(pulse.REM, function(t) { group(t).remove(t); });
+    pulse.visit(pulse.ADD, function(t) { group(t).add(t); });
+  }
+
+  // perform window calculations for each modified partition
+  for (i=0, n=self._mlen; i<n; ++i) {
+    processPartition(self._mods[i], state, _$$1);
+  }
+  self._mlen = 0;
+  self._mods = [];
+
+  // TODO don't reflow everything?
+  return pulse.reflow(mod).modifies(state.outputs);
+};
+
+prototype$33.group = function(key$$1) {
+  var self = this,
+      group = self.value[key$$1];
+
+  if (!group) {
+    group = self.value[key$$1] = SortedList(tupleid);
+    group.stamp = -1;
+  }
+
+  if (group.stamp < self.stamp) {
+    group.stamp = self.stamp;
+    self._mods[self._mlen++] = group;
+  }
+
+  return group;
+};
+
+function processPartition(list, state, _$$1) {
+  var sort = _$$1.sort,
+      range$$1 = sort && !_$$1.ignorePeers,
+      frame = _$$1.frame || [null, 0],
+      data = list.data(sort),
+      n = data.length,
+      i = 0,
+      b = range$$1 ? d3Array.bisector(sort) : null,
+      w = {
+        i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
+        data: data, compare: sort || constant(-1)
+      };
+
+  for (state.init(); i<n; ++i) {
+    setWindow(w, frame, i, n);
+    if (range$$1) adjustRange(w, b);
+    state.update(w, data[i]);
+  }
+}
+
+function setWindow(w, f, i, n) {
+  w.p0 = w.i0;
+  w.p1 = w.i1;
+  w.i0 = f[0] == null ? 0 : Math.max(0, i - Math.abs(f[0]));
+  w.i1 = f[1] == null ? n : Math.min(n, i + Math.abs(f[1]) + 1);
+  w.index = i;
+}
+
+// if frame type is 'range', adjust window for peer values
+function adjustRange(w, bisect$$1) {
+  var r0 = w.i0,
+      r1 = w.i1 - 1,
+      c = w.compare,
+      d = w.data,
+      n = d.length - 1;
+
+  if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect$$1.left(d, d[r0]);
+  if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect$$1.right(d, d[r1]);
+}
+
+
+
+var tx = Object.freeze({
+	aggregate: Aggregate,
+	bin: Bin,
+	collect: Collect,
+	compare: Compare,
+	countpattern: CountPattern,
+	cross: Cross,
+	density: Density,
+	extent: Extent,
+	facet: Facet,
+	field: Field,
+	filter: Filter,
+	fold: Fold,
+	formula: Formula,
+	generate: Generate,
+	impute: Impute,
+	joinaggregate: JoinAggregate,
+	key: Key,
+	lookup: Lookup,
+	multiextent: MultiExtent,
+	multivalues: MultiValues,
+	params: Params,
+	prefacet: PreFacet,
+	proxy: Proxy,
+	relay: Relay,
+	sample: Sample,
+	sequence: Sequence,
+	sieve: Sieve,
+	subflow: Subflow,
+	tupleindex: TupleIndex,
+	values: Values,
+	window: Window
+});
+
 function Bounds(b) {
   this.clear();
   if (b) this.union(b);
 }
 
-var prototype = Bounds.prototype;
+var prototype$36 = Bounds.prototype;
 
-prototype.clone = function() {
+prototype$36.clone = function() {
   return new Bounds(this);
 };
 
-prototype.clear = function() {
+prototype$36.clear = function() {
   this.x1 = +Number.MAX_VALUE;
   this.y1 = +Number.MAX_VALUE;
   this.x2 = -Number.MAX_VALUE;
@@ -1332,7 +6104,7 @@ prototype.clear = function() {
   return this;
 };
 
-prototype.empty = function() {
+prototype$36.empty = function() {
   return (
     this.x1 === +Number.MAX_VALUE &&
     this.y1 === +Number.MAX_VALUE &&
@@ -1341,7 +6113,7 @@ prototype.empty = function() {
   );
 };
 
-prototype.set = function(x1, y1, x2, y2) {
+prototype$36.set = function(x1, y1, x2, y2) {
   if (x2 < x1) {
     this.x2 = x1;
     this.x1 = x2;
@@ -1359,7 +6131,7 @@ prototype.set = function(x1, y1, x2, y2) {
   return this;
 };
 
-prototype.add = function(x, y) {
+prototype$36.add = function(x, y) {
   if (x < this.x1) this.x1 = x;
   if (y < this.y1) this.y1 = y;
   if (x > this.x2) this.x2 = x;
@@ -1367,7 +6139,7 @@ prototype.add = function(x, y) {
   return this;
 };
 
-prototype.expand = function(d) {
+prototype$36.expand = function(d) {
   this.x1 -= d;
   this.y1 -= d;
   this.x2 += d;
@@ -1375,7 +6147,7 @@ prototype.expand = function(d) {
   return this;
 };
 
-prototype.round = function() {
+prototype$36.round = function() {
   this.x1 = Math.floor(this.x1);
   this.y1 = Math.floor(this.y1);
   this.x2 = Math.ceil(this.x2);
@@ -1383,7 +6155,7 @@ prototype.round = function() {
   return this;
 };
 
-prototype.translate = function(dx, dy) {
+prototype$36.translate = function(dx, dy) {
   this.x1 += dx;
   this.x2 += dx;
   this.y1 += dy;
@@ -1391,7 +6163,7 @@ prototype.translate = function(dx, dy) {
   return this;
 };
 
-prototype.rotate = function(angle, x, y) {
+prototype$36.rotate = function(angle, x, y) {
   var cos = Math.cos(angle),
       sin = Math.sin(angle),
       cx = x - x*cos + y*sin,
@@ -1406,7 +6178,7 @@ prototype.rotate = function(angle, x, y) {
     .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
 };
 
-prototype.union = function(b) {
+prototype$36.union = function(b) {
   if (b.x1 < this.x1) this.x1 = b.x1;
   if (b.y1 < this.y1) this.y1 = b.y1;
   if (b.x2 > this.x2) this.x2 = b.x2;
@@ -1414,7 +6186,7 @@ prototype.union = function(b) {
   return this;
 };
 
-prototype.intersect = function(b) {
+prototype$36.intersect = function(b) {
   if (b.x1 > this.x1) this.x1 = b.x1;
   if (b.y1 > this.y1) this.y1 = b.y1;
   if (b.x2 < this.x2) this.x2 = b.x2;
@@ -1422,7 +6194,7 @@ prototype.intersect = function(b) {
   return this;
 };
 
-prototype.encloses = function(b) {
+prototype$36.encloses = function(b) {
   return b && (
     this.x1 <= b.x1 &&
     this.x2 >= b.x2 &&
@@ -1431,7 +6203,7 @@ prototype.encloses = function(b) {
   );
 };
 
-prototype.alignsWith = function(b) {
+prototype$36.alignsWith = function(b) {
   return b && (
     this.x1 == b.x1 ||
     this.x2 == b.x2 ||
@@ -1440,7 +6212,7 @@ prototype.alignsWith = function(b) {
   );
 };
 
-prototype.intersects = function(b) {
+prototype$36.intersects = function(b) {
   return b && !(
     this.x2 < b.x1 ||
     this.x1 > b.x2 ||
@@ -1449,7 +6221,7 @@ prototype.intersects = function(b) {
   );
 };
 
-prototype.contains = function(x, y) {
+prototype$36.contains = function(x, y) {
   return !(
     x < this.x1 ||
     x > this.x2 ||
@@ -1458,11 +6230,11 @@ prototype.contains = function(x, y) {
   );
 };
 
-prototype.width = function() {
+prototype$36.width = function() {
   return this.x2 - this.x1;
 };
 
-prototype.height = function() {
+prototype$36.height = function() {
   return this.y2 - this.y1;
 };
 
@@ -1569,9 +6341,9 @@ function ResourceLoader(customLoader) {
   this._loader = customLoader || loader();
 }
 
-var prototype$1 = ResourceLoader.prototype;
+var prototype$37 = ResourceLoader.prototype;
 
-prototype$1.pending = function() {
+prototype$37.pending = function() {
   return this._pending;
 };
 
@@ -1583,7 +6355,7 @@ function decrement(loader$$1) {
   loader$$1._pending -= 1;
 }
 
-prototype$1.sanitizeURL = function(uri) {
+prototype$37.sanitizeURL = function(uri) {
   var loader$$1 = this;
   increment(loader$$1);
 
@@ -1598,7 +6370,7 @@ prototype$1.sanitizeURL = function(uri) {
     });
 };
 
-prototype$1.loadImage = function(uri) {
+prototype$37.loadImage = function(uri) {
   var loader$$1 = this;
   increment(loader$$1);
 
@@ -1629,7 +6401,7 @@ prototype$1.loadImage = function(uri) {
     });
 };
 
-prototype$1.ready = function() {
+prototype$37.ready = function() {
   var loader$$1 = this;
   return new Promise(function(accept) {
     function poll(value) {
@@ -1879,21 +6651,21 @@ function bezier(params) {
   ]);
 }
 
-var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
+var temp$1 = ['l', 0, 0, 0, 0, 0, 0, 0];
 
 function scale(current, s) {
-  var c = (temp[0] = current[0]);
+  var c = (temp$1[0] = current[0]);
   if (c === 'a' || c === 'A') {
-    temp[1] = s * current[1];
-    temp[2] = s * current[2];
-    temp[6] = s * current[6];
-    temp[7] = s * current[7];
+    temp$1[1] = s * current[1];
+    temp$1[2] = s * current[2];
+    temp$1[6] = s * current[6];
+    temp$1[7] = s * current[7];
   } else {
     for (var i=1, n=current.length; i<n; ++i) {
-      temp[i] = s * current[i];
+      temp$1[i] = s * current[i];
     }
   }
-  return temp;
+  return temp$1;
 }
 
 var pathRender = function(context, path$$1, l, t, s) {
@@ -2608,36 +7380,36 @@ function context(_$$1) {
 
 function noop() {}
 
-function add(x, y) { bounds.add(x, y); }
+function add$1(x, y) { bounds.add(x, y); }
 
 context.beginPath = noop;
 
 context.closePath = noop;
 
-context.moveTo = add;
+context.moveTo = add$1;
 
-context.lineTo = add;
+context.lineTo = add$1;
 
 context.rect = function(x, y, w, h) {
-  add(x, y);
-  add(x + w, y + h);
+  add$1(x, y);
+  add$1(x + w, y + h);
 };
 
 context.quadraticCurveTo = function(x1, y1, x2, y2) {
-  add(x1, y1);
-  add(x2, y2);
+  add$1(x1, y1);
+  add$1(x2, y2);
 };
 
 context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
-  add(x1, y1);
-  add(x2, y2);
-  add(x3, y3);
+  add$1(x1, y1);
+  add$1(x2, y2);
+  add$1(x3, y3);
 };
 
 context.arc = function(cx, cy, r, sa, ea, ccw) {
   if (Math.abs(ea - sa) > circleThreshold) {
-    add(cx - r, cy - r);
-    add(cx + r, cy + r);
+    add$1(cx - r, cy - r);
+    add$1(cx + r, cy + r);
     return;
   }
 
@@ -2677,8 +7449,8 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     }
   }
 
-  add(cx + xmin, cy + ymin);
-  add(cx + xmax, cy + ymax);
+  add$1(cx + xmin, cy + ymin);
+  add$1(cx + xmax, cy + ymax);
 };
 
 var gradient = function(context, gradient, bounds) {
@@ -2717,7 +7489,7 @@ var fill = function(context, item, opacity) {
   }
 };
 
-var Empty = [];
+var Empty$1 = [];
 
 var stroke = function(context, item, opacity) {
   var lw = (lw = item.strokeWidth) != null ? lw : 1;
@@ -2735,7 +7507,7 @@ var stroke = function(context, item, opacity) {
     context.miterLimit = item.strokeMiterLimit || 10;
 
     if (context.setLineDash) {
-      context.setLineDash(item.strokeDash || Empty);
+      context.setLineDash(item.strokeDash || Empty$1);
       context.lineDashOffset = item.strokeDashOffset || 0;
     }
     return true;
@@ -3392,10 +8164,10 @@ function estimate(text) {
 // measure text width if canvas is available
 function measureWidth(item) {
   context$1.font = font(item);
-  return measure(textValue(item));
+  return measure$1(textValue(item));
 }
 
-function measure(text) {
+function measure$1(text) {
   return context$1.measureText(text).width;
 }
 
@@ -3424,7 +8196,7 @@ function truncate$1(item) {
 
   if (context$1) {
     context$1.font = font(item);
-    width = measure;
+    width = measure$1;
   } else {
     fontHeight = height(item);
     width = estimate;
@@ -3616,7 +8388,7 @@ var text = {
 
 var trail$1 = markMultiItemPath('trail', trail);
 
-var Marks = {
+var marks = {
   arc:     arc$1,
   area:    area$2,
   group:   group,
@@ -3631,8 +8403,8 @@ var Marks = {
   trail:   trail$1
 };
 
-var boundItem = function(item, func, opt) {
-  var type = Marks[item.mark.marktype],
+var boundItem$1 = function(item, func, opt) {
+  var type = marks[item.mark.marktype],
       bound = func || type.bound;
   if (type.nested) item = item.mark;
 
@@ -3642,7 +8414,7 @@ var boundItem = function(item, func, opt) {
 var DUMMY = {mark: null};
 
 var boundMark = function(mark, bounds, opt) {
-  var type  = Marks[mark.marktype],
+  var type  = marks[mark.marktype],
       bound = type.bound,
       items = mark.items,
       hasItems = items && items.length,
@@ -3656,7 +8428,7 @@ var boundMark = function(mark, bounds, opt) {
       DUMMY.mark = mark;
       item = DUMMY;
     }
-    b = boundItem(item, bound, opt);
+    b = boundItem$1(item, bound, opt);
     bounds = bounds && bounds.union(b) || b;
     return bounds;
   }
@@ -3667,7 +8439,7 @@ var boundMark = function(mark, bounds, opt) {
 
   if (hasItems) {
     for (i=0, n=items.length; i<n; ++i) {
-      bounds.union(boundItem(items[i], bound, opt));
+      bounds.union(boundItem$1(items[i], bound, opt));
     }
   }
 
@@ -3731,13 +8503,13 @@ function Scenegraph(scene) {
   }
 }
 
-var prototype$2 = Scenegraph.prototype;
+var prototype$38 = Scenegraph.prototype;
 
-prototype$2.toJSON = function(indent) {
+prototype$38.toJSON = function(indent) {
   return sceneToJSON(this.root, indent || 0);
 };
 
-prototype$2.mark = function(markdef, group, index) {
+prototype$38.mark = function(markdef, group, index) {
   group = group || this.root.items[0];
   var mark = createMark(markdef, group);
   group.items[index] = mark;
@@ -3765,24 +8537,24 @@ function Handler(customLoader) {
   this._loader = customLoader || loader();
 }
 
-var prototype$3 = Handler.prototype;
+var prototype$39 = Handler.prototype;
 
-prototype$3.initialize = function(el, origin, obj) {
+prototype$39.initialize = function(el, origin, obj) {
   this._el = el;
   this._obj = obj || null;
   return this.origin(origin);
 };
 
-prototype$3.element = function() {
+prototype$39.element = function() {
   return this._el;
 };
 
-prototype$3.origin = function(origin) {
+prototype$39.origin = function(origin) {
   this._origin = origin || [0, 0];
   return this;
 };
 
-prototype$3.scene = function(scene) {
+prototype$39.scene = function(scene) {
   if (!arguments.length) return this._scene;
   this._scene = scene;
   return this;
@@ -3790,25 +8562,25 @@ prototype$3.scene = function(scene) {
 
 // add an event handler
 // subclasses should override
-prototype$3.on = function(/*type, handler*/) {};
+prototype$39.on = function(/*type, handler*/) {};
 
 // remove an event handler
 // subclasses should override
-prototype$3.off = function(/*type, handler*/) {};
+prototype$39.off = function(/*type, handler*/) {};
 
 // return an array with all registered event handlers
-prototype$3.handlers = function() {
+prototype$39.handlers = function() {
   var h = this._handlers, a = [], k;
   for (k in h) { a.push.apply(a, h[k]); }
   return a;
 };
 
-prototype$3.eventName = function(name) {
+prototype$39.eventName = function(name) {
   var i = name.indexOf('.');
   return i < 0 ? name : name.slice(0,i);
 };
 
-prototype$3.handleHref = function(event, item, href) {
+prototype$39.handleHref = function(event, item, href) {
   this._loader
     .sanitize(href, {context:'href'})
     .then(function(opt) {
@@ -3820,7 +8592,7 @@ prototype$3.handleHref = function(event, item, href) {
     .catch(function() { /* do nothing */ });
 };
 
-prototype$3.handleTooltip = function(event, item, tooltipText) {
+prototype$39.handleTooltip = function(event, item, tooltipText) {
   this._el.setAttribute('title', tooltipText || '');
 };
 
@@ -3837,7 +8609,7 @@ function Renderer(loader) {
   this._loader = new ResourceLoader(loader);
 }
 
-var prototype$4 = Renderer.prototype;
+var prototype$40 = Renderer.prototype;
 
 /**
  * Initialize a new Renderer instance.
@@ -3848,7 +8620,7 @@ var prototype$4 = Renderer.prototype;
  *   The coordinate system will be translated to this point.
  * @return {Renderer} - This renderer instance;
  */
-prototype$4.initialize = function(el, width, height, origin) {
+prototype$40.initialize = function(el, width, height, origin) {
   this._el = el;
   return this.resize(width, height, origin);
 };
@@ -3857,7 +8629,7 @@ prototype$4.initialize = function(el, width, height, origin) {
  * Returns the parent container element for a visualization.
  * @return {DOMElement} - The containing DOM element.
  */
-prototype$4.element = function() {
+prototype$40.element = function() {
   return this._el;
 };
 
@@ -3866,14 +8638,14 @@ prototype$4.element = function() {
  * Subclasses must override if the first child is not the scene element.
  * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
  */
-prototype$4.scene = function() {
+prototype$40.scene = function() {
   return this._el && this._el.firstChild;
 };
 
 /**
  * Get / set the background color.
  */
-prototype$4.background = function(bgcolor) {
+prototype$40.background = function(bgcolor) {
   if (arguments.length === 0) return this._bgcolor;
   this._bgcolor = bgcolor;
   return this;
@@ -3887,7 +8659,7 @@ prototype$4.background = function(bgcolor) {
  *   The coordinate system will be translated to this point.
  * @return {Renderer} - This renderer instance;
  */
-prototype$4.resize = function(width, height, origin) {
+prototype$40.resize = function(width, height, origin) {
   this._width = width;
   this._height = height;
   this._origin = origin || [0, 0];
@@ -3900,7 +8672,7 @@ prototype$4.resize = function(width, height, origin) {
  * incremental should implement this method.
  * @param {Item} item - The dirty item whose bounds should be redrawn.
  */
-prototype$4.dirty = function(/*item*/) {
+prototype$40.dirty = function(/*item*/) {
 };
 
 /**
@@ -3913,7 +8685,7 @@ prototype$4.dirty = function(/*item*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Renderer} - This renderer instance.
  */
-prototype$4.render = function(scene) {
+prototype$40.render = function(scene) {
   var r = this;
 
   // bind arguments into a render call, and cache it
@@ -3935,7 +8707,7 @@ prototype$4.render = function(scene) {
  * method to actually perform rendering.
  * @param {object} scene - The root mark of a scenegraph to render.
  */
-prototype$4._render = function(/*scene*/) {
+prototype$40._render = function(/*scene*/) {
   // subclasses to override
 };
 
@@ -3947,7 +8719,7 @@ prototype$4._render = function(/*scene*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Promise} - A Promise that resolves when rendering is complete.
  */
-prototype$4.renderAsync = function(scene) {
+prototype$40.renderAsync = function(scene) {
   var r = this.render(scene);
   return this._ready
     ? this._ready.then(function() { return r; })
@@ -3962,7 +8734,7 @@ prototype$4.renderAsync = function(scene) {
  * @param {string} uri - The URI for the requested resource.
  * @return {Promise} - A Promise that resolves to the requested resource.
  */
-prototype$4._load = function(method, uri) {
+prototype$40._load = function(method, uri) {
   var r = this,
       p = r._loader[method](uri);
 
@@ -3986,7 +8758,7 @@ prototype$4._load = function(method, uri) {
  * @param {string} uri - The URI string to sanitize.
  * @return {Promise} - A Promise that resolves to the sanitized URL.
  */
-prototype$4.sanitizeURL = function(uri) {
+prototype$40.sanitizeURL = function(uri) {
   return this._load('sanitizeURL', uri);
 };
 
@@ -3997,7 +8769,7 @@ prototype$4.sanitizeURL = function(uri) {
  * @param {string} uri - The URI string of the image.
  * @return {Promise} - A Promise that resolves to the loaded Image.
  */
-prototype$4.loadImage = function(uri) {
+prototype$40.loadImage = function(uri) {
   return this._load('loadImage', uri);
 };
 
@@ -4016,17 +8788,17 @@ function CanvasHandler(loader) {
   this._first = true;
 }
 
-var prototype$5 = inherits(CanvasHandler, Handler);
+var prototype$41 = inherits(CanvasHandler, Handler);
 
-prototype$5.initialize = function(el, origin, obj) {
+prototype$41.initialize = function(el, origin, obj) {
   // add event listeners
   var canvas = this._canvas = el && domFind(el, 'canvas');
   if (canvas) {
     var that = this;
     this.events.forEach(function(type) {
       canvas.addEventListener(type, function(evt) {
-        if (prototype$5[type]) {
-          prototype$5[type].call(that, evt);
+        if (prototype$41[type]) {
+          prototype$41[type].call(that, evt);
         } else {
           that.fire(type, evt);
         }
@@ -4037,17 +8809,17 @@ prototype$5.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-prototype$5.canvas = function() {
+prototype$41.canvas = function() {
   return this._canvas;
 };
 
 // retrieve the current canvas context
-prototype$5.context = function() {
+prototype$41.context = function() {
   return this._canvas.getContext('2d');
 };
 
 // supported events
-prototype$5.events = [
+prototype$41.events = [
   'keydown',
   'keypress',
   'keyup',
@@ -4069,7 +8841,7 @@ prototype$5.events = [
 ];
 
 // to keep old versions of firefox happy
-prototype$5.DOMMouseScroll = function(evt) {
+prototype$41.DOMMouseScroll = function(evt) {
   this.fire('mousewheel', evt);
 };
 
@@ -4102,25 +8874,25 @@ function inactive(type) {
   };
 }
 
-prototype$5.mousemove = move('mousemove', 'mouseover', 'mouseout');
-prototype$5.dragover  = move('dragover', 'dragenter', 'dragleave');
+prototype$41.mousemove = move('mousemove', 'mouseover', 'mouseout');
+prototype$41.dragover  = move('dragover', 'dragenter', 'dragleave');
 
-prototype$5.mouseout  = inactive('mouseout');
-prototype$5.dragleave = inactive('dragleave');
+prototype$41.mouseout  = inactive('mouseout');
+prototype$41.dragleave = inactive('dragleave');
 
-prototype$5.mousedown = function(evt) {
+prototype$41.mousedown = function(evt) {
   this._down = this._active;
   this.fire('mousedown', evt);
 };
 
-prototype$5.click = function(evt) {
+prototype$41.click = function(evt) {
   if (this._down === this._active) {
     this.fire('click', evt);
     this._down = null;
   }
 };
 
-prototype$5.touchstart = function(evt) {
+prototype$41.touchstart = function(evt) {
   this._touch = this.pickEvent(evt.changedTouches[0]);
 
   if (this._first) {
@@ -4131,17 +8903,17 @@ prototype$5.touchstart = function(evt) {
   this.fire('touchstart', evt, true);
 };
 
-prototype$5.touchmove = function(evt) {
+prototype$41.touchmove = function(evt) {
   this.fire('touchmove', evt, true);
 };
 
-prototype$5.touchend = function(evt) {
+prototype$41.touchend = function(evt) {
   this.fire('touchend', evt, true);
   this._touch = null;
 };
 
 // fire an event
-prototype$5.fire = function(type, evt, touch) {
+prototype$41.fire = function(type, evt, touch) {
   var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
 
@@ -4162,7 +8934,7 @@ prototype$5.fire = function(type, evt, touch) {
 };
 
 // add an event handler
-prototype$5.on = function(type, handler) {
+prototype$41.on = function(type, handler) {
   var name = this.eventName(type),
       h = this._handlers;
   (h[name] || (h[name] = [])).push({
@@ -4173,7 +8945,7 @@ prototype$5.on = function(type, handler) {
 };
 
 // remove an event handler
-prototype$5.off = function(type, handler) {
+prototype$41.off = function(type, handler) {
   var name = this.eventName(type),
       h = this._handlers[name], i;
   if (!h) return;
@@ -4184,7 +8956,7 @@ prototype$5.off = function(type, handler) {
   return this;
 };
 
-prototype$5.pickEvent = function(evt) {
+prototype$41.pickEvent = function(evt) {
   var p = point(evt, this._canvas),
       o = this._origin;
   return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
@@ -4193,9 +8965,9 @@ prototype$5.pickEvent = function(evt) {
 // find the scenegraph item at the current mouse position
 // x, y -- the absolute x, y mouse coordinates on the canvas element
 // gx, gy -- the relative coordinates within the current group
-prototype$5.pick = function(scene, x, y, gx, gy) {
+prototype$41.pick = function(scene, x, y, gx, gy) {
   var g = this.context(),
-      mark = Marks[scene.marktype];
+      mark = marks[scene.marktype];
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };
 
@@ -4242,11 +9014,11 @@ function CanvasRenderer(loader) {
   this._dirty = new Bounds();
 }
 
-var prototype$6 = inherits(CanvasRenderer, Renderer);
+var prototype$42 = inherits(CanvasRenderer, Renderer);
 var base = Renderer.prototype;
 var tempBounds$1 = new Bounds();
 
-prototype$6.initialize = function(el, width, height, origin) {
+prototype$42.initialize = function(el, width, height, origin) {
   this._canvas = Canvas$1(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
@@ -4256,22 +9028,22 @@ prototype$6.initialize = function(el, width, height, origin) {
   return base.initialize.call(this, el, width, height, origin);
 };
 
-prototype$6.resize = function(width, height, origin) {
+prototype$42.resize = function(width, height, origin) {
   base.resize.call(this, width, height, origin);
   resize(this._canvas, this._width, this._height, this._origin);
   this._redraw = true;
   return this;
 };
 
-prototype$6.canvas = function() {
+prototype$42.canvas = function() {
   return this._canvas;
 };
 
-prototype$6.context = function() {
+prototype$42.context = function() {
   return this._canvas ? this._canvas.getContext('2d') : null;
 };
 
-prototype$6.dirty = function(item) {
+prototype$42.dirty = function(item) {
   var b = translate$1(item.bounds, item.mark.group);
   this._dirty.union(b);
 };
@@ -4300,7 +9072,7 @@ function translate$1(bounds, group) {
   return b;
 }
 
-prototype$6._render = function(scene) {
+prototype$42._render = function(scene) {
   var g = this.context(),
       o = this._origin,
       w = this._width,
@@ -4328,14 +9100,14 @@ prototype$6._render = function(scene) {
   return this;
 };
 
-prototype$6.draw = function(ctx, scene, bounds) {
-  var mark = Marks[scene.marktype];
+prototype$42.draw = function(ctx, scene, bounds) {
+  var mark = marks[scene.marktype];
   if (scene.clip) clip$1(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
   if (scene.clip) ctx.restore();
 };
 
-prototype$6.clear = function(x, y, w, h) {
+prototype$42.clear = function(x, y, w, h) {
   var g = this.context();
   g.clearRect(x, y, w, h);
   if (this._bgcolor != null) {
@@ -4357,9 +9129,9 @@ function SVGHandler(loader) {
   });
 }
 
-var prototype$7 = inherits(SVGHandler, Handler);
+var prototype$43 = inherits(SVGHandler, Handler);
 
-prototype$7.initialize = function(el, origin, obj) {
+prototype$43.initialize = function(el, origin, obj) {
   var svg = this._svg;
   if (svg) {
     svg.removeEventListener('click', this._hrefHandler);
@@ -4375,7 +9147,7 @@ prototype$7.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-prototype$7.svg = function() {
+prototype$43.svg = function() {
   return this._svg;
 };
 
@@ -4391,7 +9163,7 @@ function listener(context, handler) {
 }
 
 // add an event handler
-prototype$7.on = function(type, handler) {
+prototype$43.on = function(type, handler) {
   var name = this.eventName(type),
       h = this._handlers,
       x = {
@@ -4410,7 +9182,7 @@ prototype$7.on = function(type, handler) {
 };
 
 // remove an event handler
-prototype$7.off = function(type, handler) {
+prototype$43.off = function(type, handler) {
   var name = this.eventName(type),
       svg = this._svg,
       h = this._handlers[name], i;
@@ -4486,10 +9258,10 @@ function SVGRenderer(loader) {
   this._defs = null;
 }
 
-var prototype$8 = inherits(SVGRenderer, Renderer);
+var prototype$44 = inherits(SVGRenderer, Renderer);
 var base$1 = Renderer.prototype;
 
-prototype$8.initialize = function(el, width, height, padding) {
+prototype$44.initialize = function(el, width, height, padding) {
   if (el) {
     this._svg = domChild(el, 0, 'svg', ns);
     this._svg.setAttribute('class', 'marks');
@@ -4511,14 +9283,14 @@ prototype$8.initialize = function(el, width, height, padding) {
   return base$1.initialize.call(this, el, width, height, padding);
 };
 
-prototype$8.background = function(bgcolor) {
+prototype$44.background = function(bgcolor) {
   if (arguments.length && this._svg) {
     this._svg.style.setProperty('background-color', bgcolor);
   }
   return base$1.background.apply(this, arguments);
 };
 
-prototype$8.resize = function(width, height, origin) {
+prototype$44.resize = function(width, height, origin) {
   base$1.resize.call(this, width, height, origin);
 
   if (this._svg) {
@@ -4533,7 +9305,7 @@ prototype$8.resize = function(width, height, origin) {
   return this;
 };
 
-prototype$8.svg = function() {
+prototype$44.svg = function() {
   if (!this._svg) return null;
 
   var attr = {
@@ -4552,7 +9324,7 @@ prototype$8.svg = function() {
 
 // -- Render entry point --
 
-prototype$8._render = function(scene) {
+prototype$44._render = function(scene) {
   // perform spot updates and re-render markup
   if (this._dirtyCheck()) {
     if (this._dirtyAll) this._resetDefs();
@@ -4570,7 +9342,7 @@ prototype$8._render = function(scene) {
 
 // -- Manage SVG definitions ('defs') block --
 
-prototype$8.updateDefs = function() {
+prototype$44.updateDefs = function() {
   var svg = this._svg,
       defs = this._defs,
       el = defs.el,
@@ -4627,7 +9399,7 @@ function updateClipping(el, clip$$1, index) {
   rect.setAttribute('height', clip$$1.height);
 }
 
-prototype$8._resetDefs = function() {
+prototype$44._resetDefs = function() {
   var def = this._defs;
   def.gradient = {};
   def.clipping = {};
@@ -4636,20 +9408,20 @@ prototype$8._resetDefs = function() {
 
 // -- Manage rendering of items marked as dirty --
 
-prototype$8.dirty = function(item) {
+prototype$44.dirty = function(item) {
   if (item.dirty !== this._dirtyID) {
     item.dirty = this._dirtyID;
     this._dirty.push(item);
   }
 };
 
-prototype$8.isDirty = function(item) {
+prototype$44.isDirty = function(item) {
   return this._dirtyAll
     || !item._svg
     || item.dirty === this._dirtyID;
 };
 
-prototype$8._dirtyCheck = function() {
+prototype$44._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
   if (!items.length) return true;
@@ -4664,7 +9436,7 @@ prototype$8._dirtyCheck = function() {
     if (mark.marktype !== type) {
       // memoize mark instance lookup
       type = mark.marktype;
-      mdef = Marks[type];
+      mdef = marks[type];
     }
 
     if (mark.zdirty && mark.dirty !== id$$1) {
@@ -4716,11 +9488,11 @@ function dirtyParents(item, id$$1) {
 // -- Construct & maintain scenegraph to SVG mapping ---
 
 // Draw a mark container.
-prototype$8.draw = function(el, scene, prev) {
+prototype$44.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
 
   var renderer = this,
-      mdef = Marks[scene.marktype],
+      mdef = marks[scene.marktype],
       events = scene.interactive === false ? 'none' : null,
       isGroup = mdef.tag === 'g',
       sibling = null,
@@ -4846,7 +9618,7 @@ var mark_extras = {
   }
 };
 
-prototype$8._update = function(mdef, el, item) {
+prototype$44._update = function(mdef, el, item) {
   // set dom element and values cache
   // provides access to emit method
   element = el;
@@ -4888,7 +9660,7 @@ function emit(name, value, ns) {
   values[name] = value;
 }
 
-prototype$8.style = function(el, o) {
+prototype$44.style = function(el, o) {
   if (o == null) return;
   var i, n, prop, name, value;
 
@@ -4941,10 +9713,10 @@ function SVGStringRenderer(loader) {
   };
 }
 
-var prototype$9 = inherits(SVGStringRenderer, Renderer);
+var prototype$45 = inherits(SVGStringRenderer, Renderer);
 var base$2 = Renderer.prototype;
 
-prototype$9.resize = function(width, height, origin) {
+prototype$45.resize = function(width, height, origin) {
   base$2.resize.call(this, width, height, origin);
   var o = this._origin,
       t = this._text;
@@ -4968,18 +9740,18 @@ prototype$9.resize = function(width, height, origin) {
   return this;
 };
 
-prototype$9.svg = function() {
+prototype$45.svg = function() {
   var t = this._text;
   return t.head + t.defs + t.root + t.body + t.foot;
 };
 
-prototype$9._render = function(scene) {
+prototype$45._render = function(scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
   return this;
 };
 
-prototype$9.buildDefs = function() {
+prototype$45.buildDefs = function() {
   var all = this._defs,
       defs = '',
       i, id$$1, def, stops;
@@ -5030,13 +9802,13 @@ function emit$1(name, value, ns, prefixed) {
   object[prefixed || name] = value;
 }
 
-prototype$9.attributes = function(attr, item) {
+prototype$45.attributes = function(attr, item) {
   object = {};
   attr(emit$1, item, this);
   return object;
 };
 
-prototype$9.href = function(item) {
+prototype$45.href = function(item) {
   var that = this,
       href = item.href,
       attr;
@@ -5057,9 +9829,9 @@ prototype$9.href = function(item) {
   return null;
 };
 
-prototype$9.mark = function(scene) {
+prototype$45.mark = function(scene) {
   var renderer = this,
-      mdef = Marks[scene.marktype],
+      mdef = marks[scene.marktype],
       tag  = mdef.tag,
       defs = this._defs,
       str = '',
@@ -5108,7 +9880,7 @@ prototype$9.mark = function(scene) {
   return str + closeTag('g');
 };
 
-prototype$9.markGroup = function(scene) {
+prototype$45.markGroup = function(scene) {
   var renderer = this,
       str = '';
 
@@ -5235,4850 +10007,1365 @@ function objectEqual(a, b) {
   return typeof a === typeof b;
 }
 
-function UniqueList(idFunc) {
-  var $$$1 = idFunc || identity,
-      list = [],
-      ids = {};
-
-  list.add = function(_$$1) {
-    var id$$1 = $$$1(_$$1);
-    if (!ids[id$$1]) {
-      ids[id$$1] = 1;
-      list.push(_$$1);
-    }
-    return list;
-  };
-
-  list.remove = function(_$$1) {
-    var id$$1 = $$$1(_$$1), idx;
-    if (ids[id$$1]) {
-      ids[id$$1] = 0;
-      if ((idx = list.indexOf(_$$1)) >= 0) {
-        list.splice(idx, 1);
-      }
-    }
-    return list;
-  };
-
-  return list;
-}
-
-var TUPLE_ID_KEY = Symbol('vega_id');
-var TUPLE_ID = 1;
-
 /**
- * Resets the internal tuple id counter to one.
- */
-
-
-/**
- * Checks if an input value is a registered tuple.
- * @param {*} t - The value to check.
- * @return {boolean} True if the input is a tuple, false otherwise.
- */
-function isTuple(t) {
-  return !!(t && tupleid(t));
-}
-
-/**
- * Returns the id of a tuple.
- * @param {object} t - The input tuple.
- * @return {*} the tuple id.
- */
-function tupleid(t) {
-  return t[TUPLE_ID_KEY];
-}
-
-/**
- * Sets the id of a tuple.
- * @param {object} t - The input tuple.
- * @param {*} id - The id value to set.
- * @return {object} the input tuple.
- */
-function setid(t, id) {
-  t[TUPLE_ID_KEY] = id;
-  return t;
-}
-
-/**
- * Ingest an object or value as a data tuple.
- * If the input value is an object, an id field will be added to it. For
- * efficiency, the input object is modified directly. A copy is not made.
- * If the input value is a literal, it will be wrapped in a new object
- * instance, with the value accessible as the 'data' property.
- * @param datum - The value to ingest.
- * @return {object} The ingested data tuple.
- */
-function ingest(datum) {
-  var t = (datum === Object(datum)) ? datum : {data: datum};
-  return tupleid(t) ? t : setid(t, TUPLE_ID++);
-}
-
-/**
- * Given a source tuple, return a derived copy.
- * @param {object} t - The source tuple.
- * @return {object} The derived tuple.
- */
-function derive(t) {
-  return rederive(t, ingest({}));
-}
-
-/**
- * Rederive a derived tuple by copying values from the source tuple.
- * @param {object} t - The source tuple.
- * @param {object} d - The derived tuple.
- * @return {object} The derived tuple.
- */
-function rederive(t, d) {
-  for (var k in t) d[k] = t[k];
-  return d;
-}
-
-/**
- * Replace an existing tuple with a new tuple.
- * @param {object} t - The existing data tuple.
- * @param {object} d - The new tuple that replaces the old.
- * @return {object} The new tuple.
- */
-function replace(t, d) {
-  return setid(d, tupleid(t));
-}
-
-function isChangeSet(v) {
-  return v && v.constructor === changeset;
-}
-
-function changeset() {
-  var add = [],  // insert tuples
-      rem = [],  // remove tuples
-      mod = [],  // modify tuples
-      remp = [], // remove by predicate
-      modp = [], // modify by predicate
-      reflow = false;
-
-  return {
-    constructor: changeset,
-    insert: function(t) {
-      var d = array(t), i = 0, n = d.length;
-      for (; i<n; ++i) add.push(d[i]);
-      return this;
-    },
-    remove: function(t) {
-      var a = isFunction(t) ? remp : rem,
-          d = array(t), i = 0, n = d.length;
-      for (; i<n; ++i) a.push(d[i]);
-      return this;
-    },
-    modify: function(t, field$$1, value) {
-      var m = {field: field$$1, value: constant(value)};
-      if (isFunction(t)) {
-        m.filter = t;
-        modp.push(m);
-      } else {
-        m.tuple = t;
-        mod.push(m);
-      }
-      return this;
-    },
-    encode: function(t, set) {
-      if (isFunction(t)) modp.push({filter: t, field: set});
-      else mod.push({tuple: t, field: set});
-      return this;
-    },
-    reflow: function() {
-      reflow = true;
-      return this;
-    },
-    pulse: function(pulse, tuples) {
-      var out, i, n, m, f, t, id$$1;
-
-      // add
-      for (i=0, n=add.length; i<n; ++i) {
-        pulse.add.push(ingest(add[i]));
-      }
-
-      // remove
-      for (out={}, i=0, n=rem.length; i<n; ++i) {
-        t = rem[i];
-        out[tupleid(t)] = t;
-      }
-      for (i=0, n=remp.length; i<n; ++i) {
-        f = remp[i];
-        tuples.forEach(function(t) {
-          if (f(t)) out[tupleid(t)] = t;
-        });
-      }
-      for (id$$1 in out) pulse.rem.push(out[id$$1]);
-
-      // modify
-      function modify(t, f, v) {
-        if (v) t[f] = v(t); else pulse.encode = f;
-        if (!reflow) out[tupleid(t)] = t;
-      }
-      for (out={}, i=0, n=mod.length; i<n; ++i) {
-        m = mod[i];
-        modify(m.tuple, m.field, m.value);
-        pulse.modifies(m.field);
-      }
-      for (i=0, n=modp.length; i<n; ++i) {
-        m = modp[i];
-        f = m.filter;
-        tuples.forEach(function(t) {
-          if (f(t)) modify(t, m.field, m.value);
-        });
-        pulse.modifies(m.field);
-      }
-
-      // reflow?
-      if (reflow) {
-        pulse.mod = rem.length || remp.length
-          ? tuples.filter(function(t) { return out.hasOwnProperty(tupleid(t)); })
-          : tuples.slice();
-      } else {
-        for (id$$1 in out) pulse.mod.push(out[id$$1]);
-      }
-
-      return pulse;
-    }
-  };
-}
-
-var CACHE = '_:mod:_';
-
-/**
- * Hash that tracks modifications to assigned values.
- * Callers *must* use the set method to update values.
- */
-function Parameters() {
-  Object.defineProperty(this, CACHE, {writable:true, value: {}});
-}
-
-var prototype$12 = Parameters.prototype;
-
-/**
- * Set a parameter value. If the parameter value changes, the parameter
- * will be recorded as modified.
- * @param {string} name - The parameter name.
- * @param {number} index - The index into an array-value parameter. Ignored if
- *   the argument is undefined, null or less than zero.
- * @param {*} value - The parameter value to set.
- * @param {boolean} [force=false] - If true, records the parameter as modified
- *   even if the value is unchanged.
- * @return {Parameters} - This parameter object.
- */
-prototype$12.set = function(name, index, value, force) {
-  var o = this,
-      v = o[name],
-      mod = o[CACHE];
-
-  if (index != null && index >= 0) {
-    if (v[index] !== value || force) {
-      v[index] = value;
-      mod[index + ':' + name] = -1;
-      mod[name] = -1;
-    }
-  } else if (v !== value || force) {
-    o[name] = value;
-    mod[name] = isArray(value) ? 1 + value.length : -1;
-  }
-
-  return o;
-};
-
-/**
- * Tests if one or more parameters has been modified. If invoked with no
- * arguments, returns true if any parameter value has changed. If the first
- * argument is array, returns trues if any parameter name in the array has
- * changed. Otherwise, tests if the given name and optional array index has
- * changed.
- * @param {string} name - The parameter name to test.
- * @param {number} [index=undefined] - The parameter array index to test.
- * @return {boolean} - Returns true if a queried parameter was modified.
- */
-prototype$12.modified = function(name, index) {
-  var mod = this[CACHE], k;
-  if (!arguments.length) {
-    for (k in mod) { if (mod[k]) return true; }
-    return false;
-  } else if (isArray(name)) {
-    for (k=0; k<name.length; ++k) {
-      if (mod[name[k]]) return true;
-    }
-    return false;
-  }
-  return (index != null && index >= 0)
-    ? (index + 1 < mod[name] || !!mod[index + ':' + name])
-    : !!mod[name];
-};
-
-/**
- * Clears the modification records. After calling this method,
- * all parameters are considered unmodified.
- */
-prototype$12.clear = function() {
-  this[CACHE] = {};
-  return this;
-};
-
-var OP_ID = 0;
-var PULSE = 'pulse';
-var NO_PARAMS = new Parameters();
-
-// Boolean Flags
-var SKIP     = 1;
-var MODIFIED = 2;
-
-/**
- * An Operator is a processing node in a dataflow graph.
- * Each operator stores a value and an optional value update function.
- * Operators can accept a hash of named parameters. Parameter values can
- * either be direct (JavaScript literals, arrays, objects) or indirect
- * (other operators whose values will be pulled dynamically). Operators
- * included as parameters will have this operator added as a dependency.
+ * Calculate bounding boxes for scenegraph items.
  * @constructor
- * @param {*} [init] - The initial value for this operator.
- * @param {function(object, Pulse)} [update] - An update function. Upon
- *   evaluation of this operator, the update function will be invoked and the
- *   return value will be used as the new value of this operator.
- * @param {object} [params] - The parameters for this operator.
- * @param {boolean} [react=true] - Flag indicating if this operator should
- *   listen for changes to upstream operators included as parameters.
- * @see parameters
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.mark - The scenegraph mark instance to bound.
  */
-function Operator(init, update, params, react) {
-  this.id = ++OP_ID;
-  this.value = init;
-  this.stamp = -1;
-  this.rank = -1;
-  this.qrank = -1;
-  this.flags = 0;
-
-  if (update) {
-    this._update = update;
-  }
-  if (params) this.parameters(params, react);
+function Bound(params) {
+  Transform.call(this, null, params);
 }
 
-var prototype$11 = Operator.prototype;
+var prototype$35 = inherits(Bound, Transform);
+var temp = new Bounds();
 
-/**
- * Returns a list of target operators dependent on this operator.
- * If this list does not exist, it is created and then returned.
- * @return {UniqueList}
- */
-prototype$11.targets = function() {
-  return this._targets || (this._targets = UniqueList(id));
+prototype$35.transform = function(_$$1, pulse) {
+  var view = pulse.dataflow,
+      mark = _$$1.mark,
+      type = mark.marktype,
+      entry = marks[type],
+      bound = entry.bound,
+      clip = mark.clip,
+      markBounds = mark.bounds, rebound;
+
+  if (entry.nested) {
+    // multi-item marks have a single bounds instance
+    if (mark.items.length) view.dirty(mark.items[0]);
+    markBounds = boundItem(mark, bound);
+    mark.items.forEach(function(item) {
+      item.bounds.clear().union(markBounds);
+    });
+  }
+
+  else if (type === 'group' || _$$1.modified()) {
+    // operator parameters modified -> re-bound all items
+    // updates group bounds in response to modified group content
+    pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
+    markBounds.clear();
+    mark.items.forEach(function(item) {
+      markBounds.union(boundItem(item, bound));
+    });
+  }
+
+  else {
+    // incrementally update bounds, re-bound mark as needed
+    rebound = pulse.changed(pulse.REM);
+
+    pulse.visit(pulse.ADD, function(item) {
+      markBounds.union(boundItem(item, bound));
+    });
+
+    pulse.visit(pulse.MOD, function(item) {
+      rebound = rebound || markBounds.alignsWith(item.bounds);
+      view.dirty(item);
+      markBounds.union(boundItem(item, bound));
+    });
+
+    if (rebound && !clip) {
+      markBounds.clear();
+      mark.items.forEach(function(item) { markBounds.union(item.bounds); });
+    }
+  }
+
+  if (clip) {
+    markBounds.intersect(temp.set(0, 0, mark.group.width, mark.group.height));
+  }
+
+  return pulse.modifies('bounds');
 };
 
+function boundItem(item, bound, opt) {
+  return bound(item.bounds.clear(), item, opt);
+}
+
+var COUNTER_NAME = ':vega_identifier:';
+
 /**
- * Sets the value of this operator.
- * @param {*} value - the value to set.
- * @return {Number} Returns 1 if the operator value has changed
- *   according to strict equality, returns 0 otherwise.
+ * Adds a unique identifier to all added tuples.
+ * This transform creates a new signal that serves as an id counter.
+ * As a result, the id counter is shared across all instances of this
+ * transform, generating unique ids across multiple data streams. In
+ * addition, this signal value can be included in a snapshot of the
+ * dataflow state, enabling correct resumption of id allocation.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {string} params.as - The field name for the generated identifier.
  */
-prototype$11.set = function(value) {
-  if (this.value !== value) {
-    this.value = value;
-    return 1;
-  } else {
-    return 0;
+function Identifier(params) {
+  Transform.call(this, 0, params);
+}
+
+Identifier.Definition = {
+  "type": "Identifier",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "as", "type": "string", "required": true }
+  ]
+};
+
+var prototype$46 = inherits(Identifier, Transform);
+
+prototype$46.transform = function(_$$1, pulse) {
+  var counter = getCounter(pulse.dataflow),
+      id$$1 = counter.value,
+      as = _$$1.as;
+
+  pulse.visit(pulse.ADD, function(t) {
+    if (!t[as]) t[as] = ++id$$1;
+  });
+
+  counter.set(this.value = id$$1);
+  return pulse;
+};
+
+function getCounter(view) {
+  var counter = view._signals[COUNTER_NAME];
+  if (!counter) {
+    view._signals[COUNTER_NAME] = (counter = view.add(0));
+  }
+  return counter;
+}
+
+/**
+ * Bind scenegraph items to a scenegraph mark instance.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.markdef - The mark definition for creating the mark.
+ *   This is an object of legal scenegraph mark properties which *must* include
+ *   the 'marktype' property.
+ * @param {Array<number>} params.scenepath - Scenegraph tree coordinates for the mark.
+ *   The path is an array of integers, each indicating the index into
+ *   a successive chain of items arrays.
+ */
+function Mark(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$47 = inherits(Mark, Transform);
+
+prototype$47.transform = function(_$$1, pulse) {
+  var mark = this.value;
+
+  // acquire mark on first invocation, bind context and group
+  if (!mark) {
+    mark = pulse.dataflow.scenegraph().mark(_$$1.markdef, lookup$1(_$$1), _$$1.index);
+    mark.group.context = _$$1.context;
+    if (!_$$1.context.group) _$$1.context.group = mark.group;
+    mark.source = this;
+    this.value = mark;
+  }
+
+  // initialize entering items
+  var Init = mark.marktype === 'group' ? GroupItem : Item;
+  pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
+
+  // bind items array to scenegraph mark
+  mark.items = pulse.source;
+  return pulse;
+};
+
+function lookup$1(_$$1) {
+  var g = _$$1.groups, p = _$$1.parent;
+  return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
+    : g && p ? g.lookup(p)
+    : null;
+}
+
+/**
+ * Analyze items for overlap, changing opacity to hide items with
+ * overlapping bounding boxes. This transform will preserve at least
+ * two items (e.g., first and last) even if overlap persists.
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.method - The overlap removal method to apply.
+ *   One of 'parity' (default, hide every other item until there is no
+ *   more overlap) or 'greedy' (sequentially scan and hide and items that
+ *   overlap with the last visible item).
+ * @constructor
+ */
+function Overlap(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$48 = inherits(Overlap, Transform);
+
+var methods = {
+  parity: function(items) {
+    return items.filter(function(item, i) {
+      return i % 2 ? (item.opacity = 0) : 1;
+    });
+  },
+  greedy: function(items) {
+    var a;
+    return items.filter(function(b, i) {
+      if (!i || !intersect(a.bounds, b.bounds)) {
+        a = b;
+        return 1;
+      } else {
+        return b.opacity = 0;
+      }
+    });
   }
 };
 
-function flag(bit) {
-  return function(state) {
-    var f = this.flags;
-    if (arguments.length === 0) return !!(f & bit);
-    this.flags = state ? (f | bit) : (f & ~bit);
-    return this;
+// compute bounding box intersection
+// allow 1 pixel of overlap tolerance
+function intersect(a, b) {
+  return !(
+    a.x2 - 1 < b.x1 ||
+    a.x1 + 1 > b.x2 ||
+    a.y2 - 1 < b.y1 ||
+    a.y1 + 1 > b.y2
+  );
+}
+
+function hasOverlap(items) {
+  for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
+    if (intersect(a, b = items[i].bounds)) return true;
+  }
+}
+
+function hasBounds(item) {
+  var b = item.bounds;
+  return b.width() > 1 && b.height() > 1;
+}
+
+prototype$48.transform = function(_$$1, pulse) {
+  var reduce = methods[_$$1.method] || methods.parity,
+      source = pulse.materialize(pulse.SOURCE).source,
+      items  = source;
+
+  if (!items) return;
+
+  if (_$$1.method === 'greedy') {
+    items = source = source.filter(hasBounds);
+  }
+
+  if (items.length >= 3 && hasOverlap(items)) {
+    pulse = pulse.reflow(_$$1.modified()).modifies('opacity');
+    do {
+      items = reduce(items);
+    } while (items.length >= 3 && hasOverlap(items));
+
+    if (items.length < 3 && !peek(source).opacity) {
+      if (items.length > 1) peek(items).opacity = 0;
+      peek(source).opacity = 1;
+    }
+  }
+
+  return pulse;
+};
+
+/**
+ * Queue modified scenegraph items for rendering.
+ * @constructor
+ */
+function Render(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$49 = inherits(Render, Transform);
+
+prototype$49.transform = function(_$$1, pulse) {
+  var view = pulse.dataflow;
+
+  pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
+
+  // set z-index dirty flag as needed
+  if (pulse.fields && pulse.fields['zindex']) {
+    var item = pulse.source && pulse.source[0];
+    if (item) item.mark.zdirty = true;
+  }
+};
+
+var AxisRole$1 = 'axis';
+var LegendRole$1 = 'legend';
+var RowHeader$1 = 'row-header';
+var RowFooter$1 = 'row-footer';
+var RowTitle  = 'row-title';
+var ColHeader$1 = 'column-header';
+var ColFooter$1 = 'column-footer';
+var ColTitle  = 'column-title';
+
+function extractGroups(group) {
+  var groups = group.items,
+      n = groups.length,
+      i = 0, mark, items;
+
+  var views = {
+    marks:      [],
+    rowheaders: [],
+    rowfooters: [],
+    colheaders: [],
+    colfooters: [],
+    rowtitle: null,
+    coltitle: null
+  };
+
+  // layout axes, gather legends, collect bounds
+  for (; i<n; ++i) {
+    mark = groups[i];
+    items = mark.items;
+    if (mark.marktype === 'group') {
+      switch (mark.role) {
+        case AxisRole$1:
+        case LegendRole$1:
+          break;
+        case RowHeader$1: addAll(items, views.rowheaders); break;
+        case RowFooter$1: addAll(items, views.rowfooters); break;
+        case ColHeader$1: addAll(items, views.colheaders); break;
+        case ColFooter$1: addAll(items, views.colfooters); break;
+        case RowTitle:  views.rowtitle = items[0]; break;
+        case ColTitle:  views.coltitle = items[0]; break;
+        default:        addAll(items, views.marks);
+      }
+    }
+  }
+
+  return views;
+}
+
+function addAll(items, array$$1) {
+  for (var i=0, n=items.length; i<n; ++i) {
+    array$$1.push(items[i]);
+  }
+}
+
+function bboxFlush(item) {
+  return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
+}
+
+function bboxFull(item) {
+  var b = item.bounds.clone();
+  return b.empty()
+    ? b.set(0, 0, 0, 0)
+    : b.translate(-(item.x||0), -(item.y||0));
+}
+
+function boundFlush(item, field$$1) {
+  return field$$1 === 'x1' ? (item.x || 0)
+    : field$$1 === 'y1' ? (item.y || 0)
+    : field$$1 === 'x2' ? (item.x || 0) + (item.width || 0)
+    : field$$1 === 'y2' ? (item.y || 0) + (item.height || 0)
+    : undefined;
+}
+
+function boundFull(item, field$$1) {
+  return item.bounds[field$$1];
+}
+
+function get(opt, key$$1, d) {
+  var v = isObject(opt) ? opt[key$$1] : opt;
+  return v != null ? v : (d !== undefined ? d : 0);
+}
+
+function offsetValue(v) {
+  return v < 0 ? Math.ceil(-v) : 0;
+}
+
+function gridLayout(view, group, opt) {
+  var views = extractGroups(group, opt),
+      groups = views.marks,
+      flush = opt.bounds === 'flush',
+      bbox = flush ? bboxFlush : bboxFull,
+      bounds = new Bounds(0, 0, 0, 0),
+      alignCol = get(opt.align, 'column'),
+      alignRow = get(opt.align, 'row'),
+      padCol = get(opt.padding, 'column'),
+      padRow = get(opt.padding, 'row'),
+      off = opt.offset,
+      ncols = group.columns || opt.columns || groups.length,
+      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
+      xOffset = [], xExtent = [], xInit = 0,
+      yOffset = [], yExtent = [], yInit = 0,
+      n = groups.length,
+      m, i, c, r, b, g, px, py, x, y, band, extent$$1, offset;
+
+  for (i=0; i<ncols; ++i) {
+    xExtent[i] = 0;
+  }
+  for (i=0; i<nrows; ++i) {
+    yExtent[i] = 0;
+  }
+
+  // determine offsets for each group
+  for (i=0; i<n; ++i) {
+    b = bbox(groups[i]);
+    c = i % ncols;
+    r = ~~(i / ncols);
+    px = c ? Math.ceil(bbox(groups[i-1]).x2): 0;
+    py = r ? Math.ceil(bbox(groups[i-ncols]).y2): 0;
+    xExtent[c] = Math.max(xExtent[c], px);
+    yExtent[r] = Math.max(yExtent[r], py);
+    xOffset.push(padCol + offsetValue(b.x1));
+    yOffset.push(padRow + offsetValue(b.y1));
+    view.dirty(groups[i]);
+  }
+
+  // set initial alignment offsets
+  for (i=0; i<n; ++i) {
+    if (i % ncols === 0) xOffset[i] = xInit;
+    if (i < ncols) yOffset[i] = yInit;
+  }
+
+  // enforce column alignment constraints
+  if (alignCol === 'each') {
+    for (c=1; c<ncols; ++c) {
+      for (offset=0, i=c; i<n; i += ncols) {
+        if (offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i=c; i<n; i += ncols) {
+        xOffset[i] = offset + xExtent[c];
+      }
+    }
+  } else if (alignCol === 'all') {
+    for (extent$$1=0, c=1; c<ncols; ++c) {
+      if (extent$$1 < xExtent[c]) extent$$1 = xExtent[c];
+    }
+    for (offset=0, i=0; i<n; ++i) {
+      if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+    }
+    for (i=0; i<n; ++i) {
+      if (i % ncols) xOffset[i] = offset + extent$$1;
+    }
+  } else {
+    for (c=1; c<ncols; ++c) {
+      for (i=c; i<n; i += ncols) {
+        xOffset[i] += xExtent[c];
+      }
+    }
+  }
+
+  // enforce row alignment constraints
+  if (alignRow === 'each') {
+    for (r=1; r<nrows; ++r) {
+      for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i=r*ncols; i<m; ++i) {
+        yOffset[i] = offset + yExtent[r];
+      }
+    }
+  } else if (alignRow === 'all') {
+    for (extent$$1=0, r=1; r<nrows; ++r) {
+      if (extent$$1 < yExtent[r]) extent$$1 = yExtent[r];
+    }
+    for (offset=0, i=ncols; i<n; ++i) {
+      if (offset < yOffset[i]) offset = yOffset[i];
+    }
+    for (i=ncols; i<n; ++i) {
+      yOffset[i] = offset + extent$$1;
+    }
+  } else {
+    for (r=1; r<nrows; ++r) {
+      for (i=r*ncols, m=i+ncols; i<m; ++i) {
+        yOffset[i] += yExtent[r];
+      }
+    }
+  }
+
+  // perform horizontal grid layout
+  for (x=0, i=0; i<n; ++i) {
+    g = groups[i];
+    px = g.x || 0;
+    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
+    g.bounds.translate(x - px, 0);
+  }
+
+  // perform vertical grid layout
+  for (c=0; c<ncols; ++c) {
+    for (y=0, i=c; i<n; i += ncols) {
+      g = groups[i];
+      py = g.y || 0;
+      g.y = (y += yOffset[i]);
+      g.bounds.translate(0, y - py);
+    }
+  }
+
+  // update mark bounds, mark dirty
+  for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
+  for (i=0; i<n; ++i) {
+    g = groups[i];
+    view.dirty(g);
+    bounds.union(g.mark.bounds.union(g.bounds));
+  }
+
+  // -- layout grid headers and footers --
+
+  // aggregation functions for grid margin determination
+  function min$$1(a, b) { return Math.floor(Math.min(a, b)); }
+  function max$$1(a, b) { return Math.ceil(Math.max(a, b)); }
+
+  // bounding box calculation methods
+  bbox = flush ? boundFlush : boundFull;
+
+  // perform row header layout
+  band = get(opt.headerBand, 'row', null);
+  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min$$1, 0, bbox, 'x1', 0, ncols, 1, band);
+
+  // perform column header layout
+  band = get(opt.headerBand, 'column', null);
+  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min$$1, 1, bbox, 'y1', 0, 1, ncols, band);
+
+  // perform row footer layout
+  band = get(opt.footerBand, 'row', null);
+  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max$$1, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+
+  // perform column footer layout
+  band = get(opt.footerBand, 'column', null);
+  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max$$1, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+
+  // perform row title layout
+  if (views.rowtitle) {
+    offset = x - get(off, 'rowTitle');
+    band = get(opt.titleBand, 'row', 0.5);
+    layoutTitle$1(view, views.rowtitle, offset, 0, bounds, band);
+  }
+
+  // perform column title layout
+  if (views.coltitle) {
+    offset = y - get(off, 'columnTitle');
+    band = get(opt.titleBand, 'column', 0.5);
+    layoutTitle$1(view, views.coltitle, offset, 1, bounds, band);
+  }
+}
+
+function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
+  var n = groups.length,
+      init = 0,
+      edge = 0,
+      i, j, k, m, b, h, g, x, y;
+
+  // compute margin
+  for (i=start; i<n; i+=stride) {
+    if (groups[i]) init = agg(init, bound(groups[i], bf));
+  }
+
+  // if no headers, return margin calculation
+  if (!headers.length) return init;
+
+  // check if number of headers exceeds number of rows or columns
+  if (headers.length > limit) {
+    view.warn('Grid headers exceed limit: ' + limit);
+    headers = headers.slice(0, limit);
+  }
+
+  // apply offset
+  init += offset;
+
+  // clear mark bounds for all headers
+  for (j=0, m=headers.length; j<m; ++j) {
+    view.dirty(headers[j]);
+    headers[j].mark.bounds.clear();
+  }
+
+  // layout each header
+  for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
+    h = headers[j];
+    b = h.mark.bounds;
+
+    // search for nearest group to align to
+    // necessary if table has empty cells
+    for (k=i; (g = groups[k]) == null; k-=back);
+
+    // assign coordinates and update bounds
+    if (isX) {
+      x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
+      y = init;
+    } else {
+      x = init;
+      y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
+    }
+    b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+    h.x = x;
+    h.y = y;
+    view.dirty(h);
+
+    // update current edge of layout bounds
+    edge = agg(edge, b[bf]);
+  }
+
+  return edge;
+}
+
+function layoutTitle$1(view, g, offset, isX, bounds, band) {
+  if (!g) return;
+  view.dirty(g);
+
+  // compute title coordinates
+  var x = offset, y = offset;
+  isX
+    ? (x = Math.round(bounds.x1 + band * bounds.width()))
+    : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+  // assign coordinates and update bounds
+  g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+  g.mark.bounds.clear().union(g.bounds);
+  g.x = x;
+  g.y = y;
+
+  // queue title for redraw
+  view.dirty(g);
+}
+
+var Fit = 'fit';
+var Pad = 'pad';
+var None$2 = 'none';
+var Padding = 'padding';
+
+var Top = 'top';
+var Left = 'left';
+var Right = 'right';
+var Bottom = 'bottom';
+
+var AxisRole = 'axis';
+var TitleRole = 'title';
+var FrameRole = 'frame';
+var LegendRole = 'legend';
+var ScopeRole = 'scope';
+var RowHeader = 'row-header';
+var RowFooter = 'row-footer';
+var ColHeader = 'column-header';
+var ColFooter = 'column-footer';
+
+var AxisOffset = 0.5;
+var tempBounds$2 = new Bounds();
+
+/**
+ * Layout view elements such as axes and legends.
+ * Also performs size adjustments.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {object} params.mark - Scenegraph mark of groups to layout.
+ */
+function ViewLayout(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$50 = inherits(ViewLayout, Transform);
+
+prototype$50.transform = function(_$$1, pulse) {
+  // TODO incremental update, output?
+  var view = pulse.dataflow;
+  _$$1.mark.items.forEach(function(group) {
+    if (_$$1.layout) gridLayout(view, group, _$$1.layout);
+    layoutGroup(view, group, _$$1);
+  });
+  return pulse;
+};
+
+function layoutGroup(view, group, _$$1) {
+  var items = group.items,
+      width = Math.max(0, group.width || 0),
+      height = Math.max(0, group.height || 0),
+      viewBounds = new Bounds().set(0, 0, width, height),
+      axisBounds = viewBounds.clone(),
+      xBounds = viewBounds.clone(),
+      yBounds = viewBounds.clone(),
+      legends = [], title,
+      mark, flow, b, i, n;
+
+  // layout axes, gather legends, collect bounds
+  for (i=0, n=items.length; i<n; ++i) {
+    mark = items[i];
+    switch (mark.role) {
+      case AxisRole:
+        axisBounds.union(b = layoutAxis(view, mark, width, height));
+        (isYAxis(mark) ? xBounds : yBounds).union(b);
+        break;
+      case TitleRole:
+        title = mark; break;
+      case LegendRole:
+        legends.push(mark); break;
+      case FrameRole:
+      case ScopeRole:
+      case RowHeader:
+      case RowFooter:
+      case ColHeader:
+      case ColFooter:
+        xBounds.union(mark.bounds);
+        yBounds.union(mark.bounds);
+        break;
+      default:
+        viewBounds.union(mark.bounds);
+    }
+  }
+
+  // layout title, adjust bounds
+  if (title) {
+    axisBounds.union(b = layoutTitle(view, title, axisBounds));
+    (isYAxis(title) ? xBounds : yBounds).union(b);
+  }
+
+  // layout legends, adjust viewBounds
+  if (legends.length) {
+    flow = {left: 0, right: 0, top: 0, bottom: 0, margin: _$$1.legendMargin || 8};
+
+    for (i=0, n=legends.length; i<n; ++i) {
+      b = layoutLegend(view, legends[i], flow, xBounds, yBounds, width, height);
+      if (_$$1.autosize && _$$1.autosize.type === Fit) {
+        // for autosize fit, incorporate the orthogonal dimension only
+        // legends that overrun the chart area will then be clipped
+        // otherwise the chart area gets reduced to nothing!
+        var orient = legends[i].items[0].datum.orient;
+        if (orient === Left || orient === Right) {
+          viewBounds.add(b.x1, 0).add(b.x2, 0);
+        } else if (orient === Top || orient === Bottom) {
+          viewBounds.add(0, b.y1).add(0, b.y2);
+        }
+      } else {
+        viewBounds.union(b);
+      }
+    }
+  }
+
+  // perform size adjustment
+  viewBounds.union(xBounds).union(yBounds).union(axisBounds);
+  layoutSize(view, group, viewBounds, _$$1);
+}
+
+function set(item, property, value) {
+  if (item[property] === value) {
+    return 0;
+  } else {
+    item[property] = value;
+    return 1;
+  }
+}
+
+function isYAxis(mark) {
+  var orient = mark.items[0].datum.orient;
+  return orient === Left || orient === Right;
+}
+
+function axisIndices(datum) {
+  var index = +datum.grid;
+  return [
+    datum.ticks  ? index++ : -1, // ticks index
+    datum.labels ? index++ : -1, // labels index
+    index + (+datum.domain)      // title index
+  ];
+}
+
+function layoutAxis(view, axis, width, height) {
+  var item = axis.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      indices = axisIndices(datum),
+      range$$1 = item.range,
+      offset = item.offset,
+      position = item.position,
+      minExtent = item.minExtent,
+      maxExtent = item.maxExtent,
+      title = datum.title && item.items[indices[2]].items[0],
+      titlePadding = item.titlePadding,
+      bounds = item.bounds,
+      x = 0, y = 0, i, s;
+
+  tempBounds$2.clear().union(bounds);
+  bounds.clear();
+  if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
+  if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
+
+  // position axis group and title
+  switch (orient) {
+    case Top:
+      x = position || 0;
+      y = -offset;
+      s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.y = -s;
+          s += title.bounds.height();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
+      bounds.add(0, -s).add(range$$1, 0);
+      break;
+    case Left:
+      x = -offset;
+      y = position || 0;
+      s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.x = -s;
+          s += title.bounds.width();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
+      bounds.add(-s, 0).add(0, range$$1);
+      break;
+    case Right:
+      x = width + offset;
+      y = position || 0;
+      s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
+      if (title) {
+        if (title.auto) {
+          s += titlePadding;
+          title.x = s;
+          s += title.bounds.width();
+        } else {
+          bounds.union(title.bounds);
+        }
+      }
+      bounds.add(0, 0).add(s, range$$1);
+      break;
+    case Bottom:
+      x = position || 0;
+      y = height + offset;
+      s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
+      if (title) if (title.auto) {
+        s += titlePadding;
+        title.y = s;
+        s += title.bounds.height();
+      } else {
+        bounds.union(title.bounds);
+      }
+      bounds.add(0, 0).add(range$$1, s);
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  // update bounds
+  boundStroke(bounds.translate(x, y), item);
+
+  if (set(item, 'x', x + AxisOffset) | set(item, 'y', y + AxisOffset)) {
+    item.bounds = tempBounds$2;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
+  }
+
+  return item.mark.bounds.clear().union(bounds);
+}
+
+function layoutTitle(view, title, axisBounds) {
+  var item = title.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      offset = item.offset,
+      bounds = item.bounds,
+      x = 0, y = 0;
+
+  tempBounds$2.clear().union(bounds);
+
+  // position axis group and title
+  switch (orient) {
+    case Top:
+      x = item.x;
+      y = axisBounds.y1 - offset;
+      break;
+    case Left:
+      x = axisBounds.x1 - offset;
+      y = item.y;
+      break;
+    case Right:
+      x = axisBounds.x2 + offset;
+      y = item.y;
+      break;
+    case Bottom:
+      x = item.x;
+      y = axisBounds.y2 + offset;
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  bounds.translate(x - item.x, y - item.y);
+  if (set(item, 'x', x) | set(item, 'y', y)) {
+    item.bounds = tempBounds$2;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
+  }
+
+  // update bounds
+  return title.bounds.clear().union(bounds);
+}
+
+function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
+  var item = legend.items[0],
+      datum = item.datum,
+      orient = datum.orient,
+      offset = item.offset,
+      bounds = item.bounds,
+      x = 0,
+      y = 0,
+      w, h, axisBounds;
+
+  if (orient === Top || orient === Bottom) {
+    axisBounds = yBounds,
+    x = flow[orient];
+  } else if (orient === Left || orient === Right) {
+    axisBounds = xBounds;
+    y = flow[orient];
+  }
+
+  tempBounds$2.clear().union(bounds);
+  bounds.clear();
+
+  // aggregate bounds to determine size
+  // shave off 1 pixel because it looks better...
+  item.items.forEach(function(_$$1) { bounds.union(_$$1.bounds); });
+  w = Math.round(bounds.width()) + 2 * item.padding - 1;
+  h = Math.round(bounds.height()) + 2 * item.padding - 1;
+
+  switch (orient) {
+    case Left:
+      x -= w + offset - Math.floor(axisBounds.x1);
+      flow.left += h + flow.margin;
+      break;
+    case Right:
+      x += offset + Math.ceil(axisBounds.x2);
+      flow.right += h + flow.margin;
+      break;
+    case Top:
+      y -= h + offset - Math.floor(axisBounds.y1);
+      flow.top += w + flow.margin;
+      break;
+    case Bottom:
+      y += offset + Math.ceil(axisBounds.y2);
+      flow.bottom += w + flow.margin;
+      break;
+    case 'top-left':
+      x += offset;
+      y += offset;
+      break;
+    case 'top-right':
+      x += width - w - offset;
+      y += offset;
+      break;
+    case 'bottom-left':
+      x += offset;
+      y += height - h - offset;
+      break;
+    case 'bottom-right':
+      x += width - w - offset;
+      y += height - h - offset;
+      break;
+    default:
+      x = item.x;
+      y = item.y;
+  }
+
+  // update bounds
+  boundStroke(bounds.set(x, y, x + w, y + h), item);
+
+  // update legend layout
+  if (set(item, 'x', x) | set(item, 'width', w) |
+      set(item, 'y', y) | set(item, 'height', h)) {
+    item.bounds = tempBounds$2;
+    view.dirty(item);
+    item.bounds = bounds;
+    view.dirty(item);
+  }
+
+  return item.mark.bounds.clear().union(bounds);
+}
+
+function layoutSize(view, group, viewBounds, _$$1) {
+  var auto = _$$1.autosize || {},
+      type = auto.type,
+      viewWidth = view._width,
+      viewHeight = view._height,
+      padding = view.padding();
+
+  if (view._autosize < 1 || !type) return;
+
+  var width  = Math.max(0, group.width || 0),
+      left   = Math.max(0, Math.ceil(-viewBounds.x1)),
+      right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+      height = Math.max(0, group.height || 0),
+      top    = Math.max(0, Math.ceil(-viewBounds.y1)),
+      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+
+  if (auto.contains === Padding) {
+    viewWidth -= padding.left + padding.right;
+    viewHeight -= padding.top + padding.bottom;
+  }
+
+  if (type === None$2) {
+    left = 0;
+    top = 0;
+    width = viewWidth;
+    height = viewHeight;
+  }
+
+  else if (type === Fit) {
+    width = Math.max(0, viewWidth - left - right);
+    height = Math.max(0, viewHeight - top - bottom);
+  }
+
+  else if (type === Pad) {
+    viewWidth = width + left + right;
+    viewHeight = height + top + bottom;
+  }
+
+  view._resizeView(
+    viewWidth, viewHeight,
+    width, height,
+    [left, top],
+    auto.resize
+  );
+}
+
+
+
+var vtx = Object.freeze({
+	bound: Bound,
+	identifier: Identifier,
+	mark: Mark,
+	overlap: Overlap,
+	render: Render,
+	viewlayout: ViewLayout
+});
+
+var Log = 'log';
+var Pow = 'pow';
+var Sqrt = 'sqrt';
+var Band = 'band';
+var Point = 'point';
+var Linear = 'linear';
+var Ordinal = 'ordinal';
+var Quantile = 'quantile';
+var Quantize = 'quantize';
+var Threshold = 'threshold';
+var BinLinear = 'bin-linear';
+var BinOrdinal = 'bin-ordinal';
+var Sequential = 'sequential';
+
+/**
+ * Filter a set of candidate tick values, ensuring that only tick values
+ * that lie within the scale range are included.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {Array<*>} ticks - The candidate tick values.
+ * @return {Array<*>} - The filtered tick values.
+ */
+function validTicks(scale, ticks) {
+  var range$$1 = scale.range(),
+      lo = range$$1[0],
+      hi = peek(range$$1);
+  if (lo > hi) {
+    range$$1 = hi;
+    hi = lo;
+    lo = range$$1;
+  }
+
+  return ticks.filter(function(v) {
+    v = scale(v);
+    return !(v < lo || v > hi)
+  });
+}
+
+/**
+ * Generate tick values for the given scale and approximate tick count or
+ * interval value. If the scale has a 'ticks' method, it will be used to
+ * generate the ticks, with the count argument passed as a parameter. If the
+ * scale lacks a 'ticks' method, the full scale domain will be returned.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @return {Array<*>} - The generated tick values.
+ */
+function tickValues(scale, count) {
+  return scale.ticks ? scale.ticks(count) : scale.domain();
+}
+
+/**
+ * Generate a label format function for a scale. If the scale has a
+ * 'tickFormat' method, it will be used to generate the formatter, with the
+ * count and specifier arguments passed as parameters. If the scale lacks a
+ * 'tickFormat' method, the returned formatter performs simple string coercion.
+ * If the input scale is a logarithmic scale and the format specifier does not
+ * indicate a desired decimal precision, a special variable precision formatter
+ * that automatically trims trailing zeroes will be generated.
+ * @param {Scale} scale - The scale for which to generate the label formatter.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+ *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
+ * @return {function(*):string} - The generated label formatter.
+ */
+function tickFormat(scale, count, specifier) {
+  var format$$1 = scale.tickFormat
+    ? scale.tickFormat(count, specifier)
+    : String;
+
+  return (scale.type === Log)
+    ? filter$1(format$$1, variablePrecision(specifier))
+    : format$$1;
+}
+
+function filter$1(sourceFormat, targetFormat) {
+  return function(_$$1) {
+    return sourceFormat(_$$1) ? targetFormat(_$$1) : '';
   };
 }
 
-/**
- * Indicates that operator evaluation should be skipped on the next pulse.
- * This operator will still propagate incoming pulses, but its update function
- * will not be invoked. The skip flag is reset after every pulse, so calling
- * this method will affect processing of the next pulse only.
- */
-prototype$11.skip = flag(SKIP);
+function variablePrecision(specifier) {
+  var s = d3Format.formatSpecifier(specifier || ',');
+
+  if (s.precision == null) {
+    s.precision = 12;
+    switch (s.type) {
+      case '%': s.precision -= 2; break;
+      case 'e': s.precision -= 1; break;
+    }
+    return trimZeroes(
+      d3Format.format(s),          // number format
+      d3Format.format('.1f')(1)[1] // decimal point character
+    );
+  } else {
+    return d3Format.format(s);
+  }
+}
+
+function trimZeroes(format$$1, decimalChar) {
+  return function(x) {
+    var str = format$$1(x),
+        dec = str.indexOf(decimalChar),
+        idx, end;
+
+    if (dec < 0) return str;
+
+    idx = rightmostDigit(str, dec);
+    end = idx < str.length ? str.slice(idx) : '';
+    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+
+    return str.slice(0, idx) + end;
+  };
+}
+
+function rightmostDigit(str, dec) {
+  var i = str.lastIndexOf('e'), c;
+  if (i > 0) return i;
+  for (i=str.length; --i > dec;) {
+    c = str.charCodeAt(i);
+    if (c >= 48 && c <= 57) return i + 1; // is digit
+  }
+}
 
 /**
- * Indicates that this operator's value has been modified on its most recent
- * pulse. Normally modification is checked via strict equality; however, in
- * some cases it is more efficient to update the internal state of an object.
- * In those cases, the modified flag can be used to trigger propagation. Once
- * set, the modification flag persists across pulses until unset. The flag can
- * be used with the last timestamp to test if a modification is recent.
+ * Generates axis ticks for visualizing a spatial scale.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Scale} params.scale - The scale to generate ticks for.
+ * @param {*} [params.count=10] - The approximate number of ticks, or
+ *   desired tick interval, to use.
+ * @param {Array<*>} [params.values] - The exact tick values to use.
+ *   These must be legal domain values for the provided scale.
+ *   If provided, the count argument is ignored.
+ * @param {function(*):string} [params.formatSpecifier] - A format specifier
+ *   to use in conjunction with scale.tickFormat. Legal values are
+ *   any valid d3 4.0 format specifier.
+ * @param {function(*):string} [params.format] - The format function to use.
+ *   If provided, the formatSpecifier argument is ignored.
  */
-prototype$11.modified = flag(MODIFIED);
+function AxisTicks(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$51 = inherits(AxisTicks, Transform);
+
+prototype$51.transform = function(_$$1, pulse) {
+  if (this.value && !_$$1.modified()) {
+    return pulse.StopPropagation;
+  }
+
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      ticks = this.value,
+      scale = _$$1.scale,
+      count = _$$1.values ? _$$1.values.length : _$$1.count,
+      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
+      values = _$$1.values ? validTicks(scale, _$$1.values) : tickValues(scale, count);
+
+  if (ticks) out.rem = ticks;
+
+  ticks = values.map(function(value) {
+    return ingest({value: value, label: format$$1(value)})
+  });
+
+  if (_$$1.extra) {
+    // add an extra tick pegged to the initial domain value
+    // this is used to generate axes with 'binned' domains
+    ticks.push(ingest({
+      extra: {value: ticks[0].value},
+      label: ''
+    }));
+  }
+
+  out.source = ticks;
+  out.add = ticks;
+  this.value = ticks;
+
+  return out;
+};
 
 /**
- * Sets the parameters for this operator. The parameter values are analyzed for
- * operator instances. If found, this operator will be added as a dependency
- * of the parameterizing operator. Operator values are dynamically marshalled
- * from each operator parameter prior to evaluation. If a parameter value is
- * an array, the array will also be searched for Operator instances. However,
- * the search does not recurse into sub-arrays or object properties.
- * @param {object} params - A hash of operator parameters.
- * @param {boolean} [react=true] - A flag indicating if this operator should
- *   automatically update (react) when parameter values change. In other words,
- *   this flag determines if the operator registers itself as a listener on
- *   any upstream operators included in the parameters.
- * @return {Operator[]} - An array of upstream dependencies.
+ * Joins a set of data elements against a set of visual items.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): object} [params.item] - An item generator function.
+ * @param {function(object): *} [params.key] - The key field associating data and visual items.
  */
-prototype$11.parameters = function(params, react) {
-  react = react !== false;
-  var self = this,
-      argval = (self._argval = self._argval || new Parameters()),
-      argops = (self._argops = self._argops || []),
-      deps = [],
-      name, value, n, i;
+function DataJoin(params) {
+  Transform.call(this, null, params);
+}
 
-  function add(name, index, value) {
-    if (value instanceof Operator) {
-      if (value !== self) {
-        if (react) value.targets().add(self);
-        deps.push(value);
+var prototype$52 = inherits(DataJoin, Transform);
+
+function defaultItemCreate() {
+  return ingest({});
+}
+
+function isExit(t) {
+  return t.exit;
+}
+
+prototype$52.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      item = _$$1.item || defaultItemCreate,
+      key$$1 = _$$1.key || tupleid,
+      map = this.value;
+
+  if (!map) {
+    pulse = pulse.addAll();
+    this.value = map = fastmap().test(isExit);
+    map.lookup = function(t) { return map.get(key$$1(t)); };
+  }
+
+  if (_$$1.modified('key') || pulse.modified(key$$1)) {
+    error$1('DataJoin does not support modified key function or fields.');
+  }
+
+  pulse.visit(pulse.ADD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      if (x.exit) {
+        map.empty--;
+        out.add.push(x);
+      } else {
+        out.mod.push(x);
       }
-      argops.push({op:value, name:name, index:index});
     } else {
-      argval.set(name, index, value);
+      map.set(k, (x = item(t)));
+      out.add.push(x);
     }
-  }
 
-  for (name in params) {
-    value = params[name];
+    x.datum = t;
+    x.exit = false;
+  });
 
-    if (name === PULSE) {
-      array(value).forEach(function(op) {
-        if (!(op instanceof Operator)) {
-          error$1('Pulse parameters must be operator instances.');
-        } else if (op !== self) {
-          op.targets().add(self);
-          deps.push(op);
-        }
-      });
-      self.source = value;
-    } else if (isArray(value)) {
-      argval.set(name, -1, Array(n = value.length));
-      for (i=0; i<n; ++i) add(name, i, value[i]);
-    } else {
-      add(name, -1, value);
+  pulse.visit(pulse.MOD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      x.datum = t;
+      out.mod.push(x);
     }
-  }
+  });
 
-  this.marshall().clear(); // initialize values
-  return deps;
+  pulse.visit(pulse.REM, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (t === x.datum && !x.exit) {
+      out.rem.push(x);
+      x.exit = true;
+      ++map.empty;
+    }
+  });
+
+  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+
+  if (_$$1.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+
+  return out;
 };
 
 /**
- * Internal method for marshalling parameter values.
- * Visits each operator dependency to pull the latest value.
- * @return {Parameters} A Parameters object to pass to the update function.
+ * Invokes encoding functions for visual items.
+ * @constructor
+ * @param {object} params - The parameters to the encoding functions. This
+ *   parameter object will be passed through to all invoked encoding functions.
+ * @param {object} param.encoders - The encoding functions
+ * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
+ * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
+ * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
  */
-prototype$11.marshall = function(stamp) {
-  var argval = this._argval || NO_PARAMS,
-      argops = this._argops, item, i, n, op, mod;
+function Encode(params) {
+  Transform.call(this, null, params);
+}
 
-  if (argops && (n = argops.length)) {
-    for (i=0; i<n; ++i) {
-      item = argops[i];
-      op = item.op;
-      mod = op.modified() && op.stamp === stamp;
-      argval.set(item.name, item.index, op.value, mod);
-    }
-  }
-  return argval;
-};
+var prototype$53 = inherits(Encode, Transform);
 
-/**
- * Delegate method to perform operator processing.
- * Subclasses can override this method to perform custom processing.
- * By default, it marshalls parameters and calls the update function
- * if that function is defined. If the update function does not
- * change the operator value then StopPropagation is returned.
- * If no update function is defined, this method does nothing.
- * @param {Pulse} pulse - the current dataflow pulse.
- * @return The output pulse or StopPropagation. A falsy return value
- *   (including undefined) will let the input pulse pass through.
- */
-prototype$11.evaluate = function(pulse) {
-  if (this._update) {
-    var params = this.marshall(pulse.stamp),
-        v = this._update(params, pulse);
+prototype$53.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.ADD_REM),
+      encoders = _$$1.encoders,
+      encode = pulse.encode;
 
-    params.clear();
-    if (v !== this.value) {
-      this.value = v;
-    } else if (!this.modified()) {
+  // if an array, the encode directive includes additional sets
+  // that must be defined in order for the primary set to be invoked
+  // e.g., only run the update set if the hover set is defined
+  if (isArray(encode)) {
+    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+      encode = encode[0];
+    } else {
       return pulse.StopPropagation;
     }
   }
-};
 
-/**
- * Run this operator for the current pulse. If this operator has already
- * been run at (or after) the pulse timestamp, returns StopPropagation.
- * Internally, this method calls {@link evaluate} to perform processing.
- * If {@link evaluate} returns a falsy value, the input pulse is returned.
- * This method should NOT be overridden, instead overrride {@link evaluate}.
- * @param {Pulse} pulse - the current dataflow pulse.
- * @return the output pulse for this operator (or StopPropagation)
- */
-prototype$11.run = function(pulse) {
-  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
-  var rv;
-  if (this.skip()) {
-    this.skip(false);
-    rv = 0;
-  } else {
-    rv = this.evaluate(pulse);
-  }
-  this.stamp = pulse.stamp;
-  this.pulse = rv;
-  return rv || pulse;
-};
-
-/**
- * Add an operator to the dataflow graph. This function accepts a
- * variety of input argument types. The basic signature supports an
- * initial value, update function and parameters. If the first parameter
- * is an Operator instance, it will be added directly. If it is a
- * constructor for an Operator subclass, a new instance will be instantiated.
- * Otherwise, if the first parameter is a function instance, it will be used
- * as the update function and a null initial value is assumed.
- * @param {*} init - One of: the operator to add, the initial value of
- *   the operator, an operator class to instantiate, or an update function.
- * @param {function} [update] - The operator update function.
- * @param {object} [params] - The operator parameters.
- * @param {boolean} [react=true] - Flag indicating if this operator should
- *   listen for changes to upstream operators included as parameters.
- * @return {Operator} - The added operator.
- */
-var add$1 = function(init, update, params, react) {
-  var shift = 1,
-    op;
-
-  if (init instanceof Operator) {
-    op = init;
-  } else if (init && init.prototype instanceof Operator) {
-    op = new init();
-  } else if (isFunction(init)) {
-    op = new Operator(null, init);
-  } else {
-    shift = 0;
-    op = new Operator(init, update);
-  }
-
-  this.rank(op);
-  if (shift) {
-    react = params;
-    params = update;
-  }
-  if (params) this.connect(op, op.parameters(params, react));
-  this.touch(op);
-
-  return op;
-};
-
-/**
- * Connect a target operator as a dependent of source operators.
- * If necessary, this method will rerank the target operator and its
- * dependents to ensure propagation proceeds in a topologically sorted order.
- * @param {Operator} target - The target operator.
- * @param {Array<Operator>} - The source operators that should propagate
- *   to the target operator.
- */
-var connect = function(target, sources) {
-  var targetRank = target.rank, i, n;
-
-  for (i=0, n=sources.length; i<n; ++i) {
-    if (targetRank < sources[i].rank) {
-      this.rerank(target);
-      return;
-    }
-  }
-};
-
-var STREAM_ID = 0;
-
-/**
- * Models an event stream.
- * @constructor
- * @param {function(Object, number): boolean} [filter] - Filter predicate.
- *   Events pass through when truthy, events are suppressed when falsy.
- * @param {function(Object): *} [apply] - Applied to input events to produce
- *   new event values.
- * @param {function(Object)} [receive] - Event callback function to invoke
- *   upon receipt of a new event. Use to override standard event processing.
- */
-function EventStream(filter, apply, receive) {
-  this.id = ++STREAM_ID;
-  this.value = null;
-  if (receive) this.receive = receive;
-  if (filter) this._filter = filter;
-  if (apply) this._apply = apply;
-}
-
-/**
- * Creates a new event stream instance with the provided
- * (optional) filter, apply and receive functions.
- * @param {function(Object, number): boolean} [filter] - Filter predicate.
- *   Events pass through when truthy, events are suppressed when falsy.
- * @param {function(Object): *} [apply] - Applied to input events to produce
- *   new event values.
- * @see EventStream
- */
-function stream(filter, apply, receive) {
-  return new EventStream(filter, apply, receive);
-}
-
-var prototype$13 = EventStream.prototype;
-
-prototype$13._filter = truthy;
-
-prototype$13._apply = identity;
-
-prototype$13.targets = function() {
-  return this._targets || (this._targets = UniqueList(id));
-};
-
-prototype$13.consume = function(_$$1) {
-  if (!arguments.length) return !!this._consume;
-  this._consume = !!_$$1;
-  return this;
-};
-
-prototype$13.receive = function(evt) {
-  if (this._filter(evt)) {
-    var val = (this.value = this._apply(evt)),
-        trg = this._targets,
-        n = trg ? trg.length : 0,
-        i = 0;
-
-    for (; i<n; ++i) trg[i].receive(val);
-
-    if (this._consume) {
-      evt.preventDefault();
-      evt.stopPropagation();
-    }
-  }
-};
-
-prototype$13.filter = function(filter) {
-  var s = stream(filter);
-  this.targets().add(s);
-  return s;
-};
-
-prototype$13.apply = function(apply) {
-  var s = stream(null, apply);
-  this.targets().add(s);
-  return s;
-};
-
-prototype$13.merge = function() {
-  var s = stream();
-
-  this.targets().add(s);
-  for (var i=0, n=arguments.length; i<n; ++i) {
-    arguments[i].targets().add(s);
-  }
-
-  return s;
-};
-
-prototype$13.throttle = function(pause) {
-  var t = -1;
-  return this.filter(function() {
-    var now = Date.now();
-    if ((now - t) > pause) {
-      t = now;
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-};
-
-prototype$13.debounce = function(delay) {
-  var s = stream();
-
-  this.targets().add(stream(null, null,
-    debounce(delay, function(e) {
-      var df = e.dataflow;
-      s.receive(e);
-      if (df && df.run) df.run();
-    })
-  ));
-
-  return s;
-};
-
-prototype$13.between = function(a, b) {
-  var active = false;
-  a.targets().add(stream(null, null, function() { active = true; }));
-  b.targets().add(stream(null, null, function() { active = false; }));
-  return this.filter(function() { return active; });
-};
-
-/**
- * Create a new event stream from an event source.
- * @param {object} source - The event source to monitor. The input must
- *  support the addEventListener method.
- * @param {string} type - The event type.
- * @param {function(object): boolean} [filter] - Event filter function.
- * @param {function(object): *} [apply] - Event application function.
- *   If provided, this function will be invoked and the result will be
- *   used as the downstream event value.
- * @return {EventStream}
- */
-var events = function(source, type, filter, apply) {
-  var df = this,
-      s = stream(filter, apply),
-      send = function(e) {
-        e.dataflow = df;
-        try {
-          s.receive(e);
-        } catch (error) {
-          df.error(error);
-        } finally {
-          df.run();
-        }
-      },
-      sources;
-
-  if (typeof source === 'string' && typeof document !== 'undefined') {
-    sources = document.querySelectorAll(source);
-  } else {
-    sources = array(source);
-  }
-
-  for (var i=0, n=sources.length; i<n; ++i) {
-    sources[i].addEventListener(type, send);
-  }
-
-  return s;
-};
-
-var SKIP$1 = {skip: true};
-
-/**
- * Perform operator updates in response to events. Applies an
- * update function to compute a new operator value. If the update function
- * returns a {@link ChangeSet}, the operator will be pulsed with those tuple
- * changes. Otherwise, the operator value will be updated to the return value.
- * @param {EventStream|Operator} source - The event source to react to.
- *   This argument can be either an EventStream or an Operator.
- * @param {Operator|function(object):Operator} target - The operator to update.
- *   This argument can either be an Operator instance or (if the source
- *   argument is an EventStream), a function that accepts an event object as
- *   input and returns an Operator to target.
- * @param {function(Parameters,Event): *} [update] - Optional update function
- *   to compute the new operator value, or a literal value to set. Update
- *   functions expect to receive a parameter object and event as arguments.
- *   This function can either return a new operator value or (if the source
- *   argument is an EventStream) a {@link ChangeSet} instance to pulse
- *   the target operator with tuple changes.
- * @param {object} [params] - The update function parameters.
- * @param {object} [options] - Additional options hash. If not overridden,
- *   updated operators will be skipped by default.
- * @param {boolean} [options.skip] - If true, the operator will
- *  be skipped: it will not be evaluated, but its dependents will be.
- * @param {boolean} [options.force] - If true, the operator will
- *   be re-evaluated even if its value has not changed.
- * @return {Dataflow}
- */
-var on = function(source, target, update, params, options) {
-  var fn = source instanceof Operator ? onOperator : onStream;
-  fn(this, source, target, update, params, options);
-  return this;
-};
-
-function onStream(df, stream, target, update, params, options) {
-  var opt = extend({}, options, SKIP$1), func, op;
-
-  if (!isFunction(target)) target = constant(target);
-
-  if (update === undefined) {
-    func = function(e) {
-      df.touch(target(e));
-    };
-  } else if (isFunction(update)) {
-    op = new Operator(null, update, params, false);
-    func = function(e) {
-      var v, t = target(e);
-      op.evaluate(e);
-      isChangeSet(v = op.value) ? df.pulse(t, v, options) : df.update(t, v, opt);
-    };
-  } else {
-    func = function(e) {
-      df.update(target(e), update, opt);
-    };
-  }
-
-  stream.apply(func);
-}
-
-function onOperator(df, source, target, update, params, options) {
-  var func, op;
-
-  if (update === undefined) {
-    op = target;
-  } else {
-    func = isFunction(update) ? update : constant(update);
-    update = !target ? func : function(_$$1, pulse) {
-      var value = func(_$$1, pulse);
-      return target.skip()
-        ? value
-        : (target.skip(true).value = value);
-    };
-
-    op = new Operator(null, update, params, false);
-    op.modified(options && options.force);
-    op.rank = 0;
-
-    if (target) {
-      op.skip(true); // skip first invocation
-      op.value = target.value;
-      op.targets().add(target);
-    }
-  }
-
-  source.targets().add(op);
-}
-
-/**
- * Assigns a rank to an operator. Ranks are assigned in increasing order
- * by incrementing an internal rank counter.
- * @param {Operator} op - The operator to assign a rank.
- */
-function rank(op) {
-  op.rank = ++this._rank;
-}
-
-/**
- * Re-ranks an operator and all downstream target dependencies. This
- * is necessary when upstream depencies of higher rank are added to
- * a target operator.
- * @param {Operator} op - The operator to re-rank.
- */
-function rerank(op) {
-  var queue = [op],
-      cur, list, i;
-
-  while (queue.length) {
-    this.rank(cur = queue.pop());
-    if (list = cur._targets) {
-      for (i=list.length; --i >= 0;) {
-        queue.push(cur = list[i]);
-        if (cur === op) this.error('Cycle detected in dataflow graph.');
-      }
-    }
-  }
-}
-
-/**
- * Sentinel value indicating pulse propagation should stop.
- */
-var StopPropagation = {};
-
-// Pulse visit type flags
-var ADD       = (1 << 0);
-var REM       = (1 << 1);
-var MOD       = (1 << 2);
-var ADD_REM   = ADD | REM;
-var ADD_MOD   = ADD | MOD;
-var ALL       = ADD | REM | MOD;
-var REFLOW    = (1 << 3);
-var SOURCE    = (1 << 4);
-var NO_SOURCE = (1 << 5);
-var NO_FIELDS = (1 << 6);
-
-/**
- * A Pulse enables inter-operator communication during a run of the
- * dataflow graph. In addition to the current timestamp, a pulse may also
- * contain a change-set of added, removed or modified data tuples, as well as
- * a pointer to a full backing data source. Tuple change sets may not
- * be fully materialized; for example, to prevent needless array creation
- * a change set may include larger arrays and corresponding filter functions.
- * The pulse provides a {@link visit} method to enable proper and efficient
- * iteration over requested data tuples.
- *
- * In addition, each pulse can track modification flags for data tuple fields.
- * Responsible transform operators should call the {@link modifies} method to
- * indicate changes to data fields. The {@link modified} method enables
- * querying of this modification state.
- *
- * @constructor
- * @param {Dataflow} dataflow - The backing dataflow instance.
- * @param {number} stamp - The current propagation timestamp.
- * @param {string} [encode] - An optional encoding set name, which is then
- *   accessible as Pulse.encode. Operators can respond to (or ignore) this
- *   setting as appropriate. This parameter can be used in conjunction with
- *   the Encode transform in the vega-encode module.
- */
-function Pulse(dataflow, stamp, encode) {
-  this.dataflow = dataflow;
-  this.stamp = stamp == null ? -1 : stamp;
-  this.add = [];
-  this.rem = [];
-  this.mod = [];
-  this.fields = null;
-  this.encode = encode || null;
-}
-
-var prototype$14 = Pulse.prototype;
-
-/**
- * Sentinel value indicating pulse propagation should stop.
- */
-prototype$14.StopPropagation = StopPropagation;
-
-/**
- * Boolean flag indicating ADD (added) tuples.
- */
-prototype$14.ADD = ADD;
-
-/**
- * Boolean flag indicating REM (removed) tuples.
- */
-prototype$14.REM = REM;
-
-/**
- * Boolean flag indicating MOD (modified) tuples.
- */
-prototype$14.MOD = MOD;
-
-/**
- * Boolean flag indicating ADD (added) and REM (removed) tuples.
- */
-prototype$14.ADD_REM = ADD_REM;
-
-/**
- * Boolean flag indicating ADD (added) and MOD (modified) tuples.
- */
-prototype$14.ADD_MOD = ADD_MOD;
-
-/**
- * Boolean flag indicating ADD, REM and MOD tuples.
- */
-prototype$14.ALL = ALL;
-
-/**
- * Boolean flag indicating all tuples in a data source
- * except for the ADD, REM and MOD tuples.
- */
-prototype$14.REFLOW = REFLOW;
-
-/**
- * Boolean flag indicating a 'pass-through' to a
- * backing data source, ignoring ADD, REM and MOD tuples.
- */
-prototype$14.SOURCE = SOURCE;
-
-/**
- * Boolean flag indicating that source data should be
- * suppressed when creating a forked pulse.
- */
-prototype$14.NO_SOURCE = NO_SOURCE;
-
-/**
- * Boolean flag indicating that field modifications should be
- * suppressed when creating a forked pulse.
- */
-prototype$14.NO_FIELDS = NO_FIELDS;
-
-/**
- * Creates a new pulse based on the values of this pulse.
- * The dataflow, time stamp and field modification values are copied over.
- * By default, new empty ADD, REM and MOD arrays are created.
- * @param {number} flags - Integer of boolean flags indicating which (if any)
- *   tuple arrays should be copied to the new pulse. The supported flag values
- *   are ADD, REM and MOD. Array references are copied directly: new array
- *   instances are not created.
- * @return {Pulse} - The forked pulse instance.
- * @see init
- */
-prototype$14.fork = function(flags) {
-  return new Pulse(this.dataflow).init(this, flags);
-};
-
-/**
- * Returns a pulse that adds all tuples from a backing source. This is
- * useful for cases where operators are added to a dataflow after an
- * upstream data pipeline has already been processed, ensuring that
- * new operators can observe all tuples within a stream.
- * @return {Pulse} - A pulse instance with all source tuples included
- *   in the add array. If the current pulse already has all source
- *   tuples in its add array, it is returned directly. If the current
- *   pulse does not have a backing source, it is returned directly.
- */
-prototype$14.addAll = function() {
-  var p = this;
-  if (!this.source || this.source.length === this.add.length) {
-    return p;
-  } else {
-    p = new Pulse(this.dataflow).init(this);
-    p.add = p.source;
-    return p;
-  }
-};
-
-/**
- * Initialize this pulse based on the values of another pulse. This method
- * is used internally by {@link fork} to initialize a new forked tuple.
- * The dataflow, time stamp and field modification values are copied over.
- * By default, new empty ADD, REM and MOD arrays are created.
- * @param {Pulse} src - The source pulse to copy from.
- * @param {number} flags - Integer of boolean flags indicating which (if any)
- *   tuple arrays should be copied to the new pulse. The supported flag values
- *   are ADD, REM and MOD. Array references are copied directly: new array
- *   instances are not created. By default, source data arrays are copied
- *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
- * @return {Pulse} - Returns this Pulse instance.
- */
-prototype$14.init = function(src, flags) {
-  var p = this;
-  p.stamp = src.stamp;
-  p.encode = src.encode;
-
-  if (src.fields && !(flags & NO_FIELDS)) p.fields = src.fields;
-
-  if (flags & ADD) {
-    p.addF = src.addF;
-    p.add = src.add;
-  } else {
-    p.addF = null;
-    p.add = [];
-  }
-
-  if (flags & REM) {
-    p.remF = src.remF;
-    p.rem = src.rem;
-  } else {
-    p.remF = null;
-    p.rem = [];
-  }
-
-  if (flags & MOD) {
-    p.modF = src.modF;
-    p.mod = src.mod;
-  } else {
-    p.modF = null;
-    p.mod = [];
-  }
-
-  if (flags & NO_SOURCE) {
-    p.srcF = null;
-    p.source = null;
-  } else {
-    p.srcF = src.srcF;
-    p.source = src.source;
-  }
-
-  return p;
-};
-
-/**
- * Schedules a function to run after pulse propagation completes.
- * @param {function} func - The function to run.
- */
-prototype$14.runAfter = function(func) {
-  this.dataflow.runAfter(func);
-};
-
-/**
- * Indicates if tuples have been added, removed or modified.
- * @param {number} [flags] - The tuple types (ADD, REM or MOD) to query.
- *   Defaults to ALL, returning true if any tuple type has changed.
- * @return {boolean} - Returns true if one or more queried tuple types have
- *   changed, false otherwise.
- */
-prototype$14.changed = function(flags) {
-  var f = flags || ALL;
-  return ((f & ADD) && this.add.length)
-      || ((f & REM) && this.rem.length)
-      || ((f & MOD) && this.mod.length);
-};
-
-/**
- * Forces a "reflow" of tuple values, such that all tuples in the backing
- * source are added to the MOD set, unless already present in the ADD set.
- * @param {boolean} [fork=false] - If true, returns a forked copy of this
- *   pulse, and invokes reflow on that derived pulse.
- * @return {Pulse} - The reflowed pulse instance.
- */
-prototype$14.reflow = function(fork) {
-  if (fork) return this.fork(ALL).reflow();
-
-  var len = this.add.length,
-      src = this.source && this.source.length;
-  if (src && src !== len) {
-    this.mod = this.source;
-    if (len) this.filter(MOD, filter(this, ADD));
-  }
-  return this;
-};
-
-/**
- * Marks one or more data field names as modified to assist dependency
- * tracking and incremental processing by transform operators.
- * @param {string|Array<string>} _ - The field(s) to mark as modified.
- * @return {Pulse} - This pulse instance.
- */
-prototype$14.modifies = function(_$$1) {
-  var fields = array(_$$1),
-      hash = this.fields || (this.fields = {});
-  fields.forEach(function(f) { hash[f] = true; });
-  return this;
-};
-
-/**
- * Checks if one or more data fields have been modified during this pulse
- * propagation timestamp.
- * @param {string|Array<string>} _ - The field(s) to check for modified.
- * @return {boolean} - Returns true if any of the provided fields has been
- *   marked as modified, false otherwise.
- */
-prototype$14.modified = function(_$$1) {
-  var fields = this.fields;
-  return !(this.mod.length && fields) ? false
-    : !arguments.length ? !!fields
-    : isArray(_$$1) ? _$$1.some(function(f) { return fields[f]; })
-    : fields[_$$1];
-};
-
-/**
- * Adds a filter function to one more tuple sets. Filters are applied to
- * backing tuple arrays, to determine the actual set of tuples considered
- * added, removed or modified. They can be used to delay materialization of
- * a tuple set in order to avoid expensive array copies. In addition, the
- * filter functions can serve as value transformers: unlike standard predicate
- * function (which return boolean values), Pulse filters should return the
- * actual tuple value to process. If a tuple set is already filtered, the
- * new filter value will be appended into a conjuntive ('and') query.
- * @param {number} flags - Flags indicating the tuple set(s) to filter.
- * @param {function(*):object} filter - Filter function that will be applied
- *   to the tuple set array, and should return a data tuple if the value
- *   should be included in the tuple set, and falsy (or null) otherwise.
- * @return {Pulse} - Returns this pulse instance.
- */
-prototype$14.filter = function(flags, filter) {
-  var p = this;
-  if (flags & ADD) p.addF = addFilter(p.addF, filter);
-  if (flags & REM) p.remF = addFilter(p.remF, filter);
-  if (flags & MOD) p.modF = addFilter(p.modF, filter);
-  if (flags & SOURCE) p.srcF = addFilter(p.srcF, filter);
-  return p;
-};
-
-function addFilter(a, b) {
-  return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
-}
-
-/**
- * Materialize one or more tuple sets in this pulse. If the tuple set(s) have
- * a registered filter function, it will be applied and the tuple set(s) will
- * be replaced with materialized tuple arrays.
- * @param {number} flags - Flags indicating the tuple set(s) to materialize.
- * @return {Pulse} - Returns this pulse instance.
- */
-prototype$14.materialize = function(flags) {
-  flags = flags || ALL;
-  var p = this;
-  if ((flags & ADD) && p.addF) { p.add = p.add.filter(p.addF); p.addF = null; }
-  if ((flags & REM) && p.remF) { p.rem = p.rem.filter(p.remF); p.remF = null; }
-  if ((flags & MOD) && p.modF) { p.mod = p.mod.filter(p.modF); p.modF = null; }
-  if ((flags & SOURCE) && p.srcF) {
-    p.source = p.source.filter(p.srcF); p.srcF = null;
-  }
-  return p;
-};
-
-function filter(pulse, flags) {
-  var map = {};
-  pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-  return function(t) { return map[tupleid(t)] ? null : t; };
-}
-
-/**
- * Visit one or more tuple sets in this pulse.
- * @param {number} flags - Flags indicating the tuple set(s) to visit.
- *   Legal values are ADD, REM, MOD and SOURCE (if a backing data source
- *   has been set).
- * @param {function(object):*} - Visitor function invoked per-tuple.
- * @return {Pulse} - Returns this pulse instance.
- */
-prototype$14.visit = function(flags, visitor) {
-  var v = visitor, src, sum$$1;
-
-  if (flags & SOURCE) {
-    visitArray(this.source, this.srcF, v);
-    return this;
-  }
-
-  if (flags & ADD) visitArray(this.add, this.addF, v);
-  if (flags & REM) visitArray(this.rem, this.remF, v);
-  if (flags & MOD) visitArray(this.mod, this.modF, v);
-
-  if ((flags & REFLOW) && (src = this.source)) {
-    sum$$1 = this.add.length + this.mod.length;
-    if (sum$$1 === src.length) {
-      // do nothing
-    } else if (sum$$1) {
-      visitArray(src, filter(this, ADD_MOD), v);
-    } else {
-      // if no add/rem/mod tuples, visit source
-      visitArray(src, this.srcF, v);
-    }
-  }
-
-  return this;
-};
-
-var NO_OPT = {skip: false, force: false};
-
-/**
- * Touches an operator, scheduling it to be evaluated. If invoked outside of
- * a pulse propagation, the operator will be evaluated the next time this
- * dataflow is run. If invoked in the midst of pulse propagation, the operator
- * will be queued for evaluation if and only if the operator has not yet been
- * evaluated on the current propagation timestamp.
- * @param {Operator} op - The operator to touch.
- * @param {object} [options] - Additional options hash.
- * @param {boolean} [options.skip] - If true, the operator will
- *   be skipped: it will not be evaluated, but its dependents will be.
- * @return {Dataflow}
- */
-function touch(op, options) {
-  var opt = options || NO_OPT;
-  if (this._pulse) {
-    // if in midst of propagation, add to priority queue
-    this._enqueue(op);
-  } else {
-    // otherwise, queue for next propagation
-    this._touched.add(op);
-  }
-  if (opt.skip) op.skip(true);
-  return this;
-}
-
-/**
- * Updates the value of the given operator.
- * @param {Operator} op - The operator to update.
- * @param {*} value - The value to set.
- * @param {object} [options] - Additional options hash.
- * @param {boolean} [options.force] - If true, the operator will
- *   be re-evaluated even if its value has not changed.
- * @param {boolean} [options.skip] - If true, the operator will
- *   be skipped: it will not be evaluated, but its dependents will be.
- * @return {Dataflow}
- */
-function update(op, value, options) {
-  var opt = options || NO_OPT;
-  if (op.set(value) || opt.force) {
-    this.touch(op, opt);
-  }
-  return this;
-}
-
-/**
- * Pulses an operator with a changeset of tuples. If invoked outside of
- * a pulse propagation, the pulse will be applied the next time this
- * dataflow is run. If invoked in the midst of pulse propagation, the pulse
- * will be added to the set of active pulses and will be applied if and
- * only if the target operator has not yet been evaluated on the current
- * propagation timestamp.
- * @param {Operator} op - The operator to pulse.
- * @param {ChangeSet} value - The tuple changeset to apply.
- * @param {object} [options] - Additional options hash.
- * @param {boolean} [options.skip] - If true, the operator will
- *   be skipped: it will not be evaluated, but its dependents will be.
- * @return {Dataflow}
- */
-function pulse(op, changeset, options) {
-  this.touch(op, options || NO_OPT);
-
-  var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
-      t = op.pulse && op.pulse.source || [];
-  p.target = op;
-  this._pulses[op.id] = changeset.pulse(p, t);
-
-  return this;
-}
-
-function ingest$1(target, data, format$$1) {
-  return this.pulse(target, this.changeset().insert(read(data, format$$1)));
-}
-
-function loadPending(df) {
-  var accept, reject,
-      pending = new Promise(function(a, r) {
-        accept = a;
-        reject = r;
-      });
-
-  pending.requests = 0;
-
-  pending.done = function() {
-    if (--pending.requests === 0) {
-      df.runAfter(function() {
-        df._pending = null;
-        try {
-          df.run();
-          accept(df);
-        } catch (err) {
-          reject(err);
-        }
-      });
-    }
-  };
-
-  return (df._pending = pending);
-}
-
-function request$1(target, url, format$$1) {
-  var df = this,
-      pending = df._pending || loadPending(df);
-
-  pending.requests += 1;
-
-  df.loader()
-    .load(url, {context:'dataflow'})
-    .then(
-      function(data) { df.ingest(target, data, format$$1); },
-      function(error) { df.error('Loading failed', url, error); })
-    .catch(
-      function(error) { df.error('Data ingestion failed', url, error); })
-    .then(pending.done, pending.done);
-}
-
-/**
- * Represents a set of multiple pulses. Used as input for operators
- * that accept multiple pulses at a time. Contained pulses are
- * accessible via the public "pulses" array property. This pulse doe
- * not carry added, removed or modified tuples directly. However,
- * the visit method can be used to traverse all such tuples contained
- * in sub-pulses with a timestamp matching this parent multi-pulse.
- * @constructor
- * @param {Dataflow} dataflow - The backing dataflow instance.
- * @param {number} stamp - The timestamp.
- * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
- */
-function MultiPulse(dataflow, stamp, pulses, encode) {
-  var p = this,
-      c = 0,
-      pulse, hash, i, n, f;
-
-  this.dataflow = dataflow;
-  this.stamp = stamp;
-  this.fields = null;
-  this.encode = encode || null;
-  this.pulses = pulses;
-
-  for (i=0, n=pulses.length; i<n; ++i) {
-    pulse = pulses[i];
-    if (pulse.stamp !== stamp) continue;
-
-    if (pulse.fields) {
-      hash = p.fields || (p.fields = {});
-      for (f in pulse.fields) { hash[f] = 1; }
-    }
-
-    if (pulse.changed(p.ADD)) c |= p.ADD;
-    if (pulse.changed(p.REM)) c |= p.REM;
-    if (pulse.changed(p.MOD)) c |= p.MOD;
-  }
-
-  this.changes = c;
-}
-
-var prototype$15 = inherits(MultiPulse, Pulse);
-
-/**
- * Creates a new pulse based on the values of this pulse.
- * The dataflow, time stamp and field modification values are copied over.
- * @return {Pulse}
- */
-prototype$15.fork = function() {
-  if (arguments.length && (arguments[0] & Pulse.prototype.ALL)) {
-    error$1('MultiPulse fork does not support tuple change sets.');
-  }
-  return new Pulse(this.dataflow).init(this, 0);
-};
-
-prototype$15.changed = function(flags) {
-  return this.changes & flags;
-};
-
-prototype$15.modified = function(_$$1) {
-  var p = this, fields = p.fields;
-  return !(fields && (p.changes & p.MOD)) ? 0
-    : isArray(_$$1) ? _$$1.some(function(f) { return fields[f]; })
-    : fields[_$$1];
-};
-
-prototype$15.filter = function() {
-  error$1('MultiPulse does not support filtering.');
-};
-
-prototype$15.materialize = function() {
-  error$1('MultiPulse does not support materialization.');
-};
-
-prototype$15.visit = function(flags, visitor) {
-  var p = this,
-      pulses = p.pulses,
-      n = pulses.length,
-      i = 0;
-
-  if (flags & p.SOURCE) {
-    for (; i<n; ++i) {
-      pulses[i].visit(flags, visitor);
-    }
-  } else {
-    for (; i<n; ++i) {
-      if (pulses[i].stamp === p.stamp) {
-        pulses[i].visit(flags, visitor);
-      }
-    }
-  }
-
-  return p;
-};
-
-/**
- * Runs the dataflow. This method will increment the current timestamp
- * and process all updated, pulsed and touched operators. When run for
- * the first time, all registered operators will be processed. If there
- * are pending data loading operations, this method will return immediately
- * without evaluating the dataflow. Instead, the dataflow will be
- * asynchronously invoked when data loading completes. To track when dataflow
- * evaluation completes, use the {@link runAsync} method instead.
- * @param {string} [encode] - The name of an encoding set to invoke during
- *   propagation. This value is added to generated Pulse instances;
- *   operators can then respond to (or ignore) this setting as appropriate.
- *   This parameter can be used in conjunction with the Encode transform in
- *   the vega-encode module.
- */
-function run(encode) {
-  var df = this,
-      count = 0,
-      level = df.logLevel(),
-      op, next, dt, error;
-
-  if (df._pending) {
-    df.info('Awaiting requests, delaying dataflow run.');
-    return 0;
-  }
-
-  if (df._pulse) {
-    df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
-    return 0;
-  }
-
-  if (!df._touched.length) {
-    df.info('Dataflow invoked, but nothing to do.');
-    return 0;
-  }
-
-  df._pulse = new Pulse(df, ++df._clock, encode);
-
-  if (level >= Info) {
-    dt = Date.now();
-    df.debug('-- START PROPAGATION (' + df._clock + ') -----');
-  }
-
-  // initialize queue, reset touched operators
-  df._touched.forEach(function(op) { df._enqueue(op, true); });
-  df._touched = UniqueList(id);
-
-  try {
-    while (df._heap.size() > 0) {
-      op = df._heap.pop();
-
-      // re-queue if rank changes
-      if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
-
-      // otherwise, evaluate the operator
-      next = op.run(df._getPulse(op, encode));
-
-      if (level >= Debug) {
-        df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
-      }
-
-      // propagate the pulse
-      if (next !== StopPropagation) {
-        df._pulse = next;
-        if (op._targets) op._targets.forEach(function(op) { df._enqueue(op); });
-      }
-
-      // increment visit counter
-      ++count;
-    }
-  } catch (err) {
-    error = err;
-  }
-
-  // reset pulse map
-  df._pulses = {};
-  df._pulse = null;
-
-  if (level >= Info) {
-    dt = Date.now() - dt;
-    df.info('> Pulse ' + df._clock + ': ' + count + ' operators; ' + dt + 'ms');
-  }
-
-  if (error) {
-    df._postrun = [];
-    df.error(error);
-  }
-
-  if (df._onrun) {
-    try { df._onrun(df, count, error); } catch (err) { df.error(err); }
-  }
-
-  // invoke callbacks queued via runAfter
-  if (df._postrun.length) {
-    var postrun = df._postrun;
-    df._postrun = [];
-    postrun.forEach(function(f) {
-      try { f(df); } catch (err) { df.error(err); }
-    });
-  }
-
-  return count;
-}
-
-/**
- * Runs the dataflow and returns a Promise that resolves when the
- * propagation cycle completes. The standard run method may exit early
- * if there are pending data loading operations. In contrast, this
- * method returns a Promise to allow callers to receive notification
- * when dataflow evaluation completes.
- * @return {Promise} - A promise that resolves to this dataflow.
- */
-function runAsync() {
-  return this._pending || Promise.resolve(this.run());
-}
-
-/**
- * Schedules a callback function to be invoked after the current pulse
- * propagation completes. If no propagation is currently occurring,
- * the function is invoked immediately.
- * @param {function(Dataflow)} callback - The callback function to run.
- *   The callback will be invoked with this Dataflow instance as its
- *   sole argument.
- * @param {boolean} enqueue - A boolean flag indicating that the
- *   callback should be queued up to run after the next propagation
- *   cycle, suppressing immediate invovation when propagation is not
- *   currently occurring.
- */
-function runAfter(callback, enqueue) {
-  if (this._pulse || enqueue) {
-    // pulse propagation is currently running, queue to run after
-    this._postrun.push(callback);
-  } else {
-    // pulse propagation already complete, invoke immediately
-    try { callback(this); } catch (err) { this.error(err); }
-  }
-}
-
-/**
- * Enqueue an operator into the priority queue for evaluation. The operator
- * will be enqueued if it has no registered pulse for the current cycle, or if
- * the force argument is true. Upon enqueue, this method also sets the
- * operator's qrank to the current rank value.
- * @param {Operator} op - The operator to enqueue.
- * @param {boolean} [force] - A flag indicating if the operator should be
- *   forceably added to the queue, even if it has already been previously
- *   enqueued during the current pulse propagation. This is useful when the
- *   dataflow graph is dynamically modified and the operator rank changes.
- */
-function enqueue(op, force) {
-  var p = !this._pulses[op.id];
-  if (p) this._pulses[op.id] = this._pulse;
-  if (p || force) {
-    op.qrank = op.rank;
-    this._heap.push(op);
-  }
-}
-
-/**
- * Provide a correct pulse for evaluating an operator. If the operator has an
- * explicit source operator, we will try to pull the pulse(s) from it.
- * If there is an array of source operators, we build a multi-pulse.
- * Otherwise, we return a current pulse with correct source data.
- * If the pulse is the pulse map has an explicit target set, we use that.
- * Else if the pulse on the upstream source operator is current, we use that.
- * Else we use the pulse from the pulse map, but copy the source tuple array.
- * @param {Operator} op - The operator for which to get an input pulse.
- * @param {string} [encode] - An (optional) encoding set name with which to
- *   annotate the returned pulse. See {@link run} for more information.
- */
-function getPulse(op, encode) {
-  var s = op.source,
-      stamp = this._clock,
-      p;
-
-  if (s && isArray(s)) {
-    p = s.map(function(_$$1) { return _$$1.pulse; });
-    return new MultiPulse(this, stamp, p, encode);
-  } else {
-    s = s && s.pulse;
-    p = this._pulses[op.id];
-    if (s && s !== StopPropagation) {
-      if (s.stamp === stamp && p.target !== op) p = s;
-      else p.source = s.source;
-    }
-    return p;
-  }
-}
-
-function Heap(comparator) {
-  this.cmp = comparator;
-  this.nodes = [];
-}
-
-var prototype$16 = Heap.prototype;
-
-prototype$16.size = function() {
-  return this.nodes.length;
-};
-
-prototype$16.clear = function() {
-  this.nodes = [];
-  return this;
-};
-
-prototype$16.peek = function() {
-  return this.nodes[0];
-};
-
-prototype$16.push = function(x) {
-  var array = this.nodes;
-  array.push(x);
-  return siftdown(array, 0, array.length-1, this.cmp);
-};
-
-prototype$16.pop = function() {
-  var array = this.nodes,
-      last = array.pop(),
-      item;
-
-  if (array.length) {
-    item = array[0];
-    array[0] = last;
-    siftup(array, 0, this.cmp);
-  } else {
-    item = last;
-  }
-  return item;
-};
-
-prototype$16.replace = function(item) {
-  var array = this.nodes,
-      retval = array[0];
-  array[0] = item;
-  siftup(array, 0, this.cmp);
-  return retval;
-};
-
-prototype$16.pushpop = function(item) {
-  var array = this.nodes, ref = array[0];
-  if (array.length && this.cmp(ref, item) < 0) {
-    array[0] = item;
-    item = ref;
-    siftup(array, 0, this.cmp);
-  }
-  return item;
-};
-
-function siftdown(array, start, idx, cmp) {
-  var item, parent, pidx;
-
-  item = array[idx];
-  while (idx > start) {
-    pidx = (idx - 1) >> 1;
-    parent = array[pidx];
-    if (cmp(item, parent) < 0) {
-      array[idx] = parent;
-      idx = pidx;
-      continue;
-    }
-    break;
-  }
-  return (array[idx] = item);
-}
-
-function siftup(array, idx, cmp) {
-  var start = idx,
-      end = array.length,
-      item = array[idx],
-      cidx = 2 * idx + 1, ridx;
-
-  while (cidx < end) {
-    ridx = cidx + 1;
-    if (ridx < end && cmp(array[cidx], array[ridx]) >= 0) {
-      cidx = ridx;
-    }
-    array[idx] = array[cidx];
-    idx = cidx;
-    cidx = 2 * idx + 1;
-  }
-  array[idx] = item;
-  return siftdown(array, start, idx, cmp);
-}
-
-/**
- * A dataflow graph for reactive processing of data streams.
- * @constructor
- */
-function Dataflow() {
-  this._log = logger();
-  this.logLevel(Error$1);
-
-  this._clock = 0;
-  this._rank = 0;
-  this._loader = loader();
-
-  this._touched = UniqueList(id);
-  this._pulses = {};
-  this._pulse = null;
-
-  this._heap = new Heap(function(a, b) { return a.qrank - b.qrank; });
-  this._postrun = [];
-}
-
-var prototype$10 = Dataflow.prototype;
-
-/**
- * The current timestamp of this dataflow. This value reflects the
- * timestamp of the previous dataflow run. The dataflow is initialized
- * with a stamp value of 0. The initial run of the dataflow will have
- * a timestap of 1, and so on. This value will match the
- * {@link Pulse.stamp} property.
- * @return {number} - The current timestamp value.
- */
-prototype$10.stamp = function() {
-  return this._clock;
-};
-
-/**
- * Gets or sets the loader instance to use for data file loading. A
- * loader object must provide a "load" method for loading files and a
- * "sanitize" method for checking URL/filename validity. Both methods
- * should accept a URI and options hash as arguments, and return a Promise
- * that resolves to the loaded file contents (load) or a hash containing
- * sanitized URI data with the sanitized url assigned to the "href" property
- * (sanitize).
- * @param {object} _ - The loader instance to use.
- * @return {object|Dataflow} - If no arguments are provided, returns
- *   the current loader instance. Otherwise returns this Dataflow instance.
- */
-prototype$10.loader = function(_$$1) {
-  if (arguments.length) {
-    this._loader = _$$1;
-    return this;
-  } else {
-    return this._loader;
-  }
-};
-
-/**
- * Empty entry threshold for garbage cleaning. Map data structures will
- * perform cleaning once the number of empty entries exceeds this value.
- */
-prototype$10.cleanThreshold = 1e4;
-
-// OPERATOR REGISTRATION
-prototype$10.add = add$1;
-prototype$10.connect = connect;
-prototype$10.rank = rank;
-prototype$10.rerank = rerank;
-
-// OPERATOR UPDATES
-prototype$10.pulse = pulse;
-prototype$10.touch = touch;
-prototype$10.update = update;
-prototype$10.changeset = changeset;
-
-// DATA LOADING
-prototype$10.ingest = ingest$1;
-prototype$10.request = request$1;
-
-// EVENT HANDLING
-prototype$10.events = events;
-prototype$10.on = on;
-
-// PULSE PROPAGATION
-prototype$10.run = run;
-prototype$10.runAsync = runAsync;
-prototype$10.runAfter = runAfter;
-prototype$10._enqueue = enqueue;
-prototype$10._getPulse = getPulse;
-
-// LOGGING AND ERROR HANDLING
-
-function logMethod(method) {
-  return function() {
-    return this._log[method].apply(this, arguments);
-  };
-}
-
-/**
- * Logs an error message. By default, logged messages are written to console
- * output. The message will only be logged if the current log level is high
- * enough to permit error messages.
- */
-prototype$10.error = logMethod('error');
-
-/**
- * Logs a warning message. By default, logged messages are written to console
- * output. The message will only be logged if the current log level is high
- * enough to permit warning messages.
- */
-prototype$10.warn = logMethod('warn');
-
-/**
- * Logs a information message. By default, logged messages are written to
- * console output. The message will only be logged if the current log level is
- * high enough to permit information messages.
- */
-prototype$10.info = logMethod('info');
-
-/**
- * Logs a debug message. By default, logged messages are written to console
- * output. The message will only be logged if the current log level is high
- * enough to permit debug messages.
- */
-prototype$10.debug = logMethod('debug');
-
-/**
- * Get or set the current log level. If an argument is provided, it
- * will be used as the new log level.
- * @param {number} [level] - Should be one of None, Warn, Info
- * @return {number} - The current log level.
- */
-prototype$10.logLevel = logMethod('level');
-
-/**
- * Abstract class for operators that process data tuples.
- * Subclasses must provide a {@link transform} method for operator processing.
- * @constructor
- * @param {*} [init] - The initial value for this operator.
- * @param {object} [params] - The parameters for this operator.
- * @param {Operator} [source] - The operator from which to receive pulses.
- */
-function Transform(init, params) {
-  Operator.call(this, init, null, params);
-}
-
-var prototype$17 = inherits(Transform, Operator);
-
-/**
- * Overrides {@link Operator.evaluate} for transform operators.
- * Internally, this method calls {@link evaluate} to perform processing.
- * If {@link evaluate} returns a falsy value, the input pulse is returned.
- * This method should NOT be overridden, instead overrride {@link evaluate}.
- * @param {Pulse} pulse - the current dataflow pulse.
- * @return the output pulse for this operator (or StopPropagation)
- */
-prototype$17.run = function(pulse) {
-  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
-
-  var rv;
-  if (this.skip()) {
-    this.skip(false);
-  } else {
-    rv = this.evaluate(pulse);
-  }
-  rv = rv || pulse;
-
-  if (rv !== pulse.StopPropagation) this.pulse = rv;
-  this.stamp = pulse.stamp;
-
-  return rv;
-};
-
-/**
- * Overrides {@link Operator.evaluate} for transform operators.
- * Marshalls parameter values and then invokes {@link transform}.
- * @param {Pulse} pulse - the current dataflow pulse.
- * @return {Pulse} The output pulse (or StopPropagation). A falsy return
-     value (including undefined) will let the input pulse pass through.
- */
-prototype$17.evaluate = function(pulse) {
-  var params = this.marshall(pulse.stamp),
-      out = this.transform(params, pulse);
-  params.clear();
-  return out;
-};
-
-/**
- * Process incoming pulses.
- * Subclasses should override this method to implement transforms.
- * @param {Parameters} _ - The operator parameter values.
- * @param {Pulse} pulse - The current dataflow pulse.
- * @return {Pulse} The output pulse (or StopPropagation). A falsy return
- *   value (including undefined) will let the input pulse pass through.
- */
-prototype$17.transform = function() {};
-
-var transforms = {};
-
-var definitions = {};
-
-function register(def, constructor) {
-  var type = def.type;
-  definition(type, def);
-  transform(type, constructor);
-}
-
-function definition(type, def) {
-  type = type && type.toLowerCase();
-  if (arguments.length > 1) {
-    definitions[type] = def;
-    return this;
-  } else {
-    return definitions.hasOwnProperty(type) ? definitions[type] : null;
-  }
-}
-
-function transform(type, constructor) {
-  if (arguments.length > 1) {
-    transforms[type] = constructor;
-    return this;
-  } else {
-    return transforms.hasOwnProperty(type) ? transforms[type] : null;
-  }
-}
-
-var Aggregates = {
-  'values': measure$1({
-    name: 'values',
-    init: 'cell.store = true;',
-    set:  'cell.data.values()', idx: -1
-  }),
-  'count': measure$1({
-    name: 'count',
-    set:  'cell.num'
-  }),
-  'missing': measure$1({
-    name: 'missing',
-    set:  'this.missing'
-  }),
-  'valid': measure$1({
-    name: 'valid',
-    set:  'this.valid'
-  }),
-  'sum': measure$1({
-    name: 'sum',
-    init: 'this.sum = 0;',
-    add:  'this.sum += v;',
-    rem:  'this.sum -= v;',
-    set:  'this.sum'
-  }),
-  'mean': measure$1({
-    name: 'mean',
-    init: 'this.mean = 0;',
-    add:  'var d = v - this.mean; this.mean += d / this.valid;',
-    rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
-    set:  'this.mean'
-  }),
-  'average': measure$1({
-    name: 'average',
-    set:  'this.mean',
-    req:  ['mean'], idx: 1
-  }),
-  'variance': measure$1({
-    name: 'variance',
-    init: 'this.dev = 0;',
-    add:  'this.dev += d * (v - this.mean);',
-    rem:  'this.dev -= d * (v - this.mean);',
-    set:  'this.valid > 1 ? this.dev / (this.valid-1) : 0',
-    req:  ['mean'], idx: 1
-  }),
-  'variancep': measure$1({
-    name: 'variancep',
-    set:  'this.valid > 1 ? this.dev / this.valid : 0',
-    req:  ['variance'], idx: 2
-  }),
-  'stdev': measure$1({
-    name: 'stdev',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : 0',
-    req:  ['variance'], idx: 2
-  }),
-  'stdevp': measure$1({
-    name: 'stdevp',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
-    req:  ['variance'], idx: 2
-  }),
-  'stderr': measure$1({
-    name: 'stderr',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
-    req:  ['variance'], idx: 2
-  }),
-  'distinct': measure$1({
-    name: 'distinct',
-    set:  'cell.data.distinct(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'ci0': measure$1({
-    name: 'ci0',
-    set:  'cell.data.ci0(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'ci1': measure$1({
-    name: 'ci1',
-    set:  'cell.data.ci1(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'median': measure$1({
-    name: 'median',
-    set:  'cell.data.q2(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'q1': measure$1({
-    name: 'q1',
-    set:  'cell.data.q1(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'q3': measure$1({
-    name: 'q3',
-    set:  'cell.data.q3(this.get)',
-    req:  ['values'], idx: 3
-  }),
-  'argmin': measure$1({
-    name: 'argmin',
-    init: 'this.argmin = null;',
-    add:  'if (v < this.min) this.argmin = t;',
-    rem:  'if (v <= this.min) this.argmin = null;',
-    set:  'this.argmin || cell.data.argmin(this.get)',
-    req:  ['min'], str: ['values'], idx: 3
-  }),
-  'argmax': measure$1({
-    name: 'argmax',
-    init: 'this.argmax = null;',
-    add:  'if (v > this.max) this.argmax = t;',
-    rem:  'if (v >= this.max) this.argmax = null;',
-    set:  'this.argmax || cell.data.argmax(this.get)',
-    req:  ['max'], str: ['values'], idx: 3
-  }),
-  'min': measure$1({
-    name: 'min',
-    init: 'this.min = null;',
-    add:  'if (v < this.min || this.min === null) this.min = v;',
-    rem:  'if (v <= this.min) this.min = NaN;',
-    set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
-    str:  ['values'], idx: 4
-  }),
-  'max': measure$1({
-    name: 'max',
-    init: 'this.max = null;',
-    add:  'if (v > this.max || this.max === null) this.max = v;',
-    rem:  'if (v >= this.max) this.max = NaN;',
-    set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
-    str:  ['values'], idx: 4
-  })
-};
-
-function createMeasure(op, name) {
-  return Aggregates[op](name);
-}
-
-function measure$1(base) {
-  return function(out) {
-    var m = extend({init:'', add:'', rem:'', idx:0}, base);
-    m.out = out || base.name;
-    return m;
-  };
-}
-
-function compareIndex(a, b) {
-  return a.idx - b.idx;
-}
-
-function resolve(agg, stream) {
-  function collect(m, a) {
-    function helper(r) { if (!m[r]) collect(m, m[r] = Aggregates[r]()); }
-    if (a.req) a.req.forEach(helper);
-    if (stream && a.str) a.str.forEach(helper);
-    return m;
-  }
-  var map = agg.reduce(
-    collect,
-    agg.reduce(function(m, a) {
-      m[a.name] = a;
-      return m;
-    }, {})
-  );
-  var values = [], key$$1;
-  for (key$$1 in map) values.push(map[key$$1]);
-  return values.sort(compareIndex);
-}
-
-function compileMeasures(agg, field$$1) {
-  var get = field$$1 || identity,
-      all = resolve(agg, true), // assume streaming removes may occur
-      init = 'var cell = this.cell; this.valid = 0; this.missing = 0;',
-      ctr = 'this.cell = cell; this.init();',
-      add = 'if(v==null){++this.missing; return;} if(v!==v) return; ++this.valid;',
-      rem = 'if(v==null){--this.missing; return;} if(v!==v) return; --this.valid;',
-      set = 'var cell = this.cell;';
-
-  all.forEach(function(a) {
-    init += a.init;
-    add += a.add;
-    rem += a.rem;
-  });
-  agg.slice().sort(compareIndex).forEach(function(a) {
-    set += 't[\'' + a.out + '\']=' + a.set + ';';
-  });
-  set += 'return t;';
-
-  ctr = Function('cell', ctr);
-  ctr.prototype.init = Function(init);
-  ctr.prototype.add = Function('v', 't', add);
-  ctr.prototype.rem = Function('v', 't', rem);
-  ctr.prototype.set = Function('t', set);
-  ctr.prototype.get = get;
-  ctr.fields = agg.map(function(_$$1) { return _$$1.out; });
-  return ctr;
-}
-
-function multikey(f) {
-  return function(x) {
-    var n = f.length,
-        i = 1,
-        k = String(f[0](x));
-
-    for (; i<n; ++i) {
-      k += '|' + f[i](x);
-    }
-
-    return k;
-  };
-}
-
-function groupkey(fields) {
-  return !fields || !fields.length ? function() { return ''; }
-    : fields.length === 1 ? fields[0]
-    : multikey(fields);
-}
-
-var measureName = function(op, mname, as) {
-  return as || (op + (!mname ? '' : '_' + mname));
-};
-
-function TupleStore(key$$1) {
-  this._key = key$$1 ? field(key$$1) : tupleid;
-  this.reset();
-}
-
-var prototype$19 = TupleStore.prototype;
-
-prototype$19.reset = function() {
-  this._add = [];
-  this._rem = [];
-  this._ext = null;
-  this._get = null;
-  this._q = null;
-};
-
-prototype$19.add = function(v) {
-  this._add.push(v);
-};
-
-prototype$19.rem = function(v) {
-  this._rem.push(v);
-};
-
-prototype$19.values = function() {
-  this._get = null;
-  if (this._rem.length === 0) return this._add;
-
-  var a = this._add,
-      r = this._rem,
-      k = this._key,
-      n = a.length,
-      m = r.length,
-      x = Array(n - m),
-      map = {}, i, j, v;
-
-  // use unique key field to clear removed values
-  for (i=0; i<m; ++i) {
-    map[k(r[i])] = 1;
-  }
-  for (i=0, j=0; i<n; ++i) {
-    if (map[k(v = a[i])]) {
-      map[k(v)] = 0;
-    } else {
-      x[j++] = v;
-    }
-  }
-
-  this._rem = [];
-  return (this._add = x);
-};
-
-// memoizing statistics methods
-
-prototype$19.distinct = function(get) {
-  var v = this.values(),
-      n = v.length,
-      map = {},
-      count = 0, s;
-
-  while (--n >= 0) {
-    s = get(v[n]) + '';
-    if (!map.hasOwnProperty(s)) {
-      map[s] = 1;
-      ++count;
-    }
-  }
-
-  return count;
-};
-
-prototype$19.extent = function(get) {
-  if (this._get !== get || !this._ext) {
-    var v = this.values(),
-        i = extentIndex(v, get);
-    this._ext = [v[i[0]], v[i[1]]];
-    this._get = get;
-  }
-  return this._ext;
-};
-
-prototype$19.argmin = function(get) {
-  return this.extent(get)[0] || {};
-};
-
-prototype$19.argmax = function(get) {
-  return this.extent(get)[1] || {};
-};
-
-prototype$19.min = function(get) {
-  var m = this.extent(get)[0];
-  return m != null ? get(m) : +Infinity;
-};
-
-prototype$19.max = function(get) {
-  var m = this.extent(get)[1];
-  return m != null ? get(m) : -Infinity;
-};
-
-prototype$19.quartile = function(get) {
-  if (this._get !== get || !this._q) {
-    this._q = quartiles(this.values(), get);
-    this._get = get;
-  }
-  return this._q;
-};
-
-prototype$19.q1 = function(get) {
-  return this.quartile(get)[0];
-};
-
-prototype$19.q2 = function(get) {
-  return this.quartile(get)[1];
-};
-
-prototype$19.q3 = function(get) {
-  return this.quartile(get)[2];
-};
-
-prototype$19.ci = function(get) {
-  if (this._get !== get || !this._ci) {
-    this._ci = bootstrapCI(this.values(), 1000, 0.05, get);
-    this._get = get;
-  }
-  return this._ci;
-};
-
-prototype$19.ci0 = function(get) {
-  return this.ci(get)[0];
-};
-
-prototype$19.ci1 = function(get) {
-  return this.ci(get)[1];
-};
-
-var ValidAggregateOps = [
-  'values', 'count', 'valid', 'missing', 'distinct',
-  'min', 'max', 'argmin', 'argmax', 'sum', 'mean', 'average',
-  'variance', 'variancep', 'stdev', 'stdevp', 'stderr',
-  'median', 'q1', 'q3', 'ci0', 'ci1'
-];
-
-/**
- * Group-by aggregation operator.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
- * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
- * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
- * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
- * @param {boolean} [params.cross=false] - A flag indicating that the full
- *   cross-product of groupby values should be generated, including empty cells.
- *   If true, the drop parameter is ignored and empty cells are retained.
- * @param {boolean} [params.drop=true] - A flag indicating if empty cells should be removed.
- */
-function Aggregate(params) {
-  Transform.call(this, null, params);
-
-  this._adds = []; // array of added output tuples
-  this._mods = []; // array of modified output tuples
-  this._alen = 0;  // number of active added tuples
-  this._mlen = 0;  // number of active modified tuples
-  this._drop = true;   // should empty aggregation cells be removed
-  this._cross = false; // produce full cross-product of group-by values
-
-  this._dims = [];   // group-by dimension accessors
-  this._dnames = []; // group-by dimension names
-
-  this._measures = []; // collection of aggregation monoids
-  this._countOnly = false; // flag indicating only count aggregation
-  this._counts = null; // collection of count fields
-  this._prev = null;   // previous aggregation cells
-
-  this._inputs = null;  // array of dependent input tuple field names
-  this._outputs = null; // array of output tuple field names
-}
-
-var prototype$18 = inherits(Aggregate, Transform);
-
-prototype$18.transform = function(_$$1, pulse) {
-  var aggr = this,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      mod;
-
-  this.stamp = out.stamp;
-
-  if (this.value && ((mod = _$$1.modified()) || pulse.modified(this._inputs))) {
-    this._prev = this.value;
-    this.value = mod ? this.init(_$$1) : {};
-    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
-  } else {
-    this.value = this.value || this.init(_$$1);
-    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
-    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
-  }
-
-  // Indicate output fields and return aggregate tuples.
-  out.modifies(this._outputs);
-
-  // Should empty cells be dropped?
-  aggr._drop = _$$1.drop !== false;
-
-  // If domain cross-product requested, generate empty cells as needed
-  // and ensure that empty cells are not dropped
-  if (_$$1.cross && aggr._dims.length > 1) {
-    aggr._drop = false;
-    this.cross();
-  }
-
-  return aggr.changes(out);
-};
-
-prototype$18.cross = function() {
-  var aggr = this,
-      curr = aggr.value,
-      dims = aggr._dnames,
-      vals = dims.map(function() { return {}; }),
-      n = dims.length;
-
-  // collect all group-by domain values
-  function collect(cells) {
-    var key$$1, i, t, v;
-    for (key$$1 in cells) {
-      t = cells[key$$1].tuple;
-      for (i=0; i<n; ++i) {
-        vals[i][(v = t[dims[i]])] = v;
-      }
-    }
-  }
-  collect(aggr._prev);
-  collect(curr);
-
-  // iterate over key cross-product, create cells as needed
-  function generate(base, tuple, index) {
-    var name = dims[index],
-        v = vals[index++],
-        k, key$$1;
-
-    for (k in v) {
-      tuple[name] = v[k];
-      key$$1 = base ? base + '|' + k : k;
-      if (index < n) generate(key$$1, tuple, index);
-      else if (!curr[key$$1]) aggr.cell(key$$1, tuple);
-    }
-  }
-  generate('', {}, 0);
-};
-
-prototype$18.init = function(_$$1) {
-  // initialize input and output fields
-  var inputs = (this._inputs = []),
-      outputs = (this._outputs = []),
-      inputMap = {};
-
-  function inputVisit(get) {
-    var fields = array(accessorFields(get)),
-        i = 0, n = fields.length, f;
-    for (; i<n; ++i) {
-      if (!inputMap[f=fields[i]]) {
-        inputMap[f] = 1;
-        inputs.push(f);
-      }
-    }
-  }
-
-  // initialize group-by dimensions
-  this._dims = array(_$$1.groupby);
-  this._dnames = this._dims.map(function(d) {
-    var dname = accessorName(d);
-    inputVisit(d);
-    outputs.push(dname);
-    return dname;
-  });
-  this.cellkey = _$$1.key ? _$$1.key : groupkey(this._dims);
-
-  // initialize aggregate measures
-  this._countOnly = true;
-  this._counts = [];
-  this._measures = [];
-
-  var fields = _$$1.fields || [null],
-      ops = _$$1.ops || ['count'],
-      as = _$$1.as || [],
-      n = fields.length,
-      map = {},
-      field$$1, op, m, mname, outname, i;
-
-  if (n !== ops.length) {
-    error$1('Unmatched number of fields and aggregate ops.');
-  }
-
-  for (i=0; i<n; ++i) {
-    field$$1 = fields[i];
-    op = ops[i];
-
-    if (field$$1 == null && op !== 'count') {
-      error$1('Null aggregate field specified.');
-    }
-    mname = accessorName(field$$1);
-    outname = measureName(op, mname, as[i]);
-    outputs.push(outname);
-
-    if (op === 'count') {
-      this._counts.push(outname);
-      continue;
-    }
-
-    m = map[mname];
-    if (!m) {
-      inputVisit(field$$1);
-      m = (map[mname] = []);
-      m.field = field$$1;
-      this._measures.push(m);
-    }
-
-    if (op !== 'count') this._countOnly = false;
-    m.push(createMeasure(op, outname));
-  }
-
-  this._measures = this._measures.map(function(m) {
-    return compileMeasures(m, m.field);
-  });
-
-  return {}; // aggregation cells (this.value)
-};
-
-// -- Cell Management -----
-
-prototype$18.cellkey = groupkey();
-
-prototype$18.cell = function(key$$1, t) {
-  var cell = this.value[key$$1];
-  if (!cell) {
-    cell = this.value[key$$1] = this.newcell(key$$1, t);
-    this._adds[this._alen++] = cell;
-  } else if (cell.num === 0 && this._drop && cell.stamp < this.stamp) {
-    cell.stamp = this.stamp;
-    this._adds[this._alen++] = cell;
-  } else if (cell.stamp < this.stamp) {
-    cell.stamp = this.stamp;
-    this._mods[this._mlen++] = cell;
-  }
-  return cell;
-};
-
-prototype$18.newcell = function(key$$1, t) {
-  var cell = {
-    key:   key$$1,
-    num:   0,
-    agg:   null,
-    tuple: this.newtuple(t, this._prev && this._prev[key$$1]),
-    stamp: this.stamp,
-    store: false
-  };
-
-  if (!this._countOnly) {
-    var measures = this._measures,
-        n = measures.length, i;
-
-    cell.agg = Array(n);
-    for (i=0; i<n; ++i) {
-      cell.agg[i] = new measures[i](cell);
-    }
-  }
-
-  if (cell.store) {
-    cell.data = new TupleStore();
-  }
-
-  return cell;
-};
-
-prototype$18.newtuple = function(t, p) {
-  var names = this._dnames,
-      dims = this._dims,
-      x = {}, i, n;
-
-  for (i=0, n=dims.length; i<n; ++i) {
-    x[names[i]] = dims[i](t);
-  }
-
-  return p ? replace(p.tuple, x) : ingest(x);
-};
-
-// -- Process Tuples -----
-
-prototype$18.add = function(t) {
-  var key$$1 = this.cellkey(t),
-      cell = this.cell(key$$1, t),
-      agg, i, n;
-
-  cell.num += 1;
-  if (this._countOnly) return;
-
-  if (cell.store) cell.data.add(t);
-
-  agg = cell.agg;
-  for (i=0, n=agg.length; i<n; ++i) {
-    agg[i].add(agg[i].get(t), t);
-  }
-};
-
-prototype$18.rem = function(t) {
-  var key$$1 = this.cellkey(t),
-      cell = this.cell(key$$1, t),
-      agg, i, n;
-
-  cell.num -= 1;
-  if (this._countOnly) return;
-
-  if (cell.store) cell.data.rem(t);
-
-  agg = cell.agg;
-  for (i=0, n=agg.length; i<n; ++i) {
-    agg[i].rem(agg[i].get(t), t);
-  }
-};
-
-prototype$18.celltuple = function(cell) {
-  var tuple = cell.tuple,
-      counts = this._counts,
-      agg, i, n;
-
-  // consolidate stored values
-  if (cell.store) {
-    cell.data.values();
-  }
-
-  // update tuple properties
-  for (i=0, n=counts.length; i<n; ++i) {
-    tuple[counts[i]] = cell.num;
-  }
-  if (!this._countOnly) {
-    agg = cell.agg;
-    for (i=0, n=agg.length; i<n; ++i) {
-      agg[i].set(tuple);
-    }
-  }
-
-  return tuple;
-};
-
-prototype$18.changes = function(out) {
-  var adds = this._adds,
-      mods = this._mods,
-      prev = this._prev,
-      drop = this._drop,
-      add = out.add,
-      rem = out.rem,
-      mod = out.mod,
-      cell, key$$1, i, n;
-
-  if (prev) for (key$$1 in prev) {
-    cell = prev[key$$1];
-    if (!drop || cell.num) rem.push(cell.tuple);
-  }
-
-  for (i=0, n=this._alen; i<n; ++i) {
-    add.push(this.celltuple(adds[i]));
-    adds[i] = null; // for garbage collection
-  }
-
-  for (i=0, n=this._mlen; i<n; ++i) {
-    cell = mods[i];
-    (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
-    mods[i] = null; // for garbage collection
-  }
-
-  this._alen = this._mlen = 0; // reset list of active cells
-  this._prev = null;
-  return out;
-};
-
-/**
- * Generates a binning function for discretizing data.
- * @constructor
- * @param {object} params - The parameters for this operator. The
- *   provided values should be valid options for the {@link bin} function.
- * @param {function(object): *} params.field - The data field to bin.
- */
-function Bin(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$20 = inherits(Bin, Transform);
-
-prototype$20.transform = function(_$$1, pulse) {
-  var bins = this._bins(_$$1),
-      start = bins.start,
-      step = bins.step,
-      as = _$$1.as || ['bin0', 'bin1'],
-      b0 = as[0],
-      b1 = as[1],
-      flag;
-
-  if (_$$1.modified()) {
-    pulse = pulse.reflow(true);
-    flag = pulse.SOURCE;
-  } else {
-    flag = pulse.modified(accessorFields(_$$1.field)) ? pulse.ADD_MOD : pulse.ADD;
-  }
-
-  pulse.visit(flag, function(t) {
-    var v = bins(t);
-    // minimum bin value (inclusive)
-    t[b0] = v;
-    // maximum bin value (exclusive)
-    // use convoluted math for better floating point agreement
-    // see https://github.com/vega/vega/issues/830
-    t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
-  });
-
-  return pulse.modifies(as);
-};
-
-prototype$20._bins = function(_$$1) {
-  if (this.value && !_$$1.modified()) {
-    return this.value;
-  }
-
-  var field$$1 = _$$1.field,
-      bins  = bin$1(_$$1),
-      start = bins.start,
-      stop  = bins.stop,
-      step  = bins.step,
-      a, d;
-
-  if ((a = _$$1.anchor) != null) {
-    d = a - (start + step * Math.floor((a - start) / step));
-    start += d;
-    stop += d;
-  }
-
-  var f = function(t) {
-    var v = field$$1(t);
-    if (v == null) {
-      return null;
-    } else {
-      v = Math.max(start, Math.min(+v, stop - step));
-      return start + step * Math.floor((v - start) / step);
-    }
-  };
-
-  f.start = start;
-  f.stop = stop;
-  f.step = step;
-
-  return this.value = accessor(
-    f,
-    accessorFields(field$$1),
-    _$$1.name || 'bin_' + accessorName(field$$1)
-  );
-};
-
-var SortedList = function(idFunc, source, input) {
-  var $$$1 = idFunc,
-      data = source || [],
-      add = input || [],
-      rem = {},
-      cnt = 0;
-
-  return {
-    add: function(t) { add.push(t); },
-    remove: function(t) { rem[$$$1(t)] = ++cnt; },
-    size: function() { return data.length; },
-    data: function(compare$$1, resort) {
-      if (cnt) {
-        data = data.filter(function(t) { return !rem[$$$1(t)]; });
-        rem = {};
-        cnt = 0;
-      }
-      if (resort && compare$$1) {
-        data.sort(compare$$1);
-      }
-      if (add.length) {
-        data = compare$$1
-          ? merge(compare$$1, data, add.sort(compare$$1))
-          : data.concat(add);
-        add = [];
-      }
-      return data;
-    }
-  }
-};
-
-/**
- * Collects all data tuples that pass through this operator.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(*,*): number} [params.sort] - An optional
- *   comparator function for additionally sorting the collected tuples.
- */
-function Collect(params) {
-  Transform.call(this, [], params);
-}
-
-var prototype$21 = inherits(Collect, Transform);
-
-prototype$21.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
-      sort = _$$1.sort,
-      mod = pulse.changed() || (sort &&
-            (_$$1.modified('sort') || pulse.modified(sort.fields)));
-
-  out.visit(out.REM, list.remove);
-
-  this.modified(mod);
-  this.value = out.source = list.data(sort, mod);
-  return out;
-};
-
-/**
- * Generates a comparator function.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Array<string>} params.fields - The fields to compare.
- * @param {Array<string>} [params.orders] - The sort orders.
- *   Each entry should be one of "ascending" (default) or "descending".
- */
-function Compare(params) {
-  Operator.call(this, null, update$1, params);
-}
-
-inherits(Compare, Operator);
-
-function update$1(_$$1) {
-  return (this.value && !_$$1.modified())
-    ? this.value
-    : compare(_$$1.fields, _$$1.orders);
-}
-
-/**
- * Count regexp-defined pattern occurrences in a text field.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - An accessor for the text field.
- * @param {string} [params.pattern] - RegExp string defining the text pattern.
- * @param {string} [params.case] - One of 'lower', 'upper' or null (mixed) case.
- * @param {string} [params.stopwords] - RegExp string of words to ignore.
- */
-function CountPattern(params) {
-  Transform.call(this, null, params);
-}
-
-function tokenize(text, tcase, match) {
-  switch (tcase) {
-    case 'upper': text = text.toUpperCase(); break;
-    case 'lower': text = text.toLowerCase(); break;
-  }
-  return text.match(match);
-}
-
-var prototype$22 = inherits(CountPattern, Transform);
-
-prototype$22.transform = function(_$$1, pulse) {
-  function process(update) {
-    return function(tuple) {
-      var tokens = tokenize(get(tuple), _$$1.case, match) || [], t;
-      for (var i=0, n=tokens.length; i<n; ++i) {
-        if (!stop.test(t = tokens[i])) update(t);
-      }
-    };
-  }
-
-  var init = this._parameterCheck(_$$1, pulse),
-      counts = this._counts,
-      match = this._match,
-      stop = this._stop,
-      get = _$$1.field,
-      as = _$$1.as || ['text', 'count'],
-      add = process(function(t) { counts[t] = 1 + (counts[t] || 0); }),
-      rem = process(function(t) { counts[t] -= 1; });
-
-  if (init) {
-    pulse.visit(pulse.SOURCE, add);
-  } else {
-    pulse.visit(pulse.ADD, add);
-    pulse.visit(pulse.REM, rem);
-  }
-
-  return this._finish(pulse, as); // generate output tuples
-};
-
-prototype$22._parameterCheck = function(_$$1, pulse) {
-  var init = false;
-
-  if (_$$1.modified('stopwords') || !this._stop) {
-    this._stop = new RegExp('^' + (_$$1.stopwords || '') + '$', 'i');
-    init = true;
-  }
-
-  if (_$$1.modified('pattern') || !this._match) {
-    this._match = new RegExp((_$$1.pattern || '[\\w\']+'), 'g');
-    init = true;
-  }
-
-  if (_$$1.modified('field') || pulse.modified(_$$1.field.fields)) {
-    init = true;
-  }
-
-  if (init) this._counts = {};
-  return init;
-};
-
-prototype$22._finish = function(pulse, as) {
-  var counts = this._counts,
-      tuples = this._tuples || (this._tuples = {}),
-      text = as[0],
-      count = as[1],
-      out = pulse.fork(),
-      w, t, c;
-
-  for (w in counts) {
-    t = tuples[w];
-    c = counts[w] || 0;
-    if (!t && c) {
-      tuples[w] = (t = ingest({}));
-      t[text] = w;
-      t[count] = c;
-      out.add.push(t);
-    } else if (c === 0) {
-      if (t) out.rem.push(t);
-      counts[w] = null;
-      tuples[w] = null;
-    } else if (t[count] !== c) {
-      t[count] = c;
-      out.mod.push(t);
-    }
-  }
-
-  return out.modifies(as);
-};
-
-/**
- * Perform a cross-product of a tuple stream with itself.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object):boolean} [params.filter] - An optional filter
- *   function for selectively including tuples in the cross product.
- * @param {Array<string>} [params.as] - The names of the output fields.
- */
-function Cross(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$23 = inherits(Cross, Transform);
-
-prototype$23.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      data = this.value,
-      as = _$$1.as || ['a', 'b'],
-      a = as[0], b = as[1],
-      reset$$1 = !data
-          || pulse.changed(pulse.ADD_REM)
-          || _$$1.modified('as')
-          || _$$1.modified('filter');
-
-  if (reset$$1) {
-    if (data) out.rem = data;
-    out.add = this.value = cross(pulse.source, a, b, _$$1.filter || truthy);
-  } else {
-    out.mod = data;
-  }
-
-  out.source = this.value;
-  return out.modifies(as);
-};
-
-function cross(input, a, b, filter) {
-  var data = [],
-      t = {},
-      n = input.length,
-      i = 0,
-      j, left;
-
-  for (; i<n; ++i) {
-    t[a] = left = input[i];
-    for (j=0; j<n; ++j) {
-      t[b] = input[j];
-      if (filter(t)) {
-        data.push(ingest(t));
-        t = {};
-        t[a] = left;
-      }
-    }
-  }
-
-  return data;
-}
-
-var Distributions = {
-  kde:     randomKDE,
-  mixture: randomMixture,
-  normal:  randomNormal,
-  uniform: randomUniform
-};
-
-var DISTRIBUTIONS = 'distributions';
-var FUNCTION = 'function';
-var FIELD = 'field';
-
-/**
- * Parse a parameter object for a probability distribution.
- * @param {object} def - The distribution parameter object.
- * @param {function():Array<object>} - A method for requesting
- *   source data. Used for distributions (such as KDE) that
- *   require sample data points. This method will only be
- *   invoked if the 'from' parameter for a target data source
- *   is not provided. Typically this method returns backing
- *   source data for a Pulse object.
- * @return {object} - The output distribution object.
- */
-function parse$1(def, data) {
-  var func = def[FUNCTION];
-  if (!Distributions.hasOwnProperty(func)) {
-    error$1('Unknown distribution function: ' + func);
-  }
-
-  var d = Distributions[func]();
-
-  for (var name in def) {
-    // if data field, extract values
-    if (name === FIELD) {
-      d.data((def.from || data()).map(def[name]));
-    }
-
-    // if distribution mixture, recurse to parse each definition
-    else if (name === DISTRIBUTIONS) {
-      d[name](def[name].map(function(_$$1) { return parse$1(_$$1, data); }));
-    }
-
-    // otherwise, simply set the parameter
-    else if (typeof d[name] === FUNCTION) {
-      d[name](def[name]);
-    }
-  }
-
-  return d;
-}
-
-/**
- * Grid sample points for a probability density. Given a distribution and
- * a sampling extent, will generate points suitable for plotting either
- * PDF (probability density function) or CDF (cumulative distribution
- * function) curves.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {object} params.distribution - The probability distribution. This
- *   is an object parameter dependent on the distribution type.
- * @param {string} [params.method='pdf'] - The distribution method to sample.
- *   One of 'pdf' or 'cdf'.
- * @param {Array<number>} [params.extent] - The [min, max] extent over which
- *   to sample the distribution. This argument is required in most cases, but
- *   can be omitted if the distribution (e.g., 'kde') supports a 'data' method
- *   that returns numerical sample points from which the extent can be deduced.
- * @param {number} [params.steps=100] - The number of sampling steps.
- */
-function Density(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$24 = inherits(Density, Transform);
-
-prototype$24.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-
-  if (!this.value || pulse.changed() || _$$1.modified()) {
-    var dist = parse$1(_$$1.distribution, source(pulse)),
-        method = _$$1.method || 'pdf';
-
-    if (method !== 'pdf' && method !== 'cdf') {
-      error$1('Invalid density method: ' + method);
-    }
-    if (!_$$1.extent && !dist.data) {
-      error$1('Missing density extent parameter.');
-    }
-    method = dist[method];
-
-    var as = _$$1.as || ['value', 'density'],
-        domain = _$$1.extent || d3Array.extent(dist.data()),
-        step = (domain[1] - domain[0]) / (_$$1.steps || 100),
-        values = d3Array.range(domain[0], domain[1] + step/2, step)
-          .map(function(v) {
-            var tuple = {};
-            tuple[as[0]] = v;
-            tuple[as[1]] = method(v);
-            return ingest(tuple);
-          });
-
-    if (this.value) out.rem = this.value;
-    this.value = out.add = out.source = values;
-  }
-
-  return out;
-};
-
-function source(pulse) {
-  return function() { return pulse.materialize(pulse.SOURCE).source; };
-}
-
-/**
- * Computes extents (min/max) for a data field.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The field over which to compute extends.
- */
-function Extent(params) {
-  Transform.call(this, [+Infinity, -Infinity], params);
-}
-
-var prototype$25 = inherits(Extent, Transform);
-
-prototype$25.transform = function(_$$1, pulse) {
-  var extent$$1 = this.value,
-      field$$1 = _$$1.field,
-      min$$1 = extent$$1[0],
-      max$$1 = extent$$1[1],
-      flag = pulse.ADD,
-      mod;
-
-  mod = pulse.changed()
-     || pulse.modified(field$$1.fields)
-     || _$$1.modified('field');
-
-  if (mod) {
-    flag = pulse.SOURCE;
-    min$$1 = +Infinity;
-    max$$1 = -Infinity;
-  }
-
-  pulse.visit(flag, function(t) {
-    var v = field$$1(t);
-    if (v < min$$1) min$$1 = v;
-    if (v > max$$1) max$$1 = v;
-  });
-
-  this.value = [min$$1, max$$1];
-};
-
-/**
- * Provides a bridge between a parent transform and a target subflow that
- * consumes only a subset of the tuples that pass through the parent.
- * @constructor
- * @param {Pulse} pulse - A pulse to use as the value of this operator.
- * @param {Transform} parent - The parent transform (typically a Facet instance).
- * @param {Transform} target - A transform that receives the subflow of tuples.
- */
-function Subflow(pulse, parent) {
-  Operator.call(this, pulse);
-  this.parent = parent;
-}
-
-var prototype$27 = inherits(Subflow, Operator);
-
-prototype$27.connect = function(target) {
-  this.targets().add(target);
-  return (target.source = this);
-};
-
-/**
- * Add an 'add' tuple to the subflow pulse.
- * @param {Tuple} t - The tuple being added.
- */
-prototype$27.add = function(t) {
-  this.value.add.push(t);
-};
-
-/**
- * Add a 'rem' tuple to the subflow pulse.
- * @param {Tuple} t - The tuple being removed.
- */
-prototype$27.rem = function(t) {
-  this.value.rem.push(t);
-};
-
-/**
- * Add a 'mod' tuple to the subflow pulse.
- * @param {Tuple} t - The tuple being modified.
- */
-prototype$27.mod = function(t) {
-  this.value.mod.push(t);
-};
-
-/**
- * Re-initialize this operator's pulse value.
- * @param {Pulse} pulse - The pulse to copy from.
- * @see Pulse.init
- */
-prototype$27.init = function(pulse) {
-  this.value.init(pulse, pulse.NO_SOURCE);
-};
-
-/**
- * Evaluate this operator. This method overrides the
- * default behavior to simply return the contained pulse value.
- * @return {Pulse}
- */
-prototype$27.evaluate = function() {
-  // assert: this.value.stamp === pulse.stamp
-  return this.value;
-};
-
-/**
- * Facets a dataflow into a set of subflows based on a key.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(Dataflow, string): Operator} params.subflow - A function
- *   that generates a subflow of operators and returns its root operator.
- * @param {function(object): *} params.key - The key field to facet by.
- */
-function Facet(params) {
-  Transform.call(this, {}, params);
-  this._keys = fastmap(); // cache previously calculated key values
-
-  // keep track of active subflows, use as targets array for listeners
-  // this allows us to limit propagation to only updated subflows
-  var a = this._targets = [];
-  a.active = 0;
-  a.forEach = function(f) {
-    for (var i=0, n=a.active; i<n; ++i) f(a[i], i, a);
-  };
-}
-
-var prototype$26 = inherits(Facet, Transform);
-
-prototype$26.activate = function(flow) {
-  this._targets[this._targets.active++] = flow;
-};
-
-prototype$26.subflow = function(key$$1, flow, pulse, parent) {
-  var flows = this.value,
-      sf = flows.hasOwnProperty(key$$1) && flows[key$$1],
-      df, p;
-
-  if (!sf) {
-    p = parent || (p = this._group[key$$1]) && p.tuple;
-    df = pulse.dataflow;
-    sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
-      .connect(flow(df, key$$1, p));
-    flows[key$$1] = sf;
-    this.activate(sf);
-  } else if (sf.value.stamp < pulse.stamp) {
-    sf.init(pulse);
-    this.activate(sf);
-  }
-
-  return sf;
-};
-
-prototype$26.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      self = this,
-      key$$1 = _$$1.key,
-      flow = _$$1.subflow,
-      cache = this._keys,
-      rekey = _$$1.modified('key');
-
-  function subflow(key$$1) {
-    return self.subflow(key$$1, flow, pulse);
-  }
-
-  this._group = _$$1.group || {};
-  this._targets.active = 0; // reset list of active subflows
-
-  pulse.visit(pulse.REM, function(t) {
-    var id$$1 = tupleid(t),
-        k = cache.get(id$$1);
-    if (k !== undefined) {
-      cache.delete(id$$1);
-      subflow(k).rem(t);
-    }
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key$$1(t);
-    cache.set(tupleid(t), k);
-    subflow(k).add(t);
-  });
-
-  if (rekey || pulse.modified(key$$1.fields)) {
-    pulse.visit(pulse.MOD, function(t) {
-      var id$$1 = tupleid(t),
-          k0 = cache.get(id$$1),
-          k1 = key$$1(t);
-      if (k0 === k1) {
-        subflow(k1).mod(t);
-      } else {
-        cache.set(id$$1, k1);
-        subflow(k0).rem(t);
-        subflow(k1).add(t);
-      }
-    });
-  } else if (pulse.changed(pulse.MOD)) {
-    pulse.visit(pulse.MOD, function(t) {
-      subflow(cache.get(tupleid(t))).mod(t);
-    });
-  }
-
-  if (rekey) {
-    pulse.visit(pulse.REFLOW, function(t) {
-      var id$$1 = tupleid(t),
-          k0 = cache.get(id$$1),
-          k1 = key$$1(t);
-      if (k0 !== k1) {
-        cache.set(id$$1, k1);
-        subflow(k0).rem(t);
-        subflow(k1).add(t);
-      }
-    });
-  }
-
-  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
-  return pulse;
-};
-
-/**
- * Generates one or more field accessor functions.
- * If the 'name' parameter is an array, an array of field accessors
- * will be created and the 'as' parameter will be ignored.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {string} params.name - The field name(s) to access.
- * @param {string} params.as - The accessor function name.
- */
-function Field(params) {
-  Operator.call(this, null, update$2, params);
-}
-
-inherits(Field, Operator);
-
-function update$2(_$$1) {
-  return (this.value && !_$$1.modified()) ? this.value
-    : isArray(_$$1.name) ? array(_$$1.name).map(function(f) { return field(f); })
-    : field(_$$1.name, _$$1.as);
-}
-
-/**
- * Filters data tuples according to a predicate function.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.expr - The predicate expression function
- *   that determines a tuple's filter status. Truthy values pass the filter.
- */
-function Filter(params) {
-  Transform.call(this, fastmap(), params);
-}
-
-var prototype$28 = inherits(Filter, Transform);
-
-prototype$28.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      cache = this.value, // cache ids of filtered tuples
-      output = pulse.fork(),
-      add = output.add,
-      rem = output.rem,
-      mod = output.mod,
-      test = _$$1.expr,
-      isMod = true;
-
-  pulse.visit(pulse.REM, function(t) {
-    var id$$1 = tupleid(t);
-    if (!cache.has(id$$1)) rem.push(t);
-    else cache.delete(id$$1);
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    if (test(t, _$$1)) add.push(t);
-    else cache.set(tupleid(t), 1);
-  });
-
-  function revisit(t) {
-    var id$$1 = tupleid(t),
-        b = test(t, _$$1),
-        s = cache.get(id$$1);
-    if (b && s) {
-      cache.delete(id$$1);
-      add.push(t);
-    } else if (!b && !s) {
-      cache.set(id$$1, 1);
-      rem.push(t);
-    } else if (isMod && b && !s) {
-      mod.push(t);
-    }
-  }
-
-  pulse.visit(pulse.MOD, revisit);
-
-  if (_$$1.modified()) {
-    isMod = false;
-    pulse.visit(pulse.REFLOW, revisit);
-  }
-
-  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
-  return output;
-};
-
-/**
- * Folds one more tuple fields into multiple tuples in which the field
- * name and values are available under new 'key' and 'value' fields.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.fields - An array of field accessors
- *   for the tuple fields that should be folded.
- */
-function Fold(params) {
-  Transform.call(this, {}, params);
-}
-
-var prototype$29 = inherits(Fold, Transform);
-
-function keyFunction(f) {
-  return f.fields.join('|');
-}
-
-prototype$29.transform = function(_$$1, pulse) {
-  var cache = this.value,
-      reset$$1 = _$$1.modified('fields'),
-      fields = _$$1.fields,
-      as = _$$1.as || ['key', 'value'],
-      key$$1 = as[0],
-      value = as[1],
-      keys = fields.map(keyFunction),
-      n = fields.length,
-      stamp = pulse.stamp,
-      out = pulse.fork(pulse.NO_SOURCE),
-      i = 0, mask = 0, id$$1;
-
-  function add(t) {
-    var f = (cache[tupleid(t)] = Array(n)); // create cache of folded tuples
-    for (var i=0, ft; i<n; ++i) { // for each key, derive folds
-      ft = (f[i] = derive(t));
-      ft[key$$1] = keys[i];
-      ft[value] = fields[i](t);
-      out.add.push(ft);
-    }
-  }
-
-  function mod(t) {
-    var f = cache[tupleid(t)]; // get cache of folded tuples
-    for (var i=0, ft; i<n; ++i) { // for each key, rederive folds
-      if (!(mask & (1 << i))) continue; // field is unchanged
-      ft = rederive(t, f[i], stamp);
-      ft[key$$1] = keys[i];
-      ft[value] = fields[i](t);
-      out.mod.push(ft);
-    }
-  }
-
-  if (reset$$1) {
-    // on reset, remove all folded tuples and clear cache
-    for (id$$1 in cache) out.rem.push.apply(out.rem, cache[id$$1]);
-    cache = this.value = {};
-    pulse.visit(pulse.SOURCE, add);
-  } else {
-    pulse.visit(pulse.ADD, add);
-
-    for (; i<n; ++i) {
-      if (pulse.modified(fields[i].fields)) mask |= (1 << i);
-    }
-    if (mask) pulse.visit(pulse.MOD, mod);
-
-    pulse.visit(pulse.REM, function(t) {
-      var id$$1 = tupleid(t);
-      out.rem.push.apply(out.rem, cache[id$$1]);
-      cache[id$$1] = null;
-    });
-  }
-
-  return out.modifies(as);
-};
-
-/**
- * Invokes a function for each data tuple and saves the results as a new field.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.expr - The formula function to invoke for each tuple.
- * @param {string} params.as - The field name under which to save the result.
- * @param {boolean} [params.initonly=false] - If true, the formula is applied to
- *   added tuples only, and does not update in response to modifications.
- */
-function Formula(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$30 = inherits(Formula, Transform);
-
-prototype$30.transform = function(_$$1, pulse) {
-  var func = _$$1.expr,
-      as = _$$1.as,
-      mod = _$$1.modified(),
-      flag = _$$1.initonly ? pulse.ADD
-        : mod ? pulse.SOURCE
-        : pulse.modified(func.fields) ? pulse.ADD_MOD
-        : pulse.ADD;
-
-  function set(t) {
-    t[as] = func(t, _$$1);
-  }
-
-  if (mod) {
-    // parameters updated, need to reflow
-    pulse = pulse.materialize().reflow(true);
-  }
-
-  if (!_$$1.initonly) {
-    pulse.modifies(as);
-  }
-
-  return pulse.visit(flag, set);
-};
-
-/**
- * Generates data tuples using a provided generator function.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(Parameters): object} params.generator - A tuple generator
- *   function. This function is given the operator parameters as input.
- *   Changes to any additional parameters will not trigger re-calculation
- *   of previously generated tuples. Only future tuples are affected.
- * @param {number} params.size - The number of tuples to produce.
- */
-function Generate(params) {
-  Transform.call(this, [], params);
-}
-
-var prototype$31 = inherits(Generate, Transform);
-
-prototype$31.transform = function(_$$1, pulse) {
-  var data = this.value,
-      out = pulse.fork(pulse.ALL),
-      num = _$$1.size - data.length,
-      gen = _$$1.generator,
-      add, rem, t;
-
-  if (num > 0) {
-    // need more tuples, generate and add
-    for (add=[]; --num >= 0;) {
-      add.push(t = ingest(gen(_$$1)));
-      data.push(t);
-    }
-    out.add = out.add.length
-      ? out.materialize(out.ADD).add.concat(add)
-      : add;
-  } else {
-    // need fewer tuples, remove
-    rem = data.slice(0, -num);
-    out.rem = out.rem.length
-      ? out.materialize(out.REM).rem.concat(rem)
-      : rem;
-    data = data.slice(-num);
-  }
-
-  out.source = this.value = data;
-  return out;
-};
-
-var Methods = {
-  value: 'value',
-  median: d3Array.median,
-  mean: d3Array.mean,
-  min: d3Array.min,
-  max: d3Array.max
-};
-
-var Empty$1 = [];
-
-/**
- * Impute missing values.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to impute.
- * @param {Array<function(object): *>} [params.groupby] - An array of
- *   accessors to determine series within which to perform imputation.
- * @param {function(object): *} params.key - An accessor for a key value.
- *   Each key value should be unique within a group. New tuples will be
- *   imputed for any key values that are not found within a group.
- * @param {Array<*>} [params.keyvals] - Optional array of required key
- *   values. New tuples will be imputed for any key values that are not
- *   found within a group. In addition, these values will be automatically
- *   augmented with the key values observed in the input data.
- * @param {string} [method='value'] - The imputation method to use. One of
- *   'value', 'mean', 'median', 'max', 'min'.
- * @param {*} [value=0] - The constant value to use for imputation
- *   when using method 'value'.
- */
-function Impute(params) {
-  Transform.call(this, [], params);
-}
-
-var prototype$32 = inherits(Impute, Transform);
-
-function getValue(_$$1) {
-  var m = _$$1.method || Methods.value, v;
-
-  if (Methods[m] == null) {
-    error$1('Unrecognized imputation method: ' + m);
-  } else if (m === Methods.value) {
-    v = _$$1.value !== undefined ? _$$1.value : 0;
-    return function() { return v; };
-  } else {
-    return Methods[m];
-  }
-}
-
-function getField(_$$1) {
-  var f = _$$1.field;
-  return function(t) { return t ? f(t) : NaN; };
-}
-
-prototype$32.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      impute = getValue(_$$1),
-      field$$1 = getField(_$$1),
-      fName = accessorName(_$$1.field),
-      kName = accessorName(_$$1.key),
-      gNames = (_$$1.groupby || []).map(accessorName),
-      groups = partition$1(pulse.source, _$$1.groupby, _$$1.key, _$$1.keyvals),
-      curr = [],
-      prev = this.value,
-      m = groups.domain.length,
-      group, value, gVals, kVal, g, i, j, l, n, t;
-
-  for (g=0, l=groups.length; g<l; ++g) {
-    group = groups[g];
-    gVals = group.values;
-    value = NaN;
-
-    // add tuples for missing values
-    for (j=0; j<m; ++j) {
-      if (group[j] != null) continue;
-      kVal = groups.domain[j];
-
-      t = {_impute: true};
-      for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
-      t[kName] = kVal;
-      t[fName] = isNaN(value) ? (value = impute(group, field$$1)) : value;
-
-      curr.push(ingest(t));
-    }
-  }
-
-  // update pulse with imputed tuples
-  if (curr.length) out.add = out.materialize(out.ADD).add.concat(curr);
-  if (prev.length) out.rem = out.materialize(out.REM).rem.concat(prev);
-  this.value = curr;
-
-  return out;
-};
-
-function partition$1(data, groupby, key$$1, keyvals) {
-  var get = function(f) { return f(t); },
-      groups = [],
-      domain = keyvals ? keyvals.slice() : [],
-      kMap = {},
-      gMap = {}, gVals, gKey,
-      group, i, j, k, n, t;
-
-  domain.forEach(function(k, i) { kMap[k] = i + 1; });
-
-  for (i=0, n=data.length; i<n; ++i) {
-    t = data[i];
-    k = key$$1(t);
-    j = kMap[k] || (kMap[k] = domain.push(k));
-
-    gKey = (gVals = groupby ? groupby.map(get) : Empty$1) + '';
-    if (!(group = gMap[gKey])) {
-      group = (gMap[gKey] = []);
-      groups.push(group);
-      group.values = gVals;
-    }
-    group[j-1] = t;
-  }
-
-  groups.domain = domain;
-  return groups;
-}
-
-/**
- * Extend input tuples with aggregate values.
- * Calcuates aggregate values and joins them with the input stream.
- * @constructor
- */
-function JoinAggregate(params) {
-  Aggregate.call(this, params);
-}
-
-var prototype$33 = inherits(JoinAggregate, Aggregate);
-
-prototype$33.transform = function(_$$1, pulse) {
-  var aggr = this,
-      mod = _$$1.modified(),
-      cells;
-
-  // process all input tuples to calculate aggregates
-  if (aggr.value && (mod || pulse.modified(aggr._inputs))) {
-    cells = aggr.value = mod ? aggr.init(_$$1) : {};
-    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
-  } else {
-    cells = aggr.value = aggr.value || this.init(_$$1);
-    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
-    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
-  }
-
-  // update aggregation cells
-  aggr.changes();
-
-  // write aggregate values to input tuples
-  pulse.visit(pulse.SOURCE, function(t) {
-    extend(t, cells[aggr.cellkey(t)].tuple);
-  });
-
-  return pulse.reflow(mod).modifies(this._outputs);
-};
-
-prototype$33.changes = function() {
-  var adds = this._adds,
-      mods = this._mods,
-      i, n;
-
-  for (i=0, n=this._alen; i<n; ++i) {
-    this.celltuple(adds[i]);
-    adds[i] = null; // for garbage collection
-  }
-
-  for (i=0, n=this._mlen; i<n; ++i) {
-    this.celltuple(mods[i]);
-    mods[i] = null; // for garbage collection
-  }
-
-  this._alen = this._mlen = 0; // reset list of active cells
-};
-
-/**
- * Generates a key function.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Array<string>} params.fields - The field name(s) for the key function.
- */
-function Key(params) {
-  Operator.call(this, null, update$3, params);
-}
-
-inherits(Key, Operator);
-
-function update$3(_$$1) {
-  return (this.value && !_$$1.modified()) ? this.value : key(_$$1.fields);
-}
-
-/**
- * Extend tuples by joining them with values from a lookup table.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Map} params.index - The lookup table map.
- * @param {Array<function(object): *} params.fields - The fields to lookup.
- * @param {Array<string>} params.as - Output field names for each lookup value.
- * @param {*} [params.default] - A default value to use if lookup fails.
- */
-function Lookup(params) {
-  Transform.call(this, {}, params);
-}
-
-var prototype$34 = inherits(Lookup, Transform);
-
-prototype$34.transform = function(_$$1, pulse) {
-  var out = pulse,
-      as = _$$1.as,
-      keys = _$$1.fields,
-      index = _$$1.index,
-      values = _$$1.values,
-      defaultValue = _$$1.default==null ? null : _$$1.default,
-      reset = _$$1.modified(),
-      flag = reset ? pulse.SOURCE : pulse.ADD,
-      n = keys.length,
-      set, m, mods;
-
-  if (values) {
-    m = values.length;
-
-    if (n > 1 && !as) {
-      error$1('Multi-field lookup requires explicit "as" parameter.');
-    }
-    if (as && as.length !== n * m) {
-      error$1('The "as" parameter has too few output field names.');
-    }
-    as = as || values.map(accessorName);
-
-    set = function(t) {
-      for (var i=0, k=0, j, v; i<n; ++i) {
-        v = index.get(keys[i](t));
-        if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
-        else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
-      }
-    };
-  } else {
-    if (!as) {
-      error$1('Missing output field names.');
-    }
-
-    set = function(t) {
-      for (var i=0, v; i<n; ++i) {
-        v = index.get(keys[i](t));
-        t[as[i]] = v==null ? defaultValue : v;
-      }
-    };
-  }
-
-  if (reset) {
-    out = pulse.reflow(true);
-  } else {
-    mods = keys.some(function(k) { return pulse.modified(k.fields); });
-    flag |= (mods ? pulse.MOD : 0);
-  }
-  pulse.visit(flag, set);
-
-  return out.modifies(as);
-};
-
-/**
- * Computes global min/max extents over a collection of extents.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Array<Array<number>>} params.extents - The input extents.
- */
-function MultiExtent(params) {
-  Operator.call(this, null, update$4, params);
-}
-
-inherits(MultiExtent, Operator);
-
-function update$4(_$$1) {
-  if (this.value && !_$$1.modified()) {
-    return this.value;
-  }
-
-  var min$$1 = +Infinity,
-      max$$1 = -Infinity,
-      ext = _$$1.extents,
-      i, n, e;
-
-  for (i=0, n=ext.length; i<n; ++i) {
-    e = ext[i];
-    if (e[0] < min$$1) min$$1 = e[0];
-    if (e[1] > max$$1) max$$1 = e[1];
-  }
-  return [min$$1, max$$1];
-}
-
-/**
- * Merge a collection of value arrays.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Array<Array<*>>} params.values - The input value arrrays.
- */
-function MultiValues(params) {
-  Operator.call(this, null, update$5, params);
-}
-
-inherits(MultiValues, Operator);
-
-function update$5(_$$1) {
-  return (this.value && !_$$1.modified())
-    ? this.value
-    : _$$1.values.reduce(function(data, _$$1) { return data.concat(_$$1); }, []);
-}
-
-/**
- * Operator whose value is simply its parameter hash. This operator is
- * useful for enabling reactive updates to values of nested objects.
- * @constructor
- * @param {object} params - The parameters for this operator.
- */
-function Params(params) {
-  Transform.call(this, null, params);
-}
-
-inherits(Params, Transform);
-
-Params.prototype.transform = function(_$$1, pulse) {
-  this.modified(_$$1.modified());
-  this.value = _$$1;
-  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
-};
-
-/**
- * Partitions pre-faceted data into tuple subflows.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(Dataflow, string): Operator} params.subflow - A function
- *   that generates a subflow of operators and returns its root operator.
- * @param {function(object): Array<object>} params.field - The field
- *   accessor for an array of subflow tuple objects.
- */
-function PreFacet(params) {
-  Facet.call(this, params);
-}
-
-var prototype$35 = inherits(PreFacet, Facet);
-
-prototype$35.transform = function(_$$1, pulse) {
-  var self = this,
-      flow = _$$1.subflow,
-      field$$1 = _$$1.field;
-
-  if (_$$1.modified('field') || field$$1 && pulse.modified(accessorFields(field$$1))) {
-    error$1('PreFacet does not support field modification.');
-  }
-
-  this._targets.active = 0; // reset list of active subflows
-
-  pulse.visit(pulse.MOD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.mod(_$$1); }) : sf.mod(t);
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.add(ingest(_$$1)); }) : sf.add(t);
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field$$1 ? field$$1(t).forEach(function(_$$1) { sf.rem(_$$1); }) : sf.rem(t);
-  });
-
-  return pulse;
-};
-
-/**
- * Proxy the value of another operator as a pure signal value.
- * Ensures no tuples are propagated.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {*} params.value - The value to proxy, becomes the value of this operator.
- */
-function Proxy(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$36 = inherits(Proxy, Transform);
-
-prototype$36.transform = function(_$$1, pulse) {
-  this.value = _$$1.value;
-  return _$$1.modified('value')
-    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-    : pulse.StopPropagation;
-};
-
-/**
- * Compute rank order scores for tuples. The tuples are assumed to have been
- * sorted in the desired rank order by an upstream data source.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - An accessor for the field to rank.
- * @param {boolean} params.normalize - Boolean flag for normalizing rank values.
- *   If true, the integer rank scores are normalized to range [0, 1].
- */
-function Rank(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$37 = inherits(Rank, Transform);
-
-prototype$37.transform = function(_$$1, pulse) {
-  if (!pulse.source) {
-    error$1('Rank transform requires an upstream data source.');
-  }
-
-  var norm  = _$$1.normalize,
-      field$$1 = _$$1.field,
-      as = _$$1.as || 'rank',
-      ranks = {},
-      n = -1, rank;
-
-  if (field$$1) {
-    // If we have a field accessor, first compile distinct keys.
-    pulse.visit(pulse.SOURCE, function(t) {
-      var v = field$$1(t);
-      if (ranks[v] == null) ranks[v] = ++n;
-    });
-    pulse.visit(pulse.SOURCE, norm && --n
-      ? function(t) { t[as] = ranks[field$$1(t)] / n; }
-      : function(t) { t[as] = ranks[field$$1(t)]; }
-    );
-  } else {
-    n += pulse.source.length;
-    rank = -1;
-    // Otherwise rank all the tuples together.
-    pulse.visit(pulse.SOURCE, norm && n
-      ? function(t) { t[as] = ++rank / n; }
-      : function(t) { t[as] = ++rank; }
-    );
-  }
-
-  return pulse.reflow(_$$1.modified()).modifies(as);
-};
-
-/**
- * Relays a data stream between data processing pipelines.
- * If the derive parameter is set, this transform will create derived
- * copies of observed tuples. This provides derived data streams in which
- * modifications to the tuples do not pollute an upstream data source.
- * @param {object} params - The parameters for this operator.
- * @param {number} [params.derive=false] - Boolean flag indicating if
- *   the transform should make derived copies of incoming tuples.
- * @constructor
- */
-function Relay(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$38 = inherits(Relay, Transform);
-
-prototype$38.transform = function(_$$1, pulse) {
-  var out, lut;
-
-  if (this.value) {
-    lut = this.value;
-  } else {
-    out = pulse = pulse.addAll();
-    lut = this.value = {};
-  }
-
-  if (_$$1.derive) {
-    out = pulse.fork();
-    
-    pulse.visit(pulse.REM, function(t) {
-      var id$$1 = tupleid(t);
-      out.rem.push(lut[id$$1]);
-      lut[id$$1] = null;
-    });
-    
+  // marshall encoder functions
+  var reenter = encode === 'enter',
+      update = encoders.update || falsy,
+      enter = encoders.enter || falsy,
+      exit = encoders.exit || falsy,
+      set = (encode && !reenter ? encoders[encode] : update) || falsy;
+
+  if (pulse.changed(pulse.ADD)) {
     pulse.visit(pulse.ADD, function(t) {
-      var dt = derive(t);
-      lut[tupleid(t)] = dt;
-      out.add.push(dt);
+      enter(t, _$$1);
+      update(t, _$$1);
+      if (set !== falsy && set !== update) set(t, _$$1);
     });
-
-    pulse.visit(pulse.MOD, function(t) {
-      out.mod.push(rederive(t, lut[tupleid(t)]));
-    });
+    out.modifies(enter.output);
+    out.modifies(update.output);
+    if (set !== falsy && set !== update) out.modifies(set.output);
   }
 
-  return out;
-};
+  if (pulse.changed(pulse.REM) && exit !== falsy) {
+    pulse.visit(pulse.REM, function(t) { exit(t, _$$1); });
+    out.modifies(exit.output);
+  }
 
-/**
- * Samples tuples passing through this operator.
- * Uses reservoir sampling to maintain a representative sample.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {number} [params.size=1000] - The maximum number of samples.
- */
-function Sample(params) {
-  Transform.call(this, [], params);
-  this.count = 0;
-}
-
-var prototype$39 = inherits(Sample, Transform);
-
-prototype$39.transform = function(_$$1, pulse) {
-  var out = pulse.fork(),
-      mod = _$$1.modified('size'),
-      num = _$$1.size,
-      res = this.value,
-      cnt = this.count,
-      cap = 0,
-      map = res.reduce(function(m, t) {
-        m[tupleid(t)] = 1;
-        return m;
-      }, {});
-
-  // sample reservoir update function
-  function update(t) {
-    var p, idx;
-
-    if (res.length < num) {
-      res.push(t);
+  if (reenter || set !== falsy) {
+    var flag = pulse.MOD | (_$$1.modified() ? pulse.REFLOW : 0);
+    if (reenter) {
+      pulse.visit(flag, function(t) {
+        var mod = enter(t, _$$1);
+        if (set(t, _$$1) || mod) out.mod.push(t);
+      });
+      if (out.mod.length) out.modifies(enter.output);
     } else {
-      idx = ~~(cnt * Math.random());
-      if (idx < res.length && idx >= cap) {
-        p = res[idx];
-        if (map[tupleid(p)]) out.rem.push(p); // eviction
-        res[idx] = t;
-      }
+      pulse.visit(flag, function(t) {
+        if (set(t, _$$1)) out.mod.push(t);
+      });
     }
-    ++cnt;
+    if (out.mod.length) out.modifies(set.output);
   }
 
-  if (pulse.rem.length) {
-    // find all tuples that should be removed, add to output
-    pulse.visit(pulse.REM, function(t) {
-      var id$$1 = tupleid(t);
-      if (map[id$$1]) {
-        map[id$$1] = -1;
-        out.rem.push(t);
-      }
-      --cnt;
-    });
-
-    // filter removed tuples out of the sample reservoir
-    res = res.filter(function(t) { return map[tupleid(t)] !== -1; });
-  }
-
-  if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
-    // replenish sample if backing data source is available
-    cap = cnt = res.length;
-    pulse.visit(pulse.SOURCE, function(t) {
-      // update, but skip previously sampled tuples
-      if (!map[tupleid(t)]) update(t);
-    });
-    cap = -1;
-  }
-
-  if (mod && res.length > num) {
-    for (var i=0, n=res.length-num; i<n; ++i) {
-      map[tupleid(res[i])] = -1;
-      out.rem.push(res[i]);
-    }
-    res = res.slice(n);
-  }
-
-  if (pulse.mod.length) {
-    // propagate modified tuples in the sample reservoir
-    pulse.visit(pulse.MOD, function(t) {
-      if (map[tupleid(t)]) out.mod.push(t);
-    });
-  }
-
-  if (pulse.add.length) {
-    // update sample reservoir
-    pulse.visit(pulse.ADD, update);
-  }
-
-  if (pulse.add.length || cap < 0) {
-    // output newly added tuples
-    out.add = res.filter(function(t) { return !map[tupleid(t)]; });
-  }
-
-  this.count = cnt;
-  this.value = out.source = res;
-  return out;
+  return out.changed() ? out : pulse.StopPropagation;
 };
-
-/**
- * Generates data tuples for a specified sequence range of numbers.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {number} params.start - The first number in the sequence.
- * @param {number} params.stop - The last number (exclusive) in the sequence.
- * @param {number} [params.step=1] - The step size between numbers in the sequence.
- */
-function Sequence(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$40 = inherits(Sequence, Transform);
-
-prototype$40.transform = function(_$$1, pulse) {
-  if (this.value && !_$$1.modified()) return;
-
-  var out = pulse.materialize().fork(pulse.MOD);
-
-  out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
-  out.source = this.value = d3Array.range(_$$1.start, _$$1.stop, _$$1.step || 1).map(ingest);
-  out.add = pulse.add.concat(this.value);
-  return out;
-};
-
-/**
- * Propagates a new pulse without any tuples so long as the input
- * pulse contains some added, removed or modified tuples.
- * @param {object} params - The parameters for this operator.
- * @constructor
- */
-function Sieve(params) {
-  Transform.call(this, null, params);
-  this.modified(true); // always treat as modified
-}
-
-var prototype$41 = inherits(Sieve, Transform);
-
-prototype$41.transform = function(_$$1, pulse) {
-  this.value = pulse.source;
-  return pulse.changed()
-    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-    : pulse.StopPropagation;
-};
-
-/**
- * An index that maps from unique, string-coerced, field values to tuples.
- * Assumes that the field serves as a unique key with no duplicate values.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The field accessor to index.
- */
-function TupleIndex(params) {
-  Transform.call(this, fastmap(), params);
-}
-
-var prototype$42 = inherits(TupleIndex, Transform);
-
-prototype$42.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      field$$1 = _$$1.field,
-      index = this.value,
-      mod = true;
-
-  function set(t) { index.set(field$$1(t), t); }
-
-  if (_$$1.modified('field') || pulse.modified(field$$1.fields)) {
-    index.clear();
-    pulse.visit(pulse.SOURCE, set);
-  } else if (pulse.changed()) {
-    pulse.visit(pulse.REM, function(t) { index.delete(field$$1(t)); });
-    pulse.visit(pulse.ADD, set);
-  } else {
-    mod = false;
-  }
-
-  this.modified(mod);
-  if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
-  return pulse.fork();
-};
-
-/**
- * Extracts an array of values. Assumes the source data has already been
- * reduced as needed (e.g., by an upstream Aggregate transform).
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The domain field to extract.
- * @param {function(*,*): number} [params.sort] - An optional
- *   comparator function for sorting the values. The comparator will be
- *   applied to backing tuples prior to value extraction.
- */
-function Values(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$43 = inherits(Values, Transform);
-
-prototype$43.transform = function(_$$1, pulse) {
-  var run = !this.value
-    || _$$1.modified('field')
-    || _$$1.modified('sort')
-    || pulse.changed()
-    || (_$$1.sort && pulse.modified(_$$1.sort.fields));
-
-  if (run) {
-    this.value = (_$$1.sort
-      ? pulse.source.slice().sort(_$$1.sort)
-      : pulse.source).map(_$$1.field);
-  }
-};
-
-function WindowOp(op, field$$1, param, as) {
-  var fn = WindowOps[op](field$$1, param);
-  return {
-    init:   fn.init || zero,
-    update: function(w, t) { t[as] = fn.next(w); }
-  };
-}
-
-var WindowOps = {
-  row_number: function() {
-    return {
-      next: function(w) { return w.index + 1; }
-    };
-  },
-  rank: function() {
-    var rank;
-    return {
-      init: function() { rank = 1; },
-      next: function(w) {
-        var i = w.index,
-            data = w.data;
-        return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
-      }
-    };
-  },
-  dense_rank: function() {
-    var drank;
-    return {
-      init: function() { drank = 1; },
-      next: function(w) {
-        var i = w.index,
-            d = w.data;
-        return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
-      }
-    };
-  },
-  percent_rank: function() {
-    var rank = WindowOps.rank(),
-        next = rank.next;
-    return {
-      init: rank.init,
-      next: function(w) {
-        return (next(w) - 1) / (w.data.length - 1);
-      }
-    };
-  },
-  cume_dist: function() {
-    var cume;
-    return {
-      init: function() { cume = 0; },
-      next: function(w) {
-        var i = w.index,
-            d = w.data,
-            c = w.compare;
-        if (cume < i) {
-          while (i + 1 < d.length && !c(d[i], d[i + 1])) ++i;
-          cume = i;
-        }
-        return (1 + cume) / d.length;
-      }
-    };
-  },
-  ntile: function(field$$1, num) {
-    num = +num;
-    if (!(num > 0)) error$1('ntile num must be greater than zero.');
-    var cume = WindowOps.cume_dist(),
-        next = cume.next;
-    return {
-      init: cume.init,
-      next: function(w) { return Math.ceil(num * next(w)); }
-    };
-  },
-
-  lag: function(field$$1, offset) {
-    offset = +offset || 1;
-    return {
-      next: function(w) {
-        var i = w.index - offset;
-        return i >= 0 ? field$$1(w.data[i]) : null;
-      }
-    };
-  },
-  lead: function(field$$1, offset) {
-    offset = +offset || 1;
-    return {
-      next: function(w) {
-        var i = w.index + offset,
-            d = w.data;
-        return i < d.length ? field$$1(d[i]) : null;
-      }
-    };
-  },
-
-  first_value: function(field$$1) {
-    return {
-      next: function(w) { return field$$1(w.data[w.i0]); }
-    };
-  },
-  last_value: function(field$$1) {
-    return {
-      next: function(w) { return field$$1(w.data[w.i1 - 1]); }
-    }
-  },
-  nth_value: function(field$$1, nth) {
-    nth = +nth;
-    if (!(nth > 0)) error$1('nth_value nth must be greater than zero.');
-    return {
-      next: function(w) {
-        var i = w.i0 + (nth - 1);
-        return i < w.i1 ? field$$1(w.data[i]) : null;
-      }
-    }
-  }
-};
-
-var ValidWindowOps = Object.keys(WindowOps);
-
-function WindowState(_$$1) {
-  var self = this,
-      ops = array(_$$1.ops),
-      fields = array(_$$1.fields),
-      params = array(_$$1.params),
-      as = array(_$$1.as),
-      outputs = self.outputs = [],
-      windows = self.windows = [],
-      inputs = {},
-      map = {},
-      countOnly = true,
-      counts = [],
-      measures = [];
-
-  function visitInputs(f) {
-    array(accessorFields(f)).forEach(function(_$$1) { inputs[_$$1] = 1; });
-  }
-  visitInputs(_$$1.sort);
-
-  ops.forEach(function(op, i) {
-    var field$$1 = fields[i],
-        mname = accessorName(field$$1),
-        name = measureName(op, mname, as[i]);
-
-    visitInputs(field$$1);
-    outputs.push(name);
-
-    // Window operation
-    if (WindowOps.hasOwnProperty(op)) {
-      windows.push(WindowOp(op, fields[i], params[i], name));
-    }
-
-    // Aggregate operation
-    else {
-      if (field$$1 == null && op !== 'count') {
-        error$1('Null aggregate field specified.');
-      }
-      if (op === 'count') {
-        counts.push(name);
-        return;
-      }
-
-      countOnly = false;
-      var m = map[mname];
-      if (!m) {
-        m = (map[mname] = []);
-        m.field = field$$1;
-        measures.push(m);
-      }
-      m.push(createMeasure(op, name));
-    }
-  });
-
-  if (counts.length || measures.length) {
-    self.cell = cell(measures, counts, countOnly);
-  }
-
-  self.inputs = Object.keys(inputs);
-}
-
-var prototype$45 = WindowState.prototype;
-
-prototype$45.init = function() {
-  this.windows.forEach(function(_$$1) { _$$1.init(); });
-  if (this.cell) this.cell.init();
-};
-
-prototype$45.update = function(w, t) {
-  var self = this,
-      cell = self.cell,
-      wind = self.windows,
-      data = w.data,
-      m = wind && wind.length,
-      j;
-
-  if (cell) {
-    for (j=w.p0; j<w.i0; ++j) cell.rem(data[j]);
-    for (j=w.p1; j<w.i1; ++j) cell.add(data[j]);
-    cell.set(t);
-  }
-  for (j=0; j<m; ++j) wind[j].update(w, t);
-};
-
-function cell(measures, counts, countOnly) {
-  measures = measures.map(function(m) {
-    return compileMeasures(m, m.field);
-  });
-
-  var cell = {
-    num:   0,
-    agg:   null,
-    store: false,
-    count: counts
-  };
-
-  if (!countOnly) {
-    var n = measures.length,
-        a = cell.agg = Array(n),
-        i = 0;
-    for (; i<n; ++i) a[i] = new measures[i](cell);
-  }
-
-  if (cell.store) {
-    var store = cell.data = new TupleStore();
-  }
-
-  cell.add = function(t) {
-    cell.num += 1;
-    if (countOnly) return;
-    if (store) store.add(t);
-    for (var i=0; i<n; ++i) {
-      a[i].add(a[i].get(t), t);
-    }
-  };
-
-  cell.rem = function(t) {
-    cell.num -= 1;
-    if (countOnly) return;
-    if (store) store.rem(t);
-    for (var i=0; i<n; ++i) {
-      a[i].rem(a[i].get(t), t);
-    }
-  };
-
-  cell.set = function(t) {
-    var i, n;
-
-    // consolidate stored values
-    if (store) store.values();
-
-    // update tuple properties
-    for (i=0, n=counts.length; i<n; ++i) t[counts[i]] = cell.num;
-    if (!countOnly) for (i=0, n=a.length; i<n; ++i) a[i].set(t);
-  };
-
-  cell.init = function() {
-    cell.num = 0;
-    if (store) store.reset();
-    for (var i=0; i<n; ++i) a[i].init();
-  };
-
-  return cell;
-}
-
-/**
- * Perform window calculations and write results to the input stream.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(*,*): number} [params.sort] - A comparator function for sorting tuples within a window.
- * @param {Array<function(object): *>} [params.groupby] - An array of accessors by which to partition tuples into separate windows.
- * @param {Array<string>} params.ops - An array of strings indicating window operations to perform.
- * @param {Array<function(object): *>} [params.fields] - An array of accessors
- *   for data fields to use as inputs to window operations.
- * @param {Array<*>} [params.params] - An array of parameter values for window operations.
- * @param {Array<string>} [params.as] - An array of output field names for window operations.
- * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
- * @param {boolean} [params.ignorePeers] - If true, base window frame boundaries on row
- *   number alone, ignoring peers with identical sort values. If false (default),
- *   the window boundaries will be adjusted to include peer values.
- */
-function Window(params) {
-  Transform.call(this, {}, params);
-  this._mlen = 0;
-  this._mods = [];
-}
-
-var prototype$44 = inherits(Window, Transform);
-
-prototype$44.transform = function(_$$1, pulse) {
-  var self = this,
-      state = self.state,
-      mod = _$$1.modified(),
-      i, n;
-
-  this.stamp = pulse.stamp;
-
-  // initialize window state
-  if (!state || mod) {
-    state = self.state = new WindowState(_$$1);
-  }
-
-  // retrieve group for a tuple
-  var key$$1 = groupkey(_$$1.groupby);
-  function group(t) { return self.group(key$$1(t)); }
-
-  // partition input tuples
-  if (mod || pulse.modified(state.inputs)) {
-    self.value = {};
-    pulse.visit(pulse.SOURCE, function(t) { group(t).add(t); });
-  } else {
-    pulse.visit(pulse.REM, function(t) { group(t).remove(t); });
-    pulse.visit(pulse.ADD, function(t) { group(t).add(t); });
-  }
-
-  // perform window calculations for each modified partition
-  for (i=0, n=self._mlen; i<n; ++i) {
-    processPartition(self._mods[i], state, _$$1);
-  }
-  self._mlen = 0;
-  self._mods = [];
-
-  // TODO don't reflow everything?
-  return pulse.reflow(mod).modifies(state.outputs);
-};
-
-prototype$44.group = function(key$$1) {
-  var self = this,
-      group = self.value[key$$1];
-
-  if (!group) {
-    group = self.value[key$$1] = SortedList(tupleid);
-    group.stamp = -1;
-  }
-
-  if (group.stamp < self.stamp) {
-    group.stamp = self.stamp;
-    self._mods[self._mlen++] = group;
-  }
-
-  return group;
-};
-
-function processPartition(list, state, _$$1) {
-  var sort = _$$1.sort,
-      range$$1 = sort && !_$$1.ignorePeers,
-      frame = _$$1.frame || [null, 0],
-      data = list.data(sort),
-      n = data.length,
-      i = 0,
-      b = range$$1 ? d3Array.bisector(sort) : null,
-      w = {
-        i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
-        data: data, compare: sort || constant(-1)
-      };
-
-  for (state.init(); i<n; ++i) {
-    setWindow(w, frame, i, n);
-    if (range$$1) adjustRange(w, b);
-    state.update(w, data[i]);
-  }
-}
-
-function setWindow(w, f, i, n) {
-  w.p0 = w.i0;
-  w.p1 = w.i1;
-  w.i0 = f[0] == null ? 0 : Math.max(0, i - Math.abs(f[0]));
-  w.i1 = f[1] == null ? n : Math.min(n, i + Math.abs(f[1]) + 1);
-  w.index = i;
-}
-
-// if frame type is 'range', adjust window for peer values
-function adjustRange(w, bisect$$1) {
-  var r0 = w.i0,
-      r1 = w.i1 - 1,
-      c = w.compare,
-      d = w.data,
-      n = d.length - 1;
-
-  if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect$$1.left(d, d[r0]);
-  if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect$$1.right(d, d[r1]);
-}
-
-var AggregateDefinition = {
-  "type": "Aggregate",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "fields", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-    { "name": "as", "type": "string", "array": true },
-    { "name": "drop", "type": "boolean", "default": true },
-    { "name": "cross", "type": "boolean", "default": false },
-    { "name": "key", "type": "field" }
-  ]
-};
-
-var BinDefinition = {
-  "type": "Bin",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "anchor", "type": "number" },
-    { "name": "maxbins", "type": "number", "default": 20 },
-    { "name": "base", "type": "number", "default": 10 },
-    { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
-    { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "step", "type": "number" },
-    { "name": "steps", "type": "number", "array": true },
-    { "name": "minstep", "type": "number", "default": 0 },
-    { "name": "nice", "type": "boolean", "default": true },
-    { "name": "name", "type": "string" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
-  ]
-};
-
-var CollectDefinition = {
-  "type": "Collect",
-  "metadata": {"source": true},
-  "params": [
-    { "name": "sort", "type": "compare" }
-  ]
-};
-
-var CountPatternDefinition = {
-  "type": "CountPattern",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "case", "type": "enum", "values": ["upper", "lower", "mixed"], "default": "mixed" },
-    { "name": "pattern", "type": "string", "default": "[\\w\"]+" },
-    { "name": "stopwords", "type": "string", "default": "" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["text", "count"] }
-  ]
-};
-
-var CrossDefinition = {
-  "type": "Cross",
-  "metadata": {"source": true, "generates": true, "changes": true},
-  "params": [
-    { "name": "filter", "type": "expr" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
-  ]
-};
-
-var distributions = [
-  {
-    "key": {"function": "normal"},
-    "params": [
-      { "name": "mean", "type": "number", "default": 0 },
-      { "name": "stdev", "type": "number", "default": 1 }
-    ]
-  },
-  {
-    "key": {"function": "uniform"},
-    "params": [
-      { "name": "min", "type": "number", "default": 0 },
-      { "name": "max", "type": "number", "default": 1 }
-    ]
-  },
-  {
-    "key": {"function": "kde"},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "from", "type": "data" },
-      { "name": "bandwidth", "type": "number", "default": 0 }
-    ]
-  }
-];
-
-var mixture = {
-  "key": {"function": "mixture"},
-  "params": [
-    { "name": "distributions", "type": "param", "array": true,
-      "params": distributions },
-    { "name": "weights", "type": "number", "array": true }
-  ]
-};
-
-var DensityDefinition = {
-  "type": "Density",
-  "metadata": {"generates": true, "source": true},
-  "params": [
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "steps", "type": "number", "default": 100 },
-    { "name": "method", "type": "string", "default": "pdf",
-      "values": ["pdf", "cdf"] },
-    { "name": "distribution", "type": "param",
-      "params": distributions.concat(mixture) },
-    { "name": "as", "type": "string", "array": true,
-      "default": ["value", "density"] }
-  ]
-};
-
-var ExtentDefinition = {
-  "type": "Extent",
-  "metadata": {},
-  "params": [
-    { "name": "field", "type": "field", "required": true }
-  ]
-};
-
-var FilterDefinition = {
-  "type": "Filter",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true }
-  ]
-};
-
-var FoldDefinition = {
-  "type": "Fold",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
-  ]
-};
-
-var FormulaDefinition = {
-  "type": "Formula",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true },
-    { "name": "as", "type": "string", "required": true },
-    { "name": "initonly", "type": "boolean" }
-  ]
-};
-
-var ImputeDefinition = {
-  "type": "Impute",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "key", "type": "field", "required": true },
-    { "name": "keyvals", "array": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "enum", "default": "value",
-      "values": ["value", "mean", "median", "max", "min"] },
-    { "name": "value", "default": 0 }
-  ]
-};
-
-var JoinAggregateDefinition = {
-  "type": "JoinAggregate",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "fields", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true,
-      "values": [
-        "count", "valid", "missing", "distinct",
-        "sum", "mean", "average",
-        "variance", "variancep", "stdev", "stdevp", "stderr",
-        "median", "q1", "q3", "ci0", "ci1",
-        "min", "max", "argmin", "argmax" ] },
-    { "name": "as", "type": "string", "array": true },
-    { "name": "key", "type": "field" }
-  ]
-};
-
-var LookupDefinition = {
-  "type": "Lookup",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "index", "type": "index", "params": [
-        {"name": "from", "type": "data", "required": true },
-        {"name": "key", "type": "field", "required": true }
-      ] },
-    { "name": "values", "type": "field", "array": true },
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true },
-    { "name": "default", "default": null }
-  ]
-};
-
-var RankDefinition = {
-  "type": "Rank",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "normalize", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "default": "rank" }
-  ]
-};
-
-var SampleDefinition = {
-  "type": "Sample",
-  "metadata": {"source": true, "changes": true},
-  "params": [
-    { "name": "size", "type": "number", "default": 1000 }
-  ]
-};
-
-var SequenceDefinition = {
-  "type": "Sequence",
-  "metadata": {"generates": true, "source": true},
-  "params": [
-    { "name": "start", "type": "number", "required": true },
-    { "name": "stop", "type": "number", "required": true },
-    { "name": "step", "type": "number", "default": 1 }
-  ],
-  "output": ["value"]
-};
-
-var ValidOps = ValidWindowOps.concat(ValidAggregateOps);
-
-var WindowDefinition = {
-  "type": "Window",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "sort", "type": "compare" },
-    { "name": "frame", "type": "number", "array": true, "length": 2, "default": [null, 0] },
-    { "name": "frameType", "type": "enum", "values": ["range", "rows"], "default": "range" },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidOps },
-    { "name": "params", "type": "number", "array": true },
-    { "name": "fields", "type": "field", "array": true },
-    { "name": "as", "type": "string", "array": true }
-  ]
-};
-
-// Utilities
-// Data Transforms
-register(AggregateDefinition, Aggregate);
-register(BinDefinition, Bin);
-register(CollectDefinition, Collect);
-register(CountPatternDefinition, CountPattern);
-register(CrossDefinition, Cross);
-register(DensityDefinition, Density);
-register(ExtentDefinition, Extent);
-register(FilterDefinition, Filter);
-register(FoldDefinition, Fold);
-register(FormulaDefinition, Formula);
-register(ImputeDefinition, Impute);
-register(JoinAggregateDefinition, JoinAggregate);
-register(LookupDefinition, Lookup);
-register(RankDefinition, Rank);
-register(SampleDefinition, Sample);
-register(SequenceDefinition, Sequence);
-register(WindowDefinition, Window);
-
-transform('Compare', Compare);
-transform('Facet', Facet);
-transform('Field', Field);
-transform('Generate', Generate);
-transform('Key', Key);
-transform('MultiExtent', MultiExtent);
-transform('MultiValues', MultiValues);
-transform('Params', Params);
-transform('PreFacet', PreFacet);
-transform('Proxy', Proxy);
-transform('Relay', Relay);
-transform('Sieve', Sieve);
-transform('Subflow', Subflow);
-transform('TupleIndex', TupleIndex);
-transform('Values', Values);
 
 var invertRange = function(scale) {
   return function(_$$1) {
@@ -10672,6 +11959,735 @@ function method(type) {
     .join('');
 }
 
+var discrete$1 = {};
+discrete$1[Quantile] = quantile$1;
+discrete$1[Quantize] = quantize;
+discrete$1[Threshold] = threshold;
+discrete$1[BinLinear] = bin$1;
+discrete$1[BinOrdinal] = bin$1;
+
+function labelValues(scale, count, gradient) {
+  if (gradient) return scale.domain();
+  var values = discrete$1[scale.type];
+  return values ? values(scale) : tickValues(scale, count);
+}
+
+function quantize(scale) {
+  var domain = scale.domain(),
+      x0 = domain[0],
+      x1 = peek(domain),
+      n = scale.range().length,
+      values = new Array(n),
+      i = 0;
+
+  values[0] = -Infinity;
+  while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
+  values.max = +Infinity;
+
+  return values;
+}
+
+function quantile$1(scale) {
+  var values = [-Infinity].concat(scale.quantiles());
+  values.max = +Infinity;
+
+  return values;
+}
+
+function threshold(scale) {
+  var values = [-Infinity].concat(scale.domain());
+  values.max = +Infinity;
+
+  return values;
+}
+
+function bin$1(scale) {
+  var values = scale.domain();
+  values.max = values.pop();
+
+  return values;
+}
+
+function labelFormat(scale, format$$1) {
+  return discrete$1[scale.type] ? formatRange(format$$1) : formatPoint(format$$1);
+}
+
+function formatRange(format$$1) {
+  return function(value, index, array$$1) {
+    var limit = array$$1[index + 1] || array$$1.max || +Infinity,
+        lo = formatValue(value, format$$1),
+        hi = formatValue(limit, format$$1);
+    return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
+  };
+}
+
+function formatValue(value, format$$1) {
+  return isFinite(value) ? format$$1(value) : null;
+}
+
+function formatPoint(format$$1) {
+  return function(value) {
+    return format$$1(value);
+  };
+}
+
+/**
+ * Generates legend entries for visualizing a scale.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Scale} params.scale - The scale to generate items for.
+ * @param {*} [params.count=10] - The approximate number of items, or
+ *   desired tick interval, to use.
+ * @param {Array<*>} [params.values] - The exact tick values to use.
+ *   These must be legal domain values for the provided scale.
+ *   If provided, the count argument is ignored.
+ * @param {function(*):string} [params.formatSpecifier] - A format specifier
+ *   to use in conjunction with scale.tickFormat. Legal values are
+ *   any valid d3 4.0 format specifier.
+ * @param {function(*):string} [params.format] - The format function to use.
+ *   If provided, the formatSpecifier argument is ignored.
+ */
+function LegendEntries(params) {
+  Transform.call(this, [], params);
+}
+
+var prototype$54 = inherits(LegendEntries, Transform);
+
+prototype$54.transform = function(_$$1, pulse) {
+  if (this.value != null && !_$$1.modified()) {
+    return pulse.StopPropagation;
+  }
+
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      total = 0,
+      items = this.value,
+      grad  = _$$1.type === 'gradient',
+      scale$$1 = _$$1.scale,
+      count = _$$1.count == null ? 5 : _$$1.count,
+      format$$1 = _$$1.format || tickFormat(scale$$1, count, _$$1.formatSpecifier),
+      values = _$$1.values || labelValues(scale$$1, count, grad);
+
+  format$$1 = labelFormat(scale$$1, format$$1);
+  if (items) out.rem = items;
+
+  if (grad) {
+    var domain = _$$1.values ? scale$$1.domain() : values,
+        fraction = scaleFraction(scale$$1, domain[0], peek(domain));
+  } else {
+    var size = _$$1.size,
+        offset;
+    if (isFunction(size)) {
+      // if first value maps to size zero, remove from list (vega#717)
+      if (!_$$1.values && scale$$1(values[0]) === 0) {
+        values = values.slice(1);
+      }
+      // compute size offset for legend entries
+      offset = values.reduce(function(max$$1, value) {
+        return Math.max(max$$1, size(value, _$$1));
+      }, 0);
+    } else {
+      size = constant(offset = size || 8);
+    }
+  }
+
+  items = values.map(function(value, index) {
+    var t = ingest({
+      index: index,
+      label: format$$1(value, index, values),
+      value: value
+    });
+
+    if (grad) {
+      t.perc = fraction(value);
+    } else {
+      t.offset = offset;
+      t.size = size(value, _$$1);
+      t.total = Math.round(total);
+      total += t.size;
+    }
+    return t;
+  });
+
+  out.source = items;
+  out.add = items;
+  this.value = items;
+
+  return out;
+};
+
+var Paths = fastmap({
+  'line': line$3,
+  'line-radial': lineR,
+  'arc': arc$3,
+  'arc-radial': arcR,
+  'curve': curve,
+  'curve-radial': curveR,
+  'orthogonal-horizontal': orthoX,
+  'orthogonal-vertical': orthoY,
+  'orthogonal-radial': orthoR,
+  'diagonal-horizontal': diagonalX,
+  'diagonal-vertical': diagonalY,
+  'diagonal-radial': diagonalR
+});
+
+function sourceX(t) { return t.source.x; }
+function sourceY(t) { return t.source.y; }
+function targetX(t) { return t.target.x; }
+function targetY(t) { return t.target.y; }
+
+ /**
+  * Layout paths linking source and target elements.
+  * @constructor
+  * @param {object} params - The parameters for this operator.
+  */
+function LinkPath(params) {
+  Transform.call(this, {}, params);
+}
+
+LinkPath.Definition = {
+  "type": "LinkPath",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "sourceX", "type": "field", "default": "source.x" },
+    { "name": "sourceY", "type": "field", "default": "source.y" },
+    { "name": "targetX", "type": "field", "default": "target.x" },
+    { "name": "targetY", "type": "field", "default": "target.y" },
+    { "name": "orient", "type": "enum", "default": "vertical",
+      "values": ["horizontal", "vertical", "radial"] },
+    { "name": "shape", "type": "enum", "default": "line",
+      "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
+    { "name": "as", "type": "string", "default": "path" }
+  ]
+};
+
+var prototype$55 = inherits(LinkPath, Transform);
+
+prototype$55.transform = function(_$$1, pulse) {
+  var sx = _$$1.sourceX || sourceX,
+      sy = _$$1.sourceY || sourceY,
+      tx = _$$1.targetX || targetX,
+      ty = _$$1.targetY || targetY,
+      as = _$$1.as || 'path',
+      orient = _$$1.orient || 'vertical',
+      shape = _$$1.shape || 'line',
+      path$$1 = Paths.get(shape + '-' + orient) || Paths.get(shape);
+
+  if (!path$$1) {
+    error$1('LinkPath unsupported type: ' + _$$1.shape
+      + (_$$1.orient ? '-' + _$$1.orient : ''));
+  }
+
+  pulse.visit(pulse.SOURCE, function(t) {
+    t[as] = path$$1(sx(t), sy(t), tx(t), ty(t));
+  });
+
+  return pulse.reflow(_$$1.modified()).modifies(as);
+};
+
+// -- Link Path Generation Methods -----
+
+function line$3(sx, sy, tx, ty) {
+  return 'M' + sx + ',' + sy +
+         'L' + tx + ',' + ty;
+}
+
+function lineR(sa, sr, ta, tr) {
+  return line$3(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
+}
+
+function arc$3(sx, sy, tx, ty) {
+  var dx = tx - sx,
+      dy = ty - sy,
+      rr = Math.sqrt(dx * dx + dy * dy) / 2,
+      ra = 180 * Math.atan2(dy, dx) / Math.PI;
+  return 'M' + sx + ',' + sy +
+         'A' + rr + ',' + rr +
+         ' ' + ra + ' 0 1' +
+         ' ' + tx + ',' + ty;
+}
+
+function arcR(sa, sr, ta, tr) {
+  return arc$3(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
+}
+
+function curve(sx, sy, tx, ty) {
+  var dx = tx - sx,
+      dy = ty - sy,
+      ix = 0.2 * (dx + dy),
+      iy = 0.2 * (dy - dx);
+  return 'M' + sx + ',' + sy +
+         'C' + (sx+ix) + ',' + (sy+iy) +
+         ' ' + (tx+iy) + ',' + (ty-ix) +
+         ' ' + tx + ',' + ty;
+}
+
+function curveR(sa, sr, ta, tr) {
+  return curve(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
+}
+
+function orthoX(sx, sy, tx, ty) {
+  return 'M' + sx + ',' + sy +
+         'V' + ty + 'H' + tx;
+}
+
+function orthoY(sx, sy, tx, ty) {
+  return 'M' + sx + ',' + sy +
+         'H' + tx + 'V' + ty;
+}
+
+function orthoR(sa, sr, ta, tr) {
+  var sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
+  return 'M' + (sr*sc) + ',' + (sr*ss) +
+         'A' + sr + ',' + sr + ' 0 0,' + (sf?1:0) +
+         ' ' + (sr*tc) + ',' + (sr*ts) +
+         'L' + (tr*tc) + ',' + (tr*ts);
+}
+
+function diagonalX(sx, sy, tx, ty) {
+  var m = (sx + tx) / 2;
+  return 'M' + sx + ',' + sy +
+         'C' + m  + ',' + sy +
+         ' ' + m  + ',' + ty +
+         ' ' + tx + ',' + ty;
+}
+
+function diagonalY(sx, sy, tx, ty) {
+  var m = (sy + ty) / 2;
+  return 'M' + sx + ',' + sy +
+         'C' + sx + ',' + m +
+         ' ' + tx + ',' + m +
+         ' ' + tx + ',' + ty;
+}
+
+function diagonalR(sa, sr, ta, tr) {
+  var sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      mr = (sr + tr) / 2;
+  return 'M' + (sr*sc) + ',' + (sr*ss) +
+         'C' + (mr*sc) + ',' + (mr*ss) +
+         ' ' + (mr*tc) + ',' + (mr*ts) +
+         ' ' + (tr*tc) + ',' + (tr*ts);
+}
+
+/**
+ * Pie and donut chart layout.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The value field to size pie segments.
+ * @param {number} [params.startAngle=0] - The start angle (in radians) of the layout.
+ * @param {number} [params.endAngle=2π] - The end angle (in radians) of the layout.
+ * @param {boolean} [params.sort] - Boolean flag for sorting sectors by value.
+ */
+function Pie(params) {
+  Transform.call(this, null, params);
+}
+
+Pie.Definition = {
+  "type": "Pie",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "field", "type": "field" },
+    { "name": "startAngle", "type": "number", "default": 0 },
+    { "name": "endAngle", "type": "number", "default": 6.283185307179586 },
+    { "name": "sort", "type": "boolean", "default": false },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["startAngle", "endAngle"] }
+  ]
+};
+
+var prototype$56 = inherits(Pie, Transform);
+
+prototype$56.transform = function(_$$1, pulse) {
+  var as = _$$1.as || ['startAngle', 'endAngle'],
+      startAngle = as[0],
+      endAngle = as[1],
+      field$$1 = _$$1.field || one,
+      start = _$$1.startAngle || 0,
+      stop = _$$1.endAngle != null ? _$$1.endAngle : 2 * Math.PI,
+      data = pulse.source,
+      values = data.map(field$$1),
+      n = values.length,
+      a = start,
+      k = (stop - start) / d3Array.sum(values),
+      index = d3Array.range(n),
+      i, t, v;
+
+  if (_$$1.sort) {
+    index.sort(function(a, b) {
+      return values[a] - values[b];
+    });
+  }
+
+  for (i=0; i<n; ++i) {
+    v = values[index[i]];
+    t = data[index[i]];
+    t[startAngle] = a;
+    t[endAngle] = (a += v * k);
+  }
+
+  this.value = values;
+  return pulse.reflow(_$$1.modified()).modifies(as);
+};
+
+var DEFAULT_COUNT = 5;
+
+var INCLUDE_ZERO = toSet([Linear, Pow, Sqrt]);
+
+var SKIP$2 = toSet([
+  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
+  'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
+  'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
+]);
+
+/**
+ * Maintains a scale function mapping data values to visual channels.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ */
+function Scale(params) {
+  Transform.call(this, null, params);
+  this.modified(true); // always treat as modified
+}
+
+var prototype$57 = inherits(Scale, Transform);
+
+prototype$57.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      scale = this.value,
+      prop;
+
+  if (!scale || _$$1.modified('type')) {
+    this.value = scale = scale$1((_$$1.type || Linear).toLowerCase())();
+  }
+
+  for (prop in _$$1) if (!SKIP$2[prop]) {
+    isFunction(scale[prop])
+      ? scale[prop](_$$1[prop])
+      : df.warn('Unsupported scale property: ' + prop);
+  }
+
+  configureRange(scale, _$$1, configureDomain(scale, _$$1), df);
+
+  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+};
+
+function configureDomain(scale, _$$1, df) {
+  // check raw domain, if provided use that and exit early
+  var raw = rawDomain(scale, _$$1.domainRaw);
+  if (raw > -1) return raw;
+
+  var domain = _$$1.domain,
+      zero$$1 = _$$1.zero || (_$$1.zero === undefined && INCLUDE_ZERO[scale.type]),
+      n, mid;
+
+  if (!domain) return 0;
+
+  // adjust domain based on zero, min, max settings
+  if (zero$$1 || _$$1.domainMin != null || _$$1.domainMax != null || _$$1.domainMid != null) {
+    n = ((domain = domain.slice()).length - 1) || 1;
+    if (zero$$1) {
+      if (domain[0] > 0) domain[0] = 0;
+      if (domain[n] < 0) domain[n] = 0;
+    }
+    if (_$$1.domainMin != null) domain[0] = _$$1.domainMin;
+    if (_$$1.domainMax != null) domain[n] = _$$1.domainMax;
+
+    if (_$$1.domainMid != null) {
+      mid = _$$1.domainMid;
+      if (mid < domain[0] || mid > domain[n]) {
+        df.warn('Scale domainMid exceeds domain min or max.', mid);
+      }
+      domain.splice(n, 0, mid);
+    }
+  }
+
+  // set the scale domain
+  scale.domain(domain);
+
+  // perform 'nice' adjustment as requested
+  if (_$$1.nice && scale.nice) scale.nice((_$$1.nice !== true && +_$$1.nice) || null);
+
+  // return the cardinality of the domain
+  return domain.length;
+}
+
+function rawDomain(scale, raw) {
+  if (raw) {
+    scale.domain(raw);
+    return raw.length;
+  } else {
+    return -1;
+  }
+}
+
+function configureRange(scale, _$$1, count) {
+  var round = _$$1.round || false,
+      range$$1 = _$$1.range;
+
+  // if range step specified, calculate full range extent
+  if (_$$1.rangeStep != null) {
+    range$$1 = configureRangeStep(scale.type, _$$1, count);
+  }
+
+  // else if a range scheme is defined, use that
+  else if (_$$1.scheme) {
+    range$$1 = configureScheme(scale.type, _$$1, count);
+    if (isFunction(range$$1)) return scale.interpolator(range$$1);
+  }
+
+  // given a range array for a sequential scale, convert to interpolator
+  else if (range$$1 && scale.type === Sequential) {
+    return scale.interpolator($$1.interpolateRgbBasis(flip(range$$1, _$$1.reverse)));
+  }
+
+  // configure rounding / interpolation
+  if (range$$1 && _$$1.interpolate && scale.interpolate) {
+    scale.interpolate(interpolate$1(_$$1.interpolate, _$$1.interpolateGamma));
+  } else if (isFunction(scale.round)) {
+    scale.round(round);
+  } else if (isFunction(scale.rangeRound)) {
+    scale.interpolate(round ? $$1.interpolateRound : $$1.interpolate);
+  }
+
+  if (range$$1) scale.range(flip(range$$1, _$$1.reverse));
+}
+
+function configureRangeStep(type, _$$1, count) {
+  if (type !== Band && type !== Point) {
+    error$1('Only band and point scales support rangeStep.');
+  }
+
+  // calculate full range based on requested step size and padding
+  var outer = (_$$1.paddingOuter != null ? _$$1.paddingOuter : _$$1.padding) || 0,
+      inner = type === Point ? 1
+            : ((_$$1.paddingInner != null ? _$$1.paddingInner : _$$1.padding) || 0);
+  return [0, _$$1.rangeStep * bandSpace(count, inner, outer)];
+}
+
+function configureScheme(type, _$$1, count) {
+  var name = _$$1.scheme.toLowerCase(),
+      scheme = getScheme(name),
+      extent$$1 = _$$1.schemeExtent,
+      discrete;
+
+  if (!scheme) {
+    error$1('Unrecognized scheme name: ' + _$$1.scheme);
+  }
+
+  // determine size for potential discrete range
+  count = (type === Threshold) ? count + 1
+    : (type === BinOrdinal) ? count - 1
+    : (type === Quantile || type === Quantize) ? (+_$$1.schemeCount || DEFAULT_COUNT)
+    : count;
+
+  // adjust and/or quantize scheme as appropriate
+  return type === Sequential ? adjustScheme(scheme, extent$$1, _$$1.reverse)
+    : !extent$$1 && (discrete = getScheme(name + '-' + count)) ? discrete
+    : isFunction(scheme) ? quantize$1(adjustScheme(scheme, extent$$1), count)
+    : type === Ordinal ? scheme : scheme.slice(0, count);
+}
+
+function adjustScheme(scheme, extent$$1, reverse) {
+  return (isFunction(scheme) && (extent$$1 || reverse))
+    ? interpolateRange(scheme, flip(extent$$1 || [0, 1], reverse))
+    : scheme;
+}
+
+function flip(array$$1, reverse) {
+  return reverse ? array$$1.slice().reverse() : array$$1;
+}
+
+function quantize$1(interpolator, count) {
+  var samples = new Array(count),
+      n = (count - 1) || 1;
+  for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
+  return samples;
+}
+
+/**
+ * Sorts scenegraph items in the pulse source array.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(*,*): number} [params.sort] - A comparator
+ *   function for sorting tuples.
+ */
+function SortItems(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$58 = inherits(SortItems, Transform);
+
+prototype$58.transform = function(_$$1, pulse) {
+  var mod = _$$1.modified('sort')
+         || pulse.changed(pulse.ADD)
+         || pulse.modified(_$$1.sort.fields)
+         || pulse.modified('datum');
+
+  if (mod) pulse.source.sort(_$$1.sort);
+
+  this.modified(mod);
+  return pulse;
+};
+
+var Center = 'center';
+var Normalize = 'normalize';
+
+/**
+ * Stack layout for visualization elements.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The value field to stack.
+ * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+ * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
+ * @param {string} [offset='zero'] - One of 'zero', 'center', 'normalize'.
+ */
+function Stack(params) {
+  Transform.call(this, null, params);
+}
+
+Stack.Definition = {
+  "type": "Stack",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "field", "type": "field" },
+    { "name": "groupby", "type": "field", "array": true },
+    { "name": "sort", "type": "compare" },
+    { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
+  ]
+};
+
+var prototype$59 = inherits(Stack, Transform);
+
+prototype$59.transform = function(_$$1, pulse) {
+  var as = _$$1.as || ['y0', 'y1'],
+      y0 = as[0],
+      y1 = as[1],
+      field$$1 = _$$1.field || one,
+      stack = _$$1.offset === Center ? stackCenter
+            : _$$1.offset === Normalize ? stackNormalize
+            : stackZero,
+      groups, i, n, max$$1;
+
+  // partition, sum, and sort the stack groups
+  groups = partition$2(pulse.source, _$$1.groupby, _$$1.sort, field$$1);
+
+  // compute stack layouts per group
+  for (i=0, n=groups.length, max$$1=groups.max; i<n; ++i) {
+    stack(groups[i], max$$1, field$$1, y0, y1);
+  }
+
+  return pulse.reflow(_$$1.modified()).modifies(as);
+};
+
+function stackCenter(group, max$$1, field$$1, y0, y1) {
+  var last = (max$$1 - group.sum) / 2,
+      m = group.length,
+      j = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = (last += Math.abs(field$$1(t)));
+  }
+}
+
+function stackNormalize(group, max$$1, field$$1, y0, y1) {
+  var scale = 1 / group.sum,
+      last = 0,
+      m = group.length,
+      j = 0, v = 0, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    t[y0] = last;
+    t[y1] = last = scale * (v += Math.abs(field$$1(t)));
+  }
+}
+
+function stackZero(group, max$$1, field$$1, y0, y1) {
+  var lastPos = 0,
+      lastNeg = 0,
+      m = group.length,
+      j = 0, v, t;
+
+  for (; j<m; ++j) {
+    t = group[j];
+    v = field$$1(t);
+    if (v < 0) {
+      t[y0] = lastNeg;
+      t[y1] = (lastNeg += v);
+    } else {
+      t[y0] = lastPos;
+      t[y1] = (lastPos += v);
+    }
+  }
+}
+
+function partition$2(data, groupby, sort, field$$1) {
+  var groups = [],
+      get = function(f) { return f(t); },
+      map, i, n, m, t, k, g, s, max$$1;
+
+  // partition data points into stack groups
+  if (groupby == null) {
+    groups.push(data.slice());
+  } else {
+    for (map={}, i=0, n=data.length; i<n; ++i) {
+      t = data[i];
+      k = groupby.map(get);
+      g = map[k];
+      if (!g) {
+        map[k] = (g = []);
+        groups.push(g);
+      }
+      g.push(t);
+    }
+  }
+
+  // compute sums of groups, sort groups as needed
+  for (k=0, max$$1=0, m=groups.length; k<m; ++k) {
+    g = groups[k];
+    for (i=0, s=0, n=g.length; i<n; ++i) {
+      s += Math.abs(field$$1(g[i]));
+    }
+    g.sum = s;
+    if (s > max$$1) max$$1 = s;
+    if (sort) g.sort(sort);
+  }
+  groups.max = max$$1;
+
+  return groups;
+}
+
+
+
+var encode = Object.freeze({
+	axisticks: AxisTicks,
+	datajoin: DataJoin,
+	encode: Encode,
+	legendentries: LegendEntries,
+	linkpath: LinkPath,
+	pie: Pie,
+	scale: Scale,
+	sortitems: SortItems,
+	stack: Stack
+});
+
 var array$1 = Array.prototype;
 
 var slice$1 = array$1.slice;
@@ -11108,9 +13124,25 @@ function Contour(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$46 = inherits(Contour, Transform);
+Contour.Definition = {
+  "type": "Contour",
+  "metadata": {"generates": true, "source": true},
+  "params": [
+    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
+    { "name": "values", "type": "number", "array": true },
+    { "name": "x", "type": "field" },
+    { "name": "y", "type": "field" },
+    { "name": "cellSize", "type": "number" },
+    { "name": "bandwidth", "type": "number" },
+    { "name": "count", "type": "number" },
+    { "name": "nice", "type": "number", "default": false },
+    { "name": "thresholds", "type": "number", "array": true }
+  ]
+};
 
-prototype$46.transform = function(_$$1, pulse) {
+var prototype$60 = inherits(Contour, Transform);
+
+prototype$60.transform = function(_$$1, pulse) {
   if (this.value && !pulse.changed() && !_$$1.modified())
     return pulse.StopPropagation;
 
@@ -11129,7 +13161,7 @@ prototype$46.transform = function(_$$1, pulse) {
   }
 
   // set threshold parameter
-  contour.thresholds(_$$1.thresholds || (_$$1.nice ? count : quantize(count)));
+  contour.thresholds(_$$1.thresholds || (_$$1.nice ? count : quantize$2(count)));
 
   // set all other parameters
   params.forEach(function(param) {
@@ -11142,7 +13174,7 @@ prototype$46.transform = function(_$$1, pulse) {
   return out;
 };
 
-function quantize(k) {
+function quantize$2(k) {
   return function(values) {
     var ex = d3Array.extent(values), x0 = ex[0], dx = ex[1] - x0,
         t = [], i = 1;
@@ -11153,7 +13185,7 @@ function quantize(k) {
 
 var defaultPath = d3Geo.geoPath();
 
-var properties = [
+var projectionProperties = [
   // standard properties in d3-geo
   'clipAngle',
   'clipExtent',
@@ -11189,7 +13221,7 @@ function create$1(type, constructor) {
 
     p.copy = p.copy || function() {
       var c = projection();
-      properties.forEach(function(prop) {
+      projectionProperties.forEach(function(prop) {
         if (p.hasOwnProperty(prop)) c[prop](p[prop]());
       });
       c.path.pointRadius(p.path.pointRadius());
@@ -11209,7 +13241,7 @@ function projection(type, proj) {
   }
 }
 
-function getPath(proj) {
+function getProjectionPath(proj) {
   return (proj && proj.path) || defaultPath;
 }
 
@@ -11249,9 +13281,19 @@ function GeoPath(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$47 = inherits(GeoPath, Transform);
+GeoPath.Definition = {
+  "type": "GeoPath",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "projection", "type": "projection" },
+    { "name": "field", "type": "field" },
+    { "name": "as", "type": "string", "default": "path" }
+  ]
+};
 
-prototype$47.transform = function(_$$1, pulse) {
+var prototype$61 = inherits(GeoPath, Transform);
+
+prototype$61.transform = function(_$$1, pulse) {
   var out = pulse.fork(pulse.ALL),
       path$$1 = this.value,
       field$$1 = _$$1.field || identity,
@@ -11262,7 +13304,7 @@ prototype$47.transform = function(_$$1, pulse) {
 
   if (!path$$1 || _$$1.modified()) {
     // parameters updated, reset and reflow
-    this.value = path$$1 = getPath(_$$1.projection).context(null);
+    this.value = path$$1 = getProjectionPath(_$$1.projection).context(null);
     out.materialize().reflow().visit(out.SOURCE, set);
   } else {
     path$$1.context(null);
@@ -11288,9 +13330,19 @@ function GeoPoint(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$48 = inherits(GeoPoint, Transform);
+GeoPoint.Definition = {
+  "type": "GeoPoint",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "projection", "type": "projection", "required": true },
+    { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+  ]
+};
 
-prototype$48.transform = function(_$$1, pulse) {
+var prototype$62 = inherits(GeoPoint, Transform);
+
+prototype$62.transform = function(_$$1, pulse) {
   var proj = _$$1.projection,
       lon = _$$1.fields[0],
       lat = _$$1.fields[1],
@@ -11336,9 +13388,19 @@ function GeoShape(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$49 = inherits(GeoShape, Transform);
+GeoShape.Definition = {
+  "type": "GeoShape",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "projection", "type": "projection" },
+    { "name": "field", "type": "field", "default": "datum" },
+    { "name": "as", "type": "string", "default": "shape" }
+  ]
+};
 
-prototype$49.transform = function(_$$1, pulse) {
+var prototype$63 = inherits(GeoShape, Transform);
+
+prototype$63.transform = function(_$$1, pulse) {
   var out = pulse.fork(pulse.ALL),
       shape = this.value,
       datum = _$$1.field || field('datum'),
@@ -11347,7 +13409,8 @@ prototype$49.transform = function(_$$1, pulse) {
 
   if (!shape || _$$1.modified()) {
     // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(getPath(_$$1.projection), datum);
+    this.value = shape = shapeGenerator(
+      getProjectionPath(_$$1.projection), datum);
     out.materialize().reflow();
     flag = out.SOURCE;
   }
@@ -11378,9 +13441,26 @@ function Graticule(params) {
   this.generator = d3Geo.geoGraticule();
 }
 
-var prototype$50 = inherits(Graticule, Transform);
+Graticule.Definition = {
+  "type": "Graticule",
+  "metadata": {"source": true, "generates": true, "changes": true},
+  "params": [
+    { "name": "extent", "type": "array", "array": true, "length": 2,
+      "content": {"type": "number", "array": true, "length": 2} },
+    { "name": "extentMajor", "type": "array", "array": true, "length": 2,
+      "content": {"type": "number", "array": true, "length": 2} },
+    { "name": "extentMinor", "type": "array", "array": true, "length": 2,
+      "content": {"type": "number", "array": true, "length": 2} },
+    { "name": "step", "type": "number", "array": true, "length": 2 },
+    { "name": "stepMajor", "type": "number", "array": true, "length": 2, "default": [90, 360] },
+    { "name": "stepMinor", "type": "number", "array": true, "length": 2, "default": [10, 10] },
+    { "name": "precision", "type": "number", "default": 2.5 }
+  ]
+};
 
-prototype$50.transform = function(_$$1, pulse) {
+var prototype$64 = inherits(Graticule, Transform);
+
+prototype$64.transform = function(_$$1, pulse) {
   var out = pulse.fork(),
       src = this.value,
       gen = this.generator, t;
@@ -11415,19 +13495,19 @@ function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$51 = inherits(Projection, Transform);
+var prototype$65 = inherits(Projection, Transform);
 
-prototype$51.transform = function(_$$1, pulse) {
+prototype$65.transform = function(_$$1, pulse) {
   var proj = this.value;
 
   if (!proj || _$$1.modified('type')) {
     this.value = (proj = create$2(_$$1.type));
-    properties.forEach(function(prop) {
-      if (_$$1[prop] != null) set(proj, prop, _$$1[prop]);
+    projectionProperties.forEach(function(prop) {
+      if (_$$1[prop] != null) set$1(proj, prop, _$$1[prop]);
     });
   } else {
-    properties.forEach(function(prop) {
-      if (_$$1.modified(prop)) set(proj, prop, _$$1[prop]);
+    projectionProperties.forEach(function(prop) {
+      if (_$$1.modified(prop)) set$1(proj, prop, _$$1[prop]);
     });
   }
 
@@ -11455,1146 +13535,20 @@ function create$2(type) {
   return constructor();
 }
 
-function set(proj, key$$1, value) {
+function set$1(proj, key$$1, value) {
    if (isFunction(proj[key$$1])) proj[key$$1](value);
 }
 
-var ContourDefinition = {
-  "type": "Contour",
-  "metadata": {"generates": true, "source": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "values", "type": "number", "array": true },
-    { "name": "x", "type": "field" },
-    { "name": "y", "type": "field" },
-    { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number" },
-    { "name": "count", "type": "number" },
-    { "name": "nice", "type": "number", "default": false },
-    { "name": "thresholds", "type": "number", "array": true }
-  ]
-};
 
-var GeoPathDefinition = {
-  "type": "GeoPath",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field" },
-    { "name": "as", "type": "string", "default": "path" }
-  ]
-};
 
-var GeoPointDefinition = {
-  "type": "GeoPoint",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection", "required": true },
-    { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
-  ]
-};
-
-var GeoShapeDefinition = {
-  "type": "GeoShape",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field", "default": "datum" },
-    { "name": "as", "type": "string", "default": "shape" }
-  ]
-};
-
-var GraticuleDefinition = {
-  "type": "Graticule",
-  "metadata": {"source": true, "generates": true, "changes": true},
-  "params": [
-    { "name": "extent", "type": "array", "array": true, "length": 2,
-      "content": {"type": "number", "array": true, "length": 2} },
-    { "name": "extentMajor", "type": "array", "array": true, "length": 2,
-      "content": {"type": "number", "array": true, "length": 2} },
-    { "name": "extentMinor", "type": "array", "array": true, "length": 2,
-      "content": {"type": "number", "array": true, "length": 2} },
-    { "name": "step", "type": "number", "array": true, "length": 2 },
-    { "name": "stepMajor", "type": "number", "array": true, "length": 2, "default": [90, 360] },
-    { "name": "stepMinor", "type": "number", "array": true, "length": 2, "default": [10, 10] },
-    { "name": "precision", "type": "number", "default": 2.5 }
-  ]
-};
-
-register(ContourDefinition, Contour);
-register(GeoPathDefinition, GeoPath);
-register(GeoPointDefinition, GeoPoint);
-register(GeoShapeDefinition, GeoShape);
-register(GraticuleDefinition, Graticule);
-
-transform('Projection', Projection);
-
-var Log = 'log';
-var Pow = 'pow';
-var Sqrt = 'sqrt';
-var Band = 'band';
-var Point = 'point';
-var Linear = 'linear';
-var Ordinal = 'ordinal';
-var Quantile = 'quantile';
-var Quantize = 'quantize';
-var Threshold = 'threshold';
-var BinLinear = 'bin-linear';
-var BinOrdinal = 'bin-ordinal';
-var Sequential = 'sequential';
-
-/**
- * Filter a set of candidate tick values, ensuring that only tick values
- * that lie within the scale range are included.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {Array<*>} ticks - The candidate tick values.
- * @return {Array<*>} - The filtered tick values.
- */
-function validTicks(scale, ticks) {
-  var range$$1 = scale.range(),
-      lo = range$$1[0],
-      hi = peek(range$$1);
-  if (lo > hi) {
-    range$$1 = hi;
-    hi = lo;
-    lo = range$$1;
-  }
-
-  return ticks.filter(function(v) {
-    v = scale(v);
-    return !(v < lo || v > hi)
-  });
-}
-
-/**
- * Generate tick values for the given scale and approximate tick count or
- * interval value. If the scale has a 'ticks' method, it will be used to
- * generate the ticks, with the count argument passed as a parameter. If the
- * scale lacks a 'ticks' method, the full scale domain will be returned.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {*} [count] - The approximate number of desired ticks.
- * @return {Array<*>} - The generated tick values.
- */
-function tickValues(scale, count) {
-  return scale.ticks ? scale.ticks(count) : scale.domain();
-}
-
-/**
- * Generate a label format function for a scale. If the scale has a
- * 'tickFormat' method, it will be used to generate the formatter, with the
- * count and specifier arguments passed as parameters. If the scale lacks a
- * 'tickFormat' method, the returned formatter performs simple string coercion.
- * If the input scale is a logarithmic scale and the format specifier does not
- * indicate a desired decimal precision, a special variable precision formatter
- * that automatically trims trailing zeroes will be generated.
- * @param {Scale} scale - The scale for which to generate the label formatter.
- * @param {*} [count] - The approximate number of desired ticks.
- * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
- *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
- * @return {function(*):string} - The generated label formatter.
- */
-function tickFormat(scale, count, specifier) {
-  var format$$1 = scale.tickFormat
-    ? scale.tickFormat(count, specifier)
-    : String;
-
-  return (scale.type === Log)
-    ? filter$1(format$$1, variablePrecision(specifier))
-    : format$$1;
-}
-
-function filter$1(sourceFormat, targetFormat) {
-  return function(_$$1) {
-    return sourceFormat(_$$1) ? targetFormat(_$$1) : '';
-  };
-}
-
-function variablePrecision(specifier) {
-  var s = d3Format.formatSpecifier(specifier || ',');
-
-  if (s.precision == null) {
-    s.precision = 12;
-    switch (s.type) {
-      case '%': s.precision -= 2; break;
-      case 'e': s.precision -= 1; break;
-    }
-    return trimZeroes(
-      d3Format.format(s),          // number format
-      d3Format.format('.1f')(1)[1] // decimal point character
-    );
-  } else {
-    return d3Format.format(s);
-  }
-}
-
-function trimZeroes(format$$1, decimalChar) {
-  return function(x) {
-    var str = format$$1(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
-
-    if (dec < 0) return str;
-
-    idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
-    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
-
-    return str.slice(0, idx) + end;
-  };
-}
-
-function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
-  if (i > 0) return i;
-  for (i=str.length; --i > dec;) {
-    c = str.charCodeAt(i);
-    if (c >= 48 && c <= 57) return i + 1; // is digit
-  }
-}
-
-/**
- * Generates axis ticks for visualizing a spatial scale.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Scale} params.scale - The scale to generate ticks for.
- * @param {*} [params.count=10] - The approximate number of ticks, or
- *   desired tick interval, to use.
- * @param {Array<*>} [params.values] - The exact tick values to use.
- *   These must be legal domain values for the provided scale.
- *   If provided, the count argument is ignored.
- * @param {function(*):string} [params.formatSpecifier] - A format specifier
- *   to use in conjunction with scale.tickFormat. Legal values are
- *   any valid d3 4.0 format specifier.
- * @param {function(*):string} [params.format] - The format function to use.
- *   If provided, the formatSpecifier argument is ignored.
- */
-function AxisTicks(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$52 = inherits(AxisTicks, Transform);
-
-prototype$52.transform = function(_$$1, pulse) {
-  if (this.value && !_$$1.modified()) {
-    return pulse.StopPropagation;
-  }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      ticks = this.value,
-      scale = _$$1.scale,
-      count = _$$1.values ? _$$1.values.length : _$$1.count,
-      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
-      values = _$$1.values ? validTicks(scale, _$$1.values) : tickValues(scale, count);
-
-  if (ticks) out.rem = ticks;
-
-  ticks = values.map(function(value) {
-    return ingest({value: value, label: format$$1(value)})
-  });
-
-  if (_$$1.extra) {
-    // add an extra tick pegged to the initial domain value
-    // this is used to generate axes with 'binned' domains
-    ticks.push(ingest({
-      extra: {value: ticks[0].value},
-      label: ''
-    }));
-  }
-
-  out.source = ticks;
-  out.add = ticks;
-  this.value = ticks;
-
-  return out;
-};
-
-/**
- * Joins a set of data elements against a set of visual items.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): object} [params.item] - An item generator function.
- * @param {function(object): *} [params.key] - The key field associating data and visual items.
- */
-function DataJoin(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$53 = inherits(DataJoin, Transform);
-
-function defaultItemCreate() {
-  return ingest({});
-}
-
-function isExit(t) {
-  return t.exit;
-}
-
-prototype$53.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      item = _$$1.item || defaultItemCreate,
-      key$$1 = _$$1.key || tupleid,
-      map = this.value;
-
-  if (!map) {
-    pulse = pulse.addAll();
-    this.value = map = fastmap().test(isExit);
-    map.lookup = function(t) { return map.get(key$$1(t)); };
-  }
-
-  if (_$$1.modified('key') || pulse.modified(key$$1)) {
-    error$1('DataJoin does not support modified key function or fields.');
-  }
-
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      if (x.exit) {
-        map.empty--;
-        out.add.push(x);
-      } else {
-        out.mod.push(x);
-      }
-    } else {
-      map.set(k, (x = item(t)));
-      out.add.push(x);
-    }
-
-    x.datum = t;
-    x.exit = false;
-  });
-
-  pulse.visit(pulse.MOD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      x.datum = t;
-      out.mod.push(x);
-    }
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (t === x.datum && !x.exit) {
-      out.rem.push(x);
-      x.exit = true;
-      ++map.empty;
-    }
-  });
-
-  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
-
-  if (_$$1.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
-
-  return out;
-};
-
-/**
- * Invokes encoding functions for visual items.
- * @constructor
- * @param {object} params - The parameters to the encoding functions. This
- *   parameter object will be passed through to all invoked encoding functions.
- * @param {object} param.encoders - The encoding functions
- * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
- * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
- * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
- */
-function Encode(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$54 = inherits(Encode, Transform);
-
-prototype$54.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.ADD_REM),
-      encoders = _$$1.encoders,
-      encode = pulse.encode;
-
-  // if an array, the encode directive includes additional sets
-  // that must be defined in order for the primary set to be invoked
-  // e.g., only run the update set if the hover set is defined
-  if (isArray(encode)) {
-    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
-      encode = encode[0];
-    } else {
-      return pulse.StopPropagation;
-    }
-  }
-
-  // marshall encoder functions
-  var reenter = encode === 'enter',
-      update = encoders.update || falsy,
-      enter = encoders.enter || falsy,
-      exit = encoders.exit || falsy,
-      set = (encode && !reenter ? encoders[encode] : update) || falsy;
-
-  if (pulse.changed(pulse.ADD)) {
-    pulse.visit(pulse.ADD, function(t) {
-      enter(t, _$$1);
-      update(t, _$$1);
-      if (set !== falsy && set !== update) set(t, _$$1);
-    });
-    out.modifies(enter.output);
-    out.modifies(update.output);
-    if (set !== falsy && set !== update) out.modifies(set.output);
-  }
-
-  if (pulse.changed(pulse.REM) && exit !== falsy) {
-    pulse.visit(pulse.REM, function(t) { exit(t, _$$1); });
-    out.modifies(exit.output);
-  }
-
-  if (reenter || set !== falsy) {
-    var flag = pulse.MOD | (_$$1.modified() ? pulse.REFLOW : 0);
-    if (reenter) {
-      pulse.visit(flag, function(t) {
-        var mod = enter(t, _$$1);
-        if (set(t, _$$1) || mod) out.mod.push(t);
-      });
-      if (out.mod.length) out.modifies(enter.output);
-    } else {
-      pulse.visit(flag, function(t) {
-        if (set(t, _$$1)) out.mod.push(t);
-      });
-    }
-    if (out.mod.length) out.modifies(set.output);
-  }
-
-  return out.changed() ? out : pulse.StopPropagation;
-};
-
-var discrete$1 = {};
-discrete$1[Quantile] = quantile$1;
-discrete$1[Quantize] = quantize$1;
-discrete$1[Threshold] = threshold;
-discrete$1[BinLinear] = bin$2;
-discrete$1[BinOrdinal] = bin$2;
-
-function labelValues(scale, count, gradient) {
-  if (gradient) return scale.domain();
-  var values = discrete$1[scale.type];
-  return values ? values(scale) : tickValues(scale, count);
-}
-
-function quantize$1(scale) {
-  var domain = scale.domain(),
-      x0 = domain[0],
-      x1 = peek(domain),
-      n = scale.range().length,
-      values = new Array(n),
-      i = 0;
-
-  values[0] = x0;
-  while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
-  values.max = x1;
-
-  return values;
-}
-
-function quantile$1(scale) {
-  var domain = scale.domain(),
-      values = [domain[0]].concat(scale.quantiles());
-  values.max = peek(domain);
-
-  return values;
-}
-
-function threshold(scale) {
-  var values = [-Infinity].concat(scale.domain());
-  values.max = +Infinity;
-
-  return values;
-}
-
-function bin$2(scale) {
-  var values = scale.domain();
-  values.max = values.pop();
-
-  return values;
-}
-
-function labelFormat(scale, format$$1) {
-  return discrete$1[scale.type] ? formatRange(format$$1) : formatPoint(format$$1);
-}
-
-function formatRange(format$$1) {
-  return function(value, index, array$$1) {
-    var limit = array$$1[index + 1] || array$$1.max || +Infinity,
-        lo = formatValue(value, format$$1),
-        hi = formatValue(limit, format$$1);
-    return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
-  };
-}
-
-function formatValue(value, format$$1) {
-  return isFinite(value) ? format$$1(value) : null;
-}
-
-function formatPoint(format$$1) {
-  return function(value) {
-    return format$$1(value);
-  };
-}
-
-/**
- * Generates legend entries for visualizing a scale.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Scale} params.scale - The scale to generate items for.
- * @param {*} [params.count=10] - The approximate number of items, or
- *   desired tick interval, to use.
- * @param {Array<*>} [params.values] - The exact tick values to use.
- *   These must be legal domain values for the provided scale.
- *   If provided, the count argument is ignored.
- * @param {function(*):string} [params.formatSpecifier] - A format specifier
- *   to use in conjunction with scale.tickFormat. Legal values are
- *   any valid d3 4.0 format specifier.
- * @param {function(*):string} [params.format] - The format function to use.
- *   If provided, the formatSpecifier argument is ignored.
- */
-function LegendEntries(params) {
-  Transform.call(this, [], params);
-}
-
-var prototype$55 = inherits(LegendEntries, Transform);
-
-prototype$55.transform = function(_$$1, pulse) {
-  if (this.value != null && !_$$1.modified()) {
-    return pulse.StopPropagation;
-  }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      total = 0,
-      items = this.value,
-      grad  = _$$1.type === 'gradient',
-      scale = _$$1.scale,
-      count = _$$1.count == null ? 5 : _$$1.count,
-      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
-      values = _$$1.values || labelValues(scale, count, grad);
-
-  format$$1 = labelFormat(scale, format$$1);
-  if (items) out.rem = items;
-
-  if (grad) {
-    var domain = _$$1.values ? scale.domain() : values,
-        fraction = scaleFraction(scale, domain[0], peek(domain));
-  } else {
-    var size = _$$1.size,
-        offset;
-    if (isFunction(size)) {
-      // if first value maps to size zero, remove from list (vega#717)
-      if (!_$$1.values && scale(values[0]) === 0) {
-        values = values.slice(1);
-      }
-      // compute size offset for legend entries
-      offset = values.reduce(function(max$$1, value) {
-        return Math.max(max$$1, size(value, _$$1));
-      }, 0);
-    } else {
-      size = constant(offset = size || 8);
-    }
-  }
-
-  items = values.map(function(value, index) {
-    var t = ingest({
-      index: index,
-      label: format$$1(value, index, values),
-      value: value
-    });
-
-    if (grad) {
-      t.perc = fraction(value);
-    } else {
-      t.offset = offset;
-      t.size = size(value, _$$1);
-      t.total = Math.round(total);
-      total += t.size;
-    }
-    return t;
-  });
-
-  out.source = items;
-  out.add = items;
-  this.value = items;
-
-  return out;
-};
-
-var Paths = fastmap({
-  'line': line$3,
-  'line-radial': lineR,
-  'arc': arc$3,
-  'arc-radial': arcR,
-  'curve': curve,
-  'curve-radial': curveR,
-  'orthogonal-horizontal': orthoX,
-  'orthogonal-vertical': orthoY,
-  'orthogonal-radial': orthoR,
-  'diagonal-horizontal': diagonalX,
-  'diagonal-vertical': diagonalY,
-  'diagonal-radial': diagonalR
+var geo = Object.freeze({
+	contour: Contour,
+	geopath: GeoPath,
+	geopoint: GeoPoint,
+	geoshape: GeoShape,
+	graticule: Graticule,
+	projection: Projection
 });
-
-function sourceX(t) { return t.source.x; }
-function sourceY(t) { return t.source.y; }
-function targetX(t) { return t.target.x; }
-function targetY(t) { return t.target.y; }
-
- /**
-  * Layout paths linking source and target elements.
-  * @constructor
-  * @param {object} params - The parameters for this operator.
-  */
-function LinkPath(params) {
-  Transform.call(this, {}, params);
-}
-
-var prototype$56 = inherits(LinkPath, Transform);
-
-prototype$56.transform = function(_$$1, pulse) {
-  var sx = _$$1.sourceX || sourceX,
-      sy = _$$1.sourceY || sourceY,
-      tx = _$$1.targetX || targetX,
-      ty = _$$1.targetY || targetY,
-      as = _$$1.as || 'path',
-      orient = _$$1.orient || 'vertical',
-      shape = _$$1.shape || 'line',
-      path$$1 = Paths.get(shape + '-' + orient) || Paths.get(shape);
-
-  if (!path$$1) {
-    error$1('LinkPath unsupported type: ' + _$$1.shape
-      + (_$$1.orient ? '-' + _$$1.orient : ''));
-  }
-
-  pulse.visit(pulse.SOURCE, function(t) {
-    t[as] = path$$1(sx(t), sy(t), tx(t), ty(t));
-  });
-
-  return pulse.reflow(_$$1.modified()).modifies(as);
-};
-
-// -- Link Path Generation Methods -----
-
-function line$3(sx, sy, tx, ty) {
-  return 'M' + sx + ',' + sy +
-         'L' + tx + ',' + ty;
-}
-
-function lineR(sa, sr, ta, tr) {
-  return line$3(
-    sr * Math.cos(sa), sr * Math.sin(sa),
-    tr * Math.cos(ta), tr * Math.sin(ta)
-  );
-}
-
-function arc$3(sx, sy, tx, ty) {
-  var dx = tx - sx,
-      dy = ty - sy,
-      rr = Math.sqrt(dx * dx + dy * dy) / 2,
-      ra = 180 * Math.atan2(dy, dx) / Math.PI;
-  return 'M' + sx + ',' + sy +
-         'A' + rr + ',' + rr +
-         ' ' + ra + ' 0 1' +
-         ' ' + tx + ',' + ty;
-}
-
-function arcR(sa, sr, ta, tr) {
-  return arc$3(
-    sr * Math.cos(sa), sr * Math.sin(sa),
-    tr * Math.cos(ta), tr * Math.sin(ta)
-  );
-}
-
-function curve(sx, sy, tx, ty) {
-  var dx = tx - sx,
-      dy = ty - sy,
-      ix = 0.2 * (dx + dy),
-      iy = 0.2 * (dy - dx);
-  return 'M' + sx + ',' + sy +
-         'C' + (sx+ix) + ',' + (sy+iy) +
-         ' ' + (tx+iy) + ',' + (ty-ix) +
-         ' ' + tx + ',' + ty;
-}
-
-function curveR(sa, sr, ta, tr) {
-  return curve(
-    sr * Math.cos(sa), sr * Math.sin(sa),
-    tr * Math.cos(ta), tr * Math.sin(ta)
-  );
-}
-
-function orthoX(sx, sy, tx, ty) {
-  return 'M' + sx + ',' + sy +
-         'V' + ty + 'H' + tx;
-}
-
-function orthoY(sx, sy, tx, ty) {
-  return 'M' + sx + ',' + sy +
-         'H' + tx + 'V' + ty;
-}
-
-function orthoR(sa, sr, ta, tr) {
-  var sc = Math.cos(sa),
-      ss = Math.sin(sa),
-      tc = Math.cos(ta),
-      ts = Math.sin(ta),
-      sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
-  return 'M' + (sr*sc) + ',' + (sr*ss) +
-         'A' + sr + ',' + sr + ' 0 0,' + (sf?1:0) +
-         ' ' + (sr*tc) + ',' + (sr*ts) +
-         'L' + (tr*tc) + ',' + (tr*ts);
-}
-
-function diagonalX(sx, sy, tx, ty) {
-  var m = (sx + tx) / 2;
-  return 'M' + sx + ',' + sy +
-         'C' + m  + ',' + sy +
-         ' ' + m  + ',' + ty +
-         ' ' + tx + ',' + ty;
-}
-
-function diagonalY(sx, sy, tx, ty) {
-  var m = (sy + ty) / 2;
-  return 'M' + sx + ',' + sy +
-         'C' + sx + ',' + m +
-         ' ' + tx + ',' + m +
-         ' ' + tx + ',' + ty;
-}
-
-function diagonalR(sa, sr, ta, tr) {
-  var sc = Math.cos(sa),
-      ss = Math.sin(sa),
-      tc = Math.cos(ta),
-      ts = Math.sin(ta),
-      mr = (sr + tr) / 2;
-  return 'M' + (sr*sc) + ',' + (sr*ss) +
-         'C' + (mr*sc) + ',' + (mr*ss) +
-         ' ' + (mr*tc) + ',' + (mr*ts) +
-         ' ' + (tr*tc) + ',' + (tr*ts);
-}
-
-/**
- * Pie and donut chart layout.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to size pie segments.
- * @param {number} [params.startAngle=0] - The start angle (in radians) of the layout.
- * @param {number} [params.endAngle=2π] - The end angle (in radians) of the layout.
- * @param {boolean} [params.sort] - Boolean flag for sorting sectors by value.
- */
-function Pie(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$57 = inherits(Pie, Transform);
-
-prototype$57.transform = function(_$$1, pulse) {
-  var as = _$$1.as || ['startAngle', 'endAngle'],
-      startAngle = as[0],
-      endAngle = as[1],
-      field$$1 = _$$1.field || one,
-      start = _$$1.startAngle || 0,
-      stop = _$$1.endAngle != null ? _$$1.endAngle : 2 * Math.PI,
-      data = pulse.source,
-      values = data.map(field$$1),
-      n = values.length,
-      a = start,
-      k = (stop - start) / d3Array.sum(values),
-      index = d3Array.range(n),
-      i, t, v;
-
-  if (_$$1.sort) {
-    index.sort(function(a, b) {
-      return values[a] - values[b];
-    });
-  }
-
-  for (i=0; i<n; ++i) {
-    v = values[index[i]];
-    t = data[index[i]];
-    t[startAngle] = a;
-    t[endAngle] = (a += v * k);
-  }
-
-  this.value = values;
-  return pulse.reflow(_$$1.modified()).modifies(as);
-};
-
-var DEFAULT_COUNT = 5;
-
-var INCLUDE_ZERO = toSet([Linear, Pow, Sqrt]);
-
-var SKIP$2 = toSet([
-  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
-  'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
-  'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
-]);
-
-/**
- * Maintains a scale function mapping data values to visual channels.
- * @constructor
- * @param {object} params - The parameters for this operator.
- */
-function Scale(params) {
-  Transform.call(this, null, params);
-  this.modified(true); // always treat as modified
-}
-
-var prototype$58 = inherits(Scale, Transform);
-
-prototype$58.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      scale = this.value,
-      prop;
-
-  if (!scale || _$$1.modified('type')) {
-    this.value = scale = scale$1((_$$1.type || Linear).toLowerCase())();
-  }
-
-  for (prop in _$$1) if (!SKIP$2[prop]) {
-    isFunction(scale[prop])
-      ? scale[prop](_$$1[prop])
-      : df.warn('Unsupported scale property: ' + prop);
-  }
-
-  configureRange(scale, _$$1, configureDomain(scale, _$$1), df);
-
-  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-};
-
-function configureDomain(scale, _$$1, df) {
-  // check raw domain, if provided use that and exit early
-  var raw = rawDomain(scale, _$$1.domainRaw);
-  if (raw > -1) return raw;
-
-  var domain = _$$1.domain,
-      zero$$1 = _$$1.zero || (_$$1.zero === undefined && INCLUDE_ZERO[scale.type]),
-      n, mid;
-
-  if (!domain) return 0;
-
-  // adjust domain based on zero, min, max settings
-  if (zero$$1 || _$$1.domainMin != null || _$$1.domainMax != null || _$$1.domainMid != null) {
-    n = ((domain = domain.slice()).length - 1) || 1;
-    if (zero$$1) {
-      if (domain[0] > 0) domain[0] = 0;
-      if (domain[n] < 0) domain[n] = 0;
-    }
-    if (_$$1.domainMin != null) domain[0] = _$$1.domainMin;
-    if (_$$1.domainMax != null) domain[n] = _$$1.domainMax;
-
-    if (_$$1.domainMid != null) {
-      mid = _$$1.domainMid;
-      if (mid < domain[0] || mid > domain[n]) {
-        df.warn('Scale domainMid exceeds domain min or max.', mid);
-      }
-      domain.splice(n, 0, mid);
-    }
-  }
-
-  // set the scale domain
-  scale.domain(domain);
-
-  // perform 'nice' adjustment as requested
-  if (_$$1.nice && scale.nice) scale.nice((_$$1.nice !== true && +_$$1.nice) || null);
-
-  // return the cardinality of the domain
-  return domain.length;
-}
-
-function rawDomain(scale, raw) {
-  if (raw) {
-    scale.domain(raw);
-    return raw.length;
-  } else {
-    return -1;
-  }
-}
-
-function configureRange(scale, _$$1, count) {
-  var round = _$$1.round || false,
-      range$$1 = _$$1.range;
-
-  // if range step specified, calculate full range extent
-  if (_$$1.rangeStep != null) {
-    range$$1 = configureRangeStep(scale.type, _$$1, count);
-  }
-
-  // else if a range scheme is defined, use that
-  else if (_$$1.scheme) {
-    range$$1 = configureScheme(scale.type, _$$1, count);
-    if (isFunction(range$$1)) return scale.interpolator(range$$1);
-  }
-
-  // given a range array for a sequential scale, convert to interpolator
-  else if (range$$1 && scale.type === Sequential) {
-    return scale.interpolator($$1.interpolateRgbBasis(flip(range$$1, _$$1.reverse)));
-  }
-
-  // configure rounding / interpolation
-  if (range$$1 && _$$1.interpolate && scale.interpolate) {
-    scale.interpolate(interpolate$1(_$$1.interpolate, _$$1.interpolateGamma));
-  } else if (isFunction(scale.round)) {
-    scale.round(round);
-  } else if (isFunction(scale.rangeRound)) {
-    scale.interpolate(round ? $$1.interpolateRound : $$1.interpolate);
-  }
-
-  if (range$$1) scale.range(flip(range$$1, _$$1.reverse));
-}
-
-function configureRangeStep(type, _$$1, count) {
-  if (type !== Band && type !== Point) {
-    error$1('Only band and point scales support rangeStep.');
-  }
-
-  // calculate full range based on requested step size and padding
-  var outer = (_$$1.paddingOuter != null ? _$$1.paddingOuter : _$$1.padding) || 0,
-      inner = type === Point ? 1
-            : ((_$$1.paddingInner != null ? _$$1.paddingInner : _$$1.padding) || 0);
-  return [0, _$$1.rangeStep * bandSpace(count, inner, outer)];
-}
-
-function configureScheme(type, _$$1, count) {
-  var name = _$$1.scheme.toLowerCase(),
-      scheme = getScheme(name),
-      extent$$1 = _$$1.schemeExtent,
-      discrete;
-
-  if (!scheme) {
-    error$1('Unrecognized scheme name: ' + _$$1.scheme);
-  }
-
-  // determine size for potential discrete range
-  count = (type === Threshold) ? count + 1
-    : (type === BinOrdinal) ? count - 1
-    : (type === Quantile || type === Quantize) ? (+_$$1.schemeCount || DEFAULT_COUNT)
-    : count;
-
-  // adjust and/or quantize scheme as appropriate
-  return type === Sequential ? adjustScheme(scheme, extent$$1, _$$1.reverse)
-    : !extent$$1 && (discrete = getScheme(name + '-' + count)) ? discrete
-    : isFunction(scheme) ? quantize$2(adjustScheme(scheme, extent$$1), count)
-    : type === Ordinal ? scheme : scheme.slice(0, count);
-}
-
-function adjustScheme(scheme, extent$$1, reverse) {
-  return (isFunction(scheme) && (extent$$1 || reverse))
-    ? interpolateRange(scheme, flip(extent$$1 || [0, 1], reverse))
-    : scheme;
-}
-
-function flip(array$$1, reverse) {
-  return reverse ? array$$1.slice().reverse() : array$$1;
-}
-
-function quantize$2(interpolator, count) {
-  var samples = new Array(count),
-      n = (count - 1) || 1;
-  for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
-  return samples;
-}
-
-/**
- * Sorts scenegraph items in the pulse source array.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(*,*): number} [params.sort] - A comparator
- *   function for sorting tuples.
- */
-function SortItems(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$59 = inherits(SortItems, Transform);
-
-prototype$59.transform = function(_$$1, pulse) {
-  var mod = _$$1.modified('sort')
-         || pulse.changed(pulse.ADD)
-         || pulse.modified(_$$1.sort.fields)
-         || pulse.modified('datum');
-
-  if (mod) pulse.source.sort(_$$1.sort);
-
-  this.modified(mod);
-  return pulse;
-};
-
-var Center = 'center';
-var Normalize = 'normalize';
-
-/**
- * Stack layout for visualization elements.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to stack.
- * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
- * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
- * @param {string} [offset='zero'] - One of 'zero', 'center', 'normalize'.
- */
-function Stack(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$60 = inherits(Stack, Transform);
-
-prototype$60.transform = function(_$$1, pulse) {
-  var as = _$$1.as || ['y0', 'y1'],
-      y0 = as[0],
-      y1 = as[1],
-      field$$1 = _$$1.field || one,
-      stack = _$$1.offset === Center ? stackCenter
-            : _$$1.offset === Normalize ? stackNormalize
-            : stackZero,
-      groups, i, n, max$$1;
-
-  // partition, sum, and sort the stack groups
-  groups = partition$2(pulse.source, _$$1.groupby, _$$1.sort, field$$1);
-
-  // compute stack layouts per group
-  for (i=0, n=groups.length, max$$1=groups.max; i<n; ++i) {
-    stack(groups[i], max$$1, field$$1, y0, y1);
-  }
-
-  return pulse.reflow(_$$1.modified()).modifies(as);
-};
-
-function stackCenter(group, max$$1, field$$1, y0, y1) {
-  var last = (max$$1 - group.sum) / 2,
-      m = group.length,
-      j = 0, t;
-
-  for (; j<m; ++j) {
-    t = group[j];
-    t[y0] = last;
-    t[y1] = (last += Math.abs(field$$1(t)));
-  }
-}
-
-function stackNormalize(group, max$$1, field$$1, y0, y1) {
-  var scale = 1 / group.sum,
-      last = 0,
-      m = group.length,
-      j = 0, v = 0, t;
-
-  for (; j<m; ++j) {
-    t = group[j];
-    t[y0] = last;
-    t[y1] = last = scale * (v += Math.abs(field$$1(t)));
-  }
-}
-
-function stackZero(group, max$$1, field$$1, y0, y1) {
-  var lastPos = 0,
-      lastNeg = 0,
-      m = group.length,
-      j = 0, v, t;
-
-  for (; j<m; ++j) {
-    t = group[j];
-    v = field$$1(t);
-    if (v < 0) {
-      t[y0] = lastNeg;
-      t[y1] = (lastNeg += v);
-    } else {
-      t[y0] = lastPos;
-      t[y1] = (lastPos += v);
-    }
-  }
-}
-
-function partition$2(data, groupby, sort, field$$1) {
-  var groups = [],
-      get = function(f) { return f(t); },
-      map, i, n, m, t, k, g, s, max$$1;
-
-  // partition data points into stack groups
-  if (groupby == null) {
-    groups.push(data.slice());
-  } else {
-    for (map={}, i=0, n=data.length; i<n; ++i) {
-      t = data[i];
-      k = groupby.map(get);
-      g = map[k];
-      if (!g) {
-        map[k] = (g = []);
-        groups.push(g);
-      }
-      g.push(t);
-    }
-  }
-
-  // compute sums of groups, sort groups as needed
-  for (k=0, max$$1=0, m=groups.length; k<m; ++k) {
-    g = groups[k];
-    for (i=0, s=0, n=g.length; i<n; ++i) {
-      s += Math.abs(field$$1(g[i]));
-    }
-    g.sum = s;
-    if (s > max$$1) max$$1 = s;
-    if (sort) g.sort(sort);
-  }
-  groups.max = max$$1;
-
-  return groups;
-}
-
-var LinkPathDefinition = {
-  "type": "LinkPath",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "sourceX", "type": "field", "default": "source.x" },
-    { "name": "sourceY", "type": "field", "default": "source.y" },
-    { "name": "targetX", "type": "field", "default": "target.x" },
-    { "name": "targetY", "type": "field", "default": "target.y" },
-    { "name": "orient", "type": "enum", "default": "vertical",
-      "values": ["horizontal", "vertical", "radial"] },
-    { "name": "shape", "type": "enum", "default": "line",
-      "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
-    { "name": "as", "type": "string", "default": "path" }
-  ]
-};
-
-var PieDefinition = {
-  "type": "Pie",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "startAngle", "type": "number", "default": 0 },
-    { "name": "endAngle", "type": "number", "default": 6.283185307179586 },
-    { "name": "sort", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["startAngle", "endAngle"] }
-  ]
-};
-
-var StackDefinition = {
-  "type": "Stack",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "sort", "type": "compare" },
-    { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
-  ]
-};
-
-register(LinkPathDefinition, LinkPath);
-register(PieDefinition, Pie);
-register(StackDefinition, Stack);
-
-transform('AxisTicks', AxisTicks);
-transform('DataJoin', DataJoin);
-transform('Encode', Encode);
-transform('LegendEntries', LegendEntries);
-transform('Scale', Scale);
-transform('SortItems', SortItems);
 
 var ForceMap = {
   center: d3Force.forceCenter,
@@ -12623,9 +13577,78 @@ function Force(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$61 = inherits(Force, Transform);
+Force.Definition = {
+  "type": "Force",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "static", "type": "boolean", "default": false },
+    { "name": "restart", "type": "boolean", "default": false },
+    { "name": "iterations", "type": "number", "default": 300 },
+    { "name": "alpha", "type": "number", "default": 1 },
+    { "name": "alphaMin", "type": "number", "default": 0.001 },
+    { "name": "alphaTarget", "type": "number", "default": 0 },
+    { "name": "velocityDecay", "type": "number", "default": 0.4 },
+    { "name": "forces", "type": "param", "array": true,
+      "params": [
+        {
+          "key": {"force": "center"},
+          "params": [
+            { "name": "x", "type": "number", "default": 0 },
+            { "name": "y", "type": "number", "default": 0 }
+          ]
+        },
+        {
+          "key": {"force": "collide"},
+          "params": [
+            { "name": "radius", "type": "number", "expr": true },
+            { "name": "strength", "type": "number", "default": 0.7 },
+            { "name": "iterations", "type": "number", "default": 1 }
+          ]
+        },
+        {
+          "key": {"force": "nbody"},
+          "params": [
+            { "name": "strength", "type": "number", "default": -30 },
+            { "name": "theta", "type": "number", "default": 0.9 },
+            { "name": "distanceMin", "type": "number", "default": 1 },
+            { "name": "distanceMax", "type": "number" }
+          ]
+        },
+        {
+          "key": {"force": "link"},
+          "params": [
+            { "name": "links", "type": "data" },
+            { "name": "id", "type": "field" },
+            { "name": "distance", "type": "number", "default": 30, "expr": true },
+            { "name": "strength", "type": "number", "expr": true },
+            { "name": "iterations", "type": "number", "default": 1 }
+          ]
+        },
+        {
+          "key": {"force": "x"},
+          "params": [
+            { "name": "strength", "type": "number", "default": 0.1 },
+            { "name": "x", "type": "field" }
+          ]
+        },
+        {
+          "key": {"force": "y"},
+          "params": [
+            { "name": "strength", "type": "number", "default": 0.1 },
+            { "name": "y", "type": "field" }
+          ]
+        }
+      ] },
+    {
+      "name": "as", "type": "string", "array": true, "modify": false,
+      "default": ForceOutput
+    }
+  ]
+};
 
-prototype$61.transform = function(_$$1, pulse) {
+var prototype$66 = inherits(Force, Transform);
+
+prototype$66.transform = function(_$$1, pulse) {
   var sim = this.value,
       change = pulse.changed(pulse.ADD_REM),
       params = _$$1.modified(ForceParams),
@@ -12668,7 +13691,7 @@ prototype$61.transform = function(_$$1, pulse) {
   return this.finish(_$$1, pulse);
 };
 
-prototype$61.finish = function(_$$1, pulse) {
+prototype$66.finish = function(_$$1, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -12766,76 +13789,11 @@ function setForceParam(f, v, _$$1) {
   f(isFunction(v) ? function(d) { return v(d, _$$1); } : v);
 }
 
-var ForceDefinition = {
-  "type": "Force",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "static", "type": "boolean", "default": false },
-    { "name": "restart", "type": "boolean", "default": false },
-    { "name": "iterations", "type": "number", "default": 300 },
-    { "name": "alpha", "type": "number", "default": 1 },
-    { "name": "alphaMin", "type": "number", "default": 0.001 },
-    { "name": "alphaTarget", "type": "number", "default": 0 },
-    { "name": "velocityDecay", "type": "number", "default": 0.4 },
-    { "name": "forces", "type": "param", "array": true,
-      "params": [
-        {
-          "key": {"force": "center"},
-          "params": [
-            { "name": "x", "type": "number", "default": 0 },
-            { "name": "y", "type": "number", "default": 0 }
-          ]
-        },
-        {
-          "key": {"force": "collide"},
-          "params": [
-            { "name": "radius", "type": "number", "expr": true },
-            { "name": "strength", "type": "number", "default": 0.7 },
-            { "name": "iterations", "type": "number", "default": 1 }
-          ]
-        },
-        {
-          "key": {"force": "nbody"},
-          "params": [
-            { "name": "strength", "type": "number", "default": -30 },
-            { "name": "theta", "type": "number", "default": 0.9 },
-            { "name": "distanceMin", "type": "number", "default": 1 },
-            { "name": "distanceMax", "type": "number" }
-          ]
-        },
-        {
-          "key": {"force": "link"},
-          "params": [
-            { "name": "links", "type": "data" },
-            { "name": "id", "type": "field" },
-            { "name": "distance", "type": "number", "default": 30, "expr": true },
-            { "name": "strength", "type": "number", "expr": true },
-            { "name": "iterations", "type": "number", "default": 1 }
-          ]
-        },
-        {
-          "key": {"force": "x"},
-          "params": [
-            { "name": "strength", "type": "number", "default": 0.1 },
-            { "name": "x", "type": "field" }
-          ]
-        },
-        {
-          "key": {"force": "y"},
-          "params": [
-            { "name": "strength", "type": "number", "default": 0.1 },
-            { "name": "y", "type": "field" }
-          ]
-        }
-      ] },
-    {
-      "name": "as", "type": "string", "array": true, "modify": false,
-      "default": ["x", "y", "vx", "vy"]
-    }
-  ]
-};
 
-register(ForceDefinition, Force);
+
+var force = Object.freeze({
+	force: Force
+});
 
 /**
   * Nest tuples into a tree structure, grouped by key values.
@@ -12849,13 +13807,22 @@ function Nest(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$62 = inherits(Nest, Transform);
+Nest.Definition = {
+  "type": "Nest",
+  "metadata": {"treesource": true},
+  "params": [
+    { "name": "keys", "type": "field", "array": true },
+    { "name": "key", "type": "field" }
+  ]
+};
+
+var prototype$67 = inherits(Nest, Transform);
 
 function children(n) {
   return n.values;
 }
 
-prototype$62.transform = function(_$$1, pulse) {
+prototype$67.transform = function(_$$1, pulse) {
   if (!pulse.source) {
     error$1('Nest transform requires an upstream data source.');
   }
@@ -12885,6 +13852,123 @@ prototype$62.transform = function(_$$1, pulse) {
 };
 
 /**
+ * Abstract class for tree layout.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ */
+function HierarchyLayout(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$69 = inherits(HierarchyLayout, Transform);
+
+prototype$69.transform = function(_$$1, pulse) {
+  if (!pulse.source || !pulse.source.root) {
+    error$1(this.constructor.name
+      + ' transform requires a backing tree data source.');
+  }
+
+  var layout = this.layout(_$$1.method),
+      fields = this.fields,
+      root = pulse.source.root,
+      as = _$$1.as || fields;
+
+  if (_$$1.field) root.sum(_$$1.field);
+  if (_$$1.sort) root.sort(_$$1.sort);
+
+  setParams(layout, this.params, _$$1);
+  try {
+    this.value = layout(root);
+  } catch (err) {
+    error$1(err);
+  }
+  root.each(function(node) { setFields(node, fields, as); });
+
+  return pulse.reflow(_$$1.modified()).modifies(as).modifies('leaf');
+};
+
+function setParams(layout, params, _$$1) {
+  for (var p, i=0, n=params.length; i<n; ++i) {
+    p = params[i];
+    if (p in _$$1) layout[p](_$$1[p]);
+  }
+}
+
+function setFields(node, fields, as) {
+  var t = node.data;
+  for (var i=0, n=fields.length-1; i<n; ++i) {
+    t[as[i]] = node[fields[i]];
+  }
+  t[as[n]] = node.children ? node.children.length : 0;
+}
+
+var Output = ['x', 'y', 'r', 'depth', 'children'];
+
+/**
+ * Packed circle tree layout.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The value field to size nodes.
+ */
+function Pack(params) {
+  HierarchyLayout.call(this, params);
+}
+
+Pack.Definition = {
+  "type": "Pack",
+  "metadata": {"tree": true, "modifies": true},
+  "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
+    { "name": "padding", "type": "number", "default": 0 },
+    { "name": "radius", "type": "field", "default": null },
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "as", "type": "string", "array": true, "length": 3, "default": Output }
+  ]
+};
+
+var prototype$68 = inherits(Pack, HierarchyLayout);
+
+prototype$68.layout = d3Hierarchy.pack;
+
+prototype$68.params = ['size', 'padding'];
+
+prototype$68.fields = Output;
+
+var Output$1 = ["x0", "y0", "x1", "y1", "depth", "children"];
+
+/**
+ * Partition tree layout.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} params.field - The value field to size nodes.
+ */
+function Partition(params) {
+  HierarchyLayout.call(this, params);
+}
+
+Partition.Definition = {
+  "type": "Partition",
+  "metadata": {"tree": true, "modifies": true},
+  "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
+    { "name": "padding", "type": "number", "default": 0 },
+    { "name": "round", "type": "boolean", "default": false },
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$1 }
+  ]
+};
+
+var prototype$70 = inherits(Partition, HierarchyLayout);
+
+prototype$70.layout = d3Hierarchy.partition;
+
+prototype$70.params = ['size', 'round', 'padding'];
+
+prototype$70.fields = Output$1;
+
+/**
   * Stratify a collection of tuples into a tree structure based on
   * id and parent id fields.
   * @constructor
@@ -12896,9 +13980,18 @@ function Stratify(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$63 = inherits(Stratify, Transform);
+Stratify.Definition = {
+  "type": "Stratify",
+  "metadata": {"treesource": true},
+  "params": [
+    { "name": "key", "type": "field", "required": true },
+    { "name": "parentKey", "type": "field", "required": true  }
+  ]
+};
 
-prototype$63.transform = function(_$$1, pulse) {
+var prototype$71 = inherits(Stratify, Transform);
+
+prototype$71.transform = function(_$$1, pulse) {
   if (!pulse.source) {
     error$1('Stratify transform requires an upstream data source.');
   }
@@ -12921,6 +14014,51 @@ prototype$63.transform = function(_$$1, pulse) {
   return mod ? pulse.fork(pulse.ALL) : pulse;
 };
 
+var Layouts = {
+  tidy: d3Hierarchy.tree,
+  cluster: d3Hierarchy.cluster
+};
+
+var Output$2 = ["x", "y", "depth", "children"];
+
+/**
+ * Tree layout. Depending on the method parameter, performs either
+ * Reingold-Tilford 'tidy' layout or dendrogram 'cluster' layout.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ */
+function Tree(params) {
+  HierarchyLayout.call(this, params);
+}
+
+Tree.Definition = {
+  "type": "Tree",
+  "metadata": {"tree": true, "modifies": true},
+  "params": [
+    { "name": "field", "type": "field" },
+    { "name": "sort", "type": "compare" },
+    { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
+    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$2 }
+  ]
+};
+
+var prototype$72 = inherits(Tree, HierarchyLayout);
+
+/**
+ * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
+ */
+prototype$72.layout = function(method) {
+  var m = method || 'tidy';
+  if (Layouts.hasOwnProperty(m)) return Layouts[m]();
+  else error$1('Unrecognized Tree layout method: ' + m);
+};
+
+prototype$72.params = ['size', 'nodeSize', 'separation'];
+
+prototype$72.fields = Output$2;
+
 /**
   * Generate tuples representing links between tree nodes.
   * The resulting tuples will contain 'source' and 'target' fields,
@@ -12934,7 +14072,15 @@ function TreeLinks(params) {
   Transform.call(this, {}, params);
 }
 
-var prototype$64 = inherits(TreeLinks, Transform);
+TreeLinks.Definition = {
+  "type": "TreeLinks",
+  "metadata": {"tree": true, "generates": true, "changes": true},
+  "params": [
+    { "name": "key", "type": "field" }
+  ]
+};
+
+var prototype$73 = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
   var p;
@@ -12943,7 +14089,7 @@ function parentTuple(node) {
       && (tupleid(p) != null) && p;
 }
 
-prototype$64.transform = function(_$$1, pulse) {
+prototype$73.transform = function(_$$1, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error$1('TreeLinks transform requires a backing tree data source.');
   }
@@ -13007,101 +14153,7 @@ var Tiles = {
   resquarify: d3Hierarchy.treemapResquarify
 };
 
-var Layouts = {
-  tidy: d3Hierarchy.tree,
-  cluster: d3Hierarchy.cluster
-};
-
-/**
- * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
- */
-function treeLayout(method) {
-  var m = method || 'tidy';
-  if (Layouts.hasOwnProperty(m)) return Layouts[m]();
-  else error$1('Unrecognized Tree layout method: ' + m);
-}
-
-/**
- * Treemap layout generator. Adds 'method' and 'ratio' parameters
- * to configure the underlying tile method.
- */
-function treemapLayout() {
-  var x = d3Hierarchy.treemap();
-  x.ratio = function(_$$1) {
-    var t = x.tile();
-    if (t.ratio) x.tile(t.ratio(_$$1));
-  };
-  x.method = function(_$$1) {
-    if (Tiles.hasOwnProperty(_$$1)) x.tile(Tiles[_$$1]);
-    else error$1('Unrecognized Treemap layout method: ' + _$$1);
-  };
-  return x;
-}
-
- /**
-  * Abstract class for tree layout.
-  * @constructor
-  * @param {object} params - The parameters for this operator.
-  */
-function HierarchyLayout(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$65 = inherits(HierarchyLayout, Transform);
-
-prototype$65.transform = function(_$$1, pulse) {
-  if (!pulse.source || !pulse.source.root) {
-    error$1(this.constructor.name
-      + ' transform requires a backing tree data source.');
-  }
-
-  var layout = this.layout(_$$1.method),
-      fields = this.fields,
-      root = pulse.source.root,
-      as = _$$1.as || fields;
-
-  if (_$$1.field) root.sum(_$$1.field);
-  if (_$$1.sort) root.sort(_$$1.sort);
-
-  setParams(layout, this.params, _$$1);
-  try {
-    this.value = layout(root);
-  } catch (err) {
-    error$1(err);
-  }
-  root.each(function(node) { setFields(node, fields, as); });
-
-  return pulse.reflow(_$$1.modified()).modifies(as).modifies('leaf');
-};
-
-function setParams(layout, params, _$$1) {
-  for (var p, i=0, n=params.length; i<n; ++i) {
-    p = params[i];
-    if (p in _$$1) layout[p](_$$1[p]);
-  }
-}
-
-function setFields(node, fields, as) {
-  var t = node.data;
-  for (var i=0, n=fields.length-1; i<n; ++i) {
-    t[as[i]] = node[fields[i]];
-  }
-  t[as[n]] = node.children ? node.children.length : 0;
-}
-
-/**
- * Tree layout. Depending on the method parameter, performs either
- * Reingold-Tilford 'tidy' layout or dendrogram 'cluster' layout.
- * @constructor
- * @param {object} params - The parameters for this operator.
- */
-function Tree(params) {
-  HierarchyLayout.call(this, params);
-}
-inherits(Tree, HierarchyLayout);
-Tree.prototype.layout = treeLayout;
-Tree.prototype.params = ['size', 'nodeSize', 'separation'];
-Tree.prototype.fields = ['x', 'y', 'depth', 'children'];
+var Output$3 = ["x0", "y0", "x1", "y1", "depth", "children"];
 
 /**
  * Treemap layout.
@@ -13112,109 +14164,8 @@ Tree.prototype.fields = ['x', 'y', 'depth', 'children'];
 function Treemap(params) {
   HierarchyLayout.call(this, params);
 }
-inherits(Treemap, HierarchyLayout);
-Treemap.prototype.layout = treemapLayout;
-Treemap.prototype.params = [
-  'method', 'ratio', 'size', 'round',
-  'padding', 'paddingInner', 'paddingOuter',
-  'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
-];
-Treemap.prototype.fields = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
-/**
- * Partition tree layout.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to size nodes.
- */
-function Partition(params) {
-  HierarchyLayout.call(this, params);
-}
-inherits(Partition, HierarchyLayout);
-Partition.prototype.layout = d3Hierarchy.partition;
-Partition.prototype.params = ['size', 'round', 'padding'];
-Partition.prototype.fields = Treemap.prototype.fields;
-
-/**
- * Packed circle tree layout.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to size nodes.
- */
-function Pack(params) {
-  HierarchyLayout.call(this, params);
-}
-inherits(Pack, HierarchyLayout);
-Pack.prototype.layout = d3Hierarchy.pack;
-Pack.prototype.params = ['size', 'padding'];
-Pack.prototype.fields = ['x', 'y', 'r', 'depth', 'children'];
-
-var NestDefinition = {
-  "type": "Nest",
-  "metadata": {"treesource": true},
-  "params": [
-    { "name": "keys", "type": "field", "array": true },
-    { "name": "key", "type": "field" }
-  ]
-};
-
-var StratifyDefinition = {
-  "type": "Stratify",
-  "metadata": {"treesource": true},
-  "params": [
-    { "name": "key", "type": "field", "required": true },
-    { "name": "parentKey", "type": "field", "required": true  }
-  ]
-};
-
-var TreeLinksDefinition = {
-  "type": "TreeLinks",
-  "metadata": {"tree": true, "generates": true, "changes": true},
-  "params": [
-    { "name": "key", "type": "field" }
-  ]
-};
-
-var PackDefinition = {
-  "type": "Pack",
-  "metadata": {"tree": true, "modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "sort", "type": "compare" },
-    { "name": "padding", "type": "number", "default": 0 },
-    { "name": "radius", "type": "field", "default": null },
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 3, "default": ["x", "y", "r", "depth", "children"] }
-  ]
-};
-
-var PartitionDefinition = {
-  "type": "Partition",
-  "metadata": {"tree": true, "modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "sort", "type": "compare" },
-    { "name": "padding", "type": "number", "default": 0 },
-    { "name": "round", "type": "boolean", "default": false },
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1", "depth", "children"] }
-  ]
-};
-
-var TreeDefinition = {
-  "type": "Tree",
-  "metadata": {"tree": true, "modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "sort", "type": "compare" },
-    { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x", "y", "depth", "children"] }
-  ]
-};
-
-var TreemapDefinition = {
+Treemap.Definition = {
   "type": "Treemap",
   "metadata": {"tree": true, "modifies": true},
   "params": [
@@ -13232,27 +14183,72 @@ var TreemapDefinition = {
     { "name": "ratio", "type": "number", "default": 1.618033988749895 },
     { "name": "round", "type": "boolean", "default": false },
     { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": ["x0", "y0", "x1", "y1", "depth", "children"] }
+    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$3 }
   ]
 };
 
-register(NestDefinition, Nest);
-register(StratifyDefinition, Stratify);
-register(TreeLinksDefinition, TreeLinks);
-register(PackDefinition, Pack);
-register(PartitionDefinition, Partition);
-register(TreeDefinition, Tree);
-register(TreemapDefinition, Treemap);
+var prototype$74 = inherits(Treemap, HierarchyLayout);
+
+/**
+ * Treemap layout generator. Adds 'method' and 'ratio' parameters
+ * to configure the underlying tile method.
+ */
+prototype$74.layout = function() {
+  var x = d3Hierarchy.treemap();
+  x.ratio = function(_$$1) {
+    var t = x.tile();
+    if (t.ratio) x.tile(t.ratio(_$$1));
+  };
+  x.method = function(_$$1) {
+    if (Tiles.hasOwnProperty(_$$1)) x.tile(Tiles[_$$1]);
+    else error$1('Unrecognized Treemap layout method: ' + _$$1);
+  };
+  return x;
+};
+
+prototype$74.params = [
+  'method', 'ratio', 'size', 'round',
+  'padding', 'paddingInner', 'paddingOuter',
+  'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
+];
+
+prototype$74.fields = Output$3;
+
+
+
+var tree$1 = Object.freeze({
+	nest: Nest,
+	pack: Pack,
+	partition: Partition,
+	stratify: Stratify,
+	tree: Tree,
+	treelinks: TreeLinks,
+	treemap: Treemap
+});
 
 function Voronoi(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$66 = inherits(Voronoi, Transform);
+Voronoi.Definition = {
+  "type": "Voronoi",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "x", "type": "field", "required": true },
+    { "name": "y", "type": "field", "required": true },
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "extent", "type": "array", "array": true, "length": 2,
+      "default": [[-1e5, -1e5], [1e5, 1e5]],
+      "content": {"type": "number", "array": true, "length": 2} },
+    { "name": "as", "type": "string", "default": "path" }
+  ]
+};
+
+var prototype$75 = inherits(Voronoi, Transform);
 
 var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-prototype$66.transform = function(_$$1, pulse) {
+prototype$75.transform = function(_$$1, pulse) {
   var as = _$$1.as || 'path',
       data = pulse.source,
       diagram, polygons, i, n;
@@ -13275,21 +14271,11 @@ prototype$66.transform = function(_$$1, pulse) {
   return pulse.reflow(_$$1.modified()).modifies(as);
 };
 
-var VoronoiDefinition = {
-  "type": "Voronoi",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "extent", "type": "array", "array": true, "length": 2,
-      "default": [[-1e5, -1e5], [1e5, 1e5]],
-      "content": {"type": "number", "array": true, "length": 2} },
-    { "name": "as", "type": "string", "default": "path" }
-  ]
-};
 
-register(VoronoiDefinition, Voronoi);
+
+var voronoi$1 = Object.freeze({
+	voronoi: Voronoi
+});
 
 /*
 Copyright (c) 2013, Jason Davies.
@@ -13733,26 +14719,46 @@ var spirals = {
   rectangular: rectangularSpiral
 };
 
-var output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
-var params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
+var Output$4 = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+
+var Params$1 = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
 function Wordcloud(params) {
   Transform.call(this, cloud(), params);
 }
 
-var prototype$67 = inherits(Wordcloud, Transform);
+Wordcloud.Definition = {
+  "type": "Wordcloud",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "font", "type": "string", "expr": true, "default": "sans-serif" },
+    { "name": "fontStyle", "type": "string", "expr": true, "default": "normal" },
+    { "name": "fontWeight", "type": "string", "expr": true, "default": "normal" },
+    { "name": "fontSize", "type": "number", "expr": true, "default": 14 },
+    { "name": "fontSizeRange", "type": "number", "array": "nullable", "default": [10, 50] },
+    { "name": "rotate", "type": "number", "expr": true, "default": 0 },
+    { "name": "text", "type": "field" },
+    { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
+    { "name": "padding", "type": "number", "expr": true },
+    { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$4 }
+  ]
+};
 
-prototype$67.transform = function(_$$1, pulse) {
+var prototype$76 = inherits(Wordcloud, Transform);
+
+prototype$76.transform = function(_$$1, pulse) {
   function modp(param) {
     var p = _$$1[param];
     return isFunction(p) && pulse.modified(p.fields);
   }
 
   var mod = _$$1.modified();
-  if (!(mod || pulse.changed(pulse.ADD_REM) || params.some(modp))) return;
+  if (!(mod || pulse.changed(pulse.ADD_REM) || Params$1.some(modp))) return;
 
-  var layout = this.value,
-      as = _$$1.as || output,
+  var data = pulse.materialize(pulse.SOURCE).source,
+      layout = this.value,
+      as = _$$1.as || Output$4,
       fontSize = _$$1.fontSize || 14,
       range$$1;
 
@@ -13764,12 +14770,11 @@ prototype$67.transform = function(_$$1, pulse) {
   if (range$$1) {
     var fsize = fontSize,
         sizeScale = scale$1('sqrt')()
-          .domain(extent$1(fsize, pulse))
+          .domain(extent$1(fsize, data))
           .range(range$$1);
     fontSize = function(x) { return sizeScale(fsize(x)); };
   }
 
-  var data = pulse.materialize(pulse.SOURCE).source;
   data.forEach(function(t) {
     t[as[0]] = NaN;
     t[as[1]] = NaN;
@@ -13812,32 +14817,27 @@ prototype$67.transform = function(_$$1, pulse) {
   return pulse.reflow(mod).modifies(as);
 };
 
-function extent$1(size, pulse) {
-  var e = new transforms.Extent();
-  e.transform({field: size, modified: truthy}, pulse);
-  return e.value;
+function extent$1(field$$1, data) {
+  var min$$1 = +Infinity,
+      max$$1 = -Infinity,
+      i = 0,
+      n = data.length,
+      v;
+
+  for (; i<n; ++i) {
+    v = field$$1(data[i]);
+    if (v < min$$1) min$$1 = v;
+    if (v > max$$1) max$$1 = v;
+  }
+
+  return [min$$1, max$$1];
 }
 
-var WordcloudDefinition = {
-  "type": "Wordcloud",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "font", "type": "string", "expr": true, "default": "sans-serif" },
-    { "name": "fontStyle", "type": "string", "expr": true, "default": "normal" },
-    { "name": "fontWeight", "type": "string", "expr": true, "default": "normal" },
-    { "name": "fontSize", "type": "number", "expr": true, "default": 14 },
-    { "name": "fontSizeRange", "type": "number", "array": true, "null": true, "default": [10, 50] },
-    { "name": "rotate", "type": "number", "expr": true, "default": 0 },
-    { "name": "text", "type": "field" },
-    { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
-    { "name": "padding", "type": "number", "expr": true },
-    { "name": "as", "type": "string", "array": true, "length": 7,
-      "default": ["x", "y", "font", "fontSize", "fontStyle", "fontWeight", "angle"] }
-  ]
-};
 
-register(WordcloudDefinition, Wordcloud);
+
+var wordcloud = Object.freeze({
+	wordcloud: Wordcloud
+});
 
 function array8(n) { return new Uint8Array(n); }
 
@@ -14106,9 +15106,19 @@ function CrossFilter(params) {
   this._dims = null;
 }
 
-var prototype$68 = inherits(CrossFilter, Transform);
+CrossFilter.Definition = {
+  "type": "CrossFilter",
+  "metadata": {},
+  "params": [
+    { "name": "fields", "type": "field", "array": true, "required": true },
+    { "name": "query", "type": "array", "array": true, "required": true,
+      "content": {"type": "number", "array": true, "length": 2} }
+  ]
+};
 
-prototype$68.transform = function(_$$1, pulse) {
+var prototype$77 = inherits(CrossFilter, Transform);
+
+prototype$77.transform = function(_$$1, pulse) {
   if (!this._dims) {
     return this.init(_$$1, pulse);
   } else {
@@ -14121,7 +15131,7 @@ prototype$68.transform = function(_$$1, pulse) {
   }
 };
 
-prototype$68.init = function(_$$1, pulse) {
+prototype$77.init = function(_$$1, pulse) {
   var fields = _$$1.fields,
       query = _$$1.query,
       indices = this._indices = {},
@@ -14139,7 +15149,7 @@ prototype$68.init = function(_$$1, pulse) {
   return this.eval(_$$1, pulse);
 };
 
-prototype$68.reinit = function(_$$1, pulse) {
+prototype$77.reinit = function(_$$1, pulse) {
   var output = pulse.materialize().fork(),
       fields = _$$1.fields,
       query = _$$1.query,
@@ -14206,7 +15216,7 @@ prototype$68.reinit = function(_$$1, pulse) {
   return output;
 };
 
-prototype$68.eval = function(_$$1, pulse) {
+prototype$77.eval = function(_$$1, pulse) {
   var output = pulse.materialize().fork(),
       m = this._dims.length,
       mask = 0;
@@ -14234,7 +15244,7 @@ prototype$68.eval = function(_$$1, pulse) {
   return output;
 };
 
-prototype$68.insert = function(_$$1, pulse, output) {
+prototype$77.insert = function(_$$1, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
       dims = this._dims,
@@ -14268,7 +15278,7 @@ prototype$68.insert = function(_$$1, pulse, output) {
   }
 };
 
-prototype$68.modify = function(pulse, output) {
+prototype$77.modify = function(pulse, output) {
   var out = output.mod,
       bits = this.value,
       curr = bits.curr(),
@@ -14282,7 +15292,7 @@ prototype$68.modify = function(pulse, output) {
   }
 };
 
-prototype$68.remove = function(_$$1, pulse, output) {
+prototype$77.remove = function(_$$1, pulse, output) {
   var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
@@ -14312,7 +15322,7 @@ prototype$68.remove = function(_$$1, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype$68.reindex = function(pulse, num, map) {
+prototype$77.reindex = function(pulse, num, map) {
   var indices = this._indices,
       bits = this.value;
 
@@ -14322,7 +15332,7 @@ prototype$68.reindex = function(pulse, num, map) {
   });
 };
 
-prototype$68.update = function(_$$1, pulse, output) {
+prototype$77.update = function(_$$1, pulse, output) {
   var dims = this._dims,
       query = _$$1.query,
       stamp = pulse.stamp,
@@ -14352,7 +15362,7 @@ prototype$68.update = function(_$$1, pulse, output) {
   return mask;
 };
 
-prototype$68.incrementAll = function(dim, query, stamp, out) {
+prototype$77.incrementAll = function(dim, query, stamp, out) {
   var bits = this.value,
       seen = bits.seen(),
       curr = bits.curr(),
@@ -14416,7 +15426,7 @@ prototype$68.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype$68.incrementOne = function(dim, query, add, rem) {
+prototype$77.incrementOne = function(dim, query, add, rem) {
   var bits = this.value,
       curr = bits.curr(),
       index = dim.index(),
@@ -14462,16 +15472,6 @@ prototype$68.incrementOne = function(dim, query, add, rem) {
   dim.range = query.slice();
 };
 
-var CrossFilterDefinition = {
-  "type": "CrossFilter",
-  "metadata": {},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "query", "type": "array", "array": true, "required": true,
-      "content": {"type": "number", "array": true, "length": 2} }
-  ]
-};
-
 /**
  * Selectively filters tuples by resolving against a filter bitmap.
  * Useful for processing the output of a cross-filter transform.
@@ -14485,9 +15485,20 @@ function ResolveFilter(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$69 = inherits(ResolveFilter, Transform);
+ResolveFilter.Definition = {
+  "type": "ResolveFilter",
+  "metadata": {},
+  "params": [
+    { "name": "ignore", "type": "number", "required": true,
+      "description": "A bit mask indicating which filters to ignore." },
+    { "name": "filter", "type": "object", "required": true,
+      "description": "Per-tuple filter bitmaps from a CrossFilter transform." }
+  ]
+};
 
-prototype$69.transform = function(_$$1, pulse) {
+var prototype$78 = inherits(ResolveFilter, Transform);
+
+prototype$78.transform = function(_$$1, pulse) {
   var ignore = ~(_$$1.ignore || 0), // bit mask where zeros -> dims to ignore
       bitmap = _$$1.filter,
       mask = bitmap.mask;
@@ -14533,1030 +15544,14 @@ prototype$69.transform = function(_$$1, pulse) {
   return output.filter(output.SOURCE, function(t) { return pass(t._index); });
 };
 
-var ResolveFilterDefinition = {
-  "type": "ResolveFilter",
-  "metadata": {},
-  "params": [
-    { "name": "ignore", "type": "number", "required": true,
-      "description": "A bit mask indicating which filters to ignore." },
-    { "name": "filter", "type": "object", "required": true,
-      "description": "Per-tuple filter bitmaps from a CrossFilter transform." }
-  ]
-};
 
-register(CrossFilterDefinition, CrossFilter);
 
-register(ResolveFilterDefinition, ResolveFilter);
+var xf = Object.freeze({
+	crossfilter: CrossFilter,
+	resolvefilter: ResolveFilter
+});
 
-/**
- * Calculate bounding boxes for scenegraph items.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {object} params.mark - The scenegraph mark instance to bound.
- */
-function Bound(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$70 = inherits(Bound, Transform);
-var temp$1 = new Bounds();
-
-prototype$70.transform = function(_$$1, pulse) {
-  var view = pulse.dataflow,
-      mark = _$$1.mark,
-      type = mark.marktype,
-      entry = Marks[type],
-      bound = entry.bound,
-      clip = mark.clip,
-      markBounds = mark.bounds, rebound;
-
-  if (entry.nested) {
-    // multi-item marks have a single bounds instance
-    if (mark.items.length) view.dirty(mark.items[0]);
-    markBounds = boundItem$1(mark, bound);
-    mark.items.forEach(function(item) {
-      item.bounds.clear().union(markBounds);
-    });
-  }
-
-  else if (type === 'group' || _$$1.modified()) {
-    // operator parameters modified -> re-bound all items
-    // updates group bounds in response to modified group content
-    pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
-    markBounds.clear();
-    mark.items.forEach(function(item) {
-      markBounds.union(boundItem$1(item, bound));
-    });
-  }
-
-  else {
-    // incrementally update bounds, re-bound mark as needed
-    rebound = pulse.changed(pulse.REM);
-
-    pulse.visit(pulse.ADD, function(item) {
-      markBounds.union(boundItem$1(item, bound));
-    });
-
-    pulse.visit(pulse.MOD, function(item) {
-      rebound = rebound || markBounds.alignsWith(item.bounds);
-      view.dirty(item);
-      markBounds.union(boundItem$1(item, bound));
-    });
-
-    if (rebound && !clip) {
-      markBounds.clear();
-      mark.items.forEach(function(item) { markBounds.union(item.bounds); });
-    }
-  }
-
-  if (clip) {
-    markBounds.intersect(temp$1.set(0, 0, mark.group.width, mark.group.height));
-  }
-
-  return pulse.modifies('bounds');
-};
-
-function boundItem$1(item, bound, opt) {
-  return bound(item.bounds.clear(), item, opt);
-}
-
-var COUNTER_NAME = ':vega_identifier:';
-
-/**
- * Adds a unique identifier to all added tuples.
- * This transform creates a new signal that serves as an id counter.
- * As a result, the id counter is shared across all instances of this
- * transform, generating unique ids across multiple data streams. In
- * addition, this signal value can be included in a snapshot of the
- * dataflow state, enabling correct resumption of id allocation.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {string} params.as - The field name for the generated identifier.
- */
-function Identifier(params) {
-  Transform.call(this, 0, params);
-}
-
-var prototype$71 = inherits(Identifier, Transform);
-
-prototype$71.transform = function(_$$1, pulse) {
-  var counter = getCounter(pulse.dataflow),
-      id$$1 = counter.value,
-      as = _$$1.as;
-
-  pulse.visit(pulse.ADD, function(t) {
-    if (!t[as]) t[as] = ++id$$1;
-  });
-
-  counter.set(this.value = id$$1);
-  return pulse;
-};
-
-function getCounter(view) {
-  var counter = view._signals[COUNTER_NAME];
-  if (!counter) {
-    view._signals[COUNTER_NAME] = (counter = view.add(0));
-  }
-  return counter;
-}
-
-/**
- * Bind scenegraph items to a scenegraph mark instance.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {object} params.markdef - The mark definition for creating the mark.
- *   This is an object of legal scenegraph mark properties which *must* include
- *   the 'marktype' property.
- * @param {Array<number>} params.scenepath - Scenegraph tree coordinates for the mark.
- *   The path is an array of integers, each indicating the index into
- *   a successive chain of items arrays.
- */
-function Mark(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$72 = inherits(Mark, Transform);
-
-prototype$72.transform = function(_$$1, pulse) {
-  var mark = this.value;
-
-  // acquire mark on first invocation, bind context and group
-  if (!mark) {
-    mark = pulse.dataflow.scenegraph().mark(_$$1.markdef, lookup$1(_$$1), _$$1.index);
-    mark.group.context = _$$1.context;
-    if (!_$$1.context.group) _$$1.context.group = mark.group;
-    mark.source = this;
-    this.value = mark;
-  }
-
-  // initialize entering items
-  var Init = mark.marktype === 'group' ? GroupItem : Item;
-  pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
-
-  // bind items array to scenegraph mark
-  mark.items = pulse.source;
-  return pulse;
-};
-
-function lookup$1(_$$1) {
-  var g = _$$1.groups, p = _$$1.parent;
-  return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
-    : g && p ? g.lookup(p)
-    : null;
-}
-
-/**
- * Analyze items for overlap, changing opacity to hide items with
- * overlapping bounding boxes. This transform will preserve at least
- * two items (e.g., first and last) even if overlap persists.
- * @param {object} params - The parameters for this operator.
- * @param {object} params.method - The overlap removal method to apply.
- *   One of 'parity' (default, hide every other item until there is no
- *   more overlap) or 'greedy' (sequentially scan and hide and items that
- *   overlap with the last visible item).
- * @constructor
- */
-function Overlap(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$73 = inherits(Overlap, Transform);
-
-var methods = {
-  parity: function(items) {
-    return items.filter(function(item, i) {
-      return i % 2 ? (item.opacity = 0) : 1;
-    });
-  },
-  greedy: function(items) {
-    var a;
-    return items.filter(function(b, i) {
-      if (!i || !intersect(a.bounds, b.bounds)) {
-        a = b;
-        return 1;
-      } else {
-        return b.opacity = 0;
-      }
-    });
-  }
-};
-
-// compute bounding box intersection
-// allow 1 pixel of overlap tolerance
-function intersect(a, b) {
-  return !(
-    a.x2 - 1 < b.x1 ||
-    a.x1 + 1 > b.x2 ||
-    a.y2 - 1 < b.y1 ||
-    a.y1 + 1 > b.y2
-  );
-}
-
-function hasOverlap(items) {
-  for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
-    if (intersect(a, b = items[i].bounds)) return true;
-  }
-}
-
-function hasBounds(item) {
-  var b = item.bounds;
-  return b.width() > 1 && b.height() > 1;
-}
-
-prototype$73.transform = function(_$$1, pulse) {
-  var reduce = methods[_$$1.method] || methods.parity,
-      source = pulse.materialize(pulse.SOURCE).source,
-      items  = source;
-
-  if (!items) return;
-
-  if (_$$1.method === 'greedy') {
-    items = source = source.filter(hasBounds);
-  }
-
-  if (items.length >= 3 && hasOverlap(items)) {
-    pulse = pulse.reflow(_$$1.modified()).modifies('opacity');
-    do {
-      items = reduce(items);
-    } while (items.length >= 3 && hasOverlap(items));
-
-    if (items.length < 3 && !peek(source).opacity) {
-      if (items.length > 1) peek(items).opacity = 0;
-      peek(source).opacity = 1;
-    }
-  }
-
-  return pulse;
-};
-
-/**
- * Queue modified scenegraph items for rendering.
- * @constructor
- */
-function Render(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$74 = inherits(Render, Transform);
-
-prototype$74.transform = function(_$$1, pulse) {
-  var view = pulse.dataflow;
-
-  pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
-
-  // set z-index dirty flag as needed
-  if (pulse.fields && pulse.fields['zindex']) {
-    var item = pulse.source && pulse.source[0];
-    if (item) item.mark.zdirty = true;
-  }
-};
-
-var AxisRole$1 = 'axis';
-var LegendRole$1 = 'legend';
-var RowHeader$1 = 'row-header';
-var RowFooter$1 = 'row-footer';
-var RowTitle  = 'row-title';
-var ColHeader$1 = 'column-header';
-var ColFooter$1 = 'column-footer';
-var ColTitle  = 'column-title';
-
-function extractGroups(group) {
-  var groups = group.items,
-      n = groups.length,
-      i = 0, mark, items;
-
-  var views = {
-    marks:      [],
-    rowheaders: [],
-    rowfooters: [],
-    colheaders: [],
-    colfooters: [],
-    rowtitle: null,
-    coltitle: null
-  };
-
-  // layout axes, gather legends, collect bounds
-  for (; i<n; ++i) {
-    mark = groups[i];
-    items = mark.items;
-    if (mark.marktype === 'group') {
-      switch (mark.role) {
-        case AxisRole$1:
-        case LegendRole$1:
-          break;
-        case RowHeader$1: addAll(items, views.rowheaders); break;
-        case RowFooter$1: addAll(items, views.rowfooters); break;
-        case ColHeader$1: addAll(items, views.colheaders); break;
-        case ColFooter$1: addAll(items, views.colfooters); break;
-        case RowTitle:  views.rowtitle = items[0]; break;
-        case ColTitle:  views.coltitle = items[0]; break;
-        default:        addAll(items, views.marks);
-      }
-    }
-  }
-
-  return views;
-}
-
-function addAll(items, array$$1) {
-  for (var i=0, n=items.length; i<n; ++i) {
-    array$$1.push(items[i]);
-  }
-}
-
-function bboxFlush(item) {
-  return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
-}
-
-function bboxFull(item) {
-  var b = item.bounds.clone();
-  return b.empty()
-    ? b.set(0, 0, 0, 0)
-    : b.translate(-(item.x||0), -(item.y||0));
-}
-
-function boundFlush(item, field$$1) {
-  return field$$1 === 'x1' ? (item.x || 0)
-    : field$$1 === 'y1' ? (item.y || 0)
-    : field$$1 === 'x2' ? (item.x || 0) + (item.width || 0)
-    : field$$1 === 'y2' ? (item.y || 0) + (item.height || 0)
-    : undefined;
-}
-
-function boundFull(item, field$$1) {
-  return item.bounds[field$$1];
-}
-
-function get(opt, key$$1, d) {
-  var v = isObject(opt) ? opt[key$$1] : opt;
-  return v != null ? v : (d !== undefined ? d : 0);
-}
-
-function offsetValue(v) {
-  return v < 0 ? Math.ceil(-v) : 0;
-}
-
-function gridLayout(view, group, opt) {
-  var views = extractGroups(group, opt),
-      groups = views.marks,
-      flush = opt.bounds === 'flush',
-      bbox = flush ? bboxFlush : bboxFull,
-      bounds = new Bounds(0, 0, 0, 0),
-      alignCol = get(opt.align, 'column'),
-      alignRow = get(opt.align, 'row'),
-      padCol = get(opt.padding, 'column'),
-      padRow = get(opt.padding, 'row'),
-      off = opt.offset,
-      ncols = group.columns || opt.columns || groups.length,
-      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-      cells = nrows * ncols,
-      xOffset = [], xExtent = [], xInit = 0,
-      yOffset = [], yExtent = [], yInit = 0,
-      n = groups.length,
-      m, i, c, r, b, g, px, py, x, y, band, extent$$1, offset;
-
-  for (i=0; i<ncols; ++i) {
-    xExtent[i] = 0;
-  }
-  for (i=0; i<nrows; ++i) {
-    yExtent[i] = 0;
-  }
-
-  // determine offsets for each group
-  for (i=0; i<n; ++i) {
-    b = bbox(groups[i]);
-    c = i % ncols;
-    r = ~~(i / ncols);
-    px = c ? Math.ceil(bbox(groups[i-1]).x2): 0;
-    py = r ? Math.ceil(bbox(groups[i-ncols]).y2): 0;
-    xExtent[c] = Math.max(xExtent[c], px);
-    yExtent[r] = Math.max(yExtent[r], py);
-    xOffset.push(padCol + offsetValue(b.x1));
-    yOffset.push(padRow + offsetValue(b.y1));
-    view.dirty(groups[i]);
-  }
-
-  // set initial alignment offsets
-  for (i=0; i<n; ++i) {
-    if (i % ncols === 0) xOffset[i] = xInit;
-    if (i < ncols) yOffset[i] = yInit;
-  }
-
-  // enforce column alignment constraints
-  if (alignCol === 'each') {
-    for (c=1; c<ncols; ++c) {
-      for (offset=0, i=c; i<n; i += ncols) {
-        if (offset < xOffset[i]) offset = xOffset[i];
-      }
-      for (i=c; i<n; i += ncols) {
-        xOffset[i] = offset + xExtent[c];
-      }
-    }
-  } else if (alignCol === 'all') {
-    for (extent$$1=0, c=1; c<ncols; ++c) {
-      if (extent$$1 < xExtent[c]) extent$$1 = xExtent[c];
-    }
-    for (offset=0, i=0; i<n; ++i) {
-      if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
-    }
-    for (i=0; i<n; ++i) {
-      if (i % ncols) xOffset[i] = offset + extent$$1;
-    }
-  } else {
-    for (c=1; c<ncols; ++c) {
-      for (i=c; i<n; i += ncols) {
-        xOffset[i] += xExtent[c];
-      }
-    }
-  }
-
-  // enforce row alignment constraints
-  if (alignRow === 'each') {
-    for (r=1; r<nrows; ++r) {
-      for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
-        if (offset < yOffset[i]) offset = yOffset[i];
-      }
-      for (i=r*ncols; i<m; ++i) {
-        yOffset[i] = offset + yExtent[r];
-      }
-    }
-  } else if (alignRow === 'all') {
-    for (extent$$1=0, r=1; r<nrows; ++r) {
-      if (extent$$1 < yExtent[r]) extent$$1 = yExtent[r];
-    }
-    for (offset=0, i=ncols; i<n; ++i) {
-      if (offset < yOffset[i]) offset = yOffset[i];
-    }
-    for (i=ncols; i<n; ++i) {
-      yOffset[i] = offset + extent$$1;
-    }
-  } else {
-    for (r=1; r<nrows; ++r) {
-      for (i=r*ncols, m=i+ncols; i<m; ++i) {
-        yOffset[i] += yExtent[r];
-      }
-    }
-  }
-
-  // perform horizontal grid layout
-  for (x=0, i=0; i<n; ++i) {
-    g = groups[i];
-    px = g.x || 0;
-    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
-    g.bounds.translate(x - px, 0);
-  }
-
-  // perform vertical grid layout
-  for (c=0; c<ncols; ++c) {
-    for (y=0, i=c; i<n; i += ncols) {
-      g = groups[i];
-      py = g.y || 0;
-      g.y = (y += yOffset[i]);
-      g.bounds.translate(0, y - py);
-    }
-  }
-
-  // update mark bounds, mark dirty
-  for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
-  for (i=0; i<n; ++i) {
-    g = groups[i];
-    view.dirty(g);
-    bounds.union(g.mark.bounds.union(g.bounds));
-  }
-
-  // -- layout grid headers and footers --
-
-  // aggregation functions for grid margin determination
-  function min$$1(a, b) { return Math.floor(Math.min(a, b)); }
-  function max$$1(a, b) { return Math.ceil(Math.max(a, b)); }
-
-  // bounding box calculation methods
-  bbox = flush ? boundFlush : boundFull;
-
-  // perform row header layout
-  band = get(opt.headerBand, 'row', null);
-  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min$$1, 0, bbox, 'x1', 0, ncols, 1, band);
-
-  // perform column header layout
-  band = get(opt.headerBand, 'column', null);
-  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min$$1, 1, bbox, 'y1', 0, 1, ncols, band);
-
-  // perform row footer layout
-  band = get(opt.footerBand, 'row', null);
-  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max$$1, 0, bbox, 'x2', ncols-1, ncols, 1, band);
-
-  // perform column footer layout
-  band = get(opt.footerBand, 'column', null);
-  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max$$1, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
-
-  // perform row title layout
-  if (views.rowtitle) {
-    offset = x - get(off, 'rowTitle');
-    band = get(opt.titleBand, 'row', 0.5);
-    layoutTitle$1(view, views.rowtitle, offset, 0, bounds, band);
-  }
-
-  // perform column title layout
-  if (views.coltitle) {
-    offset = y - get(off, 'columnTitle');
-    band = get(opt.titleBand, 'column', 0.5);
-    layoutTitle$1(view, views.coltitle, offset, 1, bounds, band);
-  }
-}
-
-function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
-  var n = groups.length,
-      init = 0,
-      edge = 0,
-      i, j, k, m, b, h, g, x, y;
-
-  // compute margin
-  for (i=start; i<n; i+=stride) {
-    if (groups[i]) init = agg(init, bound(groups[i], bf));
-  }
-
-  // if no headers, return margin calculation
-  if (!headers.length) return init;
-
-  // check if number of headers exceeds number of rows or columns
-  if (headers.length > limit) {
-    view.warn('Grid headers exceed limit: ' + limit);
-    headers = headers.slice(0, limit);
-  }
-
-  // apply offset
-  init += offset;
-
-  // clear mark bounds for all headers
-  for (j=0, m=headers.length; j<m; ++j) {
-    view.dirty(headers[j]);
-    headers[j].mark.bounds.clear();
-  }
-
-  // layout each header
-  for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
-    h = headers[j];
-    b = h.mark.bounds;
-
-    // search for nearest group to align to
-    // necessary if table has empty cells
-    for (k=i; (g = groups[k]) == null; k-=back);
-
-    // assign coordinates and update bounds
-    if (isX) {
-      x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
-      y = init;
-    } else {
-      x = init;
-      y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
-    }
-    b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
-    h.x = x;
-    h.y = y;
-    view.dirty(h);
-
-    // update current edge of layout bounds
-    edge = agg(edge, b[bf]);
-  }
-
-  return edge;
-}
-
-function layoutTitle$1(view, g, offset, isX, bounds, band) {
-  if (!g) return;
-  view.dirty(g);
-
-  // compute title coordinates
-  var x = offset, y = offset;
-  isX
-    ? (x = Math.round(bounds.x1 + band * bounds.width()))
-    : (y = Math.round(bounds.y1 + band * bounds.height()));
-
-  // assign coordinates and update bounds
-  g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
-  g.mark.bounds.clear().union(g.bounds);
-  g.x = x;
-  g.y = y;
-
-  // queue title for redraw
-  view.dirty(g);
-}
-
-var Fit = 'fit';
-var Pad = 'pad';
-var None$2 = 'none';
-var Padding = 'padding';
-
-var Top = 'top';
-var Left = 'left';
-var Right = 'right';
-var Bottom = 'bottom';
-
-var AxisRole = 'axis';
-var TitleRole = 'title';
-var FrameRole = 'frame';
-var LegendRole = 'legend';
-var ScopeRole = 'scope';
-var RowHeader = 'row-header';
-var RowFooter = 'row-footer';
-var ColHeader = 'column-header';
-var ColFooter = 'column-footer';
-
-var AxisOffset = 0.5;
-var tempBounds$2 = new Bounds();
-
-/**
- * Layout view elements such as axes and legends.
- * Also performs size adjustments.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {object} params.mark - Scenegraph mark of groups to layout.
- */
-function ViewLayout(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$75 = inherits(ViewLayout, Transform);
-
-prototype$75.transform = function(_$$1, pulse) {
-  // TODO incremental update, output?
-  var view = pulse.dataflow;
-  _$$1.mark.items.forEach(function(group) {
-    if (_$$1.layout) gridLayout(view, group, _$$1.layout);
-    layoutGroup(view, group, _$$1);
-  });
-  return pulse;
-};
-
-function layoutGroup(view, group, _$$1) {
-  var items = group.items,
-      width = Math.max(0, group.width || 0),
-      height = Math.max(0, group.height || 0),
-      viewBounds = new Bounds().set(0, 0, width, height),
-      axisBounds = viewBounds.clone(),
-      xBounds = viewBounds.clone(),
-      yBounds = viewBounds.clone(),
-      legends = [], title,
-      mark, flow, b, i, n;
-
-  // layout axes, gather legends, collect bounds
-  for (i=0, n=items.length; i<n; ++i) {
-    mark = items[i];
-    switch (mark.role) {
-      case AxisRole:
-        axisBounds.union(b = layoutAxis(view, mark, width, height));
-        (isYAxis(mark) ? xBounds : yBounds).union(b);
-        break;
-      case TitleRole:
-        title = mark; break;
-      case LegendRole:
-        legends.push(mark); break;
-      case FrameRole:
-      case ScopeRole:
-      case RowHeader:
-      case RowFooter:
-      case ColHeader:
-      case ColFooter:
-        xBounds.union(mark.bounds);
-        yBounds.union(mark.bounds);
-        break;
-      default:
-        viewBounds.union(mark.bounds);
-    }
-  }
-
-  // layout title, adjust bounds
-  if (title) {
-    axisBounds.union(b = layoutTitle(view, title, axisBounds));
-    (isYAxis(title) ? xBounds : yBounds).union(b);
-  }
-
-  // layout legends, adjust viewBounds
-  if (legends.length) {
-    flow = {left: 0, right: 0, top: 0, bottom: 0, margin: _$$1.legendMargin || 8};
-
-    for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, xBounds, yBounds, width, height);
-      if (_$$1.autosize && _$$1.autosize.type === Fit) {
-        // for autosize fit, incorporate the orthogonal dimension only
-        // legends that overrun the chart area will then be clipped
-        // otherwise the chart area gets reduced to nothing!
-        var orient = legends[i].items[0].datum.orient;
-        if (orient === Left || orient === Right) {
-          viewBounds.add(b.x1, 0).add(b.x2, 0);
-        } else if (orient === Top || orient === Bottom) {
-          viewBounds.add(0, b.y1).add(0, b.y2);
-        }
-      } else {
-        viewBounds.union(b);
-      }
-    }
-  }
-
-  // perform size adjustment
-  viewBounds.union(xBounds).union(yBounds).union(axisBounds);
-  layoutSize(view, group, viewBounds, _$$1);
-}
-
-function set$1(item, property, value) {
-  if (item[property] === value) {
-    return 0;
-  } else {
-    item[property] = value;
-    return 1;
-  }
-}
-
-function isYAxis(mark) {
-  var orient = mark.items[0].datum.orient;
-  return orient === Left || orient === Right;
-}
-
-function axisIndices(datum) {
-  var index = +datum.grid;
-  return [
-    datum.ticks  ? index++ : -1, // ticks index
-    datum.labels ? index++ : -1, // labels index
-    index + (+datum.domain)      // title index
-  ];
-}
-
-function layoutAxis(view, axis, width, height) {
-  var item = axis.items[0],
-      datum = item.datum,
-      orient = datum.orient,
-      indices = axisIndices(datum),
-      range$$1 = item.range,
-      offset = item.offset,
-      position = item.position,
-      minExtent = item.minExtent,
-      maxExtent = item.maxExtent,
-      title = datum.title && item.items[indices[2]].items[0],
-      titlePadding = item.titlePadding,
-      bounds = item.bounds,
-      x = 0, y = 0, i, s;
-
-  tempBounds$2.clear().union(bounds);
-  bounds.clear();
-  if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
-  if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
-
-  // position axis group and title
-  switch (orient) {
-    case Top:
-      x = position || 0;
-      y = -offset;
-      s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.y = -s;
-          s += title.bounds.height();
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
-      bounds.add(0, -s).add(range$$1, 0);
-      break;
-    case Left:
-      x = -offset;
-      y = position || 0;
-      s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = -s;
-          s += title.bounds.width();
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
-      bounds.add(-s, 0).add(0, range$$1);
-      break;
-    case Right:
-      x = width + offset;
-      y = position || 0;
-      s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = s;
-          s += title.bounds.width();
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
-      bounds.add(0, 0).add(s, range$$1);
-      break;
-    case Bottom:
-      x = position || 0;
-      y = height + offset;
-      s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) if (title.auto) {
-        s += titlePadding;
-        title.y = s;
-        s += title.bounds.height();
-      } else {
-        bounds.union(title.bounds);
-      }
-      bounds.add(0, 0).add(range$$1, s);
-      break;
-    default:
-      x = item.x;
-      y = item.y;
-  }
-
-  // update bounds
-  boundStroke(bounds.translate(x, y), item);
-
-  if (set$1(item, 'x', x + AxisOffset) | set$1(item, 'y', y + AxisOffset)) {
-    item.bounds = tempBounds$2;
-    view.dirty(item);
-    item.bounds = bounds;
-    view.dirty(item);
-  }
-
-  return item.mark.bounds.clear().union(bounds);
-}
-
-function layoutTitle(view, title, axisBounds) {
-  var item = title.items[0],
-      datum = item.datum,
-      orient = datum.orient,
-      offset = item.offset,
-      bounds = item.bounds,
-      x = 0, y = 0;
-
-  tempBounds$2.clear().union(bounds);
-
-  // position axis group and title
-  switch (orient) {
-    case Top:
-      x = item.x;
-      y = axisBounds.y1 - offset;
-      break;
-    case Left:
-      x = axisBounds.x1 - offset;
-      y = item.y;
-      break;
-    case Right:
-      x = axisBounds.x2 + offset;
-      y = item.y;
-      break;
-    case Bottom:
-      x = item.x;
-      y = axisBounds.y2 + offset;
-      break;
-    default:
-      x = item.x;
-      y = item.y;
-  }
-
-  bounds.translate(x - item.x, y - item.y);
-  if (set$1(item, 'x', x) | set$1(item, 'y', y)) {
-    item.bounds = tempBounds$2;
-    view.dirty(item);
-    item.bounds = bounds;
-    view.dirty(item);
-  }
-
-  // update bounds
-  return title.bounds.clear().union(bounds);
-}
-
-function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
-  var item = legend.items[0],
-      datum = item.datum,
-      orient = datum.orient,
-      offset = item.offset,
-      bounds = item.bounds,
-      x = 0,
-      y = 0,
-      w, h, axisBounds;
-
-  if (orient === Top || orient === Bottom) {
-    axisBounds = yBounds,
-    x = flow[orient];
-  } else if (orient === Left || orient === Right) {
-    axisBounds = xBounds;
-    y = flow[orient];
-  }
-
-  tempBounds$2.clear().union(bounds);
-  bounds.clear();
-
-  // aggregate bounds to determine size
-  // shave off 1 pixel because it looks better...
-  item.items.forEach(function(_$$1) { bounds.union(_$$1.bounds); });
-  w = Math.round(bounds.width()) + 2 * item.padding - 1;
-  h = Math.round(bounds.height()) + 2 * item.padding - 1;
-
-  switch (orient) {
-    case Left:
-      x -= w + offset - Math.floor(axisBounds.x1);
-      flow.left += h + flow.margin;
-      break;
-    case Right:
-      x += offset + Math.ceil(axisBounds.x2);
-      flow.right += h + flow.margin;
-      break;
-    case Top:
-      y -= h + offset - Math.floor(axisBounds.y1);
-      flow.top += w + flow.margin;
-      break;
-    case Bottom:
-      y += offset + Math.ceil(axisBounds.y2);
-      flow.bottom += w + flow.margin;
-      break;
-    case 'top-left':
-      x += offset;
-      y += offset;
-      break;
-    case 'top-right':
-      x += width - w - offset;
-      y += offset;
-      break;
-    case 'bottom-left':
-      x += offset;
-      y += height - h - offset;
-      break;
-    case 'bottom-right':
-      x += width - w - offset;
-      y += height - h - offset;
-      break;
-    default:
-      x = item.x;
-      y = item.y;
-  }
-
-  // update bounds
-  boundStroke(bounds.set(x, y, x + w, y + h), item);
-
-  // update legend layout
-  if (set$1(item, 'x', x) | set$1(item, 'width', w) |
-      set$1(item, 'y', y) | set$1(item, 'height', h)) {
-    item.bounds = tempBounds$2;
-    view.dirty(item);
-    item.bounds = bounds;
-    view.dirty(item);
-  }
-
-  return item.mark.bounds.clear().union(bounds);
-}
-
-function layoutSize(view, group, viewBounds, _$$1) {
-  var auto = _$$1.autosize || {},
-      type = auto.type,
-      viewWidth = view._width,
-      viewHeight = view._height,
-      padding = view.padding();
-
-  if (view._autosize < 1 || !type) return;
-
-  var width  = Math.max(0, group.width || 0),
-      left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-      right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
-      height = Math.max(0, group.height || 0),
-      top    = Math.max(0, Math.ceil(-viewBounds.y1)),
-      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
-
-  if (auto.contains === Padding) {
-    viewWidth -= padding.left + padding.right;
-    viewHeight -= padding.top + padding.bottom;
-  }
-
-  if (type === None$2) {
-    left = 0;
-    top = 0;
-    width = viewWidth;
-    height = viewHeight;
-  }
-
-  else if (type === Fit) {
-    width = Math.max(0, viewWidth - left - right);
-    height = Math.max(0, viewHeight - top - bottom);
-  }
-
-  else if (type === Pad) {
-    viewWidth = width + left + right;
-    viewHeight = height + top + bottom;
-  }
-
-  view._resizeView(
-    viewWidth, viewHeight,
-    width, height,
-    [left, top],
-    auto.resize
-  );
-}
-
-var IdentifierDefinition = {
-  "type": "Identifier",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "as", "type": "string", "required": true }
-  ]
-};
+var version = "3.0.0-rc6";
 
 var Default = 'default';
 
@@ -18477,7 +18472,7 @@ var inrange = function(value, range$$1, left, right) {
     (right ? value <= r1 : value < r1);
 };
 
-var encode = function(item, name, retval) {
+var encode$1 = function(item, name, retval) {
   if (item) {
     var df = this.context.dataflow,
         target = item.mark.source;
@@ -18561,8 +18556,8 @@ var modify = function(name, insert, remove, toggle, modify, values) {
 
 var BIN = 'bin_';
 var INTERSECT = 'intersect';
-var UNIT = 'unit';
-var OTHERS = 'others';
+var UNION = 'union';
+var UNIT_INDEX = 'index:unit';
 
 function testPoint(datum, entry) {
   var fields = entry.fields,
@@ -18616,35 +18611,42 @@ function testInterval(datum, entry) {
  * @param {object} datum - The tuple to test for inclusion.
  * @param {string} op - The set operation for combining selections.
  *   One of 'intersect' or 'union' (default).
- * @param {*} unit - A unique key value indicating the current unit chart.
- * @param {string} scope - The scope within which to resolve the selection.
- *   One of 'all' (default, resolve against active selections across all unit charts),
- *   'unit' (consider only selections in the current unit chart),
- *   'others' (resolve against all units *except* the current unit).
  * @param {function(object,object):boolean} test - A boolean-valued test
  *   predicate for determining selection status within a single unit chart.
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
-function vlSelection(name, datum, op, unit, scope, test) {
+function vlSelection(name, datum, op, test) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       intersect = op === INTERSECT,
       n = entries.length,
       i = 0,
-      entry, b;
+      entry, miss, count, unit, b;
 
   for (; i<n; ++i) {
     entry = entries[i];
 
-    // is the selection entry from the current unit?
-    b = unit === entry.unit;
+    if (unitIdx && intersect) {
+      // multi selections union within the same unit and intersect across units.
+      miss = miss || {};
+      count = miss[unit=entry.unit] || 0;
 
-    // perform test if source unit is a valid selection source
-    if (!(scope === OTHERS && b || scope === UNIT && !b)) {
+      // if we've already matched this unit, skip.
+      if (count === -1) continue;
+
+      b = test(datum, entry);
+      miss[unit] = b ? -1 : ++count;
+
+      // if we match and there are no other units return true
+      // if we've missed against all tuples in this unit return false
+      if (b && unitIdx.size === 1) return true;
+      if (!b && count === unitIdx.get(unit).count) return false;
+    } else {
       b = test(datum, entry);
 
-      // if we find a match and we don't require intersection return true
       // if we find a miss and we do require intersection return false
+      // if we find a match and we don't require intersection return true
       if (intersect ^ b) return b;
     }
   }
@@ -18657,14 +18659,30 @@ function vlSelection(name, datum, op, unit, scope, test) {
 
 // Assumes point selection tuples are of the form:
 // {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
-function vlPoint(name, datum, op, unit, scope) {
-  return vlSelection.call(this, name, datum, op, unit, scope, testPoint);
+function vlPoint(name, datum, op) {
+  return vlSelection.call(this, name, datum, op, testPoint);
 }
 
 // Assumes interval selection typles are of the form:
 // {unit: string, intervals: array<{encoding: string, field:string, extent:array<number>}>}
-function vlInterval(name, datum, op, unit, scope) {
-  return vlSelection.call(this, name, datum, op, unit, scope, testInterval);
+function vlInterval(name, datum, op) {
+  return vlSelection.call(this, name, datum, op, testInterval);
+}
+
+function vlMultiVisitor(name, args, scope, params) {
+  if (args[0].type !== Literal) error$1('First argument to indata must be a string literal.');
+
+  var data = args[0].value,
+      // vlMulti, vlMultiDomain have different # of params, but op is always last.
+      op = args.length >= 2 && args[args.length-1].value,
+      field$$1 = 'unit',
+      indexName = indexPrefix + field$$1;
+
+  if (op === INTERSECT && !params.hasOwnProperty(indexName)) {
+    params[indexName] = scope.getData(data).indataRef(scope, field$$1);
+  }
+
+  dataVisitor(name, args, scope, params);
 }
 
 /**
@@ -18679,8 +18697,9 @@ function vlInterval(name, datum, op, unit, scope) {
 function vlPointDomain(name, encoding, field$$1, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
+      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       entry = entries[0],
-      i = 0, n, index, values, continuous;
+      i = 0, n, index, values, continuous, units;
 
   if (!entry) return undefined;
 
@@ -18693,13 +18712,32 @@ function vlPointDomain(name, encoding, field$$1, op) {
     }
   }
 
-  values = entries.reduce(function(acc, entry) {
-    acc.push({
-      unit: entry.unit,
-      value: entry.values[index]
+  // multi selections union within the same unit and intersect across units.
+  // if we've got only one unit, enforce union for more efficient materialization.
+  if (unitIdx && unitIdx.size === 1) {
+    op = UNION;
+  }
+
+  if (unitIdx && op === INTERSECT) {
+    units = entries.reduce(function(acc, entry) {
+      var u = acc[entry.unit] || (acc[entry.unit] = []);
+      u.push({unit: entry.unit, value: entry.values[index]});
+      return acc;
+    }, {});
+
+    values = Object.keys(units).map(function(unit) {
+      return {
+        unit: unit,
+        value: continuous
+          ? continuousDomain(units[unit], UNION)
+          : discreteDomain(units[unit], UNION)
+      };
     });
-    return acc;
-  }, []);
+  } else {
+    values = entries.map(function(entry) {
+      return {unit: entry.unit, value: entry.values[index]};
+    });
+  }
 
   return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
 }
@@ -18733,18 +18771,17 @@ function vlIntervalDomain(name, encoding, field$$1, op) {
   }
 
   values = entries.reduce(function(acc, entry) {
-  var extent$$1 = entry.intervals[index].extent,
-      value = discrete
-         ? extent$$1.map(function (d) { return {unit: entry.unit, value: d}; })
-         : {unit: entry.unit, value: extent$$1};
+    var extent$$1 = entry.intervals[index].extent,
+        value = discrete
+           ? extent$$1.map(function (d) { return {unit: entry.unit, value: d}; })
+           : {unit: entry.unit, value: extent$$1};
 
-     if (discrete) {
-       acc.push.apply(acc, value);
-       return acc;
-     } else {
-       acc.push(value);
-       return acc;
-     }
+    if (discrete) {
+      acc.push.apply(acc, value);
+    } else {
+      acc.push(value);
+    }
+    return acc;
   }, []);
 
 
@@ -18831,6 +18868,7 @@ var functionContext = {
   toNumber: toNumber,
   toString: toString,
   pad: pad,
+  peek: peek,
   truncate: truncate,
   rgb: d3Color.rgb,
   lab: d3Color.lab,
@@ -18868,7 +18906,7 @@ var functionContext = {
   zoomLinear: zoomLinear,
   zoomLog: zoomLog,
   zoomPow: zoomPow,
-  encode: encode,
+  encode: encode$1,
   modify: modify
 };
 
@@ -18907,9 +18945,11 @@ expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data$1, dataVisitor);
-expressionFunction('vlPoint', vlPoint, dataVisitor);
+expressionFunction('vlSingle', vlPoint, dataVisitor);
+expressionFunction('vlSingleDomain', vlPointDomain, dataVisitor);
+expressionFunction('vlMulti', vlPoint, vlMultiVisitor);
+expressionFunction('vlMultiDomain', vlPointDomain, vlMultiVisitor);
 expressionFunction('vlInterval', vlInterval, dataVisitor);
-expressionFunction('vlPointDomain', vlPointDomain, dataVisitor);
 expressionFunction('vlIntervalDomain', vlIntervalDomain, dataVisitor);
 expressionFunction('treePath', treePath, dataVisitor);
 expressionFunction('treeAncestors', treeAncestors, dataVisitor);
@@ -19368,7 +19408,7 @@ function entry(type, value, params, parent) {
 }
 
 function operator(value, params) {
-  return entry('Operator', value, params);
+  return entry('operator', value, params);
 }
 
 // -----
@@ -19433,33 +19473,33 @@ function transform$1(name) {
   };
 }
 
-var Aggregate$1 = transform$1('Aggregate');
-var AxisTicks$1 = transform$1('AxisTicks');
-var Bound$1 = transform$1('Bound');
-var Collect$1 = transform$1('Collect');
-var Compare$1 = transform$1('Compare');
-var DataJoin$1 = transform$1('DataJoin');
-var Encode$1 = transform$1('Encode');
+var Aggregate$1 = transform$1('aggregate');
+var AxisTicks$1 = transform$1('axisticks');
+var Bound$1 = transform$1('bound');
+var Collect$1 = transform$1('collect');
+var Compare$1 = transform$1('compare');
+var DataJoin$1 = transform$1('datajoin');
+var Encode$1 = transform$1('encode');
 
-var Facet$1 = transform$1('Facet');
-var Field$1 = transform$1('Field');
-var Key$1 = transform$1('Key');
-var LegendEntries$1 = transform$1('LegendEntries');
-var Mark$1 = transform$1('Mark');
-var MultiExtent$1 = transform$1('MultiExtent');
-var MultiValues$1 = transform$1('MultiValues');
-var Overlap$1 = transform$1('Overlap');
-var Params$1 = transform$1('Params');
-var PreFacet$1 = transform$1('PreFacet');
-var Projection$1 = transform$1('Projection');
-var Proxy$1 = transform$1('Proxy');
-var Relay$1 = transform$1('Relay');
-var Render$1 = transform$1('Render');
-var Scale$1 = transform$1('Scale');
-var Sieve$1 = transform$1('Sieve');
-var SortItems$1 = transform$1('SortItems');
-var ViewLayout$1 = transform$1('ViewLayout');
-var Values$1 = transform$1('Values');
+var Facet$1 = transform$1('facet');
+var Field$1 = transform$1('field');
+var Key$1 = transform$1('key');
+var LegendEntries$1 = transform$1('legendentries');
+var Mark$1 = transform$1('mark');
+var MultiExtent$1 = transform$1('multiextent');
+var MultiValues$1 = transform$1('multivalues');
+var Overlap$1 = transform$1('overlap');
+var Params$2 = transform$1('params');
+var PreFacet$1 = transform$1('prefacet');
+var Projection$1 = transform$1('projection');
+var Proxy$1 = transform$1('proxy');
+var Relay$1 = transform$1('relay');
+var Render$1 = transform$1('render');
+var Scale$1 = transform$1('scale');
+var Sieve$1 = transform$1('sieve');
+var SortItems$1 = transform$1('sortitems');
+var ViewLayout$1 = transform$1('viewlayout');
+var Values$1 = transform$1('values');
 
 var FIELD_REF_ID = 0;
 
@@ -19741,6 +19781,10 @@ var Perc   = 'perc';
 var Size   = 'size';
 var Total  = 'total';
 var Value  = 'value';
+
+var GuideLabelStyle = 'guide-label';
+var GuideTitleStyle = 'guide-title';
+var GroupTitleStyle = 'group-title';
 
 var LegendScales = [
   'shape',
@@ -20066,12 +20110,12 @@ function extendEncode(encode, extra, skip) {
   return encode;
 }
 
-function encoders(encode, type, role, scope, params) {
+function encoders(encode, type, role, style, scope, params) {
   var enc, key$$1;
   params = params || {};
   params.encoders = {$encode: (enc = {})};
 
-  encode = applyDefaults(encode, type, role, scope.config);
+  encode = applyDefaults(encode, type, role, style, scope.config);
 
   for (key$$1 in encode) {
     enc[key$$1] = parseEncode(encode[key$$1], type, params, scope);
@@ -20080,27 +20124,37 @@ function encoders(encode, type, role, scope, params) {
   return params;
 }
 
-function applyDefaults(encode, type, role, config) {
-  var enter, key$$1, skip;
+function applyDefaults(encode, type, role, style, config) {
+  var enter = {}, key$$1, skip, props;
 
   // ignore legend and axis
   if (role == 'legend' || String(role).indexOf('axis') === 0) {
     role = null;
   }
 
-  config = role === FrameRole$1 ? config.group
-    : (role === MarkRole || config[type = role]) ? extend({}, config.mark, config[type])
-    : {};
+  // resolve mark config
+  props = role === FrameRole$1 ? config.group
+    : (role === MarkRole) ? extend({}, config.mark, config[type])
+    : null;
 
-  enter = {};
-  for (key$$1 in config) {
+  for (key$$1 in props) {
     // do not apply defaults if relevant fields are defined
     skip = has(key$$1, encode)
       || (key$$1 === 'fill' || key$$1 === 'stroke')
       && (has('fill', encode) || has('stroke', encode));
 
-    if (!skip) enter[key$$1] = {value: config[key$$1]};
+    if (!skip) enter[key$$1] = {value: props[key$$1]};
   }
+
+  // resolve styles, apply with increasing precedence
+  array(style).forEach(function(name) {
+    var props = config.style && config.style[name];
+    for (var key$$1 in props) {
+      if (!has(key$$1, encode)) {
+        enter[key$$1] = {value: props[key$$1]};
+      }
+    }
+  });
 
   encode = extend({}, encode); // defensive copy
   encode.enter = extend(enter, encode.enter);
@@ -20115,13 +20169,14 @@ function has(key$$1, encode) {
   );
 }
 
-var guideMark = function(type, role, key, dataRef, encode, extras) {
+var guideMark = function(type, role, style, key, dataRef, encode, extras) {
   return {
-    type: type,
-    name: extras ? extras.name : undefined,
-    role: role,
-    key:  key,
-    from: dataRef,
+    type:  type,
+    name:  extras ? extras.name : undefined,
+    role:  role,
+    style: (extras && extras.style) || style,
+    key:   key,
+    from:  dataRef,
     interactive: !!(extras && extras.interactive),
     encode: extendEncode(encode, extras, Skip)
   };
@@ -20133,7 +20188,7 @@ var RuleMark = 'rule';
 var SymbolMark = 'symbol';
 var TextMark = 'text';
 
-var legendGradient = function(scale, config, userEncode) {
+var legendGradient = function(spec, scale, config, userEncode) {
   var zero = {value: 0},
       encode = {}, enter, update;
 
@@ -20160,7 +20215,7 @@ var legendGradient = function(scale, config, userEncode) {
   addEncode(update, 'width', config.gradientWidth);
   addEncode(update, 'height', config.gradientHeight);
 
-  return guideMark(RectMark, LegendGradientRole, undefined, undefined, encode, userEncode);
+  return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
 };
 
 var alignExpr = 'datum.' + Perc + '<=0?"left"'
@@ -20200,7 +20255,7 @@ var legendGradientLabels = function(spec, config, userEncode, dataRef) {
 
   enter.align = update.align = {signal: alignExpr};
 
-  return guideMark(TextMark, LegendLabelRole, Perc, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Perc, dataRef, encode, userEncode);
 };
 
 var legendLabels = function(spec, config, userEncode, dataRef) {
@@ -20243,7 +20298,7 @@ var legendLabels = function(spec, config, userEncode, dataRef) {
     }
   };
 
-  return guideMark(TextMark, LegendLabelRole, Value, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 };
 
 var legendSymbols = function(spec, config, userEncode, dataRef) {
@@ -20257,7 +20312,8 @@ var legendSymbols = function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'size', config.symbolSize);
   addEncode(enter, 'strokeWidth', config.symbolStrokeWidth);
   if (!spec.fill) {
-    addEncode(enter, 'stroke', config.symbolColor);
+    addEncode(enter, 'fill', config.symbolFillColor);
+    addEncode(enter, 'stroke', config.symbolStrokeColor);
   }
 
   encode.exit = {
@@ -20291,7 +20347,7 @@ var legendSymbols = function(spec, config, userEncode, dataRef) {
     }
   });
 
-  return guideMark(SymbolMark, LegendSymbolRole, Value, dataRef, encode, userEncode);
+  return guideMark(SymbolMark, LegendSymbolRole, null, Value, dataRef, encode, userEncode);
 };
 
 var legendTitle = function(spec, config, userEncode, dataRef) {
@@ -20321,14 +20377,15 @@ var legendTitle = function(spec, config, userEncode, dataRef) {
     text: title && title.signal ? {signal: title.signal} : {value: title + ''}
   };
 
-  return guideMark(TextMark, LegendTitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 };
 
-var guideGroup = function(role, name, dataRef, interactive, encode, marks) {
+var guideGroup = function(role, style, name, dataRef, interactive, encode, marks) {
   return {
     type: GroupMark,
     name: name,
     role: role,
+    style: style,
     from: dataRef,
     interactive: interactive,
     encode: encode,
@@ -20365,7 +20422,7 @@ var parseTransform = function(spec, scope) {
   var def = definition(spec.type);
   if (!def) error$1('Unrecognized transform type: ' + $$2(spec.type));
 
-  var t = entry(def.type, null, parseParameters(def, spec, scope));
+  var t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope));
   if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
   t.metadata = def.metadata || {};
 
@@ -20480,7 +20537,7 @@ function parseSubParameter(def, value$$1, scope) {
 
   // parse params, create Params transform, return ref
   params = extend(parseParameters(pdef, value$$1, scope), pdef.key);
-  return ref(scope.add(Params$1(params)));
+  return ref(scope.add(Params$2(params)));
 }
 
 // -- Utilities -----
@@ -20582,15 +20639,15 @@ DataScope.fromEntries = function(scope, entries) {
   for (; i<n; ++i) {
     entries[i].params.pulse = ref(entries[i-1]);
     scope.add(entries[i]);
-    if (entries[i].type === 'Aggregate') aggr = entries[i];
+    if (entries[i].type === 'aggregate') aggr = entries[i];
   }
 
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$77 = DataScope.prototype;
+var prototype$80 = DataScope.prototype;
 
-prototype$77.countsRef = function(scope, field$$1, sort) {
+prototype$80.countsRef = function(scope, field$$1, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field$$1), v, a, p;
@@ -20664,28 +20721,28 @@ function cache(scope, ds, name, optype, field$$1, counts, index) {
   return v;
 }
 
-prototype$77.tuplesRef = function() {
+prototype$80.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$77.extentRef = function(scope, field$$1) {
-  return cache(scope, this, 'extent', 'Extent', field$$1, false);
+prototype$80.extentRef = function(scope, field$$1) {
+  return cache(scope, this, 'extent', 'extent', field$$1, false);
 };
 
-prototype$77.domainRef = function(scope, field$$1) {
-  return cache(scope, this, 'domain', 'Values', field$$1, false);
+prototype$80.domainRef = function(scope, field$$1) {
+  return cache(scope, this, 'domain', 'values', field$$1, false);
 };
 
-prototype$77.valuesRef = function(scope, field$$1, sort) {
-  return cache(scope, this, 'vals', 'Values', field$$1, sort || true);
+prototype$80.valuesRef = function(scope, field$$1, sort) {
+  return cache(scope, this, 'vals', 'values', field$$1, sort || true);
 };
 
-prototype$77.lookupRef = function(scope, field$$1) {
-  return cache(scope, this, 'lookup', 'TupleIndex', field$$1, false);
+prototype$80.lookupRef = function(scope, field$$1) {
+  return cache(scope, this, 'lookup', 'tupleindex', field$$1, false);
 };
 
-prototype$77.indataRef = function(scope, field$$1) {
-  return cache(scope, this, 'indata', 'TupleIndex', field$$1, true, true);
+prototype$80.indataRef = function(scope, field$$1) {
+  return cache(scope, this, 'indata', 'tupleindex', field$$1, true, true);
 };
 
 var parseFacet = function(spec, scope, group) {
@@ -20799,7 +20856,7 @@ var parseMark = function(spec, scope) {
 
   // add visual encoders
   op = scope.add(Encode$1(
-    encoders(spec.encode, spec.type, role$$1, scope, {pulse: markRef})
+    encoders(spec.encode, spec.type, role$$1, spec.style, scope, {pulse: markRef})
   ));
 
   // monitor parent marks to propagate changes
@@ -20888,8 +20945,9 @@ var parseLegend = function(spec, scope) {
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
       interactive = !!legendEncode.interactive,
+      style = legendEncode.style,
       datum, dataRef, entryRef, group, title,
-      entryEncode, children;
+      entryEncode, params, children;
 
   // resolve 'canonical' scale name
   var scale = spec.size || spec.shape || spec.fill || spec.stroke
@@ -20937,15 +20995,14 @@ var parseLegend = function(spec, scope) {
     })));
 
     children = [
-      legendGradient(scale, config, encode.gradient),
+      legendGradient(spec, scale, config, encode.gradient),
       legendGradientLabels(spec, config, encode.labels, entryRef)
     ];
   }
 
   else {
     // data source for legend entries
-    entryRef = ref(scope.add(LegendEntries$1({
-      size:   sizeExpression(spec, config, encode.labels),
+    entryRef = ref(scope.add(LegendEntries$1(params = {
       scale:  scope.scaleRef(scale),
       count:  scope.property(spec.tickCount),
       values: scope.property(spec.values),
@@ -20956,11 +21013,13 @@ var parseLegend = function(spec, scope) {
       legendSymbols(spec, config, encode.symbols, entryRef),
       legendLabels(spec, config, encode.labels, entryRef)
     ];
+
+    params.size = sizeExpression(spec, scope, children);
   }
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, null, dataRef, interactive, entryEncode, children)
+    guideGroup(LegendEntryRole, null, null, dataRef, interactive, entryEncode, children)
   ];
 
   // include legend title if defined
@@ -20968,30 +21027,27 @@ var parseLegend = function(spec, scope) {
     title = legendTitle(spec, config, encode.title, dataRef);
     entryEncode.update.y.offset = {
       field: {group: 'titlePadding'},
-      offset: title.encode.update.fontSize || title.encode.enter.fontSize
+      offset: getValue$1(scope, title.encode, 'fontSize', GuideTitleStyle)
     };
     children.push(title);
   }
 
   // build legend specification
-  group = guideGroup(LegendRole$2, name, dataRef, interactive, legendEncode, children);
+  group = guideGroup(LegendRole$2, style, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
   return parseMark(group, scope);
 };
 
-function sizeExpression(spec, config, encode) {
-  // TODO get override for symbolSize?
-  var symbolSize = +config.symbolSize, fontSize;
-  fontSize = encode && encode.update && encode.update.fontSize;
-  if (!fontSize) fontSize = encode && encode.enter && encode.enter.fontSize;
-  if (fontSize) fontSize = fontSize.value; // TODO support signal?
-  if (!fontSize) fontSize = +config.labelFontSize;
-
-  return spec.size
-    ? {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'}
-    : Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
+function sizeExpression(spec, scope, marks) {
+  var fontSize = getValue$1(scope, marks[1].encode, 'fontSize', GuideLabelStyle);
+  if (spec.size) {
+    return {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'};
+  } else {
+    var symbolSize = getValue$1(scope, marks[0].encode, 'size');
+    return Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
+  }
 }
 
 function legendEnter(config) {
@@ -21002,6 +21058,15 @@ function legendEnter(config) {
             + addEncode(enter, 'strokeDash', config.strokeDash)
             + addEncode(enter, 'cornerRadius', config.cornerRadius);
   return count ? enter : undefined;
+}
+
+function getValue$1(scope, encode, name, style) {
+  var v = encode && (
+    (encode.update && encode.update[name]) ||
+    (encode.enter && encode.enter[name])
+  );
+  return +(v ? v.value // TODO support signal?
+    : (style && (v = scope.config.style[style]) && v[name]));
 }
 
 var parseTitle = function(spec, scope) {
@@ -21091,7 +21156,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
   addEncode(update, 'baseline', config.baseline);
   addEncode(update, 'limit', config.limit);
 
-  return guideMark(TextMark, TitleRole$1, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, TitleRole$1, spec.style || GroupTitleStyle, null, dataRef, encode, userEncode);
 }
 
 function parseData$1(data, scope) {
@@ -21216,7 +21281,7 @@ var axisDomain = function(spec, config, userEncode, dataRef) {
   update[u] = enter[u] = position(spec, 0);
   update[u2] = enter[u2] = position(spec, 1);
 
-  return guideMark(RuleMark, AxisDomainRole, null, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisDomainRole, null, null, dataRef, encode, userEncode);
 };
 
 function position(spec, pos) {
@@ -21275,7 +21340,7 @@ var axisGrid = function(spec, config, userEncode, dataRef) {
     update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
   }
 
-  return guideMark(RuleMark, AxisGridRole, Value, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisGridRole, null, Value, dataRef, encode, userEncode);
 };
 
 var axisTicks = function(spec, config, userEncode, dataRef, size) {
@@ -21320,7 +21385,7 @@ var axisTicks = function(spec, config, userEncode, dataRef, size) {
     update.y = enter.y = exit.y = tickPos;
   }
 
-  return guideMark(RuleMark, AxisTickRole, Value, dataRef, encode, userEncode);
+  return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
 };
 
 var axisLabels = function(spec, config, userEncode, dataRef, size) {
@@ -21373,7 +21438,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
     addEncode(update, 'baseline', 'middle');
   }
 
-  spec = guideMark(TextMark, AxisLabelRole, Value, dataRef, encode, userEncode);
+  spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
   spec.overlap = overlap || config.labelOverlap;
   return spec;
 };
@@ -21430,7 +21495,7 @@ var axisTitle = function(spec, config, userEncode, dataRef) {
     && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
-  return guideMark(TextMark, AxisTitleRole, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 };
 
 var parseAxis = function(spec, scope) {
@@ -21439,6 +21504,7 @@ var parseAxis = function(spec, scope) {
       axisEncode = encode.axis || {},
       name = axisEncode.name || undefined,
       interactive = !!axisEncode.interactive,
+      style = axisEncode.style,
       datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
@@ -21504,7 +21570,7 @@ var parseAxis = function(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole$2, name, dataRef, interactive, axisEncode, children);
+  group = guideGroup(AxisRole$2, style, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification
@@ -21587,7 +21653,7 @@ function parseView(spec, scope) {
   }, spec.encode);
 
   encode = scope.add(Encode$1(
-    encoders(encode, GroupMark, FrameRole$1, scope, {pulse: ref(input)}))
+    encoders(encode, GroupMark, FrameRole$1, null, scope, {pulse: ref(input)}))
   );
 
   // Perform view layout
@@ -21667,15 +21733,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$78 = Scope.prototype = Subscope.prototype;
+var prototype$81 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$78.fork = function() {
+prototype$81.fork = function() {
   return new Subscope(this);
 };
 
-prototype$78.toRuntime = function() {
+prototype$81.toRuntime = function() {
   this.finish();
   return {
     background:  this.background,
@@ -21687,11 +21753,11 @@ prototype$78.toRuntime = function() {
   };
 };
 
-prototype$78.id = function() {
+prototype$81.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$78.add = function(op) {
+prototype$81.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -21702,24 +21768,24 @@ prototype$78.add = function(op) {
   return op;
 };
 
-prototype$78.proxy = function(op) {
+prototype$81.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$78.addStream = function(stream) {
+prototype$81.addStream = function(stream) {
   this.streams.push(stream);
   stream.id = this.id();
   return stream;
 };
 
-prototype$78.addUpdate = function(update) {
+prototype$81.addUpdate = function(update) {
   this.updates.push(update);
   return update;
 };
 
 // Apply metadata
-prototype$78.finish = function() {
+prototype$81.finish = function() {
   var name, ds;
 
   // annotate root
@@ -21759,40 +21825,40 @@ prototype$78.finish = function() {
 
 // ----
 
-prototype$78.pushState = function(encode, parent, lookup) {
+prototype$81.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$78.popState = function() {
+prototype$81.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$78.parent = function() {
+prototype$81.parent = function() {
   return peek(this._parent);
 };
 
-prototype$78.encode = function() {
+prototype$81.encode = function() {
   return peek(this._encode);
 };
 
-prototype$78.lookup = function() {
+prototype$81.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$78.markpath = function() {
+prototype$81.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$78.fieldRef = function(field$$1, name) {
+prototype$81.fieldRef = function(field$$1, name) {
   if (isString(field$$1)) return fieldRef$1(field$$1, name);
   if (!field$$1.signal) {
     error$1('Unsupported field reference: ' + $$2(field$$1));
@@ -21810,7 +21876,7 @@ prototype$78.fieldRef = function(field$$1, name) {
   return f;
 };
 
-prototype$78.compareRef = function(cmp) {
+prototype$81.compareRef = function(cmp) {
   function check(_$$1) {
     if (isSignal(_$$1)) {
       signal = true;
@@ -21830,7 +21896,7 @@ prototype$78.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$78.keyRef = function(fields) {
+prototype$81.keyRef = function(fields) {
   function check(_$$1) {
     if (isSignal(_$$1)) {
       signal = true;
@@ -21849,7 +21915,7 @@ prototype$78.keyRef = function(fields) {
     : keyRef(fields);
 };
 
-prototype$78.sortRef = function(sort) {
+prototype$81.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -21866,7 +21932,7 @@ prototype$78.sortRef = function(sort) {
 
 // ----
 
-prototype$78.event = function(source, type) {
+prototype$81.event = function(source, type) {
   var key$$1 = source + ':' + type;
   if (!this.events[key$$1]) {
     var id$$1 = this.id();
@@ -21882,7 +21948,7 @@ prototype$78.event = function(source, type) {
 
 // ----
 
-prototype$78.addSignal = function(name, value$$1) {
+prototype$81.addSignal = function(name, value$$1) {
   if (this.signals.hasOwnProperty(name)) {
     error$1('Duplicate signal name: ' + $$2(name));
   }
@@ -21890,14 +21956,14 @@ prototype$78.addSignal = function(name, value$$1) {
   return this.signals[name] = op;
 };
 
-prototype$78.getSignal = function(name) {
+prototype$81.getSignal = function(name) {
   if (!this.signals[name]) {
     error$1('Unrecognized signal name: ' + $$2(name));
   }
   return this.signals[name];
 };
 
-prototype$78.signalRef = function(s) {
+prototype$81.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!this.lambdas.hasOwnProperty(s)) {
@@ -21906,7 +21972,7 @@ prototype$78.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype$78.parseLambdas = function() {
+prototype$81.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -21917,11 +21983,11 @@ prototype$78.parseLambdas = function() {
   }
 };
 
-prototype$78.property = function(spec) {
+prototype$81.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$78.objectProperty = function(spec) {
+prototype$81.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || propertyLambda(spec));
 };
@@ -21962,7 +22028,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$78.addBinding = function(name, bind) {
+prototype$81.addBinding = function(name, bind) {
   if (!this.bindings) {
     error$1('Nested signals do not support binding: ' + $$2(name));
   }
@@ -21971,55 +22037,55 @@ prototype$78.addBinding = function(name, bind) {
 
 // ----
 
-prototype$78.addScaleProj = function(name, transform) {
+prototype$81.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error$1('Duplicate scale or projection name: ' + $$2(name));
   }
   this.scales[name] = this.add(transform);
 };
 
-prototype$78.addScale = function(name, params) {
+prototype$81.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$78.addProjection = function(name, params) {
+prototype$81.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$78.getScale = function(name) {
+prototype$81.getScale = function(name) {
   if (!this.scales[name]) {
     error$1('Unrecognized scale name: ' + $$2(name));
   }
   return this.scales[name];
 };
 
-prototype$78.projectionRef =
-prototype$78.scaleRef = function(name) {
+prototype$81.projectionRef =
+prototype$81.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$78.projectionType =
-prototype$78.scaleType = function(name) {
+prototype$81.projectionType =
+prototype$81.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$78.addData = function(name, dataScope) {
+prototype$81.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $$2(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$78.getData = function(name) {
+prototype$81.getData = function(name) {
   if (!this.data[name]) {
     error$1('Undefined data set name: ' + $$2(name));
   }
   return this.data[name];
 };
 
-prototype$78.addDataPipeline = function(name, entries) {
+prototype$81.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $$2(name));
   }
@@ -22039,6 +22105,7 @@ var defaults = function(configs) {
   return output;
 };
 
+var defaultFont = 'sans-serif';
 var defaultSymbolSize = 30;
 var defaultStrokeWidth = 2;
 var defaultColor = '#4c78a8';
@@ -22095,23 +22162,47 @@ function defaults$1() {
     },
     text: {
       fill: black,
-      font: 'sans-serif',
+      font: defaultFont,
       fontSize: 11
     },
 
-    // defaults for marks using special roles
-    point: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth,
-      shape: 'circle'
-    },
-    circle: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth
-    },
-    square: {
-      size: defaultSymbolSize,
-      strokeWidth: defaultStrokeWidth
+    // style definitions
+    style: {
+      // axis & legend labels
+      "guide-label": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 10
+      },
+      // axis & legend titles
+      "guide-title": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 11,
+        fontWeight: 'bold'
+      },
+      // headers, including chart title
+      "group-title": {
+        fill: black,
+        font: defaultFont,
+        fontSize: 13,
+        fontWeight: 'bold'
+      },
+      // defaults for styled point marks
+      point: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth,
+        shape: 'circle'
+      },
+      circle: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth
+      },
+      square: {
+        size: defaultSymbolSize,
+        strokeWidth: defaultStrokeWidth,
+        shape: 'square'
+      }
     },
 
     // defaults for axes
@@ -22121,7 +22212,7 @@ function defaults$1() {
       bandPosition: 0.5,
       domain: true,
       domainWidth: 1,
-      domainColor: black,
+      domainColor: gray,
       grid: false,
       gridWidth: 1,
       gridColor: lightGray,
@@ -22129,23 +22220,16 @@ function defaults$1() {
       gridOpacity: 1,
       labels: true,
       labelAngle: 0,
-      labelColor: black,
-      labelFont: 'sans-serif',
-      labelFontSize: 10,
       labelLimit: 180,
       labelPadding: 2,
       ticks: true,
-      tickColor: black,
+      tickColor: gray,
       tickOffset: 0,
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
       titleAlign: 'center',
-      titlePadding: 2,
-      titleColor: black,
-      titleFont: 'sans-serif',
-      titleFontSize: 11,
-      titleFontWeight: 'bold'
+      titlePadding: 2
     },
 
     // correction for centering bias
@@ -22166,21 +22250,15 @@ function defaults$1() {
       gradientStrokeWidth: 0,
       gradientLabelBaseline: 'top',
       gradientLabelOffset: 2,
-      labelColor: black,
-      labelFontSize: 10,
-      labelFont: 'sans-serif',
       labelAlign: 'left',
       labelBaseline: 'middle',
       labelOffset: 8,
       labelLimit: 160,
       symbolType: 'circle',
       symbolSize: 100,
-      symbolColor: gray,
+      symbolFillColor: 'transparent',
+      symbolStrokeColor: gray,
       symbolStrokeWidth: 1.5,
-      titleColor: black,
-      titleFont: 'sans-serif',
-      titleFontSize: 11,
-      titleFontWeight: 'bold',
       titleAlign: 'left',
       titleBaseline: 'top',
       titleLimit: 180
@@ -22190,11 +22268,7 @@ function defaults$1() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 2,
-      color: black,
-      font: 'sans-serif',
-      fontSize: 13,
-      fontWeight: 'bold'
+      offset: 2
     },
 
     // defaults for scale ranges
@@ -22361,6 +22435,7 @@ function getKey(_$$1, ctx) {
  * Resolve a field accessor reference.
  */
 function getField$1(_$$1, ctx) {
+  if (!_$$1.$field) return null;
   var k = 'f:' + _$$1.$field + '_' + _$$1.$name;
   return ctx.fn[k] || (ctx.fn[k] = field(_$$1.$field, _$$1.$name));
 }
@@ -22419,11 +22494,22 @@ function getTupleId() {
   return tupleid;
 }
 
+function canonicalType(type) {
+  return (type + '').toLowerCase();
+}
+function isOperator(type) {
+   return canonicalType(type) === 'operator';
+}
+
+function isCollect(type) {
+  return canonicalType(type) === 'collect';
+}
+
 /**
  * Parse a dataflow operator.
  */
 var parseOperator = function(spec, ctx) {
-  if (spec.type === 'Operator' || !spec.type) {
+  if (isOperator(spec.type) || !spec.type) {
     ctx.operator(spec,
       spec.update ? operatorExpression(spec.update, ctx) : null);
   } else {
@@ -22670,7 +22756,7 @@ Context.prototype = ContextFork.prototype = {
 
     ctx.set(spec.id, op);
 
-    if (spec.type === 'Collect' && (data = spec.value)) {
+    if (isCollect(spec.type) && (data = spec.value)) {
       if (data.$ingest) {
         df.ingest(op, data.$ingest, data.$format);
       } else if (data.$request) {
@@ -22722,7 +22808,7 @@ Context.prototype = ContextFork.prototype = {
     this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
   },
   transform: function(spec, type, params) {
-    this.add(spec, this.dataflow.add(this.transforms[type], params));
+    this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)], params));
   },
   stream: function(spec, stream) {
     this.set(spec.id, stream);
@@ -22954,11 +23040,11 @@ function View(spec, options) {
   cursor(view);
 }
 
-var prototype$76 = inherits(View, Dataflow);
+var prototype$79 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$76.run = function(encode) {
+prototype$79.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
   if (this._redraw || this._resize) {
     try {
@@ -22970,7 +23056,7 @@ prototype$76.run = function(encode) {
   return this;
 };
 
-prototype$76.render = function() {
+prototype$79.render = function() {
   if (this._renderer) {
     if (this._resize) {
       this._resize = 0;
@@ -22982,18 +23068,18 @@ prototype$76.render = function() {
   return this;
 };
 
-prototype$76.dirty = function(item) {
+prototype$79.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
 
 // -- GET / SET ----
 
-prototype$76.container = function() {
+prototype$79.container = function() {
   return this._el;
 };
 
-prototype$76.scenegraph = function() {
+prototype$79.scenegraph = function() {
   return this._scenegraph;
 };
 
@@ -23003,14 +23089,14 @@ function lookupSignal(view, name) {
     : error$1('Unrecognized signal name: ' + $$2(name));
 }
 
-prototype$76.signal = function(name, value, options) {
+prototype$79.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$76.background = function(_$$1) {
+prototype$79.background = function(_$$1) {
   if (arguments.length) {
     this._background = _$$1;
     this._resize = 1;
@@ -23020,23 +23106,23 @@ prototype$76.background = function(_$$1) {
   }
 };
 
-prototype$76.width = function(_$$1) {
+prototype$79.width = function(_$$1) {
   return arguments.length ? this.signal('width', _$$1) : this.signal('width');
 };
 
-prototype$76.height = function(_$$1) {
+prototype$79.height = function(_$$1) {
   return arguments.length ? this.signal('height', _$$1) : this.signal('height');
 };
 
-prototype$76.padding = function(_$$1) {
+prototype$79.padding = function(_$$1) {
   return arguments.length ? this.signal('padding', _$$1) : this.signal('padding');
 };
 
-prototype$76.autosize = function(_$$1) {
+prototype$79.autosize = function(_$$1) {
   return arguments.length ? this.signal('autosize', _$$1) : this.signal('autosize');
 };
 
-prototype$76.renderer = function(type) {
+prototype$79.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) error$1('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -23049,7 +23135,7 @@ prototype$76.renderer = function(type) {
   return this;
 };
 
-prototype$76.loader = function(loader) {
+prototype$79.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -23061,27 +23147,27 @@ prototype$76.loader = function(loader) {
   return this;
 };
 
-prototype$76.resize = function() {
+prototype$79.resize = function() {
   this._autosize = 1;
   return this;
 };
 
 // -- SIZING ----
-prototype$76._resizeView = resizeView;
+prototype$79._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
-prototype$76.addEventListener = function(type, handler) {
+prototype$79.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
   return this;
 };
 
-prototype$76.removeEventListener = function(type, handler) {
+prototype$79.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
   return this;
 };
 
-prototype$76.addSignalListener = function(name, handler) {
+prototype$79.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   h.handler = handler;
@@ -23089,7 +23175,7 @@ prototype$76.addSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$76.removeSignalListener = function(name, handler) {
+prototype$79.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       t = s._targets || [],
       h = t.filter(function(op) {
@@ -23100,7 +23186,7 @@ prototype$76.removeSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$76.preventDefault = function(_$$1) {
+prototype$79.preventDefault = function(_$$1) {
   if (arguments.length) {
     this._preventDefault = _$$1;
     return this;
@@ -23109,7 +23195,7 @@ prototype$76.preventDefault = function(_$$1) {
   }
 };
 
-prototype$76.tooltipHandler = function(_$$1) {
+prototype$79.tooltipHandler = function(_$$1) {
   var h = this._handler;
   if (!arguments.length) {
     return h.handleTooltip;
@@ -23119,37 +23205,31 @@ prototype$76.tooltipHandler = function(_$$1) {
   }
 };
 
-prototype$76.events = events$1;
-prototype$76.finalize = finalize;
-prototype$76.hover = hover;
+prototype$79.events = events$1;
+prototype$79.finalize = finalize;
+prototype$79.hover = hover;
 
 // -- DATA ----
-prototype$76.data = data;
-prototype$76.change = change;
-prototype$76.insert = insert;
-prototype$76.remove = remove;
+prototype$79.data = data;
+prototype$79.change = change;
+prototype$79.insert = insert;
+prototype$79.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$76.initialize = initialize$1;
+prototype$79.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$76.toImageURL = renderToImageURL;
-prototype$76.toCanvas = renderToCanvas;
-prototype$76.toSVG = renderToSVG;
+prototype$79.toImageURL = renderToImageURL;
+prototype$79.toCanvas = renderToCanvas;
+prototype$79.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$76.getState = getState$1;
-prototype$76.setState = setState$1;
+prototype$79.getState = getState$1;
+prototype$79.setState = setState$1;
 
-register(IdentifierDefinition, Identifier);
+// -- Transforms -----
 
-transform('Bound', Bound);
-transform('Mark', Mark);
-transform('Overlap', Overlap);
-transform('Render', Render);
-transform('ViewLayout', ViewLayout);
-
-/* eslint-disable no-unused-vars */
+extend(transforms, tx, vtx, encode, geo, force, tree$1, voronoi$1, wordcloud, xf);
 
 exports.version = version;
 exports.Dataflow = Dataflow;
@@ -23162,9 +23242,7 @@ exports.Transform = Transform;
 exports.changeset = changeset;
 exports.ingest = ingest;
 exports.isTuple = isTuple;
-exports.register = register;
 exports.definition = definition;
-exports.definitions = definitions;
 exports.transform = transform;
 exports.transforms = transforms;
 exports.tupleid = tupleid;
@@ -23180,7 +23258,7 @@ exports.formatLocale = d3Format.formatDefaultLocale;
 exports.timeFormatLocale = d3TimeFormat.timeFormatDefaultLocale;
 exports.runtime = parseDataflow;
 exports.runtimeContext = context$2;
-exports.bin = bin$1;
+exports.bin = bin;
 exports.bootstrapCI = bootstrapCI;
 exports.randomInteger = integer;
 exports.randomKDE = randomKDE;
@@ -23256,10 +23334,10 @@ exports.SVGRenderer = SVGRenderer;
 exports.SVGStringRenderer = SVGStringRenderer;
 exports.RenderType = RenderType;
 exports.renderModule = renderModule;
-exports.Marks = Marks;
+exports.Marks = marks;
 exports.boundContext = context;
 exports.boundStroke = boundStroke;
-exports.boundItem = boundItem;
+exports.boundItem = boundItem$1;
 exports.boundMark = boundMark;
 exports.pathCurves = curves;
 exports.pathSymbols = symbols;
