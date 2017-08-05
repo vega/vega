@@ -95,10 +95,7 @@
         "hover": {
           "fillOpacity": {"value": 0.5}
         }
-      },
-      "transform": [
-
-      ]
+      }
     }
   ]
 }
