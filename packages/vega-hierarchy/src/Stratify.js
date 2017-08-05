@@ -14,6 +14,15 @@ export default function Stratify(params) {
   Transform.call(this, null, params);
 }
 
+Stratify.Definition = {
+  "type": "Stratify",
+  "metadata": {"treesource": true},
+  "params": [
+    { "name": "key", "type": "field", "required": true },
+    { "name": "parentKey", "type": "field", "required": true  }
+  ]
+};
+
 var prototype = inherits(Stratify, Transform);
 
 prototype.transform = function(_, pulse) {

@@ -15,6 +15,15 @@ export default function Nest(params) {
   Transform.call(this, null, params);
 }
 
+Nest.Definition = {
+  "type": "Nest",
+  "metadata": {"treesource": true},
+  "params": [
+    { "name": "keys", "type": "field", "array": true },
+    { "name": "key", "type": "field" }
+  ]
+};
+
 var prototype = inherits(Nest, Transform);
 
 function children(n) {

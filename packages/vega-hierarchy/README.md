@@ -2,7 +2,7 @@
 
 Hierarchical layout transforms for Vega dataflows.
 
-This module provides the following data transforms:
+This module provides the following Vega data transforms:
 
 - [**Nest**](https://vega.github.io/vega/docs/transforms/nest/) [&lt;&gt;](https://github.com/vega/vega-hierarchy/blob/master/src/Nest.js "Source")
 - [**Pack**](https://vega.github.io/vega/docs/transforms/pack/) [&lt;&gt;](https://github.com/vega/vega-hierarchy/blob/master/src/Layouts.js "Source")

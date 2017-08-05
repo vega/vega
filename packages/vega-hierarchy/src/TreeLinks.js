@@ -14,6 +14,14 @@ export default function TreeLinks(params) {
   Transform.call(this, {}, params);
 }
 
+TreeLinks.Definition = {
+  "type": "TreeLinks",
+  "metadata": {"tree": true, "generates": true, "changes": true},
+  "params": [
+    { "name": "key", "type": "field" }
+  ]
+};
+
 var prototype = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
