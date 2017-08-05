@@ -1,6 +1,7 @@
 var tape = require('tape'),
     util = require('vega-util'),
     vega = require('vega-dataflow'),
+    transforms = require('vega-transforms'),
     runtime = require('../');
 
 tape('Parser parses expressions', function(test) {
@@ -35,7 +36,7 @@ tape('Parser parses expressions', function(test) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
+      ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes,
       z = util.field('z');
 

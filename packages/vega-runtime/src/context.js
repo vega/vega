@@ -1,4 +1,5 @@
 import {getState, setState} from './state';
+import {canonicalType, isCollect} from './util';
 
 /**
  * Context objects store the current parse state.
@@ -59,7 +60,7 @@ Context.prototype = ContextFork.prototype = {
 
     ctx.set(spec.id, op);
 
-    if (spec.type === 'Collect' && (data = spec.value)) {
+    if (isCollect(spec.type) && (data = spec.value)) {
       if (data.$ingest) {
         df.ingest(op, data.$ingest, data.$format);
       } else if (data.$request) {
@@ -111,7 +112,7 @@ Context.prototype = ContextFork.prototype = {
     this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
   },
   transform: function(spec, type, params) {
-    this.add(spec, this.dataflow.add(this.transforms[type], params));
+    this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)], params));
   },
   stream: function(spec, stream) {
     this.set(spec.id, stream);

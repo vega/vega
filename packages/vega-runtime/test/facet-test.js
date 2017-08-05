@@ -1,5 +1,6 @@
 var tape = require('tape'),
     vega = require('vega-dataflow'),
+    transforms = require('vega-transforms'),
     runtime = require('../');
 
 tape('Parser parses faceted dataflow specs', function(test) {
@@ -43,7 +44,7 @@ tape('Parser parses faceted dataflow specs', function(test) {
   // ----
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
+      ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes;
 
   test.equal(Object.keys(ops).length, spec.operators.length);

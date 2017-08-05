@@ -31,10 +31,8 @@ tape('Parser parses event-driven operator updates', function(test) {
   df.events = events.events;
   df.fire = events.fire;
 
-  var ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
+  var ctx = runtime.parse(spec, runtime.context(df, {})),
       ops = ctx.nodes;
-
-//  console.log(ops); // TODO
 
   df.update(ops[0], 2).run();
   test.equal(ops[0].value, 2);

@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -28,7 +28,7 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-runtime.zip -- LICENSE README.md build/vega-runtime.js build/vega-runtime.min.js"
   },
   "dependencies": {
-    "vega-dataflow": "2",
+    "vega-dataflow": "3",
     "vega-util": "1"
   },
   "devDependencies": {
@@ -36,6 +36,7 @@
     "rollup": "0.43",
     "tape": "4",
     "uglify-js": "3",
-    "vega-encode": "1"
+    "vega-encode": "2",
+    "vega-transforms": "1"
   }
 }

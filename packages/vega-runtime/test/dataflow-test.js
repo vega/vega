@@ -1,6 +1,7 @@
 var tape = require('tape'),
-    venc = require('vega-encode'), // eslint-disable-line no-unused-vars
+    util = require('vega-util'),
     vega = require('vega-dataflow'),
+    transforms = util.extend({}, require('vega-transforms'), require('vega-encode')),
     runtime = require('../');
 
 tape('Parser parses dataflow specs', function(test) {
@@ -24,7 +25,7 @@ tape('Parser parses dataflow specs', function(test) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, vega.transforms)),
+      ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes;
 
   test.equal(Object.keys(ctx.fn).length, 2);

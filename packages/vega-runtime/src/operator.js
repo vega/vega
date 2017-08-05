@@ -1,12 +1,13 @@
 import {operatorExpression} from './expression';
 import parseParameters from './parameters';
+import {isOperator} from './util';
 import {error} from 'vega-util';
 
 /**
  * Parse a dataflow operator.
  */
 export default function(spec, ctx) {
-  if (spec.type === 'Operator' || !spec.type) {
+  if (isOperator(spec.type) || !spec.type) {
     ctx.operator(spec,
       spec.update ? operatorExpression(spec.update, ctx) : null);
   } else {

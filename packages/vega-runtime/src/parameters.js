@@ -81,6 +81,7 @@ function getKey(_, ctx) {
  * Resolve a field accessor reference.
  */
 function getField(_, ctx) {
+  if (!_.$field) return null;
   var k = 'f:' + _.$field + '_' + _.$name;
   return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name));
 }
