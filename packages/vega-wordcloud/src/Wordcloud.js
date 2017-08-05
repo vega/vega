@@ -1,14 +1,33 @@
 import cloud from './CloudLayout';
-import {transforms, Transform} from 'vega-dataflow';
-import {constant, inherits, isFunction, truthy} from 'vega-util';
+import {Transform} from 'vega-dataflow';
+import {constant, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';
 
-var output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
-var params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
+var Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+
+var Params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
 export default function Wordcloud(params) {
   Transform.call(this, cloud(), params);
 }
+
+Wordcloud.Definition = {
+  "type": "Wordcloud",
+  "metadata": {"modifies": true},
+  "params": [
+    { "name": "size", "type": "number", "array": true, "length": 2 },
+    { "name": "font", "type": "string", "expr": true, "default": "sans-serif" },
+    { "name": "fontStyle", "type": "string", "expr": true, "default": "normal" },
+    { "name": "fontWeight", "type": "string", "expr": true, "default": "normal" },
+    { "name": "fontSize", "type": "number", "expr": true, "default": 14 },
+    { "name": "fontSizeRange", "type": "number", "array": "nullable", "default": [10, 50] },
+    { "name": "rotate", "type": "number", "expr": true, "default": 0 },
+    { "name": "text", "type": "field" },
+    { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
+    { "name": "padding", "type": "number", "expr": true },
+    { "name": "as", "type": "string", "array": true, "length": 7, "default": Output }
+  ]
+};
 
 var prototype = inherits(Wordcloud, Transform);
 
@@ -19,10 +38,11 @@ prototype.transform = function(_, pulse) {
   }
 
   var mod = _.modified();
-  if (!(mod || pulse.changed(pulse.ADD_REM) || params.some(modp))) return;
+  if (!(mod || pulse.changed(pulse.ADD_REM) || Params.some(modp))) return;
 
-  var layout = this.value,
-      as = _.as || output,
+  var data = pulse.materialize(pulse.SOURCE).source,
+      layout = this.value,
+      as = _.as || Output,
       fontSize = _.fontSize || 14,
       range;
 
@@ -34,12 +54,11 @@ prototype.transform = function(_, pulse) {
   if (range) {
     var fsize = fontSize,
         sizeScale = scale('sqrt')()
-          .domain(extent(fsize, pulse))
+          .domain(extent(fsize, data))
           .range(range);
     fontSize = function(x) { return sizeScale(fsize(x)); };
   }
 
-  var data = pulse.materialize(pulse.SOURCE).source;
   data.forEach(function(t) {
     t[as[0]] = NaN;
     t[as[1]] = NaN;
@@ -82,8 +101,18 @@ prototype.transform = function(_, pulse) {
   return pulse.reflow(mod).modifies(as);
 };
 
-function extent(size, pulse) {
-  var e = new transforms.Extent();
-  e.transform({field: size, modified: truthy}, pulse);
-  return e.value;
+function extent(field, data) {
+  var min = +Infinity,
+      max = -Infinity,
+      i = 0,
+      n = data.length,
+      v;
+
+  for (; i<n; ++i) {
+    v = field(data[i]);
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+
+  return [min, max];
 }
