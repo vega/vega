@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-geo.js -c -m -o build/vega-geo.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-contour:d3,d3-geo:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega -o build/vega-geo.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-contour:d3,d3-geo:d3,vega-dataflow:vega,vega-projection:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-geo.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-geo.zip -- LICENSE README.md build/vega-geo.js build/vega-geo.min.js"
@@ -31,7 +31,8 @@
     "d3-array": "1",
     "d3-contour": "1",
     "d3-geo": "1",
-    "vega-dataflow": "2",
+    "vega-dataflow": "3",
+    "vega-projection": "1",
     "vega-util": "1"
   },
   "devDependencies": {
