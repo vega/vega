@@ -96,7 +96,7 @@ function defaults() {
         fontSize: 13,
         fontWeight: 'bold'
       },
-      // defaults for styled point marks
+      // defaults for styled point marks in Vega-Lite
       point: {
         size: defaultSymbolSize,
         strokeWidth: defaultStrokeWidth,
@@ -110,6 +110,11 @@ function defaults() {
         size: defaultSymbolSize,
         strokeWidth: defaultStrokeWidth,
         shape: 'square'
+      },
+      // defaults for styled group marks in Vega-Lite
+      cell: {
+        fill: 'transparent',
+        stroke: lightGray 
       }
     },
 
