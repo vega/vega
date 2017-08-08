@@ -3568,7 +3568,9 @@ prototype$4.init = function(src, flags) {
   p.stamp = src.stamp;
   p.encode = src.encode;
 
-  if (src.fields && !(flags & NO_FIELDS)) p.fields = src.fields;
+  if (src.fields && !(flags & NO_FIELDS)) {
+    p.fields = src.fields;
+  }
 
   if (flags & ADD) {
     p.addF = src.addF;
@@ -3825,11 +3827,20 @@ var prototype$5 = inherits(MultiPulse, Pulse);
  * The dataflow, time stamp and field modification values are copied over.
  * @return {Pulse}
  */
-prototype$5.fork = function() {
-  if (arguments.length && (arguments[0] & Pulse.prototype.ALL)) {
-    error$1('MultiPulse fork does not support tuple change sets.');
+prototype$5.fork = function(flags) {
+  var p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
+  if (flags !== undefined) {
+    if (flags & p.ADD) {
+      this.visit(p.ADD, function(t) { return p.add.push(t); });
+    }
+    if (flags & p.REM) {
+      this.visit(p.REM, function(t) { return p.rem.push(t); });
+    }
+    if (flags & p.MOD) {
+      this.visit(p.MOD, function(t) { return p.mod.push(t); });
+    }
   }
-  return new Pulse(this.dataflow).init(this, 0);
+  return p;
 };
 
 prototype$5.changed = function(flags) {
@@ -19202,6 +19213,88 @@ function quantize$4(k) {
   };
 }
 
+var Feature = 'Feature';
+var FeatureCollection = 'FeatureCollection';
+var MultiPoint = 'MultiPoint';
+
+/**
+ * Consolidate an array of [longitude, latitude] points or GeoJSON features
+ * into a combined GeoJSON object. This transform is particularly useful for
+ * combining geo data for a Projection's fit argument. The resulting GeoJSON
+ * data is available as this transform's value. Input pulses are unchanged.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<function(object): *>} [params.fields] - A two-element array
+ *   of field accessors for the longitude and latitude values.
+ * @param {function(object): *} params.geojson - A field accessor for
+ *   retrieving GeoJSON feature data.
+ */
+function GeoJSON(params) {
+  Transform.call(this, null, params);
+}
+
+GeoJSON.Definition = {
+  "type": "GeoJSON",
+  "metadata": {},
+  "params": [
+    { "name": "fields", "type": "field", "array": true, "length": 2 },
+    { "name": "geojson", "type": "field" },
+  ]
+};
+
+var prototype$61 = inherits(GeoJSON, Transform);
+
+prototype$61.transform = function(_, pulse) {
+  var features = this._features,
+      points = this._points,
+      fields = _.fields,
+      lon = fields && fields[0],
+      lat = fields && fields[1],
+      geojson = _.geojson,
+      flag = pulse.ADD,
+      mod;
+
+  mod = _.modified()
+    || pulse.changed(pulse.REM)
+    || pulse.modified(accessorFields(geojson))
+    || (lon && (pulse.modified(accessorFields(lon))))
+    || (lat && (pulse.modified(accessorFields(lat))));
+
+  if (!this.value || mod) {
+    flag = pulse.SOURCE;
+    this._features = (features = []);
+    this._points = (points = []);
+  }
+
+  if (geojson) {
+    pulse.visit(flag, function(t) {
+      features.push(geojson(t));
+    });
+  }
+
+  if (lon && lat) {
+    pulse.visit(flag, function(t) {
+      var x = lon(t),
+          y = lat(t);
+      if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
+        points.push([x, y]);
+      }
+    });
+    features = features.concat({
+      type: Feature,
+      geometry: {
+        type: MultiPoint,
+        coordinates: points
+      }
+    });
+  }
+
+  this.value = {
+    type: FeatureCollection,
+    features: features
+  };
+};
+
 // Adds floating point numbers with twice the normal precision.
 // Reference: J. R. Shewchuk, Adaptive Precision Floating-Point Arithmetic and
 // Fast Robust Geometric Predicates, Discrete & Computational Geometry 18(3)
@@ -21671,9 +21764,9 @@ GeoPath.Definition = {
   ]
 };
 
-var prototype$61 = inherits(GeoPath, Transform);
+var prototype$62 = inherits(GeoPath, Transform);
 
-prototype$61.transform = function(_, pulse) {
+prototype$62.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       path = this.value,
       field$$1 = _.field || identity,
@@ -21720,9 +21813,9 @@ GeoPoint.Definition = {
   ]
 };
 
-var prototype$62 = inherits(GeoPoint, Transform);
+var prototype$63 = inherits(GeoPoint, Transform);
 
-prototype$62.transform = function(_, pulse) {
+prototype$63.transform = function(_, pulse) {
   var proj = _.projection,
       lon = _.fields[0],
       lat = _.fields[1],
@@ -21778,9 +21871,9 @@ GeoShape.Definition = {
   ]
 };
 
-var prototype$63 = inherits(GeoShape, Transform);
+var prototype$64 = inherits(GeoShape, Transform);
 
-prototype$63.transform = function(_, pulse) {
+prototype$64.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       shape = this.value,
       datum = _.field || field('datum'),
@@ -21838,9 +21931,9 @@ Graticule.Definition = {
   ]
 };
 
-var prototype$64 = inherits(Graticule, Transform);
+var prototype$65 = inherits(Graticule, Transform);
 
-prototype$64.transform = function(_, pulse) {
+prototype$65.transform = function(_, pulse) {
   var out = pulse.fork(),
       src = this.value,
       gen = this.generator, t;
@@ -21875,9 +21968,9 @@ function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$65 = inherits(Projection, Transform);
+var prototype$66 = inherits(Projection, Transform);
 
-prototype$65.transform = function(_, pulse) {
+prototype$66.transform = function(_, pulse) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -21898,15 +21991,9 @@ prototype$65.transform = function(_, pulse) {
 };
 
 function fit(proj, _) {
-  var data = geoJSON(_.fit);
+  var data = collectGeoJSON(_.fit);
   _.extent ? proj.fitExtent(_.extent, data)
     : _.size ? proj.fitSize(_.size, data) : 0;
-}
-
-function geoJSON(data) {
-  return !isArray(data) ? data
-    : data.length > 1 ? {type: 'FeatureCollection', features: data}
-    : data[0];
 }
 
 function create$2(type) {
@@ -21919,10 +22006,26 @@ function set$4(proj, key$$1, value) {
    if (isFunction(proj[key$$1])) proj[key$$1](value);
 }
 
+function collectGeoJSON(features) {
+  features = array(features);
+  return features.length === 1
+    ? features[0]
+    : {
+        type: FeatureCollection,
+        features: features.reduce(function(list, f) {
+            (f && f.type === FeatureCollection) ? list.push.apply(list, f.features)
+              : isArray(f) ? list.push.apply(list, f)
+              : list.push(f);
+            return list;
+          }, [])
+      };
+}
+
 
 
 var geo = Object.freeze({
 	contour: Contour,
+	geojson: GeoJSON,
 	geopath: GeoPath,
 	geopoint: GeoPoint,
 	geoshape: GeoShape,
@@ -23145,9 +23248,9 @@ Force.Definition = {
   ]
 };
 
-var prototype$66 = inherits(Force, Transform);
+var prototype$67 = inherits(Force, Transform);
 
-prototype$66.transform = function(_, pulse) {
+prototype$67.transform = function(_, pulse) {
   var sim = this.value,
       change = pulse.changed(pulse.ADD_REM),
       params = _.modified(ForceParams),
@@ -23190,7 +23293,7 @@ prototype$66.transform = function(_, pulse) {
   return this.finish(_, pulse);
 };
 
-prototype$66.finish = function(_, pulse) {
+prototype$67.finish = function(_, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -24571,13 +24674,13 @@ Nest.Definition = {
   ]
 };
 
-var prototype$67 = inherits(Nest, Transform);
+var prototype$68 = inherits(Nest, Transform);
 
 function children(n) {
   return n.values;
 }
 
-prototype$67.transform = function(_, pulse) {
+prototype$68.transform = function(_, pulse) {
   if (!pulse.source) {
     error$1('Nest transform requires an upstream data source.');
   }
@@ -24615,9 +24718,9 @@ function HierarchyLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$69 = inherits(HierarchyLayout, Transform);
+var prototype$70 = inherits(HierarchyLayout, Transform);
 
-prototype$69.transform = function(_, pulse) {
+prototype$70.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error$1(this.constructor.name
       + ' transform requires a backing tree data source.');
@@ -24682,13 +24785,13 @@ Pack.Definition = {
   ]
 };
 
-var prototype$68 = inherits(Pack, HierarchyLayout);
+var prototype$69 = inherits(Pack, HierarchyLayout);
 
-prototype$68.layout = pack$1;
+prototype$69.layout = pack$1;
 
-prototype$68.params = ['size', 'padding'];
+prototype$69.params = ['size', 'padding'];
 
-prototype$68.fields = Output;
+prototype$69.fields = Output;
 
 var Output$1 = ["x0", "y0", "x1", "y1", "depth", "children"];
 
@@ -24715,13 +24818,13 @@ Partition.Definition = {
   ]
 };
 
-var prototype$70 = inherits(Partition, HierarchyLayout);
+var prototype$71 = inherits(Partition, HierarchyLayout);
 
-prototype$70.layout = partition$2;
+prototype$71.layout = partition$2;
 
-prototype$70.params = ['size', 'round', 'padding'];
+prototype$71.params = ['size', 'round', 'padding'];
 
-prototype$70.fields = Output$1;
+prototype$71.fields = Output$1;
 
 /**
   * Stratify a collection of tuples into a tree structure based on
@@ -24744,9 +24847,9 @@ Stratify.Definition = {
   ]
 };
 
-var prototype$71 = inherits(Stratify, Transform);
+var prototype$72 = inherits(Stratify, Transform);
 
-prototype$71.transform = function(_, pulse) {
+prototype$72.transform = function(_, pulse) {
   if (!pulse.source) {
     error$1('Stratify transform requires an upstream data source.');
   }
@@ -24799,20 +24902,20 @@ Tree.Definition = {
   ]
 };
 
-var prototype$72 = inherits(Tree, HierarchyLayout);
+var prototype$73 = inherits(Tree, HierarchyLayout);
 
 /**
  * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
  */
-prototype$72.layout = function(method) {
+prototype$73.layout = function(method) {
   var m = method || 'tidy';
   if (Layouts.hasOwnProperty(m)) return Layouts[m]();
   else error$1('Unrecognized Tree layout method: ' + m);
 };
 
-prototype$72.params = ['size', 'nodeSize', 'separation'];
+prototype$73.params = ['size', 'nodeSize', 'separation'];
 
-prototype$72.fields = Output$2;
+prototype$73.fields = Output$2;
 
 /**
   * Generate tuples representing links between tree nodes.
@@ -24835,7 +24938,7 @@ TreeLinks.Definition = {
   ]
 };
 
-var prototype$73 = inherits(TreeLinks, Transform);
+var prototype$74 = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
   var p;
@@ -24844,7 +24947,7 @@ function parentTuple(node) {
       && (tupleid(p) != null) && p;
 }
 
-prototype$73.transform = function(_, pulse) {
+prototype$74.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error$1('TreeLinks transform requires a backing tree data source.');
   }
@@ -24942,13 +25045,13 @@ Treemap.Definition = {
   ]
 };
 
-var prototype$74 = inherits(Treemap, HierarchyLayout);
+var prototype$75 = inherits(Treemap, HierarchyLayout);
 
 /**
  * Treemap layout generator. Adds 'method' and 'ratio' parameters
  * to configure the underlying tile method.
  */
-prototype$74.layout = function() {
+prototype$75.layout = function() {
   var x = treemap();
   x.ratio = function(_) {
     var t = x.tile();
@@ -24961,13 +25064,13 @@ prototype$74.layout = function() {
   return x;
 };
 
-prototype$74.params = [
+prototype$75.params = [
   'method', 'ratio', 'size', 'round',
   'padding', 'paddingInner', 'paddingOuter',
   'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
 ];
 
-prototype$74.fields = Output$3;
+prototype$75.fields = Output$3;
 
 
 
@@ -25986,11 +26089,11 @@ Voronoi.Definition = {
   ]
 };
 
-var prototype$75 = inherits(Voronoi, Transform);
+var prototype$76 = inherits(Voronoi, Transform);
 
 var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-prototype$75.transform = function(_, pulse) {
+prototype$76.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
       diagram, polygons, i, n;
@@ -26487,9 +26590,9 @@ Wordcloud.Definition = {
   ]
 };
 
-var prototype$76 = inherits(Wordcloud, Transform);
+var prototype$77 = inherits(Wordcloud, Transform);
 
-prototype$76.transform = function(_, pulse) {
+prototype$77.transform = function(_, pulse) {
   function modp(param) {
     var p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
@@ -26858,9 +26961,9 @@ CrossFilter.Definition = {
   ]
 };
 
-var prototype$77 = inherits(CrossFilter, Transform);
+var prototype$78 = inherits(CrossFilter, Transform);
 
-prototype$77.transform = function(_, pulse) {
+prototype$78.transform = function(_, pulse) {
   if (!this._dims) {
     return this.init(_, pulse);
   } else {
@@ -26873,7 +26976,7 @@ prototype$77.transform = function(_, pulse) {
   }
 };
 
-prototype$77.init = function(_, pulse) {
+prototype$78.init = function(_, pulse) {
   var fields = _.fields,
       query = _.query,
       indices = this._indices = {},
@@ -26891,7 +26994,7 @@ prototype$77.init = function(_, pulse) {
   return this.eval(_, pulse);
 };
 
-prototype$77.reinit = function(_, pulse) {
+prototype$78.reinit = function(_, pulse) {
   var output = pulse.materialize().fork(),
       fields = _.fields,
       query = _.query,
@@ -26958,7 +27061,7 @@ prototype$77.reinit = function(_, pulse) {
   return output;
 };
 
-prototype$77.eval = function(_, pulse) {
+prototype$78.eval = function(_, pulse) {
   var output = pulse.materialize().fork(),
       m = this._dims.length,
       mask = 0;
@@ -26986,7 +27089,7 @@ prototype$77.eval = function(_, pulse) {
   return output;
 };
 
-prototype$77.insert = function(_, pulse, output) {
+prototype$78.insert = function(_, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
       dims = this._dims,
@@ -27020,7 +27123,7 @@ prototype$77.insert = function(_, pulse, output) {
   }
 };
 
-prototype$77.modify = function(pulse, output) {
+prototype$78.modify = function(pulse, output) {
   var out = output.mod,
       bits = this.value,
       curr = bits.curr(),
@@ -27034,7 +27137,7 @@ prototype$77.modify = function(pulse, output) {
   }
 };
 
-prototype$77.remove = function(_, pulse, output) {
+prototype$78.remove = function(_, pulse, output) {
   var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
@@ -27064,7 +27167,7 @@ prototype$77.remove = function(_, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype$77.reindex = function(pulse, num, map) {
+prototype$78.reindex = function(pulse, num, map) {
   var indices = this._indices,
       bits = this.value;
 
@@ -27074,7 +27177,7 @@ prototype$77.reindex = function(pulse, num, map) {
   });
 };
 
-prototype$77.update = function(_, pulse, output) {
+prototype$78.update = function(_, pulse, output) {
   var dims = this._dims,
       query = _.query,
       stamp = pulse.stamp,
@@ -27104,7 +27207,7 @@ prototype$77.update = function(_, pulse, output) {
   return mask;
 };
 
-prototype$77.incrementAll = function(dim, query, stamp, out) {
+prototype$78.incrementAll = function(dim, query, stamp, out) {
   var bits = this.value,
       seen = bits.seen(),
       curr = bits.curr(),
@@ -27168,7 +27271,7 @@ prototype$77.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype$77.incrementOne = function(dim, query, add, rem) {
+prototype$78.incrementOne = function(dim, query, add, rem) {
   var bits = this.value,
       curr = bits.curr(),
       index = dim.index(),
@@ -27238,9 +27341,9 @@ ResolveFilter.Definition = {
   ]
 };
 
-var prototype$78 = inherits(ResolveFilter, Transform);
+var prototype$79 = inherits(ResolveFilter, Transform);
 
-prototype$78.transform = function(_, pulse) {
+prototype$79.transform = function(_, pulse) {
   var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
       bitmap = _.filter,
       mask = bitmap.mask;
@@ -27293,7 +27396,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.0-rc6";
+var version = "3.0.0-rc7";
 
 var Default = 'default';
 
@@ -32387,9 +32490,9 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$80 = DataScope.prototype;
+var prototype$81 = DataScope.prototype;
 
-prototype$80.countsRef = function(scope, field$$1, sort) {
+prototype$81.countsRef = function(scope, field$$1, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field$$1), v, a, p;
@@ -32463,27 +32566,27 @@ function cache(scope, ds, name, optype, field$$1, counts, index) {
   return v;
 }
 
-prototype$80.tuplesRef = function() {
+prototype$81.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$80.extentRef = function(scope, field$$1) {
+prototype$81.extentRef = function(scope, field$$1) {
   return cache(scope, this, 'extent', 'extent', field$$1, false);
 };
 
-prototype$80.domainRef = function(scope, field$$1) {
+prototype$81.domainRef = function(scope, field$$1) {
   return cache(scope, this, 'domain', 'values', field$$1, false);
 };
 
-prototype$80.valuesRef = function(scope, field$$1, sort) {
+prototype$81.valuesRef = function(scope, field$$1, sort) {
   return cache(scope, this, 'vals', 'values', field$$1, sort || true);
 };
 
-prototype$80.lookupRef = function(scope, field$$1) {
+prototype$81.lookupRef = function(scope, field$$1) {
   return cache(scope, this, 'lookup', 'tupleindex', field$$1, false);
 };
 
-prototype$80.indataRef = function(scope, field$$1) {
+prototype$81.indataRef = function(scope, field$$1) {
   return cache(scope, this, 'indata', 'tupleindex', field$$1, true, true);
 };
 
@@ -32940,9 +33043,10 @@ function analyze(data, scope, ops) {
     // load data from external source
     output.push(source = collect({$request: data.url, $format: data.format}));
   } else if (data.source) {
-    // derives from another data set
-    upstream = scope.getData(data.source);
-    source = upstream.output;
+    // derives from one or more other data sets
+    source = upstream = array(data.source).map(function(d) {
+      return ref(scope.getData(d).output);
+    });
     output.push(null); // populate later
   }
 
@@ -32964,8 +33068,15 @@ function analyze(data, scope, ops) {
   }
 
   if (upstream) {
-    output[0] = Relay$1({derive: modify, pulse: ref(upstream.output)});
-    if (modify) output.splice(1, 0, collect()); // collect derived tuples
+    n = upstream.length - 1;
+    output[0] = Relay$1({
+      derive: modify,
+      pulse: n ? upstream : upstream[0]
+    });
+    if (modify || n) {
+      // collect derived and multi-pulse tuples
+      output.splice(1, 0, collect());
+    }
   }
 
   if (!source) output.push(collect());
@@ -33395,7 +33506,7 @@ function parseView(spec, scope) {
   }, spec.encode);
 
   encode = scope.add(Encode$1(
-    encoders(encode, GroupMark, FrameRole$1, null, scope, {pulse: ref(input)}))
+    encoders(encode, GroupMark, FrameRole$1, spec.style, scope, {pulse: ref(input)}))
   );
 
   // Perform view layout
@@ -33475,15 +33586,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$81 = Scope.prototype = Subscope.prototype;
+var prototype$82 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$81.fork = function() {
+prototype$82.fork = function() {
   return new Subscope(this);
 };
 
-prototype$81.toRuntime = function() {
+prototype$82.toRuntime = function() {
   this.finish();
   return {
     background:  this.background,
@@ -33495,11 +33606,11 @@ prototype$81.toRuntime = function() {
   };
 };
 
-prototype$81.id = function() {
+prototype$82.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$81.add = function(op) {
+prototype$82.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -33510,24 +33621,24 @@ prototype$81.add = function(op) {
   return op;
 };
 
-prototype$81.proxy = function(op) {
+prototype$82.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$81.addStream = function(stream) {
+prototype$82.addStream = function(stream) {
   this.streams.push(stream);
   stream.id = this.id();
   return stream;
 };
 
-prototype$81.addUpdate = function(update) {
+prototype$82.addUpdate = function(update) {
   this.updates.push(update);
   return update;
 };
 
 // Apply metadata
-prototype$81.finish = function() {
+prototype$82.finish = function() {
   var name, ds;
 
   // annotate root
@@ -33567,40 +33678,40 @@ prototype$81.finish = function() {
 
 // ----
 
-prototype$81.pushState = function(encode, parent, lookup) {
+prototype$82.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$81.popState = function() {
+prototype$82.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$81.parent = function() {
+prototype$82.parent = function() {
   return peek(this._parent);
 };
 
-prototype$81.encode = function() {
+prototype$82.encode = function() {
   return peek(this._encode);
 };
 
-prototype$81.lookup = function() {
+prototype$82.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$81.markpath = function() {
+prototype$82.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$81.fieldRef = function(field$$1, name) {
+prototype$82.fieldRef = function(field$$1, name) {
   if (isString(field$$1)) return fieldRef$1(field$$1, name);
   if (!field$$1.signal) {
     error$1('Unsupported field reference: ' + $(field$$1));
@@ -33618,7 +33729,7 @@ prototype$81.fieldRef = function(field$$1, name) {
   return f;
 };
 
-prototype$81.compareRef = function(cmp) {
+prototype$82.compareRef = function(cmp) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -33638,7 +33749,7 @@ prototype$81.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$81.keyRef = function(fields) {
+prototype$82.keyRef = function(fields) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -33657,7 +33768,7 @@ prototype$81.keyRef = function(fields) {
     : keyRef(fields);
 };
 
-prototype$81.sortRef = function(sort) {
+prototype$82.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -33674,7 +33785,7 @@ prototype$81.sortRef = function(sort) {
 
 // ----
 
-prototype$81.event = function(source, type) {
+prototype$82.event = function(source, type) {
   var key$$1 = source + ':' + type;
   if (!this.events[key$$1]) {
     var id$$1 = this.id();
@@ -33690,7 +33801,7 @@ prototype$81.event = function(source, type) {
 
 // ----
 
-prototype$81.addSignal = function(name, value$$1) {
+prototype$82.addSignal = function(name, value$$1) {
   if (this.signals.hasOwnProperty(name)) {
     error$1('Duplicate signal name: ' + $(name));
   }
@@ -33698,14 +33809,14 @@ prototype$81.addSignal = function(name, value$$1) {
   return this.signals[name] = op;
 };
 
-prototype$81.getSignal = function(name) {
+prototype$82.getSignal = function(name) {
   if (!this.signals[name]) {
     error$1('Unrecognized signal name: ' + $(name));
   }
   return this.signals[name];
 };
 
-prototype$81.signalRef = function(s) {
+prototype$82.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!this.lambdas.hasOwnProperty(s)) {
@@ -33714,7 +33825,7 @@ prototype$81.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype$81.parseLambdas = function() {
+prototype$82.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -33725,11 +33836,11 @@ prototype$81.parseLambdas = function() {
   }
 };
 
-prototype$81.property = function(spec) {
+prototype$82.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$81.objectProperty = function(spec) {
+prototype$82.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || propertyLambda(spec));
 };
@@ -33770,7 +33881,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$81.addBinding = function(name, bind) {
+prototype$82.addBinding = function(name, bind) {
   if (!this.bindings) {
     error$1('Nested signals do not support binding: ' + $(name));
   }
@@ -33779,55 +33890,55 @@ prototype$81.addBinding = function(name, bind) {
 
 // ----
 
-prototype$81.addScaleProj = function(name, transform) {
+prototype$82.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error$1('Duplicate scale or projection name: ' + $(name));
   }
   this.scales[name] = this.add(transform);
 };
 
-prototype$81.addScale = function(name, params) {
+prototype$82.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$81.addProjection = function(name, params) {
+prototype$82.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$81.getScale = function(name) {
+prototype$82.getScale = function(name) {
   if (!this.scales[name]) {
     error$1('Unrecognized scale name: ' + $(name));
   }
   return this.scales[name];
 };
 
-prototype$81.projectionRef =
-prototype$81.scaleRef = function(name) {
+prototype$82.projectionRef =
+prototype$82.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$81.projectionType =
-prototype$81.scaleType = function(name) {
+prototype$82.projectionType =
+prototype$82.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$81.addData = function(name, dataScope) {
+prototype$82.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$81.getData = function(name) {
+prototype$82.getData = function(name) {
   if (!this.data[name]) {
     error$1('Undefined data set name: ' + $(name));
   }
   return this.data[name];
 };
 
-prototype$81.addDataPipeline = function(name, entries) {
+prototype$82.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $(name));
   }
@@ -33930,7 +34041,7 @@ function defaults$1() {
         fontSize: 13,
         fontWeight: 'bold'
       },
-      // defaults for styled point marks
+      // defaults for styled point marks in Vega-Lite
       point: {
         size: defaultSymbolSize,
         strokeWidth: defaultStrokeWidth,
@@ -33944,6 +34055,11 @@ function defaults$1() {
         size: defaultSymbolSize,
         strokeWidth: defaultStrokeWidth,
         shape: 'square'
+      },
+      // defaults for styled group marks in Vega-Lite
+      cell: {
+        fill: 'transparent',
+        stroke: lightGray 
       }
     },
 
@@ -34782,11 +34898,11 @@ function View(spec, options) {
   cursor(view);
 }
 
-var prototype$79 = inherits(View, Dataflow);
+var prototype$80 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$79.run = function(encode) {
+prototype$80.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
   if (this._redraw || this._resize) {
     try {
@@ -34798,7 +34914,7 @@ prototype$79.run = function(encode) {
   return this;
 };
 
-prototype$79.render = function() {
+prototype$80.render = function() {
   if (this._renderer) {
     if (this._resize) {
       this._resize = 0;
@@ -34810,18 +34926,18 @@ prototype$79.render = function() {
   return this;
 };
 
-prototype$79.dirty = function(item) {
+prototype$80.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
 
 // -- GET / SET ----
 
-prototype$79.container = function() {
+prototype$80.container = function() {
   return this._el;
 };
 
-prototype$79.scenegraph = function() {
+prototype$80.scenegraph = function() {
   return this._scenegraph;
 };
 
@@ -34831,14 +34947,14 @@ function lookupSignal(view, name) {
     : error$1('Unrecognized signal name: ' + $(name));
 }
 
-prototype$79.signal = function(name, value, options) {
+prototype$80.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$79.background = function(_) {
+prototype$80.background = function(_) {
   if (arguments.length) {
     this._background = _;
     this._resize = 1;
@@ -34848,23 +34964,23 @@ prototype$79.background = function(_) {
   }
 };
 
-prototype$79.width = function(_) {
+prototype$80.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype$79.height = function(_) {
+prototype$80.height = function(_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype$79.padding = function(_) {
+prototype$80.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype$79.autosize = function(_) {
+prototype$80.autosize = function(_) {
   return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
 };
 
-prototype$79.renderer = function(type) {
+prototype$80.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) error$1('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -34877,7 +34993,7 @@ prototype$79.renderer = function(type) {
   return this;
 };
 
-prototype$79.loader = function(loader) {
+prototype$80.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -34889,27 +35005,27 @@ prototype$79.loader = function(loader) {
   return this;
 };
 
-prototype$79.resize = function() {
+prototype$80.resize = function() {
   this._autosize = 1;
   return this;
 };
 
 // -- SIZING ----
-prototype$79._resizeView = resizeView;
+prototype$80._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
-prototype$79.addEventListener = function(type, handler) {
+prototype$80.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
   return this;
 };
 
-prototype$79.removeEventListener = function(type, handler) {
+prototype$80.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
   return this;
 };
 
-prototype$79.addSignalListener = function(name, handler) {
+prototype$80.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       h = function() { handler(name, s.value); };
   h.handler = handler;
@@ -34917,7 +35033,7 @@ prototype$79.addSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$79.removeSignalListener = function(name, handler) {
+prototype$80.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
       t = s._targets || [],
       h = t.filter(function(op) {
@@ -34928,7 +35044,7 @@ prototype$79.removeSignalListener = function(name, handler) {
   return this;
 };
 
-prototype$79.preventDefault = function(_) {
+prototype$80.preventDefault = function(_) {
   if (arguments.length) {
     this._preventDefault = _;
     return this;
@@ -34937,7 +35053,7 @@ prototype$79.preventDefault = function(_) {
   }
 };
 
-prototype$79.tooltipHandler = function(_) {
+prototype$80.tooltipHandler = function(_) {
   var h = this._handler;
   if (!arguments.length) {
     return h.handleTooltip;
@@ -34947,27 +35063,27 @@ prototype$79.tooltipHandler = function(_) {
   }
 };
 
-prototype$79.events = events$1;
-prototype$79.finalize = finalize;
-prototype$79.hover = hover;
+prototype$80.events = events$1;
+prototype$80.finalize = finalize;
+prototype$80.hover = hover;
 
 // -- DATA ----
-prototype$79.data = data;
-prototype$79.change = change;
-prototype$79.insert = insert;
-prototype$79.remove = remove;
+prototype$80.data = data;
+prototype$80.change = change;
+prototype$80.insert = insert;
+prototype$80.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$79.initialize = initialize$1;
+prototype$80.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$79.toImageURL = renderToImageURL;
-prototype$79.toCanvas = renderToCanvas;
-prototype$79.toSVG = renderToSVG;
+prototype$80.toImageURL = renderToImageURL;
+prototype$80.toCanvas = renderToCanvas;
+prototype$80.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$79.getState = getState$1;
-prototype$79.setState = setState$1;
+prototype$80.getState = getState$1;
+prototype$80.setState = setState$1;
 
 // -- Transforms -----
 

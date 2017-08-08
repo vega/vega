@@ -493,7 +493,18 @@
                 {
                   "properties": {
                     "source": {
-                      "type": "string"
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 1
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -3418,6 +3429,9 @@
           "$ref": "#/defs/contourTransform"
         },
         {
+          "$ref": "#/defs/geojsonTransform"
+        },
+        {
           "$ref": "#/defs/geopathTransform"
         },
         {
@@ -3501,6 +3515,9 @@
         },
         {
           "$ref": "#/defs/stackTransform"
+        },
+        {
+          "$ref": "#/defs/geojsonTransform"
         },
         {
           "$ref": "#/defs/geopathTransform"
@@ -5577,6 +5594,61 @@
       "required": [
         "type",
         "size"
+      ]
+    },
+    "geojsonTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "geojson"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "fields": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "geojson": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
       ]
     },
     "geopathTransform": {
