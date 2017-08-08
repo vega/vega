@@ -51,6 +51,7 @@ Transforms for processing streams of data objects.
 Transforms for projecting geographic data and generating geographic guides.
 
 - [`contour`](contour) - Model a spatial distribution using discrete levels.
+- [`geojson`](geojson) - Consolidate geographic data into a GeoJSON feature collection.
 - [`geopath`](geopath) - Map GeoJSON features to SVG path strings.
 - [`geopoint`](geopoint) - Map (longtidue, latitude) coordinates to (x, y) points.
 - [`geoshape`](geoshape) - Map GeoJSON features to a shape instance for procedural drawing.
