@@ -1,7 +1,8 @@
+import {FeatureCollection} from './constants';
 import {Transform} from 'vega-dataflow';
 import {projection, projectionProperties} from 'vega-projection';
-import {error, inherits, isFunction} from 'vega-util';
-import collectGeoJSON from './GeoJSON';
+import {array, error, inherits, isFunction} from 'vega-util';
+
 /**
  * Maintains a cartographic projection.
  * @constructor
@@ -48,4 +49,19 @@ function create(type) {
 
 function set(proj, key, value) {
    if (isFunction(proj[key])) proj[key](value);
+}
+
+export function collectGeoJSON(features) {
+  features = array(features);
+  return features.length === 1
+    ? features[0]
+    : {
+        type: FeatureCollection,
+        features: features.reduce(function(list, f) {
+            (f && f.type === FeatureCollection)
+              ? list.push.apply(list, f.features)
+              : list.push(f);
+            return list;
+          }, [])
+      };
 }
