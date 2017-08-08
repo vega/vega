@@ -7,6 +7,7 @@ This module provides the following Vega data transforms:
 - [**Contour**](https://vega.github.io/vega/docs/transforms/contour/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/Contour.js "Source")
 - [**GeoPath**](https://vega.github.io/vega/docs/transforms/geopath/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/GeoPath.js "Source")
 - [**GeoPoint**](https://vega.github.io/vega/docs/transforms/geopoint/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/GeoPoint.js "Source")
+- [**GeoJSON**](https://vega.github.io/vega/docs/transforms/geojson/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/GeoJSON.js "Source")
 - [**GeoShape**](https://vega.github.io/vega/docs/transforms/geoshape/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/GeoShape.js "Source")
 - [**Graticule**](https://vega.github.io/vega/docs/transforms/graticule/) [&lt;&gt;](https://github.com/vega/vega-geo/blob/master/src/Graticule.js "Source")
 
