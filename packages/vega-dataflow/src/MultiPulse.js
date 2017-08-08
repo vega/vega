@@ -48,11 +48,20 @@ var prototype = inherits(MultiPulse, Pulse);
  * The dataflow, time stamp and field modification values are copied over.
  * @return {Pulse}
  */
-prototype.fork = function() {
-  if (arguments.length && (arguments[0] & Pulse.prototype.ALL)) {
-    error('MultiPulse fork does not support tuple change sets.');
+prototype.fork = function(flags) {
+  var p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
+  if (flags !== undefined) {
+    if (flags & p.ADD) {
+      this.visit(p.ADD, function(t) { return p.add.push(t); });
+    }
+    if (flags & p.REM) {
+      this.visit(p.REM, function(t) { return p.rem.push(t); });
+    }
+    if (flags & p.MOD) {
+      this.visit(p.MOD, function(t) { return p.mod.push(t); });
+    }
   }
-  return new Pulse(this.dataflow).init(this, 0);
+  return p;
 };
 
 prototype.changed = function(flags) {
