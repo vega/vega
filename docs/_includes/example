@@ -2,7 +2,7 @@
 {% include embed spec=include.spec %}
 </div>
 
-<div>
+<div class="editor-link">
   <a href="https://vega.github.io/editor/#/examples/vega/{{ include.spec }}">View in Online Vega Editor</a>
 </div>
 

@@ -488,6 +488,10 @@ ul.column-set, .column-set ul {
   margin-top: 1em;
 }
 
+.editor-link {
+  margin-top: 1em;
+}
+
 /** Color Schemes. */
 .scheme {
   margin-bottom: 1em;
