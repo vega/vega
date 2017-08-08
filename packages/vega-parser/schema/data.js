@@ -102,7 +102,18 @@ export default {
             {
               "oneOf": [
                 {
-                  "properties": {"source": {"type": "string"}},
+                  "properties": {
+                    "source": {
+                      "oneOf": [
+                        {"type": "string"},
+                        {
+                          "type": "array",
+                          "items": {"type": "string"},
+                          "minItems": 1
+                        }
+                      ]
+                    }
+                  },
                   "required": ["source"]
                 },
                 {

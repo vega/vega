@@ -2,6 +2,7 @@ import parseTransform from './transform';
 import parseTrigger from './trigger';
 import {ref} from '../util';
 import {Collect, Relay, Sieve} from '../transforms';
+import {array} from 'vega-util';
 
 export default function parseData(data, scope) {
   var transforms = [];
@@ -42,9 +43,10 @@ function analyze(data, scope, ops) {
     // load data from external source
     output.push(source = collect({$request: data.url, $format: data.format}));
   } else if (data.source) {
-    // derives from another data set
-    upstream = scope.getData(data.source);
-    source = upstream.output;
+    // derives from one or more other data sets
+    source = upstream = array(data.source).map(function(d) {
+      return ref(scope.getData(d).output);
+    });
     output.push(null); // populate later
   }
 
@@ -66,8 +68,15 @@ function analyze(data, scope, ops) {
   }
 
   if (upstream) {
-    output[0] = Relay({derive: modify, pulse: ref(upstream.output)});
-    if (modify) output.splice(1, 0, collect()); // collect derived tuples
+    n = upstream.length - 1;
+    output[0] = Relay({
+      derive: modify,
+      pulse: n ? upstream : upstream[0]
+    });
+    if (modify || n) {
+      // collect derived and multi-pulse tuples
+      output.splice(1, 0, collect());
+    }
   }
 
   if (!source) output.push(collect());
