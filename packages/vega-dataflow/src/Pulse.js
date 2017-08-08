@@ -166,7 +166,9 @@ prototype.init = function(src, flags) {
   p.stamp = src.stamp;
   p.encode = src.encode;
 
-  if (src.fields && !(flags & NO_FIELDS)) p.fields = src.fields;
+  if (src.fields && !(flags & NO_FIELDS)) {
+    p.fields = src.fields;
+  }
 
   if (flags & ADD) {
     p.addF = src.addF;
