@@ -114,12 +114,16 @@ functions (e.g., applicable to `'sequential'` scales.)
 
 ## <a name="transforms"></a>Transforms
 
-<a name="register" href="#register">#</a>
-vega.<b>register</b>(<i>definition</i>, <i>transform</i>)
+<a name="transforms" href="#transforms">#</a>
+vega.<b>transforms</b>
 [<>](https://github.com/vega/vega-dataflow/blob/master/src/register.js "Source")
 
-Registers a new data transform for use within Vega JSON specifications.
+An object that maps transform names to transform constructors. To add a new
+transform to Vega, assign the transform to this object under the desired name.
 
-The _definition_ argument is an object providing the name, metadata, and parameters accepted by the transform. The [vega-dataflow](https://github.com/vega/vega-dataflow) repository includes a collection of [definition object examples](https://github.com/vega/vega-dataflow/tree/master/definitions). The _transform_ argument is a constructor function for a Vega dataflow [Transform](https://github.com/vega/vega-dataflow/blob/master/src/Transform.js) instance.
+In order to parse transform references within a Vega specification, the
+transform constructor must also have a `Definition` property that provides
+the necessary metadata and parameter information. The [vega-transforms](https://github.com/vega/vega-transforms) repository includes a collection of transforms demonstrating the syntax of definition objects.
 
-Note that if a transform is registered at runtime, any Vega JSON specifications using the new transform will fail JSON schema validation, as the new transform is not included in the default schema definition. To include new transforms within a custom JSON schema, developers can create a custom Vega build, using the [register](#register) method to add the transform during the build process.
+Note that if a transform is added at runtime, any Vega JSON specifications using the new transform will fail JSON schema validation, as the new transform is not included in the default schema definition. To include new transforms within a custom JSON schema, developers can create a custom Vega build, adding new
+transforms to the vega-dataflow `transforms` export during the build process.
