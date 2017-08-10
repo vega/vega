@@ -25,12 +25,14 @@
         {"name": "error-bars"},
         {"name": "barley-trellis-plot"}
     ],
-    "Probability Distributions": [
+    "Distributions": [
         {"name": "histogram"},
         {"name": "histogram-null-values"},
         {"name": "probability-density"},
         {"name": "box-plot"},
         {"name": "violin-plot"},
+        {"name": "top-k-plot"},
+        {"name": "top-k-plot-with-others"},
         {"name": "binned-scatter-plot"},
         {"name": "contour-plot"},
         {"name": "wheat-plot"}
