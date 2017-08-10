@@ -1,4 +1,4 @@
 schema: '3.0'
-vega: '3.0.0-rc7'
-vega-lite: '2.0.0-beta.11'
+vega: '3.0.0'
+vega-lite: '2.0.0-beta.13'
 vega-embed: '3.0.0-beta.20'

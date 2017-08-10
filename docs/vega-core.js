@@ -5479,7 +5479,7 @@ prototype$28.transform = function(_$$1, pulse) {
     if (res.length < num) {
       res.push(t);
     } else {
-      idx = ~~(cnt * Math.random());
+      idx = ~~((cnt + 1) * Math.random());
       if (idx < res.length && idx >= cap) {
         p = res[idx];
         if (map[tupleid(p)]) out.rem.push(p); // eviction
@@ -15654,7 +15654,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.0-rc7";
+var version = "3.0.0";
 
 var Default = 'default';
 
