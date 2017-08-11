@@ -67,7 +67,7 @@ export default {
           ]
         },
 
-        "tickCount": {"$ref": "#/refs/numberOrSignal"},
+        "tickCount": {"$ref": "#/refs/tickCount"},
         "format": {"$ref": "#/refs/stringOrSignal"},
         "values": {
           "oneOf": [

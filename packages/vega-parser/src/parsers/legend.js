@@ -63,7 +63,7 @@ export default function(spec, scope) {
     entryRef = ref(scope.add(LegendEntries({
       type:   'gradient',
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
+      count:  scope.objectProperty(spec.tickCount),
       values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
@@ -78,8 +78,8 @@ export default function(spec, scope) {
     // data source for legend entries
     entryRef = ref(scope.add(LegendEntries(params = {
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
-      values: scope.property(spec.values),
+      count:  scope.objectProperty(spec.tickCount),
+      values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
 
