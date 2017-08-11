@@ -1,8 +1,8 @@
+import {labelFormat, labelValues} from './labels';
+import {tickCount, tickFormat} from './ticks';
 import {Transform, ingest} from 'vega-dataflow';
 import {scaleFraction} from 'vega-scale';
 import {constant, inherits, isFunction, peek} from 'vega-util';
-import {labelValues, labelFormat} from './labels';
-import {tickFormat} from './ticks';
 
 /**
  * Generates legend entries for visualizing a scale.
@@ -36,7 +36,7 @@ prototype.transform = function(_, pulse) {
       items = this.value,
       grad  = _.type === 'gradient',
       scale = _.scale,
-      count = _.count == null ? 5 : _.count,
+      count = _.count == null ? 5 : tickCount(scale, _.count),
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
       values = _.values || labelValues(scale, count, grad);
 
