@@ -51,6 +51,10 @@ export function parseScale(spec, scope) {
     parseScaleInterpolate(spec.interpolate, params);
   }
 
+  if (spec.nice != null) {
+    parseScaleNice(spec.nice, params);
+  }
+
   for (key in spec) {
     if (params.hasOwnProperty(key) || key === 'name') continue;
     params[key] = parseLiteral(spec[key], scope);
@@ -201,6 +205,17 @@ function numericMultipleDomain(domain, scope, fields) {
 
   // combine extents
   return ref(scope.add(MultiExtent({extents: extents})));
+}
+
+// -- SCALE NICE -----
+
+function parseScaleNice(nice, params) {
+  params.nice = isObject(nice)
+    ? {
+        interval: parseLiteral(nice.interval),
+        step: parseLiteral(nice.step)
+      }
+    : parseLiteral(nice);
 }
 
 // -- SCALE INTERPOLATION -----

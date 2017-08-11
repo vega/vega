@@ -1,3 +1,14 @@
+export var timeIntervals = [
+  "millisecond",
+  "second",
+  "minute",
+  "hour",
+  "day",
+  "week",
+  "month",
+  "year"
+];
+
 var rangeDef = [
   {
     "enum": [
@@ -276,7 +287,20 @@ export default {
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
-                    {"enum": ["second", "minute", "hour", "day", "week", "month", "year"]},
+                    {"type": "string", "enum": timeIntervals},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "interval": {
+                          "oneOf": [
+                            {"type": "string", "enum": timeIntervals},
+                            {"$ref": "#/refs/signal"}
+                          ]
+                        },
+                        "step": {"$ref": "#/refs/numberOrSignal"}
+                      },
+                      "required": ["interval"]
+                    },
                     {"$ref": "#/refs/signal"}
                   ]
                 }

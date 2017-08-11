@@ -1,4 +1,28 @@
+import {timeIntervals} from './scale';
+
 export default {
+  "refs": {
+    "tickCount": {
+      "oneOf": [
+        {"type": "number"},
+        {"type": "string", "enum": timeIntervals},
+        {
+          "type": "object",
+          "properties": {
+            "interval": {
+              "oneOf": [
+                {"type": "string", "enum": timeIntervals},
+                {"$ref": "#/refs/signal"}
+              ]
+            },
+            "step": {"$ref": "#/refs/numberOrSignal"}
+          },
+          "required": ["interval"]
+        },
+        {"$ref": "#/refs/signal"}
+      ]
+    }
+  },
   "defs": {
     "axis": {
       "type": "object",
@@ -21,7 +45,7 @@ export default {
           ]
         },
 
-        "tickCount": {"$ref": "#/refs/numberOrSignal"},
+        "tickCount": {"$ref": "#/refs/tickCount"},
         "format": {"$ref": "#/refs/stringOrSignal"},
         "values": {
           "oneOf": [
