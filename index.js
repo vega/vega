@@ -49,7 +49,9 @@ export {
   scale,
   scheme,
   interpolate,
-  interpolateRange
+  interpolateRange,
+  timeInterval,
+  utcInterval
 } from 'vega-scale';
 
 export {
