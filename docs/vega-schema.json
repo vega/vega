@@ -95,7 +95,7 @@
           ]
         },
         "tickCount": {
-          "$ref": "#/refs/numberOrSignal"
+          "$ref": "#/refs/tickCount"
         },
         "format": {
           "$ref": "#/refs/stringOrSignal"
@@ -1477,7 +1477,7 @@
           ]
         },
         "tickCount": {
-          "$ref": "#/refs/numberOrSignal"
+          "$ref": "#/refs/tickCount"
         },
         "format": {
           "$ref": "#/refs/stringOrSignal"
@@ -2497,7 +2497,9 @@
                       "type": "boolean"
                     },
                     {
+                      "type": "string",
                       "enum": [
+                        "millisecond",
                         "second",
                         "minute",
                         "hour",
@@ -2505,6 +2507,37 @@
                         "week",
                         "month",
                         "year"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "interval": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "millisecond",
+                                "second",
+                                "minute",
+                                "hour",
+                                "day",
+                                "week",
+                                "month",
+                                "year"
+                              ]
+                            },
+                            {
+                              "$ref": "#/refs/signal"
+                            }
+                          ]
+                        },
+                        "step": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
+                      },
+                      "required": [
+                        "interval"
                       ]
                     },
                     {
@@ -3530,9 +3563,6 @@
         },
         {
           "$ref": "#/defs/forceTransform"
-        },
-        {
-          "$ref": "#/defs/nestTransform"
         },
         {
           "$ref": "#/defs/packTransform"
@@ -6417,6 +6447,16 @@
               "$ref": "#/refs/expr"
             }
           ]
+        },
+        "generate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
         }
       },
       "additionalProperties": false,
@@ -7430,6 +7470,60 @@
     }
   },
   "refs": {
+    "tickCount": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "millisecond",
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "interval": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "millisecond",
+                    "second",
+                    "minute",
+                    "hour",
+                    "day",
+                    "week",
+                    "month",
+                    "year"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "step": {
+              "$ref": "#/refs/numberOrSignal"
+            }
+          },
+          "required": [
+            "interval"
+          ]
+        },
+        {
+          "$ref": "#/refs/signal"
+        }
+      ]
+    },
     "element": {
       "type": "string"
     },

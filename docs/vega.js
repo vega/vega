@@ -14528,645 +14528,6 @@ var BinLinear = 'bin-linear';
 var BinOrdinal = 'bin-ordinal';
 var Sequential = 'sequential';
 
-// Computes the decimal coefficient and exponent of the specified number x with
-// significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimal(1.23) returns ["123", 0].
-var formatDecimal = function(x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
-  var i, coefficient = x.slice(0, i);
-
-  // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
-  // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
-  return [
-    coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
-    +x.slice(i + 1)
-  ];
-};
-
-var exponent = function(x) {
-  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
-};
-
-var formatGroup = function(grouping, thousands) {
-  return function(value, width) {
-    var i = value.length,
-        t = [],
-        j = 0,
-        g = grouping[0],
-        length = 0;
-
-    while (i > 0 && g > 0) {
-      if (length + g + 1 > width) g = Math.max(1, width - length);
-      t.push(value.substring(i -= g, i + g));
-      if ((length += g + 1) > width) break;
-      g = grouping[j = (j + 1) % grouping.length];
-    }
-
-    return t.reverse().join(thousands);
-  };
-};
-
-var formatNumerals = function(numerals) {
-  return function(value) {
-    return value.replace(/[0-9]/g, function(i) {
-      return numerals[+i];
-    });
-  };
-};
-
-var formatDefault = function(x, p) {
-  x = x.toPrecision(p);
-
-  out: for (var n = x.length, i = 1, i0 = -1, i1; i < n; ++i) {
-    switch (x[i]) {
-      case ".": i0 = i1 = i; break;
-      case "0": if (i0 === 0) i0 = i; i1 = i; break;
-      case "e": break out;
-      default: if (i0 > 0) i0 = 0; break;
-    }
-  }
-
-  return i0 > 0 ? x.slice(0, i0) + x.slice(i1 + 1) : x;
-};
-
-var prefixExponent;
-
-var formatPrefixAuto = function(x, p) {
-  var d = formatDecimal(x, p);
-  if (!d) return x + "";
-  var coefficient = d[0],
-      exponent = d[1],
-      i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
-      n = coefficient.length;
-  return i === n ? coefficient
-      : i > n ? coefficient + new Array(i - n + 1).join("0")
-      : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
-      : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
-};
-
-var formatRounded = function(x, p) {
-  var d = formatDecimal(x, p);
-  if (!d) return x + "";
-  var coefficient = d[0],
-      exponent = d[1];
-  return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient
-      : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1)
-      : coefficient + new Array(exponent - coefficient.length + 2).join("0");
-};
-
-var formatTypes = {
-  "": formatDefault,
-  "%": function(x, p) { return (x * 100).toFixed(p); },
-  "b": function(x) { return Math.round(x).toString(2); },
-  "c": function(x) { return x + ""; },
-  "d": function(x) { return Math.round(x).toString(10); },
-  "e": function(x, p) { return x.toExponential(p); },
-  "f": function(x, p) { return x.toFixed(p); },
-  "g": function(x, p) { return x.toPrecision(p); },
-  "o": function(x) { return Math.round(x).toString(8); },
-  "p": function(x, p) { return formatRounded(x * 100, p); },
-  "r": formatRounded,
-  "s": formatPrefixAuto,
-  "X": function(x) { return Math.round(x).toString(16).toUpperCase(); },
-  "x": function(x) { return Math.round(x).toString(16); }
-};
-
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
-var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
-
-function formatSpecifier(specifier) {
-  return new FormatSpecifier(specifier);
-}
-
-formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
-
-function FormatSpecifier(specifier) {
-  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-
-  var match,
-      fill = match[1] || " ",
-      align = match[2] || ">",
-      sign = match[3] || "-",
-      symbol = match[4] || "",
-      zero = !!match[5],
-      width = match[6] && +match[6],
-      comma = !!match[7],
-      precision = match[8] && +match[8].slice(1),
-      type = match[9] || "";
-
-  // The "n" type is an alias for ",g".
-  if (type === "n") comma = true, type = "g";
-
-  // Map invalid types to the default format.
-  else if (!formatTypes[type]) type = "";
-
-  // If zero fill is specified, padding goes after sign and before digits.
-  if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
-
-  this.fill = fill;
-  this.align = align;
-  this.sign = sign;
-  this.symbol = symbol;
-  this.zero = zero;
-  this.width = width;
-  this.comma = comma;
-  this.precision = precision;
-  this.type = type;
-}
-
-FormatSpecifier.prototype.toString = function() {
-  return this.fill
-      + this.align
-      + this.sign
-      + this.symbol
-      + (this.zero ? "0" : "")
-      + (this.width == null ? "" : Math.max(1, this.width | 0))
-      + (this.comma ? "," : "")
-      + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
-      + this.type;
-};
-
-var identity$3 = function(x) {
-  return x;
-};
-
-var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
-
-var formatLocale$1 = function(locale) {
-  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$3,
-      currency = locale.currency,
-      decimal = locale.decimal,
-      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$3,
-      percent = locale.percent || "%";
-
-  function newFormat(specifier) {
-    specifier = formatSpecifier(specifier);
-
-    var fill = specifier.fill,
-        align = specifier.align,
-        sign = specifier.sign,
-        symbol = specifier.symbol,
-        zero = specifier.zero,
-        width = specifier.width,
-        comma = specifier.comma,
-        precision = specifier.precision,
-        type = specifier.type;
-
-    // Compute the prefix and suffix.
-    // For SI-prefix, the suffix is lazily computed.
-    var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
-        suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? percent : "";
-
-    // What format function should we use?
-    // Is this an integer type?
-    // Can this type generate exponential notation?
-    var formatType = formatTypes[type],
-        maybeSuffix = !type || /[defgprs%]/.test(type);
-
-    // Set the default precision if not specified,
-    // or clamp the specified precision to the supported range.
-    // For significant precision, it must be in [1, 21].
-    // For fixed precision, it must be in [0, 20].
-    precision = precision == null ? (type ? 6 : 12)
-        : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
-        : Math.max(0, Math.min(20, precision));
-
-    function format(value) {
-      var valuePrefix = prefix,
-          valueSuffix = suffix,
-          i, n, c;
-
-      if (type === "c") {
-        valueSuffix = formatType(value) + valueSuffix;
-        value = "";
-      } else {
-        value = +value;
-
-        // Perform the initial formatting.
-        var valueNegative = value < 0;
-        value = formatType(Math.abs(value), precision);
-
-        // If a negative value rounds to zero during formatting, treat as positive.
-        if (valueNegative && +value === 0) valueNegative = false;
-
-        // Compute the prefix and suffix.
-        valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = valueSuffix + (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + (valueNegative && sign === "(" ? ")" : "");
-
-        // Break the formatted value into the integer “value” part that can be
-        // grouped, and fractional or exponential “suffix” part that is not.
-        if (maybeSuffix) {
-          i = -1, n = value.length;
-          while (++i < n) {
-            if (c = value.charCodeAt(i), 48 > c || c > 57) {
-              valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
-              value = value.slice(0, i);
-              break;
-            }
-          }
-        }
-      }
-
-      // If the fill character is not "0", grouping is applied before padding.
-      if (comma && !zero) value = group(value, Infinity);
-
-      // Compute the padding.
-      var length = valuePrefix.length + value.length + valueSuffix.length,
-          padding = length < width ? new Array(width - length + 1).join(fill) : "";
-
-      // If the fill character is "0", grouping is applied after padding.
-      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
-
-      // Reconstruct the final output based on the desired alignment.
-      switch (align) {
-        case "<": value = valuePrefix + value + valueSuffix + padding; break;
-        case "=": value = valuePrefix + padding + value + valueSuffix; break;
-        case "^": value = padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length); break;
-        default: value = padding + valuePrefix + value + valueSuffix; break;
-      }
-
-      return numerals(value);
-    }
-
-    format.toString = function() {
-      return specifier + "";
-    };
-
-    return format;
-  }
-
-  function formatPrefix(specifier, value) {
-    var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)),
-        e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3,
-        k = Math.pow(10, -e),
-        prefix = prefixes[8 + e / 3];
-    return function(value) {
-      return f(k * value) + prefix;
-    };
-  }
-
-  return {
-    format: newFormat,
-    formatPrefix: formatPrefix
-  };
-};
-
-var locale$2;
-var format;
-var formatPrefix;
-
-defaultLocale$1({
-  decimal: ".",
-  thousands: ",",
-  grouping: [3],
-  currency: ["$", ""]
-});
-
-function defaultLocale$1(definition) {
-  locale$2 = formatLocale$1(definition);
-  format = locale$2.format;
-  formatPrefix = locale$2.formatPrefix;
-  return locale$2;
-}
-
-var precisionFixed = function(step) {
-  return Math.max(0, -exponent(Math.abs(step)));
-};
-
-var precisionPrefix = function(step, value) {
-  return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
-};
-
-var precisionRound = function(step, max) {
-  step = Math.abs(step), max = Math.abs(max) - step;
-  return Math.max(0, exponent(max) - exponent(step)) + 1;
-};
-
-/**
- * Filter a set of candidate tick values, ensuring that only tick values
- * that lie within the scale range are included.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {Array<*>} ticks - The candidate tick values.
- * @return {Array<*>} - The filtered tick values.
- */
-function validTicks(scale, ticks) {
-  var range = scale.range(),
-      lo = range[0],
-      hi = peek(range);
-  if (lo > hi) {
-    range = hi;
-    hi = lo;
-    lo = range;
-  }
-
-  return ticks.filter(function(v) {
-    v = scale(v);
-    return !(v < lo || v > hi)
-  });
-}
-
-/**
- * Generate tick values for the given scale and approximate tick count or
- * interval value. If the scale has a 'ticks' method, it will be used to
- * generate the ticks, with the count argument passed as a parameter. If the
- * scale lacks a 'ticks' method, the full scale domain will be returned.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {*} [count] - The approximate number of desired ticks.
- * @return {Array<*>} - The generated tick values.
- */
-function tickValues(scale, count) {
-  return scale.ticks ? scale.ticks(count) : scale.domain();
-}
-
-/**
- * Generate a label format function for a scale. If the scale has a
- * 'tickFormat' method, it will be used to generate the formatter, with the
- * count and specifier arguments passed as parameters. If the scale lacks a
- * 'tickFormat' method, the returned formatter performs simple string coercion.
- * If the input scale is a logarithmic scale and the format specifier does not
- * indicate a desired decimal precision, a special variable precision formatter
- * that automatically trims trailing zeroes will be generated.
- * @param {Scale} scale - The scale for which to generate the label formatter.
- * @param {*} [count] - The approximate number of desired ticks.
- * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
- *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
- * @return {function(*):string} - The generated label formatter.
- */
-function tickFormat(scale, count, specifier) {
-  var format$$1 = scale.tickFormat
-    ? scale.tickFormat(count, specifier)
-    : String;
-
-  return (scale.type === Log)
-    ? filter$1(format$$1, variablePrecision(specifier))
-    : format$$1;
-}
-
-function filter$1(sourceFormat, targetFormat) {
-  return function(_) {
-    return sourceFormat(_) ? targetFormat(_) : '';
-  };
-}
-
-function variablePrecision(specifier) {
-  var s = formatSpecifier(specifier || ',');
-
-  if (s.precision == null) {
-    s.precision = 12;
-    switch (s.type) {
-      case '%': s.precision -= 2; break;
-      case 'e': s.precision -= 1; break;
-    }
-    return trimZeroes(
-      format(s),          // number format
-      format('.1f')(1)[1] // decimal point character
-    );
-  } else {
-    return format(s);
-  }
-}
-
-function trimZeroes(format$$1, decimalChar) {
-  return function(x) {
-    var str = format$$1(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
-
-    if (dec < 0) return str;
-
-    idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
-    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
-
-    return str.slice(0, idx) + end;
-  };
-}
-
-function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
-  if (i > 0) return i;
-  for (i=str.length; --i > dec;) {
-    c = str.charCodeAt(i);
-    if (c >= 48 && c <= 57) return i + 1; // is digit
-  }
-}
-
-/**
- * Generates axis ticks for visualizing a spatial scale.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Scale} params.scale - The scale to generate ticks for.
- * @param {*} [params.count=10] - The approximate number of ticks, or
- *   desired tick interval, to use.
- * @param {Array<*>} [params.values] - The exact tick values to use.
- *   These must be legal domain values for the provided scale.
- *   If provided, the count argument is ignored.
- * @param {function(*):string} [params.formatSpecifier] - A format specifier
- *   to use in conjunction with scale.tickFormat. Legal values are
- *   any valid d3 4.0 format specifier.
- * @param {function(*):string} [params.format] - The format function to use.
- *   If provided, the formatSpecifier argument is ignored.
- */
-function AxisTicks(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$51 = inherits(AxisTicks, Transform);
-
-prototype$51.transform = function(_, pulse) {
-  if (this.value && !_.modified()) {
-    return pulse.StopPropagation;
-  }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      ticks = this.value,
-      scale = _.scale,
-      count = _.values ? _.values.length : _.count,
-      format = _.format || tickFormat(scale, count, _.formatSpecifier),
-      values = _.values ? validTicks(scale, _.values) : tickValues(scale, count);
-
-  if (ticks) out.rem = ticks;
-
-  ticks = values.map(function(value) {
-    return ingest({value: value, label: format(value)})
-  });
-
-  if (_.extra) {
-    // add an extra tick pegged to the initial domain value
-    // this is used to generate axes with 'binned' domains
-    ticks.push(ingest({
-      extra: {value: ticks[0].value},
-      label: ''
-    }));
-  }
-
-  out.source = ticks;
-  out.add = ticks;
-  this.value = ticks;
-
-  return out;
-};
-
-/**
- * Joins a set of data elements against a set of visual items.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): object} [params.item] - An item generator function.
- * @param {function(object): *} [params.key] - The key field associating data and visual items.
- */
-function DataJoin(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$52 = inherits(DataJoin, Transform);
-
-function defaultItemCreate() {
-  return ingest({});
-}
-
-function isExit(t) {
-  return t.exit;
-}
-
-prototype$52.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      item = _.item || defaultItemCreate,
-      key$$1 = _.key || tupleid,
-      map = this.value;
-
-  if (!map) {
-    pulse = pulse.addAll();
-    this.value = map = fastmap().test(isExit);
-    map.lookup = function(t) { return map.get(key$$1(t)); };
-  }
-
-  if (_.modified('key') || pulse.modified(key$$1)) {
-    error$1('DataJoin does not support modified key function or fields.');
-  }
-
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      if (x.exit) {
-        map.empty--;
-        out.add.push(x);
-      } else {
-        out.mod.push(x);
-      }
-    } else {
-      map.set(k, (x = item(t)));
-      out.add.push(x);
-    }
-
-    x.datum = t;
-    x.exit = false;
-  });
-
-  pulse.visit(pulse.MOD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      x.datum = t;
-      out.mod.push(x);
-    }
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (t === x.datum && !x.exit) {
-      out.rem.push(x);
-      x.exit = true;
-      ++map.empty;
-    }
-  });
-
-  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
-
-  if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
-
-  return out;
-};
-
-/**
- * Invokes encoding functions for visual items.
- * @constructor
- * @param {object} params - The parameters to the encoding functions. This
- *   parameter object will be passed through to all invoked encoding functions.
- * @param {object} param.encoders - The encoding functions
- * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
- * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
- * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
- */
-function Encode(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$53 = inherits(Encode, Transform);
-
-prototype$53.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ADD_REM),
-      encoders = _.encoders,
-      encode = pulse.encode;
-
-  // if an array, the encode directive includes additional sets
-  // that must be defined in order for the primary set to be invoked
-  // e.g., only run the update set if the hover set is defined
-  if (isArray(encode)) {
-    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
-      encode = encode[0];
-    } else {
-      return pulse.StopPropagation;
-    }
-  }
-
-  // marshall encoder functions
-  var reenter = encode === 'enter',
-      update = encoders.update || falsy,
-      enter = encoders.enter || falsy,
-      exit = encoders.exit || falsy,
-      set = (encode && !reenter ? encoders[encode] : update) || falsy;
-
-  if (pulse.changed(pulse.ADD)) {
-    pulse.visit(pulse.ADD, function(t) {
-      enter(t, _);
-      update(t, _);
-      if (set !== falsy && set !== update) set(t, _);
-    });
-    out.modifies(enter.output);
-    out.modifies(update.output);
-    if (set !== falsy && set !== update) out.modifies(set.output);
-  }
-
-  if (pulse.changed(pulse.REM) && exit !== falsy) {
-    pulse.visit(pulse.REM, function(t) { exit(t, _); });
-    out.modifies(exit.output);
-  }
-
-  if (reenter || set !== falsy) {
-    var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
-    if (reenter) {
-      pulse.visit(flag, function(t) {
-        var mod = enter(t, _);
-        if (set(t, _) || mod) out.mod.push(t);
-      });
-      if (out.mod.length) out.modifies(enter.output);
-    } else {
-      pulse.visit(flag, function(t) {
-        if (set(t, _)) out.mod.push(t);
-      });
-    }
-    if (out.mod.length) out.modifies(set.output);
-  }
-
-  return out.changed() ? out : pulse.StopPropagation;
-};
-
 var invertRange = function(scale) {
   return function(_) {
     var lo = _[0],
@@ -16029,7 +15390,7 @@ var interpolateRound = function(a, b) {
 
 var degrees = 180 / Math.PI;
 
-var identity$5 = {
+var identity$4 = {
   translateX: 0,
   translateY: 0,
   rotate: 0,
@@ -16060,7 +15421,7 @@ var cssView;
 var svgNode;
 
 function parseCss(value) {
-  if (value === "none") return identity$5;
+  if (value === "none") return identity$4;
   if (!cssNode) cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView;
   cssNode.style.transform = value;
   value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform");
@@ -16070,10 +15431,10 @@ function parseCss(value) {
 }
 
 function parseSvg(value) {
-  if (value == null) return identity$5;
+  if (value == null) return identity$4;
   if (!svgNode) svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svgNode.setAttribute("transform", value);
-  if (!(value = svgNode.transform.baseVal.consolidate())) return identity$5;
+  if (!(value = svgNode.transform.baseVal.consolidate())) return identity$4;
   value = value.matrix;
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
@@ -16435,6 +15796,320 @@ function continuous(deinterpolate, reinterpolate$$1) {
   return rescale();
 }
 
+// Computes the decimal coefficient and exponent of the specified number x with
+// significant digits p, where x is positive and p is in [1, 21] or undefined.
+// For example, formatDecimal(1.23) returns ["123", 0].
+var formatDecimal = function(x, p) {
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
+  var i, coefficient = x.slice(0, i);
+
+  // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
+  // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
+  return [
+    coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient,
+    +x.slice(i + 1)
+  ];
+};
+
+var exponent = function(x) {
+  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+};
+
+var formatGroup = function(grouping, thousands) {
+  return function(value, width) {
+    var i = value.length,
+        t = [],
+        j = 0,
+        g = grouping[0],
+        length = 0;
+
+    while (i > 0 && g > 0) {
+      if (length + g + 1 > width) g = Math.max(1, width - length);
+      t.push(value.substring(i -= g, i + g));
+      if ((length += g + 1) > width) break;
+      g = grouping[j = (j + 1) % grouping.length];
+    }
+
+    return t.reverse().join(thousands);
+  };
+};
+
+var formatNumerals = function(numerals) {
+  return function(value) {
+    return value.replace(/[0-9]/g, function(i) {
+      return numerals[+i];
+    });
+  };
+};
+
+var formatDefault = function(x, p) {
+  x = x.toPrecision(p);
+
+  out: for (var n = x.length, i = 1, i0 = -1, i1; i < n; ++i) {
+    switch (x[i]) {
+      case ".": i0 = i1 = i; break;
+      case "0": if (i0 === 0) i0 = i; i1 = i; break;
+      case "e": break out;
+      default: if (i0 > 0) i0 = 0; break;
+    }
+  }
+
+  return i0 > 0 ? x.slice(0, i0) + x.slice(i1 + 1) : x;
+};
+
+var prefixExponent;
+
+var formatPrefixAuto = function(x, p) {
+  var d = formatDecimal(x, p);
+  if (!d) return x + "";
+  var coefficient = d[0],
+      exponent = d[1],
+      i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
+      n = coefficient.length;
+  return i === n ? coefficient
+      : i > n ? coefficient + new Array(i - n + 1).join("0")
+      : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
+      : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+};
+
+var formatRounded = function(x, p) {
+  var d = formatDecimal(x, p);
+  if (!d) return x + "";
+  var coefficient = d[0],
+      exponent = d[1];
+  return exponent < 0 ? "0." + new Array(-exponent).join("0") + coefficient
+      : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1)
+      : coefficient + new Array(exponent - coefficient.length + 2).join("0");
+};
+
+var formatTypes = {
+  "": formatDefault,
+  "%": function(x, p) { return (x * 100).toFixed(p); },
+  "b": function(x) { return Math.round(x).toString(2); },
+  "c": function(x) { return x + ""; },
+  "d": function(x) { return Math.round(x).toString(10); },
+  "e": function(x, p) { return x.toExponential(p); },
+  "f": function(x, p) { return x.toFixed(p); },
+  "g": function(x, p) { return x.toPrecision(p); },
+  "o": function(x) { return Math.round(x).toString(8); },
+  "p": function(x, p) { return formatRounded(x * 100, p); },
+  "r": formatRounded,
+  "s": formatPrefixAuto,
+  "X": function(x) { return Math.round(x).toString(16).toUpperCase(); },
+  "x": function(x) { return Math.round(x).toString(16); }
+};
+
+// [[fill]align][sign][symbol][0][width][,][.precision][type]
+var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
+
+function formatSpecifier(specifier) {
+  return new FormatSpecifier(specifier);
+}
+
+formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
+
+function FormatSpecifier(specifier) {
+  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+
+  var match,
+      fill = match[1] || " ",
+      align = match[2] || ">",
+      sign = match[3] || "-",
+      symbol = match[4] || "",
+      zero = !!match[5],
+      width = match[6] && +match[6],
+      comma = !!match[7],
+      precision = match[8] && +match[8].slice(1),
+      type = match[9] || "";
+
+  // The "n" type is an alias for ",g".
+  if (type === "n") comma = true, type = "g";
+
+  // Map invalid types to the default format.
+  else if (!formatTypes[type]) type = "";
+
+  // If zero fill is specified, padding goes after sign and before digits.
+  if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
+
+  this.fill = fill;
+  this.align = align;
+  this.sign = sign;
+  this.symbol = symbol;
+  this.zero = zero;
+  this.width = width;
+  this.comma = comma;
+  this.precision = precision;
+  this.type = type;
+}
+
+FormatSpecifier.prototype.toString = function() {
+  return this.fill
+      + this.align
+      + this.sign
+      + this.symbol
+      + (this.zero ? "0" : "")
+      + (this.width == null ? "" : Math.max(1, this.width | 0))
+      + (this.comma ? "," : "")
+      + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+      + this.type;
+};
+
+var identity$5 = function(x) {
+  return x;
+};
+
+var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
+
+var formatLocale$1 = function(locale) {
+  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$5,
+      currency = locale.currency,
+      decimal = locale.decimal,
+      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$5,
+      percent = locale.percent || "%";
+
+  function newFormat(specifier) {
+    specifier = formatSpecifier(specifier);
+
+    var fill = specifier.fill,
+        align = specifier.align,
+        sign = specifier.sign,
+        symbol = specifier.symbol,
+        zero = specifier.zero,
+        width = specifier.width,
+        comma = specifier.comma,
+        precision = specifier.precision,
+        type = specifier.type;
+
+    // Compute the prefix and suffix.
+    // For SI-prefix, the suffix is lazily computed.
+    var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
+        suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? percent : "";
+
+    // What format function should we use?
+    // Is this an integer type?
+    // Can this type generate exponential notation?
+    var formatType = formatTypes[type],
+        maybeSuffix = !type || /[defgprs%]/.test(type);
+
+    // Set the default precision if not specified,
+    // or clamp the specified precision to the supported range.
+    // For significant precision, it must be in [1, 21].
+    // For fixed precision, it must be in [0, 20].
+    precision = precision == null ? (type ? 6 : 12)
+        : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
+        : Math.max(0, Math.min(20, precision));
+
+    function format(value) {
+      var valuePrefix = prefix,
+          valueSuffix = suffix,
+          i, n, c;
+
+      if (type === "c") {
+        valueSuffix = formatType(value) + valueSuffix;
+        value = "";
+      } else {
+        value = +value;
+
+        // Perform the initial formatting.
+        var valueNegative = value < 0;
+        value = formatType(Math.abs(value), precision);
+
+        // If a negative value rounds to zero during formatting, treat as positive.
+        if (valueNegative && +value === 0) valueNegative = false;
+
+        // Compute the prefix and suffix.
+        valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+        valueSuffix = valueSuffix + (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + (valueNegative && sign === "(" ? ")" : "");
+
+        // Break the formatted value into the integer “value” part that can be
+        // grouped, and fractional or exponential “suffix” part that is not.
+        if (maybeSuffix) {
+          i = -1, n = value.length;
+          while (++i < n) {
+            if (c = value.charCodeAt(i), 48 > c || c > 57) {
+              valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
+              value = value.slice(0, i);
+              break;
+            }
+          }
+        }
+      }
+
+      // If the fill character is not "0", grouping is applied before padding.
+      if (comma && !zero) value = group(value, Infinity);
+
+      // Compute the padding.
+      var length = valuePrefix.length + value.length + valueSuffix.length,
+          padding = length < width ? new Array(width - length + 1).join(fill) : "";
+
+      // If the fill character is "0", grouping is applied after padding.
+      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
+
+      // Reconstruct the final output based on the desired alignment.
+      switch (align) {
+        case "<": value = valuePrefix + value + valueSuffix + padding; break;
+        case "=": value = valuePrefix + padding + value + valueSuffix; break;
+        case "^": value = padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length); break;
+        default: value = padding + valuePrefix + value + valueSuffix; break;
+      }
+
+      return numerals(value);
+    }
+
+    format.toString = function() {
+      return specifier + "";
+    };
+
+    return format;
+  }
+
+  function formatPrefix(specifier, value) {
+    var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)),
+        e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3,
+        k = Math.pow(10, -e),
+        prefix = prefixes[8 + e / 3];
+    return function(value) {
+      return f(k * value) + prefix;
+    };
+  }
+
+  return {
+    format: newFormat,
+    formatPrefix: formatPrefix
+  };
+};
+
+var locale$2;
+var format;
+var formatPrefix;
+
+defaultLocale$1({
+  decimal: ".",
+  thousands: ",",
+  grouping: [3],
+  currency: ["$", ""]
+});
+
+function defaultLocale$1(definition) {
+  locale$2 = formatLocale$1(definition);
+  format = locale$2.format;
+  formatPrefix = locale$2.formatPrefix;
+  return locale$2;
+}
+
+var precisionFixed = function(step) {
+  return Math.max(0, -exponent(Math.abs(step)));
+};
+
+var precisionPrefix = function(step, value) {
+  return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
+};
+
+var precisionRound = function(step, max) {
+  step = Math.abs(step), max = Math.abs(max) - step;
+  return Math.max(0, exponent(max) - exponent(step)) + 1;
+};
+
 var tickFormat$1 = function(domain, count, specifier) {
   var start = domain[0],
       stop = domain[domain.length - 1],
@@ -16529,7 +16204,7 @@ function linear() {
   return linearish(scale);
 }
 
-function identity$4() {
+function identity$3() {
   var domain = [0, 1];
 
   function scale(x) {
@@ -16543,7 +16218,7 @@ function identity$4() {
   };
 
   scale.copy = function() {
-    return identity$4().domain(domain);
+    return identity$3().domain(domain);
   };
 
   return linearish(scale);
@@ -17385,7 +17060,7 @@ function scale$1(type, scale) {
 
 var scales = {
   // base scale types
-  identity:      identity$4,
+  identity:      identity$3,
   linear:        linear,
   log:           log$1,
   ordinal:       ordinal,
@@ -17989,6 +17664,385 @@ function method(type) {
     .join('');
 }
 
+var time$1 = {
+  millisecond: millisecond,
+  second:      second,
+  minute:      minute,
+  hour:        hour,
+  day:         day,
+  week:        sunday,
+  month:       month,
+  year:        year
+};
+
+var utc = {
+  millisecond: millisecond,
+  second:      second,
+  minute:      utcMinute,
+  hour:        utcHour,
+  day:         utcDay,
+  week:        utcSunday,
+  month:       utcMonth,
+  year:        utcYear
+};
+
+function timeInterval(name) {
+  return time$1.hasOwnProperty(name) && time$1[name];
+}
+
+function utcInterval(name) {
+  return utc.hasOwnProperty(name) && utc[name];
+}
+
+/**
+ * Determine the tick count or interval function.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} count - The desired tick count or interval specifier.
+ * @return {*} - The tick count or interval function.
+ */
+function tickCount(scale$$1, count) {
+  var step;
+
+  if (isObject(count)) {
+    step = count.step;
+    count = count.interval;
+  }
+
+  if (isString(count)) {
+    count = scale$$1.type === 'time' ? timeInterval(count)
+      : scale$$1.type === 'utc' ? utcInterval(count)
+      : error$1('Only time and utc scales accept interval strings.');
+    if (step) count = count.every(step);
+  }
+
+  return count;
+}
+
+/**
+ * Filter a set of candidate tick values, ensuring that only tick values
+ * that lie within the scale range are included.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {Array<*>} ticks - The candidate tick values.
+ * @return {Array<*>} - The filtered tick values.
+ */
+function validTicks(scale$$1, ticks) {
+  var range = scale$$1.range(),
+      lo = range[0],
+      hi = peek(range);
+  if (lo > hi) {
+    range = hi;
+    hi = lo;
+    lo = range;
+  }
+
+  return ticks.filter(function(v) {
+    v = scale$$1(v);
+    return !(v < lo || v > hi)
+  });
+}
+
+/**
+ * Generate tick values for the given scale and approximate tick count or
+ * interval value. If the scale has a 'ticks' method, it will be used to
+ * generate the ticks, with the count argument passed as a parameter. If the
+ * scale lacks a 'ticks' method, the full scale domain will be returned.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @return {Array<*>} - The generated tick values.
+ */
+function tickValues(scale$$1, count) {
+  return scale$$1.ticks ? scale$$1.ticks(count) : scale$$1.domain();
+}
+
+/**
+ * Generate a label format function for a scale. If the scale has a
+ * 'tickFormat' method, it will be used to generate the formatter, with the
+ * count and specifier arguments passed as parameters. If the scale lacks a
+ * 'tickFormat' method, the returned formatter performs simple string coercion.
+ * If the input scale is a logarithmic scale and the format specifier does not
+ * indicate a desired decimal precision, a special variable precision formatter
+ * that automatically trims trailing zeroes will be generated.
+ * @param {Scale} scale - The scale for which to generate the label formatter.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+ *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
+ * @return {function(*):string} - The generated label formatter.
+ */
+function tickFormat(scale$$1, count, specifier) {
+  var format$$1 = scale$$1.tickFormat
+    ? scale$$1.tickFormat(count, specifier)
+    : String;
+
+  return (scale$$1.type === Log)
+    ? filter$1(format$$1, variablePrecision(specifier))
+    : format$$1;
+}
+
+function filter$1(sourceFormat, targetFormat) {
+  return function(_) {
+    return sourceFormat(_) ? targetFormat(_) : '';
+  };
+}
+
+function variablePrecision(specifier) {
+  var s = formatSpecifier(specifier || ',');
+
+  if (s.precision == null) {
+    s.precision = 12;
+    switch (s.type) {
+      case '%': s.precision -= 2; break;
+      case 'e': s.precision -= 1; break;
+    }
+    return trimZeroes(
+      format(s),          // number format
+      format('.1f')(1)[1] // decimal point character
+    );
+  } else {
+    return format(s);
+  }
+}
+
+function trimZeroes(format$$1, decimalChar) {
+  return function(x) {
+    var str = format$$1(x),
+        dec = str.indexOf(decimalChar),
+        idx, end;
+
+    if (dec < 0) return str;
+
+    idx = rightmostDigit(str, dec);
+    end = idx < str.length ? str.slice(idx) : '';
+    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+
+    return str.slice(0, idx) + end;
+  };
+}
+
+function rightmostDigit(str, dec) {
+  var i = str.lastIndexOf('e'), c;
+  if (i > 0) return i;
+  for (i=str.length; --i > dec;) {
+    c = str.charCodeAt(i);
+    if (c >= 48 && c <= 57) return i + 1; // is digit
+  }
+}
+
+/**
+ * Generates axis ticks for visualizing a spatial scale.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Scale} params.scale - The scale to generate ticks for.
+ * @param {*} [params.count=10] - The approximate number of ticks, or
+ *   desired tick interval, to use.
+ * @param {Array<*>} [params.values] - The exact tick values to use.
+ *   These must be legal domain values for the provided scale.
+ *   If provided, the count argument is ignored.
+ * @param {function(*):string} [params.formatSpecifier] - A format specifier
+ *   to use in conjunction with scale.tickFormat. Legal values are
+ *   any valid d3 4.0 format specifier.
+ * @param {function(*):string} [params.format] - The format function to use.
+ *   If provided, the formatSpecifier argument is ignored.
+ */
+function AxisTicks(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$51 = inherits(AxisTicks, Transform);
+
+prototype$51.transform = function(_, pulse) {
+  if (this.value && !_.modified()) {
+    return pulse.StopPropagation;
+  }
+
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      ticks = this.value,
+      scale = _.scale,
+      count = _.values ? _.values.length : tickCount(scale, _.count),
+      format = _.format || tickFormat(scale, count, _.formatSpecifier),
+      values = _.values ? validTicks(scale, _.values) : tickValues(scale, count);
+
+  if (ticks) out.rem = ticks;
+
+  ticks = values.map(function(value) {
+    return ingest({value: value, label: format(value)})
+  });
+
+  if (_.extra) {
+    // add an extra tick pegged to the initial domain value
+    // this is used to generate axes with 'binned' domains
+    ticks.push(ingest({
+      extra: {value: ticks[0].value},
+      label: ''
+    }));
+  }
+
+  out.source = ticks;
+  out.add = ticks;
+  this.value = ticks;
+
+  return out;
+};
+
+/**
+ * Joins a set of data elements against a set of visual items.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): object} [params.item] - An item generator function.
+ * @param {function(object): *} [params.key] - The key field associating data and visual items.
+ */
+function DataJoin(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$52 = inherits(DataJoin, Transform);
+
+function defaultItemCreate() {
+  return ingest({});
+}
+
+function isExit(t) {
+  return t.exit;
+}
+
+prototype$52.transform = function(_, pulse) {
+  var df = pulse.dataflow,
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      item = _.item || defaultItemCreate,
+      key$$1 = _.key || tupleid,
+      map = this.value;
+
+  if (!map) {
+    pulse = pulse.addAll();
+    this.value = map = fastmap().test(isExit);
+    map.lookup = function(t) { return map.get(key$$1(t)); };
+  }
+
+  if (_.modified('key') || pulse.modified(key$$1)) {
+    error$1('DataJoin does not support modified key function or fields.');
+  }
+
+  pulse.visit(pulse.ADD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      if (x.exit) {
+        map.empty--;
+        out.add.push(x);
+      } else {
+        out.mod.push(x);
+      }
+    } else {
+      map.set(k, (x = item(t)));
+      out.add.push(x);
+    }
+
+    x.datum = t;
+    x.exit = false;
+  });
+
+  pulse.visit(pulse.MOD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      x.datum = t;
+      out.mod.push(x);
+    }
+  });
+
+  pulse.visit(pulse.REM, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (t === x.datum && !x.exit) {
+      out.rem.push(x);
+      x.exit = true;
+      ++map.empty;
+    }
+  });
+
+  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+
+  if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+
+  return out;
+};
+
+/**
+ * Invokes encoding functions for visual items.
+ * @constructor
+ * @param {object} params - The parameters to the encoding functions. This
+ *   parameter object will be passed through to all invoked encoding functions.
+ * @param {object} param.encoders - The encoding functions
+ * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
+ * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
+ * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
+ */
+function Encode(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$53 = inherits(Encode, Transform);
+
+prototype$53.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.ADD_REM),
+      encoders = _.encoders,
+      encode = pulse.encode;
+
+  // if an array, the encode directive includes additional sets
+  // that must be defined in order for the primary set to be invoked
+  // e.g., only run the update set if the hover set is defined
+  if (isArray(encode)) {
+    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+      encode = encode[0];
+    } else {
+      return pulse.StopPropagation;
+    }
+  }
+
+  // marshall encoder functions
+  var reenter = encode === 'enter',
+      update = encoders.update || falsy,
+      enter = encoders.enter || falsy,
+      exit = encoders.exit || falsy,
+      set = (encode && !reenter ? encoders[encode] : update) || falsy;
+
+  if (pulse.changed(pulse.ADD)) {
+    pulse.visit(pulse.ADD, function(t) {
+      enter(t, _);
+      update(t, _);
+      if (set !== falsy && set !== update) set(t, _);
+    });
+    out.modifies(enter.output);
+    out.modifies(update.output);
+    if (set !== falsy && set !== update) out.modifies(set.output);
+  }
+
+  if (pulse.changed(pulse.REM) && exit !== falsy) {
+    pulse.visit(pulse.REM, function(t) { exit(t, _); });
+    out.modifies(exit.output);
+  }
+
+  if (reenter || set !== falsy) {
+    var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
+    if (reenter) {
+      pulse.visit(flag, function(t) {
+        var mod = enter(t, _);
+        if (set(t, _) || mod) out.mod.push(t);
+      });
+      if (out.mod.length) out.modifies(enter.output);
+    } else {
+      pulse.visit(flag, function(t) {
+        if (set(t, _)) out.mod.push(t);
+      });
+    }
+    if (out.mod.length) out.modifies(set.output);
+  }
+
+  return out.changed() ? out : pulse.StopPropagation;
+};
+
 var discrete$1 = {};
 discrete$1[Quantile] = quantile$1;
 discrete$1[Quantize] = quantize$2;
@@ -18092,23 +18146,23 @@ prototype$54.transform = function(_, pulse) {
       total = 0,
       items = this.value,
       grad  = _.type === 'gradient',
-      scale$$1 = _.scale,
-      count = _.count == null ? 5 : _.count,
-      format = _.format || tickFormat(scale$$1, count, _.formatSpecifier),
-      values = _.values || labelValues(scale$$1, count, grad);
+      scale = _.scale,
+      count = _.count == null ? 5 : tickCount(scale, _.count),
+      format = _.format || tickFormat(scale, count, _.formatSpecifier),
+      values = _.values || labelValues(scale, count, grad);
 
-  format = labelFormat(scale$$1, format);
+  format = labelFormat(scale, format);
   if (items) out.rem = items;
 
   if (grad) {
-    var domain = _.values ? scale$$1.domain() : values,
-        fraction = scaleFraction(scale$$1, domain[0], peek(domain));
+    var domain = _.values ? scale.domain() : values,
+        fraction = scaleFraction(scale, domain[0], peek(domain));
   } else {
     var size = _.size,
         offset;
     if (isFunction(size)) {
       // if first value maps to size zero, remove from list (vega#717)
-      if (!_.values && scale$$1(values[0]) === 0) {
+      if (!_.values && scale(values[0]) === 0) {
         values = values.slice(1);
       }
       // compute size offset for legend entries
@@ -18449,7 +18503,9 @@ function configureDomain(scale, _, df) {
   scale.domain(domain);
 
   // perform 'nice' adjustment as requested
-  if (_.nice && scale.nice) scale.nice((_.nice !== true && +_.nice) || null);
+  if (_.nice && scale.nice) {
+    scale.nice((_.nice !== true && tickCount(scale, _.nice)) || null);
+  }
 
   // return the cardinality of the domain
   return domain.length;
@@ -24660,6 +24716,10 @@ var treemapResquarify = (function custom(ratio) {
   * @param {Array<function(object): *>} params.keys - The key fields to nest by, in order.
   * @param {function(object): *} [params.key] - Unique key field for each tuple.
   *   If not provided, the tuple id field is used.
+  * @param {boolean} [params.generate=false] - A boolean flag indicating if
+  *   non-leaf nodes generated by this transform should be included in the
+  *   output. The default (false) includes only the input data (leaf nodes)
+  *   in the data stream.
   */
 function Nest(params) {
   Transform.call(this, null, params);
@@ -24667,10 +24727,11 @@ function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true},
+  "metadata": {"treesource": true, "source": true, "generates": true, "changes": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
-    { "name": "key", "type": "field" }
+    { "name": "key", "type": "field" },
+    { "name": "generate", "type": "boolean" }
   ]
 };
 
@@ -24686,27 +24747,50 @@ prototype$68.transform = function(_, pulse) {
   }
 
   var key$$1 = _.key || tupleid,
-      root, tree, map$$1, mod;
+      gen = _.generate,
+      mod = _.modified(),
+      out = gen || mod ? pulse.fork(pulse.ALL) : pulse,
+      root, tree, map$$1;
 
-  if (!this.value || (mod = _.modified()) || pulse.changed()) {
+  if (!this.value || mod || pulse.changed()) {
+    // collect nodes to remove
+    if (gen && this.value) {
+      out.materialize(out.REM);
+      this.value.each(function(node) {
+        if (node.children) out.rem.push(node);
+      });
+    }
+
+    // generate new tree structure
     root = array(_.keys)
-      .reduce(function(n, k) {
-        n.key(k);
-        return n;
-      }, nest())
+      .reduce(function(n, k) { n.key(k); return n; }, nest())
       .entries(pulse.source);
-    tree = hierarchy({values: root}, children);
+    this.value = tree = hierarchy({values: root}, children);
+
+    // collect nodes to add
+    if (gen) {
+      out.materialize(out.ADD);
+      out.source = out.source.slice();
+      tree.each(function(node) {
+        if (node.children) {
+          node = ingest(node.data);
+          out.add.push(node);
+          out.source.push(node);
+        }
+      });
+    }
+
+    // build lookup table
     map$$1 = tree.lookup = {};
     tree.each(function(node) {
       if (tupleid(node.data) != null) {
         map$$1[key$$1(node.data)] = node;
       }
     });
-    this.value = tree;
   }
 
-  pulse.source.root = this.value;
-  return mod ? pulse.fork(pulse.ALL) : pulse;
+  out.source.root = this.value;
+  return out;
 };
 
 /**
@@ -27396,7 +27480,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.0";
+var version = "3.0.1";
 
 var Default = 'default';
 
@@ -29941,26 +30025,26 @@ function utcParse$1(_, specifier) {
 
 var dateObj = new Date(2000, 0, 1);
 
-function time$1(month, day, specifier) {
+function time$2(month, day, specifier) {
   dateObj.setMonth(month);
   dateObj.setDate(day);
   return timeFormat$1(dateObj, specifier);
 }
 
 function monthFormat(month) {
-  return time$1(month, 1, '%B');
+  return time$2(month, 1, '%B');
 }
 
 function monthAbbrevFormat(month) {
-  return time$1(month, 1, '%b');
+  return time$2(month, 1, '%b');
 }
 
 function dayFormat(day) {
-  return time$1(0, 2 + day, '%A');
+  return time$2(0, 2 + day, '%A');
 }
 
 function dayAbbrevFormat(day) {
-  return time$1(0, 2 + day, '%a');
+  return time$2(0, 2 + day, '%a');
 }
 
 function quarter(date) {
@@ -31395,6 +31479,10 @@ function parseScale(spec, scope) {
     parseScaleInterpolate(spec.interpolate, params);
   }
 
+  if (spec.nice != null) {
+    parseScaleNice(spec.nice, params);
+  }
+
   for (key$$1 in spec) {
     if (params.hasOwnProperty(key$$1) || key$$1 === 'name') continue;
     params[key$$1] = parseLiteral(spec[key$$1], scope);
@@ -31545,6 +31633,17 @@ function numericMultipleDomain(domain, scope, fields) {
 
   // combine extents
   return ref(scope.add(MultiExtent$1({extents: extents})));
+}
+
+// -- SCALE NICE -----
+
+function parseScaleNice(nice, params) {
+  params.nice = isObject(nice)
+    ? {
+        interval: parseLiteral(nice.interval),
+        step: parseLiteral(nice.step)
+      }
+    : parseLiteral(nice);
 }
 
 // -- SCALE INTERPOLATION -----
@@ -32834,7 +32933,7 @@ var parseLegend = function(spec, scope) {
     entryRef = ref(scope.add(LegendEntries$1({
       type:   'gradient',
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
+      count:  scope.objectProperty(spec.tickCount),
       values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
@@ -32849,8 +32948,8 @@ var parseLegend = function(spec, scope) {
     // data source for legend entries
     entryRef = ref(scope.add(LegendEntries$1(params = {
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
-      values: scope.property(spec.values),
+      count:  scope.objectProperty(spec.tickCount),
+      values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
 
@@ -33387,7 +33486,7 @@ var parseAxis = function(spec, scope) {
   ticksRef = ref(scope.add(AxisTicks$1({
     scale:  scope.scaleRef(spec.scale),
     extra:  config.tickExtra,
-    count:  scope.property(spec.tickCount),
+    count:  scope.objectProperty(spec.tickCount),
     values: scope.objectProperty(spec.values),
     formatSpecifier: scope.property(spec.format)
   })));
@@ -35108,6 +35207,8 @@ exports.scale = scale$1;
 exports.scheme = getScheme;
 exports.interpolate = interpolate$1;
 exports.interpolateRange = interpolateRange;
+exports.timeInterval = timeInterval;
+exports.utcInterval = utcInterval;
 exports.projection = projection$$1;
 exports.View = View;
 exports.parse = parse$2;

@@ -5,22 +5,12 @@ saving, and sharing interactive visualization designs.
 With Vega you can describe data visualizations in a JSON format,
 and generate interactive views using either HTML5 Canvas or SVG.
 
-This repository houses ongoing **Vega 3.0** development. While still a work
-in progress, Vega 3 has matured to a fully functional beta version with a
-cleaner, more efficient, and more modular architecture. Vega 3 can now
-reproduce all standard Vega 2 examples, and much more! [Contributions, feature
-requests and bug reports](https://github.com/vega/vega/issues) are
-most appreciated.
-
-For documentation, see the [Vega website](https://vega.github.io/vega).
-For a partial description of changes from Vega 2.x, please refer to the
+For documentation, tutorials, and examples, see the
+[Vega website](https://vega.github.io/vega). For a description of changes
+between Vega 2 and Vega 3, please refer to the
 [Vega 3 Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
 Additional API documentation for Vega 3 can be found in the associated
 modules listed below.
-
-Not ready to live on the edge? Looking for the latest stable release? Please
-see [Vega 2.6](https://github.com/vega/vega/tree/v2.x). The Vega wiki
-associated with this repo contains documentation for version 2.6.
 
 ## Basic Setup
 
@@ -39,25 +29,31 @@ the right place (e.g., `http://localhost:8000/test/`).
 ## Development Setup
 
 For a more advanced development setup in which you will be working on multiple
-modules simultaneously, first clone the Vega 3 module repositories:
+modules simultaneously, first clone the relevant Vega 3 modules. Here is a
+list of all Vega 3 repositories:
 
 * https://github.com/vega/vega
 * https://github.com/vega/vega-crossfilter
 * https://github.com/vega/vega-dataflow
 * https://github.com/vega/vega-encode
+* https://github.com/vega/vega-event-selector
 * https://github.com/vega/vega-expression
 * https://github.com/vega/vega-force
 * https://github.com/vega/vega-geo
 * https://github.com/vega/vega-hierarchy
 * https://github.com/vega/vega-loader
 * https://github.com/vega/vega-parser
+* https://github.com/vega/vega-projection
 * https://github.com/vega/vega-runtime
 * https://github.com/vega/vega-scale
 * https://github.com/vega/vega-scenegraph
 * https://github.com/vega/vega-statistics
+* https://github.com/vega/vega-transforms
 * https://github.com/vega/vega-util
 * https://github.com/vega/vega-view
+* https://github.com/vega/vega-view-transforms
 * https://github.com/vega/vega-voronoi
+* https://github.com/vega/vega-wordcloud
 
 Though not strictly required, we recommend using `npm link` to connect each
 local copy of a repo with its 'vega-' dependencies. That way, any edits you

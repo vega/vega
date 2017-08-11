@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-array'), require('d3-shape'), require('d3-path'), require('d3-format'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-geo'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-array', 'd3-shape', 'd3-path', 'd3-format', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-geo', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
-	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
-}(this, (function (exports,d3Request,d3Dsv,topojson,d3TimeFormat,d3Array,d3Shape,d3Path,d3Format,$,_,$$1,d3Geo,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-request'), require('d3-dsv'), require('topojson'), require('d3-time-format'), require('d3-array'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-scale-chromatic'), require('d3-interpolate'), require('d3-time'), require('d3-format'), require('d3-geo'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'd3-request', 'd3-dsv', 'topojson', 'd3-time-format', 'd3-array', 'd3-shape', 'd3-path', 'd3-scale', 'd3-scale-chromatic', 'd3-interpolate', 'd3-time', 'd3-format', 'd3-geo', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color'], factory) :
+	(factory((global.vega = global.vega || {}),global.d3,global.d3,global.topojson,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
+}(this, (function (exports,d3Request,d3Dsv,topojson,d3TimeFormat,d3Array,d3Shape,d3Path,$,_,$$1,d3Time,d3Format,d3Geo,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color) { 'use strict';
 
 var accessor = function(fn, fields, name) {
   fn.fields = fields || [];
@@ -11053,331 +11053,6 @@ var BinLinear = 'bin-linear';
 var BinOrdinal = 'bin-ordinal';
 var Sequential = 'sequential';
 
-/**
- * Filter a set of candidate tick values, ensuring that only tick values
- * that lie within the scale range are included.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {Array<*>} ticks - The candidate tick values.
- * @return {Array<*>} - The filtered tick values.
- */
-function validTicks(scale, ticks) {
-  var range$$1 = scale.range(),
-      lo = range$$1[0],
-      hi = peek(range$$1);
-  if (lo > hi) {
-    range$$1 = hi;
-    hi = lo;
-    lo = range$$1;
-  }
-
-  return ticks.filter(function(v) {
-    v = scale(v);
-    return !(v < lo || v > hi)
-  });
-}
-
-/**
- * Generate tick values for the given scale and approximate tick count or
- * interval value. If the scale has a 'ticks' method, it will be used to
- * generate the ticks, with the count argument passed as a parameter. If the
- * scale lacks a 'ticks' method, the full scale domain will be returned.
- * @param {Scale} scale - The scale for which to generate tick values.
- * @param {*} [count] - The approximate number of desired ticks.
- * @return {Array<*>} - The generated tick values.
- */
-function tickValues(scale, count) {
-  return scale.ticks ? scale.ticks(count) : scale.domain();
-}
-
-/**
- * Generate a label format function for a scale. If the scale has a
- * 'tickFormat' method, it will be used to generate the formatter, with the
- * count and specifier arguments passed as parameters. If the scale lacks a
- * 'tickFormat' method, the returned formatter performs simple string coercion.
- * If the input scale is a logarithmic scale and the format specifier does not
- * indicate a desired decimal precision, a special variable precision formatter
- * that automatically trims trailing zeroes will be generated.
- * @param {Scale} scale - The scale for which to generate the label formatter.
- * @param {*} [count] - The approximate number of desired ticks.
- * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
- *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
- * @return {function(*):string} - The generated label formatter.
- */
-function tickFormat(scale, count, specifier) {
-  var format$$1 = scale.tickFormat
-    ? scale.tickFormat(count, specifier)
-    : String;
-
-  return (scale.type === Log)
-    ? filter$1(format$$1, variablePrecision(specifier))
-    : format$$1;
-}
-
-function filter$1(sourceFormat, targetFormat) {
-  return function(_$$1) {
-    return sourceFormat(_$$1) ? targetFormat(_$$1) : '';
-  };
-}
-
-function variablePrecision(specifier) {
-  var s = d3Format.formatSpecifier(specifier || ',');
-
-  if (s.precision == null) {
-    s.precision = 12;
-    switch (s.type) {
-      case '%': s.precision -= 2; break;
-      case 'e': s.precision -= 1; break;
-    }
-    return trimZeroes(
-      d3Format.format(s),          // number format
-      d3Format.format('.1f')(1)[1] // decimal point character
-    );
-  } else {
-    return d3Format.format(s);
-  }
-}
-
-function trimZeroes(format$$1, decimalChar) {
-  return function(x) {
-    var str = format$$1(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
-
-    if (dec < 0) return str;
-
-    idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
-    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
-
-    return str.slice(0, idx) + end;
-  };
-}
-
-function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
-  if (i > 0) return i;
-  for (i=str.length; --i > dec;) {
-    c = str.charCodeAt(i);
-    if (c >= 48 && c <= 57) return i + 1; // is digit
-  }
-}
-
-/**
- * Generates axis ticks for visualizing a spatial scale.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {Scale} params.scale - The scale to generate ticks for.
- * @param {*} [params.count=10] - The approximate number of ticks, or
- *   desired tick interval, to use.
- * @param {Array<*>} [params.values] - The exact tick values to use.
- *   These must be legal domain values for the provided scale.
- *   If provided, the count argument is ignored.
- * @param {function(*):string} [params.formatSpecifier] - A format specifier
- *   to use in conjunction with scale.tickFormat. Legal values are
- *   any valid d3 4.0 format specifier.
- * @param {function(*):string} [params.format] - The format function to use.
- *   If provided, the formatSpecifier argument is ignored.
- */
-function AxisTicks(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$51 = inherits(AxisTicks, Transform);
-
-prototype$51.transform = function(_$$1, pulse) {
-  if (this.value && !_$$1.modified()) {
-    return pulse.StopPropagation;
-  }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      ticks = this.value,
-      scale = _$$1.scale,
-      count = _$$1.values ? _$$1.values.length : _$$1.count,
-      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
-      values = _$$1.values ? validTicks(scale, _$$1.values) : tickValues(scale, count);
-
-  if (ticks) out.rem = ticks;
-
-  ticks = values.map(function(value) {
-    return ingest({value: value, label: format$$1(value)})
-  });
-
-  if (_$$1.extra) {
-    // add an extra tick pegged to the initial domain value
-    // this is used to generate axes with 'binned' domains
-    ticks.push(ingest({
-      extra: {value: ticks[0].value},
-      label: ''
-    }));
-  }
-
-  out.source = ticks;
-  out.add = ticks;
-  this.value = ticks;
-
-  return out;
-};
-
-/**
- * Joins a set of data elements against a set of visual items.
- * @constructor
- * @param {object} params - The parameters for this operator.
- * @param {function(object): object} [params.item] - An item generator function.
- * @param {function(object): *} [params.key] - The key field associating data and visual items.
- */
-function DataJoin(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$52 = inherits(DataJoin, Transform);
-
-function defaultItemCreate() {
-  return ingest({});
-}
-
-function isExit(t) {
-  return t.exit;
-}
-
-prototype$52.transform = function(_$$1, pulse) {
-  var df = pulse.dataflow,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      item = _$$1.item || defaultItemCreate,
-      key$$1 = _$$1.key || tupleid,
-      map = this.value;
-
-  if (!map) {
-    pulse = pulse.addAll();
-    this.value = map = fastmap().test(isExit);
-    map.lookup = function(t) { return map.get(key$$1(t)); };
-  }
-
-  if (_$$1.modified('key') || pulse.modified(key$$1)) {
-    error$1('DataJoin does not support modified key function or fields.');
-  }
-
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      if (x.exit) {
-        map.empty--;
-        out.add.push(x);
-      } else {
-        out.mod.push(x);
-      }
-    } else {
-      map.set(k, (x = item(t)));
-      out.add.push(x);
-    }
-
-    x.datum = t;
-    x.exit = false;
-  });
-
-  pulse.visit(pulse.MOD, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (x) {
-      x.datum = t;
-      out.mod.push(x);
-    }
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var k = key$$1(t),
-        x = map.get(k);
-
-    if (t === x.datum && !x.exit) {
-      out.rem.push(x);
-      x.exit = true;
-      ++map.empty;
-    }
-  });
-
-  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
-
-  if (_$$1.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
-
-  return out;
-};
-
-/**
- * Invokes encoding functions for visual items.
- * @constructor
- * @param {object} params - The parameters to the encoding functions. This
- *   parameter object will be passed through to all invoked encoding functions.
- * @param {object} param.encoders - The encoding functions
- * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
- * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
- * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
- */
-function Encode(params) {
-  Transform.call(this, null, params);
-}
-
-var prototype$53 = inherits(Encode, Transform);
-
-prototype$53.transform = function(_$$1, pulse) {
-  var out = pulse.fork(pulse.ADD_REM),
-      encoders = _$$1.encoders,
-      encode = pulse.encode;
-
-  // if an array, the encode directive includes additional sets
-  // that must be defined in order for the primary set to be invoked
-  // e.g., only run the update set if the hover set is defined
-  if (isArray(encode)) {
-    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
-      encode = encode[0];
-    } else {
-      return pulse.StopPropagation;
-    }
-  }
-
-  // marshall encoder functions
-  var reenter = encode === 'enter',
-      update = encoders.update || falsy,
-      enter = encoders.enter || falsy,
-      exit = encoders.exit || falsy,
-      set = (encode && !reenter ? encoders[encode] : update) || falsy;
-
-  if (pulse.changed(pulse.ADD)) {
-    pulse.visit(pulse.ADD, function(t) {
-      enter(t, _$$1);
-      update(t, _$$1);
-      if (set !== falsy && set !== update) set(t, _$$1);
-    });
-    out.modifies(enter.output);
-    out.modifies(update.output);
-    if (set !== falsy && set !== update) out.modifies(set.output);
-  }
-
-  if (pulse.changed(pulse.REM) && exit !== falsy) {
-    pulse.visit(pulse.REM, function(t) { exit(t, _$$1); });
-    out.modifies(exit.output);
-  }
-
-  if (reenter || set !== falsy) {
-    var flag = pulse.MOD | (_$$1.modified() ? pulse.REFLOW : 0);
-    if (reenter) {
-      pulse.visit(flag, function(t) {
-        var mod = enter(t, _$$1);
-        if (set(t, _$$1) || mod) out.mod.push(t);
-      });
-      if (out.mod.length) out.modifies(enter.output);
-    } else {
-      pulse.visit(flag, function(t) {
-        if (set(t, _$$1)) out.mod.push(t);
-      });
-    }
-    if (out.mod.length) out.modifies(set.output);
-  }
-
-  return out.changed() ? out : pulse.StopPropagation;
-};
-
 var invertRange = function(scale) {
   return function(_$$1) {
     var lo = _$$1[0],
@@ -11970,6 +11645,385 @@ function method(type) {
     .join('');
 }
 
+var time = {
+  millisecond: d3Time.timeMillisecond,
+  second:      d3Time.timeSecond,
+  minute:      d3Time.timeMinute,
+  hour:        d3Time.timeHour,
+  day:         d3Time.timeDay,
+  week:        d3Time.timeWeek,
+  month:       d3Time.timeMonth,
+  year:        d3Time.timeYear
+};
+
+var utc = {
+  millisecond: d3Time.utcMillisecond,
+  second:      d3Time.utcSecond,
+  minute:      d3Time.utcMinute,
+  hour:        d3Time.utcHour,
+  day:         d3Time.utcDay,
+  week:        d3Time.utcWeek,
+  month:       d3Time.utcMonth,
+  year:        d3Time.utcYear
+};
+
+function timeInterval(name) {
+  return time.hasOwnProperty(name) && time[name];
+}
+
+function utcInterval(name) {
+  return utc.hasOwnProperty(name) && utc[name];
+}
+
+/**
+ * Determine the tick count or interval function.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} count - The desired tick count or interval specifier.
+ * @return {*} - The tick count or interval function.
+ */
+function tickCount(scale$$1, count) {
+  var step;
+
+  if (isObject(count)) {
+    step = count.step;
+    count = count.interval;
+  }
+
+  if (isString(count)) {
+    count = scale$$1.type === 'time' ? timeInterval(count)
+      : scale$$1.type === 'utc' ? utcInterval(count)
+      : error$1('Only time and utc scales accept interval strings.');
+    if (step) count = count.every(step);
+  }
+
+  return count;
+}
+
+/**
+ * Filter a set of candidate tick values, ensuring that only tick values
+ * that lie within the scale range are included.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {Array<*>} ticks - The candidate tick values.
+ * @return {Array<*>} - The filtered tick values.
+ */
+function validTicks(scale$$1, ticks) {
+  var range$$1 = scale$$1.range(),
+      lo = range$$1[0],
+      hi = peek(range$$1);
+  if (lo > hi) {
+    range$$1 = hi;
+    hi = lo;
+    lo = range$$1;
+  }
+
+  return ticks.filter(function(v) {
+    v = scale$$1(v);
+    return !(v < lo || v > hi)
+  });
+}
+
+/**
+ * Generate tick values for the given scale and approximate tick count or
+ * interval value. If the scale has a 'ticks' method, it will be used to
+ * generate the ticks, with the count argument passed as a parameter. If the
+ * scale lacks a 'ticks' method, the full scale domain will be returned.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @return {Array<*>} - The generated tick values.
+ */
+function tickValues(scale$$1, count) {
+  return scale$$1.ticks ? scale$$1.ticks(count) : scale$$1.domain();
+}
+
+/**
+ * Generate a label format function for a scale. If the scale has a
+ * 'tickFormat' method, it will be used to generate the formatter, with the
+ * count and specifier arguments passed as parameters. If the scale lacks a
+ * 'tickFormat' method, the returned formatter performs simple string coercion.
+ * If the input scale is a logarithmic scale and the format specifier does not
+ * indicate a desired decimal precision, a special variable precision formatter
+ * that automatically trims trailing zeroes will be generated.
+ * @param {Scale} scale - The scale for which to generate the label formatter.
+ * @param {*} [count] - The approximate number of desired ticks.
+ * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+ *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
+ * @return {function(*):string} - The generated label formatter.
+ */
+function tickFormat(scale$$1, count, specifier) {
+  var format$$1 = scale$$1.tickFormat
+    ? scale$$1.tickFormat(count, specifier)
+    : String;
+
+  return (scale$$1.type === Log)
+    ? filter$1(format$$1, variablePrecision(specifier))
+    : format$$1;
+}
+
+function filter$1(sourceFormat, targetFormat) {
+  return function(_$$1) {
+    return sourceFormat(_$$1) ? targetFormat(_$$1) : '';
+  };
+}
+
+function variablePrecision(specifier) {
+  var s = d3Format.formatSpecifier(specifier || ',');
+
+  if (s.precision == null) {
+    s.precision = 12;
+    switch (s.type) {
+      case '%': s.precision -= 2; break;
+      case 'e': s.precision -= 1; break;
+    }
+    return trimZeroes(
+      d3Format.format(s),          // number format
+      d3Format.format('.1f')(1)[1] // decimal point character
+    );
+  } else {
+    return d3Format.format(s);
+  }
+}
+
+function trimZeroes(format$$1, decimalChar) {
+  return function(x) {
+    var str = format$$1(x),
+        dec = str.indexOf(decimalChar),
+        idx, end;
+
+    if (dec < 0) return str;
+
+    idx = rightmostDigit(str, dec);
+    end = idx < str.length ? str.slice(idx) : '';
+    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+
+    return str.slice(0, idx) + end;
+  };
+}
+
+function rightmostDigit(str, dec) {
+  var i = str.lastIndexOf('e'), c;
+  if (i > 0) return i;
+  for (i=str.length; --i > dec;) {
+    c = str.charCodeAt(i);
+    if (c >= 48 && c <= 57) return i + 1; // is digit
+  }
+}
+
+/**
+ * Generates axis ticks for visualizing a spatial scale.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Scale} params.scale - The scale to generate ticks for.
+ * @param {*} [params.count=10] - The approximate number of ticks, or
+ *   desired tick interval, to use.
+ * @param {Array<*>} [params.values] - The exact tick values to use.
+ *   These must be legal domain values for the provided scale.
+ *   If provided, the count argument is ignored.
+ * @param {function(*):string} [params.formatSpecifier] - A format specifier
+ *   to use in conjunction with scale.tickFormat. Legal values are
+ *   any valid d3 4.0 format specifier.
+ * @param {function(*):string} [params.format] - The format function to use.
+ *   If provided, the formatSpecifier argument is ignored.
+ */
+function AxisTicks(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$51 = inherits(AxisTicks, Transform);
+
+prototype$51.transform = function(_$$1, pulse) {
+  if (this.value && !_$$1.modified()) {
+    return pulse.StopPropagation;
+  }
+
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      ticks = this.value,
+      scale = _$$1.scale,
+      count = _$$1.values ? _$$1.values.length : tickCount(scale, _$$1.count),
+      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
+      values = _$$1.values ? validTicks(scale, _$$1.values) : tickValues(scale, count);
+
+  if (ticks) out.rem = ticks;
+
+  ticks = values.map(function(value) {
+    return ingest({value: value, label: format$$1(value)})
+  });
+
+  if (_$$1.extra) {
+    // add an extra tick pegged to the initial domain value
+    // this is used to generate axes with 'binned' domains
+    ticks.push(ingest({
+      extra: {value: ticks[0].value},
+      label: ''
+    }));
+  }
+
+  out.source = ticks;
+  out.add = ticks;
+  this.value = ticks;
+
+  return out;
+};
+
+/**
+ * Joins a set of data elements against a set of visual items.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {function(object): object} [params.item] - An item generator function.
+ * @param {function(object): *} [params.key] - The key field associating data and visual items.
+ */
+function DataJoin(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$52 = inherits(DataJoin, Transform);
+
+function defaultItemCreate() {
+  return ingest({});
+}
+
+function isExit(t) {
+  return t.exit;
+}
+
+prototype$52.transform = function(_$$1, pulse) {
+  var df = pulse.dataflow,
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      item = _$$1.item || defaultItemCreate,
+      key$$1 = _$$1.key || tupleid,
+      map = this.value;
+
+  if (!map) {
+    pulse = pulse.addAll();
+    this.value = map = fastmap().test(isExit);
+    map.lookup = function(t) { return map.get(key$$1(t)); };
+  }
+
+  if (_$$1.modified('key') || pulse.modified(key$$1)) {
+    error$1('DataJoin does not support modified key function or fields.');
+  }
+
+  pulse.visit(pulse.ADD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      if (x.exit) {
+        map.empty--;
+        out.add.push(x);
+      } else {
+        out.mod.push(x);
+      }
+    } else {
+      map.set(k, (x = item(t)));
+      out.add.push(x);
+    }
+
+    x.datum = t;
+    x.exit = false;
+  });
+
+  pulse.visit(pulse.MOD, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (x) {
+      x.datum = t;
+      out.mod.push(x);
+    }
+  });
+
+  pulse.visit(pulse.REM, function(t) {
+    var k = key$$1(t),
+        x = map.get(k);
+
+    if (t === x.datum && !x.exit) {
+      out.rem.push(x);
+      x.exit = true;
+      ++map.empty;
+    }
+  });
+
+  if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+
+  if (_$$1.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+
+  return out;
+};
+
+/**
+ * Invokes encoding functions for visual items.
+ * @constructor
+ * @param {object} params - The parameters to the encoding functions. This
+ *   parameter object will be passed through to all invoked encoding functions.
+ * @param {object} param.encoders - The encoding functions
+ * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
+ * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
+ * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
+ */
+function Encode(params) {
+  Transform.call(this, null, params);
+}
+
+var prototype$53 = inherits(Encode, Transform);
+
+prototype$53.transform = function(_$$1, pulse) {
+  var out = pulse.fork(pulse.ADD_REM),
+      encoders = _$$1.encoders,
+      encode = pulse.encode;
+
+  // if an array, the encode directive includes additional sets
+  // that must be defined in order for the primary set to be invoked
+  // e.g., only run the update set if the hover set is defined
+  if (isArray(encode)) {
+    if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+      encode = encode[0];
+    } else {
+      return pulse.StopPropagation;
+    }
+  }
+
+  // marshall encoder functions
+  var reenter = encode === 'enter',
+      update = encoders.update || falsy,
+      enter = encoders.enter || falsy,
+      exit = encoders.exit || falsy,
+      set = (encode && !reenter ? encoders[encode] : update) || falsy;
+
+  if (pulse.changed(pulse.ADD)) {
+    pulse.visit(pulse.ADD, function(t) {
+      enter(t, _$$1);
+      update(t, _$$1);
+      if (set !== falsy && set !== update) set(t, _$$1);
+    });
+    out.modifies(enter.output);
+    out.modifies(update.output);
+    if (set !== falsy && set !== update) out.modifies(set.output);
+  }
+
+  if (pulse.changed(pulse.REM) && exit !== falsy) {
+    pulse.visit(pulse.REM, function(t) { exit(t, _$$1); });
+    out.modifies(exit.output);
+  }
+
+  if (reenter || set !== falsy) {
+    var flag = pulse.MOD | (_$$1.modified() ? pulse.REFLOW : 0);
+    if (reenter) {
+      pulse.visit(flag, function(t) {
+        var mod = enter(t, _$$1);
+        if (set(t, _$$1) || mod) out.mod.push(t);
+      });
+      if (out.mod.length) out.modifies(enter.output);
+    } else {
+      pulse.visit(flag, function(t) {
+        if (set(t, _$$1)) out.mod.push(t);
+      });
+    }
+    if (out.mod.length) out.modifies(set.output);
+  }
+
+  return out.changed() ? out : pulse.StopPropagation;
+};
+
 var discrete$1 = {};
 discrete$1[Quantile] = quantile$1;
 discrete$1[Quantize] = quantize;
@@ -12073,23 +12127,23 @@ prototype$54.transform = function(_$$1, pulse) {
       total = 0,
       items = this.value,
       grad  = _$$1.type === 'gradient',
-      scale$$1 = _$$1.scale,
-      count = _$$1.count == null ? 5 : _$$1.count,
-      format$$1 = _$$1.format || tickFormat(scale$$1, count, _$$1.formatSpecifier),
-      values = _$$1.values || labelValues(scale$$1, count, grad);
+      scale = _$$1.scale,
+      count = _$$1.count == null ? 5 : tickCount(scale, _$$1.count),
+      format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
+      values = _$$1.values || labelValues(scale, count, grad);
 
-  format$$1 = labelFormat(scale$$1, format$$1);
+  format$$1 = labelFormat(scale, format$$1);
   if (items) out.rem = items;
 
   if (grad) {
-    var domain = _$$1.values ? scale$$1.domain() : values,
-        fraction = scaleFraction(scale$$1, domain[0], peek(domain));
+    var domain = _$$1.values ? scale.domain() : values,
+        fraction = scaleFraction(scale, domain[0], peek(domain));
   } else {
     var size = _$$1.size,
         offset;
     if (isFunction(size)) {
       // if first value maps to size zero, remove from list (vega#717)
-      if (!_$$1.values && scale$$1(values[0]) === 0) {
+      if (!_$$1.values && scale(values[0]) === 0) {
         values = values.slice(1);
       }
       // compute size offset for legend entries
@@ -12430,7 +12484,9 @@ function configureDomain(scale, _$$1, df) {
   scale.domain(domain);
 
   // perform 'nice' adjustment as requested
-  if (_$$1.nice && scale.nice) scale.nice((_$$1.nice !== true && +_$$1.nice) || null);
+  if (_$$1.nice && scale.nice) {
+    scale.nice((_$$1.nice !== true && tickCount(scale, _$$1.nice)) || null);
+  }
 
   // return the cardinality of the domain
   return domain.length;
@@ -13905,6 +13961,10 @@ var force = Object.freeze({
   * @param {Array<function(object): *>} params.keys - The key fields to nest by, in order.
   * @param {function(object): *} [params.key] - Unique key field for each tuple.
   *   If not provided, the tuple id field is used.
+  * @param {boolean} [params.generate=false] - A boolean flag indicating if
+  *   non-leaf nodes generated by this transform should be included in the
+  *   output. The default (false) includes only the input data (leaf nodes)
+  *   in the data stream.
   */
 function Nest(params) {
   Transform.call(this, null, params);
@@ -13912,10 +13972,11 @@ function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true},
+  "metadata": {"treesource": true, "source": true, "generates": true, "changes": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
-    { "name": "key", "type": "field" }
+    { "name": "key", "type": "field" },
+    { "name": "generate", "type": "boolean" }
   ]
 };
 
@@ -13931,27 +13992,50 @@ prototype$68.transform = function(_$$1, pulse) {
   }
 
   var key$$1 = _$$1.key || tupleid,
-      root, tree$$1, map, mod;
+      gen = _$$1.generate,
+      mod = _$$1.modified(),
+      out = gen || mod ? pulse.fork(pulse.ALL) : pulse,
+      root, tree$$1, map;
 
-  if (!this.value || (mod = _$$1.modified()) || pulse.changed()) {
+  if (!this.value || mod || pulse.changed()) {
+    // collect nodes to remove
+    if (gen && this.value) {
+      out.materialize(out.REM);
+      this.value.each(function(node) {
+        if (node.children) out.rem.push(node);
+      });
+    }
+
+    // generate new tree structure
     root = array(_$$1.keys)
-      .reduce(function(n, k) {
-        n.key(k);
-        return n;
-      }, d3Collection.nest())
+      .reduce(function(n, k) { n.key(k); return n; }, d3Collection.nest())
       .entries(pulse.source);
-    tree$$1 = d3Hierarchy.hierarchy({values: root}, children);
+    this.value = tree$$1 = d3Hierarchy.hierarchy({values: root}, children);
+
+    // collect nodes to add
+    if (gen) {
+      out.materialize(out.ADD);
+      out.source = out.source.slice();
+      tree$$1.each(function(node) {
+        if (node.children) {
+          node = ingest(node.data);
+          out.add.push(node);
+          out.source.push(node);
+        }
+      });
+    }
+
+    // build lookup table
     map = tree$$1.lookup = {};
     tree$$1.each(function(node) {
       if (tupleid(node.data) != null) {
         map[key$$1(node.data)] = node;
       }
     });
-    this.value = tree$$1;
   }
 
-  pulse.source.root = this.value;
-  return mod ? pulse.fork(pulse.ALL) : pulse;
+  out.source.root = this.value;
+  return out;
 };
 
 /**
@@ -15654,7 +15738,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.0";
+var version = "3.0.1";
 
 var Default = 'default';
 
@@ -18199,26 +18283,26 @@ function utcParse$1(_$$1, specifier) {
 
 var dateObj = new Date(2000, 0, 1);
 
-function time(month, day, specifier) {
+function time$1(month, day, specifier) {
   dateObj.setMonth(month);
   dateObj.setDate(day);
   return timeFormat$1(dateObj, specifier);
 }
 
 function monthFormat(month) {
-  return time(month, 1, '%B');
+  return time$1(month, 1, '%B');
 }
 
 function monthAbbrevFormat(month) {
-  return time(month, 1, '%b');
+  return time$1(month, 1, '%b');
 }
 
 function dayFormat(day) {
-  return time(0, 2 + day, '%A');
+  return time$1(0, 2 + day, '%A');
 }
 
 function dayAbbrevFormat(day) {
-  return time(0, 2 + day, '%a');
+  return time$1(0, 2 + day, '%a');
 }
 
 function quarter(date) {
@@ -19653,6 +19737,10 @@ function parseScale(spec, scope) {
     parseScaleInterpolate(spec.interpolate, params);
   }
 
+  if (spec.nice != null) {
+    parseScaleNice(spec.nice, params);
+  }
+
   for (key$$1 in spec) {
     if (params.hasOwnProperty(key$$1) || key$$1 === 'name') continue;
     params[key$$1] = parseLiteral(spec[key$$1], scope);
@@ -19803,6 +19891,17 @@ function numericMultipleDomain(domain, scope, fields) {
 
   // combine extents
   return ref(scope.add(MultiExtent$1({extents: extents})));
+}
+
+// -- SCALE NICE -----
+
+function parseScaleNice(nice, params) {
+  params.nice = isObject(nice)
+    ? {
+        interval: parseLiteral(nice.interval),
+        step: parseLiteral(nice.step)
+      }
+    : parseLiteral(nice);
 }
 
 // -- SCALE INTERPOLATION -----
@@ -21092,7 +21191,7 @@ var parseLegend = function(spec, scope) {
     entryRef = ref(scope.add(LegendEntries$1({
       type:   'gradient',
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
+      count:  scope.objectProperty(spec.tickCount),
       values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
@@ -21107,8 +21206,8 @@ var parseLegend = function(spec, scope) {
     // data source for legend entries
     entryRef = ref(scope.add(LegendEntries$1(params = {
       scale:  scope.scaleRef(scale),
-      count:  scope.property(spec.tickCount),
-      values: scope.property(spec.values),
+      count:  scope.objectProperty(spec.tickCount),
+      values: scope.objectProperty(spec.values),
       formatSpecifier: scope.property(spec.format)
     })));
 
@@ -21645,7 +21744,7 @@ var parseAxis = function(spec, scope) {
   ticksRef = ref(scope.add(AxisTicks$1({
     scale:  scope.scaleRef(spec.scale),
     extra:  config.tickExtra,
-    count:  scope.property(spec.tickCount),
+    count:  scope.objectProperty(spec.tickCount),
     values: scope.objectProperty(spec.values),
     formatSpecifier: scope.property(spec.format)
   })));
@@ -23366,6 +23465,8 @@ exports.scale = scale$1;
 exports.scheme = getScheme;
 exports.interpolate = interpolate$1;
 exports.interpolateRange = interpolateRange;
+exports.timeInterval = timeInterval;
+exports.utcInterval = utcInterval;
 exports.projection = projection;
 exports.View = View;
 exports.parse = parse$2;
