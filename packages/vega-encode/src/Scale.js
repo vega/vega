@@ -1,3 +1,4 @@
+import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
 import {error, inherits, isFunction, toSet} from 'vega-util';
 
@@ -97,7 +98,9 @@ function configureDomain(scale, _, df) {
   scale.domain(domain);
 
   // perform 'nice' adjustment as requested
-  if (_.nice && scale.nice) scale.nice((_.nice !== true && +_.nice) || null);
+  if (_.nice && scale.nice) {
+    scale.nice((_.nice !== true && tickCount(scale, _.nice)) || null);
+  }
 
   // return the cardinality of the domain
   return domain.length;

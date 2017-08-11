@@ -1,9 +1,34 @@
 import {Log} from './scale-types';
-import {peek} from 'vega-util';
+import {timeInterval, utcInterval} from 'vega-scale';
+import {error, isObject, isString, peek} from 'vega-util';
 import {
   format as numberFormat,
   formatSpecifier
 } from 'd3-format';
+
+/**
+ * Determine the tick count or interval function.
+ * @param {Scale} scale - The scale for which to generate tick values.
+ * @param {*} count - The desired tick count or interval specifier.
+ * @return {*} - The tick count or interval function.
+ */
+export function tickCount(scale, count) {
+  var step;
+
+  if (isObject(count)) {
+    step = count.step;
+    count = count.interval;
+  }
+
+  if (isString(count)) {
+    count = scale.type === 'time' ? timeInterval(count)
+      : scale.type === 'utc' ? utcInterval(count)
+      : error('Only time and utc scales accept interval strings.');
+    if (step) count = count.every(step);
+  }
+
+  return count;
+}
 
 /**
  * Filter a set of candidate tick values, ensuring that only tick values
