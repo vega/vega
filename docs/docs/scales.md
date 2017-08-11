@@ -101,7 +101,7 @@ Time scales (`time` and `utc`) are [quantitative scales](#quantitative) with a t
 
 | Property      | Type                                         | Description    |
 | :------------ | :------------------------------------------: | :------------- |
-| nice          | {% include type t="String|Number|Boolean" %} | If specified, modifies the scale domain to use a more human-friendly value range. For `time` and `utc` scale types only, the nice value can additionally be a string indicating the desired time interval. Legal values are `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`.|
+| nice          | {% include type t="String|Object|Number|Boolean" %} | If specified, modifies the scale domain to use a more human-friendly value range. For `time` and `utc` scale types, the nice value can additionally be a string indicating the desired time interval. Legal values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, `time` and `utc` scales can accept an object-valued interval specifier of the form `{"interval": "month", "step": 3}`, which includes a desired number of interval steps. Here, the domain would snap to quarter (Jan, Apr, Jul, Oct) boundaries.|
 
 ### <a name="sequential"></a>Sequential Scales
 

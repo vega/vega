@@ -27,6 +27,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes.|
 | padding       | {% include type t="Number|Value" %} | The padding between the border and content of the legend group.|
 | tickCount     | {% include type t="Number" %}  | The desired number of tick values for quantitative legends.|
+| tickCount     | {% include type t="Number|String|Object" %}  | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values.|
