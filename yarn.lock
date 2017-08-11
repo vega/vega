@@ -1851,8 +1851,8 @@ vega-geo@2:
     vega-util "1"
 
 vega-hierarchy@2:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-hierarchy/-/vega-hierarchy-2.0.0.tgz#6a4f577372d4aabe5b4737a366350a2052adb0c6"
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-hierarchy/-/vega-hierarchy-2.1.0.tgz#92119c43a9dc8f534c1836446661161dc9e42196"
   dependencies:
     d3-collection "1"
     d3-hierarchy "1"
