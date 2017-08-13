@@ -16,7 +16,7 @@ If the input data is simply an array of primitive values, Vega maps each value t
 
 Upon ingest, Vega also assigns each data object a unique id property, accessible via a custom [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol). As a result, the id property is not accessible via a string key and is not enumerable, though you can observe the id value when inspecting data objects in a JavaScript console.
 
-Data sets can be specified directly by defining data inline or providing a URL from which to load the data. Alternatively, data can be bound dynamically at runtime by using the [View API](../view) to provide data when a chart is instantiated or issue streaming updates. Loading data from a URL will be subject to the policies of your runtime environment (e.g., [cross-origin request rules](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)).
+Data sets can be specified directly by defining data inline or providing a URL from which to load the data. Alternatively, data can be bound dynamically at runtime by using the [View API](../api/view) to provide data when a chart is instantiated or issue streaming updates. Loading data from a URL will be subject to the policies of your runtime environment (e.g., [cross-origin request rules](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)).
 
 ## Documentation Overview
 
