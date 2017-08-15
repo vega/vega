@@ -23,6 +23,7 @@ The **geopoint** transform projects (longitude, latitude) pairs to (x, y) coordi
 ```json
 {
   "type": "geopoint",
+  "projection": "myprojection",
   "fields": ["lon", "lat"]
 }
 ```
