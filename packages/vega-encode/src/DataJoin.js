@@ -1,5 +1,5 @@
 import {Transform, ingest, tupleid} from 'vega-dataflow';
-import {error, fastmap, inherits} from 'vega-util';
+import {error, fastmap, inherits, isArray} from 'vega-util';
 
 /**
  * Joins a set of data elements against a set of visual items.
@@ -28,6 +28,12 @@ prototype.transform = function(_, pulse) {
       item = _.item || defaultItemCreate,
       key = _.key || tupleid,
       map = this.value;
+
+  // prevent transient (e.g., hover) requests from
+  // cascading across marks derived from marks
+  if (isArray(out.encode)) {
+    out.encode = null;
+  }
 
   if (!map) {
     pulse = pulse.addAll();
