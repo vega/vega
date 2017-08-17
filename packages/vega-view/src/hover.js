@@ -17,7 +17,7 @@ function invoke(name) {
 }
 
 export default function(hoverSet, leaveSet) {
-  hoverSet = hoverSet || 'hover';
+  hoverSet = [hoverSet || 'hover'];
   leaveSet = [leaveSet || 'update', hoverSet];
 
   // invoke hover set upon mouseover
