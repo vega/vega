@@ -1,4 +1,3 @@
-import dataName from './data-name';
 import parseTransform from '../transform';
 import {ref} from '../../util';
 import {Collect} from '../../transforms';
@@ -40,7 +39,6 @@ export default function(from, group, scope) {
   // if not yet defined, get source data reference
   if (!dataRef) {
     dataRef = from.$ref ? from
-      : from.mark ? ref(scope.getData(dataName(from.mark)).output)
       : ref(scope.getData(from.data).output);
   }
 

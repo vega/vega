@@ -1,5 +1,4 @@
 import definition from './marks/definition';
-import dataName from './marks/data-name';
 import parseData from './marks/data';
 import parseFacet from './marks/facet';
 import parseSubflow from './marks/subflow';
@@ -122,7 +121,7 @@ export default function(spec, scope) {
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
   if (spec.name != null) {
-    name = dataName(spec.name);
+    name = spec.name;
     scope.addData(name, new DataScope(scope, store, render, sieve));
     if (spec.on) spec.on.forEach(function(on) {
       if (on.insert || on.remove || on.toggle) {
