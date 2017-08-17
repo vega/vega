@@ -97,12 +97,12 @@ arrify@^1.0.0:
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
 babel-code-frame@^6.22.0:
-  version "6.22.0"
-  resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.22.0.tgz#027620bee567a88c32561574e7fd0801d33118e4"
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
   dependencies:
-    chalk "^1.1.0"
+    chalk "^1.1.3"
     esutils "^2.0.2"
-    js-tokens "^3.0.0"
+    js-tokens "^3.0.2"
 
 balanced-match@^1.0.0:
   version "1.0.0"
@@ -172,7 +172,7 @@ canvas@^1.6, canvas@^1.6.0:
     parse-css-font "^2.0.2"
     units-css "^0.4.0"
 
-chalk@^1.1.0, chalk@^1.1.1, chalk@^1.1.3:
+chalk@^1.1.1, chalk@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-1.1.3.tgz#a8115c55e4a702fe4d150abd3872822a7e09fc98"
   dependencies:
@@ -842,8 +842,8 @@ inherits@2, inherits@^2.0.3, inherits@~2.0.1, inherits@~2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
 
 inquirer@^3.0.6:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.2.1.tgz#06ceb0f540f45ca548c17d6840959878265fa175"
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.2.2.tgz#c2aaede1507cc54d826818737742d621bef2e823"
   dependencies:
     ansi-escapes "^2.0.0"
     chalk "^2.0.0"
@@ -1010,7 +1010,7 @@ isobject@^2.0.0:
   dependencies:
     isarray "1.0.0"
 
-js-tokens@^3.0.0:
+js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
@@ -1400,8 +1400,8 @@ regex-cache@^0.4.2:
     is-primitive "^2.0.0"
 
 remove-trailing-separator@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.0.2.tgz#69b062d978727ad14dc6b56ba4ab772fd8d70511"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
 
 repeat-element@^1.1.2:
   version "1.1.2"
@@ -1552,8 +1552,8 @@ slice-ansi@0.0.4:
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-0.0.4.tgz#edbf8903f66f7ce2f8eafd6ceed65e264c831b35"
 
 source-map-support@^0.4.0:
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.15.tgz#03202df65c06d2bd8c7ec2362a193056fef8d3b1"
+  version "0.4.16"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.16.tgz#16fecf98212467d017d586a2af68d628b9421cd8"
   dependencies:
     source-map "^0.5.6"
 
@@ -1800,8 +1800,8 @@ vega-crossfilter@2:
     vega-util "1"
 
 vega-dataflow@3:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-3.0.1.tgz#154df0de537cd9989f42a3b7e19b42123fefe3b1"
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-3.0.2.tgz#c9723a448d50f267113e566ad44cefe29dfbb09b"
   dependencies:
     vega-loader "2"
     vega-util "1"
@@ -1811,8 +1811,8 @@ vega-datasets@vega/vega-datasets#gh-pages:
   resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/7080ba8297825d27495bdfb8386d10cff83cbacf"
 
 vega-encode@2:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-2.0.1.tgz#5437f1f961d902cfa8f0fdc2b663c0bd0baf81e5"
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-2.0.2.tgz#8416b413003e289daf74e5ae025c417d57a534e2"
   dependencies:
     d3-array "1"
     d3-format "1"
@@ -1870,8 +1870,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@2:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-2.1.1.tgz#ddfcfb0ab8737d1fff4b00834b3c576a96950929"
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-2.1.2.tgz#f92b591af5a7990fef96dec96d07ed968ce26682"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1947,8 +1947,8 @@ vega-view-transforms@1:
     vega-util "1"
 
 vega-view@2:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.0.1.tgz#396f83b49b42138d930fcbe92128be76e3019e44"
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.0.2.tgz#4d04dbb6d26f65527b5e2b8b29c8219ff8c1a5ae"
   dependencies:
     d3-array "1"
     vega-dataflow "3"
