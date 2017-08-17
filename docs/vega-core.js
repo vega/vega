@@ -1772,7 +1772,7 @@ function rerank(op) {
     if (list = cur._targets) {
       for (i=list.length; --i >= 0;) {
         queue.push(cur = list[i]);
-        if (cur === op) this.error('Cycle detected in dataflow graph.');
+        if (cur === op) error$1('Cycle detected in dataflow graph.');
       }
     }
   }
@@ -11892,6 +11892,12 @@ prototype$52.transform = function(_$$1, pulse) {
       key$$1 = _$$1.key || tupleid,
       map = this.value;
 
+  // prevent transient (e.g., hover) requests from
+  // cascading across marks derived from marks
+  if (isArray(out.encode)) {
+    out.encode = null;
+  }
+
   if (!map) {
     pulse = pulse.addAll();
     this.value = map = fastmap().test(isExit);
@@ -12445,7 +12451,7 @@ prototype$57.transform = function(_$$1, pulse) {
       : df.warn('Unsupported scale property: ' + prop);
   }
 
-  configureRange(scale, _$$1, configureDomain(scale, _$$1), df);
+  configureRange(scale, _$$1, configureDomain(scale, _$$1, df));
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
@@ -15738,7 +15744,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.1";
+var version = "3.0.2";
 
 var Default = 'default';
 
@@ -16029,7 +16035,7 @@ function invoke(name) {
 }
 
 var hover = function(hoverSet, leaveSet) {
-  hoverSet = hoverSet || 'hover';
+  hoverSet = [hoverSet || 'hover'];
   leaveSet = [leaveSet || 'update', hoverSet];
 
   // invoke hover set upon mouseover
@@ -20613,10 +20619,6 @@ var definition$1 = function(spec) {
   };
 };
 
-var dataName = function(name) {
-  return name;
-};
-
 /**
  * Parse a data transform specification.
  */
@@ -20804,7 +20806,6 @@ var parseData = function(from, group, scope) {
   // if not yet defined, get source data reference
   if (!dataRef) {
     dataRef = from.$ref ? from
-      : from.mark ? ref(scope.getData(dataName(from.mark)).output)
       : ref(scope.getData(from.data).output);
   }
 
@@ -21129,7 +21130,7 @@ var parseMark = function(spec, scope) {
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
   if (spec.name != null) {
-    name = dataName(spec.name);
+    name = spec.name;
     scope.addData(name, new DataScope(scope, store, render, sieve));
     if (spec.on) spec.on.forEach(function(on) {
       if (on.insert || on.remove || on.toggle) {
