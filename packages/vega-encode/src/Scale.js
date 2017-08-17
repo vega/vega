@@ -59,7 +59,7 @@ prototype.transform = function(_, pulse) {
       : df.warn('Unsupported scale property: ' + prop);
   }
 
-  configureRange(scale, _, configureDomain(scale, _), df);
+  configureRange(scale, _, configureDomain(scale, _, df));
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
