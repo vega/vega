@@ -103,7 +103,7 @@
     {
       "type": "text",
       "interactive": false,
-      "from": {"mark": "circles"},
+      "from": {"data": "circles"},
       "encode": {
         "enter": {
           "align": {"value": "center"},
