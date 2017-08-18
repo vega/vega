@@ -54,7 +54,7 @@ For the following input data:
   {"key":2, "value":2},
   {"key":2, "value":4},
   {"key":3, "value":3}
-  ]
+]
 ```
 
 The window transform
