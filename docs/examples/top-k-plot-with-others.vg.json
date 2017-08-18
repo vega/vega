@@ -50,7 +50,7 @@
         {
           "type": "window",
           "sort": {"field": "Gross", "order": "descending"},
-          "ops": ["rank"]
+          "ops": ["row_number"], "as": ["rank"]
         }
       ]
     },
