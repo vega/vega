@@ -205,7 +205,7 @@ For more details, see the [marks](../../docs/marks) documentation.
 
 ## <a name="signals"></a>Signals
 
-Signals act as dynamic variables: expressions that are automatically reevaluated when other signal values change, or when input events occur. Each signal must have a unique `name` and an initial `value`; others properties define how the signal value can change.
+Signals act as dynamic variables: expressions that are automatically reevaluated when other signal values change, or when input events occur. Each signal must have a unique `name` and an initial `value`; other properties define how the signal value can change.
 
 Here we use a signal to define a tooltip interaction. In this example, the value of the `tooltip` signal changes in response to `mouseover` and `mouseout` events on `rect` marks. Every time these events occur, the corresponding expression is evaluated and set as the `tooltip` value. Thus, when the mouse pointer is moved over a rectangle mark, `tooltip` is equal to the mark's backing datum; when the pointer is moved off the rectangle, `tooltip` is an empty object.
 
