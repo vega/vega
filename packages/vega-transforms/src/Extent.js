@@ -41,8 +41,10 @@ prototype.transform = function(_, pulse) {
 
   pulse.visit(flag, function(t) {
     var v = field(t);
-    if (v < min) min = v;
-    if (v > max) max = v;
+    if (v != null) {
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
   });
 
   this.value = [min, max];
