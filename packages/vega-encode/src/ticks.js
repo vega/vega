@@ -35,9 +35,10 @@ export function tickCount(scale, count) {
  * that lie within the scale range are included.
  * @param {Scale} scale - The scale for which to generate tick values.
  * @param {Array<*>} ticks - The candidate tick values.
+ * @param {number} count - The maximum number of tick values.
  * @return {Array<*>} - The filtered tick values.
  */
-export function validTicks(scale, ticks) {
+export function validTicks(scale, ticks, count) {
   var range = scale.range(),
       lo = range[0],
       hi = peek(range);
@@ -47,10 +48,20 @@ export function validTicks(scale, ticks) {
     lo = range;
   }
 
-  return ticks.filter(function(v) {
+  ticks = ticks.filter(function(v) {
     v = scale(v);
     return !(v < lo || v > hi)
   });
+
+  if (count > 0) {
+    while (ticks.length > count) {
+      ticks = ticks.filter(function(_, i) {
+        return i % 2 === 0;
+      });
+    }
+  }
+
+  return ticks;
 }
 
 /**
