@@ -14,7 +14,7 @@ permalink: /docs/marks/line/index.html
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| interpolate         | {% include type t="String" %}  | The interpolation method to use. One of `basis`, `bundle`, `cardinal`, `catmull-rom`, `linear`, `monotone`, `natural`, `step`, `step-after`, `step-before`. The default is `linear`. |
+| interpolate         | {% include type t="String" %}  | The interpolation method to use. One of `basis`, `bundle`, `cardinal`, `catmull-rom`, `linear`, `monotone`, `natural`, `step`, `step-after`, `step-before`. The default is `linear`. You can find explanations for these line interpolators in the [D3 docs](https://github.com/d3/d3-shape/blob/master/README.md#curves). |
 | tension             | {% include type t="Number" %}  | The tension value in the range [0, 1] to parameterize `bundle` (default 0.8), `cardinal` (default 0) or `catmull-rom` (default 0.5) interpolation. |
 | defined             | {% include type t="Boolean" %} | A boolean flag indicating if the current data point is defined. If `false`, the corresponding line segment will be omitted, creating a "break". |
 
