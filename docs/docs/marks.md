@@ -95,70 +95,11 @@ When generating data-driven facets, by default new aggregate data values are gen
 
 ## <a name="encode"></a>Mark Encoding Sets
 
-All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property. The value should be a [_value reference_](#valueref) or [_production rule_](#production-rule), as defined below.
+All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property. The value should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
 
 The `enter` set is invoked when a mark item is first instantiated and also when a visualization is resized. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
 
 Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
-
-## <a name="valueref"></a>Value References
-
-A _value reference_ specifies the value for a given mark property. The value may be a constant or drawn from a data object. In addition, the value may be run through a scale transform and further modified.
-
-| Name          | Type                                 | Description  |
-| :------------ | :----------------------------------: | :------------|
-| value         | {% include type t="Any" %}           | A constant value. If _field_ is specified, this value is ignored.|
-| field         | [FieldRef](#fieldref)                | A field from which to retrieve a data value. The corresponding data set is determined by the mark's _from_ property. If a string-valued field name is provided, the value is pulled from the current datum.  Dot notation (`"price.min"`) is used to access nested properties; if a dot character is actually part of the property name, you must escape the dot with a backslash: `"some\.field"`.  To pull value from the enclosing group mark's element or datum, this property can be specified as an object. |
-| scale         | [FieldRef](#fieldref)                | The name of a scale transform to apply. If the input is an object, it indicates a field value from which to dynamically lookup the scale name and follows the format of the _field_ property. For example `{"datum": "s"}` will use the value of `s` on the current mark's data as the scale name, whereas `{"parent": "t"}` will use the value of `t` on the current group's data as the scale name.|
-| mult          | {% include type t="Number" %}        | A multiplier for the value, equivalent to (mult * value). Multipliers are applied after any scale transformation.|
-| offset        | {% include type t="Number" %}        | A simple additive offset to bias the final value, equivalent to (value + offset). Offsets are added _after_ any scale transformation and multipliers.|
-| band          | {% include type t="Boolean" %}       | If true, and _scale_ is specified, uses the range band of the scale as the retrieved value. This option is useful for determining widths with a band scale (an ordinal scale where `points` is `false`).|
-
-### <a name="fieldref"></a>Field References
-
-A _field reference_ is either a string literal or an object. For object values, the following properties are supported:
-
-| Property      | Type                  | Description    |
-| :------------ | :-------------------: | :------------- |
-| datum         | [FieldRef](#fieldref) | Perform a lookup on the current data value. This is the default operation when a _field reference_ is a string.|
-| group         | [FieldRef](#fieldref) | Use a property of the enclosing group mark element. For example, `"field": {"group": "width"}` or `"field": {"group": "height"}`).|
-| parent        | [FieldRef](#fieldref) | Use a property of the enclosing group mark's datum. For example, `"field": {"parent": "fieldInParentData"}`.|
-| level         | {% include type t="Number" %} | A positive integer (default `1`) used in conjunction with the _group_ and _parent_ properties to access grandparents or other ancestors. For example, `"field": {"parent": "f", "level": 2}` will use the value of the `f` field of the grandparent datum.|
-
-These properties can be arbitrarily nested in order to perform _indirect_ field lookups. For example, `"field": {"parent": {"datum": "f"}}` will first retrieve the value of the `f` field on the current mark's data object. This value will then be used as the property name to lookup on the enclosing group mark's datum.
-
-### Examples
-
-* `{"value": 5}` - The constant value `5`.
-* `{"field": "price"}` - The value of `price` for the current datum.
-* `{"field": "index", "mult": 20}` - The value of `index` for the current datum, multiplied by 20.
-* `{"scale": "x", "value": 0}` - The result of running the value `0` through the scale named `x`.
-* `{"scale": "y", "field": "price"}` - The result of running `price` for the current datum through the scale named `y`.
-* `{"scale": "x", "band": true}` - The range band width of the ordinal scale `x`. Note that the scale must be ordinal!
-* `{"scale": "x", "band": true, "offset": -1}` - The range band width of the ordinal scale `x`, reduced (negative offset) by one pixel.
-
-### <a name="colorref"></a>Color References
-
-Typically color values are specified as a single value indicating an RGB color. However, sometimes a designer may wish to target specific color fields or use a different color space. In this case a special Value Reference format can be used. In the following example, we can set the red and blue channels of an RGB color as constants, and determine the green channel from a scale transform.
-
-{: .suppress-error}
-```json
-"fill": {
- "r": {"value": 255},
- "g": {"scale": "green", "field": "g"},
- "b": {"value": 0}
-}
-```
-
-Vega supports the following color spaces:
-
-| Name          | Description  |
-| :------------ | :------------|
-| [RGB](http://en.wikipedia.org/wiki/RGB_color_space)| with properties `"r"`, `"g"`, and `"b"`.|
-| [HSL](http://en.wikipedia.org/wiki/HSL_and_HSV)| (hue, saturation, lightness), with properties `"h"`, `"s"`, and `"l"`.|
-| [CIE LAB](http://en.wikipedia.org/wiki/Lab_color_space)| with properties `"l"`, `"a"`, and `"b"`. A perceptual color space with distances based on human color judgments. The "L" dimension represents luminance, the "A" dimension represents green-red opposition and the "B" dimension represents blue-yellow opposition.|
-| [HCL](https://en.wikipedia.org/wiki/Lab_color_space#Cylindrical_representation:_CIELCh_or_CIEHLC)            | (hue, chroma, lightness) with properties `"h"`, `"c"`, and `"l"`. This is a version of LAB which uses polar coordinates for the AB plane.|
-
 
 ## <a name="production-rule"></a>Production Rules
 
