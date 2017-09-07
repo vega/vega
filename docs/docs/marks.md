@@ -29,6 +29,7 @@ Each mark supports a set of visual encoding properties that determine the positi
 
 A mark definition typically looks something like this:
 
+{: .suppress-error}
 ```json
 {
   "type": "rect",
@@ -101,6 +102,17 @@ The `enter` set is invoked when a mark item is first instantiated and also when 
 
 Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
 
+## <a name="valueref"></a>Value References		
+
+A _value reference_ specifies the value for a given mark property. The value may be a constant or drawn from a data object. In addition, the value may be run through a scale transform and further modified. Examples include:
+
+- `{"value": "left"}` - Literal value
+- `{"field": "amount"}` - Data field value
+- `{"scale": "yscale", "field": "amount"}` - Scale-transformed data field value
+- `{"signal": "sqrt(pow(datum.a, 2) + pow(datum.b, 2))"` - Signal expression value
+
+For more, see the [Value type documentation](../types/#Value), including the specialized [Color Value](../types/#ColorValue) and [Field Value](../types/#FieldValue) types.
+ 
 ## <a name="production-rule"></a>Production Rules
 
 Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _ValueRef_ objects, each of which must contain an additional `test` property. A single ValueRef, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the ValueRef corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final, predicate-less, ValueRef if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
