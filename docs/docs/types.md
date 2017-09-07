@@ -181,7 +181,7 @@ The base value must be specified using one of the following properties:
 
 | Name          | Type                          | Description  |
 | :------------ | :---------------------------: | :------------|
-| signal        | {% include type t="String" %} | A [signal(#Signal) name or expression.|
+| signal        | {% include type t="String" %} | A [signal](#Signal) name or expression.|
 | color         | {% include type t="ColorValue" %} | Specifies a color using value references for each color channel. See the [color value](#ColorValue) documentation.|
 | field         | {% include type t="FieldValue" %} | A data field name or descriptor. See the [field value](#FieldValue) documentation.|
 | value         | {% include type t="Any" %} | A constant value.|
@@ -229,11 +229,13 @@ Typically color values are specified as a single value indicating an RGB color. 
 
 {: .suppress-error}
 ```json
-"fill": {
-  "color": {
-    "r": {"value": 255},
-    "g": {"scale": "green", "field": "g"},
-    "b": {"value": 0}
+{
+  "fill": {
+    "color": {
+      "r": {"value": 255},
+      "g": {"scale": "green", "field": "g"},
+      "b": {"value": 0}
+    }
   }
 }
 ```
