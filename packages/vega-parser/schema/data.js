@@ -44,7 +44,7 @@ export default {
             "on": {"$ref": "#/defs/onTrigger"},
             "format": {
               "type": "object",
-              "oneOf": [
+              "anyOf": [
                 {
                   "properties": {
                     "type": {"enum": ["json"]},
