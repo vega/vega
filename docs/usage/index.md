@@ -64,12 +64,28 @@ If you have already imported d3 and want to use a smaller Vega bundle without d3
 
 Vega's [View component](../docs/api/view) takes a parsed specification and configuration options as input and sets up an interactive web component. The View API also provides methods for streaming data updates, exporting static images, and accessing internal data for debugging purposes. For more, see the [View component](../docs/api/view) documentation.
 
-```js
-var view = new vega.View(vega.parse(vegaJSONSpec))
-  .renderer('canvas')  // set renderer (canvas or svg)
-  .initialize('#view') // initialize view within parent DOM container
-  .hover()             // enable hover encode set processing
-  .run();              // run the dataflow and render the view
+```html
+<head>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/3.0.2/vega.min.js"></script>
+
+  <script type="text/javascript">
+    var view;
+
+    $.getJSON('https://vega.github.io/vega/examples/bar-chart.vg.json', render);
+
+    function render(data) {
+      view = new vega.View(vega.parse(data))
+        .renderer('canvas')  // set renderer (canvas or svg)
+        .initialize('#view') // initialize view within parent DOM container
+        .hover()             // enable hover encode set processing
+        .run();
+     }
+  </script>
+</head>
+<body>
+  <div id="view"></div>
+</body>
 ```
 
 Vega visualizations will be added to a parent DOM element. This element must be provided to the `initialize` method by passing a DOM object or a CSS selector string. **Note:** Any existing content within the parent element _will be removed_ upon view initialization.
