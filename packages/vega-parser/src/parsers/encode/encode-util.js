@@ -1,6 +1,6 @@
 import parseEncode from '../encode';
 import {FrameRole, MarkRole} from '../marks/roles';
-import {array, extend, isObject} from 'vega-util';
+import {array, extend, isArray, isObject} from 'vega-util';
 
 export function encoder(_) {
   return isObject(_) ? _ : {value: _};
@@ -8,7 +8,7 @@ export function encoder(_) {
 
 export function addEncode(object, name, value) {
   if (value != null) {
-    object[name] = {value: value};
+    object[name] = isObject(value) && !isArray(value) ? value : {value: value};
     return 1;
   } else {
     return 0;
