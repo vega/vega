@@ -19,8 +19,8 @@ export default function parseView(spec, scope) {
   scope.background = spec.background || config.background;
   scope.eventConfig = config.events;
   root = ref(scope.root = scope.add(operator()));
-  scope.addSignal('width', spec.width || -1);
-  scope.addSignal('height', spec.height || -1);
+  scope.addSignal('width', spec.width || 0);
+  scope.addSignal('height', spec.height || 0);
   scope.addSignal('padding', parsePadding(spec.padding, config));
   scope.addSignal('autosize', parseAutosize(spec.autosize, config));
 
