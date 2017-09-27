@@ -3,14 +3,24 @@ import guideMark from './guide-mark';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
+import {isNumber} from 'vega-util';
+
+function flushExpr(a, b, c) {
+  return {signal:
+    'item===item.mark.items[0] ? ' + a
+      + ' : item===peek(item.mark.items) ? ' + b
+      + ' : ' + c
+  };
+}
 
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       scale = spec.scale,
-      overlap = spec.labelOverlap != null ? spec.labelOverlap : config.labelOverlap,
-      bound = spec.labelBound != null ? spec.labelBound : config.labelBound,
       pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
+      bound = spec.labelBound != null ? spec.labelBound : config.labelBound,
+      flush = spec.labelFlush != null ? spec.labelFlush : config.labelFlush,
+      overlap = spec.labelOverlap != null ? spec.labelOverlap : config.labelOverlap,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
@@ -47,13 +57,26 @@ export default function(spec, config, userEncode, dataRef, size) {
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    addEncode(update, 'align', 'center');
+    addEncode(update, 'align', flush
+      ? flushExpr('"left"', '"right"', '"center"')
+      : 'center');
+    if (flush && isNumber(flush)) {
+      flush = Math.abs(+flush);
+      addEncode(update, 'dx', flushExpr(-flush, flush, 0));
+    }
+
     addEncode(update, 'baseline', orient === Top ? 'bottom' : 'top');
   } else {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
     addEncode(update, 'align', orient === Right ? 'left' : 'right');
-    addEncode(update, 'baseline', 'middle');
+    addEncode(update, 'baseline', flush
+      ? flushExpr('"bottom"', '"top"', '"middle"')
+      : 'middle');
+    if (flush && isNumber(flush)) {
+      flush = Math.abs(+flush);
+      addEncode(update, 'dy', flushExpr(flush, -flush, 0));
+    }
   }
 
   spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
