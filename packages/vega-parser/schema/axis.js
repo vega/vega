@@ -44,6 +44,12 @@ export default {
             {"enum": ["parity", "greedy"], "type": "string"}
           ]
         },
+        "labelBound": {
+          "oneOf": [
+            {"type": "boolean"},
+            {"type": "number"}
+          ]
+        },
 
         "tickCount": {"$ref": "#/refs/tickCount"},
         "format": {"$ref": "#/refs/stringOrSignal"},

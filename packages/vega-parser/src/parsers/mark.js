@@ -107,11 +107,17 @@ export default function(spec, scope) {
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }
   }
 
-  if (spec.overlap) {
-    boundRef = ref(scope.add(Overlap({
-      method: spec.overlap === true ? 'parity' : spec.overlap,
+  if (spec.overlapMethod || spec.overlapBound) {
+    op = {
+      method: spec.overlapMethod === true ? 'parity' : spec.overlapMethod,
       pulse:  boundRef
-    })));
+    };
+    if (spec.overlapBound) {
+      op.boundScale = scope.scaleRef(spec.overlapBound.scale);
+      op.boundOrient = spec.overlapBound.orient;
+      op.boundTolerance = spec.overlapBound.tolerance;
+    }
+    boundRef = ref(scope.add(Overlap(op)));
   }
 
   // render / sieve items
