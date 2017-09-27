@@ -1,4 +1,6 @@
+import {Top, Bottom} from './orient';
 import {Transform} from 'vega-dataflow';
+import {Bounds} from 'vega-scenegraph';
 import {inherits, peek} from 'vega-util';
 
 /**
@@ -10,6 +12,16 @@ import {inherits, peek} from 'vega-util';
  *   One of 'parity' (default, hide every other item until there is no
  *   more overlap) or 'greedy' (sequentially scan and hide and items that
  *   overlap with the last visible item).
+ * @param {object} params.boundScale - A scale whose range should be used
+ *   to bound the items. Items exceeding the bounds of the scale range
+ *   will be treated as overlapping. If null or undefined, no bounds check
+ *   will be applied.
+ * @param {object} params.boundOrient - The orientation of the scale
+ *   (top, bottom, left, or right) used to bound items. This parameter is
+ *   ignored if boundScale is null or undefined.
+ * @param {object} params.boundTolerance - The tolerance in pixels for
+ *   bound inclusion testing (default 1). This specifies by how many pixels
+ *   an item's bounds may exceed the scale range bounds and not be culled.
  * @constructor
  */
 export default function Overlap(params) {
@@ -59,16 +71,33 @@ function hasBounds(item) {
   return b.width() > 1 && b.height() > 1;
 }
 
+function boundTest(scale, orient, tolerance) {
+  var range = scale.range(),
+      b = new Bounds();
+
+  if (orient === Top || orient === Bottom) {
+    b.set(range[0], -Infinity, range[1], +Infinity);
+  } else {
+    b.set(-Infinity, range[0], +Infinity, range[1]);
+  }
+  b.expand(tolerance || 1);
+
+  return function(item) {
+    return b.encloses(item.bounds);
+  };
+}
+
 prototype.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
-      source = pulse.materialize(pulse.SOURCE).source,
-      items  = source;
+      source = pulse.materialize(pulse.SOURCE).source;
 
-  if (!items) return;
+  if (!source) return;
 
   if (_.method === 'greedy') {
-    items = source = source.filter(hasBounds);
+    source = source.filter(hasBounds);
   }
+
+  var items = source;
 
   if (items.length >= 3 && hasOverlap(items)) {
     pulse = pulse.reflow(_.modified()).modifies('opacity');
@@ -80,6 +109,13 @@ prototype.transform = function(_, pulse) {
       if (items.length > 1) peek(items).opacity = 0;
       peek(source).opacity = 1;
     }
+  }
+
+  if (_.boundScale) {
+    var test = boundTest(_.boundScale, _.boundOrient, _.boundTolerance);
+    source.forEach(function(item) {
+      if (!test(item)) item.opacity = 0;
+    })
   }
 
   return pulse;
