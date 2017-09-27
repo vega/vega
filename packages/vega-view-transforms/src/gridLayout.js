@@ -260,6 +260,9 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
       edge = 0,
       i, j, k, m, b, h, g, x, y;
 
+  // if no groups, early exit and return 0
+  if (!n) return init;
+
   // compute margin
   for (i=start; i<n; i+=stride) {
     if (groups[i]) init = agg(init, bound(groups[i], bf));
@@ -290,7 +293,7 @@ function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bo
 
     // search for nearest group to align to
     // necessary if table has empty cells
-    for (k=i; (g = groups[k]) == null; k-=back);
+    for (k=i; k >= 0 && (g = groups[k]) == null; k-=back);
 
     // assign coordinates and update bounds
     if (isX) {
