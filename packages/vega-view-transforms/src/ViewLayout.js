@@ -9,8 +9,6 @@ var Fit = 'fit',
     None = 'none',
     Padding = 'padding';
 
-
-
 var AxisRole = 'axis',
     TitleRole = 'title',
     FrameRole = 'frame',
