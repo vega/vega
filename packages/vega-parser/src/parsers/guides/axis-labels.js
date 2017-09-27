@@ -6,8 +6,10 @@ import {addEncode, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
-      overlap = spec.labelOverlap,
       sign = (orient === Left || orient === Top) ? -1 : 1,
+      scale = spec.scale,
+      overlap = spec.labelOverlap != null ? spec.labelOverlap : config.labelOverlap,
+      bound = spec.labelBound != null ? spec.labelBound : config.labelBound,
       pad = spec.labelPadding != null ? spec.labelPadding : config.labelPadding,
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
@@ -36,7 +38,7 @@ export default function(spec, config, userEncode, dataRef, size) {
   tickSize.offset.mult = sign;
 
   tickPos = {
-    scale:  spec.scale,
+    scale:  scale,
     field:  Value,
     band:   0.5,
     offset: config.tickOffset
@@ -55,6 +57,9 @@ export default function(spec, config, userEncode, dataRef, size) {
   }
 
   spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
-  spec.overlap = overlap || config.labelOverlap;
+  spec.overlapMethod = overlap;
+  spec.overlapBound = bound
+    ? {scale: scale, orient: orient, tolerance: +bound}
+    : null;
   return spec;
 }
