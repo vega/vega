@@ -38,6 +38,12 @@ export default {
         "gridScale": {"type": "string"},
         "tickSize": {"type": "number"},
         "labelPadding": {"type": "number"},
+        "labelFlush": {
+          "oneOf": [
+            {"type": "boolean"},
+            {"type": "number"}
+          ]
+        },
         "labelOverlap": {
           "oneOf": [
             {"type": "boolean"},
