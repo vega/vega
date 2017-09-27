@@ -1,4 +1,5 @@
 import {gridLayout} from './gridLayout';
+import {Top, Bottom, Left, Right} from './orient';
 import {Transform} from 'vega-dataflow';
 import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
@@ -8,10 +9,7 @@ var Fit = 'fit',
     None = 'none',
     Padding = 'padding';
 
-var Top = 'top',
-    Left = 'left',
-    Right = 'right',
-    Bottom = 'bottom';
+
 
 var AxisRole = 'axis',
     TitleRole = 'title',
