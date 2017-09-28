@@ -1,4 +1,5 @@
 import numbers from './numbers';
+import random from './random';
 import {quantile, ascending} from 'd3-array';
 
 export default function(array, samples, alpha, f) {
@@ -9,7 +10,7 @@ export default function(array, samples, alpha, f) {
 
   for (j=0, mu=Array(m); j<m; ++j) {
     for (a=0, i=0; i<n; ++i) {
-      a += values[~~(Math.random() * n)];
+      a += values[~~(random() * n)];
     }
     mu[j] = a / n;
   }
