@@ -1,4 +1,5 @@
 import {Transform, tupleid} from 'vega-dataflow';
+import {random} from 'vega-statistics';
 import {inherits} from 'vega-util';
 
 /**
@@ -42,7 +43,7 @@ prototype.transform = function(_, pulse) {
     if (res.length < num) {
       res.push(t);
     } else {
-      idx = ~~((cnt + 1) * Math.random());
+      idx = ~~((cnt + 1) * random());
       if (idx < res.length && idx >= cap) {
         p = res[idx];
         if (map[tupleid(p)]) out.rem.push(p); // eviction
