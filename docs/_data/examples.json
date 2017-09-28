@@ -71,7 +71,7 @@
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
-        {"name": "udistrict-cuisine"}
+        {"name": "u-district-cuisine"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
