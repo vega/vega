@@ -1,7 +1,9 @@
 export var Log = 'log';
 export var Pow = 'pow';
+export var Utc = 'utc';
 export var Sqrt = 'sqrt';
 export var Band = 'band';
+export var Time = 'time';
 export var Point = 'point';
 export var Linear = 'linear';
 export var Ordinal = 'ordinal';
