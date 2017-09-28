@@ -2,6 +2,7 @@ import cloud from './CloudLayout';
 import {Transform} from 'vega-dataflow';
 import {constant, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';
+import {random} from 'vega-statistics';
 
 var Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
 
@@ -77,6 +78,7 @@ prototype.transform = function(_, pulse) {
     .fontStyle(_.fontStyle || 'normal')
     .fontWeight(_.fontWeight || 'normal')
     .fontSize(fontSize)
+    .random(random)
     .layout();
 
   var size = layout.size(),
