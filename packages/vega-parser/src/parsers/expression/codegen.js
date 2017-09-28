@@ -1,7 +1,9 @@
 import {isTuple} from 'vega-dataflow';
 import {codegen, constants, functions} from 'vega-expression';
+import {random} from 'vega-statistics';
 import {
   isArray, isBoolean, isDate, isNumber, isObject, isRegExp, isString,
+  panLinear, panLog, panPow, zoomLinear, zoomLog, zoomPow,
   toBoolean, toDate, toNumber, toString,
   pad, peek, stringValue, truncate
 } from 'vega-util';
@@ -22,7 +24,6 @@ import {containerSize, screen, windowSize} from './window';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
-import {panLinear, panLog, panPow, zoomLinear, zoomLog, zoomPow} from './scale-transform';
 import {geoArea, geoBounds, geoCentroid} from './geo';
 import {data, indata, setdata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
@@ -33,6 +34,7 @@ import {vlPoint, vlPointDomain, vlMultiVisitor, vlInterval, vlIntervalDomain} fr
 
 // Expression function context object
 export var functionContext = {
+  random: function() { return random(); }, // override default
   isArray: isArray,
   isBoolean: isBoolean,
   isDate: isDate,
