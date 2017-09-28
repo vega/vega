@@ -1,11 +1,15 @@
 import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
-import {error, inherits, isFunction, toSet} from 'vega-util';
+import {
+  error, inherits, isFunction, peek, toSet,
+  zoomLinear, zoomLog, zoomPow
+} from 'vega-util';
 
 import {
   Ordinal, Band, Point,
-  Linear, Pow, Sqrt, Sequential,
-  Quantile, Quantize, Threshold, BinOrdinal
+  Linear, Log, Pow, Sqrt, Sequential,
+  Quantile, Quantize, Threshold, BinOrdinal,
+  Time, Utc
 } from './scale-types';
 
 import {
@@ -25,6 +29,8 @@ import {
 var DEFAULT_COUNT = 5;
 
 var INCLUDE_ZERO = toSet([Linear, Pow, Sqrt]);
+
+var INCLUDE_PAD = toSet([Linear, Log, Pow, Sqrt, Time, Utc]);
 
 var SKIP = toSet([
   'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
@@ -54,6 +60,9 @@ prototype.transform = function(_, pulse) {
   }
 
   for (prop in _) if (!SKIP[prop]) {
+    // padding is a scale property for band/point but not others
+    if (prop === 'padding' && INCLUDE_PAD[scale.type]) continue;
+    // invoke scale property setter, raise warning if not found
     isFunction(scale[prop])
       ? scale[prop](_[prop])
       : df.warn('Unsupported scale property: ' + prop);
@@ -70,10 +79,16 @@ function configureDomain(scale, _, df) {
   if (raw > -1) return raw;
 
   var domain = _.domain,
-      zero = _.zero || (_.zero === undefined && INCLUDE_ZERO[scale.type]),
+      type = scale.type,
+      zero = _.zero || (_.zero === undefined && INCLUDE_ZERO[type]),
       n, mid;
 
   if (!domain) return 0;
+
+  // adjust continuous domain for minimum pixel padding
+  if (INCLUDE_PAD[type] && _.padding && domain[0] !== peek(domain)) {
+    domain = padDomain(type, domain, _.range, _.padding, _.exponent);
+  }
 
   // adjust domain based on zero, min, max settings
   if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
@@ -113,6 +128,20 @@ function rawDomain(scale, raw) {
   } else {
     return -1;
   }
+}
+
+function padDomain(type, domain, range, pad, exponent) {
+  var span = Math.abs(peek(range) - range[0]),
+      frac = span / (span - 2 * pad),
+      d = type === Log  ? zoomLog(domain, null, frac)
+        : type === Sqrt ? zoomPow(domain, null, frac, 0.5)
+        : type === Pow  ? zoomPow(domain, null, frac, exponent)
+        : zoomLinear(domain, null, frac);
+
+  domain = domain.slice();
+  domain[0] = d[0];
+  domain[domain.length-1] = d[1];
+  return domain;
 }
 
 function configureRange(scale, _, count) {
