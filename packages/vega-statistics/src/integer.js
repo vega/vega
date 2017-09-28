@@ -1,4 +1,4 @@
-import random from './random';
+import {random} from './random';
 
 export default function(min, max) {
   if (max == null) {
