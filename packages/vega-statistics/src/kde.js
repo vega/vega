@@ -1,6 +1,6 @@
 import gaussian from './normal';
 import quartiles from './quartiles';
-import random from './random';
+import {random} from './random';
 import {variance} from 'd3-array';
 
 // TODO: support for additional kernels?

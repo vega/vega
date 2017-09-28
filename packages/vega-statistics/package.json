@@ -1,6 +1,6 @@
 {
   "name": "vega-statistics",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
     "vega",
