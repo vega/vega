@@ -1,13 +1,20 @@
-import {extend, isObject} from 'vega-util';
+import {extend} from 'vega-util';
 
 export default function(configs) {
   var output = defaults();
   (configs || []).forEach(function(config) {
-    var key;
-    if (config) for (key in config) {
-      output[key] = isObject(output[key])
-        ? extend(output[key], config[key])
-        : output[key] = config[key];
+    var key, style;
+    if (config) {
+      for (key in config) {
+        if (key === 'style') {
+          style = output.style || (output.style = {});
+          for (key in config.style) {
+            style[key] = extend(style[key] || {}, config.style[key]);
+          }
+        } else {
+          output[key] = extend(output[key] || {}, config[key]);
+        }
+      }
     }
   });
   return output;
@@ -114,7 +121,7 @@ function defaults() {
       // defaults for styled group marks in Vega-Lite
       cell: {
         fill: 'transparent',
-        stroke: lightGray 
+        stroke: lightGray
       }
     },
 
