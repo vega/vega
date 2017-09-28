@@ -22,6 +22,15 @@ export {
   Debug
 } from './src/logger';
 
+export {
+  panLinear,
+  panLog,
+  panPow,
+  zoomLinear,
+  zoomLog,
+  zoomPow
+} from './src/transform';
+
 export {default as array} from './src/array';
 export {default as compare} from './src/compare';
 export {default as constant} from './src/constant';

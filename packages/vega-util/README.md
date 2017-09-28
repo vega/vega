@@ -334,14 +334,6 @@ vega.extentIndex([
 ], vega.field('b')); // [1, 2]
 ```
 
-<a name="peek" href="#peek">#</a>
-vega.<b>peek</b>(<i>array</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
-
-Returns the last element in the input *array*. Similar to the built-in
-`Array.pop` method, except that it does not remove the last element. This
-method is a convenient shorthand for `array[array.length - 1]`.
-
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/merge.js "Source")
@@ -351,6 +343,48 @@ function is a comparator for sorting elements and should correspond to the
 pre-sorted orders of the *array1* and *array2* source arrays. The merged
 array contents are written to the *output* array, if provided. If *output*
 is not specified, a new array is generated and returned.
+
+<a name="panLinear" href="#panLinear">#</a>
+vega.<b>panLinear</b>(<i>domain</i>, <i>delta</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that translates the domain by a _delta_ using a linear
+transform. The _delta_ value is expressed as a fraction of the current
+domain span, and may be positive or negative to indicate the translation
+direction. The return value is a two-element array indicating the starting
+and ending value of the translated (panned) domain.
+
+<a name="panLog" href="#panLog">#</a>
+vega.<b>panLog</b>(<i>domain</i>, <i>delta</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that translates the domain by a _delta_ using a logarithmic
+transform. The _delta_ value is expressed as a fraction of the current
+domain span, and may be positive or negative to indicate the translation
+direction. The return value is a two-element array indicating the starting
+and ending value of the translated (panned) domain.
+
+<a name="panPow" href="#panPow">#</a>
+vega.<b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that translates the domain by a _delta_ using a power
+scale transform parameterized by the provided _exponent_. The _delta_ value
+is expressed as a fraction of the current domain span, and may be positive
+or negative to indicate the translation direction. The return value is a
+two-element array indicating the starting and ending value of the
+translated (panned) domain.
+
+<a name="peek" href="#peek">#</a>
+vega.<b>peek</b>(<i>array</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+
+Returns the last element in the input *array*. Similar to the built-in
+`Array.pop` method, except that it does not remove the last element. This
+method is a convenient shorthand for `array[array.length - 1]`.
 
 <a name="toSet" href="#toSet">#</a>
 vega.<b>toSet</b>(<i>array</i>)
@@ -388,6 +422,38 @@ vega.visitArray([0, -1, 2],
   function(v, i, array) { console.log(v, i); });
 ```
 
+<a name="zoomLinear" href="#zoomLinear">#</a>
+vega.<b>zoomLinear</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that scales (zooms) the domain by a _scale_ factor using
+a linear transform, centered on the given _anchor_ value. If _anchor_ is
+`null`, the midpoint of the domain is used instead. The return value is a
+two-element array indicating the starting and ending value of the
+scaled (zoomed) domain.
+
+<a name="zoomLog" href="#zoomLog">#</a>
+vega.<b>zoomLog</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that scales (zooms) the domain by a _scale_ factor using
+a logarithmic transform, centered on the given _anchor_ value. If _anchor_
+is `null`, the midpoint of the domain is used instead. The return value is
+a two-element array indicating the starting and ending value of the
+scaled (zoomed) domain.
+
+<a name="zoomPow" href="#zoomPow">#</a>
+vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
+[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a
+new domain array that scales (zooms) the domain by a _scale_ factor using
+a power scale transform parameterized by the provided _exponent_, centered
+on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the
+domain is used instead. The return value is a two-element array indicating
+the starting and ending value of the scaled (zoomed) domain.
 
 ### Strings
 
