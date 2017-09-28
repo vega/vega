@@ -1,3 +1,5 @@
+import random from './random';
+
 export default function(min, max) {
   if (max == null) {
     max = min;
@@ -28,7 +30,7 @@ export default function(min, max) {
   };
 
   dist.sample = function() {
-    return a + Math.floor(d * Math.random());
+    return a + Math.floor(d * random());
   };
 
   dist.pdf = function(x) {

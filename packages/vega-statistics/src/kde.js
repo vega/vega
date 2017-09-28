@@ -1,5 +1,6 @@
 import gaussian from './normal';
 import quartiles from './quartiles';
+import random from './random';
 import {variance} from 'd3-array';
 
 // TODO: support for additional kernels?
@@ -26,7 +27,7 @@ export default function(support, bandwidth) {
   };
 
   dist.sample = function() {
-    return support[~~(Math.random() * n)] + bandwidth * kernel.sample();
+    return support[~~(random() * n)] + bandwidth * kernel.sample();
   };
 
   dist.pdf = function(x) {

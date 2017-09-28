@@ -4,8 +4,29 @@ Statistical routines and probability distributions.
 
 ## API Reference
 
+* [Random Number Generation](#random-number-generation)
 * [Distributions](#distributions)
 * [Statistics](#statistics)
+
+### Random Number Generation
+
+<a name="random" href="#random">#</a>
+vega.<b>random</b>()
+[<>](https://github.com/vega/vega-statistics/blob/master/src/random.js "Source")
+
+Returns a uniform pseudo-random number in the domain [0, 1). By default this
+is simply a call to JavaScript's built-in `Math.random` function. All Vega
+routines that require random numbers should use this function.
+
+<a name="setRandom" href="#setRandom">#</a>
+vega.<b>setRandom</b>(<i>randfunc</i>)
+[<>](https://github.com/vega/vega-statistics/blob/master/src/random.js "Source")
+
+Sets the random number generator to the provided function _randfunc_.
+Subsequent calls to <a href="#random">random</a> will invoke the new
+function to generate random numbers. Setting a custom generator can be
+helpful if one wishes to use an alternative source of randomness or replace
+the default generator with a deterministic function for testing purposes.
 
 ### Distributions
 

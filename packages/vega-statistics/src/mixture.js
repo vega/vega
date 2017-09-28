@@ -1,3 +1,5 @@
+import random from './random';
+
 export default function(dists, weights) {
   var dist = {}, m = 0, w;
 
@@ -31,7 +33,7 @@ export default function(dists, weights) {
   };
 
   dist.sample = function() {
-    var r = Math.random(),
+    var r = random(),
         d = dists[m-1],
         v = w[0],
         i = 0;
