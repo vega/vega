@@ -53,16 +53,13 @@ export function validTicks(scale, ticks, count) {
     return !(v < lo || v > hi)
   });
 
-  var startAndEnd = [ticks[0], peek(ticks)];
-  if (count > 0) {
+  if (count > 0 && ticks.length > 1) {
+    var endpoints = [ticks[0], peek(ticks)];
     while (ticks.length > count && ticks.length >= 3) {
-      ticks = ticks.filter(function(_, i) {
-        return i % 2 === 0;
-      });
+      ticks = ticks.filter(function(_, i) { return !(i % 2); });
     }
-
     if (ticks.length < 3) {
-      return startAndEnd;
+      ticks = endpoints;
     }
   }
 
