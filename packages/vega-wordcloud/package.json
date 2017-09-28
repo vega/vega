@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-wordcloud.js -c -m -o build/vega-wordcloud.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-wordcloud.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g vega-dataflow:vega,vega-scale:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-wordcloud.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-wordcloud.zip -- LICENSE README.md build/vega-wordcloud.js build/vega-wordcloud.min.js"
@@ -29,6 +29,7 @@
   "dependencies": {
     "vega-dataflow": "3",
     "vega-scale": "2",
+    "vega-statistics": "^1.2",
     "vega-util": "1"
   },
   "optionalDependencies": {
