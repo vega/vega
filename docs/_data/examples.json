@@ -70,7 +70,8 @@
         {"name": "wheat-and-wages"},
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
-        {"name": "weekly-temperature"}
+        {"name": "weekly-temperature"},
+        {"name": "udistrict-cuisine"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
