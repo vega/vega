@@ -177,7 +177,9 @@ Additional property blocks can target more specific axis types based on the orie
 | gridWidth       | {% include type t="Number" %}   | Stroke width of axis grid lines. |
 | labels          | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick labels should be included by default. |
 | labelAngle      | {% include type t="Number" %}   | Angle in degrees of axis tick labels. |
+| labelBound      | {% include type t="Boolean|Number" %} | Boolean flag or pixel tolerance value for removal of labels that exceed the axis range. |
 | labelColor      | {% include type t="Color" %}    | Text color of axis tick labels. |
+| labelFlush      | {% include type t="Boolean|Number" %} | Boolean flag or offset value for flush alignment of first and last axis labels. |
 | labelFont       | {% include type t="String" %}   | Font name for axis tick labels. |
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
