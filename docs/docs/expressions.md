@@ -606,31 +606,31 @@ Tests if the data set with a given _name_ contains a datum with a _field_ value 
 Functions for working with Vega scale transforms and cartographic projections.
 
 <a name="scale" href="#scale">#</a>
-<b>scale</b>(<i>name</i>, <i>value</i>[, <i>group</i>)<br/>
+<b>scale</b>(<i>name</i>, <i>value</i>[, <i>group</i>])<br/>
 Applies the named scale transform (or projection) to the specified _value_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale or projection.
 
 <a name="invert" href="#invert">#</a>
-<b>invert</b>(<i>name</i>, <i>value</i>[, <i>group</i>)<br/>
+<b>invert</b>(<i>name</i>, <i>value</i>[, <i>group</i>])<br/>
 Inverts the named scale transform (or projection) for the specified _value_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale or projection.
 
 <a name="copy" href="#copy">#</a>
-<b>copy</b>(<i>name</i>[, <i>group</i>)<br/>
+<b>copy</b>(<i>name</i>[, <i>group</i>])<br/>
 Returns a copy (a new cloned instance) of the named scale transform of projection, or `undefined` if no scale or projection is found. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale or projection.
 
 <a name="domain" href="#domain">#</a>
-<b>domain</b>(<i>name</i>[, <i>group</i>)<br/>
+<b>domain</b>(<i>name</i>[, <i>group</i>])<br/>
 Returns the scale domain array for the named scale transform, or an empty array if the scale is not found. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale.
 
 <a name="range" href="#range">#</a>
-<b>range</b>(<i>name</i>[, <i>group</i>)<br/>
+<b>range</b>(<i>name</i>[, <i>group</i>])<br/>
 Returns the scale range array for the named scale transform, or an empty array if the scale is not found. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale.
 
 <a name="bandwidth" href="#bandwidth">#</a>
-<b>bandwidth</b>(<i>name</i>[, <i>group</i>)<br/>
+<b>bandwidth</b>(<i>name</i>[, <i>group</i>])<br/>
 Returns the current band width for the named band scale transform, or zero if the scale is not found or is not a band scale. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the scale.
 
 <a name="bandspace" href="#bandspace">#</a>
-<b>bandspace</b>(<i>count</i>[, <i>paddingInner</i>, <i>paddingOuter</i>)<br/>
+<b>bandspace</b>(<i>count</i>[, <i>paddingInner</i>, <i>paddingOuter</i>])<br/>
 Returns the number of steps needed within a band scale, based on the _count_ of domain elements and the inner and outer padding values. While normally calculated within the scale itself, this function can be helpful for determining the size of a chart's layout.
 
 <a name="gradient" href="#gradient">#</a>
