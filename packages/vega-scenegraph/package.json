@@ -50,6 +50,7 @@
     "uglify-js": "3"
   },
   "browser": {
-    "canvas": false
+    "canvas": false,
+    "canvas-prebuilt": false
   }
 }
