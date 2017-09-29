@@ -66,21 +66,22 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
 
 ```html
 <head>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/3.0.2/vega.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>
 
   <script type="text/javascript">
     var view;
 
-    $.getJSON('https://vega.github.io/vega/examples/bar-chart.vg.json', render);
+    vega.loader()
+      .load('https://vega.github.io/vega/examples/bar-chart.vg.json')
+      .then(function(data) { render(JSON.parse(data)); });
 
-    function render(data) {
-      view = new vega.View(vega.parse(data))
+    function render(spec) {
+      view = new vega.View(vega.parse(spec))
         .renderer('canvas')  // set renderer (canvas or svg)
         .initialize('#view') // initialize view within parent DOM container
         .hover()             // enable hover encode set processing
         .run();
-     }
+    }
   </script>
 </head>
 <body>
