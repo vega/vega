@@ -5,10 +5,15 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     tape = require('tape'),
     vega = require('../'),
     loader = vega.loader({baseURL: 'test/'}),
-    specs = require('./specs-valid.json').filter(function(name) {
-      // remove wordcloud due to random layout
-      return name !== 'wordcloud';
-    });
+    specs = require('./specs-valid.json');
+
+// Plug-in a deterministic random number generator for testing.
+// Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
+var seed = 123456789;
+vega.setRandom(function() {
+  seed = (1103515245 * seed + 12345) % 2147483647;
+  return seed / 2147483647;
+});
 
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
