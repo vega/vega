@@ -427,7 +427,15 @@ function cloudCanvas() {
     var canvas = typeof document !== 'undefined' && document.createElement
       ? document.createElement('canvas')
       : 0;
-    return canvas && canvas.getContext ? canvas : new (require('canvas'))();
+
+    if (canvas && canvas.getContext) {
+      return canvas;
+    }
+    try {
+      return new (require('canvas'))();
+    } catch (e) {
+      return new (require('canvas-prebuilt'))()
+    }
   } catch (e) {
     error('Canvas unavailable. Run in browser or install node-canvas.');
   }
