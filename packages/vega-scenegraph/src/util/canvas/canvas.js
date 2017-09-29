@@ -2,7 +2,10 @@ import {domCreate} from '../dom';
 
 export var Canvas;
 
-try { Canvas = require('canvas'); } catch (e) { Canvas = null; }
+try {
+  Canvas = require('canvas');
+  Canvas = Canvas || require('canvas-prebuilt');
+} catch (e) { Canvas = null; }
 
 export default function(w, h) {
   var canvas = domCreate(null, 'canvas');

@@ -38,7 +38,8 @@
     "vega-util": "^1.1"
   },
   "optionalDependencies": {
-    "canvas": "^1.6"
+    "canvas": "^1.6",
+    "canvas-prebuilt": "^1.6"
   },
   "devDependencies": {
     "eslint": "4",
