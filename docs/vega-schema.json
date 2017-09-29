@@ -80,6 +80,16 @@
         "labelPadding": {
           "type": "number"
         },
+        "labelFlush": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
         "labelOverlap": {
           "oneOf": [
             {
@@ -91,6 +101,16 @@
                 "greedy"
               ],
               "type": "string"
+            }
+          ]
+        },
+        "labelBound": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
             }
           ]
         },
@@ -313,7 +333,7 @@
             },
             "format": {
               "type": "object",
-              "oneOf": [
+              "anyOf": [
                 {
                   "properties": {
                     "type": {
@@ -2491,6 +2511,9 @@
                 "clamp": {
                   "$ref": "#/refs/booleanOrSignal"
                 },
+                "padding": {
+                  "type": "number"
+                },
                 "nice": {
                   "oneOf": [
                     {
@@ -2771,6 +2794,9 @@
                 "clamp": {
                   "$ref": "#/refs/booleanOrSignal"
                 },
+                "padding": {
+                  "type": "number"
+                },
                 "nice": {
                   "oneOf": [
                     {
@@ -2874,6 +2900,9 @@
                 },
                 "clamp": {
                   "$ref": "#/refs/booleanOrSignal"
+                },
+                "padding": {
+                  "type": "number"
                 },
                 "nice": {
                   "oneOf": [
@@ -2981,6 +3010,9 @@
                 },
                 "exponent": {
                   "$ref": "#/refs/numberOrSignal"
+                },
+                "padding": {
+                  "type": "number"
                 },
                 "nice": {
                   "oneOf": [
@@ -3436,6 +3468,9 @@
         },
         {
           "$ref": "#/defs/lookupTransform"
+        },
+        {
+          "$ref": "#/defs/projectTransform"
         },
         {
           "$ref": "#/defs/sampleTransform"
@@ -4864,6 +4899,69 @@
         "from",
         "key",
         "fields"
+      ]
+    },
+    "projectTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "project"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "fields": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
       ]
     },
     "sampleTransform": {
