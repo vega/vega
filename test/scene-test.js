@@ -5,7 +5,10 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     tape = require('tape'),
     vega = require('../'),
     loader = vega.loader({baseURL: 'test/'}),
-    specs = require('./specs-valid.json');
+    specs = require('./specs-valid.json').filter(function(spec) {
+      // filter wordcloud due to cross-platform canvas issues
+      return spec !== 'wordcloud';
+    });
 
 // Plug-in a deterministic random number generator for testing.
 // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
