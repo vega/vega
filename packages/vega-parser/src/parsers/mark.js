@@ -20,6 +20,7 @@ export default function(spec, scope) {
       facet = spec.from && spec.from.facet,
       layout = spec.layout || role === ScopeRole || role === FrameRole,
       nested = role === MarkRole || layout || facet,
+      overlap = spec.overlap,
       ops, op, input, store, bound, render, sieve, name,
       joinRef, markRef, encodeRef, layoutRef, boundRef;
 
@@ -107,15 +108,18 @@ export default function(spec, scope) {
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }
   }
 
-  if (spec.overlapMethod || spec.overlapBound) {
+  if (overlap) {
     op = {
-      method: spec.overlapMethod === true ? 'parity' : spec.overlapMethod,
+      method: overlap.method === true ? 'parity' : overlap.method,
       pulse:  boundRef
     };
-    if (spec.overlapBound) {
-      op.boundScale = scope.scaleRef(spec.overlapBound.scale);
-      op.boundOrient = spec.overlapBound.orient;
-      op.boundTolerance = spec.overlapBound.tolerance;
+    if (overlap.order) {
+      op.sort = scope.compareRef({field: overlap.order});
+    }
+    if (overlap.bound) {
+      op.boundScale = scope.scaleRef(overlap.bound.scale);
+      op.boundOrient = overlap.bound.orient;
+      op.boundTolerance = overlap.bound.tolerance;
     }
     boundRef = ref(scope.add(Overlap(op)));
   }
