@@ -38,14 +38,19 @@ prototype.transform = function(_, pulse) {
 
   if (ticks) out.rem = ticks;
 
-  ticks = values.map(function(value) {
-    return ingest({value: value, label: format(value)})
+  ticks = values.map(function(value, i) {
+    return ingest({
+      index: i / (values.length - 1),
+      value: value,
+      label: format(value)
+    });
   });
 
   if (_.extra) {
     // add an extra tick pegged to the initial domain value
     // this is used to generate axes with 'binned' domains
     ticks.push(ingest({
+      index: -1,
       extra: {value: ticks[0].value},
       label: ''
     }));
