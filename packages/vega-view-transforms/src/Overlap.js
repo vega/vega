@@ -8,18 +8,20 @@ import {inherits, peek} from 'vega-util';
  * overlapping bounding boxes. This transform will preserve at least
  * two items (e.g., first and last) even if overlap persists.
  * @param {object} params - The parameters for this operator.
- * @param {object} params.method - The overlap removal method to apply.
+ * @param {function(*,*): number} [params.sort] - A comparator
+ *   function for sorting items.
+ * @param {object} [params.method] - The overlap removal method to apply.
  *   One of 'parity' (default, hide every other item until there is no
  *   more overlap) or 'greedy' (sequentially scan and hide and items that
  *   overlap with the last visible item).
- * @param {object} params.boundScale - A scale whose range should be used
+ * @param {object} [params.boundScale] - A scale whose range should be used
  *   to bound the items. Items exceeding the bounds of the scale range
  *   will be treated as overlapping. If null or undefined, no bounds check
  *   will be applied.
- * @param {object} params.boundOrient - The orientation of the scale
+ * @param {object} [params.boundOrient] - The orientation of the scale
  *   (top, bottom, left, or right) used to bound items. This parameter is
  *   ignored if boundScale is null or undefined.
- * @param {object} params.boundTolerance - The tolerance in pixels for
+ * @param {object} [params.boundTolerance] - The tolerance in pixels for
  *   bound inclusion testing (default 1). This specifies by how many pixels
  *   an item's bounds may exceed the scale range bounds and not be culled.
  * @constructor
@@ -93,9 +95,16 @@ prototype.transform = function(_, pulse) {
 
   if (!source) return;
 
+  if (_.sort) {
+    source = source.slice().sort(_.sort);
+  }
+
   if (_.method === 'greedy') {
     source = source.filter(hasBounds);
   }
+
+  // reset all items to be fully opaque
+  source.forEach(function(item) { item.opacity = 1; });
 
   var items = source;
 
