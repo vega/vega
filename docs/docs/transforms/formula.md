@@ -23,7 +23,7 @@ The **formula** transform extends data objects with new values according to a ca
 
 This example computes the base-10 logarithm of `x` and stores the result as the `logx` field.
 
-```
+```json
 {"type": "formula", "as": "hr", "expr": "hours(datum.date)"}
 ```
 
