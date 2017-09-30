@@ -32,7 +32,7 @@ function dataTest(name, data) {
 }
 
 function signalTest(name, op) {
-  return !(name === 'parent' || op instanceof transforms.Proxy);
+  return !(name === 'parent' || op instanceof transforms.proxy);
 }
 
 /**
