@@ -30,7 +30,7 @@ var prototype = inherits(Project, Transform);
 
 prototype.transform = function(_, pulse) {
   var fields = _.fields,
-      as = output(_.fields, _.as),
+      as = output(_.fields, _.as || []),
       derive = fields
         ? function(s, t) { return project(s, t, fields, as); }
         : rederive,
