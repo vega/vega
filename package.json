@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -96,6 +96,7 @@
   "browser": {
     "buffer": false,
     "canvas": false,
+    "canvas-prebuilt": false,
     "fs": false
   }
 }

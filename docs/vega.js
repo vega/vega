@@ -27745,7 +27745,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.3";
+var version = "3.0.4";
 
 var Default = 'default';
 
