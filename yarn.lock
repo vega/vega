@@ -402,8 +402,8 @@ d3-dsv@1:
     rw "1"
 
 d3-force@1:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/d3-force/-/d3-force-1.0.6.tgz#ea7e1b7730e2664cd314f594d6718c57cc132b79"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/d3-force/-/d3-force-1.1.0.tgz#cebf3c694f1078fcc3d4daf8e567b2fbd70d4ea3"
   dependencies:
     d3-collection "1"
     d3-dispatch "1"
@@ -421,8 +421,8 @@ d3-geo-projection@0.2:
     brfs "^1.3.0"
 
 d3-geo@1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.7.1.tgz#44bbc7a218b1fd859f3d8fd7c443ca836569ce99"
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.8.1.tgz#50615c33454487e350db71059f84f71cda2dd983"
   dependencies:
     d3-array "1"
 
@@ -646,8 +646,8 @@ eslint-scope@^3.7.1:
     estraverse "^4.1.1"
 
 eslint@4:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.7.2.tgz#ff6f5f5193848a27ee9b627be3e73fb9cb5e662e"
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.8.0.tgz#229ef0e354e0e61d837c7a80fdfba825e199815e"
   dependencies:
     ajv "^5.2.0"
     babel-code-frame "^6.22.0"
@@ -2228,8 +2228,8 @@ vega-datasets@vega/vega-datasets#gh-pages:
   resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/7080ba8297825d27495bdfb8386d10cff83cbacf"
 
 vega-encode@2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-2.0.3.tgz#c2b2d9b6dee1127a62dee5285f2e5543b42687b5"
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-2.0.4.tgz#a6364f7e11d1b5681f008054d6a8d1a2724ce4a6"
   dependencies:
     d3-array "1"
     d3-format "1"
@@ -2345,8 +2345,8 @@ vega-statistics@^1.2:
     d3-array "1"
 
 vega-transforms@^1.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-1.1.0.tgz#4e16e350c6104d4880b3e2e3089212ee2dd3b662"
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-1.1.1.tgz#65ea98708f1218a21c7f56fd2857a7ab62362972"
   dependencies:
     d3-array "1"
     vega-dataflow "3"
@@ -2366,8 +2366,8 @@ vega-view-transforms@^1.1:
     vega-util "1"
 
 vega-view@2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.0.2.tgz#4d04dbb6d26f65527b5e2b8b29c8219ff8c1a5ae"
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.0.3.tgz#8c3498f48e34f079c999b047fe5bf3731c641654"
   dependencies:
     d3-array "1"
     vega-dataflow "3"

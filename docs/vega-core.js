@@ -5468,7 +5468,7 @@ var prototype$26 = inherits(Project, Transform);
 
 prototype$26.transform = function(_$$1, pulse) {
   var fields = _$$1.fields,
-      as = output(_$$1.fields, _$$1.as),
+      as = output(_$$1.fields, _$$1.as || []),
       derive$$1 = fields
         ? function(s, t) { return project(s, t, fields, as); }
         : rederive,
@@ -12063,7 +12063,7 @@ prototype$52.transform = function(_$$1, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       ticks = this.value,
       scale = _$$1.scale,
-      count = _$$1.tickCount ? _$$1.tickCount : (_$$1.values ? _$$1.values.length : tickCount(scale, _$$1.count)),
+      count = _$$1.count ? _$$1.count : (_$$1.values ? _$$1.values.length : tickCount(scale, _$$1.count)),
       format$$1 = _$$1.format || tickFormat(scale, count, _$$1.formatSpecifier),
       values = _$$1.values ? validTicks(scale, _$$1.values, count) : tickValues(scale, count);
 
@@ -16009,7 +16009,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.4";
+var version = "3.0.5";
 
 var Default = 'default';
 
@@ -23419,7 +23419,7 @@ function dataTest(name, data) {
 }
 
 function signalTest(name, op) {
-  return !(name === 'parent' || op instanceof transforms.Proxy);
+  return !(name === 'parent' || op instanceof transforms.proxy);
 }
 
 /**
