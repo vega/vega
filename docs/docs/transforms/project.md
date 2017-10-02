@@ -11,7 +11,7 @@ The **project** transform performs a <a href="https://en.wikipedia.org/wiki/Proj
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
 | fields              | {% include type t="Field[]" %} | The data fields that should be copied over in the projection. If unspecified, all fields will be copied using their existing names.|
-| as                  | {% include type t="String" %}  | For each corresponding field in the _fields_ array, indicates the output field name to use for derived data objects.|
+| as                  | {% include type t="String[]" %}  | For each corresponding field in the _fields_ array, indicates the output field name to use for derived data objects.|
 
 
 ## Usage
