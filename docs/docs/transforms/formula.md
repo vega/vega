@@ -12,7 +12,7 @@ The **formula** transform extends data objects with new values according to a ca
 | :------------------ | :----------------------------: | :------------ |
 | expr                | {% include type t="Expr" %}    | {% include required %} The formula [expression](../../expressions) for calculating derived values.|
 | as                  | {% include type t="String" %}  | {% include required %} The output field at which to write the formula value.|
-| initonly            | {% include type t="Boolean" %} | If `true`, the formula is evaluated only when a data object is first observed. The formula values will _not_ automatically update if data objects are modified. Th default is `false`.|
+| initonly            | {% include type t="Boolean" %} | If `true`, the formula is evaluated only when a data object is first observed. The formula values will _not_ automatically update if data objects are modified. The default is `false`.|
 
 
 ## Usage
