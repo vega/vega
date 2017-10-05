@@ -22,7 +22,11 @@ export default function Dataflow() {
 
   this._clock = 0;
   this._rank = 0;
-  this._loader = loader();
+  try {
+    this._loader = loader();
+  } catch (e) {
+    // do nothing if loader module is unavailable
+  }
 
   this._touched = UniqueList(id);
   this._pulses = {};
