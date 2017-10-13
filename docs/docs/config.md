@@ -153,6 +153,11 @@ For example, to set a default shape and stroke width for symbol marks with a sty
 }
 ```
 
+In addition to custom `style` names, Vega includes the following built-in style names:
+- `guide-label`: styles for axis and legend labels
+- `guide-title`: styles for axis and legend titles
+- `group-title`: styles for chart and header titles
+
 Style settings take precedence over default mark settings, but are overridden by the axis, legend, and title properties described below.
 
 [Back to Top](#reference)
