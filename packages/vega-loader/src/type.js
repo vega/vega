@@ -1,11 +1,12 @@
-import {toBoolean, toDate, toNumber, toString} from 'vega-util';
+import {identity, toBoolean, toDate, toNumber, toString} from 'vega-util';
 
 export var typeParsers = {
   boolean: toBoolean,
   integer: toNumber,
   number:  toNumber,
   date:    toDate,
-  string:  toString
+  string:  toString,
+  unknown: identity
 };
 
 var typeTests = [
@@ -23,6 +24,8 @@ var typeList = [
 ];
 
 export function inferType(values, field) {
+  if (!values || !values.length) return 'unknown';
+
   var tests = typeTests.slice(),
       value, i, n, j;
 
