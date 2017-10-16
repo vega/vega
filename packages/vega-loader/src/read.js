@@ -17,6 +17,8 @@ export default function(data, schema, dateParse) {
 }
 
 function parse(data, types, dateParse) {
+  if (!data.length) return; // early exit for empty data
+
   dateParse = dateParse || timeParse;
 
   var fields = data.columns || Object.keys(data[0]),
