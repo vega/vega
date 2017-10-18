@@ -142,6 +142,8 @@ orientation-based options, which in turn take precedence over general options.
 - *labels*: Boolean flag indicating if axis tick labels should be included by default.
 - *labelAngle*: Angle in degrees of axis tick labels.
 - *labelColor*: Text color for axis tick labels.
+- *labelFlush*: Boolean flag or pixel distance threshold value for performing a "flush" layout of axis labels. For an x-axis, flush alignment will left-align the left-most labels (if within the distance threshold from the axis start) and similarly right-align the right-most labels. If `true`, a pixel tolerance of 1 is used.
+- *labelFlushOffset*: Offset in pixels for flush-adjusted labels (default `0`).
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
 - *labelLimit*: Maximum allowed pixel width of axis tick labels.
