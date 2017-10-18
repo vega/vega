@@ -1,4 +1,4 @@
-import {extend} from 'vega-util';
+import {extend, isObject} from 'vega-util';
 
 export default function(configs) {
   var output = defaults();
@@ -12,7 +12,9 @@ export default function(configs) {
             style[key] = extend(style[key] || {}, config.style[key]);
           }
         } else {
-          output[key] = extend(output[key] || {}, config[key]);
+          output[key] = isObject(config[key])
+            ? extend(output[key] || {}, config[key])
+            : config[key];
         }
       }
     }
