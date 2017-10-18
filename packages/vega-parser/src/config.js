@@ -151,7 +151,7 @@ function defaults() {
       tickSize: 5,
       tickWidth: 1,
       titleAlign: 'center',
-      titlePadding: 2
+      titlePadding: 4
     },
 
     // correction for centering bias
@@ -190,7 +190,7 @@ function defaults() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 2
+      offset: 4
     },
 
     // defaults for scale ranges
