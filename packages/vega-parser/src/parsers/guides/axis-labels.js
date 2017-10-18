@@ -4,11 +4,12 @@ import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
 import {value} from '../../util';
-import {isNumber} from 'vega-util';
 
-function flushExpr(a, b, c) {
+function flushExpr(scale, threshold, a, b, c) {
   return {
-    signal: 'datum.index===0 ? ' + a + ' : datum.index===1 ? ' + b + ' : ' + c
+    signal: 'flush(range("' + scale + '"), '
+      + 'scale("' + scale + '", datum.value), '
+      + threshold + ',' + a + ',' + b + ',' + c + ')'
   };
 }
 
@@ -19,6 +20,8 @@ export default function(spec, config, userEncode, dataRef, size) {
       pad = value(spec.labelPadding, config.labelPadding),
       bound = value(spec.labelBound, config.labelBound),
       flush = value(spec.labelFlush, config.labelFlush),
+      flushOn = flush != null && flush !== false && (flush = +flush) === flush,
+      flushOffset = +value(spec.labelFlushOffset, config.labelFlushOffset),
       overlap = value(spec.labelOverlap, config.labelOverlap),
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
@@ -56,12 +59,11 @@ export default function(spec, config, userEncode, dataRef, size) {
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    addEncode(update, 'align', flush
-      ? flushExpr('"left"', '"right"', '"center"')
+    addEncode(update, 'align', flushOn
+      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
       : 'center');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dx', flushExpr(-flush, flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
     }
 
     addEncode(update, 'baseline', orient === Top ? 'bottom' : 'top');
@@ -69,12 +71,11 @@ export default function(spec, config, userEncode, dataRef, size) {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
     addEncode(update, 'align', orient === Right ? 'left' : 'right');
-    addEncode(update, 'baseline', flush
-      ? flushExpr('"bottom"', '"top"', '"middle"')
+    addEncode(update, 'baseline', flushOn
+      ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
       : 'middle');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dy', flushExpr(flush, -flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
     }
   }
 
