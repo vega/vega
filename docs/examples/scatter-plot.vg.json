@@ -3,7 +3,6 @@
   "width": 200,
   "height": 200,
   "padding": 5,
-  "autosize": "pad",
 
   "data": [
     {
@@ -26,7 +25,7 @@
       "nice": true,
       "zero": true,
       "domain": {"data": "source", "field": "Horsepower"},
-      "range": [0,200]
+      "range": "width"
     },
     {
       "name": "y",
@@ -35,7 +34,7 @@
       "nice": true,
       "zero": true,
       "domain": {"data": "source", "field": "Miles_per_Gallon"},
-      "range": [200,0]
+      "range": "height"
     },
     {
       "name": "size",
