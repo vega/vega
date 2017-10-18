@@ -44,6 +44,7 @@ export default {
             {"type": "number"}
           ]
         },
+        "labelFlushOffset": {"type": "number"},
         "labelOverlap": {
           "oneOf": [
             {"type": "boolean"},
