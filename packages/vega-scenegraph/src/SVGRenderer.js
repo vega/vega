@@ -71,16 +71,23 @@ prototype.svg = function() {
   if (!this._svg) return null;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];
   }
 
-  return openTag('svg', attr) + this._svg.innerHTML + closeTag('svg');
+  var bg = !this._bgcolor ? ''
+    : (openTag('rect', {
+        width:  this._width,
+        height: this._height,
+        style:  'fill: ' + this._bgcolor + ';'
+      }) + closeTag('rect'));
+
+  return openTag('svg', attr) + bg + this._svg.innerHTML + closeTag('svg');
 };
 
 

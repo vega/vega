@@ -14,6 +14,7 @@ export default function SVGStringRenderer(loader) {
 
   this._text = {
     head: '',
+    bg:   '',
     root: '',
     foot: '',
     defs: '',
@@ -35,27 +36,47 @@ prototype.resize = function(width, height, origin) {
       t = this._text;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
     attr[key] = metadata[key];
   }
 
   t.head = openTag('svg', attr);
+
+  if (this._bgcolor) {
+    t.bg = openTag('rect', {
+      width:  this._width,
+      height: this._height,
+      style:  'fill: ' + this._bgcolor + ';'
+    }) + closeTag('rect');
+  } else {
+    t.bg = '';
+  }
+
   t.root = openTag('g', {
     transform: 'translate(' + o + ')'
   });
+
   t.foot = closeTag('g') + closeTag('svg');
 
   return this;
 };
 
+prototype.background = function() {
+  var rv = base.background.apply(this, arguments);
+  if (arguments.length && this._text.head) {
+    this.resize(this._width, this._height, this._origin);
+  }
+  return rv;
+};
+
 prototype.svg = function() {
   var t = this._text;
-  return t.head + t.defs + t.root + t.body + t.foot;
+  return t.head + t.bg + t.defs + t.root + t.body + t.foot;
 };
 
 prototype._render = function(scene) {
