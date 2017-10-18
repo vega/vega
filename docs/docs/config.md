@@ -184,7 +184,8 @@ Additional property blocks can target more specific axis types based on the orie
 | labelAngle      | {% include type t="Number" %}   | Angle in degrees of axis tick labels. |
 | labelBound      | {% include type t="Boolean|Number" %} | Boolean flag or pixel tolerance value for removal of labels that exceed the axis range. |
 | labelColor      | {% include type t="Color" %}    | Text color of axis tick labels. |
-| labelFlush      | {% include type t="Boolean|Number" %} | Boolean flag or offset value for flush alignment of first and last axis labels. |
+| labelFlush      | {% include type t="Boolean|Number" %} | Boolean flag or pixel distance threshold value for performing a "flush" layout of axis labels. For an x-axis, flush alignment will left-align the left-most labels (if within the distance threshold from the axis start) and similarly right-align the right-most labels. If `true`, a pixel tolerance of 1 is used. |
+| labelFlushOffset| {% include type t="Number" %} | Offset in pixels for flush-adjusted labels (default `0`). |
 | labelFont       | {% include type t="String" %}   | Font name for axis tick labels. |
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
