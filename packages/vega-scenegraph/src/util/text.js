@@ -110,7 +110,7 @@ export function offset(item) {
   var baseline = item.baseline,
       h = height(item);
   return Math.round(
-    baseline === 'top'    ?  0.93*h :
+    baseline === 'top'    ?  0.79*h :
     baseline === 'middle' ?  0.30*h :
     baseline === 'bottom' ? -0.21*h : 0
   );
