@@ -119,7 +119,7 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 
 Vega is compatible with Internet Explorer versions 10 and 11, with one notable caveat: Internet Explorer does not natively support ES6 [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) or [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Vega uses Symbols to add unique identifiers to data objects, and uses Promises for asynchronous tasks such as data and image loading. For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol and Promise support.
 
-For example, one can use the [promise-polyfill](https://github.com/taylorhakes/promise-polyfill) library. Web pages should first import the polyfill script, then import Vega:
+For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) library. Web pages should first import any polyfill scripts, then import Vega:
 
 ```html
 <head>
