@@ -1491,7 +1491,8 @@ var typeParsers = {
   integer: toNumber,
   number:  toNumber,
   date:    toDate,
-  string:  toString
+  string:  toString,
+  unknown: identity
 };
 
 var typeTests = [
@@ -1509,6 +1510,8 @@ var typeList = [
 ];
 
 function inferType(values, field$$1) {
+  if (!values || !values.length) return 'unknown';
+
   var tests = typeTests.slice(),
       value, i, n, j;
 
@@ -1637,6 +1640,8 @@ var read = function(data, schema, dateParse) {
 };
 
 function parse(data, types, dateParse) {
+  if (!data.length) return; // early exit for empty data
+
   dateParse = dateParse || d3TimeFormat.timeParse;
 
   var fields = data.columns || Object.keys(data[0]),
@@ -2684,7 +2689,11 @@ function Dataflow() {
 
   this._clock = 0;
   this._rank = 0;
-  this._loader = loader();
+  try {
+    this._loader = loader();
+  } catch (e) {
+    // do nothing if loader module is unavailable
+  }
 
   this._touched = UniqueList(id);
   this._pulses = {};
@@ -8423,7 +8432,7 @@ function offset(item) {
   var baseline = item.baseline,
       h = height(item);
   return Math.round(
-    baseline === 'top'    ?  0.93*h :
+    baseline === 'top'    ?  0.79*h :
     baseline === 'middle' ?  0.30*h :
     baseline === 'bottom' ? -0.21*h : 0
   );
@@ -9484,16 +9493,23 @@ prototype$45.svg = function() {
   if (!this._svg) return null;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
     attr[key$$1] = metadata[key$$1];
   }
 
-  return openTag('svg', attr) + this._svg.innerHTML + closeTag('svg');
+  var bg = !this._bgcolor ? ''
+    : (openTag('rect', {
+        width:  this._width,
+        height: this._height,
+        style:  'fill: ' + this._bgcolor + ';'
+      }) + closeTag('rect'));
+
+  return openTag('svg', attr) + bg + this._svg.innerHTML + closeTag('svg');
 };
 
 
@@ -9876,6 +9892,7 @@ function SVGStringRenderer(loader) {
 
   this._text = {
     head: '',
+    bg:   '',
     root: '',
     foot: '',
     defs: '',
@@ -9897,27 +9914,47 @@ prototype$46.resize = function(width, height, origin) {
       t = this._text;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
     attr[key$$1] = metadata[key$$1];
   }
 
   t.head = openTag('svg', attr);
+
+  if (this._bgcolor) {
+    t.bg = openTag('rect', {
+      width:  this._width,
+      height: this._height,
+      style:  'fill: ' + this._bgcolor + ';'
+    }) + closeTag('rect');
+  } else {
+    t.bg = '';
+  }
+
   t.root = openTag('g', {
     transform: 'translate(' + o + ')'
   });
+
   t.foot = closeTag('g') + closeTag('svg');
 
   return this;
 };
 
+prototype$46.background = function() {
+  var rv = base$2.background.apply(this, arguments);
+  if (arguments.length && this._text.head) {
+    this.resize(this._width, this._height, this._origin);
+  }
+  return rv;
+};
+
 prototype$46.svg = function() {
   var t = this._text;
-  return t.head + t.defs + t.root + t.body + t.foot;
+  return t.head + t.bg + t.defs + t.root + t.body + t.foot;
 };
 
 prototype$46._render = function(scene) {
@@ -16009,7 +16046,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.5";
+var version = "3.0.6";
 
 var Default = 'default';
 
@@ -18678,6 +18715,14 @@ function containerSize() {
     : [undefined, undefined];
 }
 
+var flush = function(range$$1, value, threshold, left, right, center) {
+  var l = Math.abs(value - range$$1[0]),
+      r = Math.abs(peek(range$$1) - value);
+  return l < r && l <= threshold ? left
+    : r <= threshold ? right
+    : center;
+};
+
 var span = function(array) {
   return (array[array.length-1] - array[0]) || 0;
 };
@@ -19294,6 +19339,7 @@ var functionContext = {
   containerSize: containerSize,
   windowSize: windowSize,
   span: span,
+  flush: flush,
   bandspace: bandspace,
   inrange: inrange,
   setdata: setdata,
@@ -21813,9 +21859,11 @@ var axisTicks = function(spec, config, userEncode, dataRef, size) {
   return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
 };
 
-function flushExpr(a, b, c) {
+function flushExpr(scale, threshold, a, b, c) {
   return {
-    signal: 'datum.index===0 ? ' + a + ' : datum.index===1 ? ' + b + ' : ' + c
+    signal: 'flush(range("' + scale + '"), '
+      + 'scale("' + scale + '", datum.value), '
+      + threshold + ',' + a + ',' + b + ',' + c + ')'
   };
 }
 
@@ -21823,15 +21871,17 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
       scale = spec.scale,
-      pad$$1 = value(spec.labelPadding, config.labelPadding),
+      pad = value(spec.labelPadding, config.labelPadding),
       bound = value(spec.labelBound, config.labelBound),
       flush = value(spec.labelFlush, config.labelFlush),
+      flushOn = flush != null && flush !== false && (flush = +flush) === flush,
+      flushOffset = +value(spec.labelFlushOffset, config.labelFlushOffset),
       overlap = value(spec.labelOverlap, config.labelOverlap),
-      zero$$1 = {value: 0},
+      zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
-    opacity: zero$$1
+    opacity: zero
   };
   addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
@@ -21840,7 +21890,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   addEncode(enter, 'limit', config.labelLimit);
 
   encode.exit = exit = {
-    opacity: zero$$1
+    opacity: zero
   };
 
   encode.update = update = {
@@ -21850,7 +21900,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
 
   tickSize = encoder(size);
   tickSize.mult = sign;
-  tickSize.offset = encoder(pad$$1);
+  tickSize.offset = encoder(pad);
   tickSize.offset.mult = sign;
 
   tickPos = {
@@ -21863,12 +21913,11 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   if (orient === Top$1 || orient === Bottom$1) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    addEncode(update, 'align', flush
-      ? flushExpr('"left"', '"right"', '"center"')
+    addEncode(update, 'align', flushOn
+      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
       : 'center');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dx', flushExpr(-flush, flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
     }
 
     addEncode(update, 'baseline', orient === Top$1 ? 'bottom' : 'top');
@@ -21876,12 +21925,11 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
     addEncode(update, 'align', orient === Right$1 ? 'left' : 'right');
-    addEncode(update, 'baseline', flush
-      ? flushExpr('"bottom"', '"top"', '"middle"')
+    addEncode(update, 'baseline', flushOn
+      ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
       : 'middle');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dy', flushExpr(flush, -flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
     }
   }
 
@@ -22557,7 +22605,9 @@ var defaults = function(configs) {
             style[key$$1] = extend(style[key$$1] || {}, config.style[key$$1]);
           }
         } else {
-          output[key$$1] = extend(output[key$$1] || {}, config[key$$1]);
+          output[key$$1] = isObject(config[key$$1])
+            ? extend(output[key$$1] || {}, config[key$$1])
+            : config[key$$1];
         }
       }
     }
@@ -22694,7 +22744,7 @@ function defaults$1() {
       tickSize: 5,
       tickWidth: 1,
       titleAlign: 'center',
-      titlePadding: 2
+      titlePadding: 4
     },
 
     // correction for centering bias
@@ -22733,7 +22783,7 @@ function defaults$1() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 2
+      offset: 4
     },
 
     // defaults for scale ranges

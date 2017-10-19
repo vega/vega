@@ -90,6 +90,9 @@
             }
           ]
         },
+        "labelFlushOffset": {
+          "type": "number"
+        },
         "labelOverlap": {
           "oneOf": [
             {

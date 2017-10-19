@@ -2037,7 +2037,8 @@ var typeParsers = {
   integer: toNumber,
   number:  toNumber,
   date:    toDate,
-  string:  toString
+  string:  toString,
+  unknown: identity
 };
 
 var typeTests = [
@@ -2055,6 +2056,8 @@ var typeList = [
 ];
 
 function inferType(values, field$$1) {
+  if (!values || !values.length) return 'unknown';
+
   var tests = typeTests.slice(),
       value, i, n, j;
 
@@ -2719,6 +2722,7 @@ function formatLocale(locale) {
     "c": null,
     "d": formatDayOfMonth,
     "e": formatDayOfMonth,
+    "f": formatMicroseconds,
     "H": formatHour24,
     "I": formatHour12,
     "j": formatDayOfYear,
@@ -2726,9 +2730,13 @@ function formatLocale(locale) {
     "m": formatMonthNumber,
     "M": formatMinutes,
     "p": formatPeriod,
+    "Q": formatUnixTimestamp,
+    "s": formatUnixTimestampSeconds,
     "S": formatSeconds,
+    "u": formatWeekdayNumberMonday,
     "U": formatWeekNumberSunday,
-    "w": formatWeekdayNumber,
+    "V": formatWeekNumberISO,
+    "w": formatWeekdayNumberSunday,
     "W": formatWeekNumberMonday,
     "x": null,
     "X": null,
@@ -2746,6 +2754,7 @@ function formatLocale(locale) {
     "c": null,
     "d": formatUTCDayOfMonth,
     "e": formatUTCDayOfMonth,
+    "f": formatUTCMicroseconds,
     "H": formatUTCHour24,
     "I": formatUTCHour12,
     "j": formatUTCDayOfYear,
@@ -2753,9 +2762,13 @@ function formatLocale(locale) {
     "m": formatUTCMonthNumber,
     "M": formatUTCMinutes,
     "p": formatUTCPeriod,
+    "Q": formatUnixTimestamp,
+    "s": formatUnixTimestampSeconds,
     "S": formatUTCSeconds,
+    "u": formatUTCWeekdayNumberMonday,
     "U": formatUTCWeekNumberSunday,
-    "w": formatUTCWeekdayNumber,
+    "V": formatUTCWeekNumberISO,
+    "w": formatUTCWeekdayNumberSunday,
     "W": formatUTCWeekNumberMonday,
     "x": null,
     "X": null,
@@ -2773,6 +2786,7 @@ function formatLocale(locale) {
     "c": parseLocaleDateTime,
     "d": parseDayOfMonth,
     "e": parseDayOfMonth,
+    "f": parseMicroseconds,
     "H": parseHour24,
     "I": parseHour24,
     "j": parseDayOfYear,
@@ -2780,9 +2794,13 @@ function formatLocale(locale) {
     "m": parseMonthNumber,
     "M": parseMinutes,
     "p": parsePeriod,
+    "Q": parseUnixTimestamp,
+    "s": parseUnixTimestampSeconds,
     "S": parseSeconds,
+    "u": parseWeekdayNumberMonday,
     "U": parseWeekNumberSunday,
-    "w": parseWeekdayNumber,
+    "V": parseWeekNumberISO,
+    "w": parseWeekdayNumberSunday,
     "W": parseWeekNumberMonday,
     "x": parseLocaleDate,
     "X": parseLocaleTime,
@@ -2831,16 +2849,38 @@ function formatLocale(locale) {
   function newParse(specifier, newDate) {
     return function(string) {
       var d = newYear(1900),
-          i = parseSpecifier(d, specifier, string += "", 0);
+          i = parseSpecifier(d, specifier, string += "", 0),
+          week, day$$1;
       if (i != string.length) return null;
+
+      // If a UNIX timestamp is specified, return it.
+      if ("Q" in d) return new Date(d.Q);
 
       // The am-pm flag is 0 for AM, and 1 for PM.
       if ("p" in d) d.H = d.H % 12 + d.p * 12;
 
       // Convert day-of-week and week-of-year to day-of-year.
-      if ("W" in d || "U" in d) {
-        if (!("w" in d)) d.w = "W" in d ? 1 : 0;
-        var day$$1 = "Z" in d ? utcDate(newYear(d.y)).getUTCDay() : newDate(newYear(d.y)).getDay();
+      if ("V" in d) {
+        if (d.V < 1 || d.V > 53) return null;
+        if (!("w" in d)) d.w = 1;
+        if ("Z" in d) {
+          week = utcDate(newYear(d.y)), day$$1 = week.getUTCDay();
+          week = day$$1 > 4 || day$$1 === 0 ? utcMonday.ceil(week) : utcMonday(week);
+          week = utcDay.offset(week, (d.V - 1) * 7);
+          d.y = week.getUTCFullYear();
+          d.m = week.getUTCMonth();
+          d.d = week.getUTCDate() + (d.w + 6) % 7;
+        } else {
+          week = newDate(newYear(d.y)), day$$1 = week.getDay();
+          week = day$$1 > 4 || day$$1 === 0 ? monday.ceil(week) : monday(week);
+          week = day.offset(week, (d.V - 1) * 7);
+          d.y = week.getFullYear();
+          d.m = week.getMonth();
+          d.d = week.getDate() + (d.w + 6) % 7;
+        }
+      } else if ("W" in d || "U" in d) {
+        if (!("w" in d)) d.w = "u" in d ? d.u % 7 : "W" in d ? 1 : 0;
+        day$$1 = "Z" in d ? utcDate(newYear(d.y)).getUTCDay() : newDate(newYear(d.y)).getDay();
         d.m = 0;
         d.d = "W" in d ? (d.w + 6) % 7 + d.W * 7 - (day$$1 + 5) % 7 : d.w + d.U * 7 - (day$$1 + 6) % 7;
       }
@@ -2984,7 +3024,7 @@ function formatLocale(locale) {
 var pads = {"-": "", "_": " ", "0": "0"};
 var numberRe = /^\s*\d+/;
 var percentRe = /^%/;
-var requoteRe = /[\\\^\$\*\+\?\|\[\]\(\)\.\{\}]/g;
+var requoteRe = /[\\^$*+?|[\]().{}]/g;
 
 function pad$1(value, fill, width) {
   var sign = value < 0 ? "-" : "",
@@ -3007,18 +3047,28 @@ function formatLookup(names) {
   return map;
 }
 
-function parseWeekdayNumber(d, string, i) {
+function parseWeekdayNumberSunday(d, string, i) {
   var n = numberRe.exec(string.slice(i, i + 1));
   return n ? (d.w = +n[0], i + n[0].length) : -1;
 }
 
+function parseWeekdayNumberMonday(d, string, i) {
+  var n = numberRe.exec(string.slice(i, i + 1));
+  return n ? (d.u = +n[0], i + n[0].length) : -1;
+}
+
 function parseWeekNumberSunday(d, string, i) {
-  var n = numberRe.exec(string.slice(i));
+  var n = numberRe.exec(string.slice(i, i + 2));
   return n ? (d.U = +n[0], i + n[0].length) : -1;
 }
 
+function parseWeekNumberISO(d, string, i) {
+  var n = numberRe.exec(string.slice(i, i + 2));
+  return n ? (d.V = +n[0], i + n[0].length) : -1;
+}
+
 function parseWeekNumberMonday(d, string, i) {
-  var n = numberRe.exec(string.slice(i));
+  var n = numberRe.exec(string.slice(i, i + 2));
   return n ? (d.W = +n[0], i + n[0].length) : -1;
 }
 
@@ -3033,7 +3083,7 @@ function parseYear(d, string, i) {
 }
 
 function parseZone(d, string, i) {
-  var n = /^(Z)|([+-]\d\d)(?:\:?(\d\d))?/.exec(string.slice(i, i + 6));
+  var n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
   return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || "00")), i + n[0].length) : -1;
 }
 
@@ -3072,9 +3122,24 @@ function parseMilliseconds(d, string, i) {
   return n ? (d.L = +n[0], i + n[0].length) : -1;
 }
 
+function parseMicroseconds(d, string, i) {
+  var n = numberRe.exec(string.slice(i, i + 6));
+  return n ? (d.L = Math.floor(n[0] / 1000), i + n[0].length) : -1;
+}
+
 function parseLiteralPercent(d, string, i) {
   var n = percentRe.exec(string.slice(i, i + 1));
   return n ? i + n[0].length : -1;
+}
+
+function parseUnixTimestamp(d, string, i) {
+  var n = numberRe.exec(string.slice(i));
+  return n ? (d.Q = +n[0], i + n[0].length) : -1;
+}
+
+function parseUnixTimestampSeconds(d, string, i) {
+  var n = numberRe.exec(string.slice(i));
+  return n ? (d.Q = (+n[0]) * 1000, i + n[0].length) : -1;
 }
 
 function formatDayOfMonth(d, p) {
@@ -3097,6 +3162,10 @@ function formatMilliseconds(d, p) {
   return pad$1(d.getMilliseconds(), p, 3);
 }
 
+function formatMicroseconds(d, p) {
+  return formatMilliseconds(d, p) + "000";
+}
+
 function formatMonthNumber(d, p) {
   return pad$1(d.getMonth() + 1, p, 2);
 }
@@ -3109,11 +3178,22 @@ function formatSeconds(d, p) {
   return pad$1(d.getSeconds(), p, 2);
 }
 
+function formatWeekdayNumberMonday(d) {
+  var day$$1 = d.getDay();
+  return day$$1 === 0 ? 7 : day$$1;
+}
+
 function formatWeekNumberSunday(d, p) {
   return pad$1(sunday.count(year(d), d), p, 2);
 }
 
-function formatWeekdayNumber(d) {
+function formatWeekNumberISO(d, p) {
+  var day$$1 = d.getDay();
+  d = (day$$1 >= 4 || day$$1 === 0) ? thursday(d) : thursday.ceil(d);
+  return pad$1(thursday.count(year(d), d) + (year(d).getDay() === 4), p, 2);
+}
+
+function formatWeekdayNumberSunday(d) {
   return d.getDay();
 }
 
@@ -3156,6 +3236,10 @@ function formatUTCMilliseconds(d, p) {
   return pad$1(d.getUTCMilliseconds(), p, 3);
 }
 
+function formatUTCMicroseconds(d, p) {
+  return formatUTCMilliseconds(d, p) + "000";
+}
+
 function formatUTCMonthNumber(d, p) {
   return pad$1(d.getUTCMonth() + 1, p, 2);
 }
@@ -3168,11 +3252,22 @@ function formatUTCSeconds(d, p) {
   return pad$1(d.getUTCSeconds(), p, 2);
 }
 
+function formatUTCWeekdayNumberMonday(d) {
+  var dow = d.getUTCDay();
+  return dow === 0 ? 7 : dow;
+}
+
 function formatUTCWeekNumberSunday(d, p) {
   return pad$1(utcSunday.count(utcYear(d), d), p, 2);
 }
 
-function formatUTCWeekdayNumber(d) {
+function formatUTCWeekNumberISO(d, p) {
+  var day$$1 = d.getUTCDay();
+  d = (day$$1 >= 4 || day$$1 === 0) ? utcThursday(d) : utcThursday.ceil(d);
+  return pad$1(utcThursday.count(utcYear(d), d) + (utcYear(d).getUTCDay() === 4), p, 2);
+}
+
+function formatUTCWeekdayNumberSunday(d) {
   return d.getUTCDay();
 }
 
@@ -3194,6 +3289,14 @@ function formatUTCZone() {
 
 function formatLiteralPercent() {
   return "%";
+}
+
+function formatUnixTimestamp(d) {
+  return +d;
+}
+
+function formatUnixTimestampSeconds(d) {
+  return Math.floor(+d / 1000);
 }
 
 var locale$1;
@@ -3255,6 +3358,8 @@ var read = function(data, schema, dateParse) {
 };
 
 function parse(data, types, dateParse) {
+  if (!data.length) return; // early exit for empty data
+
   dateParse = dateParse || timeParse;
 
   var fields = data.columns || Object.keys(data[0]),
@@ -4302,7 +4407,11 @@ function Dataflow() {
 
   this._clock = 0;
   this._rank = 0;
-  this._loader = loader();
+  try {
+    this._loader = loader();
+  } catch (e) {
+    // do nothing if loader module is unavailable
+  }
 
   this._touched = UniqueList(id);
   this._pulses = {};
@@ -11892,7 +12001,7 @@ function offset(item) {
   var baseline = item.baseline,
       h = height(item);
   return Math.round(
-    baseline === 'top'    ?  0.93*h :
+    baseline === 'top'    ?  0.79*h :
     baseline === 'middle' ?  0.30*h :
     baseline === 'bottom' ? -0.21*h : 0
   );
@@ -12953,16 +13062,23 @@ prototype$45.svg = function() {
   if (!this._svg) return null;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
     attr[key$$1] = metadata[key$$1];
   }
 
-  return openTag('svg', attr) + this._svg.innerHTML + closeTag('svg');
+  var bg = !this._bgcolor ? ''
+    : (openTag('rect', {
+        width:  this._width,
+        height: this._height,
+        style:  'fill: ' + this._bgcolor + ';'
+      }) + closeTag('rect'));
+
+  return openTag('svg', attr) + bg + this._svg.innerHTML + closeTag('svg');
 };
 
 
@@ -13345,6 +13461,7 @@ function SVGStringRenderer(loader) {
 
   this._text = {
     head: '',
+    bg:   '',
     root: '',
     foot: '',
     defs: '',
@@ -13366,27 +13483,47 @@ prototype$46.resize = function(width, height, origin) {
       t = this._text;
 
   var attr = {
-    'class':  'marks',
-    'width':  this._width,
-    'height': this._height,
-    'viewBox': '0 0 ' + this._width + ' ' + this._height
+    class:   'marks',
+    width:   this._width,
+    height:  this._height,
+    viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
     attr[key$$1] = metadata[key$$1];
   }
 
   t.head = openTag('svg', attr);
+
+  if (this._bgcolor) {
+    t.bg = openTag('rect', {
+      width:  this._width,
+      height: this._height,
+      style:  'fill: ' + this._bgcolor + ';'
+    }) + closeTag('rect');
+  } else {
+    t.bg = '';
+  }
+
   t.root = openTag('g', {
     transform: 'translate(' + o + ')'
   });
+
   t.foot = closeTag('g') + closeTag('svg');
 
   return this;
 };
 
+prototype$46.background = function() {
+  var rv = base$2.background.apply(this, arguments);
+  if (arguments.length && this._text.head) {
+    this.resize(this._width, this._height, this._origin);
+  }
+  return rv;
+};
+
 prototype$46.svg = function() {
   var t = this._text;
-  return t.head + t.defs + t.root + t.body + t.foot;
+  return t.head + t.bg + t.defs + t.root + t.body + t.foot;
 };
 
 prototype$46._render = function(scene) {
@@ -21343,33 +21480,49 @@ TransformStream.prototype = {
   polygonEnd: function() { this.stream.polygonEnd(); }
 };
 
-function fitExtent(projection, extent, object) {
-  var w = extent[1][0] - extent[0][0],
-      h = extent[1][1] - extent[0][1],
-      clip = projection.clipExtent && projection.clipExtent();
-
-  projection
-      .scale(150)
-      .translate([0, 0]);
-
+function fit(projection, fitBounds, object) {
+  var clip = projection.clipExtent && projection.clipExtent();
+  projection.scale(150).translate([0, 0]);
   if (clip != null) projection.clipExtent(null);
-
   geoStream(object, projection.stream(boundsStream$1));
-
-  var b = boundsStream$1.result(),
-      k = Math.min(w / (b[1][0] - b[0][0]), h / (b[1][1] - b[0][1])),
-      x = +extent[0][0] + (w - k * (b[1][0] + b[0][0])) / 2,
-      y = +extent[0][1] + (h - k * (b[1][1] + b[0][1])) / 2;
-
+  fitBounds(boundsStream$1.result());
   if (clip != null) projection.clipExtent(clip);
+  return projection;
+}
 
-  return projection
-      .scale(k * 150)
-      .translate([x, y]);
+function fitExtent(projection, extent, object) {
+  return fit(projection, function(b) {
+    var w = extent[1][0] - extent[0][0],
+        h = extent[1][1] - extent[0][1],
+        k = Math.min(w / (b[1][0] - b[0][0]), h / (b[1][1] - b[0][1])),
+        x = +extent[0][0] + (w - k * (b[1][0] + b[0][0])) / 2,
+        y = +extent[0][1] + (h - k * (b[1][1] + b[0][1])) / 2;
+    projection.scale(150 * k).translate([x, y]);
+  }, object);
 }
 
 function fitSize(projection, size, object) {
   return fitExtent(projection, [[0, 0], size], object);
+}
+
+function fitWidth(projection, width, object) {
+  return fit(projection, function(b) {
+    var w = +width,
+        k = w / (b[1][0] - b[0][0]),
+        x = (w - k * (b[1][0] + b[0][0])) / 2,
+        y = -k * b[0][1];
+    projection.scale(150 * k).translate([x, y]);
+  }, object);
+}
+
+function fitHeight(projection, height, object) {
+  return fit(projection, function(b) {
+    var h = +height,
+        k = h / (b[1][1] - b[0][1]),
+        x = -k * b[0][0],
+        y = (h - k * (b[1][1] + b[0][1])) / 2;
+    projection.scale(150 * k).translate([x, y]);
+  }, object);
 }
 
 var maxDepth = 16;
@@ -21564,6 +21717,14 @@ function projectionMutator(projectAt) {
     return fitSize(projection, size, object);
   };
 
+  projection.fitWidth = function(width, object) {
+    return fitWidth(projection, width, object);
+  };
+
+  projection.fitHeight = function(height, object) {
+    return fitHeight(projection, height, object);
+  };
+
   function recenter() {
     projectRotate = compose(rotate = rotateRadians(deltaLambda, deltaPhi, deltaGamma), project);
     var center = project(lambda, phi);
@@ -21736,6 +21897,14 @@ var geoAlbersUsa = function() {
 
   albersUsa.fitSize = function(size, object) {
     return fitSize(albersUsa, size, object);
+  };
+
+  albersUsa.fitWidth = function(width, object) {
+    return fitWidth(albersUsa, width, object);
+  };
+
+  albersUsa.fitHeight = function(height, object) {
+    return fitHeight(albersUsa, height, object);
   };
 
   function reset() {
@@ -22311,12 +22480,12 @@ prototype$67.transform = function(_, pulse) {
   }
 
   if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
-  if (_.fit) fit(proj, _);
+  if (_.fit) fit$1(proj, _);
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
-function fit(proj, _) {
+function fit$1(proj, _) {
   var data = collectGeoJSON(_.fit);
   _.extent ? proj.fitExtent(_.extent, data)
     : _.size ? proj.fitSize(_.size, data) : 0;
@@ -27759,7 +27928,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.5";
+var version = "3.0.6";
 
 var Default = 'default';
 
@@ -30428,6 +30597,14 @@ function containerSize() {
     : [undefined, undefined];
 }
 
+var flush = function(range, value, threshold, left, right, center) {
+  var l = Math.abs(value - range[0]),
+      r = Math.abs(peek(range) - value);
+  return l < r && l <= threshold ? left
+    : r <= threshold ? right
+    : center;
+};
+
 var span = function(array) {
   return (array[array.length-1] - array[0]) || 0;
 };
@@ -31044,6 +31221,7 @@ var functionContext = {
   containerSize: containerSize,
   windowSize: windowSize,
   span: span,
+  flush: flush,
   bandspace: bandspace,
   inrange: inrange,
   setdata: setdata,
@@ -33563,9 +33741,11 @@ var axisTicks = function(spec, config, userEncode, dataRef, size) {
   return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
 };
 
-function flushExpr(a, b, c) {
+function flushExpr(scale, threshold, a, b, c) {
   return {
-    signal: 'datum.index===0 ? ' + a + ' : datum.index===1 ? ' + b + ' : ' + c
+    signal: 'flush(range("' + scale + '"), '
+      + 'scale("' + scale + '", datum.value), '
+      + threshold + ',' + a + ',' + b + ',' + c + ')'
   };
 }
 
@@ -33573,15 +33753,17 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
       scale = spec.scale,
-      pad$$1 = value(spec.labelPadding, config.labelPadding),
+      pad = value(spec.labelPadding, config.labelPadding),
       bound = value(spec.labelBound, config.labelBound),
       flush = value(spec.labelFlush, config.labelFlush),
+      flushOn = flush != null && flush !== false && (flush = +flush) === flush,
+      flushOffset = +value(spec.labelFlushOffset, config.labelFlushOffset),
       overlap = value(spec.labelOverlap, config.labelOverlap),
-      zero$$1 = {value: 0},
+      zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
-    opacity: zero$$1
+    opacity: zero
   };
   addEncode(enter, 'angle', config.labelAngle);
   addEncode(enter, 'fill', config.labelColor);
@@ -33590,7 +33772,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   addEncode(enter, 'limit', config.labelLimit);
 
   encode.exit = exit = {
-    opacity: zero$$1
+    opacity: zero
   };
 
   encode.update = update = {
@@ -33600,7 +33782,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
 
   tickSize = encoder(size);
   tickSize.mult = sign;
-  tickSize.offset = encoder(pad$$1);
+  tickSize.offset = encoder(pad);
   tickSize.offset.mult = sign;
 
   tickPos = {
@@ -33613,12 +33795,11 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   if (orient === Top$1 || orient === Bottom$1) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    addEncode(update, 'align', flush
-      ? flushExpr('"left"', '"right"', '"center"')
+    addEncode(update, 'align', flushOn
+      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
       : 'center');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dx', flushExpr(-flush, flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
     }
 
     addEncode(update, 'baseline', orient === Top$1 ? 'bottom' : 'top');
@@ -33626,12 +33807,11 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
     addEncode(update, 'align', orient === Right$1 ? 'left' : 'right');
-    addEncode(update, 'baseline', flush
-      ? flushExpr('"bottom"', '"top"', '"middle"')
+    addEncode(update, 'baseline', flushOn
+      ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
       : 'middle');
-    if (flush && isNumber(flush)) {
-      flush = Math.abs(+flush);
-      addEncode(update, 'dy', flushExpr(flush, -flush, 0));
+    if (flushOn && flushOffset) {
+      addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
     }
   }
 
@@ -34307,7 +34487,9 @@ var defaults = function(configs) {
             style[key$$1] = extend(style[key$$1] || {}, config.style[key$$1]);
           }
         } else {
-          output[key$$1] = extend(output[key$$1] || {}, config[key$$1]);
+          output[key$$1] = isObject(config[key$$1])
+            ? extend(output[key$$1] || {}, config[key$$1])
+            : config[key$$1];
         }
       }
     }
@@ -34444,7 +34626,7 @@ function defaults$1() {
       tickSize: 5,
       tickWidth: 1,
       titleAlign: 'center',
-      titlePadding: 2
+      titlePadding: 4
     },
 
     // correction for centering bias
@@ -34483,7 +34665,7 @@ function defaults$1() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 2
+      offset: 4
     },
 
     // defaults for scale ranges
