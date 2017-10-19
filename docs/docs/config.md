@@ -82,6 +82,7 @@ Properties for event handling configuration, defined within an `"events"` proper
 
 To prevent the default behavior for all events originating within a Vega view:
 
+{: .suppress-error}
 ```json
 "events": {
   "defaults": {
@@ -93,6 +94,7 @@ To prevent the default behavior for all events originating within a Vega view:
 
 To prevent the default behavior for all events originating within a Vega view, except for `wheel` events:
 
+{: .suppress-error}
 ```json
 "events": {
   "defaults": {
