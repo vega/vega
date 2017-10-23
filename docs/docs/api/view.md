@@ -86,7 +86,7 @@ same container element as the visualization will be used.
 
 <a name="view_loader" href="#view_loader">#</a>
 view.<b>loader</b>([<i>loader</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
 Get or set the [loader](https://github.com/vega/vega-loader#loader) instance
 to use for data files and images. If the loader is updated _after_
