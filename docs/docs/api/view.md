@@ -20,12 +20,12 @@ A **View** instantiates a Vega dataflow graph and provides a component for visua
 
 Methods for constructing and deconstructing views. In addition to the methods
 described below, View instances also inherit all (non-overidden) methods of the
-[Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/Dataflow.js)
+[Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js)
 parent class.
 
 <a name="view" href="#view">#</a>
 vega.<b>View</b>(<i>runtime</i>[, <i>options</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
 Constructor that creates a new View instance for the provided
 [Vega dataflow *runtime* specification](https://github.com/vega/vega-runtime).
@@ -55,7 +55,7 @@ var view = new vega.View(runtime)
 
 <a name="view_finalize" href="#view_finalize">#</a>
 view.<b>finalize</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/view/finalize.js "Source")
+[<>](https://github.com/vega/vega-view/blob/master/src/finalize.js "Source")
 
 Prepares the view to be removed from a web page. To prevent unwanted behaviors
 and memory leaks, this method removes any event listeners the visualization has
@@ -72,7 +72,7 @@ invocation of the [run](#view_run) method.
 
 <a name="view_initialize" href="#view_initialize">#</a>
 view.<b>initialize</b>([<i>container</i>, <i>bindContainer</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/view/initialize.js "Source")
+[<>](https://github.com/vega/vega-view/blob/master/src/initialize.js "Source")
 
 Initializes internal rendering and event handling, then returns this view
 instance. If the DOM element *container* is provided, visualization
