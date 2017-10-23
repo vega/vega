@@ -95,7 +95,7 @@ reinitialized.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
-[<>](https://github.com/vega/vega-dataflow/blob/master/src/Dataflow.js "Source")
+[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js "Source")
 
 Sets the current log level and returns this view instance. This method controls
 which types of log messages are printed to the JavaScript console, and is
