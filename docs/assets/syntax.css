@@ -1,4 +1,3 @@
-/* Pygments */
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #999988; font-style: italic } /* Comment */
 .highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
@@ -62,10 +61,8 @@
 .highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
 
 /* Allow json example with errors */
+
 .suppress-error .highlight .err {
   color: #000;
   background-color: transparent;
 }
-
-/* Highlight.js */
-.hljs .hljs-attr { color: #000080 } /* Name.Tag (JSON key name) */

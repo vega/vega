@@ -26,6 +26,12 @@ these, launch a local webserver in the top-level directory for the repo
 `python -m http.server 8000` for Python 3) and then point your browser to
 the right place (e.g., `http://localhost:8000/test/`).
 
+This repo also includes the website and documentation in the `docs` folder. To
+launch it, run `bundle install` and `bundle exec jekyll serve` in the `docs`
+folder. The last command launches a local webserver. Now, you can open
+[`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the
+website.
+
 ## Development Setup
 
 For a more advanced development setup in which you will be working on multiple

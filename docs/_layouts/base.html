@@ -7,25 +7,24 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="{{ site.description }}">
     <link rel="shortcut icon" href="https://vega.github.io/favicon.ico"/>
-    <link rel="stylesheet" href="{{ site.github.url }}/assets/syntax.css">
-    <link rel="stylesheet" href="{{ site.github.url }}/assets/github.css">
-    <link rel="stylesheet" href="{{ site.github.url }}/assets/main.css">
-    <script src="{{ site.github.url }}/assets/promise.min.js"></script>
-    <script src="{{ site.github.url }}/assets/symbol.min.js"></script>
-    <script src="{{ site.github.url }}/vega.js"></script>
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/syntax.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/main.css">
+    <script src="{{ site.baseurl }}/assets/promise.min.js"></script>
+    <script src="{{ site.baseurl }}/assets/symbol.min.js"></script>
+    <script src="{{ site.baseurl }}/vega.js"></script>
   </head>
   <body>
     <div class="fill">
       <header>
         <nav class="page-centered">
-          <a class="vega-title" href="{{ site.github.url }}/">{{ site.title }}</a>
+          <a class="vega-title" href="{{ site.baseurl }}/">{{ site.title }}</a>
           <div class="vega-links">
             <div class="primary-links">
-              <a href="{{ site.github.url }}/examples/" {% if page.menu == 'examples' or layout.menu == 'examples' %}class="active"{% endif %}>Examples</a>
-              <a href="{{ site.github.url }}/tutorials/" {% if page.menu == 'tutorials' or layout.menu == 'tutorials' %}class="active"{% endif %}>Tutorials</a>
-              <a href="{{ site.github.url }}/docs/" {% if page.menu == 'docs' or layout.menu == 'docs' %}class="active"{% endif %}>Documentation</a>
-              <a href="{{ site.github.url }}/usage/" {% if page.menu == 'usage' or layout.menu == 'usage' %}class="active"{% endif %}>Usage</a>
-              <a href="{{ site.github.url }}/about/" {% if page.menu == 'about' or layout.menu == 'about' %}class="active"{% endif %}>About</a>
+              <a href="{{ site.baseurl }}/examples/" {% if page.menu == 'examples' or layout.menu == 'examples' %}class="active"{% endif %}>Examples</a>
+              <a href="{{ site.baseurl }}/tutorials/" {% if page.menu == 'tutorials' or layout.menu == 'tutorials' %}class="active"{% endif %}>Tutorials</a>
+              <a href="{{ site.baseurl }}/docs/" {% if page.menu == 'docs' or layout.menu == 'docs' %}class="active"{% endif %}>Documentation</a>
+              <a href="{{ site.baseurl }}/usage/" {% if page.menu == 'usage' or layout.menu == 'usage' %}class="active"{% endif %}>Usage</a>
+              <a href="{{ site.baseurl }}/about/" {% if page.menu == 'about' or layout.menu == 'about' %}class="active"{% endif %}>About</a>
             </div>
             <div class="secondary-links">
               <a href="https://github.com/vega/vega" target="_blank">GitHub</a>
@@ -47,7 +46,7 @@
         </span>
         <span class="fill"></span>
         <a href="http://idl.cs.washington.edu" title="UW Interactive Data Lab" class="logo">
-          <img src="{{ site.github.url }}/assets/idl-logo.png"/>
+          <img src="{{ site.baseurl }}/assets/idl-logo.png"/>
         </a>
       </div>
     </footer>
