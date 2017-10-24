@@ -22,7 +22,7 @@ function image(view, type) {
 }
 
 var view = new vega.View(vega.parse(spec), {
-  loader: vega.loader({baseURL: '{{ site.github.url }}/'}),
+  loader: vega.loader({baseURL: '{{ site.baseurl }}/'}),
   logLevel: vega.Warn,
   renderer: 'canvas'
 }).initialize('#{{id}}').hover().run();
