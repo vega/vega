@@ -14,11 +14,12 @@ modules listed below.
 
 ## Basic Setup
 
-For a basic setup allowing you to build Vega and run examples,
-clone `https://github.com/vega/vega` and run `npm install`.
+For a basic setup allowing you to build Vega and run examples:
 
-Once installation is complete, use `npm run test` to run tests and
-`npm run build` to build output files.
+- Clone `https://github.com/vega/vega`.
+- Run `yarn` to install dependencies. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install.
+- If you do not wish to install yarn, you can alternatively run `npm install`. However, you will not be guaranteed to have dependencies matching those of the current release.
+- Once installation is complete, use `npm run test` to run tests and `npm run build` to build output files.
 
 This repo (`vega`) includes web-based demos within the `test` folder. To run
 these, launch a local webserver in the top-level directory for the repo
