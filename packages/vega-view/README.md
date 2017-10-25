@@ -91,7 +91,10 @@ view.<b>loader</b>([<i>loader</i>])
 Get or set the [loader](https://github.com/vega/vega-loader#loader) instance
 to use for data files and images. If the loader is updated _after_
 [initialize](#view_initialize) has been invoked, the visualization will be
-reinitialized.
+reinitialized. If a Vega View loads data from an external URL, the load request
+is made _immediately_ upon view construction. To ensure a custom loader is used,
+_provide the loader as a constructor option!_ Invoking this method will update
+the loader only _after_ initial data requests have been made.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
