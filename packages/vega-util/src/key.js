@@ -4,7 +4,12 @@ import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
 export default function(fields, flat) {
-  fields = fields ? array(fields) : fields;
+  if (fields) {
+    fields = flat
+      ? array(fields).map(function(f) { return f.replace(/\\(.)/g, '$1'); })
+      : array(fields);
+  }
+
   var fn = !(fields && fields.length)
     ? function() { return ''; }
     : Function('_', 'return \'\'+' +
@@ -14,5 +19,6 @@ export default function(fields, flat) {
               : splitAccessPath(f).map(stringValue).join('][')
             ) + ']';
         }).join('+\'|\'+') + ';');
+
   return accessor(fn, fields, 'key');
 }
