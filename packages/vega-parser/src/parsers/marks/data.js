@@ -19,20 +19,20 @@ export default function(from, group, scope) {
     if (facet.field != null) {
       dataRef = parent = ref(scope.getData(facet.data).output);
     } else {
-      key = scope.keyRef(facet.groupby);
-
       // generate facet aggregates if no direct data specification
       if (!from.data) {
         op = parseTransform(extend({
           type:    'aggregate',
           groupby: array(facet.groupby)
-        }, facet.aggregate));
-        op.params.key = key;
+        }, facet.aggregate), scope);
+        op.params.key = scope.keyRef(facet.groupby);
         op.params.pulse = ref(scope.getData(facet.data).output);
         dataRef = parent = ref(scope.add(op));
       } else {
         parent = ref(scope.getData(from.data).aggregate);
       }
+
+      key = scope.keyRef(facet.groupby, true);
     }
   }
 
