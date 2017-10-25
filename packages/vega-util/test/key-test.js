@@ -42,3 +42,21 @@ tape('key creates a key accessor', function(test) {
 
   test.end();
 });
+
+tape('key respects the "flat" argument', function(test) {
+  var _ = {"d.e": 1, d:{0:5, e:4}}, k;
+
+  k = vega.key('d.e', false);
+  test.equal(typeof k, 'function');
+  test.equal(vega.accessorName(k), 'key');
+  test.deepEqual(vega.accessorFields(k), ['d.e']);
+  test.equal(k(_), '4');
+
+  k = vega.key('d.e', true);
+  test.equal(typeof k, 'function');
+  test.equal(vega.accessorName(k), 'key');
+  test.deepEqual(vega.accessorFields(k), ['d.e']);
+  test.equal(k(_), '1');
+
+  test.end()
+});
