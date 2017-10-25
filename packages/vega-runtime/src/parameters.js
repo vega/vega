@@ -73,8 +73,8 @@ function getExpression(_, ctx) {
  * Resolve a key accessor reference.
  */
 function getKey(_, ctx) {
-  var k = 'k:' + _.$key;
-  return ctx.fn[k] || (ctx.fn[k] = key(_.$key));
+  var k = 'k:' + _.$key + '_' + (!!_.$flat);
+  return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat));
 }
 
 /**
