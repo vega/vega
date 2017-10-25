@@ -3,13 +3,16 @@ import array from './array';
 import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
-export default function(fields) {
+export default function(fields, flat) {
   fields = fields ? array(fields) : fields;
   var fn = !(fields && fields.length)
     ? function() { return ''; }
     : Function('_', 'return \'\'+' +
         fields.map(function(f) {
-          return '_[' + splitAccessPath(f).map(stringValue).join('][') + ']';
+          return '_[' + (flat
+              ? stringValue(f)
+              : splitAccessPath(f).map(stringValue).join('][')
+            ) + ']';
         }).join('+\'|\'+') + ';');
   return accessor(fn, fields, 'key');
 }

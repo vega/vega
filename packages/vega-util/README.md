@@ -119,7 +119,7 @@ vega.<b>identity</b>(<i>value</i>)
 An accessor function that simply returns its *value* argument.
 
 <a name="key" href="#key">#</a>
-vega.<b>key</b>(<i>fields</i>)
+vega.<b>key</b>(<i>fields</i>[, <i>flat</i>])
 [<>](https://github.com/vega/vega-util/blob/master/src/key.js "Source")
 
 Generates an accessor function that returns a key string (suitable for
@@ -128,6 +128,10 @@ using as an object property name) for a set of object *fields*. The
 entry indicating a property of an input object to be used to produce
 representative key values. The resulting key function is an
 [accessor](#accessor) instance with the accessor name `'key'`.
+The optional *flat* argument is a boolean flag indicating if the field
+names should be treated as flat property names, side-stepping nested
+field lookups normally indicated by dot or bracket notation. By default,
+*flat* is `false` and nested property lookup is performed.
 
 ```js
 var keyf = vega.key(['foo', 'bar']);
