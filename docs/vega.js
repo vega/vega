@@ -484,14 +484,23 @@ var isRegExp = function(_) {
   return Object.prototype.toString.call(_) === '[object RegExp]';
 };
 
-var key = function(fields) {
-  fields = fields ? array(fields) : fields;
+var key = function(fields, flat) {
+  if (fields) {
+    fields = flat
+      ? array(fields).map(function(f) { return f.replace(/\\(.)/g, '$1'); })
+      : array(fields);
+  }
+
   var fn = !(fields && fields.length)
     ? function() { return ''; }
     : Function('_', 'return \'\'+' +
         fields.map(function(f) {
-          return '_[' + splitAccessPath(f).map($).join('][') + ']';
+          return '_[' + (flat
+              ? $(f)
+              : splitAccessPath(f).map($).join('][')
+            ) + ']';
         }).join('+\'|\'+') + ';');
+
   return accessor(fn, fields, 'key');
 };
 
@@ -7338,6 +7347,9 @@ prototype$23.changes = function() {
  * @constructor
  * @param {object} params - The parameters for this operator.
  * @param {Array<string>} params.fields - The field name(s) for the key function.
+ * @param {boolean} params.flat - A boolean flag indicating if the field names
+ *  should be treated as flat property names, side-stepping nested field
+ *  lookups normally indicated by dot or bracket notation.
  */
 function Key(params) {
   Operator.call(this, null, update$3, params);
@@ -7346,7 +7358,7 @@ function Key(params) {
 inherits(Key, Operator);
 
 function update$3(_) {
-  return (this.value && !_.modified()) ? this.value : key(_.fields);
+  return (this.value && !_.modified()) ? this.value : key(_.fields, _.flat);
 }
 
 /**
@@ -18278,14 +18290,14 @@ prototype$53.transform = function(_, pulse) {
     out.encode = null;
   }
 
+  if (map && (_.modified('key') || pulse.modified(key$$1))) {
+    error$1('DataJoin does not support modified key function or fields.');
+  }
+
   if (!map) {
     pulse = pulse.addAll();
     this.value = map = fastmap().test(isExit);
     map.lookup = function(t) { return map.get(key$$1(t)); };
-  }
-
-  if (_.modified('key') || pulse.modified(key$$1)) {
-    error$1('DataJoin does not support modified key function or fields.');
   }
 
   pulse.visit(pulse.ADD, function(t) {
@@ -27928,7 +27940,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.6";
+var version = "3.0.7";
 
 var Default = 'default';
 
@@ -31760,8 +31772,10 @@ function compareRef(fields, orders) {
   return {$compare: fields, $order: orders};
 }
 
-function keyRef(fields) {
-  return {$key: fields};
+function keyRef(fields, flat) {
+  var ref = {$key: fields};
+  if (flat) ref.$flat = true;
+  return ref;
 }
 
 // -----
@@ -32918,20 +32932,20 @@ var parseData = function(from, group, scope) {
     if (facet.field != null) {
       dataRef = parent = ref(scope.getData(facet.data).output);
     } else {
-      key$$1 = scope.keyRef(facet.groupby);
-
       // generate facet aggregates if no direct data specification
       if (!from.data) {
         op = parseTransform(extend({
           type:    'aggregate',
           groupby: array(facet.groupby)
-        }, facet.aggregate));
-        op.params.key = key$$1;
+        }, facet.aggregate), scope);
+        op.params.key = scope.keyRef(facet.groupby);
         op.params.pulse = ref(scope.getData(facet.data).output);
         dataRef = parent = ref(scope.add(op));
       } else {
         parent = ref(scope.getData(from.data).aggregate);
       }
+
+      key$$1 = scope.keyRef(facet.groupby, true);
     }
   }
 
@@ -34279,7 +34293,7 @@ prototype$83.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype$83.keyRef = function(fields) {
+prototype$83.keyRef = function(fields, flat) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -34294,8 +34308,8 @@ prototype$83.keyRef = function(fields) {
   fields = array(fields).map(check);
 
   return signal
-    ? ref(this.add(Key$1({fields: fields})))
-    : keyRef(fields);
+    ? ref(this.add(Key$1({fields: fields, flat: flat})))
+    : keyRef(fields, flat);
 };
 
 prototype$83.sortRef = function(sort) {
@@ -34824,8 +34838,8 @@ function getExpression(_, ctx) {
  * Resolve a key accessor reference.
  */
 function getKey(_, ctx) {
-  var k = 'k:' + _.$key;
-  return ctx.fn[k] || (ctx.fn[k] = key(_.$key));
+  var k = 'k:' + _.$key + '_' + (!!_.$flat);
+  return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat));
 }
 
 /**
