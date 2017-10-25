@@ -35,14 +35,14 @@ prototype.transform = function(_, pulse) {
     out.encode = null;
   }
 
+  if (map && (_.modified('key') || pulse.modified(key))) {
+    error('DataJoin does not support modified key function or fields.');
+  }
+
   if (!map) {
     pulse = pulse.addAll();
     this.value = map = fastmap().test(isExit);
     map.lookup = function(t) { return map.get(key(t)); };
-  }
-
-  if (_.modified('key') || pulse.modified(key)) {
-    error('DataJoin does not support modified key function or fields.');
   }
 
   pulse.visit(pulse.ADD, function(t) {
