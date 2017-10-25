@@ -221,7 +221,7 @@ prototype.compareRef = function(cmp) {
     : compareRef(fields, orders);
 };
 
-prototype.keyRef = function(fields) {
+prototype.keyRef = function(fields, flat) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -236,8 +236,8 @@ prototype.keyRef = function(fields) {
   fields = array(fields).map(check);
 
   return signal
-    ? ref(this.add(Key({fields: fields})))
-    : keyRef(fields);
+    ? ref(this.add(Key({fields: fields, flat: flat})))
+    : keyRef(fields, flat);
 };
 
 prototype.sortRef = function(sort) {

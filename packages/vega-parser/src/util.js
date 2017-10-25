@@ -40,8 +40,10 @@ export function compareRef(fields, orders) {
   return {$compare: fields, $order: orders};
 }
 
-export function keyRef(fields) {
-  return {$key: fields};
+export function keyRef(fields, flat) {
+  var ref = {$key: fields};
+  if (flat) ref.$flat = true;
+  return ref;
 }
 
 // -----
