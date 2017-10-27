@@ -12,6 +12,13 @@
     <script src="{{ site.baseurl }}/assets/promise.min.js"></script>
     <script src="{{ site.baseurl }}/assets/symbol.min.js"></script>
     <script src="{{ site.baseurl }}/vega.js"></script>
+    {% if page.image %}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@vega_vis" />
+      <meta property="og:image" content="{{ site.baseurl }}{{ page.image }}" />
+      {% if page.description %}<meta property="og:description" content="{{ page.description }}" />{% endif %}
+      <meta property="og:title" content="{{ page.title }}" />
+    {% endif %}
   </head>
   <body>
     <div class="fill">
