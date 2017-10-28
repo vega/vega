@@ -245,14 +245,18 @@ nav a:hover {
   margin-top: 0.3em;
 }
 
+nav > .dropdown {
+  flex: 0 0 auto;
+  margin: 0 20px 0px -20px;
+}
+
 .vega-title {
+  padding: 0 54px 2px 20px;
   font-weight: bold;
   font-size: 1.4em;
   color: #fff;
-  margin-right: 8px;
   flex: 0 0 auto;
   display: inline-block;
-  line-height: 54px;
 }
 
 .vega-links {
@@ -519,6 +523,38 @@ ul.column-set, .column-set ul {
   border: 1px solid #ddd;
 }
 
+/* Dropdown */
+nav .dropdown-content {
+  position: absolute;
+  display: none;
+  z-index: 1;
+}
+
+nav .dropdown-content a {
+  display: block;
+  font-weight: 600;
+  font-size: 1.2em;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+nav > .dropdown:hover {
+  box-shadow: 0px 51px 20px 5px rgba(0,0,0,0.2);
+}
+
+nav > .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+nav > .dropdown:hover a {
+  background-color: #e2e2e2;
+  color: #666;
+}
+
+nav > .dropdown:hover a:hover {
+  color: #000;
+}
+
 /* Media queries */
 @media (max-width:768px) {
   body {
@@ -559,5 +595,8 @@ ul.column-set, .column-set ul {
   }
   .highlight {
     overflow-x: auto;
+  }
+  .vega-title {
+    padding-right: 51px;
   }
 }

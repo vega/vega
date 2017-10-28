@@ -17,7 +17,12 @@
     <div class="fill">
       <header>
         <nav class="page-centered">
-          <a class="vega-title" href="{{ site.baseurl }}/">{{ site.title }}</a>
+          <div class="dropdown">
+            <a class="vega-title" href="{{site.baseurl}}/">{{site.title}}</a>
+            <div class="dropdown-content">
+              <a href="https://vega.github.io/vega-lite/">Vega-Lite</a>
+            </div>
+          </div>
           <div class="vega-links">
             <div class="primary-links">
               <a href="{{ site.baseurl }}/examples/" {% if page.menu == 'examples' or layout.menu == 'examples' %}class="active"{% endif %}>Examples</a>
