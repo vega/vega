@@ -53,6 +53,7 @@ If you have already imported d3 and want to use a smaller Vega bundle without d3
 
 ```html
 <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/{{ site.data.versions.d3 }}/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega-core.min.js"></script>
 </head>
 ```
