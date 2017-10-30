@@ -2233,9 +2233,9 @@ vega-dataflow@3:
     vega-loader "2"
     vega-util "1"
 
-vega-datasets@vega/vega-datasets#gh-pages:
+vega-datasets@1:
   version "1.10.0"
-  resolved "https://codeload.github.com/vega/vega-datasets/tar.gz/7080ba8297825d27495bdfb8386d10cff83cbacf"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.10.0.tgz#fe923df5aa3828eeb350b5e710a79936a25f29f0"
 
 vega-encode@2:
   version "2.0.5"
