@@ -63,7 +63,7 @@
   "dependencies": {
     "vega-crossfilter": "2",
     "vega-dataflow": "3",
-    "vega-datasets": "vega/vega-datasets#gh-pages",
+    "vega-datasets": "1",
     "vega-encode": "2",
     "vega-expression": "2",
     "vega-force": "2",
