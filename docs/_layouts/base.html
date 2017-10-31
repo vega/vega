@@ -1,24 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{{ site.title }}{% if page.title %}: {{ page.title }}{% endif %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="{{ site.description }}">
     <link rel="shortcut icon" href="https://vega.github.io/favicon.ico"/>
     <link rel="stylesheet" href="{{ site.baseurl }}/assets/syntax.css">
     <link rel="stylesheet" href="{{ site.baseurl }}/assets/main.css">
     <script src="{{ site.baseurl }}/assets/promise.min.js"></script>
     <script src="{{ site.baseurl }}/assets/symbol.min.js"></script>
     <script src="{{ site.baseurl }}/vega.js"></script>
-    {% if page.image %}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@vega_vis" />
-      <meta property="og:image" content="{{ site.baseurl }}{{ page.image }}" />
-      {% if page.description %}<meta property="og:description" content="{{ page.description }}" />{% endif %}
-      <meta property="og:title" content="{{ page.title }}" />
-    {% endif %}
+    {% seo %}
   </head>
   <body>
     <div class="fill">

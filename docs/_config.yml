@@ -13,6 +13,9 @@ url: "https://vega.github.io" # the base hostname & protocol for your site
 markdown: kramdown
 highlighter: rouge
 
+twitter:
+  username: vega_vis
+
 kramdown:
   input: GFM
   syntax_highlighter: rouge
