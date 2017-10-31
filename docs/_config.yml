@@ -24,3 +24,8 @@ kramdown:
 exclude:
   - Gemfile
   - Gemfile.lock
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-mentions
