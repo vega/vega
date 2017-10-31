@@ -1,0 +1,575 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "description": "A diverging stacked bar chart for sentiments towards a set of eight questions, displayed as percentages with neutral responses straddling the 0% mark",
+  "autosize": "pad",
+  "padding": 5,
+  "style": "cell",
+  "data": [
+    {
+      "name": "source_questions",
+      "values": [
+        {
+          "question": "Question 1",
+          "type": "Strongly disagree",
+          "value": 24,
+          "percentage": 0.7,
+          "percentage_start": -19.1,
+          "percentage_end": -18.4
+        },
+        {
+          "question": "Question 1",
+          "type": "Disagree",
+          "value": 294,
+          "percentage": 9.1,
+          "percentage_start": -18.4,
+          "percentage_end": -9.2
+        },
+        {
+          "question": "Question 1",
+          "type": "Neither agree nor disagree",
+          "value": 594,
+          "percentage": 18.5,
+          "percentage_start": -9.2,
+          "percentage_end": 9.2
+        },
+        {
+          "question": "Question 1",
+          "type": "Agree",
+          "value": 1927,
+          "percentage": 59.9,
+          "percentage_start": 9.2,
+          "percentage_end": 69.2
+        },
+        {
+          "question": "Question 1",
+          "type": "Strongly agree",
+          "value": 376,
+          "percentage": 11.7,
+          "percentage_start": 69.2,
+          "percentage_end": 80.9
+        },
+        {
+          "question": "Question 2",
+          "type": "Strongly disagree",
+          "value": 2,
+          "percentage": 18.2,
+          "percentage_start": -36.4,
+          "percentage_end": -18.2
+        },
+        {
+          "question": "Question 2",
+          "type": "Disagree",
+          "value": 2,
+          "percentage": 18.2,
+          "percentage_start": -18.2,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 2",
+          "type": "Neither agree nor disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 0,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 2",
+          "type": "Agree",
+          "value": 7,
+          "percentage": 63.6,
+          "percentage_start": 0,
+          "percentage_end": 63.6
+        },
+        {
+          "question": "Question 2",
+          "type": "Strongly agree",
+          "value": 11,
+          "percentage": 0,
+          "percentage_start": 63.6,
+          "percentage_end": 63.6
+        },
+        {
+          "question": "Question 3",
+          "type": "Strongly disagree",
+          "value": 2,
+          "percentage": 20,
+          "percentage_start": -30,
+          "percentage_end": -10
+        },
+        {
+          "question": "Question 3",
+          "type": "Disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": -10,
+          "percentage_end": -10
+        },
+        {
+          "question": "Question 3",
+          "type": "Neither agree nor disagree",
+          "value": 2,
+          "percentage": 20,
+          "percentage_start": -10,
+          "percentage_end": 10
+        },
+        {
+          "question": "Question 3",
+          "type": "Agree",
+          "value": 4,
+          "percentage": 40,
+          "percentage_start": 10,
+          "percentage_end": 50
+        },
+        {
+          "question": "Question 3",
+          "type": "Strongly agree",
+          "value": 2,
+          "percentage": 20,
+          "percentage_start": 50,
+          "percentage_end": 70
+        },
+        {
+          "question": "Question 4",
+          "type": "Strongly disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": -15.6,
+          "percentage_end": -15.6
+        },
+        {
+          "question": "Question 4",
+          "type": "Disagree",
+          "value": 2,
+          "percentage": 12.5,
+          "percentage_start": -15.6,
+          "percentage_end": -3.1
+        },
+        {
+          "question": "Question 4",
+          "type": "Neither agree nor disagree",
+          "value": 1,
+          "percentage": 6.3,
+          "percentage_start": -3.1,
+          "percentage_end": 3.1
+        },
+        {
+          "question": "Question 4",
+          "type": "Agree",
+          "value": 7,
+          "percentage": 43.8,
+          "percentage_start": 3.1,
+          "percentage_end": 46.9
+        },
+        {
+          "question": "Question 4",
+          "type": "Strongly agree",
+          "value": 6,
+          "percentage": 37.5,
+          "percentage_start": 46.9,
+          "percentage_end": 84.4
+        },
+        {
+          "question": "Question 5",
+          "type": "Strongly disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": -10.4,
+          "percentage_end": -10.4
+        },
+        {
+          "question": "Question 5",
+          "type": "Disagree",
+          "value": 1,
+          "percentage": 4.2,
+          "percentage_start": -10.4,
+          "percentage_end": -6.3
+        },
+        {
+          "question": "Question 5",
+          "type": "Neither agree nor disagree",
+          "value": 3,
+          "percentage": 12.5,
+          "percentage_start": -6.3,
+          "percentage_end": 6.3
+        },
+        {
+          "question": "Question 5",
+          "type": "Agree",
+          "value": 16,
+          "percentage": 66.7,
+          "percentage_start": 6.3,
+          "percentage_end": 72.9
+        },
+        {
+          "question": "Question 5",
+          "type": "Strongly agree",
+          "value": 4,
+          "percentage": 16.7,
+          "percentage_start": 72.9,
+          "percentage_end": 89.6
+        },
+        {
+          "question": "Question 6",
+          "type": "Strongly disagree",
+          "value": 1,
+          "percentage": 6.3,
+          "percentage_start": -18.8,
+          "percentage_end": -12.5
+        },
+        {
+          "question": "Question 6",
+          "type": "Disagree",
+          "value": 1,
+          "percentage": 6.3,
+          "percentage_start": -12.5,
+          "percentage_end": -6.3
+        },
+        {
+          "question": "Question 6",
+          "type": "Neither agree nor disagree",
+          "value": 2,
+          "percentage": 12.5,
+          "percentage_start": -6.3,
+          "percentage_end": 6.3
+        },
+        {
+          "question": "Question 6",
+          "type": "Agree",
+          "value": 9,
+          "percentage": 56.3,
+          "percentage_start": 6.3,
+          "percentage_end": 62.5
+        },
+        {
+          "question": "Question 6",
+          "type": "Strongly agree",
+          "value": 3,
+          "percentage": 18.8,
+          "percentage_start": 62.5,
+          "percentage_end": 81.3
+        },
+        {
+          "question": "Question 7",
+          "type": "Strongly disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": -10,
+          "percentage_end": -10
+        },
+        {
+          "question": "Question 7",
+          "type": "Disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": -10,
+          "percentage_end": -10
+        },
+        {
+          "question": "Question 7",
+          "type": "Neither agree nor disagree",
+          "value": 1,
+          "percentage": 20,
+          "percentage_start": -10,
+          "percentage_end": 10
+        },
+        {
+          "question": "Question 7",
+          "type": "Agree",
+          "value": 4,
+          "percentage": 80,
+          "percentage_start": 10,
+          "percentage_end": 90
+        },
+        {
+          "question": "Question 7",
+          "type": "Strongly agree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 90,
+          "percentage_end": 90
+        },
+        {
+          "question": "Question 8",
+          "type": "Strongly disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 0,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 8",
+          "type": "Disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 0,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 8",
+          "type": "Neither agree nor disagree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 0,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 8",
+          "type": "Agree",
+          "value": 0,
+          "percentage": 0,
+          "percentage_start": 0,
+          "percentage_end": 0
+        },
+        {
+          "question": "Question 8",
+          "type": "Strongly agree",
+          "value": 2,
+          "percentage": 100,
+          "percentage_start": 0,
+          "percentage_end": 100
+        }
+      ]
+    },
+    {
+      "name": "data_questions",
+      "source": "source_questions",
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "toNumber(datum[\"percentage\"])",
+          "as": "percentage"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.type === 'Strongly disagree' ? -2 : datum.type === 'Disagree' ? -1 : datum.type === 'Neither agree nor disagree' ? 0 : datum.type === 'Agree' ? 1 : 2",
+          "as": "type_index",
+          "initonly": true
+        },
+        {
+          "type": "formula",
+          "expr": "if(datum.type === 'Disagree' || datum.type === 'Strongly disagree', datum.percentage,0) + if(datum.type === 'Neither agree nor disagree', datum.percentage / 2, 0)",
+          "as": "signed_percentage"
+        },
+        {
+          "type": "window",
+          "groupby": ["question"],
+          "ops": ["sum"],
+          "fields": ["signed_percentage"],
+          "frame": [null, null],
+          "as": ["offset"]
+        },
+        {
+          "type": "aggregate",
+          "groupby": [
+            "question",
+            "type",
+            "offset"
+          ],
+          "ops": [
+            "sum"
+          ],
+          "fields": [
+            "percentage"
+          ],
+          "as": [
+            "sum_percentage"
+          ]
+        },
+        {
+          "type": "stack",
+          "groupby": [
+            "question"
+          ],
+          "field": "sum_percentage",
+          "sort": {
+            "field": [
+              "type_index"
+            ],
+            "order": [
+              "descending"
+            ]
+          },
+          "as": [
+            "sum_percentage_start",
+            "sum_percentage_end"
+          ],
+          "offset": "zero"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.sum_percentage_start - datum.offset",
+          "as": "sum_percentage_start"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.sum_percentage_end - datum.offset",
+          "as": "sum_percentage_end"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "width",
+      "update": "200"
+    },
+    {
+      "name": "y_step",
+      "value": 21
+    },
+    {
+      "name": "height",
+      "update": "bandspace(domain('y').length, 0.1, 0.05) * y_step"
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "rect",
+      "style": [
+        "bar"
+      ],
+      "from": {
+        "data": "data_questions"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x",
+            "field": "sum_percentage_end"
+          },
+          "x2": {
+            "scale": "x",
+            "field": "sum_percentage_start"
+          },
+          "y": {
+            "scale": "y",
+            "field": "question"
+          },
+          "height": {
+            "scale": "y",
+            "band": true
+          },
+          "fill": {
+            "scale": "color",
+            "field": "type"
+          }
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {
+        "data": "data_questions",
+        "fields": [
+          "sum_percentage_start",
+          "sum_percentage_end"
+        ],
+        "sort": true
+      },
+      "range": [
+        0,
+        {
+          "signal": "width"
+        }
+      ],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "data_questions",
+        "field": "question",
+        "sort": true
+      },
+      "range": {
+        "step": {
+          "signal": "y_step"
+        }
+      },
+      "paddingInner": 0.1,
+      "paddingOuter": 0.05
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": [
+        "Strongly disagree",
+        "Disagree",
+        "Neither agree nor disagree",
+        "Agree",
+        "Strongly agree"
+      ],
+      "range": [
+        "#c30d24",
+        "#f3a583",
+        "#cccccc",
+        "#94c6da",
+        "#1770ab"
+      ]
+    }
+  ],
+  "axes": [
+    {
+      "title": "Percentage",
+      "scale": "x",
+      "labelOverlap": true,
+      "orient": "bottom",
+      "tickCount": {
+        "signal": "ceil(width/40)"
+      },
+      "zindex": 1
+    },
+    {
+      "scale": "x",
+      "domain": false,
+      "grid": true,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "orient": "bottom",
+      "tickCount": {
+        "signal": "ceil(width/40)"
+      },
+      "ticks": false,
+      "zindex": 0,
+      "gridScale": "y"
+    },
+    {
+      "domain": false,
+      "minExtent": 60,
+      "offset": 5,
+      "ticks": false,
+      "title": "Question",
+      "scale": "y",
+      "orient": "left",
+      "zindex": 1
+    }
+  ],
+  "legends": [
+    {
+      "title": "Response",
+      "fill": "color",
+      "encode": {
+        "symbols": {
+          "update": {
+            "shape": {
+              "value": "square"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "config": {
+    "axisY": {
+      "minExtent": 30
+    }
+  }
+}
+
