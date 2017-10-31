@@ -4,7 +4,8 @@
         {"name": "stacked-bar-chart"},
         {"name": "grouped-bar-chart"},
         {"name": "nested-bar-chart"},
-        {"name": "population-pyramid"}
+        {"name": "population-pyramid"},
+        {"name": "diverging-bar-chart"}
     ],
     "Line & Area Charts": [
         {"name": "line-chart"},
