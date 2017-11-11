@@ -1,6 +1,6 @@
 # vega-scenegraph
 
-[Vega](http://gihub.com/vega/vega) scenegraph and renderers.
+[Vega](http://github.com/vega/vega) scenegraph and renderers.
 
 Renderers and event handlers for Vega's mark-based scenegraph. This module
 supports both pixel-based (canvas) and vector graphics (SVG) output. Renderers
