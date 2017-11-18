@@ -63,7 +63,6 @@
   "dependencies": {
     "vega-crossfilter": "2",
     "vega-dataflow": "3",
-    "vega-datasets": "1",
     "vega-encode": "2",
     "vega-expression": "2",
     "vega-force": "2",
@@ -91,7 +90,8 @@
     "rollup-plugin-node-resolve": "3",
     "tape": "4",
     "tv4": "1",
-    "uglify-js": "3"
+    "uglify-js": "3",
+    "vega-datasets": "1"
   },
   "browser": {
     "buffer": false,
