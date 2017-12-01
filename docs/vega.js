@@ -1779,7 +1779,7 @@ var dsvFormat = function(delimiter) {
       if (convert) return convert(row, i - 1);
       columns = row, convert = f ? customConverter(row, f) : objectConverter(row);
     });
-    rows.columns = columns;
+    rows.columns = columns || [];
     return rows;
   }
 
@@ -2145,85 +2145,75 @@ function parseJSON(data, format) {
     : data;
 }
 
-var noop$1 = function() {};
+var identity$1 = function(x) {
+  return x;
+};
 
-function absolute(transform) {
-  if (!transform) return noop$1;
+var transform = function(transform) {
+  if (transform == null) return identity$1;
   var x0,
       y0,
       kx = transform.scale[0],
       ky = transform.scale[1],
       dx = transform.translate[0],
       dy = transform.translate[1];
-  return function(point, i) {
+  return function(input, i) {
     if (!i) x0 = y0 = 0;
-    point[0] = (x0 += point[0]) * kx + dx;
-    point[1] = (y0 += point[1]) * ky + dy;
+    var j = 2, n = input.length, output = new Array(n);
+    output[0] = (x0 += input[0]) * kx + dx;
+    output[1] = (y0 += input[1]) * ky + dy;
+    while (j < n) output[j] = input[j], ++j;
+    return output;
   };
-}
+};
 
-function reverse(array, n) {
+var reverse = function(array, n) {
   var t, j = array.length, i = j - n;
   while (i < --j) t = array[i], array[i++] = array[j], array[j] = t;
-}
-
-function bisect(a, x) {
-  var lo = 0, hi = a.length;
-  while (lo < hi) {
-    var mid = lo + hi >>> 1;
-    if (a[mid] < x) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
+};
 
 var feature = function(topology, o) {
-  return o.type === "GeometryCollection" ? {
-    type: "FeatureCollection",
-    features: o.geometries.map(function(o) { return feature$1(topology, o); })
-  } : feature$1(topology, o);
+  return o.type === "GeometryCollection"
+      ? {type: "FeatureCollection", features: o.geometries.map(function(o) { return feature$1(topology, o); })}
+      : feature$1(topology, o);
 };
 
 function feature$1(topology, o) {
-  var f = {
-    type: "Feature",
-    id: o.id,
-    properties: o.properties || {},
-    geometry: object(topology, o)
-  };
-  if (o.id == null) delete f.id;
-  return f;
+  var id = o.id,
+      bbox = o.bbox,
+      properties = o.properties == null ? {} : o.properties,
+      geometry = object(topology, o);
+  return id == null && bbox == null ? {type: "Feature", properties: properties, geometry: geometry}
+      : bbox == null ? {type: "Feature", id: id, properties: properties, geometry: geometry}
+      : {type: "Feature", id: id, bbox: bbox, properties: properties, geometry: geometry};
 }
 
 function object(topology, o) {
-  var absolute$$1 = absolute(topology.transform),
+  var transformPoint = transform(topology.transform),
       arcs = topology.arcs;
 
   function arc(i, points) {
     if (points.length) points.pop();
-    for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
-      points.push(p = a[k].slice());
-      absolute$$1(p, k);
+    for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length; k < n; ++k) {
+      points.push(transformPoint(a[k], k));
     }
     if (i < 0) reverse(points, n);
   }
 
   function point(p) {
-    p = p.slice();
-    absolute$$1(p, 0);
-    return p;
+    return transformPoint(p);
   }
 
   function line(arcs) {
     var points = [];
     for (var i = 0, n = arcs.length; i < n; ++i) arc(arcs[i], points);
-    if (points.length < 2) points.push(points[0].slice());
+    if (points.length < 2) points.push(points[0]); // This should never happen per the specification.
     return points;
   }
 
   function ring(arcs) {
     var points = line(arcs);
-    while (points.length < 4) points.push(points[0].slice());
+    while (points.length < 4) points.push(points[0]); // This may happen if an arc has only two points.
     return points;
   }
 
@@ -2232,25 +2222,24 @@ function object(topology, o) {
   }
 
   function geometry(o) {
-    var t = o.type;
-    return t === "GeometryCollection" ? {type: t, geometries: o.geometries.map(geometry)}
-        : t in geometryType ? {type: t, coordinates: geometryType[t](o)}
-        : null;
+    var type = o.type, coordinates;
+    switch (type) {
+      case "GeometryCollection": return {type: type, geometries: o.geometries.map(geometry)};
+      case "Point": coordinates = point(o.coordinates); break;
+      case "MultiPoint": coordinates = o.coordinates.map(point); break;
+      case "LineString": coordinates = line(o.arcs); break;
+      case "MultiLineString": coordinates = o.arcs.map(line); break;
+      case "Polygon": coordinates = polygon(o.arcs); break;
+      case "MultiPolygon": coordinates = o.arcs.map(polygon); break;
+      default: return null;
+    }
+    return {type: type, coordinates: coordinates};
   }
-
-  var geometryType = {
-    Point: function(o) { return point(o.coordinates); },
-    MultiPoint: function(o) { return o.coordinates.map(point); },
-    LineString: function(o) { return line(o.arcs); },
-    MultiLineString: function(o) { return o.arcs.map(line); },
-    Polygon: function(o) { return polygon(o.arcs); },
-    MultiPolygon: function(o) { return o.arcs.map(polygon); }
-  };
 
   return geometry(o);
 }
 
-var stitchArcs = function(topology, arcs) {
+var stitch = function(topology, arcs) {
   var stitchedArcs = {},
       fragmentByStart = {},
       fragmentByEnd = {},
@@ -2328,49 +2317,62 @@ var mesh = function(topology) {
   return object(topology, meshArcs.apply(this, arguments));
 };
 
-function meshArcs(topology, o, filter) {
-  var arcs = [];
+function meshArcs(topology, object$$1, filter) {
+  var arcs, i, n;
+  if (arguments.length > 1) arcs = extractArcs(topology, object$$1, filter);
+  else for (i = 0, arcs = new Array(n = topology.arcs.length); i < n; ++i) arcs[i] = i;
+  return {type: "MultiLineString", arcs: stitch(topology, arcs)};
+}
 
-  function arc(i) {
+function extractArcs(topology, object$$1, filter) {
+  var arcs = [],
+      geomsByArc = [],
+      geom;
+
+  function extract0(i) {
     var j = i < 0 ? ~i : i;
     (geomsByArc[j] || (geomsByArc[j] = [])).push({i: i, g: geom});
   }
 
-  function line(arcs) {
-    arcs.forEach(arc);
+  function extract1(arcs) {
+    arcs.forEach(extract0);
   }
 
-  function polygon(arcs) {
-    arcs.forEach(line);
+  function extract2(arcs) {
+    arcs.forEach(extract1);
+  }
+
+  function extract3(arcs) {
+    arcs.forEach(extract2);
   }
 
   function geometry(o) {
-    if (o.type === "GeometryCollection") o.geometries.forEach(geometry);
-    else if (o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
+    switch (geom = o, o.type) {
+      case "GeometryCollection": o.geometries.forEach(geometry); break;
+      case "LineString": extract1(o.arcs); break;
+      case "MultiLineString": case "Polygon": extract2(o.arcs); break;
+      case "MultiPolygon": extract3(o.arcs); break;
+    }
   }
 
-  if (arguments.length > 1) {
-    var geomsByArc = [],
-        geom;
+  geometry(object$$1);
 
-    var geometryType = {
-      LineString: line,
-      MultiLineString: polygon,
-      Polygon: polygon,
-      MultiPolygon: function(arcs) { arcs.forEach(polygon); }
-    };
+  geomsByArc.forEach(filter == null
+      ? function(geoms) { arcs.push(geoms[0].i); }
+      : function(geoms) { if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i); });
 
-    geometry(o);
-
-    geomsByArc.forEach(arguments.length < 3
-        ? function(geoms) { arcs.push(geoms[0].i); }
-        : function(geoms) { if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i); });
-  } else {
-    for (var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
-  }
-
-  return {type: "MultiLineString", arcs: stitchArcs(topology, arcs)};
+  return arcs;
 }
+
+var bisect = function(a, x) {
+  var lo = 0, hi = a.length;
+  while (lo < hi) {
+    var mid = lo + hi >>> 1;
+    if (a[mid] < x) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+};
 
 var topojson = function(data, format) {
   var object, property;
@@ -2434,11 +2436,12 @@ function newInterval(floori, offseti, count, field) {
   };
 
   interval.range = function(start, stop, step) {
-    var range = [];
+    var range = [], previous;
     start = interval.ceil(start);
     step = step == null ? 1 : Math.floor(step);
     if (!(start < stop) || !(step > 0)) return range; // also handles Invalid Date
-    do range.push(new Date(+start)); while (offseti(start, step), floori(start), start < stop)
+    do range.push(previous = new Date(+start)), offseti(start, step), floori(start);
+    while (previous < start && start < stop);
     return range;
   };
 
@@ -4608,11 +4611,11 @@ prototype$7.transform = function() {};
 var transforms = {};
 
 function definition(type) {
-  var t = transform(type);
+  var t = transform$1(type);
   return t && t.Definition || null;
 }
 
-function transform(type) {
+function transform$1(type) {
   type = type && type.toLowerCase();
   return transforms.hasOwnProperty(type) ? transforms[type] : null;
 }
@@ -5034,7 +5037,7 @@ var extent = function(values, valueof) {
   return [min, max];
 };
 
-var identity$1 = function(x) {
+var identity$2 = function(x) {
   return x;
 };
 
@@ -9340,7 +9343,7 @@ var d3_symbol = function() {
   return symbol;
 };
 
-var noop$2 = function() {};
+var noop$1 = function() {};
 
 function point(that, x, y) {
   that._context.bezierCurveTo(
@@ -9399,8 +9402,8 @@ function BasisClosed(context) {
 }
 
 BasisClosed.prototype = {
-  areaStart: noop$2,
-  areaEnd: noop$2,
+  areaStart: noop$1,
+  areaEnd: noop$1,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 =
     this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN;
@@ -9605,8 +9608,8 @@ function CardinalClosed(context, tension) {
 }
 
 CardinalClosed.prototype = {
-  areaStart: noop$2,
-  areaEnd: noop$2,
+  areaStart: noop$1,
+  areaEnd: noop$1,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 =
     this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
@@ -9798,8 +9801,8 @@ function CatmullRomClosed(context, alpha) {
 }
 
 CatmullRomClosed.prototype = {
-  areaStart: noop$2,
-  areaEnd: noop$2,
+  areaStart: noop$1,
+  areaEnd: noop$1,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 =
     this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
@@ -9928,8 +9931,8 @@ function LinearClosed(context) {
 }
 
 LinearClosed.prototype = {
-  areaStart: noop$2,
-  areaEnd: noop$2,
+  areaStart: noop$1,
+  areaEnd: noop$1,
   lineStart: function() {
     this._point = 0;
   },
@@ -11143,13 +11146,13 @@ function context(_) {
   return context;
 }
 
-function noop$3() {}
+function noop$2() {}
 
 function add$1(x, y) { bounds.add(x, y); }
 
-context.beginPath = noop$3;
+context.beginPath = noop$2;
 
-context.closePath = noop$3;
+context.closePath = noop$2;
 
 context.moveTo = add$1;
 
@@ -14618,6 +14621,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.y = -s;
           s += title.bounds.height();
+          bounds.add(title.bounds.x1, 0)
+                .add(title.bounds.x2, 0);
         } else {
           bounds.union(title.bounds);
         }
@@ -14633,6 +14638,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.x = -s;
           s += title.bounds.width();
+          bounds.add(0, title.bounds.y1)
+                .add(0, title.bounds.y2);
         } else {
           bounds.union(title.bounds);
         }
@@ -14648,6 +14655,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.x = s;
           s += title.bounds.width();
+          bounds.add(0, title.bounds.y1)
+                .add(0, title.bounds.y2);
         } else {
           bounds.union(title.bounds);
         }
@@ -14662,6 +14671,8 @@ function layoutAxis(view, axis, width, height) {
         s += titlePadding;
         title.y = s;
         s += title.bounds.height();
+        bounds.add(title.bounds.x1, 0)
+              .add(title.bounds.x2, 0);
       } else {
         bounds.union(title.bounds);
       }
@@ -15614,7 +15625,7 @@ var rgbBasisClosed = rgbSpline(basisClosed);
 var array$3 = function(a, b) {
   var nb = b ? b.length : 0,
       na = a ? Math.min(nb, a.length) : 0,
-      x = new Array(nb),
+      x = new Array(na),
       c = new Array(nb),
       i;
 
@@ -15745,7 +15756,7 @@ var interpolateRound = function(a, b) {
 
 var degrees = 180 / Math.PI;
 
-var identity$4 = {
+var identity$5 = {
   translateX: 0,
   translateY: 0,
   rotate: 0,
@@ -15776,7 +15787,7 @@ var cssView;
 var svgNode;
 
 function parseCss(value) {
-  if (value === "none") return identity$4;
+  if (value === "none") return identity$5;
   if (!cssNode) cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView;
   cssNode.style.transform = value;
   value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform");
@@ -15786,10 +15797,10 @@ function parseCss(value) {
 }
 
 function parseSvg(value) {
-  if (value == null) return identity$4;
+  if (value == null) return identity$5;
   if (!svgNode) svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svgNode.setAttribute("transform", value);
-  if (!(value = svgNode.transform.baseVal.consolidate())) return identity$4;
+  if (!(value = svgNode.transform.baseVal.consolidate())) return identity$5;
   value = value.matrix;
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
@@ -15999,7 +16010,7 @@ function cubehelix$1(hue$$1) {
 var cubehelix$2 = cubehelix$1(hue);
 var cubehelixLong = cubehelix$1(nogamma);
 
-var quantize = function(interpolator, n) {
+var quantize$1 = function(interpolator, n) {
   var samples = new Array(n);
   for (var i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
   return samples;
@@ -16030,7 +16041,7 @@ var $$1 = Object.freeze({
 	interpolateHclLong: hclLong,
 	interpolateCubehelix: cubehelix$2,
 	interpolateCubehelixLong: cubehelixLong,
-	quantize: quantize
+	quantize: quantize$1
 });
 
 var constant$5 = function(x) {
@@ -16309,17 +16320,17 @@ FormatSpecifier.prototype.toString = function() {
       + this.type;
 };
 
-var identity$5 = function(x) {
+var identity$6 = function(x) {
   return x;
 };
 
 var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
 
 var formatLocale$1 = function(locale) {
-  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$5,
+  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$6,
       currency = locale.currency,
       decimal = locale.decimal,
-      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$5,
+      numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$6,
       percent = locale.percent || "%";
 
   function newFormat(specifier) {
@@ -16559,7 +16570,7 @@ function linear() {
   return linearish(scale);
 }
 
-function identity$3() {
+function identity$4() {
   var domain = [0, 1];
 
   function scale(x) {
@@ -16573,7 +16584,7 @@ function identity$3() {
   };
 
   scale.copy = function() {
-    return identity$3().domain(domain);
+    return identity$4().domain(domain);
   };
 
   return linearish(scale);
@@ -16805,7 +16816,7 @@ function quantile() {
   return scale;
 }
 
-function quantize$1() {
+function quantize$2() {
   var x0 = 0,
       x1 = 1,
       n = 1,
@@ -16840,7 +16851,7 @@ function quantize$1() {
   };
 
   scale.copy = function() {
-    return quantize$1()
+    return quantize$2()
         .domain([x0, x1])
         .range(range);
   };
@@ -16957,7 +16968,7 @@ function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1
         step = i[1];
         interval = i[0];
       } else {
-        step = tickStep(start, stop, interval);
+        step = Math.max(tickStep(start, stop, interval), 1);
         interval = millisecond$$1;
       }
     }
@@ -17415,14 +17426,14 @@ function scale$1(type, scale) {
 
 var scales = {
   // base scale types
-  identity:      identity$3,
+  identity:      identity$4,
   linear:        linear,
   log:           log$2,
   ordinal:       ordinal,
   pow:           pow$1,
   sqrt:          sqrt$1,
   quantile:      quantile,
-  quantize:      quantize$1,
+  quantize:      quantize$2,
   threshold:     threshold$1,
   time:          time,
   utc:           utcTime,
@@ -18225,7 +18236,7 @@ prototype$52.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       ticks = this.value,
       scale = _.scale,
-      count = _.count ? _.count : (_.values ? _.values.length : tickCount(scale, _.count)),
+      count = _.count == null ? (_.values ? _.values.length : 10) : tickCount(scale, _.count),
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
       values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
@@ -18424,7 +18435,7 @@ prototype$54.transform = function(_, pulse) {
 
 var discrete$1 = {};
 discrete$1[Quantile] = quantile$1;
-discrete$1[Quantize] = quantize$2;
+discrete$1[Quantize] = quantize$3;
 discrete$1[Threshold] = threshold$2;
 discrete$1[BinLinear] = bin$1;
 discrete$1[BinOrdinal] = bin$1;
@@ -18435,7 +18446,7 @@ function labelValues(scale, count, gradient) {
   return values ? values(scale) : tickValues(scale, count);
 }
 
-function quantize$2(scale) {
+function quantize$3(scale) {
   var domain = scale.domain(),
       x0 = domain[0],
       x1 = peek(domain),
@@ -18987,7 +18998,7 @@ function configureScheme(type, _, count) {
   // adjust and/or quantize scheme as appropriate
   return type === Sequential ? adjustScheme(scheme, extent, _.reverse)
     : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
-    : isFunction(scheme) ? quantize$3(adjustScheme(scheme, extent), count)
+    : isFunction(scheme) ? quantize$4(adjustScheme(scheme, extent), count)
     : type === Ordinal ? scheme : scheme.slice(0, count);
 }
 
@@ -19001,7 +19012,7 @@ function flip(array$$1, reverse) {
   return reverse ? array$$1.slice().reverse() : array$$1;
 }
 
-function quantize$3(interpolator, count) {
+function quantize$4(interpolator, count) {
   var samples = new Array(count),
       n = (count - 1) || 1;
   for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
@@ -19227,7 +19238,7 @@ function within(p, q, r) {
   return p <= q && q <= r || r <= q && q <= p;
 }
 
-var noop$4 = function() {};
+var noop$3 = function() {};
 
 var cases = [
   [],
@@ -19417,7 +19428,7 @@ var contours = function() {
   };
 
   contours.smooth = function(_) {
-    return arguments.length ? (smooth = _ ? smoothLinear : noop$4, contours) : smooth === smoothLinear;
+    return arguments.length ? (smooth = _ ? smoothLinear : noop$3, contours) : smooth === smoothLinear;
   };
 
   return contours;
@@ -19652,7 +19663,7 @@ prototype$61.transform = function(_, pulse) {
   }
 
   // set threshold parameter
-  contour.thresholds(_.thresholds || (_.nice ? count : quantize$4(count)));
+  contour.thresholds(_.thresholds || (_.nice ? count : quantize$5(count)));
 
   // set all other parameters
   params.forEach(function(param) {
@@ -19665,7 +19676,7 @@ prototype$61.transform = function(_, pulse) {
   return out;
 };
 
-function quantize$4(k) {
+function quantize$5(k) {
   return function(values) {
     var ex = extent(values), x0 = ex[0], dx = ex[1] - x0,
         t = [], i = 1;
@@ -19829,7 +19840,7 @@ function asin$1(x) {
   return x > 1 ? halfPi$2 : x < -1 ? -halfPi$2 : Math.asin(x);
 }
 
-function noop$5() {}
+function noop$4() {}
 
 function streamGeometry(geometry, stream) {
   if (geometry && streamGeometryType.hasOwnProperty(geometry.type)) {
@@ -20084,7 +20095,7 @@ var clipBuffer = function() {
     lineStart: function() {
       lines.push(line = []);
     },
-    lineEnd: noop$5,
+    lineEnd: noop$4,
     rejoin: function() {
       if (lines.length > 1) lines.push(lines.pop().concat(lines.shift()));
     },
@@ -20889,12 +20900,12 @@ var sinPhi0$1;
 var cosPhi0$1;
 
 var lengthStream = {
-  sphere: noop$5,
-  point: noop$5,
+  sphere: noop$4,
+  point: noop$4,
   lineStart: lengthLineStart,
-  lineEnd: noop$5,
-  polygonStart: noop$5,
-  polygonEnd: noop$5
+  lineEnd: noop$4,
+  polygonStart: noop$4,
+  polygonEnd: noop$4
 };
 
 function lengthLineStart() {
@@ -20903,7 +20914,7 @@ function lengthLineStart() {
 }
 
 function lengthLineEnd() {
-  lengthStream.point = lengthStream.lineEnd = noop$5;
+  lengthStream.point = lengthStream.lineEnd = noop$4;
 }
 
 function lengthPointFirst(lambda, phi) {
@@ -21104,7 +21115,7 @@ function graticule() {
       .extentMinor([[-180, -80 - epsilon$2], [180, 80 + epsilon$2]]);
 }
 
-var identity$6 = function(x) {
+var identity$7 = function(x) {
   return x;
 };
 
@@ -21116,15 +21127,15 @@ var x0$1;
 var y0$1;
 
 var areaStream$1 = {
-  point: noop$5,
-  lineStart: noop$5,
-  lineEnd: noop$5,
+  point: noop$4,
+  lineStart: noop$4,
+  lineEnd: noop$4,
   polygonStart: function() {
     areaStream$1.lineStart = areaRingStart$1;
     areaStream$1.lineEnd = areaRingEnd$1;
   },
   polygonEnd: function() {
-    areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$5;
+    areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$4;
     areaSum$1.add(abs$1(areaRingSum$1));
     areaRingSum$1.reset();
   },
@@ -21160,10 +21171,10 @@ var y1 = x1;
 
 var boundsStream$1 = {
   point: boundsPoint$1,
-  lineStart: noop$5,
-  lineEnd: noop$5,
-  polygonStart: noop$5,
-  polygonEnd: noop$5,
+  lineStart: noop$4,
+  lineEnd: noop$4,
+  polygonStart: noop$4,
+  polygonEnd: noop$4,
   result: function() {
     var bounds = [[x0$2, y0$2], [x1, y1]];
     x1 = y1 = -(y0$2 = x0$2 = Infinity);
@@ -21315,7 +21326,7 @@ PathContext.prototype = {
       }
     }
   },
-  result: noop$5
+  result: noop$4
 };
 
 var lengthSum$1 = adder();
@@ -21326,13 +21337,13 @@ var x0$4;
 var y0$4;
 
 var lengthStream$1 = {
-  point: noop$5,
+  point: noop$4,
   lineStart: function() {
     lengthStream$1.point = lengthPointFirst$1;
   },
   lineEnd: function() {
     if (lengthRing) lengthPoint$1(x00$2, y00$2);
-    lengthStream$1.point = noop$5;
+    lengthStream$1.point = noop$4;
   },
   polygonStart: function() {
     lengthRing = true;
@@ -21452,7 +21463,7 @@ var geoPath = function(projection, context) {
   };
 
   path.projection = function(_) {
-    return arguments.length ? (projectionStream = _ == null ? (projection = null, identity$6) : (projection = _).stream, path) : projection;
+    return arguments.length ? (projectionStream = _ == null ? (projection = null, identity$7) : (projection = _).stream, path) : projection;
   };
 
   path.context = function(_) {
@@ -21662,7 +21673,7 @@ function projectionMutator(projectAt) {
       dx, dy, lambda = 0, phi = 0, // center
       deltaLambda = 0, deltaPhi = 0, deltaGamma = 0, rotate, projectRotate, // rotate
       theta = null, preclip = clipAntimeridian, // clip angle
-      x0 = null, y0, x1, y1, postclip = identity$6, // clip extent
+      x0 = null, y0, x1, y1, postclip = identity$7, // clip extent
       delta2 = 0.5, projectResample = resample(projectTransform, delta2), // precision
       cache,
       cacheStream;
@@ -21698,7 +21709,7 @@ function projectionMutator(projectAt) {
   };
 
   projection.clipExtent = function(_) {
-    return arguments.length ? (postclip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$6) : clipRectangle(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
+    return arguments.length ? (postclip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$7) : clipRectangle(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
   };
 
   projection.scale = function(_) {
@@ -27940,7 +27951,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.7";
+var version = "3.0.8";
 
 var Default = 'default';
 
@@ -28313,7 +28324,6 @@ var bind$1 = function(view, el, binding) {
     }
   }
 
-  if (isString(el)) el = document.querySelector(el);
   generate(bind, el, param, view.signal(param.signal));
 
   if (!bind.active) {
@@ -28557,11 +28567,13 @@ var initialize$1 = function(el, elBind) {
       : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
-      if (_.param.element) lookup$2(view, _.param.element);
+      if (_.param.element) {
+        _.element = lookup$2(view, _.param.element);
+      }
     });
 
     view._bind.forEach(function(_) {
-      bind$1(view, _.param.element || elBind, _);
+      bind$1(view, _.element || elBind, _);
     });
   }
 
@@ -28572,12 +28584,23 @@ function lookup$2(view, el) {
   if (typeof el === 'string') {
     if (typeof document !== 'undefined') {
       el = document.querySelector(el);
+      if (!el) {
+        view.error('Signal bind element not found: ' + el);
+        return null;
+      }
     } else {
       view.error('DOM document instance not found.');
       return null;
     }
   }
-  el.innerHTML = '';
+  if (el) {
+    try {
+      el.innerHTML = '';
+    } catch (e) {
+      el = null;
+      view.error(e);
+    }
+  }
   return el;
 }
 
@@ -28652,13 +28675,23 @@ var parseAutosize = function(spec, config) {
 
 var parsePadding = function(spec, config) {
   spec = spec || config.padding;
-  if (isObject(spec)) {
-    return spec;
-  } else {
-    spec = +spec || 0;
-    return {top: spec, bottom: spec, left: spec, right: spec};
-  }
+  return isObject(spec)
+    ? {
+        top:    number$4(spec.top),
+        bottom: number$4(spec.bottom),
+        left:   number$4(spec.left),
+        right:  number$4(spec.right)
+      }
+    : paddingObject(number$4(spec));
 };
+
+function number$4(_) {
+  return +_ || 0;
+}
+
+function paddingObject(_) {
+  return {top: _, bottom: _, left: _, right: _};
+}
 
 var OUTER = 'outer';
 var OUTER_INVALID = ['value', 'update', 'react', 'bind'];
@@ -31806,39 +31839,39 @@ function value(specValue, defaultValue) {
   return specValue != null ? specValue : defaultValue;
 }
 
-function transform$2(name) {
+function transform$3(name) {
   return function(params, value$$1, parent) {
     return entry(name, value$$1, params || undefined, parent);
   };
 }
 
-var Aggregate$1 = transform$2('aggregate');
-var AxisTicks$1 = transform$2('axisticks');
-var Bound$1 = transform$2('bound');
-var Collect$1 = transform$2('collect');
-var Compare$1 = transform$2('compare');
-var DataJoin$1 = transform$2('datajoin');
-var Encode$1 = transform$2('encode');
+var Aggregate$1 = transform$3('aggregate');
+var AxisTicks$1 = transform$3('axisticks');
+var Bound$1 = transform$3('bound');
+var Collect$1 = transform$3('collect');
+var Compare$1 = transform$3('compare');
+var DataJoin$1 = transform$3('datajoin');
+var Encode$1 = transform$3('encode');
 
-var Facet$1 = transform$2('facet');
-var Field$1 = transform$2('field');
-var Key$1 = transform$2('key');
-var LegendEntries$1 = transform$2('legendentries');
-var Mark$1 = transform$2('mark');
-var MultiExtent$1 = transform$2('multiextent');
-var MultiValues$1 = transform$2('multivalues');
-var Overlap$1 = transform$2('overlap');
-var Params$2 = transform$2('params');
-var PreFacet$1 = transform$2('prefacet');
-var Projection$1 = transform$2('projection');
-var Proxy$1 = transform$2('proxy');
-var Relay$1 = transform$2('relay');
-var Render$1 = transform$2('render');
-var Scale$1 = transform$2('scale');
-var Sieve$1 = transform$2('sieve');
-var SortItems$1 = transform$2('sortitems');
-var ViewLayout$1 = transform$2('viewlayout');
-var Values$1 = transform$2('values');
+var Facet$1 = transform$3('facet');
+var Field$1 = transform$3('field');
+var Key$1 = transform$3('key');
+var LegendEntries$1 = transform$3('legendentries');
+var Mark$1 = transform$3('mark');
+var MultiExtent$1 = transform$3('multiextent');
+var MultiValues$1 = transform$3('multivalues');
+var Overlap$1 = transform$3('overlap');
+var Params$2 = transform$3('params');
+var PreFacet$1 = transform$3('prefacet');
+var Projection$1 = transform$3('projection');
+var Proxy$1 = transform$3('proxy');
+var Relay$1 = transform$3('relay');
+var Render$1 = transform$3('render');
+var Scale$1 = transform$3('scale');
+var Sieve$1 = transform$3('sieve');
+var SortItems$1 = transform$3('sortitems');
+var ViewLayout$1 = transform$3('viewlayout');
+var Values$1 = transform$3('values');
 
 var FIELD_REF_ID = 0;
 
@@ -35654,7 +35687,7 @@ exports.changeset = changeset;
 exports.ingest = ingest;
 exports.isTuple = isTuple;
 exports.definition = definition;
-exports.transform = transform;
+exports.transform = transform$1;
 exports.transforms = transforms;
 exports.tupleid = tupleid;
 exports.scale = scale$1;

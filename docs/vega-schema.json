@@ -1856,12 +1856,6 @@
               "type": "number"
             }
           },
-          "required": [
-            "top",
-            "bottom",
-            "left",
-            "right"
-          ],
           "additionalProperties": false
         }
       ]
