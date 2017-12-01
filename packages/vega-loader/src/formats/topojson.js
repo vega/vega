@@ -1,5 +1,5 @@
 import json from './json';
-import {feature, mesh} from 'topojson';
+import {feature, mesh} from 'topojson-client';
 import {error} from 'vega-util';
 
 export default function(data, format) {
