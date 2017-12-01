@@ -169,6 +169,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.y = -s;
           s += title.bounds.height();
+          bounds.add(title.bounds.x1, 0)
+                .add(title.bounds.x2, 0);
         } else {
           bounds.union(title.bounds);
         }
@@ -184,6 +186,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.x = -s;
           s += title.bounds.width();
+          bounds.add(0, title.bounds.y1)
+                .add(0, title.bounds.y2);
         } else {
           bounds.union(title.bounds);
         }
@@ -199,6 +203,8 @@ function layoutAxis(view, axis, width, height) {
           s += titlePadding;
           title.x = s;
           s += title.bounds.width();
+          bounds.add(0, title.bounds.y1)
+                .add(0, title.bounds.y2);
         } else {
           bounds.union(title.bounds);
         }
@@ -213,6 +219,8 @@ function layoutAxis(view, axis, width, height) {
         s += titlePadding;
         title.y = s;
         s += title.bounds.height();
+        bounds.add(title.bounds.x1, 0)
+              .add(title.bounds.x2, 0);
       } else {
         bounds.union(title.bounds);
       }
