@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    topojson = require('topojson'),
+    topojson = require('topojson-client'),
     vega = require('../'),
     read = vega.read;
 

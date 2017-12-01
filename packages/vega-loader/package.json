@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-loader.js -c -m -o build/vega-loader.min.js",
-    "pretest": "rm -rf build && mkdir build&& rollup -f umd -g d3-dsv:d3,d3-request:d3,d3-time-format:d3,vega-util:vega,topojson:topojson -n vega -o build/vega-loader.js -- index.js",
+    "pretest": "rm -rf build && mkdir build&& rollup -f umd -g d3-dsv:d3,d3-request:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-loader.zip -- LICENSE README.md build/vega-loader.js build/vega-loader.min.js"
@@ -39,7 +39,7 @@
     "d3-dsv": "1",
     "d3-request": "1",
     "d3-time-format": "2",
-    "topojson": "1",
+    "topojson-client": "3",
     "vega-util": "1"
   },
   "devDependencies": {
