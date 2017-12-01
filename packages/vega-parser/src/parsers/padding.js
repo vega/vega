@@ -2,10 +2,20 @@ import {isObject} from 'vega-util';
 
 export default function(spec, config) {
   spec = spec || config.padding;
-  if (isObject(spec)) {
-    return spec;
-  } else {
-    spec = +spec || 0;
-    return {top: spec, bottom: spec, left: spec, right: spec};
-  }
+  return isObject(spec)
+    ? {
+        top:    number(spec.top),
+        bottom: number(spec.bottom),
+        left:   number(spec.left),
+        right:  number(spec.right)
+      }
+    : paddingObject(number(spec));
+}
+
+function number(_) {
+  return +_ || 0;
+}
+
+function paddingObject(_) {
+  return {top: _, bottom: _, left: _, right: _};
 }
