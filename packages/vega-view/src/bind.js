@@ -1,5 +1,5 @@
 import element from './element';
-import {debounce, isString} from 'vega-util';
+import {debounce} from 'vega-util';
 import {tickStep} from 'd3-array';
 
 var BindClass = 'vega-bind',
@@ -41,7 +41,6 @@ export default function(view, el, binding) {
     }
   }
 
-  if (isString(el)) el = document.querySelector(el);
   generate(bind, el, param, view.signal(param.signal));
 
   if (!bind.active) {

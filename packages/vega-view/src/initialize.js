@@ -30,11 +30,13 @@ export default function(el, elBind) {
       : el.appendChild(element('div', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
-      if (_.param.element) lookup(view, _.param.element);
+      if (_.param.element) {
+        _.element = lookup(view, _.param.element);
+      }
     });
 
     view._bind.forEach(function(_) {
-      bind(view, _.param.element || elBind, _);
+      bind(view, _.element || elBind, _);
     });
   }
 
@@ -45,11 +47,22 @@ function lookup(view, el) {
   if (typeof el === 'string') {
     if (typeof document !== 'undefined') {
       el = document.querySelector(el);
+      if (!el) {
+        view.error('Signal bind element not found: ' + el);
+        return null;
+      }
     } else {
       view.error('DOM document instance not found.');
       return null;
     }
   }
-  el.innerHTML = '';
+  if (el) {
+    try {
+      el.innerHTML = '';
+    } catch (e) {
+      el = null;
+      view.error(e);
+    }
+  }
   return el;
 }
