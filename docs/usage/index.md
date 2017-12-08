@@ -22,6 +22,8 @@ Vega can be deployed for interactive visualizations within a web browser, or to 
 
 To deploy Vega on the web, first [import](#import) the requisite JavaScript libraries. Then, use the [Vega View API](#view) or the convenient [Vega-Embed](#embed) helper module to parse Vega specifications and add interactive visualizations to a web page.
 
+Try Vega with Vega-Embed online and publish your own chart by forking [our example Block](https://bl.ocks.org/domoritz/cd636b15fa0e187b51b73fc60b4d3014).
+
 ### <a name="import"></a>Import Vega JavaScript
 
 To use Vega on a web page you first need to load the Vega JavaScript files. The simplest option is to import the complete Vega bundle. Load `vega.min.js` for deployment, and use `vega.js` for easier debugging.
