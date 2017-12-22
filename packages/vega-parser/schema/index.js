@@ -44,6 +44,7 @@ export default function(definitions) {
       {
         "properties": {
           "$schema": {"type": "string", "format": "uri"},
+          "usermeta": {"type": "object"},
           "config": {"type": "object"},
           "description": {"type": "string"},
           "width": {"type": "number"},
