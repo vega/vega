@@ -23,8 +23,21 @@ Properties supported by color scheme definitions. These objects can be assigned 
 Vega can be extended with additional color schemes using the [`vega.scheme`](https://github.com/vega/vega-scale/#scheme) method. New schemes must be a valid color array or [interpolator](https://github.com/d3/d3-scale#sequential_interpolator). For example:
 
 ```js
-// Register a color scheme named "basic" that can then be used in Vega specs
+// Register a discrete color scheme named "basic" that can then be used in Vega specs
 vega.scheme('basic', ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff']);
+```
+
+```js
+// Register a custom continuous interpolation scheme
+
+// Define an interpolator function that maps from [0,1] to colors
+function gray(f) {
+  var g = Math.max(0, Math.min(255, Math.round(255 * f))) + '';
+  return 'rgb(' + g + ', ' + g + ', ' + g + ')';
+}
+
+// Register the interpolator. Now the scheme "mygray" can be used in Vega specs
+vega.scheme("mygray", gray);
 ```
 
 ## <a name="reference"></a>Scheme Reference
