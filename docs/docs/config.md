@@ -110,7 +110,9 @@ To prevent the default behavior for all events originating within a Vega view, e
 
 Properties defining default property values for each mark type. These properties are defined within blocks with names matching a valid mark type (e.g., `"area"`, `"line"`, `"rect"`). The valid properties within each block consist of the legal mark properties (e.g., `"fill"`, `"stroke"`, `"size"`, `"font"`). Global defaults for _all_ mark types can be set using the `"mark"` property.
 
-_Defaults for fill or stroke color will be applied only if neither `"fill"` nor `"stroke"` are defined in the Vega spec_.
+_Important limitations_:
+- Defaults for fill or stroke color will be applied only if neither `"fill"` nor `"stroke"` are defined in the Vega spec.
+- Defaults set using the top-level `"mark"` property will be overridden by any defaults defined for more specific mark types (e.g., `"rect"`). Vega's built-in configuration includes default fill or stroke colors for a number of specific mark types, and these will take precedence over new fill or stroke colors set only on the top-level `"mark"`.
 
 ### Usage
 
