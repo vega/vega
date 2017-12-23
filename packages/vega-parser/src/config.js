@@ -138,7 +138,6 @@ function defaults() {
       grid: false,
       gridWidth: 1,
       gridColor: lightGray,
-      gridDash: [],
       gridOpacity: 1,
       labels: true,
       labelAngle: 0,
