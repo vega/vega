@@ -230,11 +230,11 @@ function applyStyles(o, mark, tag, defs) {
   var i, n, prop, name, value, s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
-    s += 'pointer-events: none;';
+    s += 'pointer-events: none; ';
   }
 
   if (tag === 'text') {
-    s += 'font: ' + font(o) + ';';
+    s += 'font: ' + font(o) + '; ';
   }
 
   for (i=0, n=styleProperties.length; i<n; ++i) {
@@ -244,19 +244,22 @@ function applyStyles(o, mark, tag, defs) {
 
     if (value == null) {
       if (name === 'fill') {
-        s += (s.length ? ' ' : '') + 'fill: none;';
+        s += 'fill: none; ';
       }
+    } else if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
+      // transparent is not a legal SVG value, so map to none instead
+      s += name + ': none; ';
     } else {
       if (value.id) {
         // ensure definition is included
         defs.gradient[value.id] = value;
         value = 'url(#' + value.id + ')';
       }
-      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
+      s += name + ': ' + value + '; ';
     }
   }
 
-  return s ? 'style="' + s + '"' : null;
+  return s ? 'style="' + s.trim() + '"' : null;
 }
 
 function escape_text(s) {
