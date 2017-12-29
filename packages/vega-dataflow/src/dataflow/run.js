@@ -180,13 +180,19 @@ export function getPulse(op, encode) {
   if (s && isArray(s)) {
     p = s.map(function(_) { return _.pulse; });
     return new MultiPulse(this, stamp, p, encode);
-  } else {
-    s = s && s.pulse;
-    p = this._pulses[op.id];
-    if (s && s !== StopPropagation) {
-      if (s.stamp === stamp && p.target !== op) p = s;
-      else p.source = s.source;
-    }
-    return p;
   }
+
+  p = this._pulses[op.id];
+  if (s) {
+    s = s.pulse;
+    if (!s || s === StopPropagation) {
+      p.source = [];
+    } else if (s.stamp === stamp && p.target !== op) {
+      p = s;
+    } else {
+      p.source = s.source;
+    }
+  }
+
+  return p;
 }
