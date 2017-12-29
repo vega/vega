@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
