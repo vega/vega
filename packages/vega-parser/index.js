@@ -1,4 +1,5 @@
 export {default as parse} from './src/parse';
+export {default as config} from './src/config';
 
 export {default as signal} from './src/parsers/signal';
 export {default as signalUpdates} from './src/parsers/signal-updates';

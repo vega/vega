@@ -1,9 +1,9 @@
-import {extend, isObject} from 'vega-util';
+import {extend, isArray, isObject} from 'vega-util';
 
 export default function(configs) {
   var output = defaults();
   (configs || []).forEach(function(config) {
-    var key, style;
+    var key, value, style;
     if (config) {
       for (key in config) {
         if (key === 'style') {
@@ -12,9 +12,10 @@ export default function(configs) {
             style[key] = extend(style[key] || {}, config.style[key]);
           }
         } else {
-          output[key] = isObject(config[key])
-            ? extend(output[key] || {}, config[key])
-            : config[key];
+          value = config[key];
+          output[key] = isObject(value) && !isArray(value)
+            ? extend(isObject(output[key]) ? output[key] : {}, value)
+            : value;
         }
       }
     }
