@@ -144,6 +144,7 @@ orientation-based options, which in turn take precedence over general options.
 - *labelFlushOffset*: Offset in pixels for flush-adjusted labels (default `0`).
 - *labelFont*: Font name for axis tick labels.
 - *labelFontSize*: Font size for axis tick labels.
+- *labelFontWeight*: Font weight for axis tick labels.
 - *labelLimit*: Maximum allowed pixel width of axis tick labels.
 - *labelPadding*: Padding in pixels betweem axis ticks and tick labels.
 - *ticks*: Boolean flag indicating if axis tick marks should be included by default.
@@ -179,6 +180,7 @@ within a `"legend"` property block.
 - *labelColor*: Text color for legend labels.
 - *labelFont*: Font name for legend labels.
 - *labelFontSize*: Font size (in pixels) for legend labels.
+- *labelFontWeight*: Font weight for legend labels.
 - *labelAlign*: Horizontal text alignment for legend labels.
 - *labelBaseline*: Vertical text baseline for legend labels.
 - *labelLimit*: Maximum allowed pixel width of legend labels.
