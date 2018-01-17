@@ -30,15 +30,15 @@ export default function SVGStringRenderer(loader) {
 var prototype = inherits(SVGStringRenderer, Renderer);
 var base = Renderer.prototype;
 
-prototype.resize = function(width, height, origin) {
-  base.resize.call(this, width, height, origin);
+prototype.resize = function(width, height, origin, scaleFactor) {
+  base.resize.call(this, width, height, origin, scaleFactor);
   var o = this._origin,
       t = this._text;
 
   var attr = {
     class:   'marks',
-    width:   this._width,
-    height:  this._height,
+    width:   this._width * this._scale,
+    height:  this._height * this._scale,
     viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
@@ -47,11 +47,14 @@ prototype.resize = function(width, height, origin) {
 
   t.head = openTag('svg', attr);
 
-  if (this._bgcolor) {
+  var bg = this._bgcolor;
+  if (bg === 'transparent' || bg === 'none') bg = null;
+
+  if (bg) {
     t.bg = openTag('rect', {
       width:  this._width,
       height: this._height,
-      style:  'fill: ' + this._bgcolor + ';'
+      style:  'fill: ' + bg + ';'
     }) + closeTag('rect');
   } else {
     t.bg = '';
@@ -69,7 +72,7 @@ prototype.resize = function(width, height, origin) {
 prototype.background = function() {
   var rv = base.background.apply(this, arguments);
   if (arguments.length && this._text.head) {
-    this.resize(this._width, this._height, this._origin);
+    this.resize(this._width, this._height, this._origin, this._scale);
   }
   return rv;
 };

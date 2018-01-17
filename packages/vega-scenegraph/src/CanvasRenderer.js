@@ -18,19 +18,19 @@ var prototype = inherits(CanvasRenderer, Renderer),
     base = Renderer.prototype,
     tempBounds = new Bounds();
 
-prototype.initialize = function(el, width, height, origin) {
+prototype.initialize = function(el, width, height, origin, scaleFactor) {
   this._canvas = Canvas(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
   // this method will invoke resize to size the canvas appropriately
-  return base.initialize.call(this, el, width, height, origin);
+  return base.initialize.call(this, el, width, height, origin, scaleFactor);
 };
 
-prototype.resize = function(width, height, origin) {
-  base.resize.call(this, width, height, origin);
-  resize(this._canvas, this._width, this._height, this._origin);
+prototype.resize = function(width, height, origin, scaleFactor) {
+  base.resize.call(this, width, height, origin, scaleFactor);
+  resize(this._canvas, this._width, this._height, this._origin, this._scale);
   this._redraw = true;
   return this;
 };

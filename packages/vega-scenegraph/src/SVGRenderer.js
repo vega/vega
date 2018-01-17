@@ -52,12 +52,12 @@ prototype.background = function(bgcolor) {
   return base.background.apply(this, arguments);
 };
 
-prototype.resize = function(width, height, origin) {
-  base.resize.call(this, width, height, origin);
+prototype.resize = function(width, height, origin, scaleFactor) {
+  base.resize.call(this, width, height, origin, scaleFactor);
 
   if (this._svg) {
-    this._svg.setAttribute('width', this._width);
-    this._svg.setAttribute('height', this._height);
+    this._svg.setAttribute('width', this._width * this._scale);
+    this._svg.setAttribute('height', this._height * this._scale);
     this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
     this._root.setAttribute('transform', 'translate(' + this._origin + ')');
   }
@@ -72,8 +72,8 @@ prototype.svg = function() {
 
   var attr = {
     class:   'marks',
-    width:   this._width,
-    height:  this._height,
+    width:   this._width * this._scale,
+    height:  this._height * this._scale,
     viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key in metadata) {
