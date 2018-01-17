@@ -18,15 +18,17 @@ var prototype = Renderer.prototype;
 /**
  * Initialize a new Renderer instance.
  * @param {DOMElement} el - The containing DOM element for the display.
- * @param {number} width - The width of the display, in pixels.
- * @param {number} height - The height of the display, in pixels.
+ * @param {number} width - The coordinate width of the display, in pixels.
+ * @param {number} height - The coordinate height of the display, in pixels.
  * @param {Array<number>} origin - The origin of the display, in pixels.
  *   The coordinate system will be translated to this point.
+ * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+ *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype.initialize = function(el, width, height, origin) {
+prototype.initialize = function(el, width, height, origin, scaleFactor) {
   this._el = el;
-  return this.resize(width, height, origin);
+  return this.resize(width, height, origin, scaleFactor);
 };
 
 /**
@@ -57,16 +59,19 @@ prototype.background = function(bgcolor) {
 
 /**
  * Resize the display.
- * @param {number} width - The new width of the display, in pixels.
- * @param {number} height - The new height of the display, in pixels.
+ * @param {number} width - The new coordinate width of the display, in pixels.
+ * @param {number} height - The new coordinate height of the display, in pixels.
  * @param {Array<number>} origin - The new origin of the display, in pixels.
  *   The coordinate system will be translated to this point.
+ * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+ *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype.resize = function(width, height, origin) {
+prototype.resize = function(width, height, origin, scaleFactor) {
   this._width = width;
   this._height = height;
   this._origin = origin || [0, 0];
+  this._scale = scaleFactor || 1;
   return this;
 };
 

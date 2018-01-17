@@ -1,18 +1,18 @@
 export var devicePixelRatio = typeof window !== 'undefined'
   ? window.devicePixelRatio || 1 : 1;
 
-export default function(canvas, width, height, origin) {
-  var scale = typeof HTMLElement !== 'undefined'
+export default function(canvas, width, height, origin, scaleFactor) {
+  var inDOM = typeof HTMLElement !== 'undefined'
     && canvas instanceof HTMLElement
     && canvas.parentNode != null;
 
   var context = canvas.getContext('2d'),
-      ratio = scale ? devicePixelRatio : 1;
+      ratio = inDOM ? devicePixelRatio : scaleFactor;
 
   canvas.width = width * ratio;
   canvas.height = height * ratio;
 
-  if (ratio !== 1) {
+  if (inDOM && ratio !== 1) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
   }
