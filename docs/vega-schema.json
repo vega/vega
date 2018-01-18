@@ -9246,6 +9246,9 @@
           "type": "string",
           "format": "uri"
         },
+        "usermeta": {
+          "type": "object"
+        },
         "config": {
           "type": "object"
         },

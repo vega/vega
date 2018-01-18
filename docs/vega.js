@@ -4232,15 +4232,21 @@ function getPulse(op, encode) {
   if (s && isArray(s)) {
     p = s.map(function(_) { return _.pulse; });
     return new MultiPulse(this, stamp, p, encode);
-  } else {
-    s = s && s.pulse;
-    p = this._pulses[op.id];
-    if (s && s !== StopPropagation) {
-      if (s.stamp === stamp && p.target !== op) p = s;
-      else p.source = s.source;
-    }
-    return p;
   }
+
+  p = this._pulses[op.id];
+  if (s) {
+    s = s.pulse;
+    if (!s || s === StopPropagation) {
+      p.source = [];
+    } else if (s.stamp === stamp && p.target !== op) {
+      p = s;
+    } else {
+      p.source = s.source;
+    }
+  }
+
+  return p;
 }
 
 var NO_OPT = {skip: false, force: false};
@@ -12382,15 +12388,17 @@ var prototype$41 = Renderer.prototype;
 /**
  * Initialize a new Renderer instance.
  * @param {DOMElement} el - The containing DOM element for the display.
- * @param {number} width - The width of the display, in pixels.
- * @param {number} height - The height of the display, in pixels.
+ * @param {number} width - The coordinate width of the display, in pixels.
+ * @param {number} height - The coordinate height of the display, in pixels.
  * @param {Array<number>} origin - The origin of the display, in pixels.
  *   The coordinate system will be translated to this point.
+ * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+ *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype$41.initialize = function(el, width, height, origin) {
+prototype$41.initialize = function(el, width, height, origin, scaleFactor) {
   this._el = el;
-  return this.resize(width, height, origin);
+  return this.resize(width, height, origin, scaleFactor);
 };
 
 /**
@@ -12421,16 +12429,19 @@ prototype$41.background = function(bgcolor) {
 
 /**
  * Resize the display.
- * @param {number} width - The new width of the display, in pixels.
- * @param {number} height - The new height of the display, in pixels.
+ * @param {number} width - The new coordinate width of the display, in pixels.
+ * @param {number} height - The new coordinate height of the display, in pixels.
  * @param {Array<number>} origin - The new origin of the display, in pixels.
  *   The coordinate system will be translated to this point.
+ * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+ *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype$41.resize = function(width, height, origin) {
+prototype$41.resize = function(width, height, origin, scaleFactor) {
   this._width = width;
   this._height = height;
   this._origin = origin || [0, 0];
+  this._scale = scaleFactor || 1;
   return this;
 };
 
@@ -12750,18 +12761,18 @@ var clip$1 = function(context, scene) {
 var devicePixelRatio = typeof window !== 'undefined'
   ? window.devicePixelRatio || 1 : 1;
 
-var resize = function(canvas, width, height, origin) {
-  var scale = typeof HTMLElement !== 'undefined'
+var resize = function(canvas, width, height, origin, scaleFactor) {
+  var inDOM = typeof HTMLElement !== 'undefined'
     && canvas instanceof HTMLElement
     && canvas.parentNode != null;
 
   var context = canvas.getContext('2d'),
-      ratio = scale ? devicePixelRatio : 1;
+      ratio = inDOM ? devicePixelRatio : scaleFactor;
 
   canvas.width = width * ratio;
   canvas.height = height * ratio;
 
-  if (ratio !== 1) {
+  if (inDOM && ratio !== 1) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
   }
@@ -12786,19 +12797,19 @@ var prototype$43 = inherits(CanvasRenderer, Renderer);
 var base = Renderer.prototype;
 var tempBounds$1 = new Bounds();
 
-prototype$43.initialize = function(el, width, height, origin) {
+prototype$43.initialize = function(el, width, height, origin, scaleFactor) {
   this._canvas = Canvas$1(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
   // this method will invoke resize to size the canvas appropriately
-  return base.initialize.call(this, el, width, height, origin);
+  return base.initialize.call(this, el, width, height, origin, scaleFactor);
 };
 
-prototype$43.resize = function(width, height, origin) {
-  base.resize.call(this, width, height, origin);
-  resize(this._canvas, this._width, this._height, this._origin);
+prototype$43.resize = function(width, height, origin, scaleFactor) {
+  base.resize.call(this, width, height, origin, scaleFactor);
+  resize(this._canvas, this._width, this._height, this._origin, this._scale);
   this._redraw = true;
   return this;
 };
@@ -13003,8 +13014,8 @@ var styles = {
   'fill':             'fill',
   'fillOpacity':      'fill-opacity',
   'stroke':           'stroke',
-  'strokeWidth':      'stroke-width',
   'strokeOpacity':    'stroke-opacity',
+  'strokeWidth':      'stroke-width',
   'strokeCap':        'stroke-linecap',
   'strokeJoin':       'stroke-linejoin',
   'strokeDash':       'stroke-dasharray',
@@ -13058,12 +13069,12 @@ prototype$45.background = function(bgcolor) {
   return base$1.background.apply(this, arguments);
 };
 
-prototype$45.resize = function(width, height, origin) {
-  base$1.resize.call(this, width, height, origin);
+prototype$45.resize = function(width, height, origin, scaleFactor) {
+  base$1.resize.call(this, width, height, origin, scaleFactor);
 
   if (this._svg) {
-    this._svg.setAttribute('width', this._width);
-    this._svg.setAttribute('height', this._height);
+    this._svg.setAttribute('width', this._width * this._scale);
+    this._svg.setAttribute('height', this._height * this._scale);
     this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
     this._root.setAttribute('transform', 'translate(' + this._origin + ')');
   }
@@ -13078,8 +13089,8 @@ prototype$45.svg = function() {
 
   var attr = {
     class:   'marks',
-    width:   this._width,
-    height:  this._height,
+    width:   this._width * this._scale,
+    height:  this._height * this._scale,
     viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
@@ -13492,15 +13503,15 @@ function SVGStringRenderer(loader) {
 var prototype$46 = inherits(SVGStringRenderer, Renderer);
 var base$2 = Renderer.prototype;
 
-prototype$46.resize = function(width, height, origin) {
-  base$2.resize.call(this, width, height, origin);
+prototype$46.resize = function(width, height, origin, scaleFactor) {
+  base$2.resize.call(this, width, height, origin, scaleFactor);
   var o = this._origin,
       t = this._text;
 
   var attr = {
     class:   'marks',
-    width:   this._width,
-    height:  this._height,
+    width:   this._width * this._scale,
+    height:  this._height * this._scale,
     viewBox: '0 0 ' + this._width + ' ' + this._height
   };
   for (var key$$1 in metadata) {
@@ -13509,11 +13520,14 @@ prototype$46.resize = function(width, height, origin) {
 
   t.head = openTag('svg', attr);
 
-  if (this._bgcolor) {
+  var bg = this._bgcolor;
+  if (bg === 'transparent' || bg === 'none') bg = null;
+
+  if (bg) {
     t.bg = openTag('rect', {
       width:  this._width,
       height: this._height,
-      style:  'fill: ' + this._bgcolor + ';'
+      style:  'fill: ' + bg + ';'
     }) + closeTag('rect');
   } else {
     t.bg = '';
@@ -13531,7 +13545,7 @@ prototype$46.resize = function(width, height, origin) {
 prototype$46.background = function() {
   var rv = base$2.background.apply(this, arguments);
   if (arguments.length && this._text.head) {
-    this.resize(this._width, this._height, this._origin);
+    this.resize(this._width, this._height, this._origin, this._scale);
   }
   return rv;
 };
@@ -13692,11 +13706,11 @@ function applyStyles(o, mark, tag, defs) {
   var i, n, prop, name, value, s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
-    s += 'pointer-events: none;';
+    s += 'pointer-events: none; ';
   }
 
   if (tag === 'text') {
-    s += 'font: ' + font(o) + ';';
+    s += 'font: ' + font(o) + '; ';
   }
 
   for (i=0, n=styleProperties.length; i<n; ++i) {
@@ -13706,19 +13720,22 @@ function applyStyles(o, mark, tag, defs) {
 
     if (value == null) {
       if (name === 'fill') {
-        s += (s.length ? ' ' : '') + 'fill: none;';
+        s += 'fill: none; ';
       }
+    } else if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
+      // transparent is not a legal SVG value, so map to none instead
+      s += name + ': none; ';
     } else {
       if (value.id) {
         // ensure definition is included
         defs.gradient[value.id] = value;
         value = 'url(#' + value.id + ')';
       }
-      s += (s.length ? ' ' : '') + name + ': ' + value + ';';
+      s += name + ': ' + value + '; ';
     }
   }
 
-  return s ? 'style="' + s + '"' : null;
+  return s ? 'style="' + s.trim() + '"' : null;
 }
 
 function escape_text(s) {
@@ -16385,7 +16402,7 @@ var formatLocale$1 = function(locale) {
 
         // Compute the prefix and suffix.
         valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-        valueSuffix = valueSuffix + (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + (valueNegative && sign === "(" ? ")" : "");
+        valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
 
         // Break the formatted value into the integer “value” part that can be
         // grouped, and fractional or exponential “suffix” part that is not.
@@ -19242,20 +19259,20 @@ var noop$3 = function() {};
 
 var cases = [
   [],
-  [[[1,1.5],[0.5,1]]],
-  [[[1.5,1],[1,1.5]]],
-  [[[1.5,1],[0.5,1]]],
-  [[[1,0.5],[1.5,1]]],
-  [[[1,0.5],[0.5,1]],[[1,1.5],[1.5,1]]],
-  [[[1,0.5],[1,1.5]]],
-  [[[1,0.5],[0.5,1]]],
-  [[[0.5,1],[1,0.5]]],
-  [[[1,1.5],[1,0.5]]],
-  [[[0.5,1],[1,1.5]],[[1.5,1],[1,0.5]]],
-  [[[1.5,1],[1,0.5]]],
-  [[[0.5,1],[1.5,1]]],
-  [[[1,1.5],[1.5,1]]],
-  [[[0.5,1],[1,1.5]]],
+  [[[1.0, 1.5], [0.5, 1.0]]],
+  [[[1.5, 1.0], [1.0, 1.5]]],
+  [[[1.5, 1.0], [0.5, 1.0]]],
+  [[[1.0, 0.5], [1.5, 1.0]]],
+  [[[1.0, 1.5], [0.5, 1.0]], [[1.0, 0.5], [1.5, 1.0]]],
+  [[[1.0, 0.5], [1.0, 1.5]]],
+  [[[1.0, 0.5], [0.5, 1.0]]],
+  [[[0.5, 1.0], [1.0, 0.5]]],
+  [[[1.0, 1.5], [1.0, 0.5]]],
+  [[[0.5, 1.0], [1.0, 0.5]], [[1.5, 1.0], [1.0, 1.5]]],
+  [[[1.5, 1.0], [1.0, 0.5]]],
+  [[[0.5, 1.0], [1.5, 1.0]]],
+  [[[1.0, 1.5], [1.5, 1.0]]],
+  [[[0.5, 1.0], [1.0, 1.5]]],
   []
 ];
 
@@ -27951,7 +27968,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.8";
+var version = "3.0.9";
 
 var Default = 'default';
 
@@ -28519,10 +28536,10 @@ function valuesEqual(a, b) {
   return a === b || (a+'' === b+'');
 }
 
-var initializeRenderer = function(view, r, el, constructor) {
+var initializeRenderer = function(view, r, el, constructor, scaleFactor) {
   r = r || new constructor(view.loader());
   return r
-    .initialize(el, width(view), height$1(view), offset$1(view))
+    .initialize(el, width(view), height$1(view), offset$1(view), scaleFactor)
     .background(view._background);
 };
 
@@ -28609,12 +28626,13 @@ function lookup$2(view, el) {
  * This method is asynchronous, returning a Promise instance.
  * @return {Promise} - A Promise that resolves to a renderer.
  */
-var renderHeadless = function(view, type) {
-  var module = renderModule(type);
-  return !(module && module.headless)
+var renderHeadless = function(view, type, scaleFactor) {
+  var module = renderModule(type),
+      ctr = module && module.headless;
+  return !ctr
     ? Promise.reject('Unrecognized renderer type: ' + type)
     : view.runAsync().then(function() {
-        return initializeRenderer(view, null, null, module.headless)
+        return initializeRenderer(view, null, null, ctr, scaleFactor)
           .renderAsync(view._scenegraph.root);
       });
 };
@@ -28628,10 +28646,10 @@ var renderHeadless = function(view, type) {
  *   The 'canvas' and 'png' types are synonyms for a PNG image.
  * @return {Promise} - A promise that resolves to an image URL.
  */
-var renderToImageURL = function(type) {
+var renderToImageURL = function(type, scaleFactor) {
   return (type !== RenderType.Canvas && type !== RenderType.SVG && type !== RenderType.PNG)
     ? Promise.reject('Unrecognized image type: ' + type)
-    : renderHeadless(this, type).then(function(renderer) {
+    : renderHeadless(this, type, scaleFactor).then(function(renderer) {
         return type === RenderType.SVG
           ? toBlobURL(renderer.svg(), 'image/svg+xml')
           : renderer.canvas().toDataURL('image/png');
@@ -28648,8 +28666,8 @@ function toBlobURL(data, mime) {
  * This method is asynchronous, returning a Promise instance.
  * @return {Promise} - A promise that resolves to a Canvas instance.
  */
-var renderToCanvas = function() {
-  return renderHeadless(this, RenderType.Canvas)
+var renderToCanvas = function(scaleFactor) {
+  return renderHeadless(this, RenderType.Canvas, scaleFactor)
     .then(function(renderer) { return renderer.canvas(); });
 };
 
@@ -28658,8 +28676,8 @@ var renderToCanvas = function() {
  * This method is asynchronous, returning a Promise instance.
  * @return {Promise} - A promise that resolves to an SVG string.
  */
-var renderToSVG = function() {
-  return renderHeadless(this, RenderType.SVG)
+var renderToSVG = function(scaleFactor) {
+  return renderHeadless(this, RenderType.SVG, scaleFactor)
     .then(function(renderer) { return renderer.svg(); });
 };
 
@@ -32002,7 +32020,8 @@ function fieldRef(data, scope) {
   if (isArray(data)) {
     coll.value = {$ingest: data};
   } else if (data.signal) {
-    scope.signalRef('setdata(' + $(name) + ',' + data.signal + ')');
+    var code = 'setdata(' + $(name) + ',' + data.signal + ')';
+    coll.params.input = scope.signalRef(code);
   }
   scope.addDataPipeline(name, [coll, Sieve$1({})]);
   return {data: name, field: 'data'};
@@ -32618,6 +32637,7 @@ var legendGradientLabels = function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'fontWeight', config.labelFontWeight);
   addEncode(enter, 'baseline', config.gradientLabelBaseline);
   addEncode(enter, 'limit', config.gradientLabelLimit);
 
@@ -32657,6 +32677,7 @@ var legendLabels = function(spec, config, userEncode, dataRef) {
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'fontWeight', config.labelFontWeight);
   addEncode(enter, 'limit', config.labelLimit);
 
   encode.exit = {
@@ -33816,6 +33837,7 @@ var axisLabels = function(spec, config, userEncode, dataRef, size) {
   addEncode(enter, 'fill', config.labelColor);
   addEncode(enter, 'font', config.labelFont);
   addEncode(enter, 'fontSize', config.labelFontSize);
+  addEncode(enter, 'fontWeight', config.labelFontWeight);
   addEncode(enter, 'limit', config.labelLimit);
 
   encode.exit = exit = {
@@ -34525,7 +34547,7 @@ prototype$83.addDataPipeline = function(name, entries) {
 var defaults = function(configs) {
   var output = defaults$1();
   (configs || []).forEach(function(config) {
-    var key$$1, style;
+    var key$$1, value, style;
     if (config) {
       for (key$$1 in config) {
         if (key$$1 === 'style') {
@@ -34534,9 +34556,10 @@ var defaults = function(configs) {
             style[key$$1] = extend(style[key$$1] || {}, config.style[key$$1]);
           }
         } else {
-          output[key$$1] = isObject(config[key$$1])
-            ? extend(output[key$$1] || {}, config[key$$1])
-            : config[key$$1];
+          value = config[key$$1];
+          output[key$$1] = isObject(value) && !isArray(value)
+            ? extend(isObject(output[key$$1]) ? output[key$$1] : {}, value)
+            : value;
         }
       }
     }
@@ -34660,7 +34683,6 @@ function defaults$1() {
       grid: false,
       gridWidth: 1,
       gridColor: lightGray,
-      gridDash: [],
       gridOpacity: 1,
       labels: true,
       labelAngle: 0,
