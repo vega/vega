@@ -60,7 +60,7 @@ function writeSVG(svg, file) {
 }
 
 function render(spec) {
-  var view = new vega.View(vega.parse(spec), {
+  new vega.View(vega.parse(spec), {
       loader: vega.loader({baseURL: base}),
       logLevel: vega.Warn,
       renderer: 'none'
