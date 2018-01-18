@@ -13,7 +13,6 @@ var helpText =
 // import required libraries
 var path = require('path'),
     fs = require('fs'),
-    canvas = require('canvas'),
     vega = require('../');
 
 // arguments
@@ -48,7 +47,7 @@ function writePNG(canvas, file) {
 }
 
 function render(spec) {
-  var view = new vega.View(vega.parse(spec), {
+  new vega.View(vega.parse(spec), {
       loader: vega.loader({baseURL: base}),
       logLevel: vega.Warn,
       renderer: 'none'
