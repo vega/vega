@@ -8,6 +8,8 @@ A **layout** positions a collection of group marks within a grid, simplifying th
 
 The layout engine also supports inclusion of header and footer cells for both rows and columns, as well as row title and column title cells. To indicate headers, footers and titles, the specifications for these groups must include a `role` property set to one of `column-header`, `column-footer`, `column-title`, `row-header`, `row-footer`, or `row-title`. The number of header, footer, or title elements should match the number of rows or columns in the table. If there are fewer elements, some cells will be left empty. If there are too many elements, the additional elements will be ignored and a warning will be logged.
 
+The order of groups within the layout depends on both specification order (across group mark definitions) and internal mark ordering (for multiple group instances within a single group mark definition). The order that group mark definitions appear in the specification determines their order in the layout. Within a single group mark specification with multiple group instances, the internal ordering of the group items determines both their rendering order and their order in the layout. The internal order can be modified using the [`sort`](../marks) directive.
+
 ## Layout Properties
 
 Properties for specifying a grid layout of contained group marks.
