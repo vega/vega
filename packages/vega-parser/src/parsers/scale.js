@@ -131,7 +131,8 @@ function fieldRef(data, scope) {
   if (isArray(data)) {
     coll.value = {$ingest: data};
   } else if (data.signal) {
-    scope.signalRef('setdata(' + stringValue(name) + ',' + data.signal + ')');
+    var code = 'setdata(' + stringValue(name) + ',' + data.signal + ')';
+    coll.params.input = scope.signalRef(code);
   }
   scope.addDataPipeline(name, [coll, Sieve({})]);
   return {data: name, field: 'data'};
