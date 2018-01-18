@@ -424,32 +424,38 @@ Methods for exporting static visualization images. These methods can be invoked
 either client-side or server-side.
 
 <a name="view_toCanvas" href="#view_toCanvas">#</a>
-view.<b>toCanvas</b>(<i>items</i>)
+view.<b>toCanvas</b>([<i>scaleFactor</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/render-to-canvas.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to a canvas instance containing a rendered bitmap image of the
-view. If invoked in a browser, the returned Promise resolves to an
+view. The optional *scaleFactor* argument (default 1) is a number by which to
+multiply the view width and height when determining the output image size.
+If invoked in a browser, the returned Promise resolves to an
 [HTML5 canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas)
 element. If invoked server-side in node.js, the Promise resolves to a
 [node-canvas Canvas](https://github.com/Automattic/node-canvas) instance.
 
 <a name="view_toSVG" href="#view_toSVG">#</a>
-view.<b>toSVG</b>(<i>items</i>)
+view.<b>toSVG</b>([<i>scaleFactor</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/render-to-svg.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to an SVG string, providing a vector graphics image of the view.
+The optional *scaleFactor* argument (default 1) is a number by which to
+multiply the view width and height when determining the output image size.
 
 <a name="view_toImageURL" href="#view_toImageURL">#</a>
-view.<b>toImageURL</b>(<i>type</i>)
+view.<b>toImageURL</b>(<i>type</i>[, <i>scaleFactor</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/view/render-to-image-url.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to an image URL for a snapshot of the current view. The *type*
 argument must be one of `'svg'`, `'png'` or `'canvas'`. Both the png and
 canvas types result in a PNG image. The generated URL can be used to create
-downloadable visualization images.
+downloadable visualization images. The optional *scaleFactor* argument
+(default 1) is a number by which to multiply the view width and height when
+determining the output image size.
 
 ```js
 // generate a PNG snapshot and then download the image

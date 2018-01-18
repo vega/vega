@@ -10,10 +10,10 @@ import {RenderType as Type} from 'vega-scenegraph';
  *   The 'canvas' and 'png' types are synonyms for a PNG image.
  * @return {Promise} - A promise that resolves to an image URL.
  */
-export default function(type) {
+export default function(type, scaleFactor) {
   return (type !== Type.Canvas && type !== Type.SVG && type !== Type.PNG)
     ? Promise.reject('Unrecognized image type: ' + type)
-    : renderHeadless(this, type).then(function(renderer) {
+    : renderHeadless(this, type, scaleFactor).then(function(renderer) {
         return type === Type.SVG
           ? toBlobURL(renderer.svg(), 'image/svg+xml')
           : renderer.canvas().toDataURL('image/png');
