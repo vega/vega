@@ -192,6 +192,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFlushOffset| {% include type t="Number" %} | Offset in pixels for flush-adjusted labels (default `0`). |
 | labelFont       | {% include type t="String" %}   | Font name for axis tick labels. |
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
+| labelFontWeight | {% include type t="String" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
 | labelPadding    | {% include type t="Number" %}   | Padding in pixels betweem axis ticks and tick labels. |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
@@ -254,6 +255,7 @@ Properties defining default settings for legends. These properties are defined u
 | labelColor            | {% include type t="Color" %}    | Text color for legend labels. |
 | labelFont             | {% include type t="String" %}   | Font name for legend labels. |
 | labelFontSize         | {% include type t="Number" %}   | Font size in pixels for legend labels. |
+| labelFontWeight       | {% include type t="String" %}   | Font weight of legend labels. |
 | labelLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. |
