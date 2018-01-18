@@ -6,12 +6,13 @@ import {renderModule} from 'vega-scenegraph';
  * This method is asynchronous, returning a Promise instance.
  * @return {Promise} - A Promise that resolves to a renderer.
  */
-export default function(view, type) {
-  var module = renderModule(type);
-  return !(module && module.headless)
+export default function(view, type, scaleFactor) {
+  var module = renderModule(type),
+      ctr = module && module.headless;
+  return !ctr
     ? Promise.reject('Unrecognized renderer type: ' + type)
     : view.runAsync().then(function() {
-        return initializeRenderer(view, null, null, module.headless)
+        return initializeRenderer(view, null, null, ctr, scaleFactor)
           .renderAsync(view._scenegraph.root);
       });
 }
