@@ -397,11 +397,12 @@ Removes an event listener registered with the
 view.<b>tooltipHandler</b>(<i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
-Gets or sets the *handler* function used to display tooltips. The default
-handler uses built-in browser mechanisms by setting the `"title"` attribute
-of the Canvas or SVG element containing the visualization. To use custom
-tooltips, a new handler function can be provided to process tooltip events.
-If *handler* is `null`, the tooltip handler will reset to the default.
+Gets or sets the *handler* function used to display tooltips, as defined via
+the `tooltip` property of a mark. The default handler uses built-in browser
+mechanisms by setting the `"title"` attribute of the Canvas or SVG element
+containing the visualization. To use custom tooltips, a new handler function
+can be provided to process tooltip events. If *handler* is `null`,
+the tooltip handler will reset to the default.
 
 The tooltip handler has the method signature `handler(event, item, text)`,
 where *event* is the triggering DOM mouseover or mouseout event, *item*
