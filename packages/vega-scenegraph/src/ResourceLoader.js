@@ -1,4 +1,4 @@
-import Image from './util/canvas/image';
+import {image} from 'vega-canvas';
 import {loader} from 'vega-loader';
 
 export default function ResourceLoader(customLoader) {
@@ -36,29 +36,30 @@ prototype.sanitizeURL = function(uri) {
 };
 
 prototype.loadImage = function(uri) {
-  var loader = this;
+  var loader = this,
+      Image = image();
   increment(loader);
 
   return loader._loader
-    .sanitize(uri, {context:'image'})
+    .sanitize(uri, {context: 'image'})
     .then(function(opt) {
       var url = opt.href;
       if (!url || !Image) throw {url: url};
 
-      var image = new Image();
+      var img = new Image();
 
-      image.onload = function() {
+      img.onload = function() {
         decrement(loader);
-        image.loaded = true;
+        img.loaded = true;
       };
 
-      image.onerror = function() {
+      img.onerror = function() {
         decrement(loader);
-        image.loaded = false;
+        img.loaded = false;
       }
 
-      image.src = url;
-      return image;
+      img.src = url;
+      return img;
     })
     .catch(function(e) {
       decrement(loader);

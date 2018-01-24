@@ -4,8 +4,8 @@ import marks from './marks/index';
 
 import {domClear} from './util/dom';
 import clip from './util/canvas/clip';
-import Canvas from './util/canvas/canvas';
 import resize from './util/canvas/resize';
+import {canvas} from 'vega-canvas';
 import {inherits} from 'vega-util';
 
 export default function CanvasRenderer(loader) {
@@ -19,7 +19,7 @@ var prototype = inherits(CanvasRenderer, Renderer),
     tempBounds = new Bounds();
 
 prototype.initialize = function(el, width, height, origin, scaleFactor) {
-  this._canvas = Canvas(1, 1); // instantiate a small canvas
+  this._canvas = canvas(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
