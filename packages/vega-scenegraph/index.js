@@ -29,7 +29,6 @@ export {default as pathParse} from './src/path/parse';
 export {default as pathRender} from './src/path/render';
 
 export {default as point} from './src/util/point';
-export {default as canvas} from './src/util/canvas/canvas';
 export {domCreate, domFind, domChild, domClear} from './src/util/dom';
 export {openTag, closeTag} from './src/util/tags';
 export {font, textMetrics} from './src/util/text';

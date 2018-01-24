@@ -1,4 +1,4 @@
-import Canvas from './canvas/canvas';
+import {canvas} from 'vega-canvas';
 
 var context,
     fontHeight;
@@ -8,10 +8,10 @@ export var textMetrics = {
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
   width: estimateWidth,
-  canvas: canvas
+  canvas: useCanvas
 };
 
-canvas(true);
+useCanvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
@@ -37,8 +37,8 @@ function height(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
 
-function canvas(use) {
-  context = use && (context = Canvas(1,1)) ? context.getContext('2d') : null;
+function useCanvas(use) {
+  context = use && (context = canvas(1,1)) ? context.getContext('2d') : null;
   textMetrics.width = context ? measureWidth : estimateWidth;
 }
 
