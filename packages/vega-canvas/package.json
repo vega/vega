@@ -1,0 +1,41 @@
+{
+  "name": "vega-canvas",
+  "version": "1.0.0",
+  "description": "Canvas and Image object instantiation utilities.",
+  "keywords": [
+    "vega",
+    "canvas",
+    "image"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-canvas.js",
+  "jsnext:main": "index",
+  "module": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vega/vega-canvas.git"
+  },
+  "scripts": {
+    "build": "npm run test && uglifyjs build/vega-canvas.js -c -m -o build/vega-canvas.min.js",
+    "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-canvas.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublish": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-canvas.zip -- LICENSE README.md build/vega-canvas.js build/vega-canvas.min.js"
+  },
+  "devDependencies": {
+    "eslint": "4",
+    "rollup": "0.43",
+    "tape": "4",
+    "uglify-js": "3",
+    "canvas": "^1.6",
+    "canvas-prebuilt": "^1.6"
+  },
+  "browser": {
+    "canvas": null,
+    "canvas-prebuilt": null
+  }
+}
