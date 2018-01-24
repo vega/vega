@@ -23,13 +23,13 @@ Creates a new [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_A
 
 <a name="domCanvas" href="#domCanvas">#</a>
 vega.<b>domCanvas</b>([<i>width</i>, <i>height</i>])
-[<>](https://github.com/vega/vega-canvas/blob/master/index.js "Source")
+[<>](https://github.com/vega/vega-canvas/blob/master/src/domCanvas.js "Source")
 
 Creates a new [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) instance, with an optional *width* and *height* (in pixels). If *width* and *height* are omitted, creates a _0 x 0_ canvas. This method first attempts to create a canvas using the DOM `document.createElement` method. If that fails, returns `null`.
 
 <a name="nodeCanvas" href="#nodeCanvas">#</a>
 vega.<b>nodeCanvas</b>([<i>width</i>, <i>height</i>])
-[<>](https://github.com/vega/vega-canvas/blob/master/index.js "Source")
+[<>](https://github.com/vega/vega-canvas/blob/master/src/nodeCanvas.js "Source")
 
 Creates a new [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) instance, with an optional *width* and *height* (in pixels). If *width* and *height* are omitted, creates a _0 x 0_ canvas. This method attempts to instantiate a canvas using using the [node-canvas](https://github.com/Automattic/node-canvas) library. If that fails, it attempts to use the [node-canvas-prebuilt](https://github.com/node-gfx/node-canvas-prebuilt) library. If all attempts fail, returns `null`.
 
