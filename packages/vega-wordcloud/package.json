@@ -21,22 +21,20 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-wordcloud.js -c -m -o build/vega-wordcloud.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g vega-dataflow:vega,vega-scale:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-wordcloud.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g vega-canvas:vega,vega-dataflow:vega,vega-scale:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-wordcloud.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublish": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-wordcloud.zip -- LICENSE README.md build/vega-wordcloud.js build/vega-wordcloud.min.js"
   },
   "dependencies": {
+    "vega-canvas": "1",
     "vega-dataflow": "3",
     "vega-scale": "2",
     "vega-statistics": "^1.2",
     "vega-util": "1"
   },
-  "optionalDependencies": {
-    "canvas": "^1.6",
-    "canvas-prebuilt": "^1.6"
-  },
   "devDependencies": {
+    "canvas": "^1.6",
     "eslint": "4",
     "rollup": "0.43",
     "tape": "4",

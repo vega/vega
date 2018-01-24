@@ -1,4 +1,4 @@
-import {error} from 'vega-util';
+import {canvas} from 'vega-canvas';
 
 /*
 Copyright (c) 2013, Jason Davies.
@@ -48,8 +48,7 @@ export default function() {
       spiral = archimedeanSpiral,
       words = [],
       random = Math.random,
-      cloud = {},
-      canvas = cloudCanvas;
+      cloud = {};
 
   cloud.layout = function() {
     var contextAndRatio = getContext(canvas()),
@@ -420,25 +419,6 @@ function zeroArray(n) {
       i = -1;
   while (++i < n) a[i] = 0;
   return a;
-}
-
-function cloudCanvas() {
-  try {
-    var canvas = typeof document !== 'undefined' && document.createElement
-      ? document.createElement('canvas')
-      : 0;
-
-    if (canvas && canvas.getContext) {
-      return canvas;
-    }
-    try {
-      return new (require('canvas'))();
-    } catch (e) {
-      return new (require('canvas-prebuilt'))()
-    }
-  } catch (e) {
-    error('Canvas unavailable. Run in browser or install node-canvas.');
-  }
 }
 
 function functor(d) {
