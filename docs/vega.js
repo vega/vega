@@ -8552,84 +8552,60 @@ function GroupItem(mark) {
 
 inherits(GroupItem, Item);
 
-// create a new DOM element
-function domCreate(doc, tag, ns) {
-  if (!doc && typeof document !== 'undefined' && document.createElement) {
-    doc = document;
+function domCanvas(w, h) {
+  if (typeof document !== 'undefined' && document.createElement) {
+    var c = document.createElement('canvas');
+    if (c && c.getContext) {
+      c.width = w;
+      c.height = h;
+      return c;
+    }
   }
-  return doc
-    ? (ns ? doc.createElementNS(ns, tag) : doc.createElement(tag))
-    : null;
+  return null;
 }
 
-// find first child element with matching tag
-function domFind(el, tag) {
-  tag = tag.toLowerCase();
-  var nodes = el.childNodes, i = 0, n = nodes.length;
-  for (; i<n; ++i) if (nodes[i].tagName.toLowerCase() === tag) {
-    return nodes[i];
-  }
+function domImage() {
+  return typeof Image !== 'undefined' ? Image : null;
 }
 
-// retrieve child element at given index
-// create & insert if doesn't exist or if tags do not match
-function domChild(el, index, tag, ns) {
-  var a = el.childNodes[index], b;
-  if (!a || a.tagName.toLowerCase() !== tag.toLowerCase()) {
-    b = a || null;
-    a = domCreate(el.ownerDocument, tag, ns);
-    el.insertBefore(a, b);
-  }
-  return a;
-}
-
-// remove all child elements at or above the given index
-function domClear(el, index) {
-  var nodes = el.childNodes,
-      curr = nodes.length;
-  while (curr > index) el.removeChild(nodes[--curr]);
-  return el;
-}
-
-// generate css class name for mark
-function cssClass(mark) {
-  return 'mark-' + mark.marktype
-    + (mark.role ? ' role-' + mark.role : '')
-    + (mark.name ? ' ' + mark.name : '');
-}
-
-var Canvas;
+var NodeCanvas;
 
 try {
   // try to load canvas module
-  Canvas = require('canvas');
+  NodeCanvas = require('canvas');
+  if (!NodeCanvas) throw 1;
 } catch (e) {
   try {
     // if canvas fails, try to load canvas-prebuilt
-    Canvas = require('canvas-prebuilt');
+    NodeCanvas = require('canvas-prebuilt');
   } catch (e2) {
     // if all options fail, set to null
-    Canvas = null;
+    NodeCanvas = null;
   }
 }
 
-var Canvas$1 = function(w, h) {
-  var canvas = domCreate(null, 'canvas');
-  if (canvas && canvas.getContext) {
-    canvas.width = w;
-    canvas.height = h;
-  } else if (Canvas) {
+function nodeCanvas(w, h) {
+  if (NodeCanvas) {
     try {
-      canvas = new Canvas(w, h);
+      return new NodeCanvas(w, h);
     } catch (e) {
-      canvas = null;
+      // do nothing, return null on error
     }
   }
-  return canvas;
-};
+  return null;
+}
 
-var Image$1 = typeof Image !== 'undefined' ? Image
-  : (Canvas && Canvas.Image || null);
+function nodeImage() {
+  return NodeCanvas && NodeCanvas.Image || null;
+}
+
+function canvas(w, h) {
+  return domCanvas(w, h) || nodeCanvas(w, h) || null;
+}
+
+function image() {
+  return domImage() || nodeImage() || null;
+}
 
 function ResourceLoader(customLoader) {
   this._pending = 0;
@@ -8666,29 +8642,30 @@ prototype$38.sanitizeURL = function(uri) {
 };
 
 prototype$38.loadImage = function(uri) {
-  var loader$$1 = this;
+  var loader$$1 = this,
+      Image = image();
   increment(loader$$1);
 
   return loader$$1._loader
-    .sanitize(uri, {context:'image'})
+    .sanitize(uri, {context: 'image'})
     .then(function(opt) {
       var url = opt.href;
-      if (!url || !Image$1) throw {url: url};
+      if (!url || !Image) throw {url: url};
 
-      var image = new Image$1();
+      var img = new Image();
 
-      image.onload = function() {
+      img.onload = function() {
         decrement(loader$$1);
-        image.loaded = true;
+        img.loaded = true;
       };
 
-      image.onerror = function() {
+      img.onerror = function() {
         decrement(loader$$1);
-        image.loaded = false;
+        img.loaded = false;
       };
 
-      image.src = url;
-      return image;
+      img.src = url;
+      return img;
     })
     .catch(function(e) {
       decrement(loader$$1);
@@ -11775,7 +11752,7 @@ function draw$1(context, scene, bounds) {
   });
 }
 
-var image = {
+var image$1 = {
   type:     'image',
   tag:      'image',
   nested:   false,
@@ -11920,10 +11897,10 @@ var textMetrics = {
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
   width: estimateWidth,
-  canvas: canvas
+  canvas: useCanvas
 };
 
-canvas(true);
+useCanvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
@@ -11949,8 +11926,8 @@ function height(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
 
-function canvas(use) {
-  context$1 = use && (context$1 = Canvas$1(1,1)) ? context$1.getContext('2d') : null;
+function useCanvas(use) {
+  context$1 = use && (context$1 = canvas(1,1)) ? context$1.getContext('2d') : null;
   textMetrics.width = context$1 ? measureWidth : estimateWidth;
 }
 
@@ -12166,7 +12143,7 @@ var marks = {
   arc:     arc,
   area:    area$2,
   group:   group,
-  image:   image,
+  image:   image$1,
   line:    line$2,
   path:    path$3,
   rect:    rect,
@@ -12303,6 +12280,52 @@ function createMark(def, group) {
     role:        def.role || undefined,
     zindex:      def.zindex || 0
   };
+}
+
+// create a new DOM element
+function domCreate(doc, tag, ns) {
+  if (!doc && typeof document !== 'undefined' && document.createElement) {
+    doc = document;
+  }
+  return doc
+    ? (ns ? doc.createElementNS(ns, tag) : doc.createElement(tag))
+    : null;
+}
+
+// find first child element with matching tag
+function domFind(el, tag) {
+  tag = tag.toLowerCase();
+  var nodes = el.childNodes, i = 0, n = nodes.length;
+  for (; i<n; ++i) if (nodes[i].tagName.toLowerCase() === tag) {
+    return nodes[i];
+  }
+}
+
+// retrieve child element at given index
+// create & insert if doesn't exist or if tags do not match
+function domChild(el, index, tag, ns) {
+  var a = el.childNodes[index], b;
+  if (!a || a.tagName.toLowerCase() !== tag.toLowerCase()) {
+    b = a || null;
+    a = domCreate(el.ownerDocument, tag, ns);
+    el.insertBefore(a, b);
+  }
+  return a;
+}
+
+// remove all child elements at or above the given index
+function domClear(el, index) {
+  var nodes = el.childNodes,
+      curr = nodes.length;
+  while (curr > index) el.removeChild(nodes[--curr]);
+  return el;
+}
+
+// generate css class name for mark
+function cssClass(mark) {
+  return 'mark-' + mark.marktype
+    + (mark.role ? ' role-' + mark.role : '')
+    + (mark.name ? ' ' + mark.name : '');
 }
 
 function Handler(customLoader) {
@@ -12798,7 +12821,7 @@ var base = Renderer.prototype;
 var tempBounds$1 = new Bounds();
 
 prototype$43.initialize = function(el, width, height, origin, scaleFactor) {
-  this._canvas = Canvas$1(1, 1); // instantiate a small canvas
+  this._canvas = canvas(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
@@ -13744,13 +13767,13 @@ function escape_text(s) {
           .replace(/>/g, '&gt;');
 }
 
-var Canvas$2 = 'canvas';
+var Canvas = 'canvas';
 var PNG = 'png';
 var SVG = 'svg';
 var None$1 = 'none';
 
 var RenderType = {
-  Canvas: Canvas$2,
+  Canvas: Canvas,
   PNG:    PNG,
   SVG:    SVG,
   None:   None$1
@@ -13758,7 +13781,7 @@ var RenderType = {
 
 var modules = {};
 
-modules[Canvas$2] = modules[PNG] = {
+modules[Canvas] = modules[PNG] = {
   renderer: CanvasRenderer,
   headless: CanvasRenderer,
   handler:  CanvasHandler
@@ -26733,8 +26756,7 @@ var cloud = function() {
       spiral = archimedeanSpiral,
       words = [],
       random = Math.random,
-      cloud = {},
-      canvas = cloudCanvas;
+      cloud = {};
 
   cloud.layout = function() {
     var contextAndRatio = getContext(canvas()),
@@ -26782,13 +26804,13 @@ var cloud = function() {
     return tags;
   };
 
-  function getContext(canvas) {
-    canvas.width = canvas.height = 1;
-    var ratio = Math.sqrt(canvas.getContext("2d").getImageData(0, 0, 1, 1).data.length >> 2);
-    canvas.width = (cw << 5) / ratio;
-    canvas.height = ch / ratio;
+  function getContext(canvas$$1) {
+    canvas$$1.width = canvas$$1.height = 1;
+    var ratio = Math.sqrt(canvas$$1.getContext("2d").getImageData(0, 0, 1, 1).data.length >> 2);
+    canvas$$1.width = (cw << 5) / ratio;
+    canvas$$1.height = ch / ratio;
 
-    var context = canvas.getContext("2d");
+    var context = canvas$$1.getContext("2d");
     context.fillStyle = context.strokeStyle = "red";
     context.textAlign = "center";
 
@@ -27105,25 +27127,6 @@ function zeroArray(n) {
       i = -1;
   while (++i < n) a[i] = 0;
   return a;
-}
-
-function cloudCanvas() {
-  try {
-    var canvas = typeof document !== 'undefined' && document.createElement
-      ? document.createElement('canvas')
-      : 0;
-
-    if (canvas && canvas.getContext) {
-      return canvas;
-    }
-    try {
-      return new (require('canvas'))();
-    } catch (e) {
-      return new (require('canvas-prebuilt'))()
-    }
-  } catch (e) {
-    error$1('Canvas unavailable. Run in browser or install node-canvas.');
-  }
 }
 
 function functor(d) {
@@ -27968,7 +27971,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.9";
+var version = "3.0.10";
 
 var Default = 'default';
 
@@ -35821,7 +35824,6 @@ exports.pathTrail = vg_trail;
 exports.pathParse = pathParse;
 exports.pathRender = pathRender;
 exports.point = point$4;
-exports.canvas = Canvas$1;
 exports.domCreate = domCreate;
 exports.domFind = domFind;
 exports.domChild = domChild;
