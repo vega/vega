@@ -1,0 +1,79 @@
+{
+  "name": "vega-lib",
+  "version": "3.0.10-alpha",
+  "description": "The Vega visualization grammar - as a library",
+  "keywords": [
+    "vega",
+    "visualization",
+    "interaction",
+    "dataflow",
+    "grammar",
+    "data",
+    "d3"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "UW Interactive Data Lab",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "contributors": [
+    {
+      "name": "Jeffrey Heer",
+      "url": "http://idl.cs.washington.edu"
+    },
+    {
+      "name": "Arvind Satyanarayan",
+      "url": "http://arvindsatya.com"
+    },
+    {
+      "name": "Ryan Russell",
+      "url": "https://github.com/RussellSprouts"
+    },
+    {
+      "name": "Emily Gu",
+      "url": "https://github.com/emilygu"
+    },
+    {
+      "name": "Dominik Moritz",
+      "url": "https://www.domoritz.de"
+    },
+    {
+      "name": "Yuri Astrakhan",
+      "url": "https://github.com/nyurik"
+    }
+  ],
+  "module": "index",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nyurik/vega-lib.git"
+  },
+  "scripts": {
+    "test": "eslint index.js"
+  },
+  "dependencies": {
+    "vega-crossfilter": "2",
+    "vega-dataflow": "3",
+    "vega-encode": "2",
+    "vega-expression": "2",
+    "vega-force": "2",
+    "vega-geo": "^2.1",
+    "vega-hierarchy": "^2.1",
+    "vega-loader": "2",
+    "vega-parser": "^2.4",
+    "vega-projection": "1",
+    "vega-runtime": "2",
+    "vega-scale": "^2.1",
+    "vega-scenegraph": "^2.2",
+    "vega-statistics": "^1.2",
+    "vega-transforms": "^1.1",
+    "vega-util": "^1.6",
+    "vega-view": "^2.1",
+    "vega-view-transforms": "^1.1",
+    "vega-voronoi": "2",
+    "vega-wordcloud": "^2.1"
+  },
+  "devDependencies": {
+    "eslint": "4"
+  }
+}
