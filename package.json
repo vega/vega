@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -73,15 +73,19 @@
     "vega-projection": "1",
     "vega-runtime": "2",
     "vega-scale": "^2.1",
-    "vega-scenegraph": "^2.1",
+    "vega-scenegraph": "^2.2",
     "vega-statistics": "^1.2",
     "vega-transforms": "^1.1",
     "vega-util": "^1.6",
     "vega-view": "^2.1",
     "vega-view-transforms": "^1.1",
     "vega-voronoi": "2",
-    "vega-wordcloud": "2",
+    "vega-wordcloud": "^2.1",
     "yargs": "4"
+  },
+  "optionalDependencies": {
+    "canvas": "^1.6",
+    "canvas-prebuilt": "^1.6"
   },
   "devDependencies": {
     "eslint": "4",

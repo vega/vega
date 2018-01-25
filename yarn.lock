@@ -507,7 +507,7 @@ detect-libc@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
 
-doctrine@^2.0.2:
+doctrine@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
   dependencies:
@@ -559,8 +559,8 @@ eslint-visitor-keys@^1.0.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
 eslint@4:
-  version "4.15.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.15.0.tgz#89ab38c12713eec3d13afac14e4a89e75ef08145"
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.16.0.tgz#934ada9e98715e1d7bbfd6f6f0519ed2fab35cc1"
   dependencies:
     ajv "^5.3.0"
     babel-code-frame "^6.22.0"
@@ -568,7 +568,7 @@ eslint@4:
     concat-stream "^1.6.0"
     cross-spawn "^5.1.0"
     debug "^3.1.0"
-    doctrine "^2.0.2"
+    doctrine "^2.1.0"
     eslint-scope "^3.7.1"
     eslint-visitor-keys "^1.0.0"
     espree "^3.5.2"
@@ -1073,8 +1073,8 @@ is-regex@^1.0.4:
     has "^1.0.1"
 
 is-resolvable@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.0.1.tgz#acca1cd36dbe44b974b924321555a70ba03b1cf4"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.1.0.tgz#fb18f87ce1feb925169c9a407c19318a3206ed88"
 
 is-symbol@^1.0.1:
   version "1.0.1"
@@ -1920,8 +1920,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 uglify-js@3:
-  version "3.3.7"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.7.tgz#28463e7c7451f89061d2b235e30925bf5625e14d"
+  version "3.3.8"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.8.tgz#51e9a5db73afb53ac98603d08224edcd0be45fd8"
   dependencies:
     commander "~2.13.0"
     source-map "~0.6.1"
@@ -1944,6 +1944,10 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
+
+vega-canvas@1:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vega-canvas/-/vega-canvas-1.0.0.tgz#c71a27b58b2cfba1ca680cb4cfb5d07beca3fe98"
 
 vega-crossfilter@2:
   version "2.0.0"
@@ -2023,7 +2027,7 @@ vega-loader@2:
     topojson-client "3"
     vega-util "1"
 
-vega-parser@2, vega-parser@^2.2:
+vega-parser@2, vega-parser@^2.4:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-2.4.0.tgz#305a620653e00e96219e71d2b32748ede7acf3f2"
   dependencies:
@@ -2063,17 +2067,15 @@ vega-scale@2, vega-scale@^2.1:
     d3-time "1"
     vega-util "1"
 
-vega-scenegraph@2:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.1.0.tgz#9b4e8bc2acfe1424bccf760bee1c43622cc18547"
+vega-scenegraph@2, vega-scenegraph@^2.2:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.2.0.tgz#a72e44b286a19d1f38dc8ceaf2a1a20cabc48000"
   dependencies:
     d3-path "1"
     d3-shape "1"
+    vega-canvas "1"
     vega-loader "2"
     vega-util "^1.1"
-  optionalDependencies:
-    canvas "^1.6"
-    canvas-prebuilt "^1.6"
 
 vega-statistics@^1.2:
   version "1.2.1"
@@ -2102,7 +2104,7 @@ vega-view-transforms@^1.1:
     vega-scenegraph "2"
     vega-util "1"
 
-vega-view@2:
+vega-view@^2.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.1.0.tgz#578e862ad502b24680eac7e93230e972ce7c8fb5"
   dependencies:
@@ -2121,17 +2123,15 @@ vega-voronoi@2:
     vega-dataflow "3"
     vega-util "1"
 
-vega-wordcloud@2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/vega-wordcloud/-/vega-wordcloud-2.0.2.tgz#853be1b1492ba749001e5483be30380662ff2c59"
+vega-wordcloud@^2.1:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-wordcloud/-/vega-wordcloud-2.1.0.tgz#fb3187ab667ada14daffb7f175082a9a9736cab1"
   dependencies:
+    vega-canvas "1"
     vega-dataflow "3"
     vega-scale "2"
     vega-statistics "^1.2"
     vega-util "1"
-  optionalDependencies:
-    canvas "^1.6"
-    canvas-prebuilt "^1.6"
 
 verror@1.10.0:
   version "1.10.0"
