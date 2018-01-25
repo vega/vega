@@ -56,7 +56,7 @@
     "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega-core.js -c -m -o build/vega-core.min.js",
     "test": "eslint index.js",
     "prepublish": "npm run test && npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
+    "__postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
