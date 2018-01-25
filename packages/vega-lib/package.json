@@ -1,6 +1,6 @@
 {
   "name": "vega-lib",
-  "version": "3.0.10-alpha",
+  "version": "3.0.10-alpha2",
   "description": "The Vega visualization grammar - as a library",
   "keywords": [
     "vega",
@@ -42,6 +42,7 @@
       "url": "https://github.com/nyurik"
     }
   ],
+  "main": "build/vega.js",
   "module": "index",
   "jsnext:main": "index",
   "repository": {
@@ -49,7 +50,14 @@
     "url": "https://github.com/nyurik/vega-lib.git"
   },
   "scripts": {
-    "test": "eslint index.js"
+    "rollup": "bin/rollup && bin/schema > build/vega-schema.json",
+    "prebuild": "rm -rf build && mkdir build",
+    "build": "npm run rollup && bin/rollup -e",
+    "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega-core.js -c -m -o build/vega-core.min.js",
+    "test": "eslint index.js",
+    "prepublish": "npm run test && npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
+    "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
     "vega-crossfilter": "2",
@@ -74,6 +82,19 @@
     "vega-wordcloud": "^2.1"
   },
   "devDependencies": {
-    "eslint": "4"
+    "eslint": "4",
+    "rollup": "0.43",
+    "rollup-plugin-json": "2",
+    "rollup-plugin-node-resolve": "3",
+    "tape": "4",
+    "tv4": "1",
+    "uglify-js": "3",
+    "vega-datasets": "1"
+  },
+  "browser": {
+    "buffer": false,
+    "canvas": false,
+    "canvas-prebuilt": false,
+    "fs": false
   }
 }
