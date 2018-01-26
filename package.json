@@ -41,6 +41,8 @@
   "main": "build/vega.js",
   "module": "index",
   "jsnext:main": "index",
+  "unpkg": "build/vega.min.js",
+  "jsdelivr": "build/vega.min.js",
   "bin": {
     "vg2png": "./bin/vg2png",
     "vg2svg": "./bin/vg2svg"

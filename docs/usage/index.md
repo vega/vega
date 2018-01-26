@@ -43,11 +43,11 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 </head>
 ```
 
-**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [cdnjs](https://cdnjs.com/libraries/vega):
+**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [jsDelivr](https://www.jsdelivr.com/package/npm/vega):
 
 ```html
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
 </head>
 ```
 
@@ -55,8 +55,8 @@ If you have already imported d3 and want to use a smaller Vega bundle without d3
 
 ```html
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/{{ site.data.versions.d3 }}/d3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@{{ site.data.versions.d3 }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build/vega-core.min.js"></script>
 </head>
 ```
 
@@ -69,7 +69,7 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
 
 ```html
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
 
   <script type="text/javascript">
     var view;
@@ -103,9 +103,9 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 
 ```html
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega/{{ site.data.versions.vega }}/vega.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/{{ site.data.versions.vega-lite }}/vega-lite.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/{{ site.data.versions.vega-embed }}/vega-embed.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}"></script>
 </head>
 <body>
 <div id="view"></div>
