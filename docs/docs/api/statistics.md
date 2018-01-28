@@ -4,7 +4,7 @@ title: Statistics API
 permalink: /docs/api/statistics/index.html
 ---
 
-Vega includes **statistics** functions for to model probability distributions and perform other statistical calcuations. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-statistics](https://github.com/vega/vega-statistics) project.
+Vega includes **statistics** functions for to model probability distributions and perform other statistical calculations. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-statistics](https://github.com/vega/vega-statistics) project.
 
 ## Statistics API Reference
 

@@ -72,7 +72,7 @@ Each axis tick, grid line, and label instance is backed by a data object with th
 - `label` - the string label
 - `value` - the data value
 
-The following example shows how to set custom colors, thickness, text angle, and fonts. The `labels` encoding block also make legend labels reponsive to input events, and changes the text color on mouse hover.
+The following example shows how to set custom colors, thickness, text angle, and fonts. The `labels` encoding block also make legend labels responsive to input events, and changes the text color on mouse hover.
 
 {: .suppress-error}
 ```json

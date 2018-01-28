@@ -162,7 +162,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The axis line previously stylable as `"axis"` is now referred to as the axis `"domain"`. For example, use `"domain": false` to hide the axis line, or include a `"domain"` property in the `"encode"` block to style the axis line.
 
-- Axis ticks, labels, gridlines, and domain can all be selectively enabled or disabled. Axis ticks, labels and domain are enabled by default, but can be disabled (for examepl, `"tick": false`, `"label": false`). Axis grid lines are disabled by default, but can be enabled (`"grid": true`). These toggles can be useful to achieve richer layering. For example, one might place an axis definition with only gridlines on a bottom layer, and add an axis definition with ticks and labels on a higher layer.
+- Axis ticks, labels, gridlines, and domain can all be selectively enabled or disabled. Axis ticks, labels and domain are enabled by default, but can be disabled (for example, `"tick": false`, `"label": false`). Axis grid lines are disabled by default, but can be enabled (`"grid": true`). These toggles can be useful to achieve richer layering. For example, one might place an axis definition with only gridlines on a bottom layer, and add an axis definition with ticks and labels on a higher layer.
 
 - By default, the axis gridline extent is determined by the settings of the signals `"width"` (for y-axis gridlines) or `"height"` (for x-axis gridlines). This is a change from Vega 2, where the group width/height was used. Vega 3 enables recursive signal definitions: named signal values can be overridden within sub-groups, allowing one to set appropriate width/height signal values in sub-plots. Alternatively, Vega 3 introduces a `"gridScale"` property which instead indicates a scale whose range should be used to determine the gridline extent. For example, if you have an x-axis scale named "xscale", the y-axis gridline lengths can be set to match that scale by using `"gridScale": "xscale"`.
 
@@ -194,7 +194,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - A number of transforms now have different default output field names. In most cases, this was done to make the values more easily serve as scenegraph item properties (for example, when using post-encoding transforms).
 
-- For layout transforms suchs as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calulate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
+- For layout transforms such as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calculate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
 
 - The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
 

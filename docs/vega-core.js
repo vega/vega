@@ -5417,7 +5417,7 @@ function partition$1(data, groupby, key$$1, keyvals) {
 
 /**
  * Extend input tuples with aggregate values.
- * Calcuates aggregate values and joins them with the input stream.
+ * Calculates aggregate values and joins them with the input stream.
  * @constructor
  */
 function JoinAggregate(params) {

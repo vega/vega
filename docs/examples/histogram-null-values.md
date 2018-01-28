@@ -6,6 +6,6 @@ spec: histogram-null-values
 image: /examples/img/histogram-null-values.png
 ---
 
-This example demonstrates a [histogram](../histogram) over a numerical range, with a segment to show the prevelance of null values.
+This example demonstrates a [histogram](../histogram) over a numerical range, with a segment to show the prevalence of null values.
 
 {% include example spec=page.spec %}

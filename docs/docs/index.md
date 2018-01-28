@@ -6,7 +6,7 @@ permalink: /docs/index.html
 
 The **Vega** visualization grammar provides basic building blocks for a wide variety of visualization designs. This page provides documentation of [Vega JSON specifications](#specification) and [JavaScript API](#api).
 
-To start learning Vega, we recommend first working through the introductory **[Let's Make A Bar Chart tutorial](../tutorials/bar-chart)** and exploring the [example gallery](../examples), then digging into the documention. These pages document _Vega version 3.0 and later_; if you are familiar with Vega 2.x, you might begin with the [**Vega 2 porting guide**](porting-guide).
+To start learning Vega, we recommend first working through the introductory **[Let's Make A Bar Chart tutorial](../tutorials/bar-chart)** and exploring the [example gallery](../examples), then digging into the documentation. These pages document _Vega version 3.0 and later_; if you are familiar with Vega 2.x, you might begin with the [**Vega 2 porting guide**](porting-guide).
 
 
 ## <a name="specification"></a>Specification Reference

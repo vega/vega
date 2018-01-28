@@ -26,7 +26,7 @@ The force transform modifies the input node data _only_. It does not modify any 
 | iterations          | {% include type t="Number" %}   | The number of iterations to run the simulation when in _static_ mode (default `300`).|
 | alpha               | {% include type t="Number" %}   | A value representing the current energy level or "temperature" of the simulation. Alpha values lie in the range [0, 1]. Internally, the simulation will decrease the alpha value over time, causing the magnitude of updates to diminish.|
 | alphaMin            |{% include type t="Number" %}   | The minimum amount by which to lower the alpha value on each simulation iteration (default `0.001`).|
-| alphaTarget         | {% include type t="Number" %}   | The target alpha value to which the simulation coverges (default `0`).|
+| alphaTarget         | {% include type t="Number" %}   | The target alpha value to which the simulation converges (default `0`).|
 | velocityDecay       | {% include type t="Number" %}   | The velocity decay factor is akin to atmospheric friction; after the application of any forces during an iteration, each node's velocity is multiplied by _1 - velocityDecay_ (default `0.4`).|
 | forces              | {% include array t="[Force](#forces)" %} | An array of objects defining the forces to include in the simulation. See the [forces reference](#forces) for more.|
 | as                  | {% include type t="String[]" %} | The output fields to which node positions and velocities are written. The default is `["x", "y", "vx", "vy"]`.|
@@ -142,7 +142,7 @@ Attracts nodes to a particular y-coordinate, on a per-node basis.
 }
 ```
 
-Perform force-directed layout of a network. The layout is centered in the middle of the view, nodes repel each other, and a data set `edges` defines link constraints with a 25 pixel distance. Finally, collision detection is performend on nodes with a radius of 10 pixels.
+Perform force-directed layout of a network. The layout is centered in the middle of the view, nodes repel each other, and a data set `edges` defines link constraints with a 25 pixel distance. Finally, collision detection is performed on nodes with a radius of 10 pixels.
 
 ```json
 {
