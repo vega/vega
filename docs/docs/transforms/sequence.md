@@ -4,7 +4,7 @@ title: Sequence Transform
 permalink: /docs/transforms/sequence/index.html
 ---
 
-The **sequence** transform generates a data stream containing a seqence of numeric values. See also the [sequence expression function](../../expressions/#sequence).
+The **sequence** transform generates a data stream containing a sequence of numeric values. See also the [sequence expression function](../../expressions/#sequence).
 
 ## Transform Parameters
 

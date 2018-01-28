@@ -21,7 +21,7 @@ If a match is found, by default the full data object in the secondary stream is 
 
 ## Usage
 
-For each data object in the input data stream, this example lookups records where the `key` field of the the data stream `unemployment` matches the `id` field of the input stream. Matching records are added to the input stream under the field named `value`.
+For each data object in the input data stream, this example lookups records where the `key` field of the data stream `unemployment` matches the `id` field of the input stream. Matching records are added to the input stream under the field named `value`.
 
 ```json
 {

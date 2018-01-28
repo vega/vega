@@ -80,7 +80,7 @@ Load a JavaScript Object Notation (JSON) file using the [TopoJSON](https://githu
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
 | feature       | {% include type t="String" %} | The name of the TopoJSON object set to convert to a GeoJSON feature collection. For example, in a map of the world, there may be an object set named `"countries"`. Using the feature property, we can extract this set and generate a GeoJSON feature object for each country.|
-| mesh          | {% include type t="String" %} | The name of the TopoJSON object set to convert to a mesh. Similar to the _feature_ option, _mesh_ extracts a named TopoJSON object set. Unlike the _feature_ option, the corresponding geo data is returned as a single, unified mesh instance, not as inidividual GeoJSON features. Extracting a mesh is useful for more efficiently drawing borders or other geographic elements that you do not need to associate with specific regions such as individual countries, states or counties.|
+| mesh          | {% include type t="String" %} | The name of the TopoJSON object set to convert to a mesh. Similar to the _feature_ option, _mesh_ extracts a named TopoJSON object set. Unlike the _feature_ option, the corresponding geo data is returned as a single, unified mesh instance, not as individual GeoJSON features. Extracting a mesh is useful for more efficiently drawing borders or other geographic elements that you do not need to associate with specific regions such as individual countries, states or counties.|
 
 
 ## <a name="examples"></a>Examples

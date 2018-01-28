@@ -4,7 +4,7 @@ title: Event Streams
 permalink: /docs/event-streams/index.html
 ---
 
-**Event streams** are the primary means of modeling user input to enable dynamic, interactive visualizations. Event streams capture a sequence of input events such as mouse click, touch movement, or signal updates. When events that match a stream definition occur, they cause any corresponding [signal event handlers](../signals/#handlers) to evalute, potentially updating a signal value.
+**Event streams** are the primary means of modeling user input to enable dynamic, interactive visualizations. Event streams capture a sequence of input events such as mouse click, touch movement, or signal updates. When events that match a stream definition occur, they cause any corresponding [signal event handlers](../signals/#handlers) to evaluate, potentially updating a signal value.
 
 {: .suppress-error}
 ```json

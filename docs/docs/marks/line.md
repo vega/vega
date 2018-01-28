@@ -4,7 +4,7 @@ title: Line Mark
 permalink: /docs/marks/line/index.html
 ---
 
-**Line** marks are stroked paths with constant width, defined by an ordered set of (x, y) coordinates. While line marks default to using straight line segements, different interpolation methods can be used to create smoothed or stepped paths. Line marks are commonly used to depict trajectories or change over time.
+**Line** marks are stroked paths with constant width, defined by an ordered set of (x, y) coordinates. While line marks default to using straight line segments, different interpolation methods can be used to create smoothed or stepped paths. Line marks are commonly used to depict trajectories or change over time.
 
 ## Example
 

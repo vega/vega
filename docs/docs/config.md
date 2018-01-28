@@ -194,7 +194,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
 | labelFontWeight | {% include type t="String" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
-| labelPadding    | {% include type t="Number" %}   | Padding in pixels betweem axis ticks and tick labels. |
+| labelPadding    | {% include type t="Number" %}   | Padding in pixels between axis ticks and tick labels. |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |

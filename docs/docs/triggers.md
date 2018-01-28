@@ -17,7 +17,7 @@ Triggers can either be used to update data objects within a [data set](../data),
 | remove    | [Expression](../expressions){% include or %}{% include type t="Boolean" %} | An expression that evaluates to data objects to remove. Or, if boolean `true`, indicates that all existing data objects should be removed. Remove operations are only applicable to data sets, not marks.|
 | toggle    | [Expression](../expressions)  | An expression that evaluates to data objects to toggle. Toggled objects are inserted or removed depending on whether they are already in the data set. Toggle operations are only applicable to data sets, not marks.|
 | modify    | [Expression](../expressions)  | An expression that evaluates to data objects to modify. Modify operations are applicable to both data sets and marks. If _modify_ is specified, the _values_ property **must** be specified as well.|
-| values    | [Expression](../expressions)  | An expression that evaluates to an object of name-value pairs, indicating the field values that should be updated for the data objects returend by the _modify_ expression. |
+| values    | [Expression](../expressions)  | An expression that evaluates to an object of name-value pairs, indicating the field values that should be updated for the data objects returned by the _modify_ expression. |
 
 ## Usage
 

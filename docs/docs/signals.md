@@ -94,7 +94,7 @@ An event handler object includes an [event stream](../event-streams) definition 
 | :------------------ | :-----------------------------: | :------------|
 | events              | [EventStream](../event-streams) | {% include required %} The events to respond to.|
 | update              | [Expression](../expressions)    | An expression that is evaluated when events occur, the result then becomes the new signal value. This property is _**required**_ if _encode_ is not specified.|
-| encode              | {% include type t="String" %}   | The name of a mark property encoding set to re-evaluate for the the mark item that was the source of the input event. This property is _**required**_ if _update_ is not specified.|
+| encode              | {% include type t="String" %}   | The name of a mark property encoding set to re-evaluate for the mark item that was the source of the input event. This property is _**required**_ if _update_ is not specified.|
 | force               | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating whether or not updates that do not change the signal value should propagate. For example, if set to `true` and an input stream update sets the signal to its current value, downstream signals will still be notified of an update.|
 
 This signal definition increments its value upon `mouseover` of `rect` items:

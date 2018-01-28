@@ -4,7 +4,7 @@ title: "Mapping Airport Connections Tutorial"
 permalink: /tutorials/airports/index.html
 ---
 
-From massive hubs to small local outposts, the United States air traffic system consists of a rich set of connections among hundeds of airports. In this tutorial, we will visualize this system of airports and connections, based on data from the year 2008. Our goal will be to create our own version of [Mike Bostock's D3.js airports map](https://mbostock.github.io/d3/talk/20111116/airports.html).
+From massive hubs to small local outposts, the United States air traffic system consists of a rich set of connections among hundreds of airports. In this tutorial, we will visualize this system of airports and connections, based on data from the year 2008. Our goal will be to create our own version of [Mike Bostock's D3.js airports map](https://mbostock.github.io/d3/talk/20111116/airports.html).
 
 {% include embed spec="airports" dir="." %}
 
@@ -254,7 +254,7 @@ The result is a map of all airports in the United States. That's a lot of airpor
 
 We'd now like to visualize more information about the airports. How much traffic does each airport get in 2008? In the process, we can also filter out those airports that did not service any commercial flights in 2008. To incorporate this information, we need to load the flights data.
 
-We can add the following entry to the the `data` array, _before_ the `airports` data:
+We can add the following entry to the `data` array, _before_ the `airports` data:
 
 ```json
 {
