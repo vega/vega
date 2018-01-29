@@ -35,7 +35,7 @@
     "canvas-prebuilt": "^1.6"
   },
   "browser": {
-    "canvas": null,
-    "canvas-prebuilt": null
+    "canvas": false,
+    "canvas-prebuilt": false
   }
 }
