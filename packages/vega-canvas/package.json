@@ -1,6 +1,6 @@
 {
   "name": "vega-canvas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Canvas and Image object instantiation utilities.",
   "keywords": [
     "vega",
