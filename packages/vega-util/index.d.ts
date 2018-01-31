@@ -76,7 +76,7 @@ export function panPow(domain: number[], delta: number, exponent: number): numbe
 
 export function peek(array: any[]): any;
 
-export function toSet<T>(array: T[]): { [T: string]: 1 }
+export function toSet<T>(array: T[]): { [T: string]: true }
 
 export function visitArray(array: any[] | undefined,
   filter: (any: any) => boolean | undefined,
