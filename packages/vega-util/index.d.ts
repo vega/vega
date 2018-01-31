@@ -5,11 +5,13 @@ export function accessor(fn: AccessorFn, fields?: string[], name?: string): Acce
 export function accessorFields(fn: Function): string[];
 export function accessorName(fn: Function): string;
 
-export function compare(fields: string[], orders?: ('ascending' | 'descending')[]);
+export type Order = 'ascending' | 'descending';
+
+export function compare(fields: string | string[] | AccessorFn | AccessorFn[], orders?: Order | Order[]): (a: any, b: any) => number;
 
 export function constant<V>(v: V): () => V;
 
-export function debounce(delay: number, func: Function): Function;
+export function debounce<F extends Function>(delay: number, func: F): F;
 
 export function field(field: string, name?: string): AccessorFn;
 
@@ -21,7 +23,7 @@ export function key(fields: string[], flat?: boolean): (_: object) => string;
 
 export function one(): 1;
 export function zero(): 0;
-export function truth(): true;
+export function truthy(): true;
 export function falsy(): false;
 
 // Type Checkers
@@ -58,12 +60,15 @@ export function fastmap(_?: object): FastMap;
 
 // Arrays
 
+export function array<T extends any[]>(v: T): T;
 export function array<T>(v: T): T[];
 
 export function extentIndex(array: number[], accessor?: AccessorFn): number[];
 
 export function merge(compare: (a: any, b: any) => number,
-  array1: any[], array2: any[], output?: any[]): any[];
+  array1: any[], array2: any[]): any[];
+export function merge(compare: (a: any, b: any) => number,
+  array1: any[], array2: any[], output?: any[]): void;
 
 export function panLinear(domain: number[], delta: number): number[];
 export function panLog(domain: number[], delta: number): number[];
@@ -73,11 +78,9 @@ export function peek(array: any[]): any;
 
 export function toSet<T>(array: T[]): { [T: string]: 1 }
 
-// FIXME: an optional arg before a required one is invalid TypeScript.
-export function visitArray(): void;
-// export function visitArray(array: any[],
-//   filter?: (any) => boolean,
-//   visitor: (v: any, i: number, arr: any[]) => void): void;
+export function visitArray(array: any[] | undefined,
+  filter: (any: any) => boolean | undefined,
+  visitor: (v: any, i: number, arr: any[]) => void): void;
 
 export function zoomLinear(domain: number[],
   anchor: number | null, scale: number): number[];
