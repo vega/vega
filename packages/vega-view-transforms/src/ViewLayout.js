@@ -5,6 +5,7 @@ import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
 var Fit = 'fit',
+    FitX = 'fit-x',
     Pad = 'pad',
     None = 'none',
     Padding = 'padding';
@@ -400,6 +401,12 @@ function layoutSize(view, group, viewBounds, _) {
   else if (type === Fit) {
     width = Math.max(0, viewWidth - left - right);
     height = Math.max(0, viewHeight - top - bottom);
+  }
+  
+  else if (type === FitX) {
+    width = Math.max(0, viewWidth - left - right);
+    height = height + top + bottom;
+    viewHeight = height;
   }
 
   else if (type === Pad) {
