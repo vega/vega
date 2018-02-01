@@ -210,7 +210,7 @@ Internally, this method invokes the `run` method of the
 [Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js)
 parent class, and then additionally performs rendering.
 
-<a name="view_runAfter" href="#view_run">#</a>
+<a name="view_runAfter" href="#view_runAfter">#</a>
 view.<b>runAfter</b>(<i>callback</i>)
 [<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/run.js "Source")
 
@@ -218,6 +218,16 @@ Schedules a *callback* function to be invoked after the current dataflow
 evaluation completes. The callback function will be invoked with this view
 instance provided as the sole parameter. If dataflow evaluation is not
 currently occurring, the callback function is invoked immediately.
+
+<a name="view_runAsync" href="#view_runAsync">#</a>
+view.<b>runAsync</b>()
+[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/run.js "Source")
+
+Runs the dataflow and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves when the
+propagation cycle completes. The standard [`run`](#view_run) method may exit early
+if there are pending data loading operations. In contrast, this
+method returns a Promise to allow callers to receive notification
+when dataflow evaluation completes.
 
 <a name="view_render" href="#view_render">#</a>
 view.<b>render</b>([<i>update</i>])
