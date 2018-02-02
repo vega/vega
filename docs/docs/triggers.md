@@ -21,7 +21,7 @@ Triggers can either be used to update data objects within a [data set](../data),
 
 ## Usage
 
-Update a data set of selected items based on shift-click interactions. The signal `shift` indicates if the shift key is pressed during a click event, and the signal `clicked` references a data object corresponding to a clicked mark item. If a click event occurs and the shift key is not pressed, all selected items are removed. If a mark item is clicked without the shift key, its data object is added to the data set. If a mark item is clicked while the shift key is pressed, its data object is toggled.
+Update a data set of selected items based on shift-click interactions. The signal `shift` indicates if the shift key is pressed during a click event, and the signal `clicked` references a data object corresponding to a clicked mark item. (Note the signal definitions are not shown in these examples.) If a click event occurs and the shift key is not pressed, all selected items are removed. If a mark item is clicked without the shift key, its data object is added to the data set. If a mark item is clicked while the shift key is pressed, its data object is toggled.
 
 {: .suppress-error}
 ```json
