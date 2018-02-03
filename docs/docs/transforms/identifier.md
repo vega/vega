@@ -14,8 +14,25 @@ The **identifier** transform extends data objects with a globally unique key val
 
 ## Usage
 
+Given this data:
+
+```json
+[
+  {"foo": "a"},
+  {"foo": "b"}
+]
+```
+
+This example writes unique identifier values to the `id` field of each newly seen data object. 
+
 ```json
 {"type": "identifier", "as": "id"}
 ```
 
-This example writes unique identifier values to the `id` field of each newly seen data object.
+Results:
+
+```json
+[
+  {"foo":"a", "id":1},
+  {"foo":"b", "id":2}
+]
