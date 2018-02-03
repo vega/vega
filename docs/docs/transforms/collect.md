@@ -14,17 +14,39 @@ The **collect** transform collects all the objects in a data stream within a sin
 
 ## Usage
 
-To sort data objects by the `value` field in descending order:
+Given this data:
+
+```json
+[
+  {"a": 3, "b": 1},
+  {"a": 2, "b": 2},
+  {"a": 1, "b": 4},
+  {"a": 1, "b": 3}
+]
+```
+
+### Simple sort
+To sort data objects by the field `a`:
 
 ```json
 {
   "type": "collect",
-  "sort": {
-    "field": "value",
-    "order": "descending"
-  }
+  "sort": {"field": "a"}
 }
 ```
+
+Produces
+
+```json
+[
+  {"a": 1, "b": 4},
+  {"a": 1, "b": 3},
+  {"a": 2, "b": 2},
+  {"a": 3, "b": 1}
+]
+```
+
+### Multi-value and multi-criteria sort
 
 To sort data objects according to multiple criteria:
 
@@ -33,7 +55,18 @@ To sort data objects according to multiple criteria:
   "type": "collect",
   "sort": {
     "field": ["a", "b"],
-    "order": ["ascending", "descending"]
+    "order": ["descending", "ascending"]
   }
 }
+```
+
+Produces
+
+```json
+[
+  {"a":3,"b":1},
+  {"a":2,"b":2},
+  {"a":1,"b":3},
+  {"a":1,"b":4}
+]
 ```
