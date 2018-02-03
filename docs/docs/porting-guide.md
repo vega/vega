@@ -35,7 +35,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - Mark definitions no longer allow embedded data transforms (e.g., `{"type": "rect", "from": {"data": "table, "transform": [...]}}`). Instead, *all* derived data sources must now be defined within a `"data"` definition block. However, as of Vega 3, `"data"` blocks are no longer constrained to only the top-level of a spec: they can be defined within `group` marks as well! For example, this flexibility allows creation of derived data sets *within* a faceted group.
 
-- The `"facet"` transform is no longer supported. Instead, a new `"facet"` directive can be applied within a mark `"from"` block to enable multiple forms of faceting support. For example, the `barley.vg.json` example facets a group mark like so:
+- The `"facet"` transform is no longer supported. Instead, a new `"facet"` directive can be applied within a mark `"from"` block to enable multiple forms of faceting support. Also, the `"aggregate"` transform can be used for grouping. For example, the `barley.vg.json` example facets a group mark like so:
 
   {:.suppress-error}
   ```json
