@@ -44,11 +44,11 @@ This example will bin values in the _amount_ field into one of 5 bins between 0 
 
 the bin transform produces the output
 
-```
+```json
 [
   {"amount": 3.7, "bin0": 2, "bin1": 4},
   {"amount": 6.2, "bin0": 6, "bin1": 8},
   {"amount": 5.9, "bin0": 4, "bin1": 6},
-  {"amount": 8, "bin0": 8, "bin1": 10},
+  {"amount": 8, "bin0": 8, "bin1": 10}
 ]
 ```
