@@ -73,3 +73,33 @@ produces the output:
 ```json
 [{"v": 2, "s": 6, "m": 2}]
 ```
+
+## Usage with groupby
+
+For the following input data:
+
+```json
+[
+  {"foo": "a", "bar": 1},
+  {"foo": "a", "bar": 2},
+  {"foo": "b", "bar": 3}
+]
+```
+
+The aggregate transform
+
+```json
+{
+  "type": "aggregate",
+  "groupby": ["foo"],
+}
+```
+
+produces the output:
+
+```json
+[
+  {"foo":"a","count":2},
+  {"foo":"b","count":1}
+]
+```
