@@ -45,7 +45,7 @@ Similarly, with the same input data, the following transform
 
 produces the output
 
-```
+```json
 [
   {"a": {"v": 1}, "b": {"v": 2}},
   {"a": {"v": 1}, "b": {"v": 3}},
