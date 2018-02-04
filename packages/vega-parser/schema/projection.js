@@ -76,7 +76,7 @@ export default {
         })
       },
       "additionalProperties": true,
-      "required": ["name", "type"]
+      "required": ["name"]
     }
   }
 };
