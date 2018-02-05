@@ -33,6 +33,6 @@ Results:
 
 ```json
 [
-  {"foo":"a", "id":1},
-  {"foo":"b", "id":2}
+  {"foo": "a", "id": 1},
+  {"foo": "b", "id": 2}
 ]
