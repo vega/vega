@@ -99,7 +99,7 @@ produces the output:
 
 ```json
 [
-  {"foo":"a","count":2},
-  {"foo":"b","count":1}
+  {"foo": "a", "count": 2},
+  {"foo": "b", "count": 1}
 ]
 ```
