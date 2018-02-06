@@ -1,5 +1,8 @@
-import {tableau10, tableau20, blueOrange} from './palettes';
-import * as $ from 'd3-scale';
+import {
+  category20, category20b, category20c,
+  tableau10, tableau20,
+  blueOrange
+} from './palettes';
 import * as _ from 'd3-scale-chromatic';
 import {interpolateRgbBasis} from 'd3-interpolate';
 import {peek} from 'vega-util';
@@ -9,13 +12,8 @@ var discrete = {
 };
 
 var schemes = {
-  // d3 built-in categorical palettes
-  category10:  $.schemeCategory10,
-  category20:  $.schemeCategory20,
-  category20b: $.schemeCategory20b,
-  category20c: $.schemeCategory20c,
-
-  // extended categorical palettes
+  // d3 categorical palettes
+  category10:  _.schemeCategory10,
   accent:      _.schemeAccent,
   dark2:       _.schemeDark2,
   paired:      _.schemePaired,
@@ -24,14 +22,19 @@ var schemes = {
   set1:        _.schemeSet1,
   set2:        _.schemeSet2,
   set3:        _.schemeSet3,
+
+  // additional categorical palettes
+  category20:  category20,
+  category20b: category20b,
+  category20c: category20c,
   tableau10:   tableau10,
   tableau20:   tableau20,
 
-  // d3 built-in interpolators
-  viridis:     $.interpolateViridis,
-  magma:       $.interpolateMagma,
-  inferno:     $.interpolateInferno,
-  plasma:      $.interpolatePlasma,
+  // sequential multi-hue interpolators
+  viridis:     _.interpolateViridis,
+  magma:       _.interpolateMagma,
+  inferno:     _.interpolateInferno,
+  plasma:      _.interpolatePlasma,
 
   // extended interpolators
   blueorange:  interpolateRgbBasis(peek(blueOrange))
