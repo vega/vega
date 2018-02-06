@@ -27,6 +27,7 @@ export function truthy(): true;
 export function falsy(): false;
 
 // Type Checkers
+
 export function isArray<T>(a: any | T[]): a is T[];
 export function isBoolean(a: any): a is boolean;
 export function isDate(a: any): a is Date;
@@ -37,6 +38,7 @@ export function isRegExp(a: any): a is RegExp;
 export function isString(a: any): a is string;
 
 // Type Coercion
+
 export function toBoolean(a: any): boolean;
 export function toDate(a: any, parser?: (_: any) => number): number;
 export function toNumber(a: any): number;
