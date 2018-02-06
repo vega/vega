@@ -30,8 +30,8 @@
   "dependencies": {
     "d3-array": "1",
     "d3-interpolate": "1",
-    "d3-scale": "1",
-    "d3-scale-chromatic": "^1.1",
+    "d3-scale": "2",
+    "d3-scale-chromatic": "^1.2",
     "d3-time": "1",
     "vega-util": "1"
   },
