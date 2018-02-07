@@ -23,6 +23,7 @@ GeoPath.Definition = {
   "params": [
     { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field" },
+    { "name": "pointRadius", "type": "number", "expr": true },
     { "name": "as", "type": "string", "default": "path" }
   ]
 };
@@ -34,19 +35,32 @@ prototype.transform = function(_, pulse) {
       path = this.value,
       field = _.field || identity,
       as = _.as || 'path',
-      mod;
+      flag = out.SOURCE;
 
   function set(t) { t[as] = path(field(t)); }
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = path = getProjectionPath(_.projection).context(null);
-    out.materialize().reflow().visit(out.SOURCE, set);
+    this.value = path = getProjectionPath(_.projection);
+    out.materialize().reflow();
   } else {
-    path.context(null);
-    mod = field === identity || pulse.modified(field.fields);
-    out.visit(mod ? out.ADD_MOD : out.ADD, set);
+    flag = field === identity || pulse.modified(field.fields)
+      ? out.ADD_MOD
+      : out.ADD;
   }
+
+  var prev = initPath(path, _.pointRadius);
+  out.visit(flag, set);
+  path.pointRadius(prev);
 
   return out.modifies(as);
 };
+
+function initPath(path, pointRadius) {
+  var prev = path.pointRadius();
+  path.context(null);
+  if (pointRadius != null) {
+    path.pointRadius(pointRadius);
+  }
+  return prev;
+}

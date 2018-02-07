@@ -23,6 +23,7 @@ GeoShape.Definition = {
   "params": [
     { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field", "default": "datum" },
+    { "name": "pointRadius", "type": "number", "expr": true },
     { "name": "as", "type": "string", "default": "shape" }
   ]
 };
@@ -39,7 +40,10 @@ prototype.transform = function(_, pulse) {
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
     this.value = shape = shapeGenerator(
-      getProjectionPath(_.projection), datum);
+      getProjectionPath(_.projection),
+      datum,
+      _.pointRadius
+    );
     out.materialize().reflow();
     flag = out.SOURCE;
   }
@@ -49,10 +53,15 @@ prototype.transform = function(_, pulse) {
   return out.modifies(as);
 };
 
-function shapeGenerator(path, field) {
-  var shape = function(_) {
-    return path(field(_));
-  };
+function shapeGenerator(path, field, pointRadius) {
+  var shape = pointRadius == null
+    ? function(_) { return path(field(_)); }
+    : function(_) {
+      var prev = path.pointRadius(),
+          value = path.pointRadius(pointRadius)(field(_));
+      path.pointRadius(prev);
+      return value;
+    };
   shape.context = function(_) {
     path.context(_);
     return shape;
