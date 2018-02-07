@@ -6,6 +6,7 @@ import {inherits} from 'vega-util';
 
 var Fit = 'fit',
     FitX = 'fit-x',
+    FitY = 'fit-y',
     Pad = 'pad',
     None = 'none',
     Padding = 'padding';
@@ -402,11 +403,15 @@ function layoutSize(view, group, viewBounds, _) {
     width = Math.max(0, viewWidth - left - right);
     height = Math.max(0, viewHeight - top - bottom);
   }
-  
+
   else if (type === FitX) {
     width = Math.max(0, viewWidth - left - right);
-    height = height + top + bottom;
-    viewHeight = height;
+    viewHeight = height + top + bottom;
+  }
+
+  else if (type === FitY) {
+    viewWidth = width + left + right;
+    height = Math.max(0, viewHeight - top - bottom);
   }
 
   else if (type === Pad) {
