@@ -234,22 +234,32 @@ prototype.removeResizeListener = function(handler) {
   return this;
 };
 
+function findHandler(signal, handler) {
+  var t = signal._targets || [],
+      h = t.filter(function(op) {
+            var u = op._update;
+            return u && u.handler === handler;
+          });
+  return h.length ? h[0] : null;
+}
+
 prototype.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
-      h = function() { handler(name, s.value); };
-  h.handler = handler;
-  this.on(s, null, h);
+      h = findHandler(s, handler);
+
+  if (!h) {
+    h = function() { handler(name, s.value); };
+    h.handler = handler;
+    this.on(s, null, h);
+  }
   return this;
 };
 
 prototype.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
-      t = s._targets || [],
-      h = t.filter(function(op) {
-            var u = op._update;
-            return u && u.handler === handler;
-          });
-  if (h.length) t.remove(h[0]);
+      h = findHandler(s, handler);
+
+  if (h) s._targets.remove(h);
   return this;
 };
 
