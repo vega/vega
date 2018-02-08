@@ -159,23 +159,29 @@ prototype.fire = function(type, evt, touch) {
 // add an event handler
 prototype.on = function(type, handler) {
   var name = this.eventName(type),
-      h = this._handlers;
-  (h[name] || (h[name] = [])).push({
-    type: type,
-    handler: handler
-  });
+      h = this._handlers,
+      i = this._handlerIndex(h[name], type, handler);
+
+  if (i < 0) {
+    (h[name] || (h[name] = [])).push({
+      type:    type,
+      handler: handler
+    });
+  }
+
   return this;
 };
 
 // remove an event handler
 prototype.off = function(type, handler) {
   var name = this.eventName(type),
-      h = this._handlers[name], i;
-  if (!h) return;
-  for (i=h.length; --i>=0;) {
-    if (h[i].type !== type) continue;
-    if (!handler || h[i].handler === handler) h.splice(i, 1);
+      h = this._handlers[name],
+      i = this._handlerIndex(h, type, handler);
+
+  if (i >= 0) {
+    h.splice(i, 1);
   }
+
   return this;
 };
 

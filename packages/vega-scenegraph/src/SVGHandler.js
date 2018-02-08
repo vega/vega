@@ -52,16 +52,19 @@ function listener(context, handler) {
 prototype.on = function(type, handler) {
   var name = this.eventName(type),
       h = this._handlers,
-      x = {
-        type:     type,
-        handler:  handler,
-        listener: listener(this, handler)
-      };
+      i = this._handlerIndex(h[name], type, handler);
 
-  (h[name] || (h[name] = [])).push(x);
+  if (i < 0) {
+    var x = {
+      type:     type,
+      handler:  handler,
+      listener: listener(this, handler)
+    };
 
-  if (this._svg) {
-    this._svg.addEventListener(name, x.listener);
+    (h[name] || (h[name] = [])).push(x);
+    if (this._svg) {
+      this._svg.addEventListener(name, x.listener);
+    }
   }
 
   return this;
@@ -70,18 +73,14 @@ prototype.on = function(type, handler) {
 // remove an event handler
 prototype.off = function(type, handler) {
   var name = this.eventName(type),
-      svg = this._svg,
-      h = this._handlers[name], i;
+      h = this._handlers[name],
+      i = this._handlerIndex(h, type, handler);
 
-  if (!h) return;
-
-  for (i=h.length; --i>=0;) {
-    if (h[i].type === type && !handler || h[i].handler === handler) {
-      if (this._svg) {
-        svg.removeEventListener(name, h[i].listener);
-      }
-      h.splice(i, 1);
+  if (i >= 0) {
+    if (this._svg) {
+      this._svg.removeEventListener(name, h[i].listener);
     }
+    h.splice(i, 1);
   }
 
   return this;

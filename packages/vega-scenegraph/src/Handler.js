@@ -38,6 +38,17 @@ prototype.on = function(/*type, handler*/) {};
 // subclasses should override
 prototype.off = function(/*type, handler*/) {};
 
+// utility method for finding array index of registered handler
+// returns -1 if handler is not registered
+prototype._handlerIndex = function(h, type, handler) {
+  for (var i = h ? h.length : 0; --i>=0;) {
+    if (h[i].type === type && !handler || h[i].handler === handler) {
+      return i;
+    }
+  }
+  return -1;
+};
+
 // return an array with all registered event handlers
 prototype.handlers = function() {
   var h = this._handlers, a = [], k;
