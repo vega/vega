@@ -18,8 +18,15 @@ export function offset(view) {
 }
 
 export function resizeRenderer(view) {
-  var origin = offset(view);
+  var origin = offset(view),
+      w = width(view),
+      h = height(view);
+
   view._renderer.background(view._background);
-  view._renderer.resize(width(view), height(view), origin);
+  view._renderer.resize(w, h, origin);
   view._handler.origin(origin);
+
+  view._resizeListeners.forEach(function(handler) {
+    handler(w, h);
+  });
 }

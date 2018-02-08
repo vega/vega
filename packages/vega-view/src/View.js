@@ -46,8 +46,9 @@ export default function View(spec, options) {
   view._renderer = null;
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
-  view._eventListeners = [];
   view._preventDefault = false;
+  view._eventListeners = [];
+  view._resizeListeners = [];
 
   // initialize dataflow graph
   var ctx = runtime(view, spec, options.functions);
@@ -212,6 +213,24 @@ prototype.addEventListener = function(type, handler) {
 
 prototype.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
+  return this;
+};
+
+prototype.addResizeListener = function(handler) {
+  var l = this._resizeListeners;
+  if (l.indexOf(handler) < 0) {
+    // add handler if it isn't already registered
+    l.push(handler);
+  }
+  return this;
+};
+
+prototype.removeResizeListener = function(handler) {
+  var l = this._resizeListeners,
+      i = l.indexOf(handler);
+  if (i >= 0) {
+    l.splice(i, 1);
+  }
   return this;
 };
 
