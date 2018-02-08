@@ -1,4 +1,4 @@
-var types = {"enum": ["pad", "fit", "none"]};
+var types = {"enum": ["pad", "fit", "fit-x", "fit-y", "none"]};
 
 export default {
   "defs": {
