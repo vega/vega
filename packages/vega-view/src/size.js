@@ -93,5 +93,5 @@ export function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
     // run dataflow on width/height signal change
     if (rerun) view.run('enter');
     if (auto) view.runAfter(function() { view.resize(); });
-  });
+  }, false, 1);
 }
