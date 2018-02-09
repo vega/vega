@@ -42,7 +42,7 @@ export default function(name, insert, remove, toggle, modify, values) {
     df.runAfter(function() {
       data.modified = true;
       df.pulse(input, changes).run();
-    }, true);
+    }, true, 1);
   }
 
   if (remove) {
