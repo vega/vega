@@ -98,12 +98,16 @@ export function run(encode) {
   if (df._postrun.length) {
     var postrun = df._postrun;
     df._postrun = [];
-    postrun.forEach(function(f) {
-      try { f(df); } catch (err) { df.error(err); }
-    });
+    postrun
+      .sort(function(a, b) { return b.priority - a.priority; })
+      .forEach(function(_) { invokeCallback(df, _.callback); });
   }
 
   return count;
+}
+
+function invokeCallback(df, callback) {
+  try { callback(df); } catch (err) { df.error(err); }
 }
 
 /**
@@ -127,16 +131,19 @@ export function runAsync() {
  *   sole argument.
  * @param {boolean} enqueue - A boolean flag indicating that the
  *   callback should be queued up to run after the next propagation
- *   cycle, suppressing immediate invovation when propagation is not
+ *   cycle, suppressing immediate invocation when propagation is not
  *   currently occurring.
  */
-export function runAfter(callback, enqueue) {
+export function runAfter(callback, enqueue, priority) {
   if (this._pulse || enqueue) {
     // pulse propagation is currently running, queue to run after
-    this._postrun.push(callback);
+    this._postrun.push({
+      priority: priority || 0,
+      callback: callback
+    });
   } else {
     // pulse propagation already complete, invoke immediately
-    try { callback(this); } catch (err) { this.error(err); }
+    invokeCallback(this, callback);
   }
 }
 
