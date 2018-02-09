@@ -43,8 +43,10 @@ function signalTest(name, op) {
  */
 export function setState(state) {
   var view = this;
-  view._trigger = false;
-  view._runtime.setState(state);
-  view.run().runAfter(function() { view._trigger = true; });
+  view.runAfter(function() {
+    view._trigger = false;
+    view._runtime.setState(state);
+    view.run().runAfter(function() { view._trigger = true; });
+  });
   return this;
 }
