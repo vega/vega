@@ -186,6 +186,7 @@ on the next pulse propagation cycle. If an autosize method of `"pad"` or
 `"fit"` is being used, calling this method will cause the chart bounds layout
 to be recomputed the next time the [run](#view_run) method is invoked.
 
+
 ### Dataflow and Rendering
 
 Methods for invoking dataflow evaluation and view rendering.
@@ -303,12 +304,15 @@ view instance.
 view.<b>addSignalListener</b>(<i>name</i>, <i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
-Registers a listener for changes to the signal with the given *name*. If
-the signal does not exist, an error will be raised. When the signal value
-changes, the *handler* function is invoked with two arguments: the *name*
-of the signal and the new signal *value*. Listeners will be invoked when
-the signal value *changes* during pulse propagation (e.g., after
-[view.run()](#view_run) is called).
+Registers a listener for changes to the signal with the given *name* and
+returns this view instance. If the signal does not exist, an error will be
+raised. This method is idempotent: adding the same handler for the same
+signal multiple times has no effect beyond the first call.
+
+When the signal value changes, the *handler* function is invoked with two
+arguments: the *name* of the signal and the new signal *value*. Listeners
+will be invoked when the signal value *changes* during pulse propagation
+(e.g., after [view.run()](#view_run) is called).
 
 Signal listeners are invoked immediately upon signal update, in the midst
 of dataflow evaluation. As a result, other signal updates and data transforms
@@ -334,9 +338,10 @@ view.<b>removeSignalListener</b>(<i>name</i>, <i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
 Removes a signal listener registered with the
-[addSignalListener](#view_addSignalListener) method. If the signal does not
-exist, an error will be raised. If the signal exists but the provided
-*handler* is not registered, this method has no effect.
+[addSignalListener](#view_addSignalListener) method and returns this view
+instance. If the signal does not exist, an error will be raised. If the
+signal exists but the provided *handler* is not registered, this method
+has no effect.
 
 
 ### Event Handling
@@ -367,10 +372,13 @@ in a browser environment, otherwise invoking this method may have no effect.
 view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
-Registers an event listener for input events. The event *type* should be a
-string indicating a legal DOM event type supported by
-[vega-scenegraph](https://github.com/vega/vega-scenegraph) event handlers.
-Examples include `"mouseover"`, `"click"`, `"keydown"` and `"touchstart"`.
+Registers an event listener for input events and returns this view instance.
+The event *type* should be a string indicating a legal DOM event type
+supported by [vega-scenegraph](https://github.com/vega/vega-scenegraph)
+event handlers. Examples include `"mouseover"`, `"click"`, `"keydown"` and
+`"touchstart"`. This method is idempotent: adding the same handler for the
+same event type multiple times has no effect beyond the first call.
+
 When events occur, the *handler* function is invoked with two arguments: the
 *event* instance and the currently active scenegraph *item* (which is `null`
 if the event target is the view component itself).
@@ -391,7 +399,33 @@ view.<b>removeEventListener</b>(<i>type</i>, <i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
 
 Removes an event listener registered with the
-[addEventListener](#view_addEventListener) method.
+[addEventListener](#view_addEventListener) method and returns this view
+instance.
+
+<a name="view_addResizeListener" href="#view_addResizeListener">#</a>
+view.<b>addResizeListener</b>(<i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Registers a listener for changes to the view size and returns this view
+instance. This method is idempotent: adding the same handler multiple times
+has no effect beyond the first call.
+
+When the view size changes, the *handler* function is invoked with two
+arguments: the *width* and *height* of the view.
+
+```js
+view.addResizeListener(function(width, height) {
+  console.log('RESIZE', width, height);
+});
+```
+
+<a name="view_removeResizeListener" href="#view_removeResizeListener">#</a>
+view.<b>removeResizeListener</b>(<i>type</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/view/View.js "Source")
+
+Removes a listener registered with the
+[addResizeListener](#view_addResizeListener) method and returns this view
+instance.
 
 <a name="view_tooltipHandler" href="#view_tooltipHandler">#</a>
 view.<b>tooltipHandler</b>(<i>handler</i>)
@@ -418,6 +452,7 @@ view.tooltipHandler(function(event, item, text) {
 // restore the default tooltip handler
 view.tooltipHandler(null);
 ```
+
 
 ### Image Export
 
