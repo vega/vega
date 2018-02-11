@@ -10,7 +10,7 @@ The **aggregate** transform groups and summarizes an input data stream to produc
 
 | Property            | Type                            | Description   |
 | :------------------ | :-----------------------------: | :------------ |
-| groupby             | {% include type t="Field[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used.|
+| groupby             | {% include type t="String[]|Signal[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used.|
 | fields              | {% include type t="Field[]" %}  | The data fields for which to compute aggregate functions. This array should align with the _ops_ and _as_ arrays. If no _fields_ and _ops_ are specified, a `count` aggregation will be used by default.|
 | ops                 | {% include type t="String[]" %} | The aggregation operations to apply to the _fields_, such as `sum`, `average` or `count`. See the [aggregate operation reference](#ops) for more.|
 | as                  | {% include type t="String[]" %} | The output field names to use for each aggregated field in _fields_. If not specified, names will be automatically generated based on the operation and field names (e.g., `sum_field`, `average_field`).|
