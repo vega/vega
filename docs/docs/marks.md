@@ -96,7 +96,7 @@ When generating data-driven facets, by default new aggregate data values are gen
 
 ## <a name="encode"></a>Mark Encoding Sets
 
-All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property. The value should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
+All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property: individual mark types support standardized encoding channel names, but arbitrary names are also allowed, resulting in new named properties on output scenegraph items. The value of a property definition should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
 
 The `enter` set is invoked when a mark item is first instantiated and also when a visualization is resized. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
 
