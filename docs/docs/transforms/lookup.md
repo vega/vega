@@ -21,29 +21,70 @@ If a match is found, by default the full data object in the secondary stream is 
 
 ## Usage
 
-For each data object in the input data stream, this example lookups records where the `key` field of the data stream `unemployment` matches the `id` field of the input stream. Matching records are added to the input stream under the field named `value`.
+For each data object in the input data stream `values`, this example lookups records where the `id` field of the data stream `names` matches the `foo` field. Matching records are added to the input stream `values` under the field named `obj`.
+
+```json
+"data": [
+  {
+    "name": "names",
+    "values": [
+      {"id": "A", "name": "label A"},
+      {"id": "B", "name": "label B"},
+      {"id": "C", "name": "label C"}
+    ]
+  },
+  {
+    "name": "values",
+    "values": [
+      {"foo": "A", "bar": 28},
+      {"foo": "B", "bar": 55},
+      {"foo": "C", "bar": 43},
+      {"foo": "C", "bar": 91},
+      {"foo": "D", "bar": 81}
+    ],
+    "transform": [
+      {
+        "type": "lookup",
+        "from": "names",
+        "key": "id",
+        "fields": ["foo"],
+        "as": ["obj"]
+      }
+    ]
+  }
+]
+```
+
+After transformation, the `values` stream will be:
+
+```json
+{"foo": "A", "bar": 28, "obj": {"id": "A", "name": "label A"}},
+{"foo": "B", "bar": 55, "obj": {"id": "B", "name": "label B"}},
+{"foo": "C", "bar": 43, "obj": {"id": "C", "name": "label C"}},
+{"foo": "C", "bar": 91, "obj": {"id": "C", "name": "label C"}},
+{"foo": "D", "bar": 81, "obj": null}
+```
+
+This example is similar to the previous example, except that instead of copying a reference to the full data record found in the lookup, the `"name"` data field value is copied directly to objects in the primary data stream, and a default is provided:
 
 ```json
 {
   "type": "lookup",
-  "from": "unemployment",
-  "key": "key",
-  "fields": ["id"],
-  "as": ["value"],
-  "default": null
+  "from": "names",
+  "key": "id",
+  "fields": ["foo"],
+  "values": ["name"],
+  "as": ["obj"],
+  "default": "some label"
 }
 ```
 
-This example is similar to the previous example, except that instead of copying a reference to the full data record found in the lookup, the `"rate"` data field value is copied directly to objects in the primary data stream:
+result:
 
 ```json
-{
-  "type": "lookup",
-  "from": "unemployment",
-  "key": "key",
-  "values": ["rate"],
-  "fields": ["id"],
-  "as": ["value"],
-  "default": null
-}
+{"foo": "A", "bar": 28, "obj": "label A"},
+{"foo": "B", "bar": 55, "obj": "label B"},
+{"foo": "C", "bar": 43, "obj": "label C"},
+{"foo": "C", "bar": 91, "obj": "label C"},
+{"foo": "D", "bar": 81, "obj": "some label"}
 ```
