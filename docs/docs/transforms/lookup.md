@@ -21,7 +21,7 @@ If a match is found, by default the full data object in the secondary stream is 
 
 ## Usage
 
-For each data object in the input data stream `values`, this example lookups records where the `id` field of the data stream `names` matches the `foo` field. Matching records are added to the input stream `values` under the field named `obj`.
+For each data object in the input data stream `values`, this example lookups records where the field `foo` matches the field `id` field of the data stream `names`. Matching records are added to the input stream `values` as a field named `obj`.
 
 ```json
 "data": [
