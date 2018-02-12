@@ -71,63 +71,12 @@ A few signal names are automatically processed and/or reserved:
 
 - Signals for the [specification](../specification) `width`, `height`, and `padding` properties are automatically defined. Specifications may include definitions for these signals: the _value_ property will be ignored, but the _update_ and _on_ properties may be used to dynamically update these view settings.
 - Group mark instances automatically include a `parent` signal bound to the data object for that group. Specifications may **not** define a signal named `parent`.
-- The signal names `datum`, `item`, and `event` are reserved as top-level variables within expressions. Specifications may **not** define signals named `datum`, `item` or `event`.
+- The signal names `datum`, `item`, and `event` are reserved for top-level variables within expressions. Specifications may **not** define signals named `datum`, `item` or `event`.
 - If you define a signal named `cursor`, its value will automatically drive the [CSS mouse cursor](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor) for the Vega view. For more, see the [`cursor` signal documentation](#cursor) below.
 
-#### <a name="item"></a>The `item` Signal
-
-The `item` signal represents current [scenegraph item](https://github.com/vega/vega-scenegraph#scenegraph-definition). For example, given this text mark definition:
-
-```yaml
-{
-  "name": "myTextMark",
-  "type": "text",
-  "encode": {
-    "enter": {
-      "x": {"value": 200}, "y": {"value": 100},
-      "text": {"signal": "format(10000, ',.0f')"}
-    },
-    "update": {
-      "stroke": {"signal": "item"}   ### <--- see below
-    }
-  }
-}
-```
-
-The `item` object in the `update` section would have this structure:
-
-```yaml
-{
-  # default values for the text mark
-  fill: "#000", font:  "sans-serif", fontSize: 11,
-  # these were set in the "enter" block
-  x: 200, y: 100, text: "10,000",
-  # this is the same as the current datum object. item.datum and datum are equivalent
-  datum: {...},
-  # real values for a group, min/max for the whole graph
-  bounds: {x1: ..., y1: ..., x2: ..., y2: ...},
-  # definition of the current mark object
-  mark: {
-    name: "myTextMark",
-    role: "mark", marktype: "text", interactive: true, clip: false,
-    # this is a full list of all datums for this mark. The above datum is part of it
-    items: [{...}, {...}, ...],
-    # group information, or for the top level represents the whole graph
-    group: {
-      # real values for a group, min/max for the whole graph
-      bounds: {x1: ..., y1: ..., x2: ..., y2: ...},
-      # these may be useful to when positioning elements inside a group
-      x: 0, y: 0, width: 200, height: 100
-    }
-  }
-}
-```
-The `item` signal is only available inside a mark object. 
-
-#### <a name="cursor"></a>The `cursor` Signal
+### <a name="cursor"></a>The `cursor` Signal
 
 By default, Vega will style the mouse pointer when it is over a mark with a defined `cursor` property. However, in some interactive use cases, the cursor style should persist for the entire duration of an interaction (e.g., while dragging, regardless if the cursor remains over the item where the drag initiated). For more control, Vega provides a dedicated `cursor` signal. When the value of this signal is set, Vega uses it in lieu of any cursor properties set on marks. If the value is set to `"default"`, Vega resumes using the mark-based `cursor` property.
-
 
 ### Nested Signals
 
