@@ -7,7 +7,7 @@ export default function(role, style, name, dataRef, interactive, encode, marks) 
     role: role,
     style: style,
     from: dataRef,
-    interactive: interactive,
+    interactive: interactive || false,
     encode: encode,
     marks: marks
   };

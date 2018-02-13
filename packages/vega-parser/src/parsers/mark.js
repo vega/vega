@@ -1,4 +1,6 @@
+import clip from './marks/clip';
 import definition from './marks/definition';
+import interactive from './marks/interactive';
 import parseData from './marks/data';
 import parseFacet from './marks/facet';
 import parseSubflow from './marks/subflow';
@@ -40,12 +42,14 @@ export default function(spec, scope) {
 
   // connect visual items to scenegraph
   op = scope.add(Mark({
-    markdef:   definition(spec),
-    context:   {$context: true},
-    groups:    scope.lookup(),
-    parent:    scope.signals.parent ? scope.signalRef('parent') : null,
-    index:     scope.markpath(),
-    pulse:     ref(op)
+    markdef:     definition(spec),
+    interactive: interactive(spec.interactive, scope),
+    clip:        clip(spec.clip, scope),
+    context:     {$context: true},
+    groups:      scope.lookup(),
+    parent:      scope.signals.parent ? scope.signalRef('parent') : null,
+    index:       scope.markpath(),
+    pulse:       ref(op)
   }));
   markRef = ref(op);
 

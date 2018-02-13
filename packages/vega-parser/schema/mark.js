@@ -88,6 +88,27 @@ export default {
       "additionalProperties": false,
       "required": ["facet"]
     },
+    "markclip": {
+      "oneOf": [
+        {"$ref": "#/refs/booleanOrSignal"},
+        {
+          "type": "object",
+          "properties": {
+            "path": {"$ref": "#/refs/stringOrSignal"}
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "sphere": {"$ref": "#/refs/stringOrSignal"}
+          },
+          "required": ["sphere"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "style": {
       "oneOf": [
         {
@@ -112,9 +133,9 @@ export default {
         "name": {"type": "string"},
         "style": {"$ref": "#/refs/style"},
         "key": {"type": "string"},
-        "clip": {"type": "boolean"},
+        "clip": {"$ref": "#/refs/markclip"},
         "sort": {"$ref": "#/refs/compare"},
-        "interactive": {"type": "boolean"},
+        "interactive": {"$ref": "#/refs/booleanOrSignal"},
         "encode": {"$ref": "#/defs/encode"},
         "transform": {
           "type": "array",

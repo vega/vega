@@ -18,7 +18,7 @@ export default function(spec, scope) {
       encode = spec.encode || {},
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
-      interactive = !!legendEncode.interactive,
+      interactive = legendEncode.interactive,
       style = legendEncode.style,
       datum, dataRef, entryRef, group, title,
       entryEncode, params, children;
