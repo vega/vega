@@ -201,7 +201,7 @@ prototype.fieldRef = function(field, name) {
   return f;
 };
 
-prototype.compareRef = function(cmp) {
+prototype.compareRef = function(cmp, stable) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -215,6 +215,10 @@ prototype.compareRef = function(cmp) {
       signal = false,
       fields = array(cmp.field).map(check),
       orders = array(cmp.order).map(check);
+
+  if (stable) {
+    fields.push(tupleidRef);
+  }
 
   return signal
     ? ref(this.add(Compare({fields: fields, orders: orders})))

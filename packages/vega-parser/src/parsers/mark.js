@@ -76,7 +76,7 @@ export default function(spec, scope) {
   // if item sort specified, perform post-encoding
   if (spec.sort) {
     op = scope.add(SortItems({
-      sort:  scope.compareRef(spec.sort),
+      sort:  scope.compareRef(spec.sort, true), // stable sort
       pulse: ref(op)
     }));
   }
