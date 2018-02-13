@@ -120,12 +120,18 @@ prototype.buildDefs = function() {
 
     defs += openTag('clipPath', {id: id});
 
-    defs += openTag('rect', {
-      x: 0,
-      y: 0,
-      width: def.width,
-      height: def.height
-    }) + closeTag('rect');
+    if (def.path) {
+      defs += openTag('path', {
+        d: def.path
+      }) + closeTag('path');
+    } else {
+      defs += openTag('rect', {
+        x: 0,
+        y: 0,
+        width: def.width,
+        height: def.height
+      }) + closeTag('rect');
+    }
 
     defs += closeTag('clipPath');
   }
