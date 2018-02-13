@@ -17,7 +17,7 @@ export default function(spec, scope) {
       encode = spec.encode || {},
       axisEncode = encode.axis || {},
       name = axisEncode.name || undefined,
-      interactive = !!axisEncode.interactive,
+      interactive = axisEncode.interactive,
       style = axisEncode.style,
       datum, dataRef, ticksRef, size, group, children;
 
