@@ -1,4 +1,6 @@
-# Vega-Lib: Include Vega in projects using minimal dependencies
+# vega-lib
+
+Include Vega in client-side projects using minimal dependencies.
 
 **Vega** is a _visualization grammar_, a declarative format for creating, saving, and sharing interactive visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG.
 
