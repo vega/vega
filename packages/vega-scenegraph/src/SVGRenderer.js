@@ -157,15 +157,21 @@ function updateGradient(el, grad, index) {
 }
 
 function updateClipping(el, clip, index) {
-  var rect;
+  var mask;
 
   el = domChild(el, index, 'clipPath', ns);
   el.setAttribute('id', clip.id);
-  rect = domChild(el, 0, 'rect', ns);
-  rect.setAttribute('x', 0);
-  rect.setAttribute('y', 0);
-  rect.setAttribute('width', clip.width);
-  rect.setAttribute('height', clip.height);
+
+  if (clip.path) {
+    mask = domChild(el, 0, 'path', ns);
+    mask.setAttribute('d', clip.path);
+  } else {
+    mask = domChild(el, 0, 'rect', ns);
+    mask.setAttribute('x', 0);
+    mask.setAttribute('y', 0);
+    mask.setAttribute('width', clip.width);
+    mask.setAttribute('height', clip.height);
+  }
 }
 
 prototype._resetDefs = function() {
@@ -270,11 +276,13 @@ prototype.draw = function(el, scene, prev) {
 
   parent = bind(scene, el, prev, 'g');
   parent.setAttribute('class', cssClass(scene));
-  if (!isGroup && events) {
+  if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
   }
   if (scene.clip) {
     parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
+  } else {
+    parent.removeAttribute('clip-path');
   }
 
   function process(item) {

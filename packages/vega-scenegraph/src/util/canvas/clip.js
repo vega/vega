@@ -1,7 +1,17 @@
+import {isFunction} from 'vega-util';
+
 export default function(context, scene) {
-  var group = scene.group;
+  var clip = scene.clip;
+
   context.save();
   context.beginPath();
-  context.rect(0, 0, group.width || 0, group.height || 0);
+
+  if (isFunction(clip)) {
+    clip(context);
+  } else {
+    var group = scene.group;
+    context.rect(0, 0, group.width || 0, group.height || 0);
+  }
+
   context.clip();
 }

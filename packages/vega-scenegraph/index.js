@@ -16,6 +16,7 @@ export {RenderType, renderModule} from './src/modules';
 
 export {default as Marks} from './src/marks/index';
 
+export {default as boundClip} from './src/bound/boundClip';
 export {default as boundContext} from './src/bound/boundContext';
 export {default as boundStroke} from './src/bound/boundStroke';
 export {default as boundItem} from './src/bound/boundItem';
