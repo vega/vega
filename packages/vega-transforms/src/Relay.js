@@ -28,7 +28,7 @@ prototype.transform = function(_, pulse) {
   }
 
   if (_.derive) {
-    out = pulse.fork();
+    out = pulse.fork(pulse.NO_SOURCE);
 
     pulse.visit(pulse.REM, function(t) {
       var id = tupleid(t);

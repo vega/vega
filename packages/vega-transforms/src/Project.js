@@ -43,7 +43,7 @@ prototype.transform = function(_, pulse) {
     lut = this.value = {};
   }
 
-  out = pulse.fork();
+  out = pulse.fork(pulse.NO_SOURCE);
 
   pulse.visit(pulse.REM, function(t) {
     var id = tupleid(t);
