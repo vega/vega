@@ -9,9 +9,6 @@ import {inherits} from 'vega-util';
  * @param {object} params.markdef - The mark definition for creating the mark.
  *   This is an object of legal scenegraph mark properties which *must* include
  *   the 'marktype' property.
- * @param {Array<number>} params.scenepath - Scenegraph tree coordinates for the mark.
- *   The path is an array of integers, each indicating the index into
- *   a successive chain of items arrays.
  */
 export default function Mark(params) {
   Transform.call(this, null, params);
@@ -28,12 +25,22 @@ prototype.transform = function(_, pulse) {
     mark.group.context = _.context;
     if (!_.context.group) _.context.group = mark.group;
     mark.source = this;
+    mark.clip = _.clip;
+    mark.interactive = _.interactive;
     this.value = mark;
   }
 
   // initialize entering items
   var Init = mark.marktype === 'group' ? GroupItem : Item;
   pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
+
+  // update clipping and/or interactive status
+  if (_.modified('clip') || _.modified('interactive')) {
+    mark.clip = _.clip;
+    mark.interactive = !!_.interactive;
+    mark.zdirty = true; // force re-eval
+    pulse.reflow();
+  }
 
   // bind items array to scenegraph mark
   mark.items = pulse.source;
