@@ -26,6 +26,7 @@ import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
 import {geoArea, geoBounds, geoCentroid} from './geo';
+import {geoShape, pathShape} from './shape';
 import {data, indata, setdata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
 import inrange from './inrange';
@@ -82,6 +83,7 @@ export var functionContext = {
   bandspace: bandspace,
   inrange: inrange,
   setdata: setdata,
+  pathShape: pathShape,
   panLinear: panLinear,
   panLog: panLog,
   panPow: panPow,
@@ -125,6 +127,7 @@ expressionFunction('gradient', scaleGradient, scaleVisitor);
 expressionFunction('geoArea', geoArea, scaleVisitor);
 expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
+expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('vlSingle', vlPoint, dataVisitor);
