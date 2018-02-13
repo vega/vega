@@ -16,7 +16,7 @@ export default function Sequence(params) {
 
 Sequence.Definition = {
   "type": "Sequence",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "start", "type": "number", "required": true },
     { "name": "stop", "type": "number", "required": true },
@@ -33,7 +33,7 @@ prototype.transform = function(_, pulse) {
   var out = pulse.materialize().fork(pulse.MOD);
 
   out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
-  out.source = this.value = range(_.start, _.stop, _.step || 1).map(ingest);
+  this.value = range(_.start, _.stop, _.step || 1).map(ingest);
   out.add = pulse.add.concat(this.value);
   return out;
 };

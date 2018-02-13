@@ -15,7 +15,7 @@ export default function Cross(params) {
 
 Cross.Definition = {
   "type": "Cross",
-  "metadata": {"source": true, "generates": true, "changes": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "filter", "type": "expr" },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
@@ -36,7 +36,8 @@ prototype.transform = function(_, pulse) {
 
   if (reset) {
     if (data) out.rem = data;
-    out.add = this.value = cross(pulse.source, a, b, _.filter || truthy);
+    data = pulse.materialize(pulse.SOURCE).source;
+    out.add = this.value = cross(data, a, b, _.filter || truthy);
   } else {
     out.mod = data;
   }

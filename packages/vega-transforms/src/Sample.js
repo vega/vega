@@ -16,7 +16,7 @@ export default function Sample(params) {
 
 Sample.Definition = {
   "type": "Sample",
-  "metadata": {"source": true, "changes": true},
+  "metadata": {},
   "params": [
     { "name": "size", "type": "number", "default": 1000 }
   ]
@@ -25,7 +25,7 @@ Sample.Definition = {
 var prototype = inherits(Sample, Transform);
 
 prototype.transform = function(_, pulse) {
-  var out = pulse.fork(),
+  var out = pulse.fork(pulse.NO_SOURCE),
       mod = _.modified('size'),
       num = _.size,
       res = this.value,

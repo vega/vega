@@ -60,7 +60,7 @@ var mixture = {
 
 Density.Definition = {
   "type": "Density",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "extent", "type": "number", "array": true, "length": 2 },
     { "name": "steps", "type": "number", "default": 100 },
