@@ -91,7 +91,7 @@ prototype._finish = function(pulse, as) {
       tuples = this._tuples || (this._tuples = {}),
       text = as[0],
       count = as[1],
-      out = pulse.fork(),
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       w, t, c;
 
   for (w in counts) {

@@ -34,5 +34,11 @@ prototype.transform = function(_, pulse) {
 
   this.modified(mod);
   this.value = out.source = list.data(sort, mod);
+
+  // propagate tree root if defined
+  if (pulse.source && pulse.source.root) {
+    this.value.root = pulse.source.root;
+  }
+
   return out;
 };
