@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {Bounds, Marks} from 'vega-scenegraph';
+import {boundClip, Marks} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
 /**
@@ -12,8 +12,7 @@ export default function Bound(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Bound, Transform),
-    temp = new Bounds();
+var prototype = inherits(Bound, Transform);
 
 prototype.transform = function(_, pulse) {
   var view = pulse.dataflow,
@@ -21,7 +20,6 @@ prototype.transform = function(_, pulse) {
       type = mark.marktype,
       entry = Marks[type],
       bound = entry.bound,
-      clip = mark.clip,
       markBounds = mark.bounds, rebound;
 
   if (entry.nested) {
@@ -57,15 +55,14 @@ prototype.transform = function(_, pulse) {
       markBounds.union(boundItem(item, bound));
     });
 
-    if (rebound && !clip) {
+    if (rebound) {
       markBounds.clear();
       mark.items.forEach(function(item) { markBounds.union(item.bounds); });
     }
   }
 
-  if (clip) {
-    markBounds.intersect(temp.set(0, 0, mark.group.width, mark.group.height));
-  }
+  // ensure mark bounds do not exceed any clipping region
+  boundClip(mark);
 
   return pulse.modifies('bounds');
 };
