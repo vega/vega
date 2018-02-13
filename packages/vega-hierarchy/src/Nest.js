@@ -21,7 +21,7 @@ export default function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true, "source": true, "generates": true, "changes": true},
+  "metadata": {"treesource": true, "generates": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
     { "name": "key", "type": "field" },
@@ -58,7 +58,7 @@ prototype.transform = function(_, pulse) {
     // generate new tree structure
     root = array(_.keys)
       .reduce(function(n, k) { n.key(k); return n; }, nest())
-      .entries(pulse.source);
+      .entries(out.materialize(out.SOURCE).source);
     this.value = tree = hierarchy({values: root}, children);
 
     // collect nodes to add
