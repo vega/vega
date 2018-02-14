@@ -35,7 +35,7 @@ export default function Contour(params) {
 
 Contour.Definition = {
   "type": "Contour",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
     { "name": "values", "type": "number", "array": true },
@@ -78,7 +78,8 @@ prototype.transform = function(_, pulse) {
   });
 
   if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = contour(values).map(ingest);
+  values = values && values.length ? contour(values).map(ingest) : [];
+  this.value = out.source = out.add = values;
 
   return out;
 };
