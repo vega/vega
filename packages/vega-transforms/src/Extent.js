@@ -42,6 +42,9 @@ prototype.transform = function(_, pulse) {
   pulse.visit(flag, function(t) {
     var v = field(t);
     if (v != null) {
+      // coerce to number
+      v = +v;
+      // NaNs will fail all comparisons!
       if (v < min) min = v;
       if (v > max) max = v;
     }
