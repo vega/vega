@@ -35,7 +35,7 @@ function addModule(schema, module) {
 export default function(definitions) {
   var schema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "Vega 3.0 Visualization Specification Language",
+    "title": "Vega Visualization Specification Language",
     "defs": {},
     "refs": {},
     "type": "object",
