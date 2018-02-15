@@ -65,6 +65,10 @@ function create(type, constructor) {
 }
 
 export function projection(type, proj) {
+  if (!type || typeof type !== 'string') {
+    throw new Error('Projection type must be a name string.');
+  }
+  type = type.toLowerCase();
   if (arguments.length > 1) {
     projections[type] = create(type, proj);
     return this;
