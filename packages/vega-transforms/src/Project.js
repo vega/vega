@@ -1,17 +1,18 @@
+import {fieldNames} from './util/util';
 import {ingest, rederive, Transform, tupleid} from 'vega-dataflow';
-import {accessorName, inherits} from 'vega-util';
+import {inherits} from 'vega-util';
 
 /**
  * Performs a relational projection, copying selected fields from source
  * tuples to a new set of derived tuples.
+ * @constructor
  * @param {object} params - The parameters for this operator.
  * @param {Array<function(object): *} params.fields - The fields to project,
  *   as an array of field accessors. If unspecified, all fields will be
- *  copied with names unchanged.
- * @param {Array<string>} params.as - Output field names for each projected
+ *   copied with names unchanged.
+ * @param {Array<string>} [params.as] - Output field names for each projected
  *   field. Any unspecified fields will use the field name provided by
  *   the field accessor.
- * @constructor
  */
 export default function Project(params) {
   Transform.call(this, null, params);
@@ -30,7 +31,7 @@ var prototype = inherits(Project, Transform);
 
 prototype.transform = function(_, pulse) {
   var fields = _.fields,
-      as = output(_.fields, _.as || []),
+      as = fieldNames(_.fields, _.as || []),
       derive = fields
         ? function(s, t) { return project(s, t, fields, as); }
         : rederive,
@@ -63,13 +64,6 @@ prototype.transform = function(_, pulse) {
 
   return out;
 };
-
-function output(fields, as) {
-  if (!fields) return null;
-  return fields.map(function(f, i) {
-    return as[i] || accessorName(f);
-  });
-}
 
 function project(s, t, fields, as) {
   for (var i=0, n=fields.length; i<n; ++i) {
