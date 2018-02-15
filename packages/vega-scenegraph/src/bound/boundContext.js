@@ -72,10 +72,10 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     if (ccw) {
       ea -= tau;
       s = sa - (sa % halfPi);
-      for (i=0; i<3 && s>ea; ++i, s-=halfPi) update(s);
+      for (i=0; i<4 && s>ea; ++i, s-=halfPi) update(s);
     } else {
       s = sa - (sa % halfPi) + halfPi;
-      for (i=0; i<3 && s<ea; ++i, s=s+halfPi) update(s);
+      for (i=0; i<4 && s<ea; ++i, s=s+halfPi) update(s);
     }
   }
 
