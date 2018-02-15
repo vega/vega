@@ -12,11 +12,12 @@ tape('Fold folds tuples', function(test) {
     {a:'?', b:2, c:4}
   ];
 
-  var fields = ['b', 'c'].map(util.field),
+  var fields = ['b', 'c'].map(function(k) { return util.field(k); }),
       df = new vega.Dataflow(),
       c0 = df.add(Collect),
-      fd = df.add(Fold, {fields: fields, pulse:c0}),
-      out = df.add(Collect, {pulse:fd}), d;
+      fd = df.add(Fold, {fields: fields, pulse: c0}),
+      out = df.add(Collect, {pulse: fd}),
+      d;
 
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
