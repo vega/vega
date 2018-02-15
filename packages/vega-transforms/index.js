@@ -9,6 +9,7 @@ export {default as extent} from './src/Extent';
 export {default as facet} from './src/Facet';
 export {default as field} from './src/Field';
 export {default as filter} from './src/Filter';
+export {default as flatten} from './src/Flatten';
 export {default as fold} from './src/Fold';
 export {default as formula} from './src/Formula';
 export {default as generate} from './src/Generate';

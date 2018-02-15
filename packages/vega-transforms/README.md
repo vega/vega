@@ -12,6 +12,7 @@ This module provides the following Vega data transforms:
 - [**Density**](https://vega.github.io/vega/docs/transforms/density/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Density.js "Source")
 - [**Extent**](https://vega.github.io/vega/docs/transforms/extent/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Extent.js "Source")
 - [**Filter**](https://vega.github.io/vega/docs/transforms/filter/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Filter.js "Source")
+- [**Flatten**](https://vega.github.io/vega/docs/transforms/flatten/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Flatten.js "Source")
 - [**Fold**](https://vega.github.io/vega/docs/transforms/fold/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Fold.js "Source")
 - [**Formula**](https://vega.github.io/vega/docs/transforms/formula/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Formula.js "Source")
 - [**Impute**](https://vega.github.io/vega/docs/transforms/Impute/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/impute.js "Source")
