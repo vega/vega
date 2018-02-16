@@ -3,20 +3,16 @@ import {feature, mesh} from 'topojson-client';
 import {error} from 'vega-util';
 
 export default function(data, format) {
-  var object, property;
+  var method, object, property;
   data = json(data, format);
 
-  if (format && (property = format.feature)) {
-    return (object = data.objects[property])
-      ? feature(data, object).features
-      : error('Invalid TopoJSON object: ' + property);
-  }
+  method = (format && (property = format.feature)) ? feature
+    : (format && (property = format.mesh)) ? mesh
+    : error('Missing TopoJSON feature or mesh parameter.');
 
-  else if (format && (property = format.mesh)) {
-    return (object = data.objects[property])
-      ? [mesh(data, object)]
-      : error('Invalid TopoJSON object: ' + property);
-  }
+  object = (object = data.objects[property])
+    ? method(data, object)
+    : error('Invalid TopoJSON object: ' + property);
 
-  error('Missing TopoJSON feature or mesh parameter.');
+  return object && object.features || [object];
 }
