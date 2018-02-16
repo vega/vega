@@ -58,11 +58,11 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | type          | {% include type t="String" %}  | {% include required %} The graphical mark type. Must be one of the [supported mark types](#types).|
-| clip          | {% include type t="Boolean" %} | Indicates if the marks should be clipped to the enclosing group's width and height (default `false`).|
+| clip          | [Clip](#clip) | Indicates if the marks should be clipped to a specified shape. If boolean-valued, the clipping region is the enclosing group's width and height (default `false`). If object-valued, should specify either an arbitrary SVG path string or a cartographic projection with which to clip to the sphere of the Earth.|
 | description   | {% include type t="String" %}  | An optional description of this mark. Can be used as a comment.|
 | encode        | [Encode](#encode)              | An object containing a set of visual encoding rules for mark properties.|
 | from          | [From](#from)                  | An object describing the data this mark set should visualize. If undefined, a single element data set containing an empty object is assumed. The _from_ property can either specify a data set to use (e.g., `{"data": "table"}`) or provide a faceting directive to subdivide a data set across a set of [`group` marks](../marks/group).|
-| interactive   | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if the marks can serve as input event sources. If `false`, no mouse or touch events corresponding to the marks will be generated.|
+| interactive   | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if the marks can serve as input event sources. If `false`, no mouse or touch events corresponding to the marks will be generated. This property can also take a [Signal](../types/#Signal) value to dynamically toggle interactive status.|
 | key           | {% include type t="Field" %}   | A data field to use as a unique key for data binding. When a visualization's data is updated, the key value will be used to match data elements to existing mark instances. Use a key field to enable object constancy for transitions over dynamic data.|
 | name          | {% include type t="String" %}  | A unique name for the mark. This name can be used to refer to these marks within an [event stream definition](../event-streams). SVG renderers will add this name value as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances.|
 | on            | {% include array t="[Trigger](../triggers)" %} | A set of triggers for modifying mark properties in response to signal changes. |
@@ -70,6 +70,18 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | transform     | {% include array t="[Transform](../transforms)" %} | A set of post-encoding transforms, applied after any _encode_ blocks, that operate directly on mark scenegraph items (not backing data objects). These can be useful for performing layout with transforms that can set `x`, `y`, `width`, `height`, _etc._ properties. Only data transforms that do not generate or filter data objects may be used.|
 | role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances. Roles are used internally by Vega to guide layout. _Do not set this property unless you know which layout effect you are trying to achieve._|
 | style         | {% include type t="String|String[]" %}  | A string or array of strings indicating the name of custom styles to apply to the mark. A style is a named collection of mark property defaults defined within the [configuration](../config). These properties will be applied to the mark's `enter` encoding set, with later styles overriding earlier styles. Any properties explicitly defined within the mark's `encode` block will override a style default.|
+
+## <a name="clip"></a>Mark Clipping
+
+The `clip` property limits the area in which a set of marks is visible. The default (boolean `false`) is to disable clipping. A boolean `true` value clips the marks to the width and height of the enclosing group mark. The `clip` property can also accept a [signal](../types/#Signal) that should evaluate to a boolean value.
+
+Alternatively, an object specification can be used to define more sophisticated clipping regions. An object-valued clipping specification can take either a `path` (for arbitrary SVG paths) or a `sphere` property (to clip to the globe, relative to a geographic projection), but not both. Both properties can be signal values to enable dynamic clipping regions.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| path          | {% include type t="String|Signal" %}  | An [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) describing the clipping region. The path is assumed to lie relative to the coordinate system of the enclosing group.|
+| sphere        | {% include type t="String|Signal" %}  | The name of a cartogrpahic [projection](../projections) with which to clip all marks to the projected sphere of the globe. This option is useful in conjunction with map projections that otherwise included projected content (such as graticule lines) outside the bounds of the globe.|
+
 
 ## <a name="from"></a>Mark Data Sources (`from`)
 
@@ -94,6 +106,39 @@ The `facet` directive splits up a data source among multiple group mark items. E
 
 When generating data-driven facets, by default new aggregate data values are generated to serve as the data backing each group mark item. However, if _both_ the `data` and `facet` properties are defined in the `from` object, pre-existing aggregate values will be pulled from the named `data` source. In such cases it is **critical** that the aggregate and facet `groupby` domains match. If they do not match, the behavior of the resulting visualization is undefined.
 
+### <a name="reactivegeom"></a>Reactive Geometry
+
+Typically a `"from": {"data": "..."}` statement draws data from a backing data source defined within a `"data"` block. However, Vega can also use a set of marks as the backing data objects for a new set of marks &mdash; a feature referred to a _reactive geometry_. For example, one might add text marks to serve as labels, using computed `x`, `y`, `width`, or `height` values of the source marks to determine label placement.
+
+To use a set of marks as a backing data source, the mark definition must include a unique `name` property. The marks can then be referenced as `"from": {"data": "name"}`.
+
+Here is an example in which point marks serve as the backing data for a set of text marks:
+
+{: .suppress-error}
+```json
+{
+  "marks": [
+    {
+      "name": "baseMarks",
+      "type": "point",
+      "from": {"data": "source"},
+      "encode": {...}
+    },
+    {
+      "type": "text",
+      "from": {"data": "baseMarks"},
+      "encode": {
+        "update": {
+          "x": {"field": "x", "offset": 4},
+          "y": {"field": "y"},
+          "text": {"field": "datum.label"}
+        }
+      }
+    }
+  ]
+}
+```
+
 ## <a name="encode"></a>Mark Encoding Sets
 
 All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property: individual mark types support standardized encoding channel names, but arbitrary names are also allowed, resulting in new named properties on output scenegraph items. The value of a property definition should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
@@ -102,7 +147,7 @@ The `enter` set is invoked when a mark item is first instantiated and also when 
 
 Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
 
-## <a name="valueref"></a>Value References		
+## <a name="valueref"></a>Value References
 
 A _value reference_ specifies the value for a given mark property. The value may be a constant or drawn from a data object. In addition, the value may be run through a scale transform and further modified. Examples include:
 
@@ -112,7 +157,7 @@ A _value reference_ specifies the value for a given mark property. The value may
 - `{"signal": "sqrt(pow(datum.a, 2) + pow(datum.b, 2))"` - Signal expression value
 
 For more, see the [Value type documentation](../types/#Value), including the specialized [Color Value](../types/#ColorValue) and [Field Value](../types/#FieldValue) types.
- 
+
 ## <a name="production-rule"></a>Production Rules
 
 Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _value reference_ objects, each of which must contain an additional `test` property. A single value reference, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the value reference corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final (predicate-less) value reference if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
