@@ -10,9 +10,11 @@ The **treelinks** transform generates a new stream of data objects representing 
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| key                 | {% include type t="Field" %}   | A data field containing a unique key (identifier) for each node. This must be the same field used by the upstream [nest](../nest) or [stratify](../stratify) transform.|
+| key                 | {% include type t="Field" %}   | A data field containing a unique key (identifier) for each node. This should be the same field used by any upstream [stratify](../stratify) transform. If unspecified, Vega's internal data object ids will be used.|
 
 ## Usage
+
+This example generates a tree data structure using a `stratify` transform, then generates a set of tree links using `treelinks`:
 
 ```json
 {
@@ -42,4 +44,32 @@ The **treelinks** transform generates a new stream of data objects representing 
 }
 ```
 
-Generates a tree data structure using a `stratify` transform, then generates a set of tree links using a `treelinks` transform.
+This example generates a tree data structure using a `nest` transform, using `"generate": true` to ensure creation of internal (non-leaf) tree nodes. A `treelinks` transform then generates links between all nodes. In this case, no `key` parameter is used for either transform; instead, internal data object ids are used to identify the nodes.
+
+```json
+{
+  "data": [
+    {
+      "name": "tree",
+      "url": "tree.csv",
+      "transform": [
+        {
+          "type": "nest",
+          "keys": ["categoryA", "categoryB"],
+          "generate": true
+        }
+      ]
+    },
+    {
+      "name": "links",
+      "source": "tree",
+      "transform": [
+        {
+          "type": "treelinks"
+        }
+      ]
+    }
+  ]
+}
+```
+
