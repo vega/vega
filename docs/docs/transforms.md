@@ -36,6 +36,7 @@ Transforms for processing streams of data objects.
 - [`density`](density) - Generate values drawn from a probability distribution.
 - [`extent`](extent) - Compute minimum and maximum values over a data stream.
 - [`filter`](filter) - Filter a data stream using a predicate expression.
+- [`flatten`](flatten) - Map array-typed fields to data objects, one per array entry.
 - [`fold`](fold) - Collapse selected data fields into _key_ and _value_ properties.
 - [`formula`](formula) - Extend data objects with derived fields using a formula expression.
 - [`identifier`](identifier) - Assign unique key values to data objects.
