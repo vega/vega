@@ -41,6 +41,7 @@
         {"name": "county-unemployment"},
         {"name": "dorling-cartogram"},
         {"name": "world-map"},
+        {"name": "earthquakes"},
         {"name": "zoomable-world-map"},
         {"name": "distortion-comparison"}
     ],
