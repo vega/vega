@@ -24,6 +24,7 @@
 | cursor            | {% include type t="String" %} | The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.|
 | href              | {% include type t="URL" %}    | A URL to load upon mouse click. If defined, the mark acts as a hyperlink.|
 | tooltip           | {% include type t="String" %} | The tooltip text to show upon mouse hover.|
+| zindex            | {% include type t="Number" %} | An integer z-index indicating the layering order of sibling mark items. The default value is `0`. Higher values (`1`) will cause marks to be drawn on top of those with lower z-index values. Setting the z-index as an encoding property only affects ordering among sibling mark items; it will not change the layering relative to other mark definitions. Unlike the mark-level _sort_ property, _zindex_ changes the rendering order only; it does not otherwise change mark item order (such as line or area point order). The most common use of _zindex_ is to ensure that a mark is drawn over its siblings when selected, such as by mouse hover.|
 
 For marks that support width and height settings (including `rect` and `area`), the horizontal dimensions are determined (in order of precedence) by the _x_ and _x2_ properties, the _x_ and _width_ properties, the _x2_ and _width_ properties, or the _xc_ and _width_ properties. If all three of _x_, _x2_ and _width_ are specified, the _width_ value is ignored. The _y_, _y2_, _yc_ and _height_ properties are treated similarly.
 
