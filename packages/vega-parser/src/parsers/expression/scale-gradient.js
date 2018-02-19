@@ -1,7 +1,10 @@
+import {getScale} from './scale';
 import {Gradient} from 'vega-scenegraph';
 import {scaleFraction} from 'vega-scale';
 
-export default function(scale, p0, p1, count) {
+export default function(scale, p0, p1, count, group) {
+  scale = getScale(scale, (group || this).context);
+
   var gradient = Gradient(p0, p1),
       stops = scale.domain(),
       min = stops[0],
