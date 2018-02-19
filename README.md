@@ -12,6 +12,12 @@ between Vega 2 and Vega 3, please refer to the
 Additional API documentation for Vega 3 can be found in the associated
 modules listed below.
 
+Are you using Vega in a web application built with a bundler such as
+[Webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/)?
+If so, and you _do not need server-side rendering support_, you might
+prefer using [vega-lib](https://github.com/vega/vega-lib) to include Vega
+in your app.
+
 ## Basic Setup
 
 For a basic setup allowing you to build Vega and run examples:
@@ -40,6 +46,7 @@ modules simultaneously, first clone the relevant Vega 3 modules. Here is a
 list of all Vega 3 repositories:
 
 * https://github.com/vega/vega
+* https://github.com/vega/vega-canvas
 * https://github.com/vega/vega-crossfilter
 * https://github.com/vega/vega-dataflow
 * https://github.com/vega/vega-encode
