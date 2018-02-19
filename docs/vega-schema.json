@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Vega 3.0 Visualization Specification Language",
+  "title": "Vega Visualization Specification Language",
   "defs": {
     "autosize": {
       "oneOf": [
@@ -8,6 +8,8 @@
           "enum": [
             "pad",
             "fit",
+            "fit-x",
+            "fit-y",
             "none"
           ]
         },
@@ -18,6 +20,8 @@
               "enum": [
                 "pad",
                 "fit",
+                "fit-x",
+                "fit-y",
                 "none"
               ]
             },
@@ -1590,13 +1594,13 @@
           "type": "string"
         },
         "clip": {
-          "type": "boolean"
+          "$ref": "#/refs/markclip"
         },
         "sort": {
           "$ref": "#/refs/compare"
         },
         "interactive": {
-          "type": "boolean"
+          "$ref": "#/refs/booleanOrSignal"
         },
         "encode": {
           "$ref": "#/defs/encode"
@@ -2021,8 +2025,7 @@
       },
       "additionalProperties": true,
       "required": [
-        "name",
-        "type"
+        "name"
       ]
     },
     "scale": {
@@ -3452,6 +3455,9 @@
           "$ref": "#/defs/filterTransform"
         },
         {
+          "$ref": "#/defs/flattenTransform"
+        },
+        {
           "$ref": "#/defs/foldTransform"
         },
         {
@@ -3565,6 +3571,9 @@
         },
         {
           "$ref": "#/defs/lookupTransform"
+        },
+        {
+          "$ref": "#/defs/sampleTransform"
         },
         {
           "$ref": "#/defs/windowTransform"
@@ -4442,6 +4451,67 @@
       "required": [
         "type",
         "expr"
+      ]
+    },
+    "flattenTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "flatten"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "fields": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "fields"
       ]
     },
     "foldTransform": {
@@ -5803,6 +5873,22 @@
             }
           ]
         },
+        "pointRadius": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            },
+            {
+              "$ref": "#/refs/expr"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            }
+          ]
+        },
         "as": {
           "anyOf": [
             {
@@ -5920,6 +6006,22 @@
             }
           ],
           "default": "datum"
+        },
+        "pointRadius": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            },
+            {
+              "$ref": "#/refs/expr"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            }
+          ]
         },
         "as": {
           "anyOf": [
@@ -8973,6 +9075,37 @@
       "additionalProperties": false,
       "required": [
         "facet"
+      ]
+    },
+    "markclip": {
+      "oneOf": [
+        {
+          "$ref": "#/refs/booleanOrSignal"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "$ref": "#/refs/stringOrSignal"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "sphere": {
+              "$ref": "#/refs/stringOrSignal"
+            }
+          },
+          "required": [
+            "sphere"
+          ],
+          "additionalProperties": false
+        }
       ]
     },
     "style": {

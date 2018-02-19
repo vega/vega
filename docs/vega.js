@@ -566,7 +566,7 @@ var toString = function(_) {
 };
 
 var toSet = function(_) {
-  for (var s={}, i=0, n=_.length; i<n; ++i) s[_[i]] = 1;
+  for (var s={}, i=0, n=_.length; i<n; ++i) s[_[i]] = true;
   return s;
 };
 
@@ -2375,22 +2375,18 @@ var bisect = function(a, x) {
 };
 
 var topojson = function(data, format) {
-  var object, property;
+  var method, object, property;
   data = json$1(data, format);
 
-  if (format && (property = format.feature)) {
-    return (object = data.objects[property])
-      ? feature(data, object).features
-      : error$1('Invalid TopoJSON object: ' + property);
-  }
+  method = (format && (property = format.feature)) ? feature
+    : (format && (property = format.mesh)) ? mesh
+    : error$1('Missing TopoJSON feature or mesh parameter.');
 
-  else if (format && (property = format.mesh)) {
-    return (object = data.objects[property])
-      ? [mesh(data, object)]
-      : error$1('Invalid TopoJSON object: ' + property);
-  }
+  object = (object = data.objects[property])
+    ? method(data, object)
+    : error$1('Invalid TopoJSON object: ' + property);
 
-  error$1('Missing TopoJSON feature or mesh parameter.');
+  return object && object.features || [object];
 };
 
 var formats = {
@@ -4150,12 +4146,16 @@ function run(encode) {
   if (df._postrun.length) {
     var postrun = df._postrun;
     df._postrun = [];
-    postrun.forEach(function(f) {
-      try { f(df); } catch (err) { df.error(err); }
-    });
+    postrun
+      .sort(function(a, b) { return b.priority - a.priority; })
+      .forEach(function(_) { invokeCallback(df, _.callback); });
   }
 
   return count;
+}
+
+function invokeCallback(df, callback) {
+  try { callback(df); } catch (err) { df.error(err); }
 }
 
 /**
@@ -4179,16 +4179,19 @@ function runAsync() {
  *   sole argument.
  * @param {boolean} enqueue - A boolean flag indicating that the
  *   callback should be queued up to run after the next propagation
- *   cycle, suppressing immediate invovation when propagation is not
+ *   cycle, suppressing immediate invocation when propagation is not
  *   currently occurring.
  */
-function runAfter(callback, enqueue) {
+function runAfter(callback, enqueue, priority) {
   if (this._pulse || enqueue) {
     // pulse propagation is currently running, queue to run after
-    this._postrun.push(callback);
+    this._postrun.push({
+      priority: priority || 0,
+      callback: callback
+    });
   } else {
     // pulse propagation already complete, invoke immediately
-    try { callback(this); } catch (err) { this.error(err); }
+    invokeCallback(this, callback);
   }
 }
 
@@ -6294,6 +6297,12 @@ prototype$11.transform = function(_, pulse) {
 
   this.modified(mod);
   this.value = out.source = list.data(sort, mod);
+
+  // propagate tree root if defined
+  if (pulse.source && pulse.source.root) {
+    this.value.root = pulse.source.root;
+  }
+
   return out;
 };
 
@@ -6407,7 +6416,7 @@ prototype$12._finish = function(pulse, as) {
       tuples = this._tuples || (this._tuples = {}),
       text = as[0],
       count = as[1],
-      out = pulse.fork(),
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       w, t, c;
 
   for (w in counts) {
@@ -6445,7 +6454,7 @@ function Cross(params) {
 
 Cross.Definition = {
   "type": "Cross",
-  "metadata": {"source": true, "generates": true, "changes": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "filter", "type": "expr" },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
@@ -6466,7 +6475,8 @@ prototype$13.transform = function(_, pulse) {
 
   if (reset) {
     if (data) out.rem = data;
-    out.add = this.value = cross$1(pulse.source, a, b, _.filter || truthy);
+    data = pulse.materialize(pulse.SOURCE).source;
+    out.add = this.value = cross$1(data, a, b, _.filter || truthy);
   } else {
     out.mod = data;
   }
@@ -6604,7 +6614,7 @@ var mixture = {
 
 Density.Definition = {
   "type": "Density",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "extent", "type": "number", "array": true, "length": 2 },
     { "name": "steps", "type": "number", "default": 100 },
@@ -6697,6 +6707,9 @@ prototype$15.transform = function(_, pulse) {
   pulse.visit(flag, function(t) {
     var v = field$$1(t);
     if (v != null) {
+      // coerce to number
+      v = +v;
+      // NaNs will fail all comparisons!
       if (v < min) min = v;
       if (v > max) max = v;
     }
@@ -6970,6 +6983,69 @@ prototype$18.transform = function(_, pulse) {
   return output;
 };
 
+// use either provided alias or accessor field name
+function fieldNames(fields, as) {
+  if (!fields) return null;
+  return fields.map(function(f, i) {
+    return as[i] || accessorName(f);
+  });
+}
+
+/**
+ * Flattens array-typed field values into new data objects.
+ * If multiple fields are specified, they are treated as parallel arrays,
+ * with output values included for each matching index (or null if missing).
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<function(object): *>} params.fields - An array of field
+ *   accessors for the tuple fields that should be flattened.
+ * @param {Array<string>} [params.as] - Output field names for flattened
+ *   array fields. Any unspecified fields will use the field name provided
+ *   by the fields accessors.
+ */
+function Flatten(params) {
+  Transform.call(this, [], params);
+}
+
+Flatten.Definition = {
+  "type": "Flatten",
+  "metadata": {"generates": true, "source": true},
+  "params": [
+    { "name": "fields", "type": "field", "array": true, "required": true },
+    { "name": "as", "type": "string", "array": true }
+  ]
+};
+
+var prototype$19 = inherits(Flatten, Transform);
+
+prototype$19.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.NO_SOURCE),
+      fields = _.fields,
+      as = fieldNames(fields, _.as || []),
+      m = as.length;
+
+  // remove any previous results
+  out.rem = this.value;
+
+  // generate flattened tuples
+  pulse.visit(pulse.SOURCE, function(t) {
+    var arrays = fields.map(function(f) { return f(t); }),
+        maxlen = arrays.reduce(function(l, a) { return Math.max(l, a.length); }, 0),
+        i = 0, j, d, v;
+
+    for (; i<maxlen; ++i) {
+      d = derive(t);
+      for (j=0; j<m; ++j) {
+        d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+      }
+      out.add.push(d);
+    }
+  });
+
+  this.value = out.source = out.add;
+  return out.modifies(as);
+};
+
 /**
  * Folds one more tuple fields into multiple tuples in which the field
  * name and values are available under new 'key' and 'value' fields.
@@ -6977,80 +7053,45 @@ prototype$18.transform = function(_, pulse) {
  * @param {object} params - The parameters for this operator.
  * @param {function(object): *} params.fields - An array of field accessors
  *   for the tuple fields that should be folded.
+ * @param {Array<string>} [params.as] - Output field names for folded key
+ *   and value fields, defaults to ['key', 'value'].
  */
 function Fold(params) {
-  Transform.call(this, {}, params);
+  Transform.call(this, [], params);
 }
 
 Fold.Definition = {
   "type": "Fold",
-  "metadata": {"generates": true, "changes": true},
+  "metadata": {"generates": true, "source": true},
   "params": [
     { "name": "fields", "type": "field", "array": true, "required": true },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
   ]
 };
 
-var prototype$19 = inherits(Fold, Transform);
+var prototype$20 = inherits(Fold, Transform);
 
-function keyFunction(f) {
-  return f.fields.join('|');
-}
-
-prototype$19.transform = function(_, pulse) {
-  var cache = this.value,
-      reset = _.modified('fields'),
+prototype$20.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.NO_SOURCE),
       fields = _.fields,
+      fnames = fields.map(accessorName),
       as = _.as || ['key', 'value'],
-      key$$1 = as[0],
-      value = as[1],
-      keys = fields.map(keyFunction),
-      n = fields.length,
-      stamp = pulse.stamp,
-      out = pulse.fork(pulse.NO_SOURCE),
-      i = 0, mask = 0, id$$1;
+      k = as[0],
+      v = as[1],
+      n = fields.length;
 
-  function add(t) {
-    var f = (cache[tupleid(t)] = Array(n)); // create cache of folded tuples
-    for (var i=0, ft; i<n; ++i) { // for each key, derive folds
-      ft = (f[i] = derive(t));
-      ft[key$$1] = keys[i];
-      ft[value] = fields[i](t);
-      out.add.push(ft);
+  out.rem = this.value;
+
+  pulse.visit(pulse.SOURCE, function(t) {
+    for (var i=0, d; i<n; ++i) {
+      d = derive(t);
+      d[k] = fnames[i];
+      d[v] = fields[i](t);
+      out.add.push(d);
     }
-  }
+  });
 
-  function mod(t) {
-    var f = cache[tupleid(t)]; // get cache of folded tuples
-    for (var i=0, ft; i<n; ++i) { // for each key, rederive folds
-      if (!(mask & (1 << i))) continue; // field is unchanged
-      ft = rederive(t, f[i], stamp);
-      ft[key$$1] = keys[i];
-      ft[value] = fields[i](t);
-      out.mod.push(ft);
-    }
-  }
-
-  if (reset) {
-    // on reset, remove all folded tuples and clear cache
-    for (id$$1 in cache) out.rem.push.apply(out.rem, cache[id$$1]);
-    cache = this.value = {};
-    pulse.visit(pulse.SOURCE, add);
-  } else {
-    pulse.visit(pulse.ADD, add);
-
-    for (; i<n; ++i) {
-      if (pulse.modified(fields[i].fields)) mask |= (1 << i);
-    }
-    if (mask) pulse.visit(pulse.MOD, mod);
-
-    pulse.visit(pulse.REM, function(t) {
-      var id$$1 = tupleid(t);
-      out.rem.push.apply(out.rem, cache[id$$1]);
-      cache[id$$1] = null;
-    });
-  }
-
+  this.value = out.source = out.add;
   return out.modifies(as);
 };
 
@@ -7077,9 +7118,9 @@ Formula.Definition = {
   ]
 };
 
-var prototype$20 = inherits(Formula, Transform);
+var prototype$21 = inherits(Formula, Transform);
 
-prototype$20.transform = function(_, pulse) {
+prototype$21.transform = function(_, pulse) {
   var func = _.expr,
       as = _.as,
       mod = _.modified(),
@@ -7118,9 +7159,9 @@ function Generate(params) {
   Transform.call(this, [], params);
 }
 
-var prototype$21 = inherits(Generate, Transform);
+var prototype$22 = inherits(Generate, Transform);
 
-prototype$21.transform = function(_, pulse) {
+prototype$22.transform = function(_, pulse) {
   var data = this.value,
       out = pulse.fork(pulse.ALL),
       num = _.size - data.length,
@@ -7184,7 +7225,7 @@ function Impute(params) {
 
 Impute.Definition = {
   "type": "Impute",
-  "metadata": {"changes": true},
+  "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
     { "name": "key", "type": "field", "required": true },
@@ -7196,7 +7237,7 @@ Impute.Definition = {
   ]
 };
 
-var prototype$22 = inherits(Impute, Transform);
+var prototype$23 = inherits(Impute, Transform);
 
 function getValue(_) {
   var m = _.method || Methods.value, v;
@@ -7216,7 +7257,7 @@ function getField(_) {
   return function(t) { return t ? f(t) : NaN; };
 }
 
-prototype$22.transform = function(_, pulse) {
+prototype$23.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       impute = getValue(_),
       field$$1 = getField(_),
@@ -7286,7 +7327,7 @@ function partition(data, groupby, key$$1, keyvals) {
 
 /**
  * Extend input tuples with aggregate values.
- * Calculates aggregate values and joins them with the input stream.
+ * Calcuates aggregate values and joins them with the input stream.
  * @constructor
  */
 function JoinAggregate(params) {
@@ -7305,9 +7346,9 @@ JoinAggregate.Definition = {
   ]
 };
 
-var prototype$23 = inherits(JoinAggregate, Aggregate);
+var prototype$24 = inherits(JoinAggregate, Aggregate);
 
-prototype$23.transform = function(_, pulse) {
+prototype$24.transform = function(_, pulse) {
   var aggr = this,
       mod = _.modified(),
       cells;
@@ -7333,7 +7374,7 @@ prototype$23.transform = function(_, pulse) {
   return pulse.reflow(mod).modifies(this._outputs);
 };
 
-prototype$23.changes = function() {
+prototype$24.changes = function() {
   var adds = this._adds,
       mods = this._mods,
       i, n;
@@ -7398,9 +7439,9 @@ Lookup.Definition = {
   ]
 };
 
-var prototype$24 = inherits(Lookup, Transform);
+var prototype$25 = inherits(Lookup, Transform);
 
-prototype$24.transform = function(_, pulse) {
+prototype$25.transform = function(_, pulse) {
   var out = pulse,
       as = _.as,
       keys = _.fields,
@@ -7533,9 +7574,9 @@ function PreFacet(params) {
   Facet.call(this, params);
 }
 
-var prototype$25 = inherits(PreFacet, Facet);
+var prototype$26 = inherits(PreFacet, Facet);
 
-prototype$25.transform = function(_, pulse) {
+prototype$26.transform = function(_, pulse) {
   var self = this,
       flow = _.subflow,
       field$$1 = _.field;
@@ -7567,14 +7608,14 @@ prototype$25.transform = function(_, pulse) {
 /**
  * Performs a relational projection, copying selected fields from source
  * tuples to a new set of derived tuples.
+ * @constructor
  * @param {object} params - The parameters for this operator.
  * @param {Array<function(object): *} params.fields - The fields to project,
  *   as an array of field accessors. If unspecified, all fields will be
- *  copied with names unchanged.
- * @param {Array<string>} params.as - Output field names for each projected
+ *   copied with names unchanged.
+ * @param {Array<string>} [params.as] - Output field names for each projected
  *   field. Any unspecified fields will use the field name provided by
  *   the field accessor.
- * @constructor
  */
 function Project(params) {
   Transform.call(this, null, params);
@@ -7589,11 +7630,11 @@ Project.Definition = {
   ]
 };
 
-var prototype$26 = inherits(Project, Transform);
+var prototype$27 = inherits(Project, Transform);
 
-prototype$26.transform = function(_, pulse) {
+prototype$27.transform = function(_, pulse) {
   var fields = _.fields,
-      as = output(_.fields, _.as || []),
+      as = fieldNames(_.fields, _.as || []),
       derive$$1 = fields
         ? function(s, t) { return project(s, t, fields, as); }
         : rederive,
@@ -7606,7 +7647,7 @@ prototype$26.transform = function(_, pulse) {
     lut = this.value = {};
   }
 
-  out = pulse.fork();
+  out = pulse.fork(pulse.NO_SOURCE);
 
   pulse.visit(pulse.REM, function(t) {
     var id$$1 = tupleid(t);
@@ -7627,13 +7668,6 @@ prototype$26.transform = function(_, pulse) {
   return out;
 };
 
-function output(fields, as) {
-  if (!fields) return null;
-  return fields.map(function(f, i) {
-    return as[i] || accessorName(f);
-  });
-}
-
 function project(s, t, fields, as) {
   for (var i=0, n=fields.length; i<n; ++i) {
     t[as[i]] = fields[i](s);
@@ -7652,9 +7686,9 @@ function Proxy(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$27 = inherits(Proxy, Transform);
+var prototype$28 = inherits(Proxy, Transform);
 
-prototype$27.transform = function(_, pulse) {
+prototype$28.transform = function(_, pulse) {
   this.value = _.value;
   return _.modified('value')
     ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
@@ -7675,9 +7709,9 @@ function Relay(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$28 = inherits(Relay, Transform);
+var prototype$29 = inherits(Relay, Transform);
 
-prototype$28.transform = function(_, pulse) {
+prototype$29.transform = function(_, pulse) {
   var out, lut;
 
   if (this.value) {
@@ -7688,7 +7722,7 @@ prototype$28.transform = function(_, pulse) {
   }
 
   if (_.derive) {
-    out = pulse.fork();
+    out = pulse.fork(pulse.NO_SOURCE);
 
     pulse.visit(pulse.REM, function(t) {
       var id$$1 = tupleid(t);
@@ -7724,16 +7758,16 @@ function Sample(params) {
 
 Sample.Definition = {
   "type": "Sample",
-  "metadata": {"source": true, "changes": true},
+  "metadata": {},
   "params": [
     { "name": "size", "type": "number", "default": 1000 }
   ]
 };
 
-var prototype$29 = inherits(Sample, Transform);
+var prototype$30 = inherits(Sample, Transform);
 
-prototype$29.transform = function(_, pulse) {
-  var out = pulse.fork(),
+prototype$30.transform = function(_, pulse) {
+  var out = pulse.fork(pulse.NO_SOURCE),
       mod = _.modified('size'),
       num = _.size,
       res = this.value,
@@ -7830,7 +7864,7 @@ function Sequence(params) {
 
 Sequence.Definition = {
   "type": "Sequence",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "start", "type": "number", "required": true },
     { "name": "stop", "type": "number", "required": true },
@@ -7839,15 +7873,15 @@ Sequence.Definition = {
   "output": ["value"]
 };
 
-var prototype$30 = inherits(Sequence, Transform);
+var prototype$31 = inherits(Sequence, Transform);
 
-prototype$30.transform = function(_, pulse) {
+prototype$31.transform = function(_, pulse) {
   if (this.value && !_.modified()) return;
 
   var out = pulse.materialize().fork(pulse.MOD);
 
   out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
-  out.source = this.value = sequence(_.start, _.stop, _.step || 1).map(ingest);
+  this.value = sequence(_.start, _.stop, _.step || 1).map(ingest);
   out.add = pulse.add.concat(this.value);
   return out;
 };
@@ -7863,9 +7897,9 @@ function Sieve(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$31 = inherits(Sieve, Transform);
+var prototype$32 = inherits(Sieve, Transform);
 
-prototype$31.transform = function(_, pulse) {
+prototype$32.transform = function(_, pulse) {
   this.value = pulse.source;
   return pulse.changed()
     ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
@@ -7883,9 +7917,9 @@ function TupleIndex(params) {
   Transform.call(this, fastmap(), params);
 }
 
-var prototype$32 = inherits(TupleIndex, Transform);
+var prototype$33 = inherits(TupleIndex, Transform);
 
-prototype$32.transform = function(_, pulse) {
+prototype$33.transform = function(_, pulse) {
   var df = pulse.dataflow,
       field$$1 = _.field,
       index = this.value,
@@ -7922,9 +7956,9 @@ function Values(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$33 = inherits(Values, Transform);
+var prototype$34 = inherits(Values, Transform);
 
-prototype$33.transform = function(_, pulse) {
+prototype$34.transform = function(_, pulse) {
   var run = !this.value
     || _.modified('field')
     || _.modified('sort')
@@ -8115,14 +8149,14 @@ function WindowState(_) {
   self.inputs = Object.keys(inputs);
 }
 
-var prototype$35 = WindowState.prototype;
+var prototype$36 = WindowState.prototype;
 
-prototype$35.init = function() {
+prototype$36.init = function() {
   this.windows.forEach(function(_) { _.init(); });
   if (this.cell) this.cell.init();
 };
 
-prototype$35.update = function(w, t) {
+prototype$36.update = function(w, t) {
   var self = this,
       cell = self.cell,
       wind = self.windows,
@@ -8236,9 +8270,9 @@ Window.Definition = {
   ]
 };
 
-var prototype$34 = inherits(Window, Transform);
+var prototype$35 = inherits(Window, Transform);
 
-prototype$34.transform = function(_, pulse) {
+prototype$35.transform = function(_, pulse) {
   var self = this,
       state = self.state,
       mod = _.modified(),
@@ -8275,7 +8309,7 @@ prototype$34.transform = function(_, pulse) {
   return pulse.reflow(mod).modifies(state.outputs);
 };
 
-prototype$34.group = function(key$$1) {
+prototype$35.group = function(key$$1) {
   var self = this,
       group = self.value[key$$1];
 
@@ -8346,6 +8380,7 @@ var tx = Object.freeze({
 	facet: Facet,
 	field: Field,
 	filter: Filter,
+	flatten: Flatten,
 	fold: Fold,
 	formula: Formula,
 	generate: Generate,
@@ -8374,13 +8409,13 @@ function Bounds(b) {
   if (b) this.union(b);
 }
 
-var prototype$37 = Bounds.prototype;
+var prototype$38 = Bounds.prototype;
 
-prototype$37.clone = function() {
+prototype$38.clone = function() {
   return new Bounds(this);
 };
 
-prototype$37.clear = function() {
+prototype$38.clear = function() {
   this.x1 = +Number.MAX_VALUE;
   this.y1 = +Number.MAX_VALUE;
   this.x2 = -Number.MAX_VALUE;
@@ -8388,7 +8423,7 @@ prototype$37.clear = function() {
   return this;
 };
 
-prototype$37.empty = function() {
+prototype$38.empty = function() {
   return (
     this.x1 === +Number.MAX_VALUE &&
     this.y1 === +Number.MAX_VALUE &&
@@ -8397,7 +8432,7 @@ prototype$37.empty = function() {
   );
 };
 
-prototype$37.set = function(x1, y1, x2, y2) {
+prototype$38.set = function(x1, y1, x2, y2) {
   if (x2 < x1) {
     this.x2 = x1;
     this.x1 = x2;
@@ -8415,7 +8450,7 @@ prototype$37.set = function(x1, y1, x2, y2) {
   return this;
 };
 
-prototype$37.add = function(x, y) {
+prototype$38.add = function(x, y) {
   if (x < this.x1) this.x1 = x;
   if (y < this.y1) this.y1 = y;
   if (x > this.x2) this.x2 = x;
@@ -8423,7 +8458,7 @@ prototype$37.add = function(x, y) {
   return this;
 };
 
-prototype$37.expand = function(d) {
+prototype$38.expand = function(d) {
   this.x1 -= d;
   this.y1 -= d;
   this.x2 += d;
@@ -8431,7 +8466,7 @@ prototype$37.expand = function(d) {
   return this;
 };
 
-prototype$37.round = function() {
+prototype$38.round = function() {
   this.x1 = Math.floor(this.x1);
   this.y1 = Math.floor(this.y1);
   this.x2 = Math.ceil(this.x2);
@@ -8439,7 +8474,7 @@ prototype$37.round = function() {
   return this;
 };
 
-prototype$37.translate = function(dx, dy) {
+prototype$38.translate = function(dx, dy) {
   this.x1 += dx;
   this.x2 += dx;
   this.y1 += dy;
@@ -8447,7 +8482,7 @@ prototype$37.translate = function(dx, dy) {
   return this;
 };
 
-prototype$37.rotate = function(angle, x, y) {
+prototype$38.rotate = function(angle, x, y) {
   var cos = Math.cos(angle),
       sin = Math.sin(angle),
       cx = x - x*cos + y*sin,
@@ -8462,7 +8497,7 @@ prototype$37.rotate = function(angle, x, y) {
     .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
 };
 
-prototype$37.union = function(b) {
+prototype$38.union = function(b) {
   if (b.x1 < this.x1) this.x1 = b.x1;
   if (b.y1 < this.y1) this.y1 = b.y1;
   if (b.x2 > this.x2) this.x2 = b.x2;
@@ -8470,7 +8505,7 @@ prototype$37.union = function(b) {
   return this;
 };
 
-prototype$37.intersect = function(b) {
+prototype$38.intersect = function(b) {
   if (b.x1 > this.x1) this.x1 = b.x1;
   if (b.y1 > this.y1) this.y1 = b.y1;
   if (b.x2 < this.x2) this.x2 = b.x2;
@@ -8478,7 +8513,7 @@ prototype$37.intersect = function(b) {
   return this;
 };
 
-prototype$37.encloses = function(b) {
+prototype$38.encloses = function(b) {
   return b && (
     this.x1 <= b.x1 &&
     this.x2 >= b.x2 &&
@@ -8487,7 +8522,7 @@ prototype$37.encloses = function(b) {
   );
 };
 
-prototype$37.alignsWith = function(b) {
+prototype$38.alignsWith = function(b) {
   return b && (
     this.x1 == b.x1 ||
     this.x2 == b.x2 ||
@@ -8496,7 +8531,7 @@ prototype$37.alignsWith = function(b) {
   );
 };
 
-prototype$37.intersects = function(b) {
+prototype$38.intersects = function(b) {
   return b && !(
     this.x2 < b.x1 ||
     this.x1 > b.x2 ||
@@ -8505,7 +8540,7 @@ prototype$37.intersects = function(b) {
   );
 };
 
-prototype$37.contains = function(x, y) {
+prototype$38.contains = function(x, y) {
   return !(
     x < this.x1 ||
     x > this.x2 ||
@@ -8514,11 +8549,11 @@ prototype$37.contains = function(x, y) {
   );
 };
 
-prototype$37.width = function() {
+prototype$38.width = function() {
   return this.x2 - this.x1;
 };
 
-prototype$37.height = function() {
+prototype$38.height = function() {
   return this.y2 - this.y1;
 };
 
@@ -8612,9 +8647,9 @@ function ResourceLoader(customLoader) {
   this._loader = customLoader || loader();
 }
 
-var prototype$38 = ResourceLoader.prototype;
+var prototype$39 = ResourceLoader.prototype;
 
-prototype$38.pending = function() {
+prototype$39.pending = function() {
   return this._pending;
 };
 
@@ -8626,7 +8661,7 @@ function decrement(loader$$1) {
   loader$$1._pending -= 1;
 }
 
-prototype$38.sanitizeURL = function(uri) {
+prototype$39.sanitizeURL = function(uri) {
   var loader$$1 = this;
   increment(loader$$1);
 
@@ -8641,7 +8676,7 @@ prototype$38.sanitizeURL = function(uri) {
     });
 };
 
-prototype$38.loadImage = function(uri) {
+prototype$39.loadImage = function(uri) {
   var loader$$1 = this,
       Image = image();
   increment(loader$$1);
@@ -8673,7 +8708,7 @@ prototype$38.loadImage = function(uri) {
     });
 };
 
-prototype$38.ready = function() {
+prototype$39.ready = function() {
   var loader$$1 = this;
   return new Promise(function(accept) {
     function poll(value) {
@@ -10397,21 +10432,21 @@ function bezier(params) {
   ]);
 }
 
-var temp$1 = ['l', 0, 0, 0, 0, 0, 0, 0];
+var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 
 function scale(current, s) {
-  var c = (temp$1[0] = current[0]);
+  var c = (temp[0] = current[0]);
   if (c === 'a' || c === 'A') {
-    temp$1[1] = s * current[1];
-    temp$1[2] = s * current[2];
-    temp$1[6] = s * current[6];
-    temp$1[7] = s * current[7];
+    temp[1] = s * current[1];
+    temp[2] = s * current[2];
+    temp[6] = s * current[6];
+    temp[7] = s * current[7];
   } else {
     for (var i=1, n=current.length; i<n; ++i) {
-      temp$1[i] = s * current[i];
+      temp[i] = s * current[i];
     }
   }
-  return temp$1;
+  return temp;
 }
 
 var pathRender = function(context, path, l, t, s) {
@@ -11193,10 +11228,10 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     if (ccw) {
       ea -= tau$3;
       s = sa - (sa % halfPi$1);
-      for (i=0; i<3 && s>ea; ++i, s-=halfPi$1) update(s);
+      for (i=0; i<4 && s>ea; ++i, s-=halfPi$1) update(s);
     } else {
       s = sa - (sa % halfPi$1) + halfPi$1;
-      for (i=0; i<3 && s<ea; ++i, s=s+halfPi$1) update(s);
+      for (i=0; i<4 && s<ea; ++i, s=s+halfPi$1) update(s);
     }
   }
 
@@ -11508,12 +11543,19 @@ function resetSVGClipId() {
 }
 
 var clip = function(renderer, item, size) {
-  var defs = renderer._defs,
-      id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
-      c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-  c.width = size.width || 0;
-  c.height = size.height || 0;
-  return 'url(#' + id + ')';
+  var clip = item.clip,
+      defs = renderer._defs,
+      id$$1 = item.clip_id || (item.clip_id = 'clip' + clip_id++),
+      c = defs.clipping[id$$1] || (defs.clipping[id$$1] = {id: id$$1});
+
+  if (isFunction(clip)) {
+    c.path = clip(null);
+  } else {
+    c.width = size.width || 0;
+    c.height = size.height || 0;
+  }
+
+  return 'url(#' + id$$1 + ')';
 };
 
 var StrokeOffset = 0.5;
@@ -12254,13 +12296,13 @@ function Scenegraph(scene) {
   }
 }
 
-var prototype$39 = Scenegraph.prototype;
+var prototype$40 = Scenegraph.prototype;
 
-prototype$39.toJSON = function(indent) {
+prototype$40.toJSON = function(indent) {
   return sceneToJSON(this.root, indent || 0);
 };
 
-prototype$39.mark = function(markdef, group, index) {
+prototype$40.mark = function(markdef, group, index) {
   group = group || this.root.items[0];
   var mark = createMark(markdef, group);
   group.items[index] = mark;
@@ -12334,24 +12376,24 @@ function Handler(customLoader) {
   this._loader = customLoader || loader();
 }
 
-var prototype$40 = Handler.prototype;
+var prototype$41 = Handler.prototype;
 
-prototype$40.initialize = function(el, origin, obj) {
+prototype$41.initialize = function(el, origin, obj) {
   this._el = el;
   this._obj = obj || null;
   return this.origin(origin);
 };
 
-prototype$40.element = function() {
+prototype$41.element = function() {
   return this._el;
 };
 
-prototype$40.origin = function(origin) {
+prototype$41.origin = function(origin) {
   this._origin = origin || [0, 0];
   return this;
 };
 
-prototype$40.scene = function(scene) {
+prototype$41.scene = function(scene) {
   if (!arguments.length) return this._scene;
   this._scene = scene;
   return this;
@@ -12359,25 +12401,36 @@ prototype$40.scene = function(scene) {
 
 // add an event handler
 // subclasses should override
-prototype$40.on = function(/*type, handler*/) {};
+prototype$41.on = function(/*type, handler*/) {};
 
 // remove an event handler
 // subclasses should override
-prototype$40.off = function(/*type, handler*/) {};
+prototype$41.off = function(/*type, handler*/) {};
+
+// utility method for finding array index of registered handler
+// returns -1 if handler is not registered
+prototype$41._handlerIndex = function(h, type, handler) {
+  for (var i = h ? h.length : 0; --i>=0;) {
+    if (h[i].type === type && !handler || h[i].handler === handler) {
+      return i;
+    }
+  }
+  return -1;
+};
 
 // return an array with all registered event handlers
-prototype$40.handlers = function() {
+prototype$41.handlers = function() {
   var h = this._handlers, a = [], k;
   for (k in h) { a.push.apply(a, h[k]); }
   return a;
 };
 
-prototype$40.eventName = function(name) {
+prototype$41.eventName = function(name) {
   var i = name.indexOf('.');
   return i < 0 ? name : name.slice(0,i);
 };
 
-prototype$40.handleHref = function(event, item, href) {
+prototype$41.handleHref = function(event, item, href) {
   this._loader
     .sanitize(href, {context:'href'})
     .then(function(opt) {
@@ -12389,7 +12442,7 @@ prototype$40.handleHref = function(event, item, href) {
     .catch(function() { /* do nothing */ });
 };
 
-prototype$40.handleTooltip = function(event, item, tooltipText) {
+prototype$41.handleTooltip = function(event, item, tooltipText) {
   this._el.setAttribute('title', tooltipText || '');
 };
 
@@ -12406,7 +12459,7 @@ function Renderer(loader) {
   this._loader = new ResourceLoader(loader);
 }
 
-var prototype$41 = Renderer.prototype;
+var prototype$42 = Renderer.prototype;
 
 /**
  * Initialize a new Renderer instance.
@@ -12419,7 +12472,7 @@ var prototype$41 = Renderer.prototype;
  *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype$41.initialize = function(el, width, height, origin, scaleFactor) {
+prototype$42.initialize = function(el, width, height, origin, scaleFactor) {
   this._el = el;
   return this.resize(width, height, origin, scaleFactor);
 };
@@ -12428,7 +12481,7 @@ prototype$41.initialize = function(el, width, height, origin, scaleFactor) {
  * Returns the parent container element for a visualization.
  * @return {DOMElement} - The containing DOM element.
  */
-prototype$41.element = function() {
+prototype$42.element = function() {
   return this._el;
 };
 
@@ -12437,14 +12490,14 @@ prototype$41.element = function() {
  * Subclasses must override if the first child is not the scene element.
  * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
  */
-prototype$41.scene = function() {
+prototype$42.scene = function() {
   return this._el && this._el.firstChild;
 };
 
 /**
  * Get / set the background color.
  */
-prototype$41.background = function(bgcolor) {
+prototype$42.background = function(bgcolor) {
   if (arguments.length === 0) return this._bgcolor;
   this._bgcolor = bgcolor;
   return this;
@@ -12460,7 +12513,7 @@ prototype$41.background = function(bgcolor) {
  *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype$41.resize = function(width, height, origin, scaleFactor) {
+prototype$42.resize = function(width, height, origin, scaleFactor) {
   this._width = width;
   this._height = height;
   this._origin = origin || [0, 0];
@@ -12474,7 +12527,7 @@ prototype$41.resize = function(width, height, origin, scaleFactor) {
  * incremental should implement this method.
  * @param {Item} item - The dirty item whose bounds should be redrawn.
  */
-prototype$41.dirty = function(/*item*/) {
+prototype$42.dirty = function(/*item*/) {
 };
 
 /**
@@ -12487,7 +12540,7 @@ prototype$41.dirty = function(/*item*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Renderer} - This renderer instance.
  */
-prototype$41.render = function(scene) {
+prototype$42.render = function(scene) {
   var r = this;
 
   // bind arguments into a render call, and cache it
@@ -12509,7 +12562,7 @@ prototype$41.render = function(scene) {
  * method to actually perform rendering.
  * @param {object} scene - The root mark of a scenegraph to render.
  */
-prototype$41._render = function(/*scene*/) {
+prototype$42._render = function(/*scene*/) {
   // subclasses to override
 };
 
@@ -12521,7 +12574,7 @@ prototype$41._render = function(/*scene*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Promise} - A Promise that resolves when rendering is complete.
  */
-prototype$41.renderAsync = function(scene) {
+prototype$42.renderAsync = function(scene) {
   var r = this.render(scene);
   return this._ready
     ? this._ready.then(function() { return r; })
@@ -12536,7 +12589,7 @@ prototype$41.renderAsync = function(scene) {
  * @param {string} uri - The URI for the requested resource.
  * @return {Promise} - A Promise that resolves to the requested resource.
  */
-prototype$41._load = function(method, uri) {
+prototype$42._load = function(method, uri) {
   var r = this,
       p = r._loader[method](uri);
 
@@ -12560,7 +12613,7 @@ prototype$41._load = function(method, uri) {
  * @param {string} uri - The URI string to sanitize.
  * @return {Promise} - A Promise that resolves to the sanitized URL.
  */
-prototype$41.sanitizeURL = function(uri) {
+prototype$42.sanitizeURL = function(uri) {
   return this._load('sanitizeURL', uri);
 };
 
@@ -12571,7 +12624,7 @@ prototype$41.sanitizeURL = function(uri) {
  * @param {string} uri - The URI string of the image.
  * @return {Promise} - A Promise that resolves to the loaded Image.
  */
-prototype$41.loadImage = function(uri) {
+prototype$42.loadImage = function(uri) {
   return this._load('loadImage', uri);
 };
 
@@ -12590,17 +12643,17 @@ function CanvasHandler(loader) {
   this._first = true;
 }
 
-var prototype$42 = inherits(CanvasHandler, Handler);
+var prototype$43 = inherits(CanvasHandler, Handler);
 
-prototype$42.initialize = function(el, origin, obj) {
+prototype$43.initialize = function(el, origin, obj) {
   // add event listeners
   var canvas = this._canvas = el && domFind(el, 'canvas');
   if (canvas) {
     var that = this;
     this.events.forEach(function(type) {
       canvas.addEventListener(type, function(evt) {
-        if (prototype$42[type]) {
-          prototype$42[type].call(that, evt);
+        if (prototype$43[type]) {
+          prototype$43[type].call(that, evt);
         } else {
           that.fire(type, evt);
         }
@@ -12611,17 +12664,17 @@ prototype$42.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-prototype$42.canvas = function() {
+prototype$43.canvas = function() {
   return this._canvas;
 };
 
 // retrieve the current canvas context
-prototype$42.context = function() {
+prototype$43.context = function() {
   return this._canvas.getContext('2d');
 };
 
 // supported events
-prototype$42.events = [
+prototype$43.events = [
   'keydown',
   'keypress',
   'keyup',
@@ -12643,7 +12696,7 @@ prototype$42.events = [
 ];
 
 // to keep old versions of firefox happy
-prototype$42.DOMMouseScroll = function(evt) {
+prototype$43.DOMMouseScroll = function(evt) {
   this.fire('mousewheel', evt);
 };
 
@@ -12676,25 +12729,25 @@ function inactive(type) {
   };
 }
 
-prototype$42.mousemove = move('mousemove', 'mouseover', 'mouseout');
-prototype$42.dragover  = move('dragover', 'dragenter', 'dragleave');
+prototype$43.mousemove = move('mousemove', 'mouseover', 'mouseout');
+prototype$43.dragover  = move('dragover', 'dragenter', 'dragleave');
 
-prototype$42.mouseout  = inactive('mouseout');
-prototype$42.dragleave = inactive('dragleave');
+prototype$43.mouseout  = inactive('mouseout');
+prototype$43.dragleave = inactive('dragleave');
 
-prototype$42.mousedown = function(evt) {
+prototype$43.mousedown = function(evt) {
   this._down = this._active;
   this.fire('mousedown', evt);
 };
 
-prototype$42.click = function(evt) {
+prototype$43.click = function(evt) {
   if (this._down === this._active) {
     this.fire('click', evt);
     this._down = null;
   }
 };
 
-prototype$42.touchstart = function(evt) {
+prototype$43.touchstart = function(evt) {
   this._touch = this.pickEvent(evt.changedTouches[0]);
 
   if (this._first) {
@@ -12705,17 +12758,17 @@ prototype$42.touchstart = function(evt) {
   this.fire('touchstart', evt, true);
 };
 
-prototype$42.touchmove = function(evt) {
+prototype$43.touchmove = function(evt) {
   this.fire('touchmove', evt, true);
 };
 
-prototype$42.touchend = function(evt) {
+prototype$43.touchend = function(evt) {
   this.fire('touchend', evt, true);
   this._touch = null;
 };
 
 // fire an event
-prototype$42.fire = function(type, evt, touch) {
+prototype$43.fire = function(type, evt, touch) {
   var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
 
@@ -12736,29 +12789,35 @@ prototype$42.fire = function(type, evt, touch) {
 };
 
 // add an event handler
-prototype$42.on = function(type, handler) {
+prototype$43.on = function(type, handler) {
   var name = this.eventName(type),
-      h = this._handlers;
-  (h[name] || (h[name] = [])).push({
-    type: type,
-    handler: handler
-  });
+      h = this._handlers,
+      i = this._handlerIndex(h[name], type, handler);
+
+  if (i < 0) {
+    (h[name] || (h[name] = [])).push({
+      type:    type,
+      handler: handler
+    });
+  }
+
   return this;
 };
 
 // remove an event handler
-prototype$42.off = function(type, handler) {
+prototype$43.off = function(type, handler) {
   var name = this.eventName(type),
-      h = this._handlers[name], i;
-  if (!h) return;
-  for (i=h.length; --i>=0;) {
-    if (h[i].type !== type) continue;
-    if (!handler || h[i].handler === handler) h.splice(i, 1);
+      h = this._handlers[name],
+      i = this._handlerIndex(h, type, handler);
+
+  if (i >= 0) {
+    h.splice(i, 1);
   }
+
   return this;
 };
 
-prototype$42.pickEvent = function(evt) {
+prototype$43.pickEvent = function(evt) {
   var p = point$4(evt, this._canvas),
       o = this._origin;
   return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
@@ -12767,17 +12826,25 @@ prototype$42.pickEvent = function(evt) {
 // find the scenegraph item at the current mouse position
 // x, y -- the absolute x, y mouse coordinates on the canvas element
 // gx, gy -- the relative coordinates within the current group
-prototype$42.pick = function(scene, x, y, gx, gy) {
+prototype$43.pick = function(scene, x, y, gx, gy) {
   var g = this.context(),
       mark = marks[scene.marktype];
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };
 
 var clip$1 = function(context, scene) {
-  var group = scene.group;
+  var clip = scene.clip;
+
   context.save();
   context.beginPath();
-  context.rect(0, 0, group.width || 0, group.height || 0);
+
+  if (isFunction(clip)) {
+    clip(context);
+  } else {
+    var group = scene.group;
+    context.rect(0, 0, group.width || 0, group.height || 0);
+  }
+
   context.clip();
 };
 
@@ -12816,11 +12883,11 @@ function CanvasRenderer(loader) {
   this._dirty = new Bounds();
 }
 
-var prototype$43 = inherits(CanvasRenderer, Renderer);
+var prototype$44 = inherits(CanvasRenderer, Renderer);
 var base = Renderer.prototype;
 var tempBounds$1 = new Bounds();
 
-prototype$43.initialize = function(el, width, height, origin, scaleFactor) {
+prototype$44.initialize = function(el, width, height, origin, scaleFactor) {
   this._canvas = canvas(1, 1); // instantiate a small canvas
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
@@ -12830,22 +12897,22 @@ prototype$43.initialize = function(el, width, height, origin, scaleFactor) {
   return base.initialize.call(this, el, width, height, origin, scaleFactor);
 };
 
-prototype$43.resize = function(width, height, origin, scaleFactor) {
+prototype$44.resize = function(width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
   resize(this._canvas, this._width, this._height, this._origin, this._scale);
   this._redraw = true;
   return this;
 };
 
-prototype$43.canvas = function() {
+prototype$44.canvas = function() {
   return this._canvas;
 };
 
-prototype$43.context = function() {
+prototype$44.context = function() {
   return this._canvas ? this._canvas.getContext('2d') : null;
 };
 
-prototype$43.dirty = function(item) {
+prototype$44.dirty = function(item) {
   var b = translate$1(item.bounds, item.mark.group);
   this._dirty.union(b);
 };
@@ -12874,7 +12941,7 @@ function translate$1(bounds, group) {
   return b;
 }
 
-prototype$43._render = function(scene) {
+prototype$44._render = function(scene) {
   var g = this.context(),
       o = this._origin,
       w = this._width,
@@ -12902,14 +12969,14 @@ prototype$43._render = function(scene) {
   return this;
 };
 
-prototype$43.draw = function(ctx, scene, bounds) {
+prototype$44.draw = function(ctx, scene, bounds) {
   var mark = marks[scene.marktype];
   if (scene.clip) clip$1(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
   if (scene.clip) ctx.restore();
 };
 
-prototype$43.clear = function(x, y, w, h) {
+prototype$44.clear = function(x, y, w, h) {
   var g = this.context();
   g.clearRect(x, y, w, h);
   if (this._bgcolor != null) {
@@ -12931,9 +12998,9 @@ function SVGHandler(loader) {
   });
 }
 
-var prototype$44 = inherits(SVGHandler, Handler);
+var prototype$45 = inherits(SVGHandler, Handler);
 
-prototype$44.initialize = function(el, origin, obj) {
+prototype$45.initialize = function(el, origin, obj) {
   var svg = this._svg;
   if (svg) {
     svg.removeEventListener('click', this._hrefHandler);
@@ -12949,7 +13016,7 @@ prototype$44.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-prototype$44.svg = function() {
+prototype$45.svg = function() {
   return this._svg;
 };
 
@@ -12965,39 +13032,38 @@ function listener(context, handler) {
 }
 
 // add an event handler
-prototype$44.on = function(type, handler) {
+prototype$45.on = function(type, handler) {
   var name = this.eventName(type),
       h = this._handlers,
-      x = {
-        type:     type,
-        handler:  handler,
-        listener: listener(this, handler)
-      };
+      i = this._handlerIndex(h[name], type, handler);
 
-  (h[name] || (h[name] = [])).push(x);
+  if (i < 0) {
+    var x = {
+      type:     type,
+      handler:  handler,
+      listener: listener(this, handler)
+    };
 
-  if (this._svg) {
-    this._svg.addEventListener(name, x.listener);
+    (h[name] || (h[name] = [])).push(x);
+    if (this._svg) {
+      this._svg.addEventListener(name, x.listener);
+    }
   }
 
   return this;
 };
 
 // remove an event handler
-prototype$44.off = function(type, handler) {
+prototype$45.off = function(type, handler) {
   var name = this.eventName(type),
-      svg = this._svg,
-      h = this._handlers[name], i;
+      h = this._handlers[name],
+      i = this._handlerIndex(h, type, handler);
 
-  if (!h) return;
-
-  for (i=h.length; --i>=0;) {
-    if (h[i].type === type && !handler || h[i].handler === handler) {
-      if (this._svg) {
-        svg.removeEventListener(name, h[i].listener);
-      }
-      h.splice(i, 1);
+  if (i >= 0) {
+    if (this._svg) {
+      this._svg.removeEventListener(name, h[i].listener);
     }
+    h.splice(i, 1);
   }
 
   return this;
@@ -13060,10 +13126,10 @@ function SVGRenderer(loader) {
   this._defs = null;
 }
 
-var prototype$45 = inherits(SVGRenderer, Renderer);
+var prototype$46 = inherits(SVGRenderer, Renderer);
 var base$1 = Renderer.prototype;
 
-prototype$45.initialize = function(el, width, height, padding) {
+prototype$46.initialize = function(el, width, height, padding) {
   if (el) {
     this._svg = domChild(el, 0, 'svg', ns);
     this._svg.setAttribute('class', 'marks');
@@ -13085,14 +13151,14 @@ prototype$45.initialize = function(el, width, height, padding) {
   return base$1.initialize.call(this, el, width, height, padding);
 };
 
-prototype$45.background = function(bgcolor) {
+prototype$46.background = function(bgcolor) {
   if (arguments.length && this._svg) {
     this._svg.style.setProperty('background-color', bgcolor);
   }
   return base$1.background.apply(this, arguments);
 };
 
-prototype$45.resize = function(width, height, origin, scaleFactor) {
+prototype$46.resize = function(width, height, origin, scaleFactor) {
   base$1.resize.call(this, width, height, origin, scaleFactor);
 
   if (this._svg) {
@@ -13107,7 +13173,7 @@ prototype$45.resize = function(width, height, origin, scaleFactor) {
   return this;
 };
 
-prototype$45.svg = function() {
+prototype$46.svg = function() {
   if (!this._svg) return null;
 
   var attr = {
@@ -13133,7 +13199,7 @@ prototype$45.svg = function() {
 
 // -- Render entry point --
 
-prototype$45._render = function(scene) {
+prototype$46._render = function(scene) {
   // perform spot updates and re-render markup
   if (this._dirtyCheck()) {
     if (this._dirtyAll) this._resetDefs();
@@ -13151,7 +13217,7 @@ prototype$45._render = function(scene) {
 
 // -- Manage SVG definitions ('defs') block --
 
-prototype$45.updateDefs = function() {
+prototype$46.updateDefs = function() {
   var svg = this._svg,
       defs = this._defs,
       el = defs.el,
@@ -13197,18 +13263,24 @@ function updateGradient(el, grad, index) {
 }
 
 function updateClipping(el, clip$$1, index) {
-  var rect;
+  var mask;
 
   el = domChild(el, index, 'clipPath', ns);
   el.setAttribute('id', clip$$1.id);
-  rect = domChild(el, 0, 'rect', ns);
-  rect.setAttribute('x', 0);
-  rect.setAttribute('y', 0);
-  rect.setAttribute('width', clip$$1.width);
-  rect.setAttribute('height', clip$$1.height);
+
+  if (clip$$1.path) {
+    mask = domChild(el, 0, 'path', ns);
+    mask.setAttribute('d', clip$$1.path);
+  } else {
+    mask = domChild(el, 0, 'rect', ns);
+    mask.setAttribute('x', 0);
+    mask.setAttribute('y', 0);
+    mask.setAttribute('width', clip$$1.width);
+    mask.setAttribute('height', clip$$1.height);
+  }
 }
 
-prototype$45._resetDefs = function() {
+prototype$46._resetDefs = function() {
   var def = this._defs;
   def.gradient = {};
   def.clipping = {};
@@ -13217,20 +13289,20 @@ prototype$45._resetDefs = function() {
 
 // -- Manage rendering of items marked as dirty --
 
-prototype$45.dirty = function(item) {
+prototype$46.dirty = function(item) {
   if (item.dirty !== this._dirtyID) {
     item.dirty = this._dirtyID;
     this._dirty.push(item);
   }
 };
 
-prototype$45.isDirty = function(item) {
+prototype$46.isDirty = function(item) {
   return this._dirtyAll
     || !item._svg
     || item.dirty === this._dirtyID;
 };
 
-prototype$45._dirtyCheck = function() {
+prototype$46._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
   if (!items.length) return true;
@@ -13297,7 +13369,7 @@ function dirtyParents(item, id$$1) {
 // -- Construct & maintain scenegraph to SVG mapping ---
 
 // Draw a mark container.
-prototype$45.draw = function(el, scene, prev) {
+prototype$46.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
 
   var renderer = this,
@@ -13310,11 +13382,13 @@ prototype$45.draw = function(el, scene, prev) {
 
   parent = bind(scene, el, prev, 'g');
   parent.setAttribute('class', cssClass(scene));
-  if (!isGroup && events) {
+  if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
   }
   if (scene.clip) {
     parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
+  } else {
+    parent.removeAttribute('clip-path');
   }
 
   function process(item) {
@@ -13427,7 +13501,7 @@ var mark_extras = {
   }
 };
 
-prototype$45._update = function(mdef, el, item) {
+prototype$46._update = function(mdef, el, item) {
   // set dom element and values cache
   // provides access to emit method
   element = el;
@@ -13469,7 +13543,7 @@ function emit(name, value, ns) {
   values$1[name] = value;
 }
 
-prototype$45.style = function(el, o) {
+prototype$46.style = function(el, o) {
   if (o == null) return;
   var i, n, prop, name, value;
 
@@ -13523,10 +13597,10 @@ function SVGStringRenderer(loader) {
   };
 }
 
-var prototype$46 = inherits(SVGStringRenderer, Renderer);
+var prototype$47 = inherits(SVGStringRenderer, Renderer);
 var base$2 = Renderer.prototype;
 
-prototype$46.resize = function(width, height, origin, scaleFactor) {
+prototype$47.resize = function(width, height, origin, scaleFactor) {
   base$2.resize.call(this, width, height, origin, scaleFactor);
   var o = this._origin,
       t = this._text;
@@ -13565,7 +13639,7 @@ prototype$46.resize = function(width, height, origin, scaleFactor) {
   return this;
 };
 
-prototype$46.background = function() {
+prototype$47.background = function() {
   var rv = base$2.background.apply(this, arguments);
   if (arguments.length && this._text.head) {
     this.resize(this._width, this._height, this._origin, this._scale);
@@ -13573,18 +13647,18 @@ prototype$46.background = function() {
   return rv;
 };
 
-prototype$46.svg = function() {
+prototype$47.svg = function() {
   var t = this._text;
   return t.head + t.bg + t.defs + t.root + t.body + t.foot;
 };
 
-prototype$46._render = function(scene) {
+prototype$47._render = function(scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
   return this;
 };
 
-prototype$46.buildDefs = function() {
+prototype$47.buildDefs = function() {
   var all = this._defs,
       defs = '',
       i, id$$1, def, stops;
@@ -13616,12 +13690,18 @@ prototype$46.buildDefs = function() {
 
     defs += openTag('clipPath', {id: id$$1});
 
-    defs += openTag('rect', {
-      x: 0,
-      y: 0,
-      width: def.width,
-      height: def.height
-    }) + closeTag('rect');
+    if (def.path) {
+      defs += openTag('path', {
+        d: def.path
+      }) + closeTag('path');
+    } else {
+      defs += openTag('rect', {
+        x: 0,
+        y: 0,
+        width: def.width,
+        height: def.height
+      }) + closeTag('rect');
+    }
 
     defs += closeTag('clipPath');
   }
@@ -13635,13 +13715,13 @@ function emit$1(name, value, ns, prefixed) {
   object$1[prefixed || name] = value;
 }
 
-prototype$46.attributes = function(attr, item) {
+prototype$47.attributes = function(attr, item) {
   object$1 = {};
   attr(emit$1, item, this);
   return object$1;
 };
 
-prototype$46.href = function(item) {
+prototype$47.href = function(item) {
   var that = this,
       href = item.href,
       attr;
@@ -13662,7 +13742,7 @@ prototype$46.href = function(item) {
   return null;
 };
 
-prototype$46.mark = function(scene) {
+prototype$47.mark = function(scene) {
   var renderer = this,
       mdef = marks[scene.marktype],
       tag  = mdef.tag,
@@ -13713,7 +13793,7 @@ prototype$46.mark = function(scene) {
   return str + closeTag('g');
 };
 
-prototype$46.markGroup = function(scene) {
+prototype$47.markGroup = function(scene) {
   var renderer = this,
       str = '';
 
@@ -13805,6 +13885,20 @@ function renderModule(name, _) {
   }
 }
 
+var clipBounds = new Bounds();
+
+var boundClip = function(mark) {
+  var clip = mark.clip;
+
+  if (isFunction(clip)) {
+    clip(context(clipBounds.clear()));
+  } else if (clip) {
+    clipBounds.set(0, 0, mark.group.width, mark.group.height);
+  } else return;
+
+  mark.bounds.intersect(clipBounds);
+};
+
 var TOLERANCE = 1e-9;
 
 function sceneEqual(a, b, key$$1) {
@@ -13853,16 +13947,14 @@ function Bound(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$36 = inherits(Bound, Transform);
-var temp = new Bounds();
+var prototype$37 = inherits(Bound, Transform);
 
-prototype$36.transform = function(_, pulse) {
+prototype$37.transform = function(_, pulse) {
   var view = pulse.dataflow,
       mark = _.mark,
       type = mark.marktype,
       entry = marks[type],
       bound = entry.bound,
-      clip = mark.clip,
       markBounds = mark.bounds, rebound;
 
   if (entry.nested) {
@@ -13898,15 +13990,14 @@ prototype$36.transform = function(_, pulse) {
       markBounds.union(boundItem(item, bound));
     });
 
-    if (rebound && !clip) {
+    if (rebound) {
       markBounds.clear();
       mark.items.forEach(function(item) { markBounds.union(item.bounds); });
     }
   }
 
-  if (clip) {
-    markBounds.intersect(temp.set(0, 0, mark.group.width, mark.group.height));
-  }
+  // ensure mark bounds do not exceed any clipping region
+  boundClip(mark);
 
   return pulse.modifies('bounds');
 };
@@ -13940,9 +14031,9 @@ Identifier.Definition = {
   ]
 };
 
-var prototype$47 = inherits(Identifier, Transform);
+var prototype$48 = inherits(Identifier, Transform);
 
-prototype$47.transform = function(_, pulse) {
+prototype$48.transform = function(_, pulse) {
   var counter = getCounter(pulse.dataflow),
       id$$1 = counter.value,
       as = _.as;
@@ -13970,17 +14061,14 @@ function getCounter(view) {
  * @param {object} params.markdef - The mark definition for creating the mark.
  *   This is an object of legal scenegraph mark properties which *must* include
  *   the 'marktype' property.
- * @param {Array<number>} params.scenepath - Scenegraph tree coordinates for the mark.
- *   The path is an array of integers, each indicating the index into
- *   a successive chain of items arrays.
  */
 function Mark(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$48 = inherits(Mark, Transform);
+var prototype$49 = inherits(Mark, Transform);
 
-prototype$48.transform = function(_, pulse) {
+prototype$49.transform = function(_, pulse) {
   var mark = this.value;
 
   // acquire mark on first invocation, bind context and group
@@ -13989,12 +14077,22 @@ prototype$48.transform = function(_, pulse) {
     mark.group.context = _.context;
     if (!_.context.group) _.context.group = mark.group;
     mark.source = this;
+    mark.clip = _.clip;
+    mark.interactive = _.interactive;
     this.value = mark;
   }
 
   // initialize entering items
   var Init = mark.marktype === 'group' ? GroupItem : Item;
   pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
+
+  // update clipping and/or interactive status
+  if (_.modified('clip') || _.modified('interactive')) {
+    mark.clip = _.clip;
+    mark.interactive = !!_.interactive;
+    mark.zdirty = true; // force re-eval
+    pulse.reflow();
+  }
 
   // bind items array to scenegraph mark
   mark.items = pulse.source;
@@ -14040,7 +14138,7 @@ function Overlap(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$49 = inherits(Overlap, Transform);
+var prototype$50 = inherits(Overlap, Transform);
 
 var methods = {
   parity: function(items) {
@@ -14099,7 +14197,7 @@ function boundTest(scale, orient, tolerance) {
   };
 }
 
-prototype$49.transform = function(_, pulse) {
+prototype$50.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
       source = pulse.materialize(pulse.SOURCE).source;
 
@@ -14148,9 +14246,9 @@ function Render(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$50 = inherits(Render, Transform);
+var prototype$51 = inherits(Render, Transform);
 
-prototype$50.transform = function(_, pulse) {
+prototype$51.transform = function(_, pulse) {
   var view = pulse.dataflow;
 
   pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
@@ -14497,6 +14595,8 @@ function layoutTitle$1(view, g, offset, isX, bounds, band) {
 }
 
 var Fit = 'fit';
+var FitX = 'fit-x';
+var FitY = 'fit-y';
 var Pad = 'pad';
 var None$2 = 'none';
 var Padding = 'padding';
@@ -14525,9 +14625,9 @@ function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$51 = inherits(ViewLayout, Transform);
+var prototype$52 = inherits(ViewLayout, Transform);
 
-prototype$51.transform = function(_, pulse) {
+prototype$52.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(function(group) {
@@ -14891,6 +14991,16 @@ function layoutSize(view, group, viewBounds, _) {
 
   else if (type === Fit) {
     width = Math.max(0, viewWidth - left - right);
+    height = Math.max(0, viewHeight - top - bottom);
+  }
+
+  else if (type === FitX) {
+    width = Math.max(0, viewWidth - left - right);
+    viewHeight = height + top + bottom;
+  }
+
+  else if (type === FitY) {
+    viewWidth = width + left + right;
     height = Math.max(0, viewHeight - top - bottom);
   }
 
@@ -17062,43 +17172,6 @@ var utcTime = function() {
   return calendar(utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, millisecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]);
 };
 
-var colors = function(s) {
-  return s.match(/.{6}/g).map(function(x) {
-    return "#" + x;
-  });
-};
-
-var category10 = colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
-
-var category20b = colors("393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6");
-
-var category20c = colors("3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9");
-
-var category20 = colors("1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5");
-
-cubehelixLong(cubehelix(300, 0.5, 0.0), cubehelix(-240, 0.5, 1.0));
-
-var warm = cubehelixLong(cubehelix(-100, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
-
-var cool = cubehelixLong(cubehelix(260, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
-
-var rainbow = cubehelix();
-
-function ramp(range) {
-  var n = range.length;
-  return function(t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-}
-
-var viridis = ramp(colors("44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c20938c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881fa1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae8029af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655ac8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad1517cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51befe51cf1e51df4e61ef6e620f8e621fbe723fde725"));
-
-var magma = ramp(colors("00000401000501010601010802010902020b02020d03030f03031204041405041606051806051a07061c08071e0907200a08220b09240c09260d0a290e0b2b100b2d110c2f120d31130d34140e36150e38160f3b180f3d19103f1a10421c10441d11471e114920114b21114e22115024125325125527125829115a2a115c2c115f2d11612f116331116533106734106936106b38106c390f6e3b0f703d0f713f0f72400f74420f75440f764510774710784910784a10794c117a4e117b4f127b51127c52137c54137d56147d57157e59157e5a167e5c167f5d177f5f187f601880621980641a80651a80671b80681c816a1c816b1d816d1d816e1e81701f81721f817320817521817621817822817922827b23827c23827e24828025828125818326818426818627818827818928818b29818c29818e2a81902a81912b81932b80942c80962c80982d80992d809b2e7f9c2e7f9e2f7fa02f7fa1307ea3307ea5317ea6317da8327daa337dab337cad347cae347bb0357bb2357bb3367ab5367ab73779b83779ba3878bc3978bd3977bf3a77c03a76c23b75c43c75c53c74c73d73c83e73ca3e72cc3f71cd4071cf4070d0416fd2426fd3436ed5446dd6456cd8456cd9466bdb476adc4869de4968df4a68e04c67e24d66e34e65e44f64e55064e75263e85362e95462ea5661eb5760ec5860ed5a5fee5b5eef5d5ef05f5ef1605df2625df2645cf3655cf4675cf4695cf56b5cf66c5cf66e5cf7705cf7725cf8745cf8765cf9785df9795df97b5dfa7d5efa7f5efa815ffb835ffb8560fb8761fc8961fc8a62fc8c63fc8e64fc9065fd9266fd9467fd9668fd9869fd9a6afd9b6bfe9d6cfe9f6dfea16efea36ffea571fea772fea973feaa74feac76feae77feb078feb27afeb47bfeb67cfeb77efeb97ffebb81febd82febf84fec185fec287fec488fec68afec88cfeca8dfecc8ffecd90fecf92fed194fed395fed597fed799fed89afdda9cfddc9efddea0fde0a1fde2a3fde3a5fde5a7fde7a9fde9aafdebacfcecaefceeb0fcf0b2fcf2b4fcf4b6fcf6b8fcf7b9fcf9bbfcfbbdfcfdbf"));
-
-var inferno = ramp(colors("00000401000501010601010802010a02020c02020e03021004031204031405041706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d110a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a68450a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e67166e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d781c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a8a226a8c23698d23698f24699025689225689326679526679727669827669a28659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca404acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd84c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed6925ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f57b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0af98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca108fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fbb61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"));
-
-var plasma = ramp(colors("0d088710078813078916078a19068c1b068d1d068e20068f2206902406912605912805922a05932c05942e05952f059631059733059735049837049938049a3a049a3c049b3e049c3f049c41049d43039e44039e46039f48039f4903a04b03a14c02a14e02a25002a25102a35302a35502a45601a45801a45901a55b01a55c01a65e01a66001a66100a76300a76400a76600a76700a86900a86a00a86c00a86e00a86f00a87100a87201a87401a87501a87701a87801a87a02a87b02a87d03a87e03a88004a88104a78305a78405a78606a68707a68808a68a09a58b0aa58d0ba58e0ca48f0da4910ea3920fa39410a29511a19613a19814a099159f9a169f9c179e9d189d9e199da01a9ca11b9ba21d9aa31e9aa51f99a62098a72197a82296aa2395ab2494ac2694ad2793ae2892b02991b12a90b22b8fb32c8eb42e8db52f8cb6308bb7318ab83289ba3388bb3488bc3587bd3786be3885bf3984c03a83c13b82c23c81c33d80c43e7fc5407ec6417dc7427cc8437bc9447aca457acb4679cc4778cc4977cd4a76ce4b75cf4c74d04d73d14e72d24f71d35171d45270d5536fd5546ed6556dd7566cd8576bd9586ada5a6ada5b69db5c68dc5d67dd5e66de5f65de6164df6263e06363e16462e26561e26660e3685fe4695ee56a5de56b5de66c5ce76e5be76f5ae87059e97158e97257ea7457eb7556eb7655ec7754ed7953ed7a52ee7b51ef7c51ef7e50f07f4ff0804ef1814df1834cf2844bf3854bf3874af48849f48948f58b47f58c46f68d45f68f44f79044f79143f79342f89441f89540f9973ff9983ef99a3efa9b3dfa9c3cfa9e3bfb9f3afba139fba238fca338fca537fca636fca835fca934fdab33fdac33fdae32fdaf31fdb130fdb22ffdb42ffdb52efeb72dfeb82cfeba2cfebb2bfebd2afebe2afec029fdc229fdc328fdc527fdc627fdc827fdca26fdcb26fccd25fcce25fcd025fcd225fbd324fbd524fbd724fad824fada24f9dc24f9dd25f8df25f8e125f7e225f7e425f6e626f6e826f5e926f5eb27f4ed27f3ee27f3f027f2f227f1f426f1f525f0f724f0f921"));
-
 function band$$1() {
   var scale = ordinal().unknown(undefined),
       domain = scale.domain,
@@ -17490,17 +17563,29 @@ for (var key$1 in scales) {
   scale$1(key$1, scales[key$1]);
 }
 
-function colors$1(specifier) {
+function colors(specifier) {
   var n = specifier.length / 6 | 0, colors = new Array(n), i = 0;
   while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
   return colors;
 }
 
-var tableau10 = colors$1(
+var category20 = colors(
+  '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5'
+);
+
+var category20b = colors(
+  '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6'
+);
+
+var category20c = colors(
+  '3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9'
+);
+
+var tableau10 = colors(
   '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac'
 );
 
-var tableau20 = colors$1(
+var tableau20 = colors(
   '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5'
 );
 
@@ -17514,31 +17599,33 @@ var blueOrange = new Array(3).concat(
   "2166ac4393c392c5ded1e5f0f7f7f7fee0b6fdb863e08214b35806",
   "0530612166ac4393c392c5ded1e5f0fee0b6fdb863e08214b358067f3b08",
   "0530612166ac4393c392c5ded1e5f0f7f7f7fee0b6fdb863e08214b358067f3b08"
-).map(colors$1);
+).map(colors);
 
-var colors$2 = function(specifier) {
+var colors$1 = function(specifier) {
   var n = specifier.length / 6 | 0, colors = new Array(n), i = 0;
   while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
   return colors;
 };
 
-var Accent = colors$2("7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666");
+var category10 = colors$1("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
 
-var Dark2 = colors$2("1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666");
+var Accent = colors$1("7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666");
 
-var Paired = colors$2("a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928");
+var Dark2 = colors$1("1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666");
 
-var Pastel1 = colors$2("fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2");
+var Paired = colors$1("a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928");
 
-var Pastel2 = colors$2("b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc");
+var Pastel1 = colors$1("fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2");
 
-var Set1 = colors$2("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
+var Pastel2 = colors$1("b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc");
 
-var Set2 = colors$2("66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3");
+var Set1 = colors$1("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
 
-var Set3 = colors$2("8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f");
+var Set2 = colors$1("66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3");
 
-var ramp$1 = function(scheme) {
+var Set3 = colors$1("8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f");
+
+var ramp = function(scheme) {
   return rgbBasis(scheme[scheme.length - 1]);
 };
 
@@ -17552,9 +17639,9 @@ var scheme = new Array(3).concat(
   "8c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e",
   "5430058c510abf812ddfc27df6e8c3c7eae580cdc135978f01665e003c30",
   "5430058c510abf812ddfc27df6e8c3f5f5f5c7eae580cdc135978f01665e003c30"
-).map(colors$2);
+).map(colors$1);
 
-var BrBG = ramp$1(scheme);
+var BrBG = ramp(scheme);
 
 var scheme$1 = new Array(3).concat(
   "af8dc3f7f7f77fbf7b",
@@ -17566,9 +17653,9 @@ var scheme$1 = new Array(3).concat(
   "762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b7837",
   "40004b762a839970abc2a5cfe7d4e8d9f0d3a6dba05aae611b783700441b",
   "40004b762a839970abc2a5cfe7d4e8f7f7f7d9f0d3a6dba05aae611b783700441b"
-).map(colors$2);
+).map(colors$1);
 
-var PRGn = ramp$1(scheme$1);
+var PRGn = ramp(scheme$1);
 
 var scheme$2 = new Array(3).concat(
   "e9a3c9f7f7f7a1d76a",
@@ -17580,9 +17667,9 @@ var scheme$2 = new Array(3).concat(
   "c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221",
   "8e0152c51b7dde77aef1b6dafde0efe6f5d0b8e1867fbc414d9221276419",
   "8e0152c51b7dde77aef1b6dafde0eff7f7f7e6f5d0b8e1867fbc414d9221276419"
-).map(colors$2);
+).map(colors$1);
 
-var PiYG = ramp$1(scheme$2);
+var PiYG = ramp(scheme$2);
 
 var scheme$3 = new Array(3).concat(
   "998ec3f7f7f7f1a340",
@@ -17594,9 +17681,9 @@ var scheme$3 = new Array(3).concat(
   "5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b35806",
   "2d004b5427888073acb2abd2d8daebfee0b6fdb863e08214b358067f3b08",
   "2d004b5427888073acb2abd2d8daebf7f7f7fee0b6fdb863e08214b358067f3b08"
-).map(colors$2);
+).map(colors$1);
 
-var PuOr = ramp$1(scheme$3);
+var PuOr = ramp(scheme$3);
 
 var scheme$4 = new Array(3).concat(
   "ef8a62f7f7f767a9cf",
@@ -17608,9 +17695,9 @@ var scheme$4 = new Array(3).concat(
   "b2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac",
   "67001fb2182bd6604df4a582fddbc7d1e5f092c5de4393c32166ac053061",
   "67001fb2182bd6604df4a582fddbc7f7f7f7d1e5f092c5de4393c32166ac053061"
-).map(colors$2);
+).map(colors$1);
 
-var RdBu = ramp$1(scheme$4);
+var RdBu = ramp(scheme$4);
 
 var scheme$5 = new Array(3).concat(
   "ef8a62ffffff999999",
@@ -17622,9 +17709,9 @@ var scheme$5 = new Array(3).concat(
   "b2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d",
   "67001fb2182bd6604df4a582fddbc7e0e0e0bababa8787874d4d4d1a1a1a",
   "67001fb2182bd6604df4a582fddbc7ffffffe0e0e0bababa8787874d4d4d1a1a1a"
-).map(colors$2);
+).map(colors$1);
 
-var RdGy = ramp$1(scheme$5);
+var RdGy = ramp(scheme$5);
 
 var scheme$6 = new Array(3).concat(
   "fc8d59ffffbf91bfdb",
@@ -17636,9 +17723,9 @@ var scheme$6 = new Array(3).concat(
   "d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4",
   "a50026d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4313695",
   "a50026d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4313695"
-).map(colors$2);
+).map(colors$1);
 
-var RdYlBu = ramp$1(scheme$6);
+var RdYlBu = ramp(scheme$6);
 
 var scheme$7 = new Array(3).concat(
   "fc8d59ffffbf91cf60",
@@ -17650,9 +17737,9 @@ var scheme$7 = new Array(3).concat(
   "d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850",
   "a50026d73027f46d43fdae61fee08bd9ef8ba6d96a66bd631a9850006837",
   "a50026d73027f46d43fdae61fee08bffffbfd9ef8ba6d96a66bd631a9850006837"
-).map(colors$2);
+).map(colors$1);
 
-var RdYlGn = ramp$1(scheme$7);
+var RdYlGn = ramp(scheme$7);
 
 var scheme$8 = new Array(3).concat(
   "fc8d59ffffbf99d594",
@@ -17664,9 +17751,9 @@ var scheme$8 = new Array(3).concat(
   "d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd",
   "9e0142d53e4ff46d43fdae61fee08be6f598abdda466c2a53288bd5e4fa2",
   "9e0142d53e4ff46d43fdae61fee08bffffbfe6f598abdda466c2a53288bd5e4fa2"
-).map(colors$2);
+).map(colors$1);
 
-var Spectral = ramp$1(scheme$8);
+var Spectral = ramp(scheme$8);
 
 var scheme$9 = new Array(3).concat(
   "e5f5f999d8c92ca25f",
@@ -17676,9 +17763,9 @@ var scheme$9 = new Array(3).concat(
   "edf8fbccece699d8c966c2a441ae76238b45005824",
   "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45005824",
   "f7fcfde5f5f9ccece699d8c966c2a441ae76238b45006d2c00441b"
-).map(colors$2);
+).map(colors$1);
 
-var BuGn = ramp$1(scheme$9);
+var BuGn = ramp(scheme$9);
 
 var scheme$10 = new Array(3).concat(
   "e0ecf49ebcda8856a7",
@@ -17688,9 +17775,9 @@ var scheme$10 = new Array(3).concat(
   "edf8fbbfd3e69ebcda8c96c68c6bb188419d6e016b",
   "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d6e016b",
   "f7fcfde0ecf4bfd3e69ebcda8c96c68c6bb188419d810f7c4d004b"
-).map(colors$2);
+).map(colors$1);
 
-var BuPu = ramp$1(scheme$10);
+var BuPu = ramp(scheme$10);
 
 var scheme$11 = new Array(3).concat(
   "e0f3dba8ddb543a2ca",
@@ -17700,9 +17787,9 @@ var scheme$11 = new Array(3).concat(
   "f0f9e8ccebc5a8ddb57bccc44eb3d32b8cbe08589e",
   "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe08589e",
   "f7fcf0e0f3dbccebc5a8ddb57bccc44eb3d32b8cbe0868ac084081"
-).map(colors$2);
+).map(colors$1);
 
-var GnBu = ramp$1(scheme$11);
+var GnBu = ramp(scheme$11);
 
 var scheme$12 = new Array(3).concat(
   "fee8c8fdbb84e34a33",
@@ -17712,9 +17799,9 @@ var scheme$12 = new Array(3).concat(
   "fef0d9fdd49efdbb84fc8d59ef6548d7301f990000",
   "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301f990000",
   "fff7ecfee8c8fdd49efdbb84fc8d59ef6548d7301fb300007f0000"
-).map(colors$2);
+).map(colors$1);
 
-var OrRd = ramp$1(scheme$12);
+var OrRd = ramp(scheme$12);
 
 var scheme$13 = new Array(3).concat(
   "ece2f0a6bddb1c9099",
@@ -17724,9 +17811,9 @@ var scheme$13 = new Array(3).concat(
   "f6eff7d0d1e6a6bddb67a9cf3690c002818a016450",
   "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016450",
   "fff7fbece2f0d0d1e6a6bddb67a9cf3690c002818a016c59014636"
-).map(colors$2);
+).map(colors$1);
 
-var PuBuGn = ramp$1(scheme$13);
+var PuBuGn = ramp(scheme$13);
 
 var scheme$14 = new Array(3).concat(
   "ece7f2a6bddb2b8cbe",
@@ -17736,9 +17823,9 @@ var scheme$14 = new Array(3).concat(
   "f1eef6d0d1e6a6bddb74a9cf3690c00570b0034e7b",
   "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0034e7b",
   "fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0045a8d023858"
-).map(colors$2);
+).map(colors$1);
 
-var PuBu = ramp$1(scheme$14);
+var PuBu = ramp(scheme$14);
 
 var scheme$15 = new Array(3).concat(
   "e7e1efc994c7dd1c77",
@@ -17748,9 +17835,9 @@ var scheme$15 = new Array(3).concat(
   "f1eef6d4b9dac994c7df65b0e7298ace125691003f",
   "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125691003f",
   "f7f4f9e7e1efd4b9dac994c7df65b0e7298ace125698004367001f"
-).map(colors$2);
+).map(colors$1);
 
-var PuRd = ramp$1(scheme$15);
+var PuRd = ramp(scheme$15);
 
 var scheme$16 = new Array(3).concat(
   "fde0ddfa9fb5c51b8a",
@@ -17760,9 +17847,9 @@ var scheme$16 = new Array(3).concat(
   "feebe2fcc5c0fa9fb5f768a1dd3497ae017e7a0177",
   "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a0177",
   "fff7f3fde0ddfcc5c0fa9fb5f768a1dd3497ae017e7a017749006a"
-).map(colors$2);
+).map(colors$1);
 
-var RdPu = ramp$1(scheme$16);
+var RdPu = ramp(scheme$16);
 
 var scheme$17 = new Array(3).concat(
   "edf8b17fcdbb2c7fb8",
@@ -17772,9 +17859,9 @@ var scheme$17 = new Array(3).concat(
   "ffffccc7e9b47fcdbb41b6c41d91c0225ea80c2c84",
   "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea80c2c84",
   "ffffd9edf8b1c7e9b47fcdbb41b6c41d91c0225ea8253494081d58"
-).map(colors$2);
+).map(colors$1);
 
-var YlGnBu = ramp$1(scheme$17);
+var YlGnBu = ramp(scheme$17);
 
 var scheme$18 = new Array(3).concat(
   "f7fcb9addd8e31a354",
@@ -17784,9 +17871,9 @@ var scheme$18 = new Array(3).concat(
   "ffffccd9f0a3addd8e78c67941ab5d238443005a32",
   "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443005a32",
   "ffffe5f7fcb9d9f0a3addd8e78c67941ab5d238443006837004529"
-).map(colors$2);
+).map(colors$1);
 
-var YlGn = ramp$1(scheme$18);
+var YlGn = ramp(scheme$18);
 
 var scheme$19 = new Array(3).concat(
   "fff7bcfec44fd95f0e",
@@ -17796,9 +17883,9 @@ var scheme$19 = new Array(3).concat(
   "ffffd4fee391fec44ffe9929ec7014cc4c028c2d04",
   "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c028c2d04",
   "ffffe5fff7bcfee391fec44ffe9929ec7014cc4c02993404662506"
-).map(colors$2);
+).map(colors$1);
 
-var YlOrBr = ramp$1(scheme$19);
+var YlOrBr = ramp(scheme$19);
 
 var scheme$20 = new Array(3).concat(
   "ffeda0feb24cf03b20",
@@ -17808,9 +17895,9 @@ var scheme$20 = new Array(3).concat(
   "ffffb2fed976feb24cfd8d3cfc4e2ae31a1cb10026",
   "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cb10026",
   "ffffccffeda0fed976feb24cfd8d3cfc4e2ae31a1cbd0026800026"
-).map(colors$2);
+).map(colors$1);
 
-var YlOrRd = ramp$1(scheme$20);
+var YlOrRd = ramp(scheme$20);
 
 var scheme$21 = new Array(3).concat(
   "deebf79ecae13182bd",
@@ -17820,9 +17907,9 @@ var scheme$21 = new Array(3).concat(
   "eff3ffc6dbef9ecae16baed64292c62171b5084594",
   "f7fbffdeebf7c6dbef9ecae16baed64292c62171b5084594",
   "f7fbffdeebf7c6dbef9ecae16baed64292c62171b508519c08306b"
-).map(colors$2);
+).map(colors$1);
 
-var Blues = ramp$1(scheme$21);
+var Blues = ramp(scheme$21);
 
 var scheme$22 = new Array(3).concat(
   "e5f5e0a1d99b31a354",
@@ -17832,9 +17919,9 @@ var scheme$22 = new Array(3).concat(
   "edf8e9c7e9c0a1d99b74c47641ab5d238b45005a32",
   "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45005a32",
   "f7fcf5e5f5e0c7e9c0a1d99b74c47641ab5d238b45006d2c00441b"
-).map(colors$2);
+).map(colors$1);
 
-var Greens = ramp$1(scheme$22);
+var Greens = ramp(scheme$22);
 
 var scheme$23 = new Array(3).concat(
   "f0f0f0bdbdbd636363",
@@ -17844,9 +17931,9 @@ var scheme$23 = new Array(3).concat(
   "f7f7f7d9d9d9bdbdbd969696737373525252252525",
   "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525",
   "fffffff0f0f0d9d9d9bdbdbd969696737373525252252525000000"
-).map(colors$2);
+).map(colors$1);
 
-var Greys = ramp$1(scheme$23);
+var Greys = ramp(scheme$23);
 
 var scheme$24 = new Array(3).concat(
   "efedf5bcbddc756bb1",
@@ -17856,9 +17943,9 @@ var scheme$24 = new Array(3).concat(
   "f2f0f7dadaebbcbddc9e9ac8807dba6a51a34a1486",
   "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a34a1486",
   "fcfbfdefedf5dadaebbcbddc9e9ac8807dba6a51a354278f3f007d"
-).map(colors$2);
+).map(colors$1);
 
-var Purples = ramp$1(scheme$24);
+var Purples = ramp(scheme$24);
 
 var scheme$25 = new Array(3).concat(
   "fee0d2fc9272de2d26",
@@ -17868,9 +17955,9 @@ var scheme$25 = new Array(3).concat(
   "fee5d9fcbba1fc9272fb6a4aef3b2ccb181d99000d",
   "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181d99000d",
   "fff5f0fee0d2fcbba1fc9272fb6a4aef3b2ccb181da50f1567000d"
-).map(colors$2);
+).map(colors$1);
 
-var Reds = ramp$1(scheme$25);
+var Reds = ramp(scheme$25);
 
 var scheme$26 = new Array(3).concat(
   "fee6cefdae6be6550d",
@@ -17880,13 +17967,46 @@ var scheme$26 = new Array(3).concat(
   "feeddefdd0a2fdae6bfd8d3cf16913d948018c2d04",
   "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d948018c2d04",
   "fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d94801a636037f2704"
-).map(colors$2);
+).map(colors$1);
 
-var Oranges = ramp$1(scheme$26);
+var Oranges = ramp(scheme$26);
+
+var cubehelix$3 = cubehelixLong(cubehelix(300, 0.5, 0.0), cubehelix(-240, 0.5, 1.0));
+
+var warm = cubehelixLong(cubehelix(-100, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
+
+var cool = cubehelixLong(cubehelix(260, 0.75, 0.35), cubehelix(80, 1.50, 0.8));
+
+var rainbow = cubehelix();
+
+var rainbow$1 = function(t) {
+  if (t < 0 || t > 1) t -= Math.floor(t);
+  var ts = Math.abs(t - 0.5);
+  rainbow.h = 360 * t - 100;
+  rainbow.s = 1.5 - 1.5 * ts;
+  rainbow.l = 0.8 - 0.9 * ts;
+  return rainbow + "";
+};
+
+function ramp$1(range) {
+  var n = range.length;
+  return function(t) {
+    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
+  };
+}
+
+var viridis = ramp$1(colors$1("44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c20938c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881fa1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae8029af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655ac8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad1517cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51befe51cf1e51df4e61ef6e620f8e621fbe723fde725"));
+
+var magma = ramp$1(colors$1("00000401000501010601010802010902020b02020d03030f03031204041405041606051806051a07061c08071e0907200a08220b09240c09260d0a290e0b2b100b2d110c2f120d31130d34140e36150e38160f3b180f3d19103f1a10421c10441d11471e114920114b21114e22115024125325125527125829115a2a115c2c115f2d11612f116331116533106734106936106b38106c390f6e3b0f703d0f713f0f72400f74420f75440f764510774710784910784a10794c117a4e117b4f127b51127c52137c54137d56147d57157e59157e5a167e5c167f5d177f5f187f601880621980641a80651a80671b80681c816a1c816b1d816d1d816e1e81701f81721f817320817521817621817822817922827b23827c23827e24828025828125818326818426818627818827818928818b29818c29818e2a81902a81912b81932b80942c80962c80982d80992d809b2e7f9c2e7f9e2f7fa02f7fa1307ea3307ea5317ea6317da8327daa337dab337cad347cae347bb0357bb2357bb3367ab5367ab73779b83779ba3878bc3978bd3977bf3a77c03a76c23b75c43c75c53c74c73d73c83e73ca3e72cc3f71cd4071cf4070d0416fd2426fd3436ed5446dd6456cd8456cd9466bdb476adc4869de4968df4a68e04c67e24d66e34e65e44f64e55064e75263e85362e95462ea5661eb5760ec5860ed5a5fee5b5eef5d5ef05f5ef1605df2625df2645cf3655cf4675cf4695cf56b5cf66c5cf66e5cf7705cf7725cf8745cf8765cf9785df9795df97b5dfa7d5efa7f5efa815ffb835ffb8560fb8761fc8961fc8a62fc8c63fc8e64fc9065fd9266fd9467fd9668fd9869fd9a6afd9b6bfe9d6cfe9f6dfea16efea36ffea571fea772fea973feaa74feac76feae77feb078feb27afeb47bfeb67cfeb77efeb97ffebb81febd82febf84fec185fec287fec488fec68afec88cfeca8dfecc8ffecd90fecf92fed194fed395fed597fed799fed89afdda9cfddc9efddea0fde0a1fde2a3fde3a5fde5a7fde7a9fde9aafdebacfcecaefceeb0fcf0b2fcf2b4fcf4b6fcf6b8fcf7b9fcf9bbfcfbbdfcfdbf"));
+
+var inferno = ramp$1(colors$1("00000401000501010601010802010a02020c02020e03021004031204031405041706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d110a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a68450a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e67166e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d781c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a8a226a8c23698d23698f24699025689225689326679526679727669827669a28659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca404acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd84c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed6925ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f57b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0af98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca108fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fbb61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"));
+
+var plasma = ramp$1(colors$1("0d088710078813078916078a19068c1b068d1d068e20068f2206902406912605912805922a05932c05942e05952f059631059733059735049837049938049a3a049a3c049b3e049c3f049c41049d43039e44039e46039f48039f4903a04b03a14c02a14e02a25002a25102a35302a35502a45601a45801a45901a55b01a55c01a65e01a66001a66100a76300a76400a76600a76700a86900a86a00a86c00a86e00a86f00a87100a87201a87401a87501a87701a87801a87a02a87b02a87d03a87e03a88004a88104a78305a78405a78606a68707a68808a68a09a58b0aa58d0ba58e0ca48f0da4910ea3920fa39410a29511a19613a19814a099159f9a169f9c179e9d189d9e199da01a9ca11b9ba21d9aa31e9aa51f99a62098a72197a82296aa2395ab2494ac2694ad2793ae2892b02991b12a90b22b8fb32c8eb42e8db52f8cb6308bb7318ab83289ba3388bb3488bc3587bd3786be3885bf3984c03a83c13b82c23c81c33d80c43e7fc5407ec6417dc7427cc8437bc9447aca457acb4679cc4778cc4977cd4a76ce4b75cf4c74d04d73d14e72d24f71d35171d45270d5536fd5546ed6556dd7566cd8576bd9586ada5a6ada5b69db5c68dc5d67dd5e66de5f65de6164df6263e06363e16462e26561e26660e3685fe4695ee56a5de56b5de66c5ce76e5be76f5ae87059e97158e97257ea7457eb7556eb7655ec7754ed7953ed7a52ee7b51ef7c51ef7e50f07f4ff0804ef1814df1834cf2844bf3854bf3874af48849f48948f58b47f58c46f68d45f68f44f79044f79143f79342f89441f89540f9973ff9983ef99a3efa9b3dfa9c3cfa9e3bfb9f3afba139fba238fca338fca537fca636fca835fca934fdab33fdac33fdae32fdaf31fdb130fdb22ffdb42ffdb52efeb72dfeb82cfeba2cfebb2bfebd2afebe2afec029fdc229fdc328fdc527fdc627fdc827fdca26fdcb26fccd25fcce25fcd025fcd225fbd324fbd524fbd724fad824fada24f9dc24f9dd25f8df25f8e125f7e225f7e425f6e626f6e826f5e926f5eb27f4ed27f3ee27f3f027f2f227f1f426f1f525f0f724f0f921"));
 
 
 
 var _ = Object.freeze({
+	schemeCategory10: category10,
 	schemeAccent: Accent,
 	schemeDark2: Dark2,
 	schemePaired: Paired,
@@ -17948,7 +18068,15 @@ var _ = Object.freeze({
 	interpolateReds: Reds,
 	schemeReds: scheme$25,
 	interpolateOranges: Oranges,
-	schemeOranges: scheme$26
+	schemeOranges: scheme$26,
+	interpolateCubehelixDefault: cubehelix$3,
+	interpolateRainbow: rainbow$1,
+	interpolateWarm: warm,
+	interpolateCool: cool,
+	interpolateViridis: viridis,
+	interpolateMagma: magma,
+	interpolateInferno: inferno,
+	interpolatePlasma: plasma
 });
 
 var discrete = {
@@ -17956,13 +18084,8 @@ var discrete = {
 };
 
 var schemes = {
-  // d3 built-in categorical palettes
+  // d3 categorical palettes
   category10:  category10,
-  category20:  category20,
-  category20b: category20b,
-  category20c: category20c,
-
-  // extended categorical palettes
   accent:      Accent,
   dark2:       Dark2,
   paired:      Paired,
@@ -17971,10 +18094,15 @@ var schemes = {
   set1:        Set1,
   set2:        Set2,
   set3:        Set3,
+
+  // additional categorical palettes
+  category20:  category20,
+  category20b: category20b,
+  category20c: category20c,
   tableau10:   tableau10,
   tableau20:   tableau20,
 
-  // d3 built-in interpolators
+  // sequential multi-hue interpolators
   viridis:     viridis,
   magma:       magma,
   inferno:     inferno,
@@ -18266,9 +18394,9 @@ function AxisTicks(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$52 = inherits(AxisTicks, Transform);
+var prototype$53 = inherits(AxisTicks, Transform);
 
-prototype$52.transform = function(_, pulse) {
+prototype$53.transform = function(_, pulse) {
   if (this.value && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -18318,7 +18446,7 @@ function DataJoin(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$53 = inherits(DataJoin, Transform);
+var prototype$54 = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
   return ingest({});
@@ -18328,7 +18456,7 @@ function isExit(t) {
   return t.exit;
 }
 
-prototype$53.transform = function(_, pulse) {
+prototype$54.transform = function(_, pulse) {
   var df = pulse.dataflow,
       out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       item = _.item || defaultItemCreate,
@@ -18413,9 +18541,9 @@ function Encode(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$54 = inherits(Encode, Transform);
+var prototype$55 = inherits(Encode, Transform);
 
-prototype$54.transform = function(_, pulse) {
+prototype$55.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
       encoders = _.encoders,
       encode = pulse.encode;
@@ -18565,9 +18693,9 @@ function LegendEntries(params) {
   Transform.call(this, [], params);
 }
 
-var prototype$55 = inherits(LegendEntries, Transform);
+var prototype$56 = inherits(LegendEntries, Transform);
 
-prototype$55.transform = function(_, pulse) {
+prototype$56.transform = function(_, pulse) {
   if (this.value != null && !_.modified()) {
     return pulse.StopPropagation;
   }
@@ -18674,9 +18802,9 @@ LinkPath.Definition = {
   ]
 };
 
-var prototype$56 = inherits(LinkPath, Transform);
+var prototype$57 = inherits(LinkPath, Transform);
 
-prototype$56.transform = function(_, pulse) {
+prototype$57.transform = function(_, pulse) {
   var sx = _.sourceX || sourceX,
       sy = _.sourceY || sourceY,
       tx = _.targetX || targetX,
@@ -18823,9 +18951,9 @@ Pie.Definition = {
   ]
 };
 
-var prototype$57 = inherits(Pie, Transform);
+var prototype$58 = inherits(Pie, Transform);
 
-prototype$57.transform = function(_, pulse) {
+prototype$58.transform = function(_, pulse) {
   var as = _.as || ['startAngle', 'endAngle'],
       startAngle = as[0],
       endAngle = as[1],
@@ -18879,9 +19007,9 @@ function Scale(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$58 = inherits(Scale, Transform);
+var prototype$59 = inherits(Scale, Transform);
 
-prototype$58.transform = function(_, pulse) {
+prototype$59.transform = function(_, pulse) {
   var df = pulse.dataflow,
       scale = this.value,
       prop;
@@ -19070,9 +19198,9 @@ function SortItems(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$59 = inherits(SortItems, Transform);
+var prototype$60 = inherits(SortItems, Transform);
 
-prototype$59.transform = function(_, pulse) {
+prototype$60.transform = function(_, pulse) {
   var mod = _.modified('sort')
          || pulse.changed(pulse.ADD)
          || pulse.modified(_.sort.fields)
@@ -19112,9 +19240,9 @@ Stack.Definition = {
   ]
 };
 
-var prototype$60 = inherits(Stack, Transform);
+var prototype$61 = inherits(Stack, Transform);
 
-prototype$60.transform = function(_, pulse) {
+prototype$61.transform = function(_, pulse) {
   var as = _.as || ['y0', 'y1'],
       y0 = as[0],
       y1 = as[1],
@@ -19668,7 +19796,7 @@ function Contour(params) {
 
 Contour.Definition = {
   "type": "Contour",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
     { "name": "values", "type": "number", "array": true },
@@ -19682,9 +19810,9 @@ Contour.Definition = {
   ]
 };
 
-var prototype$61 = inherits(Contour, Transform);
+var prototype$62 = inherits(Contour, Transform);
 
-prototype$61.transform = function(_, pulse) {
+prototype$62.transform = function(_, pulse) {
   if (this.value && !pulse.changed() && !_.modified())
     return pulse.StopPropagation;
 
@@ -19711,7 +19839,8 @@ prototype$61.transform = function(_, pulse) {
   });
 
   if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = contour(values).map(ingest);
+  values = values && values.length ? contour(values).map(ingest) : [];
+  this.value = out.source = out.add = values;
 
   return out;
 };
@@ -19754,9 +19883,9 @@ GeoJSON.Definition = {
   ]
 };
 
-var prototype$62 = inherits(GeoJSON, Transform);
+var prototype$63 = inherits(GeoJSON, Transform);
 
-prototype$62.transform = function(_, pulse) {
+prototype$63.transform = function(_, pulse) {
   var features = this._features,
       points = this._points,
       fields = _.fields,
@@ -19829,17 +19958,17 @@ Adder.prototype = {
     this.t = 0; // exact error
   },
   add: function(y) {
-    add$3(temp$2, y, this.t);
-    add$3(this, temp$2.s, this.s);
-    if (this.s) this.t += temp$2.t;
-    else this.s = temp$2.t;
+    add$3(temp$1, y, this.t);
+    add$3(this, temp$1.s, this.s);
+    if (this.s) this.t += temp$1.t;
+    else this.s = temp$1.t;
   },
   valueOf: function() {
     return this.s;
   }
 };
 
-var temp$2 = new Adder;
+var temp$1 = new Adder;
 
 function add$3(adder, a, b) {
   var x = adder.s = a + b,
@@ -19849,7 +19978,7 @@ function add$3(adder, a, b) {
 }
 
 var epsilon$2 = 1e-6;
-
+var epsilon2$1 = 1e-12;
 var pi$3 = Math.PI;
 var halfPi$2 = pi$3 / 2;
 var quarterPi = pi$3 / 4;
@@ -19961,6 +20090,67 @@ var lambda0;
 var cosPhi0;
 var sinPhi0;
 
+var areaStream = {
+  point: noop$4,
+  lineStart: noop$4,
+  lineEnd: noop$4,
+  polygonStart: function() {
+    areaRingSum.reset();
+    areaStream.lineStart = areaRingStart;
+    areaStream.lineEnd = areaRingEnd;
+  },
+  polygonEnd: function() {
+    var areaRing = +areaRingSum;
+    areaSum.add(areaRing < 0 ? tau$4 + areaRing : areaRing);
+    this.lineStart = this.lineEnd = this.point = noop$4;
+  },
+  sphere: function() {
+    areaSum.add(tau$4);
+  }
+};
+
+function areaRingStart() {
+  areaStream.point = areaPointFirst;
+}
+
+function areaRingEnd() {
+  areaPoint(lambda00, phi00);
+}
+
+function areaPointFirst(lambda, phi) {
+  areaStream.point = areaPoint;
+  lambda00 = lambda, phi00 = phi;
+  lambda *= radians, phi *= radians;
+  lambda0 = lambda, cosPhi0 = cos$1(phi = phi / 2 + quarterPi), sinPhi0 = sin$1(phi);
+}
+
+function areaPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  phi = phi / 2 + quarterPi; // half the angular distance from south pole
+
+  // Spherical excess E for a spherical triangle with vertices: south pole,
+  // previous point, current point.  Uses a formula derived from Cagnoli’s
+  // theorem.  See Todhunter, Spherical Trig. (1871), Sec. 103, Eq. (2).
+  var dLambda = lambda - lambda0,
+      sdLambda = dLambda >= 0 ? 1 : -1,
+      adLambda = sdLambda * dLambda,
+      cosPhi = cos$1(phi),
+      sinPhi = sin$1(phi),
+      k = sinPhi0 * sinPhi,
+      u = cosPhi0 * cosPhi + k * cos$1(adLambda),
+      v = k * sdLambda * sin$1(adLambda);
+  areaRingSum.add(atan2$1(v, u));
+
+  // Advance the previous points.
+  lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
+}
+
+var area$4 = function(object) {
+  areaSum.reset();
+  geoStream(object, areaStream);
+  return areaSum * 2;
+};
+
 function spherical(cartesian) {
   return [atan2$1(cartesian[1], cartesian[0]), asin$1(cartesian[2])];
 }
@@ -20005,10 +20195,315 @@ var deltaSum = adder();
 var ranges;
 var range;
 
+var boundsStream = {
+  point: boundsPoint,
+  lineStart: boundsLineStart,
+  lineEnd: boundsLineEnd,
+  polygonStart: function() {
+    boundsStream.point = boundsRingPoint;
+    boundsStream.lineStart = boundsRingStart;
+    boundsStream.lineEnd = boundsRingEnd;
+    deltaSum.reset();
+    areaStream.polygonStart();
+  },
+  polygonEnd: function() {
+    areaStream.polygonEnd();
+    boundsStream.point = boundsPoint;
+    boundsStream.lineStart = boundsLineStart;
+    boundsStream.lineEnd = boundsLineEnd;
+    if (areaRingSum < 0) lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
+    else if (deltaSum > epsilon$2) phi1 = 90;
+    else if (deltaSum < -epsilon$2) phi0 = -90;
+    range[0] = lambda0$1, range[1] = lambda1;
+  }
+};
+
+function boundsPoint(lambda, phi) {
+  ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+  if (phi < phi0) phi0 = phi;
+  if (phi > phi1) phi1 = phi;
+}
+
+function linePoint(lambda, phi) {
+  var p = cartesian([lambda * radians, phi * radians]);
+  if (p0) {
+    var normal = cartesianCross(p0, p),
+        equatorial = [normal[1], -normal[0], 0],
+        inflection = cartesianCross(equatorial, normal);
+    cartesianNormalizeInPlace(inflection);
+    inflection = spherical(inflection);
+    var delta = lambda - lambda2,
+        sign = delta > 0 ? 1 : -1,
+        lambdai = inflection[0] * degrees$1 * sign,
+        phii,
+        antimeridian = abs$1(delta) > 180;
+    if (antimeridian ^ (sign * lambda2 < lambdai && lambdai < sign * lambda)) {
+      phii = inflection[1] * degrees$1;
+      if (phii > phi1) phi1 = phii;
+    } else if (lambdai = (lambdai + 360) % 360 - 180, antimeridian ^ (sign * lambda2 < lambdai && lambdai < sign * lambda)) {
+      phii = -inflection[1] * degrees$1;
+      if (phii < phi0) phi0 = phii;
+    } else {
+      if (phi < phi0) phi0 = phi;
+      if (phi > phi1) phi1 = phi;
+    }
+    if (antimeridian) {
+      if (lambda < lambda2) {
+        if (angle(lambda0$1, lambda) > angle(lambda0$1, lambda1)) lambda1 = lambda;
+      } else {
+        if (angle(lambda, lambda1) > angle(lambda0$1, lambda1)) lambda0$1 = lambda;
+      }
+    } else {
+      if (lambda1 >= lambda0$1) {
+        if (lambda < lambda0$1) lambda0$1 = lambda;
+        if (lambda > lambda1) lambda1 = lambda;
+      } else {
+        if (lambda > lambda2) {
+          if (angle(lambda0$1, lambda) > angle(lambda0$1, lambda1)) lambda1 = lambda;
+        } else {
+          if (angle(lambda, lambda1) > angle(lambda0$1, lambda1)) lambda0$1 = lambda;
+        }
+      }
+    }
+  } else {
+    ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+  }
+  if (phi < phi0) phi0 = phi;
+  if (phi > phi1) phi1 = phi;
+  p0 = p, lambda2 = lambda;
+}
+
+function boundsLineStart() {
+  boundsStream.point = linePoint;
+}
+
+function boundsLineEnd() {
+  range[0] = lambda0$1, range[1] = lambda1;
+  boundsStream.point = boundsPoint;
+  p0 = null;
+}
+
+function boundsRingPoint(lambda, phi) {
+  if (p0) {
+    var delta = lambda - lambda2;
+    deltaSum.add(abs$1(delta) > 180 ? delta + (delta > 0 ? 360 : -360) : delta);
+  } else {
+    lambda00$1 = lambda, phi00$1 = phi;
+  }
+  areaStream.point(lambda, phi);
+  linePoint(lambda, phi);
+}
+
+function boundsRingStart() {
+  areaStream.lineStart();
+}
+
+function boundsRingEnd() {
+  boundsRingPoint(lambda00$1, phi00$1);
+  areaStream.lineEnd();
+  if (abs$1(deltaSum) > epsilon$2) lambda0$1 = -(lambda1 = 180);
+  range[0] = lambda0$1, range[1] = lambda1;
+  p0 = null;
+}
+
+// Finds the left-right distance between two longitudes.
+// This is almost the same as (lambda1 - lambda0 + 360°) % 360°, except that we want
+// the distance between ±180° to be 360°.
+function angle(lambda0, lambda1) {
+  return (lambda1 -= lambda0) < 0 ? lambda1 + 360 : lambda1;
+}
+
+function rangeCompare(a, b) {
+  return a[0] - b[0];
+}
+
+function rangeContains(range, x) {
+  return range[0] <= range[1] ? range[0] <= x && x <= range[1] : x < range[0] || range[1] < x;
+}
+
+var bounds$1 = function(feature) {
+  var i, n, a, b, merged, deltaMax, delta;
+
+  phi1 = lambda1 = -(lambda0$1 = phi0 = Infinity);
+  ranges = [];
+  geoStream(feature, boundsStream);
+
+  // First, sort ranges by their minimum longitudes.
+  if (n = ranges.length) {
+    ranges.sort(rangeCompare);
+
+    // Then, merge any ranges that overlap.
+    for (i = 1, a = ranges[0], merged = [a]; i < n; ++i) {
+      b = ranges[i];
+      if (rangeContains(a, b[0]) || rangeContains(a, b[1])) {
+        if (angle(a[0], b[1]) > angle(a[0], a[1])) a[1] = b[1];
+        if (angle(b[0], a[1]) > angle(a[0], a[1])) a[0] = b[0];
+      } else {
+        merged.push(a = b);
+      }
+    }
+
+    // Finally, find the largest gap between the merged ranges.
+    // The final bounding box will be the inverse of this gap.
+    for (deltaMax = -Infinity, n = merged.length - 1, i = 0, a = merged[n]; i <= n; a = b, ++i) {
+      b = merged[i];
+      if ((delta = angle(a[1], b[0])) > deltaMax) deltaMax = delta, lambda0$1 = b[0], lambda1 = a[1];
+    }
+  }
+
+  ranges = range = null;
+
+  return lambda0$1 === Infinity || phi0 === Infinity
+      ? [[NaN, NaN], [NaN, NaN]]
+      : [[lambda0$1, phi0], [lambda1, phi1]];
+};
+
 var W0;
+var W1;
 var X0;
 var Y0;
-var Z0; // previous point
+var Z0;
+var X1;
+var Y1;
+var Z1;
+var X2;
+var Y2;
+var Z2;
+var lambda00$2;
+var phi00$2;
+var x0;
+var y0;
+var z0; // previous point
+
+var centroidStream = {
+  sphere: noop$4,
+  point: centroidPoint,
+  lineStart: centroidLineStart,
+  lineEnd: centroidLineEnd,
+  polygonStart: function() {
+    centroidStream.lineStart = centroidRingStart;
+    centroidStream.lineEnd = centroidRingEnd;
+  },
+  polygonEnd: function() {
+    centroidStream.lineStart = centroidLineStart;
+    centroidStream.lineEnd = centroidLineEnd;
+  }
+};
+
+// Arithmetic mean of Cartesian vectors.
+function centroidPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos$1(phi);
+  centroidPointCartesian(cosPhi * cos$1(lambda), cosPhi * sin$1(lambda), sin$1(phi));
+}
+
+function centroidPointCartesian(x, y, z) {
+  ++W0;
+  X0 += (x - X0) / W0;
+  Y0 += (y - Y0) / W0;
+  Z0 += (z - Z0) / W0;
+}
+
+function centroidLineStart() {
+  centroidStream.point = centroidLinePointFirst;
+}
+
+function centroidLinePointFirst(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos$1(phi);
+  x0 = cosPhi * cos$1(lambda);
+  y0 = cosPhi * sin$1(lambda);
+  z0 = sin$1(phi);
+  centroidStream.point = centroidLinePoint;
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidLinePoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos$1(phi),
+      x = cosPhi * cos$1(lambda),
+      y = cosPhi * sin$1(lambda),
+      z = sin$1(phi),
+      w = atan2$1(sqrt$2((w = y0 * z - z0 * y) * w + (w = z0 * x - x0 * z) * w + (w = x0 * y - y0 * x) * w), x0 * x + y0 * y + z0 * z);
+  W1 += w;
+  X1 += w * (x0 + (x0 = x));
+  Y1 += w * (y0 + (y0 = y));
+  Z1 += w * (z0 + (z0 = z));
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidLineEnd() {
+  centroidStream.point = centroidPoint;
+}
+
+// See J. E. Brock, The Inertia Tensor for a Spherical Triangle,
+// J. Applied Mechanics 42, 239 (1975).
+function centroidRingStart() {
+  centroidStream.point = centroidRingPointFirst;
+}
+
+function centroidRingEnd() {
+  centroidRingPoint(lambda00$2, phi00$2);
+  centroidStream.point = centroidPoint;
+}
+
+function centroidRingPointFirst(lambda, phi) {
+  lambda00$2 = lambda, phi00$2 = phi;
+  lambda *= radians, phi *= radians;
+  centroidStream.point = centroidRingPoint;
+  var cosPhi = cos$1(phi);
+  x0 = cosPhi * cos$1(lambda);
+  y0 = cosPhi * sin$1(lambda);
+  z0 = sin$1(phi);
+  centroidPointCartesian(x0, y0, z0);
+}
+
+function centroidRingPoint(lambda, phi) {
+  lambda *= radians, phi *= radians;
+  var cosPhi = cos$1(phi),
+      x = cosPhi * cos$1(lambda),
+      y = cosPhi * sin$1(lambda),
+      z = sin$1(phi),
+      cx = y0 * z - z0 * y,
+      cy = z0 * x - x0 * z,
+      cz = x0 * y - y0 * x,
+      m = sqrt$2(cx * cx + cy * cy + cz * cz),
+      w = asin$1(m), // line weight = angle
+      v = m && -w / m; // area weight multiplier
+  X2 += v * cx;
+  Y2 += v * cy;
+  Z2 += v * cz;
+  W1 += w;
+  X1 += w * (x0 + (x0 = x));
+  Y1 += w * (y0 + (y0 = y));
+  Z1 += w * (z0 + (z0 = z));
+  centroidPointCartesian(x0, y0, z0);
+}
+
+var centroid = function(object) {
+  W0 = W1 =
+  X0 = Y0 = Z0 =
+  X1 = Y1 = Z1 =
+  X2 = Y2 = Z2 = 0;
+  geoStream(object, centroidStream);
+
+  var x = X2,
+      y = Y2,
+      z = Z2,
+      m = x * x + y * y + z * z;
+
+  // If the area-weighted ccentroid is undefined, fall back to length-weighted ccentroid.
+  if (m < epsilon2$1) {
+    x = X1, y = Y1, z = Z1;
+    // If the feature has zero length, fall back to arithmetic mean of point vectors.
+    if (W1 < epsilon$2) x = X0, y = Y0, z = Z0;
+    m = x * x + y * y + z * z;
+    // If the feature still has an undefined ccentroid, then return.
+    if (m < epsilon2$1) return [NaN, NaN];
+  }
+
+  return [atan2$1(y, x) * degrees$1, asin$1(z / sqrt$2(m)) * degrees$1];
+};
 
 var compose = function(a, b) {
 
@@ -22264,6 +22759,10 @@ function create$1(type, constructor) {
 }
 
 function projection$$1(type, proj) {
+  if (!type || typeof type !== 'string') {
+    throw new Error('Projection type must be a name string.');
+  }
+  type = type.toLowerCase();
   if (arguments.length > 1) {
     projections[type] = create$1(type, proj);
     return this;
@@ -22318,33 +22817,47 @@ GeoPath.Definition = {
   "params": [
     { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field" },
+    { "name": "pointRadius", "type": "number", "expr": true },
     { "name": "as", "type": "string", "default": "path" }
   ]
 };
 
-var prototype$63 = inherits(GeoPath, Transform);
+var prototype$64 = inherits(GeoPath, Transform);
 
-prototype$63.transform = function(_, pulse) {
+prototype$64.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       path = this.value,
       field$$1 = _.field || identity,
       as = _.as || 'path',
-      mod;
+      flag = out.SOURCE;
 
   function set(t) { t[as] = path(field$$1(t)); }
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
-    this.value = path = getProjectionPath(_.projection).context(null);
-    out.materialize().reflow().visit(out.SOURCE, set);
+    this.value = path = getProjectionPath(_.projection);
+    out.materialize().reflow();
   } else {
-    path.context(null);
-    mod = field$$1 === identity || pulse.modified(field$$1.fields);
-    out.visit(mod ? out.ADD_MOD : out.ADD, set);
+    flag = field$$1 === identity || pulse.modified(field$$1.fields)
+      ? out.ADD_MOD
+      : out.ADD;
   }
+
+  var prev = initPath(path, _.pointRadius);
+  out.visit(flag, set);
+  path.pointRadius(prev);
 
   return out.modifies(as);
 };
+
+function initPath(path, pointRadius) {
+  var prev = path.pointRadius();
+  path.context(null);
+  if (pointRadius != null) {
+    path.pointRadius(pointRadius);
+  }
+  return prev;
+}
 
 /**
  * Geo-code a longitude/latitude point to an x/y coordinate.
@@ -22371,9 +22884,9 @@ GeoPoint.Definition = {
   ]
 };
 
-var prototype$64 = inherits(GeoPoint, Transform);
+var prototype$65 = inherits(GeoPoint, Transform);
 
-prototype$64.transform = function(_, pulse) {
+prototype$65.transform = function(_, pulse) {
   var proj = _.projection,
       lon = _.fields[0],
       lat = _.fields[1],
@@ -22425,13 +22938,14 @@ GeoShape.Definition = {
   "params": [
     { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field", "default": "datum" },
+    { "name": "pointRadius", "type": "number", "expr": true },
     { "name": "as", "type": "string", "default": "shape" }
   ]
 };
 
-var prototype$65 = inherits(GeoShape, Transform);
+var prototype$66 = inherits(GeoShape, Transform);
 
-prototype$65.transform = function(_, pulse) {
+prototype$66.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       shape = this.value,
       datum = _.field || field('datum'),
@@ -22441,7 +22955,10 @@ prototype$65.transform = function(_, pulse) {
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
     this.value = shape = shapeGenerator(
-      getProjectionPath(_.projection), datum);
+      getProjectionPath(_.projection),
+      datum,
+      _.pointRadius
+    );
     out.materialize().reflow();
     flag = out.SOURCE;
   }
@@ -22451,10 +22968,15 @@ prototype$65.transform = function(_, pulse) {
   return out.modifies(as);
 };
 
-function shapeGenerator(path, field$$1) {
-  var shape = function(_) {
-    return path(field$$1(_));
-  };
+function shapeGenerator(path, field$$1, pointRadius) {
+  var shape = pointRadius == null
+    ? function(_) { return path(field$$1(_)); }
+    : function(_) {
+      var prev = path.pointRadius(),
+          value = path.pointRadius(pointRadius)(field$$1(_));
+      path.pointRadius(prev);
+      return value;
+    };
   shape.context = function(_) {
     path.context(_);
     return shape;
@@ -22489,9 +23011,9 @@ Graticule.Definition = {
   ]
 };
 
-var prototype$66 = inherits(Graticule, Transform);
+var prototype$67 = inherits(Graticule, Transform);
 
-prototype$66.transform = function(_, pulse) {
+prototype$67.transform = function(_, pulse) {
   var out = pulse.fork(),
       src = this.value,
       gen = this.generator, t;
@@ -22526,9 +23048,9 @@ function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype$67 = inherits(Projection, Transform);
+var prototype$68 = inherits(Projection, Transform);
 
-prototype$67.transform = function(_, pulse) {
+prototype$68.transform = function(_, pulse) {
   var proj = this.value;
 
   if (!proj || _.modified('type')) {
@@ -23806,9 +24328,9 @@ Force.Definition = {
   ]
 };
 
-var prototype$68 = inherits(Force, Transform);
+var prototype$69 = inherits(Force, Transform);
 
-prototype$68.transform = function(_, pulse) {
+prototype$69.transform = function(_, pulse) {
   var sim = this.value,
       change = pulse.changed(pulse.ADD_REM),
       params = _.modified(ForceParams),
@@ -23851,7 +24373,7 @@ prototype$68.transform = function(_, pulse) {
   return this.finish(_, pulse);
 };
 
-prototype$68.finish = function(_, pulse) {
+prototype$69.finish = function(_, pulse) {
   var dataflow = pulse.dataflow;
 
   // inspect dependencies, touch link source data
@@ -25229,7 +25751,7 @@ function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true, "source": true, "generates": true, "changes": true},
+  "metadata": {"treesource": true, "generates": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
     { "name": "key", "type": "field" },
@@ -25237,13 +25759,13 @@ Nest.Definition = {
   ]
 };
 
-var prototype$69 = inherits(Nest, Transform);
+var prototype$70 = inherits(Nest, Transform);
 
 function children(n) {
   return n.values;
 }
 
-prototype$69.transform = function(_, pulse) {
+prototype$70.transform = function(_, pulse) {
   if (!pulse.source) {
     error$1('Nest transform requires an upstream data source.');
   }
@@ -25266,7 +25788,7 @@ prototype$69.transform = function(_, pulse) {
     // generate new tree structure
     root = array(_.keys)
       .reduce(function(n, k) { n.key(k); return n; }, nest())
-      .entries(pulse.source);
+      .entries(out.materialize(out.SOURCE).source);
     this.value = tree = hierarchy({values: root}, children);
 
     // collect nodes to add
@@ -25304,9 +25826,9 @@ function HierarchyLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype$71 = inherits(HierarchyLayout, Transform);
+var prototype$72 = inherits(HierarchyLayout, Transform);
 
-prototype$71.transform = function(_, pulse) {
+prototype$72.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error$1(this.constructor.name
       + ' transform requires a backing tree data source.');
@@ -25371,13 +25893,13 @@ Pack.Definition = {
   ]
 };
 
-var prototype$70 = inherits(Pack, HierarchyLayout);
+var prototype$71 = inherits(Pack, HierarchyLayout);
 
-prototype$70.layout = pack$1;
+prototype$71.layout = pack$1;
 
-prototype$70.params = ['size', 'padding'];
+prototype$71.params = ['size', 'padding'];
 
-prototype$70.fields = Output;
+prototype$71.fields = Output;
 
 var Output$1 = ["x0", "y0", "x1", "y1", "depth", "children"];
 
@@ -25404,13 +25926,13 @@ Partition.Definition = {
   ]
 };
 
-var prototype$72 = inherits(Partition, HierarchyLayout);
+var prototype$73 = inherits(Partition, HierarchyLayout);
 
-prototype$72.layout = partition$2;
+prototype$73.layout = partition$2;
 
-prototype$72.params = ['size', 'round', 'padding'];
+prototype$73.params = ['size', 'round', 'padding'];
 
-prototype$72.fields = Output$1;
+prototype$73.fields = Output$1;
 
 /**
   * Stratify a collection of tuples into a tree structure based on
@@ -25433,9 +25955,9 @@ Stratify.Definition = {
   ]
 };
 
-var prototype$73 = inherits(Stratify, Transform);
+var prototype$74 = inherits(Stratify, Transform);
 
-prototype$73.transform = function(_, pulse) {
+prototype$74.transform = function(_, pulse) {
   if (!pulse.source) {
     error$1('Stratify transform requires an upstream data source.');
   }
@@ -25488,20 +26010,20 @@ Tree.Definition = {
   ]
 };
 
-var prototype$74 = inherits(Tree, HierarchyLayout);
+var prototype$75 = inherits(Tree, HierarchyLayout);
 
 /**
  * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
  */
-prototype$74.layout = function(method) {
+prototype$75.layout = function(method) {
   var m = method || 'tidy';
   if (Layouts.hasOwnProperty(m)) return Layouts[m]();
   else error$1('Unrecognized Tree layout method: ' + m);
 };
 
-prototype$74.params = ['size', 'nodeSize', 'separation'];
+prototype$75.params = ['size', 'nodeSize', 'separation'];
 
-prototype$74.fields = Output$2;
+prototype$75.fields = Output$2;
 
 /**
   * Generate tuples representing links between tree nodes.
@@ -25524,7 +26046,7 @@ TreeLinks.Definition = {
   ]
 };
 
-var prototype$75 = inherits(TreeLinks, Transform);
+var prototype$76 = inherits(TreeLinks, Transform);
 
 function parentTuple(node) {
   var p;
@@ -25533,7 +26055,7 @@ function parentTuple(node) {
       && (tupleid(p) != null) && p;
 }
 
-prototype$75.transform = function(_, pulse) {
+prototype$76.transform = function(_, pulse) {
   if (!pulse.source || !pulse.source.root) {
     error$1('TreeLinks transform requires a backing tree data source.');
   }
@@ -25631,13 +26153,13 @@ Treemap.Definition = {
   ]
 };
 
-var prototype$76 = inherits(Treemap, HierarchyLayout);
+var prototype$77 = inherits(Treemap, HierarchyLayout);
 
 /**
  * Treemap layout generator. Adds 'method' and 'ratio' parameters
  * to configure the underlying tile method.
  */
-prototype$76.layout = function() {
+prototype$77.layout = function() {
   var x = treemap();
   x.ratio = function(_) {
     var t = x.tile();
@@ -25650,13 +26172,13 @@ prototype$76.layout = function() {
   return x;
 };
 
-prototype$76.params = [
+prototype$77.params = [
   'method', 'ratio', 'size', 'round',
   'padding', 'paddingInner', 'paddingOuter',
   'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
 ];
 
-prototype$76.fields = Output$3;
+prototype$77.fields = Output$3;
 
 
 
@@ -26675,11 +27197,11 @@ Voronoi.Definition = {
   ]
 };
 
-var prototype$77 = inherits(Voronoi, Transform);
+var prototype$78 = inherits(Voronoi, Transform);
 
 var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-prototype$77.transform = function(_, pulse) {
+prototype$78.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
       diagram, polygons, i, n;
@@ -27164,9 +27686,9 @@ Wordcloud.Definition = {
   ]
 };
 
-var prototype$78 = inherits(Wordcloud, Transform);
+var prototype$79 = inherits(Wordcloud, Transform);
 
-prototype$78.transform = function(_, pulse) {
+prototype$79.transform = function(_, pulse) {
   function modp(param) {
     var p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
@@ -27536,9 +28058,9 @@ CrossFilter.Definition = {
   ]
 };
 
-var prototype$79 = inherits(CrossFilter, Transform);
+var prototype$80 = inherits(CrossFilter, Transform);
 
-prototype$79.transform = function(_, pulse) {
+prototype$80.transform = function(_, pulse) {
   if (!this._dims) {
     return this.init(_, pulse);
   } else {
@@ -27551,7 +28073,7 @@ prototype$79.transform = function(_, pulse) {
   }
 };
 
-prototype$79.init = function(_, pulse) {
+prototype$80.init = function(_, pulse) {
   var fields = _.fields,
       query = _.query,
       indices = this._indices = {},
@@ -27569,7 +28091,7 @@ prototype$79.init = function(_, pulse) {
   return this.eval(_, pulse);
 };
 
-prototype$79.reinit = function(_, pulse) {
+prototype$80.reinit = function(_, pulse) {
   var output = pulse.materialize().fork(),
       fields = _.fields,
       query = _.query,
@@ -27636,7 +28158,7 @@ prototype$79.reinit = function(_, pulse) {
   return output;
 };
 
-prototype$79.eval = function(_, pulse) {
+prototype$80.eval = function(_, pulse) {
   var output = pulse.materialize().fork(),
       m = this._dims.length,
       mask = 0;
@@ -27664,7 +28186,7 @@ prototype$79.eval = function(_, pulse) {
   return output;
 };
 
-prototype$79.insert = function(_, pulse, output) {
+prototype$80.insert = function(_, pulse, output) {
   var tuples = pulse.add,
       bits = this.value,
       dims = this._dims,
@@ -27698,7 +28220,7 @@ prototype$79.insert = function(_, pulse, output) {
   }
 };
 
-prototype$79.modify = function(pulse, output) {
+prototype$80.modify = function(pulse, output) {
   var out = output.mod,
       bits = this.value,
       curr = bits.curr(),
@@ -27712,7 +28234,7 @@ prototype$79.modify = function(pulse, output) {
   }
 };
 
-prototype$79.remove = function(_, pulse, output) {
+prototype$80.remove = function(_, pulse, output) {
   var indices = this._indices,
       bits = this.value,
       curr = bits.curr(),
@@ -27742,7 +28264,7 @@ prototype$79.remove = function(_, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype$79.reindex = function(pulse, num, map) {
+prototype$80.reindex = function(pulse, num, map) {
   var indices = this._indices,
       bits = this.value;
 
@@ -27752,7 +28274,7 @@ prototype$79.reindex = function(pulse, num, map) {
   });
 };
 
-prototype$79.update = function(_, pulse, output) {
+prototype$80.update = function(_, pulse, output) {
   var dims = this._dims,
       query = _.query,
       stamp = pulse.stamp,
@@ -27782,7 +28304,7 @@ prototype$79.update = function(_, pulse, output) {
   return mask;
 };
 
-prototype$79.incrementAll = function(dim, query, stamp, out) {
+prototype$80.incrementAll = function(dim, query, stamp, out) {
   var bits = this.value,
       seen = bits.seen(),
       curr = bits.curr(),
@@ -27846,7 +28368,7 @@ prototype$79.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype$79.incrementOne = function(dim, query, add, rem) {
+prototype$80.incrementOne = function(dim, query, add, rem) {
   var bits = this.value,
       curr = bits.curr(),
       index = dim.index(),
@@ -27916,9 +28438,9 @@ ResolveFilter.Definition = {
   ]
 };
 
-var prototype$80 = inherits(ResolveFilter, Transform);
+var prototype$81 = inherits(ResolveFilter, Transform);
 
-prototype$80.transform = function(_, pulse) {
+prototype$81.transform = function(_, pulse) {
   var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
       bitmap = _.filter,
       mask = bitmap.mask;
@@ -27971,7 +28493,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.0.10";
+var version = "3.1.0";
 
 var Default = 'default';
 
@@ -28068,10 +28590,17 @@ function offset$1(view) {
 }
 
 function resizeRenderer(view) {
-  var origin = offset$1(view);
+  var origin = offset$1(view),
+      w = width(view),
+      h = height$1(view);
+
   view._renderer.background(view._background);
-  view._renderer.resize(width(view), height$1(view), origin);
+  view._renderer.resize(w, h, origin);
   view._handler.origin(origin);
+
+  view._resizeListeners.forEach(function(handler) {
+    handler(w, h);
+  });
 }
 
 /**
@@ -30769,16 +31298,38 @@ var scaleGradient = function(scale, p0, p1, count) {
   return gradient;
 };
 
-function geoMethod(method) {
+function geoMethod(methodName, globalMethod) {
   return function(projection, geojson, group) {
-    var p = getScale(projection, (group || this).context);
-    return p && p.path[method](geojson);
+    if (projection) {
+      // projection defined, use it
+      var p = getScale(projection, (group || this).context);
+      return p && p.path[methodName](geojson);
+    } else {
+      // projection undefined, use global method
+      return globalMethod(geojson);
+    }
   };
 }
 
-var geoArea = geoMethod('area');
-var geoBounds = geoMethod('bounds');
-var geoCentroid = geoMethod('centroid');
+var geoArea = geoMethod('area', area$4);
+var geoBounds = geoMethod('bounds', bounds$1);
+var geoCentroid = geoMethod('centroid', centroid);
+
+function geoShape(projection, geojson, group) {
+  var p = getScale(projection, (group || this).context);
+  return function(context$$1) {
+    return p ? p.path.context(context$$1)(geojson) : '';
+  }
+}
+
+function pathShape(path) {
+  var p = null;
+  return function(context$$1) {
+    return context$$1
+      ? pathRender(context$$1, (p = p || pathParse(path)))
+      : path;
+  };
+}
 
 function data$1(name) {
   var data = this.context.data[name];
@@ -30911,7 +31462,7 @@ var modify = function(name, insert, remove, toggle, modify, values) {
     df.runAfter(function() {
       data.modified = true;
       df.pulse(input, changes).run();
-    }, true);
+    }, true, 1);
   }
 
   if (remove) {
@@ -31291,6 +31842,7 @@ var functionContext = {
   bandspace: bandspace,
   inrange: inrange,
   setdata: setdata,
+  pathShape: pathShape,
   panLinear: panLinear,
   panLog: panLog,
   panPow: panPow,
@@ -31334,6 +31886,7 @@ expressionFunction('gradient', scaleGradient, scaleVisitor);
 expressionFunction('geoArea', geoArea, scaleVisitor);
 expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
+expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data$1, dataVisitor);
 expressionFunction('vlSingle', vlPoint, dataVisitor);
@@ -32798,11 +33351,35 @@ var guideGroup = function(role, style, name, dataRef, interactive, encode, marks
     role: role,
     style: style,
     from: dataRef,
-    interactive: interactive,
+    interactive: interactive || false,
     encode: encode,
     marks: marks
   };
 };
+
+var clip$3 = function(clip, scope) {
+  var expr;
+
+  if (isObject(clip)) {
+    if (clip.signal) {
+      expr = clip.signal;
+    } else if (clip.path) {
+      expr = 'pathShape(' + param(clip.path) + ')';
+    } else if (clip.sphere) {
+      expr = 'geoShape(' + param(clip.sphere) + ', {type: "Sphere"})';
+    }
+  }
+
+  return expr
+    ? scope.signalRef(expr)
+    : !!clip;
+};
+
+function param(value) {
+  return isObject(value) && value.signal
+    ? value.signal
+    : $(value);
+}
 
 var role = function(spec) {
   var role = spec.role || '';
@@ -32813,13 +33390,17 @@ var role = function(spec) {
 
 var definition$1 = function(spec) {
   return {
-    clip:        spec.clip || false,
-    interactive: spec.interactive === false ? false : true,
     marktype:    spec.type,
     name:        spec.name || undefined,
     role:        spec.role || role(spec),
     zindex:      +spec.zindex || undefined
   };
+};
+
+var interactive = function(spec, scope) {
+  return spec && spec.signal ? scope.signalRef(spec.signal)
+    : spec === false ? false
+    : true;
 };
 
 /**
@@ -33051,9 +33632,9 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype$82 = DataScope.prototype;
+var prototype$83 = DataScope.prototype;
 
-prototype$82.countsRef = function(scope, field$$1, sort) {
+prototype$83.countsRef = function(scope, field$$1, sort) {
   var ds = this,
       cache = ds.counts || (ds.counts = {}),
       k = fieldKey(field$$1), v, a, p;
@@ -33127,27 +33708,27 @@ function cache(scope, ds, name, optype, field$$1, counts, index) {
   return v;
 }
 
-prototype$82.tuplesRef = function() {
+prototype$83.tuplesRef = function() {
   return ref(this.values);
 };
 
-prototype$82.extentRef = function(scope, field$$1) {
+prototype$83.extentRef = function(scope, field$$1) {
   return cache(scope, this, 'extent', 'extent', field$$1, false);
 };
 
-prototype$82.domainRef = function(scope, field$$1) {
+prototype$83.domainRef = function(scope, field$$1) {
   return cache(scope, this, 'domain', 'values', field$$1, false);
 };
 
-prototype$82.valuesRef = function(scope, field$$1, sort) {
+prototype$83.valuesRef = function(scope, field$$1, sort) {
   return cache(scope, this, 'vals', 'values', field$$1, sort || true);
 };
 
-prototype$82.lookupRef = function(scope, field$$1) {
+prototype$83.lookupRef = function(scope, field$$1) {
   return cache(scope, this, 'lookup', 'tupleindex', field$$1, false);
 };
 
-prototype$82.indataRef = function(scope, field$$1) {
+prototype$83.indataRef = function(scope, field$$1) {
   return cache(scope, this, 'indata', 'tupleindex', field$$1, true, true);
 };
 
@@ -33252,12 +33833,14 @@ var parseMark = function(spec, scope) {
 
   // connect visual items to scenegraph
   op = scope.add(Mark$1({
-    markdef:   definition$1(spec),
-    context:   {$context: true},
-    groups:    scope.lookup(),
-    parent:    scope.signals.parent ? scope.signalRef('parent') : null,
-    index:     scope.markpath(),
-    pulse:     ref(op)
+    markdef:     definition$1(spec),
+    interactive: interactive(spec.interactive, scope),
+    clip:        clip$3(spec.clip, scope),
+    context:     {$context: true},
+    groups:      scope.lookup(),
+    parent:      scope.signals.parent ? scope.signalRef('parent') : null,
+    index:       scope.markpath(),
+    pulse:       ref(op)
   }));
   markRef = ref(op);
 
@@ -33284,7 +33867,7 @@ var parseMark = function(spec, scope) {
   // if item sort specified, perform post-encoding
   if (spec.sort) {
     op = scope.add(SortItems$1({
-      sort:  scope.compareRef(spec.sort),
+      sort:  scope.compareRef(spec.sort, true), // stable sort
       pulse: ref(op)
     }));
   }
@@ -33360,7 +33943,7 @@ var parseLegend = function(spec, scope) {
       encode = spec.encode || {},
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
-      interactive = !!legendEncode.interactive,
+      interactive = legendEncode.interactive,
       style = legendEncode.style,
       datum, dataRef, entryRef, group, title,
       entryEncode, params, children;
@@ -33958,7 +34541,7 @@ var parseAxis = function(spec, scope) {
       encode = spec.encode || {},
       axisEncode = encode.axis || {},
       name = axisEncode.name || undefined,
-      interactive = !!axisEncode.interactive,
+      interactive = axisEncode.interactive,
       style = axisEncode.style,
       datum, dataRef, ticksRef, size, group, children;
 
@@ -34188,15 +34771,15 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$83 = Scope.prototype = Subscope.prototype;
+var prototype$84 = Scope.prototype = Subscope.prototype;
 
 // ----
 
-prototype$83.fork = function() {
+prototype$84.fork = function() {
   return new Subscope(this);
 };
 
-prototype$83.toRuntime = function() {
+prototype$84.toRuntime = function() {
   this.finish();
   return {
     background:  this.background,
@@ -34208,11 +34791,11 @@ prototype$83.toRuntime = function() {
   };
 };
 
-prototype$83.id = function() {
+prototype$84.id = function() {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype$83.add = function(op) {
+prototype$84.add = function(op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
@@ -34223,24 +34806,24 @@ prototype$83.add = function(op) {
   return op;
 };
 
-prototype$83.proxy = function(op) {
+prototype$84.proxy = function(op) {
   var vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy$1({value: vref}));
 };
 
-prototype$83.addStream = function(stream) {
+prototype$84.addStream = function(stream) {
   this.streams.push(stream);
   stream.id = this.id();
   return stream;
 };
 
-prototype$83.addUpdate = function(update) {
+prototype$84.addUpdate = function(update) {
   this.updates.push(update);
   return update;
 };
 
 // Apply metadata
-prototype$83.finish = function() {
+prototype$84.finish = function() {
   var name, ds;
 
   // annotate root
@@ -34280,40 +34863,40 @@ prototype$83.finish = function() {
 
 // ----
 
-prototype$83.pushState = function(encode, parent, lookup) {
+prototype$84.pushState = function(encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype$83.popState = function() {
+prototype$84.popState = function() {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype$83.parent = function() {
+prototype$84.parent = function() {
   return peek(this._parent);
 };
 
-prototype$83.encode = function() {
+prototype$84.encode = function() {
   return peek(this._encode);
 };
 
-prototype$83.lookup = function() {
+prototype$84.lookup = function() {
   return peek(this._lookup);
 };
 
-prototype$83.markpath = function() {
+prototype$84.markpath = function() {
   var p = this._markpath;
   return ++p[p.length-1];
 };
 
 // ----
 
-prototype$83.fieldRef = function(field$$1, name) {
+prototype$84.fieldRef = function(field$$1, name) {
   if (isString(field$$1)) return fieldRef$1(field$$1, name);
   if (!field$$1.signal) {
     error$1('Unsupported field reference: ' + $(field$$1));
@@ -34331,7 +34914,7 @@ prototype$83.fieldRef = function(field$$1, name) {
   return f;
 };
 
-prototype$83.compareRef = function(cmp) {
+prototype$84.compareRef = function(cmp, stable) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -34346,12 +34929,16 @@ prototype$83.compareRef = function(cmp) {
       fields = array(cmp.field).map(check),
       orders = array(cmp.order).map(check);
 
+  if (stable) {
+    fields.push(tupleidRef);
+  }
+
   return signal
     ? ref(this.add(Compare$1({fields: fields, orders: orders})))
     : compareRef(fields, orders);
 };
 
-prototype$83.keyRef = function(fields, flat) {
+prototype$84.keyRef = function(fields, flat) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -34370,7 +34957,7 @@ prototype$83.keyRef = function(fields, flat) {
     : keyRef(fields, flat);
 };
 
-prototype$83.sortRef = function(sort) {
+prototype$84.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
@@ -34387,7 +34974,7 @@ prototype$83.sortRef = function(sort) {
 
 // ----
 
-prototype$83.event = function(source, type) {
+prototype$84.event = function(source, type) {
   var key$$1 = source + ':' + type;
   if (!this.events[key$$1]) {
     var id$$1 = this.id();
@@ -34403,7 +34990,7 @@ prototype$83.event = function(source, type) {
 
 // ----
 
-prototype$83.addSignal = function(name, value$$1) {
+prototype$84.addSignal = function(name, value$$1) {
   if (this.signals.hasOwnProperty(name)) {
     error$1('Duplicate signal name: ' + $(name));
   }
@@ -34411,14 +34998,14 @@ prototype$83.addSignal = function(name, value$$1) {
   return this.signals[name] = op;
 };
 
-prototype$83.getSignal = function(name) {
+prototype$84.getSignal = function(name) {
   if (!this.signals[name]) {
     error$1('Unrecognized signal name: ' + $(name));
   }
   return this.signals[name];
 };
 
-prototype$83.signalRef = function(s) {
+prototype$84.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!this.lambdas.hasOwnProperty(s)) {
@@ -34427,7 +35014,7 @@ prototype$83.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype$83.parseLambdas = function() {
+prototype$84.parseLambdas = function() {
   var code = Object.keys(this.lambdas);
   for (var i=0, n=code.length; i<n; ++i) {
     var s = code[i],
@@ -34438,11 +35025,11 @@ prototype$83.parseLambdas = function() {
   }
 };
 
-prototype$83.property = function(spec) {
+prototype$84.property = function(spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype$83.objectProperty = function(spec) {
+prototype$84.objectProperty = function(spec) {
   return (!spec || !isObject(spec)) ? spec
     : this.signalRef(spec.signal || propertyLambda(spec));
 };
@@ -34483,7 +35070,7 @@ function objectLambda(obj) {
   return code + '}';
 }
 
-prototype$83.addBinding = function(name, bind) {
+prototype$84.addBinding = function(name, bind) {
   if (!this.bindings) {
     error$1('Nested signals do not support binding: ' + $(name));
   }
@@ -34492,55 +35079,55 @@ prototype$83.addBinding = function(name, bind) {
 
 // ----
 
-prototype$83.addScaleProj = function(name, transform) {
+prototype$84.addScaleProj = function(name, transform) {
   if (this.scales.hasOwnProperty(name)) {
     error$1('Duplicate scale or projection name: ' + $(name));
   }
   this.scales[name] = this.add(transform);
 };
 
-prototype$83.addScale = function(name, params) {
+prototype$84.addScale = function(name, params) {
   this.addScaleProj(name, Scale$1(params));
 };
 
-prototype$83.addProjection = function(name, params) {
+prototype$84.addProjection = function(name, params) {
   this.addScaleProj(name, Projection$1(params));
 };
 
-prototype$83.getScale = function(name) {
+prototype$84.getScale = function(name) {
   if (!this.scales[name]) {
     error$1('Unrecognized scale name: ' + $(name));
   }
   return this.scales[name];
 };
 
-prototype$83.projectionRef =
-prototype$83.scaleRef = function(name) {
+prototype$84.projectionRef =
+prototype$84.scaleRef = function(name) {
   return ref(this.getScale(name));
 };
 
-prototype$83.projectionType =
-prototype$83.scaleType = function(name) {
+prototype$84.projectionType =
+prototype$84.scaleType = function(name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype$83.addData = function(name, dataScope) {
+prototype$84.addData = function(name, dataScope) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype$83.getData = function(name) {
+prototype$84.getData = function(name) {
   if (!this.data[name]) {
     error$1('Undefined data set name: ' + $(name));
   }
   return this.data[name];
 };
 
-prototype$83.addDataPipeline = function(name, entries) {
+prototype$84.addDataPipeline = function(name, entries) {
   if (this.data.hasOwnProperty(name)) {
     error$1('Duplicate data set name: ' + $(name));
   }
@@ -35389,7 +35976,7 @@ function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
     // run dataflow on width/height signal change
     if (rerun) view.run('enter');
     if (auto) view.runAfter(function() { view.resize(); });
-  });
+  }, false, 1);
 }
 
 /**
@@ -35434,9 +36021,11 @@ function signalTest(name, op) {
  */
 function setState$1(state) {
   var view = this;
-  view._trigger = false;
-  view._runtime.setState(state);
-  view.run().runAfter(function() { view._trigger = true; });
+  view.runAfter(function() {
+    view._trigger = false;
+    view._runtime.setState(state);
+    view.run().runAfter(function() { view._trigger = true; });
+  });
   return this;
 }
 
@@ -35467,8 +36056,9 @@ function View(spec, options) {
   view._renderer = null;
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
-  view._eventListeners = [];
   view._preventDefault = false;
+  view._eventListeners = [];
+  view._resizeListeners = [];
 
   // initialize dataflow graph
   var ctx = runtime(view, spec, options.functions);
@@ -35509,11 +36099,11 @@ function View(spec, options) {
   cursor(view);
 }
 
-var prototype$81 = inherits(View, Dataflow);
+var prototype$82 = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype$81.run = function(encode) {
+prototype$82.run = function(encode) {
   Dataflow.prototype.run.call(this, encode);
   if (this._redraw || this._resize) {
     try {
@@ -35525,7 +36115,7 @@ prototype$81.run = function(encode) {
   return this;
 };
 
-prototype$81.render = function() {
+prototype$82.render = function() {
   if (this._renderer) {
     if (this._resize) {
       this._resize = 0;
@@ -35537,18 +36127,18 @@ prototype$81.render = function() {
   return this;
 };
 
-prototype$81.dirty = function(item) {
+prototype$82.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
 
 // -- GET / SET ----
 
-prototype$81.container = function() {
+prototype$82.container = function() {
   return this._el;
 };
 
-prototype$81.scenegraph = function() {
+prototype$82.scenegraph = function() {
   return this._scenegraph;
 };
 
@@ -35558,14 +36148,14 @@ function lookupSignal(view, name) {
     : error$1('Unrecognized signal name: ' + $(name));
 }
 
-prototype$81.signal = function(name, value, options) {
+prototype$82.signal = function(name, value, options) {
   var op = lookupSignal(this, name);
   return arguments.length === 1
     ? op.value
     : this.update(op, value, options);
 };
 
-prototype$81.background = function(_) {
+prototype$82.background = function(_) {
   if (arguments.length) {
     this._background = _;
     this._resize = 1;
@@ -35575,23 +36165,23 @@ prototype$81.background = function(_) {
   }
 };
 
-prototype$81.width = function(_) {
+prototype$82.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype$81.height = function(_) {
+prototype$82.height = function(_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype$81.padding = function(_) {
+prototype$82.padding = function(_) {
   return arguments.length ? this.signal('padding', _) : this.signal('padding');
 };
 
-prototype$81.autosize = function(_) {
+prototype$82.autosize = function(_) {
   return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
 };
 
-prototype$81.renderer = function(type) {
+prototype$82.renderer = function(type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) error$1('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -35604,7 +36194,7 @@ prototype$81.renderer = function(type) {
   return this;
 };
 
-prototype$81.loader = function(loader) {
+prototype$82.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -35616,46 +36206,74 @@ prototype$81.loader = function(loader) {
   return this;
 };
 
-prototype$81.resize = function() {
+prototype$82.resize = function() {
   this._autosize = 1;
   return this;
 };
 
 // -- SIZING ----
-prototype$81._resizeView = resizeView;
+prototype$82._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
-prototype$81.addEventListener = function(type, handler) {
+prototype$82.addEventListener = function(type, handler) {
   this._handler.on(type, handler);
   return this;
 };
 
-prototype$81.removeEventListener = function(type, handler) {
+prototype$82.removeEventListener = function(type, handler) {
   this._handler.off(type, handler);
   return this;
 };
 
-prototype$81.addSignalListener = function(name, handler) {
-  var s = lookupSignal(this, name),
-      h = function() { handler(name, s.value); };
-  h.handler = handler;
-  this.on(s, null, h);
+prototype$82.addResizeListener = function(handler) {
+  var l = this._resizeListeners;
+  if (l.indexOf(handler) < 0) {
+    // add handler if it isn't already registered
+    l.push(handler);
+  }
   return this;
 };
 
-prototype$81.removeSignalListener = function(name, handler) {
-  var s = lookupSignal(this, name),
-      t = s._targets || [],
+prototype$82.removeResizeListener = function(handler) {
+  var l = this._resizeListeners,
+      i = l.indexOf(handler);
+  if (i >= 0) {
+    l.splice(i, 1);
+  }
+  return this;
+};
+
+function findHandler(signal, handler) {
+  var t = signal._targets || [],
       h = t.filter(function(op) {
             var u = op._update;
             return u && u.handler === handler;
           });
-  if (h.length) t.remove(h[0]);
+  return h.length ? h[0] : null;
+}
+
+prototype$82.addSignalListener = function(name, handler) {
+  var s = lookupSignal(this, name),
+      h = findHandler(s, handler);
+
+  if (!h) {
+    h = function() { handler(name, s.value); };
+    h.handler = handler;
+    this.on(s, null, h);
+  }
   return this;
 };
 
-prototype$81.preventDefault = function(_) {
+prototype$82.removeSignalListener = function(name, handler) {
+  var s = lookupSignal(this, name),
+      h = findHandler(s, handler);
+
+  if (h) s._targets.remove(h);
+  return this;
+};
+
+prototype$82.preventDefault = function(_) {
   if (arguments.length) {
     this._preventDefault = _;
     return this;
@@ -35664,7 +36282,7 @@ prototype$81.preventDefault = function(_) {
   }
 };
 
-prototype$81.tooltipHandler = function(_) {
+prototype$82.tooltipHandler = function(_) {
   var h = this._handler;
   if (!arguments.length) {
     return h.handleTooltip;
@@ -35674,27 +36292,27 @@ prototype$81.tooltipHandler = function(_) {
   }
 };
 
-prototype$81.events = events$1;
-prototype$81.finalize = finalize;
-prototype$81.hover = hover;
+prototype$82.events = events$1;
+prototype$82.finalize = finalize;
+prototype$82.hover = hover;
 
 // -- DATA ----
-prototype$81.data = data;
-prototype$81.change = change;
-prototype$81.insert = insert;
-prototype$81.remove = remove;
+prototype$82.data = data;
+prototype$82.change = change;
+prototype$82.insert = insert;
+prototype$82.remove = remove;
 
 // -- INITIALIZATION ----
-prototype$81.initialize = initialize$1;
+prototype$82.initialize = initialize$1;
 
 // -- HEADLESS RENDERING ----
-prototype$81.toImageURL = renderToImageURL;
-prototype$81.toCanvas = renderToCanvas;
-prototype$81.toSVG = renderToSVG;
+prototype$82.toImageURL = renderToImageURL;
+prototype$82.toCanvas = renderToCanvas;
+prototype$82.toSVG = renderToSVG;
 
 // -- SAVE / RESTORE STATE ----
-prototype$81.getState = getState$1;
-prototype$81.setState = setState$1;
+prototype$82.getState = getState$1;
+prototype$82.setState = setState$1;
 
 // -- Transforms -----
 
@@ -35813,6 +36431,7 @@ exports.SVGStringRenderer = SVGStringRenderer;
 exports.RenderType = RenderType;
 exports.renderModule = renderModule;
 exports.Marks = marks;
+exports.boundClip = boundClip;
 exports.boundContext = context;
 exports.boundStroke = boundStroke;
 exports.boundItem = boundItem$1;
