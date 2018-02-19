@@ -2,7 +2,7 @@
 layout: example
 title: Earthquakes Example
 permalink: /examples/earthquakes/index.html
-spec: eathquakes
+spec: earthquakes
 image: /examples/img/earthquakes.png
 ---
 
