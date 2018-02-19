@@ -47,7 +47,7 @@ tape('Parser parses Vega specs with data transforms', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.operators.length, 33);
+  test.equal(dfs.operators.length, 31);
 
   test.end();
 });
