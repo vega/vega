@@ -1,2 +1,3 @@
-# vega-typings
-Typings for Vega
+# Vega-Typings
+
+Typings for [Vega](https://github.com/vega/vega). This is work in progress.
