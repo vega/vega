@@ -1,0 +1,18 @@
+{
+  "name": "vega-typings",
+  "version": "0.1.0",
+  "description": "Typings for Vega",
+  "types": "index.d.ts",
+  "repository": "git@github.com:vega/vega-typings.git",
+  "author": "Dominik Moritz <domoritz@gmail.com>",
+  "license": "BSD-3",
+  "devDependencies": {
+    "dtslint": "^0.2.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
+  },
+  "scripts": {
+    "lint": "tslint -p .",
+    "test": "tsc -p ."
+  }
+}
