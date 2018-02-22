@@ -48,5 +48,5 @@ export type Data = (
   name: string;
   on?: OnTrigger[];
   format?: Format;
-  transform?: Transform;
+  transform?: Transform[];
 };
