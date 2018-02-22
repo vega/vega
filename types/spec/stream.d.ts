@@ -29,13 +29,16 @@ export interface StreamParameters {
   debounce?: number;
   consume?: boolean;
 }
-export type EventStream = StreamParameters & ({
-  source?: 'view' | 'scope';
-  type: EventType;
-} | {
-  source: 'window',
-  type: keyof HTMLBodyElementEventMap;
-})
+export type EventStream = StreamParameters &
+  (
+    | {
+        source?: 'view' | 'scope';
+        type: EventType;
+      }
+    | {
+        source: 'window';
+        type: keyof HTMLBodyElementEventMap;
+      });
 export interface DerivedStream extends StreamParameters {
   stream: Stream;
 }
