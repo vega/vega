@@ -12,7 +12,6 @@
     "typescript": "^2.7.2"
   },
   "scripts": {
-    "lint": "tslint -p .",
-    "test": "tsc -p ."
+    "test": "dtslint ."
   }
 }
