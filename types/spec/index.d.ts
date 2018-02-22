@@ -1,8 +1,9 @@
 import { AutoSize } from './autosize';
 import { Background } from './background';
+import { Config } from './config';
+import { EncodeEntry, Encode } from './encode';
 import { Padding } from './padding';
 import { Scope } from './scope';
-import { EncodeEntry, Encode } from './encode';
 
 export interface Spec extends Scope, Encode<EncodeEntry> {
   $schema: string;
@@ -19,6 +20,7 @@ export * from './autosize';
 export * from './axis';
 export * from './background';
 export * from './bind';
+export * from './config';
 export * from './data';
 export * from './encode';
 export * from './expr';
