@@ -16,33 +16,30 @@ export type Loader = {
 
 export class View {
   constructor(runtime: Runtime, config?: any);
-  public initialize(dom?: Element | string): View;
-  public finalize(): void;
-  public logLevel(level: number): View;
-  public renderer(renderer: 'canvas' | 'svg' | 'none'): View;
-  public loader(loader: Loader): View;
+  initialize(dom?: Element | string): View;
+  finalize(): void;
+  logLevel(level: number): View;
+  renderer(renderer: 'canvas' | 'svg' | 'none'): View;
+  loader(loader: Loader): View;
 
-  public hover(): View;
-  public run(): View;
-  public change(name: string, changeset: any): View;
-  public changeset(): any;
-  public data(name: string): object[];
+  hover(): View;
+  run(): View;
+  change(name: string, changeset: any): View;
+  changeset(): any;
+  data(name: string): object[];
 
-  public width(): number;
-  public width(w: number): View;
-  public height(): number;
-  public height(h: number): View;
-  public padding(
-    p: number | { left?: number; right?: number; top?: number; bottom?: number },
-  ): View;
+  width(): number;
+  width(w: number): View;
+  height(): number;
+  height(h: number): View;
+  padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): View;
 
-  public toImageURL(type: string): Promise<string>;
-
+  toImageURL(type: string): Promise<string>;
   toSVG(): Promise<string>;
   toCanvas(): Promise<any>; // TODO node-canvas result
-  public signal(name: string, value: any): View;
-  public container(): HTMLElement | null;
-  public addEventListener(type: string, handler: Handler): void;
+  signal(name: string, value: any): View;
+  container(): HTMLElement | null;
+  addEventListener(type: string, handler: Handler): void;
 }
 
 export const Warn: number;
