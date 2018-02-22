@@ -184,10 +184,20 @@ export interface QuantizeScale extends BaseScale {
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
+export interface ThresholdScale extends BaseScale {
+  type?: 'threshold';
+  range?: RangeScheme;
+  nice?: boolean | number | SignalRef;
+  zero?: boolean | SignalRef;
+}
 export interface BinLinearScale extends BaseScale {
   type: 'bin-linear';
   range?: RangeScheme;
   interpolate?: ScaleInterpolate;
+}
+export interface BinOrdinalScale extends BaseScale {
+  type: 'bin-ordinal';
+  range?: RangeScheme | ScaleData;
 }
 export declare type Scale =
   | OrdinalScale
@@ -203,4 +213,6 @@ export declare type Scale =
   | SqrtScale
   | QuantileScale
   | QuantizeScale
-  | BinLinearScale;
+  | ThresholdScale
+  | BinLinearScale
+  | BinOrdinalScale;
