@@ -16,9 +16,5 @@
         "types": [],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
-    },
-    "files": [
-        "index.d.ts",
-        "vega-tests.ts"
-    ]
+    }
 }

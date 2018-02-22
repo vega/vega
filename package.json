@@ -2,7 +2,7 @@
   "name": "vega-typings",
   "version": "0.1.0",
   "description": "Typings for Vega",
-  "types": "index.d.ts",
+  "types": "types",
   "repository": "git@github.com:vega/vega-typings.git",
   "author": "Dominik Moritz <domoritz@gmail.com>",
   "license": "BSD-3",
