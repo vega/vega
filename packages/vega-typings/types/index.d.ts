@@ -10,38 +10,38 @@ import { Padding } from './padding';
 import { Scope } from './scope';
 import { EncodeEntry, Encode } from './encode';
 
-export * from './autosize'
-export * from './axis'
-export * from './background'
-export * from './bind'
-export * from './data'
-export * from './encode'
-export * from './expr'
-export * from './layout'
-export * from './legend'
-export * from './mark'
-export * from './marktype'
-export * from './on-events'
-export * from './on-trigger'
-export * from './padding'
-export * from './projection'
-export * from './scale'
-export * from './scope'
-export * from './selector'
-export * from './signal'
-export * from './stream'
-export * from './title'
-export * from './transform'
+export * from './autosize';
+export * from './axis';
+export * from './background';
+export * from './bind';
+export * from './data';
+export * from './encode';
+export * from './expr';
+export * from './layout';
+export * from './legend';
+export * from './mark';
+export * from './marktype';
+export * from './on-events';
+export * from './on-trigger';
+export * from './padding';
+export * from './projection';
+export * from './scale';
+export * from './scope';
+export * from './selector';
+export * from './signal';
+export * from './stream';
+export * from './title';
+export * from './transform';
 
 export interface Spec extends Scope, Encode<EncodeEntry> {
-    '$schema': string;
-    width?: number;
-    height?: number;
-    config?: any;
-    description?: string;
-    padding?: Padding;
-    autosize?: AutoSize;
-    background?: Background;
+  $schema: string;
+  width?: number;
+  height?: number;
+  config?: any;
+  description?: string;
+  padding?: Padding;
+  autosize?: AutoSize;
+  background?: Background;
 }
 
 // ============================================================================================
@@ -49,41 +49,43 @@ export interface Spec extends Scope, Encode<EncodeEntry> {
 // ============================================================================================
 
 // TODO
-export type Runtime = any
+export type Runtime = any;
 
 export const version: string;
 export function parse(spec: any, opt?: any): Runtime;
 export function isString(value: any): value is string;
 
 export type Loader = {
-    load: (uri: string, options?: any) => Promise<string>
-    sanitize: (uri: string, options: any) => Promise<{href: string}>
-    http: (uri: string, options: any) => Promise<string>
-    file: (filename: string) => Promise<string>
-}
+  load: (uri: string, options?: any) => Promise<string>;
+  sanitize: (uri: string, options: any) => Promise<{ href: string }>;
+  http: (uri: string, options: any) => Promise<string>;
+  file: (filename: string) => Promise<string>;
+};
 
 export class View {
-    constructor(runtime: Runtime, config?: any);
-    public initialize(dom?: Element | string): View;
-    public finalize(): void;
-    public logLevel(level: number): View;
-    public renderer(renderer: 'canvas' | 'svg' | 'none'): View;
-    public loader(loader: Loader): View;
+  constructor(runtime: Runtime, config?: any);
+  public initialize(dom?: Element | string): View;
+  public finalize(): void;
+  public logLevel(level: number): View;
+  public renderer(renderer: 'canvas' | 'svg' | 'none'): View;
+  public loader(loader: Loader): View;
 
-    public hover(): View;
-    public run(): View;
-    public change(name: string, changeset: any): View;
-    public changeset(): any;
-    public data(name: string): object[];
+  public hover(): View;
+  public run(): View;
+  public change(name: string, changeset: any): View;
+  public changeset(): any;
+  public data(name: string): object[];
 
-    public width(w: number): View;
-    public height(h: number): View;
-    public padding(p: number | {left?: number, right?: number, top?: number, bottom?: number}): View;
+  public width(w: number): View;
+  public height(h: number): View;
+  public padding(
+    p: number | { left?: number; right?: number; top?: number; bottom?: number },
+  ): View;
 
-    public toImageURL(type: string): Promise<string>;
+  public toImageURL(type: string): Promise<string>;
 
-    toSVG(): Promise<string>;
-    toCanvas(): Promise<any>; // TODO node-canvas result
+  toSVG(): Promise<string>;
+  toCanvas(): Promise<any>; // TODO node-canvas result
 }
 
 export const Warn: number;
