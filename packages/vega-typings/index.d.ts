@@ -1,7 +1,3 @@
-// Type definitions for Vega 3.0
-// Project: https://vega.github.io/vega/
-// Definitions by: Tom Crockett <https://github.com/pelotom>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.2
 
 // ============================================================================================
