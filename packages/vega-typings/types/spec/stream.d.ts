@@ -1,6 +1,6 @@
 import { Expr } from './expr';
 import { MarkType } from './marktype';
-export declare type EventSource = 'view' | 'scope' | 'window';
+export declare type EventSource = EventStream['source'] & {};
 export declare type EventType =
   | 'click'
   | 'dblclick'
@@ -29,10 +29,13 @@ export interface StreamParameters {
   debounce?: number;
   consume?: boolean;
 }
-export interface EventStream extends StreamParameters {
-  source?: EventSource;
+export type EventStream = StreamParameters & ({
+  source?: 'view' | 'scope';
   type: EventType;
-}
+} | {
+  source: 'window',
+  type: keyof HTMLBodyElementEventMap;
+})
 export interface DerivedStream extends StreamParameters {
   stream: Stream;
 }
