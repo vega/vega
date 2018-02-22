@@ -1,4 +1,4 @@
-import { Spec } from '..';
+import { Spec } from 'vega';
 
 // TODO
 export type Runtime = any;

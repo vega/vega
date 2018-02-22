@@ -3,10 +3,9 @@
     "module": "commonjs",
     "lib": ["es6", "dom"],
     "strict": true,
-    "baseUrl": "../",
-    "typeRoots": ["../"],
-    "types": [],
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "forceConsistentCasingInFileNames": true
+    "baseUrl": ".",
+    "paths": { "vega": ["."] }
   }
 }
