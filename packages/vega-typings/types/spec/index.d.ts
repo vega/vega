@@ -6,7 +6,7 @@ import { Padding } from './padding';
 import { Scope } from './scope';
 
 export interface Spec extends Scope, Encode<EncodeEntry> {
-  $schema: string;
+  $schema?: string;
   width?: number;
   height?: number;
   config?: any;
