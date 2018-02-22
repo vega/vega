@@ -1,9 +1,7 @@
-import * as vega from 'vega';
-
-type Spec = vega.Spec;
+import { Spec } from 'vega';
 
 // https://vega.github.io/editor/#/examples/vega/bar-chart
-const barChart: Spec = {
+export const barChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 400,
   height: 200,
@@ -102,7 +100,7 @@ const barChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/stacked-bar-chart
-const stackedBarChart: Spec = {
+export const stackedBarChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 200,
@@ -193,7 +191,7 @@ const stackedBarChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/grouped-bar-chart
-const groupedBarChart: Spec = {
+export const groupedBarChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 300,
   height: 240,
@@ -322,7 +320,7 @@ const groupedBarChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/nested-bar-chart
-const nestedBarChart: Spec = {
+export const nestedBarChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 300,
   padding: 5,
@@ -492,7 +490,7 @@ const nestedBarChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/line-chart
-const lineChart: Spec = {
+export const lineChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 300,
   padding: 5,
@@ -660,7 +658,7 @@ const lineChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/area-chart
-const areaChart: Spec = {
+export const areaChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 200,
@@ -759,7 +757,7 @@ const areaChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/stacked-area-chart
-const stackedAreaChart: Spec = {
+export const stackedAreaChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 200,
@@ -862,7 +860,7 @@ const stackedAreaChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/horizon-graph
-const horizonGraph: Spec = {
+export const horizonGraph: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 100,
@@ -989,7 +987,7 @@ const horizonGraph: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/job-voyager
-const jobVoyager: Spec = {
+export const jobVoyager: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   height: 500,
@@ -1188,7 +1186,7 @@ const jobVoyager: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/pie-chart
-const pieChart: Spec = {
+export const pieChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   height: 200,
@@ -1282,7 +1280,7 @@ const pieChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/donut-chart
-const donutChart: Spec = {
+export const donutChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   height: 200,
@@ -1376,7 +1374,7 @@ const donutChart: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/radial-plot
-const radialPlot: Spec = {
+export const radialPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   height: 200,
@@ -1442,7 +1440,7 @@ const radialPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/scatter-plot
-const scatterPlot: Spec = {
+export const scatterPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   height: 200,
@@ -1551,7 +1549,7 @@ const scatterPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/scatter-plot-null-values
-const scatterPlotNullValues: Spec = {
+export const scatterPlotNullValues: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 450,
   height: 450,
@@ -1753,7 +1751,7 @@ const scatterPlotNullValues: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/connected-scatter-plot
-const connectedScatterPlot: Spec = {
+export const connectedScatterPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   height: 500,
@@ -1921,7 +1919,7 @@ const connectedScatterPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/error-bars
-const errorBars: Spec = {
+export const errorBars: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 160,
@@ -2065,7 +2063,7 @@ const errorBars: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/barley-trellis-plot
-const barleyTrellisPlot: Spec = {
+export const barleyTrellisPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   padding: 5,
@@ -2236,7 +2234,7 @@ const barleyTrellisPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/histogram
-const histogram: Spec = {
+export const histogram: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 100,
@@ -2344,7 +2342,7 @@ const histogram: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/histogram-null-values
-const histogramNullValues: Spec = {
+export const histogramNullValues: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 400,
   height: 200,
@@ -2489,7 +2487,7 @@ const histogramNullValues: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/probability-density
-const probabilityDensity: Spec = {
+export const probabilityDensity: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 100,
@@ -2639,7 +2637,7 @@ const probabilityDensity: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/box-plot
-const boxPlot: Spec = {
+export const boxPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 100,
@@ -2789,7 +2787,7 @@ const boxPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/violin-plot
-const violinPlot: Spec = {
+export const violinPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   padding: 5,
@@ -2982,7 +2980,7 @@ const violinPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/top-k-plot
-const topKPlot: Spec = {
+export const topKPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 410,
@@ -3094,7 +3092,7 @@ const topKPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/top-k-plot-with-others
-const topKPlotWithOthers: Spec = {
+export const topKPlotWithOthers: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 410,
@@ -3233,7 +3231,7 @@ const topKPlotWithOthers: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/binned-scatter-plot
-const binnedScatterPlot: Spec = {
+export const binnedScatterPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 200,
   height: 200,
@@ -3373,7 +3371,7 @@ const binnedScatterPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/contour-plot
-const contourPlot: Spec = {
+export const contourPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 400,
@@ -3508,7 +3506,7 @@ const contourPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/wheat-plot
-const wheatPlot: Spec = {
+export const wheatPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   padding: 5,
@@ -3615,7 +3613,7 @@ const wheatPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/county-unemployment
-const countyUnemployment: Spec = {
+export const countyUnemployment: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 960,
   height: 500,
@@ -3693,7 +3691,7 @@ const countyUnemployment: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/dorling-cartogram
-const dorlingCartogram: Spec = {
+export const dorlingCartogram: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 520,
@@ -3825,7 +3823,7 @@ const dorlingCartogram: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/world-map
-const worldMap: Spec = {
+export const worldMap: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 500,
@@ -3977,7 +3975,7 @@ const worldMap: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/earthquakes
-const earthquakes: Spec = {
+export const earthquakes: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   padding: 10,
   width: 450,
@@ -4102,7 +4100,7 @@ const earthquakes: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/projections
-const projections: Spec = {
+export const projections: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   autosize: 'pad',
 
@@ -4268,7 +4266,7 @@ const projections: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/zoomable-world-map
-const zoomableWorldMap: Spec = {
+export const zoomableWorldMap: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 500,
@@ -4414,7 +4412,7 @@ const zoomableWorldMap: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/distortion-comparison
-const distortionComparison: Spec = {
+export const distortionComparison: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 500,
@@ -4597,7 +4595,7 @@ const distortionComparison: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/tree-layout
-const treeLayout: Spec = {
+export const treeLayout: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 600,
   height: 1600,
@@ -4714,7 +4712,7 @@ const treeLayout: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/radial-tree-layout
-const radialTreeLayout: Spec = {
+export const radialTreeLayout: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 720,
   height: 720,
@@ -4883,7 +4881,7 @@ const radialTreeLayout: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/treemap
-const treemap: Spec = {
+export const treemap: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 960,
   height: 500,
@@ -5040,7 +5038,7 @@ const treemap: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/circle-packing
-const circlePacking: Spec = {
+export const circlePacking: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 600,
   height: 600,
@@ -5104,7 +5102,7 @@ const circlePacking: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/sunburst
-const sunburst: Spec = {
+export const sunburst: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 600,
   height: 600,
@@ -5173,7 +5171,7 @@ const sunburst: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/edge-bundling
-const edgeBundling: Spec = {
+export const edgeBundling: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   padding: 5,
   width: 720,
@@ -5420,7 +5418,7 @@ const edgeBundling: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/force-directed-layout
-const forceDirectedLayout: Spec = {
+export const forceDirectedLayout: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 700,
   height: 500,
@@ -5589,7 +5587,7 @@ const forceDirectedLayout: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/reorderable-matrix
-const reorderableMatrix: Spec = {
+export const reorderableMatrix: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 770,
   height: 770,
@@ -5772,7 +5770,7 @@ const reorderableMatrix: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/arc-diagram
-const arcDiagram: Spec = {
+export const arcDiagram: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 770,
   padding: 5,
@@ -5920,7 +5918,7 @@ const arcDiagram: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/airport-connections
-const airportConnections: Spec = {
+export const airportConnections: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 560,
@@ -6163,7 +6161,7 @@ const airportConnections: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/heatmap
-const heatMap: Spec = {
+export const heatMap: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   height: 500,
@@ -6340,7 +6338,7 @@ const heatMap: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/parallel-coordinates
-const parallelCoordinates: Spec = {
+export const parallelCoordinates: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 700,
   height: 400,
@@ -6536,7 +6534,7 @@ const parallelCoordinates: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/timelines
-const timelines: Spec = {
+export const timelines: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 80,
@@ -6684,7 +6682,7 @@ const timelines: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/beeswarm-plot
-const beeswarmPlot: Spec = {
+export const beeswarmPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   height: 100,
@@ -6797,7 +6795,7 @@ const beeswarmPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/budget-forecasts
-const budgetForecasts: Spec = {
+export const budgetForecasts: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 700,
   height: 400,
@@ -7161,7 +7159,7 @@ const budgetForecasts: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/wheat-and-wages
-const wheatAndWages: Spec = {
+export const wheatAndWages: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 900,
   height: 465,
@@ -7339,7 +7337,7 @@ const wheatAndWages: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/falkensee-population
-const falkenseePopulation: Spec = {
+export const falkenseePopulation: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 250,
@@ -7529,7 +7527,7 @@ const falkenseePopulation: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/annual-temperature
-const annualTemperature: Spec = {
+export const annualTemperature: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   padding: 5,
@@ -7672,7 +7670,7 @@ const annualTemperature: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/weekly-temperature
-const weeklyTemperature: Spec = {
+export const weeklyTemperature: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 250,
   height: 200,
@@ -7831,7 +7829,7 @@ const weeklyTemperature: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/u-district-cuisine
-const uDistrictCuisine: Spec = {
+export const uDistrictCuisine: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 380,
@@ -8171,7 +8169,7 @@ const uDistrictCuisine: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/crossfilter-flights
-const crossfilterFlights: Spec = {
+export const crossfilterFlights: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   padding: 5,
@@ -8796,7 +8794,7 @@ const crossfilterFlights: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/overview-plus-detail
-const overviewPlusDetail: Spec = {
+export const overviewPlusDetail: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 720,
   height: 480,
@@ -9017,7 +9015,7 @@ const overviewPlusDetail: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/brushing-scatter-plots
-const brushingScatterPlots: Spec = {
+export const brushingScatterPlots: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   padding: 10,
   config: {
@@ -9419,7 +9417,7 @@ const brushingScatterPlots: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/zoomable-scatter-plot
-const zoomableScatterPlot: Spec = {
+export const zoomableScatterPlot: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 500,
   height: 300,
@@ -9684,7 +9682,7 @@ const zoomableScatterPlot: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/global-development
-const globalDevelopment: Spec = {
+export const globalDevelopment: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 800,
   height: 600,
@@ -10127,7 +10125,7 @@ const globalDevelopment: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/interactive-legend
-const interactiveLegend: Spec = {
+export const interactiveLegend: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   description: 'Scatter plot with interactive legend and x-axis.',
   width: 200,
@@ -10446,7 +10444,7 @@ const interactiveLegend: Spec = {
 };
 
 // https://vega.github.io/editor/#/examples/vega/stock-index-chart
-const stockIndexChart: Spec = {
+export const stockIndexChart: Spec = {
   $schema: 'https://vega.github.io/schema/vega/v3.json',
   width: 650,
   height: 300,
@@ -10617,51 +10615,3 @@ const stockIndexChart: Spec = {
     },
   ],
 };
-
-// Runtime examples from https://vega.github.io/vega/usage/
-
-function clientSideApi() {
-  var view;
-
-  vega
-    .loader()
-    .load('https://vega.github.io/vega/examples/bar-chart.vg.json')
-    .then(function(data) {
-      render(JSON.parse(data));
-    });
-
-  function render(spec: Spec) {
-    view = new vega.View(vega.parse(spec))
-      .renderer('canvas') // set renderer (canvas or svg)
-      .initialize('#view') // initialize view within parent DOM container
-      .hover() // enable hover encode set processing
-      .run();
-  }
-}
-
-function serverSideApi() {
-  // create a new view instance for a given Vega JSON spec
-  var view = new vega.View(vega.parse(histogram)).renderer('none').initialize();
-
-  // generate a static SVG image
-  view
-    .toSVG()
-    .then(function(svg) {
-      // process svg string
-    })
-    .catch(function(err) {
-      console.error(err);
-    });
-
-  // generate a static PNG image
-  view
-    .toCanvas()
-    .then(function(canvas) {
-      // process node-canvas instance
-      // for example, generate a PNG stream to write
-      var stream = canvas.createPNGStream();
-    })
-    .catch(function(err) {
-      console.error(err);
-    });
-}
