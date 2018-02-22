@@ -7,11 +7,9 @@
   "author": "Dominik Moritz <domoritz@gmail.com>",
   "license": "BSD-3",
   "devDependencies": {
-    "dtslint": "^0.2.0",
-    "tslint": "^5.9.1",
     "typescript": "^2.7.2"
   },
   "scripts": {
-    "test": "dtslint ."
+    "test": "tsc"
   }
 }
