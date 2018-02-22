@@ -1,4 +1,4 @@
-import * as vega from 'vega';
+import * as vega from '.';
 
 type Spec = vega.Spec;
 
