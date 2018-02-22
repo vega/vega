@@ -11,7 +11,7 @@ export interface ParentFieldRef {
     level?: number;
 }
 export declare type BaseValueRef<T> = SignalRef | {
-    value: T;
+    value: T | null;
 } | {
     field: FieldRef;
 } | {
