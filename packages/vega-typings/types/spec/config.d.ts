@@ -1,2 +1,2 @@
 // TODO
-export type Config = any
+export type Config = any;

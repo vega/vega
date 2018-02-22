@@ -8,8 +8,5 @@
     "baseUrl": ".",
     "paths": { "vega": ["."] }
   },
-  "include": [
-    "types/**/*",
-    "tests/**/*"
-  ]
+  "include": ["types/**/*", "tests/**/*"]
 }
