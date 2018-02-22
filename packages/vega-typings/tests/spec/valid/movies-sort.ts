@@ -110,15 +110,6 @@ const spec: Spec = {
       "encode": {
         "labels": {
           "interactive": true,
-          "title": {
-            "update": {
-              "x": {"value": -5},
-              "y": {"value": -2},
-              "align": {"value": "right"},
-              "baseline": {"value": "bottom"},
-              "angle": {"value": 0}
-            }
-          },
           "enter": {
             "text": {"signal": "truncate(datum.label, 25)"}
           },
@@ -129,7 +120,16 @@ const spec: Spec = {
             "fill": {"value": "firebrick"},
             "cursor": {"value": "pointer"}
           }
-        }
+        },
+        "title": {
+          "update": {
+            "x": {"value": -5},
+            "y": {"value": -2},
+            "align": {"value": "right"},
+            "baseline": {"value": "bottom"},
+            "angle": {"value": 0}
+          }
+        },
       }
     }
   ]
