@@ -1,7 +1,7 @@
 import { Expr } from './expr';
 import { MarkType } from './marktype';
-export declare type EventSource = EventStream['source'] & {};
-export declare type EventType =
+export type EventSource = EventStream['source'] & {};
+export type EventType =
   | 'click'
   | 'dblclick'
   | 'dragenter'
@@ -45,4 +45,4 @@ export interface DerivedStream extends StreamParameters {
 export interface MergedStream extends StreamParameters {
   merge: Stream[];
 }
-export declare type Stream = EventStream | DerivedStream | MergedStream;
+export type Stream = EventStream | DerivedStream | MergedStream;

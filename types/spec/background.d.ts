@@ -1,1 +1,1 @@
-export declare type Background = string;
+export type Background = string;

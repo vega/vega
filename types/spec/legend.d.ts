@@ -14,8 +14,8 @@ export interface GuideEncodeEntry<T> {
   exit?: T;
   hover?: T;
 }
-export declare type LegendType = 'gradient' | 'symbol';
-export declare type LegendOrient =
+export type LegendType = 'gradient' | 'symbol';
+export type LegendOrient =
   | 'none'
   | 'left'
   | 'right'
@@ -63,7 +63,7 @@ export interface StrokeDashLegend extends BaseLegend {
 export interface OpacityLegend extends BaseLegend {
   opacity: string;
 }
-export declare type Legend =
+export type Legend =
   | SizeLegend
   | ShapeLegend
   | FillLegend

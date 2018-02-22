@@ -1,8 +1,8 @@
 import { Encode, NumericValueRef, TextEncodeEntry } from './encode';
 import { SignalRef } from './signal';
-export declare type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
-export declare type TitleAnchor = 'start' | 'middle' | 'end';
-export declare type Title =
+export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
+export type TitleAnchor = 'start' | 'middle' | 'end';
+export type Title =
   | string
   | (Encode<TextEncodeEntry> & {
       text: string | SignalRef;

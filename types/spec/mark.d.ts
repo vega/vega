@@ -4,7 +4,7 @@ import { Scope } from './scope';
 import { SignalRef } from './signal';
 import { Transform } from './transform';
 import { OnMarkTrigger } from './on-trigger';
-export declare type Facet =
+export type Facet =
   | {
       name: string;
       data: string;
@@ -24,12 +24,12 @@ export declare type Facet =
 export interface From {
   data?: string;
 }
-export declare type FromFacet =
+export type FromFacet =
   | From
   | (From & {
       facet: Facet;
     });
-export declare type Clip =
+export type Clip =
   | boolean
   | {
       path: string | SignalRef;
@@ -37,7 +37,7 @@ export declare type Clip =
   | {
       sphere: string | SignalRef;
     };
-export declare type Compare =
+export type Compare =
   | {
       field: string | SignalRef;
       order?: SortOrder;
@@ -96,7 +96,7 @@ export interface TextMark extends BaseMark, Encode.Encode<Encode.TextEncodeEntry
 export interface TrailMark extends BaseMark, Encode.Encode<Encode.TrailEncodeEntry> {
   type: 'trail';
 }
-export declare type Mark =
+export type Mark =
   | ArcMark
   | AreaMark
   | ImageMark

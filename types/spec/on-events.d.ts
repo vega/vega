@@ -2,7 +2,7 @@ import { Expr, ExprRef } from './expr';
 import { EventSelector } from './selector';
 import { SignalRef } from './signal';
 import { Stream } from './stream';
-export declare type Events =
+export type Events =
   | EventSelector
   | SignalRef
   | Stream
@@ -10,14 +10,14 @@ export declare type Events =
   | {
       scale: string;
     };
-export declare type Update =
+export type Update =
   | Expr
   | ExprRef
   | SignalRef
   | {
       value: any;
     };
-export declare type OnEvent = (
+export type OnEvent = (
   | {
       encode: string;
     }

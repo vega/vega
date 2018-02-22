@@ -1,11 +1,11 @@
 import { OnTrigger } from './on-trigger';
 import { Transform } from './transform';
 
-export declare type FieldParam = {
+export interface FieldParam {
   field: string;
-};
-export declare type DataType = 'boolean' | 'number' | 'date' | 'string';
-export declare type Parse =
+}
+export type DataType = 'boolean' | 'number' | 'date' | 'string';
+export type Parse =
   | 'auto'
   | {
       [f: string]: DataType | string;
@@ -23,7 +23,7 @@ export interface FormatSV {
 export interface FormatDSV extends FormatSV {
   delimiter: string;
 }
-export declare type FormatTopoJSON = {
+export type FormatTopoJSON = {
   type: 'topojson';
   property?: string;
 } & (
@@ -33,8 +33,8 @@ export declare type FormatTopoJSON = {
   | {
       mesh?: 'string';
     });
-export declare type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON;
-export declare type Data = (
+export type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON;
+export type Data = (
   | {
       source: string;
     }

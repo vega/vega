@@ -1,7 +1,7 @@
 import { SignalRef } from './signal';
-export declare type LayoutAlign = 'all' | 'each' | 'none' | SignalRef;
-export declare type LayoutBounds = 'full' | 'flush' | SignalRef;
-export declare type LayoutOffset =
+export type LayoutAlign = 'all' | 'each' | 'none' | SignalRef;
+export type LayoutBounds = 'full' | 'flush' | SignalRef;
+export type LayoutOffset =
   | number
   | SignalRef
   | {
@@ -12,14 +12,14 @@ export declare type LayoutOffset =
       columnFooter?: number | SignalRef;
       columnTitle?: number | SignalRef;
     };
-export declare type RowColumnParam =
+export type RowColumnParam =
   | number
   | SignalRef
   | {
       row?: number | SignalRef;
       column?: number | SignalRef;
     };
-export declare type Layout =
+export type Layout =
   | SignalRef
   | {
       align?:

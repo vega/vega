@@ -1,4 +1,4 @@
-export declare type Element = string;
+export type Element = string;
 export interface BaseBinding {
   type?: string;
   element?: Element;
@@ -17,4 +17,4 @@ export interface BindRange extends BaseBinding {
   max?: number;
   step?: number;
 }
-export declare type Binding = BaseBinding | BindCheckbox | BindRadioSelect | BindRange;
+export type Binding = BaseBinding | BindCheckbox | BindRadioSelect | BindRange;

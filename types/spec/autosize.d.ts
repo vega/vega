@@ -1,5 +1,5 @@
-export declare type AutoSizeType = 'pad' | 'fit' | 'fit-x' | 'fit-y' | 'none';
-export declare type AutoSize =
+export type AutoSizeType = 'pad' | 'fit' | 'fit-x' | 'fit-y' | 'none';
+export type AutoSize =
   | AutoSizeType
   | {
       type: AutoSizeType;

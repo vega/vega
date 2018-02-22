@@ -1,5 +1,5 @@
 import { SignalRef } from './signal';
-export declare type RangeEnum =
+export type RangeEnum =
   | 'width'
   | 'height'
   | 'symbol'
@@ -8,8 +8,8 @@ export declare type RangeEnum =
   | 'ramp'
   | 'diverging'
   | 'heatmap';
-export declare type RangeRaw = (null | boolean | string | number | SignalRef)[];
-export declare type RangeScheme =
+export type RangeRaw = (null | boolean | string | number | SignalRef)[];
+export type RangeScheme =
   | RangeEnum
   | RangeRaw
   | SignalRef
@@ -18,13 +18,13 @@ export declare type RangeScheme =
       count?: number | SignalRef;
       extent?: (number | SignalRef)[] | SignalRef;
     };
-export declare type RangeBand =
+export type RangeBand =
   | RangeEnum
   | RangeRaw
   | {
       step: number | SignalRef;
     };
-export declare type SortOrder = 'ascending' | 'descending' | SignalRef;
+export type SortOrder = 'ascending' | 'descending' | SignalRef;
 export interface SingleSort {
   sort?:
     | boolean
@@ -42,8 +42,8 @@ export interface MultiSort {
         order?: SortOrder;
       };
 }
-export declare type ScaleField = string | SignalRef;
-export declare type ScaleInterpolate =
+export type ScaleField = string | SignalRef;
+export type ScaleInterpolate =
   | string
   | SignalRef
   | {
@@ -54,7 +54,7 @@ export interface DataRef {
   data: string;
   field: ScaleField;
 }
-export declare type ScaleData =
+export type ScaleData =
   | (DataRef & SingleSort)
   | (MultiSort &
       (
@@ -65,26 +65,15 @@ export declare type ScaleData =
         | {
             fields: ((string | number | boolean)[] | DataRef | SignalRef)[];
           }));
-export declare type QuantScaleType =
-  | 'linear'
-  | 'pow'
-  | 'sqrt'
-  | 'log'
-  | 'time'
-  | 'utc'
-  | 'sequential';
-export declare type DiscreteScaleType = 'ordinal' | 'band' | 'point';
-export declare type DiscretizingScaleType =
+export type QuantScaleType = 'linear' | 'pow' | 'sqrt' | 'log' | 'time' | 'utc' | 'sequential';
+export type DiscreteScaleType = 'ordinal' | 'band' | 'point';
+export type DiscretizingScaleType =
   | 'quantile'
   | 'quantize'
   | 'threshold'
   | 'bin-linear'
   | 'bin-ordinal';
-export declare type ScaleType =
-  | QuantScaleType
-  | DiscreteScaleType
-  | DiscretizingScaleType
-  | 'identity';
+export type ScaleType = QuantScaleType | DiscreteScaleType | DiscretizingScaleType | 'identity';
 export interface BaseScale {
   name: string;
   type?: ScaleType;
@@ -122,7 +111,7 @@ export interface SequentialScale extends BaseScale {
   zero?: boolean | SignalRef;
   nice?: boolean | Nice | SignalRef;
 }
-export declare type Nice = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+export type Nice = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 export interface TimeScale extends BaseScale {
   type: 'time' | 'utc';
   range?: RangeScheme;
@@ -199,7 +188,7 @@ export interface BinOrdinalScale extends BaseScale {
   type: 'bin-ordinal';
   range?: RangeScheme | ScaleData;
 }
-export declare type Scale =
+export type Scale =
   | OrdinalScale
   | BandScale
   | PointScale
