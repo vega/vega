@@ -8,13 +8,13 @@ import { Scale } from './scale';
 import { Signal } from './signal';
 import { Title } from './title';
 export interface Scope {
-    title?: Title;
-    layout?: Layout;
-    signals?: Signal[];
-    projections?: Projection[];
-    data?: Data[];
-    scales?: Scale[];
-    axes?: Axis[];
-    legends?: Legend[];
-    marks?: Mark[];
+  title?: Title;
+  layout?: Layout;
+  signals?: Signal[];
+  projections?: Projection[];
+  data?: Data[];
+  scales?: Scale[];
+  axes?: Axis[];
+  legends?: Legend[];
+  marks?: Mark[];
 }
