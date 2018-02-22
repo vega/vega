@@ -127,7 +127,7 @@ export interface GroupEncodeEntry extends RectEncodeEntry {
 }
 export declare type Baseline = 'top' | 'middle' | 'bottom';
 export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
-  url: ProductionRule<StringValueRef>;
+  url?: ProductionRule<StringValueRef>;
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
 }
