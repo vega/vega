@@ -48,7 +48,7 @@ export declare type ScaleInterpolate =
   | SignalRef
   | {
       type: string | SignalRef;
-      gamma?: string | SignalRef;
+      gamma?: number | SignalRef;
     };
 export interface DataRef {
   data: string;
