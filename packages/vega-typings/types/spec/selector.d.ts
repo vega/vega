@@ -1,1 +1,1 @@
-export declare type EventSelector = string;
+export type EventSelector = string;

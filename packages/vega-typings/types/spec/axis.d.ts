@@ -1,7 +1,7 @@
 import { GroupEncodeEntry, NumericValueRef, RuleEncodeEntry, TextEncodeEntry } from './encode';
 import { GuideEncodeEntry } from './legend';
 import { SignalRef } from './signal';
-export declare type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
+export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 export interface Axis {
   orient: AxisOrient;
   scale: string;

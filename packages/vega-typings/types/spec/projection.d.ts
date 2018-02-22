@@ -1,5 +1,8 @@
 import { SignalRef } from './signal';
-export declare type NumberSignalArray = (number | SignalRef)[];
+export type NumberSignalArray = (number | SignalRef)[];
+export type GeoJsonFeature = any; // TODO
+export type GeoJsonFeatureCollection = any; // TODO
+export type Fit = GeoJsonFeature | GeoJsonFeatureCollection | GeoJsonFeature[];
 export interface Projection {
   name: string;
   type: string | SignalRef;
@@ -12,7 +15,7 @@ export interface Projection {
   parallels?: SignalRef | NumberSignalArray;
   precision?: number | SignalRef;
   pointRadius?: number | SignalRef;
-  fit?: any | any[];
+  fit?: Fit | Fit[];
   extent?: SignalRef | (SignalRef | NumberSignalArray)[];
   size?: SignalRef | NumberSignalArray;
 }

@@ -1,4 +1,4 @@
-export declare type Padding =
+export type Padding =
   | number
   | {
       top: number;

@@ -7,12 +7,13 @@
   "author": "Dominik Moritz <domoritz@gmail.com>",
   "license": "BSD-3",
   "devDependencies": {
+    "dtslint": "^0.2.0",
     "typescript": "^2.7.2"
   },
   "scripts": {
     "format":
       "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
-    "test": "tsc"
+    "test": "dtslint ."
   },
   "dependencies": {
     "prettier": "^1.10.2"
