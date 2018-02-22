@@ -2,7 +2,6 @@ import { Spec } from 'vega';
 
 const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v3.json",
-  "name": "wordcloud",
   "width": 800,
   "height": 400,
   "padding": 0,
