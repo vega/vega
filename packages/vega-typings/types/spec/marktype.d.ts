@@ -1,4 +1,4 @@
-export declare type MarkType =
+export type MarkType =
   | 'arc'
   | 'area'
   | 'image'

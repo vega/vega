@@ -1,5 +1,5 @@
 import { SignalRef } from './signal';
-export declare type FieldRef =
+export type FieldRef =
   | string
   | SignalRef
   | {
@@ -15,7 +15,7 @@ export interface ParentFieldRef {
   parent: FieldRef;
   level?: number;
 }
-export declare type BaseValueRef<T> =
+export type BaseValueRef<T> =
   | SignalRef
   | {
       value: T | null;
@@ -26,7 +26,7 @@ export declare type BaseValueRef<T> =
   | {
       range: number | boolean;
     };
-export declare type ScaledValueRef<T> =
+export type ScaledValueRef<T> =
   | BaseValueRef<T>
   | (BaseValueRef<T> & {
       scale: FieldRef;
@@ -35,15 +35,15 @@ export declare type ScaledValueRef<T> =
       scale: FieldRef;
       band: boolean | number;
     };
-export declare type NumericValueRef = (ScaledValueRef<number> | {}) & {
+export type NumericValueRef = (ScaledValueRef<number> | {}) & {
   exponent?: number | NumericValueRef;
   mult?: number | NumericValueRef;
   offset?: number | NumericValueRef;
   round?: boolean;
   extra?: boolean;
 };
-export declare type StringValueRef = ScaledValueRef<string>;
-export declare type BooleanValueRef = ScaledValueRef<boolean>;
+export type StringValueRef = ScaledValueRef<string>;
+export type BooleanValueRef = ScaledValueRef<boolean>;
 export interface ColorRGB {
   r: NumericValueRef;
   g: NumericValueRef;
@@ -64,7 +64,7 @@ export interface ColorHCL {
   c: NumericValueRef;
   l: NumericValueRef;
 }
-export declare type ColorValueRef =
+export type ColorValueRef =
   | ScaledValueRef<string>
   | {
       gradient: FieldRef;
@@ -72,7 +72,7 @@ export declare type ColorValueRef =
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;
     };
-export declare type ProductionRule<T> =
+export type ProductionRule<T> =
   | T
   | ({
       test?: string;
@@ -100,7 +100,7 @@ export interface EncodeEntry {
   xfocus?: ProductionRule<NumericValueRef>;
   yfocus?: ProductionRule<NumericValueRef>;
 }
-export declare type Align = 'left' | 'center' | 'right';
+export type Align = 'left' | 'center' | 'right';
 export interface AlignProperty {
   align?: ProductionRule<ScaledValueRef<Align>>;
 }
@@ -118,20 +118,20 @@ export interface ArcEncodeEntry extends EncodeEntry {
   outerRadius?: ProductionRule<NumericValueRef>;
   cornerRadius?: ProductionRule<NumericValueRef>;
 }
-export declare type Orientation = 'horizontal' | 'vertical';
+export type Orientation = 'horizontal' | 'vertical';
 export interface AreaEncodeEntry extends LineEncodeEntry {
   orient?: ProductionRule<ScaledValueRef<Orientation>>;
 }
 export interface GroupEncodeEntry extends RectEncodeEntry {
   clip?: ProductionRule<BooleanValueRef>;
 }
-export declare type Baseline = 'top' | 'middle' | 'bottom';
+export type Baseline = 'top' | 'middle' | 'bottom';
 export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   url?: ProductionRule<StringValueRef>;
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
 }
-export declare type Interpolate =
+export type Interpolate =
   | 'basis'
   | 'bundle'
   | 'cardinal'
@@ -152,11 +152,11 @@ export interface PathEncodeEntry extends EncodeEntry {
 export interface RectEncodeEntry extends EncodeEntry {
   cornerRadius?: ProductionRule<NumericValueRef>;
 }
-export declare type RuleEncodeEntry = EncodeEntry;
+export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {
   shape?: ProductionRule<StringValueRef>;
 }
-export declare type SymbolShapes =
+export type SymbolShapes =
   | 'circle'
   | 'square'
   | 'cross'
@@ -170,9 +170,9 @@ export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
   shape?: string | ProductionRule<ScaledValueRef<SymbolShapes>>;
 }
-export declare type TextBaseline = 'alphabetic' | Baseline;
-export declare type TextDirection = 'ltr' | 'rtl';
-export declare type FontWeight =
+export type TextBaseline = 'alphabetic' | Baseline;
+export type TextDirection = 'ltr' | 'rtl';
+export type FontWeight =
   | 'normal'
   | 'bold'
   | '100'
@@ -193,7 +193,7 @@ export declare type FontWeight =
   | 700
   | 800
   | 900;
-export declare type FontStyle = 'normal' | 'italic';
+export type FontStyle = 'normal' | 'italic';
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
   text?: ProductionRule<StringValueRef>;
   angle?: ProductionRule<NumericValueRef>;

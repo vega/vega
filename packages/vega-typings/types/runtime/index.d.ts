@@ -7,12 +7,12 @@ export const version: string;
 export function parse(spec: Spec, opt?: any): Runtime;
 export function isString(value: any): value is string;
 
-export type Loader = {
+export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
   sanitize: (uri: string, options: any) => Promise<{ href: string }>;
   http: (uri: string, options: any) => Promise<string>;
   file: (filename: string) => Promise<string>;
-};
+}
 
 export class View {
   constructor(runtime: Runtime, config?: any);
@@ -44,7 +44,7 @@ export class View {
 
 export const Warn: number;
 export const changeset: any;
-export const loader: (opt?: any) => Loader;
+export function loader(opt?: any): Loader;
 export type Handler = (event: Event, item?: Item) => void;
 export interface Item<T = any> {
   /**

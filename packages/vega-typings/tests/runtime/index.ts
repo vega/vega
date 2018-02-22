@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import * as vega from 'vega'
 
 import { histogram } from '../spec/examples'

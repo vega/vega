@@ -1,4 +1,4 @@
-export declare type Expr = string;
+export type Expr = string;
 export interface ExprRef {
   expr: Expr;
 }

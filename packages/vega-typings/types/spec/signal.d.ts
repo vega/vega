@@ -1,9 +1,9 @@
 import { Binding } from './bind';
 import { Expr } from './expr';
 import { OnEvent } from './on-events';
-export declare type SignalRef = {
+export interface SignalRef {
   signal: string;
-};
+}
 export interface BaseSignal {
   name: string;
   description?: string;
@@ -18,4 +18,4 @@ export interface NewSignal extends BaseSignal {
   update?: Expr;
   bind?: Binding;
 }
-export declare type Signal = NewSignal | PushSignal;
+export type Signal = NewSignal | PushSignal;
