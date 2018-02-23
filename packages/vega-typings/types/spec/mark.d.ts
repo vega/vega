@@ -43,7 +43,7 @@ export type Compare =
       order?: SortOrder;
     }
   | {
-      field: string[] | SignalRef[];
+      field: (string | SignalRef)[];
       order?: SortOrder[];
     };
 export interface BaseMark {
