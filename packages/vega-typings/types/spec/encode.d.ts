@@ -127,17 +127,29 @@ export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
 }
+
+/**
+ * @TJS-type integer
+ * @minimum 100
+ * @maximum 900
+ */
 export type Interpolate =
   | 'basis'
+  | 'basis-open'
+  | 'basis-closed'
   | 'bundle'
   | 'cardinal'
+  | 'cardinal-open'
+  | 'cardinal-closed'
   | 'catmull-rom'
   | 'linear'
+  | 'linear-closed'
   | 'monotone'
   | 'natural'
   | 'step'
-  | 'step-after'
-  | 'step-before';
+  | 'step-before'
+  | 'step-after';
+
 export interface LineEncodeEntry extends EncodeEntry, DefinedProperty {
   interpolate?: ProductionRule<ScaledValueRef<Interpolate>>;
   tension?: ProductionRule<NumericValueRef>;
