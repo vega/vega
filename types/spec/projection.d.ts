@@ -1,5 +1,4 @@
-import { SignalRef } from './signal';
-export type NumberSignalArray = (number | SignalRef)[];
+import { Vector2, SignalRef, Signal, Vector3 } from '.';
 export type GeoJsonFeature = any; // TODO
 export type GeoJsonFeatureCollection = any; // TODO
 export type Fit = GeoJsonFeature | GeoJsonFeatureCollection | GeoJsonFeature[];
@@ -7,15 +6,15 @@ export interface Projection {
   name: string;
   type: string | SignalRef;
   clipAngle?: number | SignalRef;
-  clipExtent?: SignalRef | NumberSignalArray;
+  clipExtent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
   scale?: number | SignalRef;
-  translate?: SignalRef | NumberSignalArray;
-  center?: SignalRef | NumberSignalArray;
-  rotate?: SignalRef | NumberSignalArray;
-  parallels?: SignalRef | NumberSignalArray;
+  translate?: Vector2<number | SignalRef> | SignalRef;
+  center?: Vector2<number | SignalRef> | SignalRef;
+  rotate?: Vector3<number | SignalRef> | SignalRef;
+  parallels?: (number | SignalRef)[] | SignalRef;
   precision?: number | SignalRef;
   pointRadius?: number | SignalRef;
   fit?: Fit | Fit[];
-  extent?: SignalRef | (SignalRef | NumberSignalArray)[];
-  size?: SignalRef | NumberSignalArray;
+  extent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
 }
