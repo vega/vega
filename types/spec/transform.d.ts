@@ -5,6 +5,11 @@ import {
   ScaledValueRef,
   StringValueRef,
   SignalRef,
+  SortOrder,
+  SingleSort,
+  MultiSort,
+  DataRef,
+  EventStream,
 } from '.';
 
 export interface VgParentRef {
@@ -35,83 +40,17 @@ export type AggregateOp =
   | 'variance'
   | 'variancep';
 
-export type SortOrder = 'ascending' | 'descending' | null;
+export type VgDataRef = DataRef & SingleSort;
 
-export interface SortField<F> {
-  /**
-   * The data [field](field.html) to sort by.
-   *
-   * __Default value:__ If unspecified, defaults to the field specified in the outer data reference.
-   */
-  field?: F;
-  /**
-   * An [aggregate operation](aggregate.html#ops) to perform on the field prior to sorting (e.g., `"count"`, `"mean"` and `"median"`).
-   * This property is required in cases where the sort field and the data reference field do not match.
-   * The input data objects will be aggregated, grouped by the encoded data field.
-   *
-   * For a full list of operations, please see the documentation for [aggregate](aggregate.html#ops).
-   */
-  op: AggregateOp;
+export type VgEventStream = EventStream;
 
-  /**
-   * The sort order. One of `"ascending"` (default) or `"descending"`.
-   */
-  order?: SortOrder;
-}
-
-export type VgSortField =
-  | true
-  | {
-      field?: VgFieldRef;
-      op?: AggregateOp;
-      order?: SortOrder;
-    };
-
-/**
- * Unioned domains can only be sorted by count aggregate.
- */
-export type VgUnionSortField =
-  | true
-  | {
-      op: 'count';
-      order?: SortOrder;
-    };
-
-export interface VgDataRef {
-  data: string;
-  field: VgFieldRef;
-  sort?: VgSortField;
-}
-
-export type VgEventStream = any;
-
-// TODO: add type of value (Make it VgValueRef<T> {value?:T ...})
-export interface VgValueRef {
-  value?: number | string | boolean;
-  field?:
-    | string
-    | {
-        datum?: string;
-        group?: string;
-        parent?: string;
-      };
-  signal?: string;
-  scale?: string; // TODO: object
-  mult?: number;
-  offset?: number | VgValueRef;
-  band?: boolean | number | VgValueRef;
-}
-
-// TODO: add vg prefix
-export interface DataRefUnionDomain {
+export interface DataRefUnionDomain extends MultiSort {
   fields: (any[] | VgDataRef | SignalRef)[];
-  sort?: VgUnionSortField;
 }
 
-export interface VgFieldRefUnionDomain {
+export interface VgFieldRefUnionDomain extends MultiSort {
   data: string;
   fields: VgFieldRef[];
-  sort?: VgUnionSortField;
 }
 
 export type VgScheme = { scheme: string; extent?: number[]; count?: number };
@@ -273,65 +212,6 @@ export interface VgSignal {
   push?: string;
 }
 
-export type VgEncodeChannel =
-  | 'x'
-  | 'x2'
-  | 'xc'
-  | 'width'
-  | 'y'
-  | 'y2'
-  | 'yc'
-  | 'height'
-  | 'opacity'
-  | 'fill'
-  | 'fillOpacity'
-  | 'stroke'
-  | 'strokeWidth'
-  | 'strokeOpacity'
-  | 'strokeDash'
-  | 'strokeDashOffset'
-  | 'cursor'
-  | 'clip'
-  | 'size'
-  | 'shape'
-  | 'path'
-  | 'innerRadius'
-  | 'outerRadius'
-  | 'startAngle'
-  | 'endAngle'
-  | 'interpolate'
-  | 'tension'
-  | 'orient'
-  | 'url'
-  | 'align'
-  | 'baseline'
-  | 'text'
-  | 'dir'
-  | 'ellipsis'
-  | 'limit'
-  | 'dx'
-  | 'dy'
-  | 'radius'
-  | 'theta'
-  | 'angle'
-  | 'font'
-  | 'fontSize'
-  | 'fontWeight'
-  | 'fontStyle'
-  | 'tooltip'
-  | 'href'
-  | 'cursor';
-export type VgEncodeEntry = {
-  [k in VgEncodeChannel]?: VgValueRef | (VgValueRef & { test?: string })[]
-};
-
-// TODO: make export interface VgEncodeEntry {
-//   x?: VgValueRef<number>
-//   y?: VgValueRef<number>
-//  ...
-//   color?: VgValueRef<string>
-//  ...
-// }
 export type AxisOrient = 'top' | 'right' | 'left' | 'bottom';
 
 export interface VgAxis {
@@ -517,9 +397,8 @@ export interface VgIdentifierTransform {
   as: string;
 }
 
-export interface VgWindowTransform {
+export interface VgWindowTransform extends SingleSort {
   type: 'window';
-  sort?: VgSortField;
   groupby?: VgFieldRef[];
   ops?: (string | SignalRef)[];
   fields?: (VgFieldRef | null)[];
