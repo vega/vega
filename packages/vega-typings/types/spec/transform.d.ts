@@ -7,10 +7,6 @@ import {
   SignalRef,
 } from '.';
 
-export type VgVal<T> = T | ProductionRule<ScaledValueRef<T>>;
-
-export type SignalLift<T> = T | SignalRef;
-
 export interface VgParentRef {
   parent: string;
 }
@@ -87,10 +83,6 @@ export interface VgDataRef {
   sort?: VgSortField;
 }
 
-export interface VgSignalRef {
-  signal: string;
-}
-
 export type VgEventStream = any;
 
 // TODO: add type of value (Make it VgValueRef<T> {value?:T ...})
@@ -112,7 +104,7 @@ export interface VgValueRef {
 
 // TODO: add vg prefix
 export interface DataRefUnionDomain {
-  fields: (any[] | VgDataRef | VgSignalRef)[];
+  fields: (any[] | VgDataRef | SignalRef)[];
   sort?: VgUnionSortField;
 }
 
@@ -126,14 +118,14 @@ export type VgScheme = { scheme: string; extent?: number[]; count?: number };
 export type VgRange =
   | string
   | VgDataRef
-  | (number | string | VgDataRef | VgSignalRef)[]
+  | (number | string | VgDataRef | SignalRef)[]
   | VgScheme
   | VgRangeStep;
 
-export type VgRangeStep = { step: number | VgSignalRef };
+export type VgRangeStep = { step: number | SignalRef };
 
 // Domains that are not a union of domains
-export type VgNonUnionDomain = any[] | VgDataRef | VgSignalRef;
+export type VgNonUnionDomain = any[] | VgDataRef | SignalRef;
 export type VgDomain = VgNonUnionDomain | DataRefUnionDomain | VgFieldRefUnionDomain;
 
 export type VgMarkGroup = any;
@@ -193,15 +185,15 @@ export type VgProjection = {
   /*
    * GeoJSON data to which the projection should attempt to automatically fit the translate and scale parameters..
    */
-  fit?: VgSignalRef | Object | any[];
+  fit?: SignalRef | Object | any[];
   /*
    * Used in conjunction with fit, provides the pixel area to which the projection should be automatically fit.
    */
-  extent?: VgSignalRef | number[][];
+  extent?: SignalRef | number[][];
   /*
    * Used in conjunction with fit, provides the width and height in pixels of the area to which the projection should be automatically fit.
    */
-  size?: VgSignalRef | (number | VgSignalRef)[];
+  size?: SignalRef | (number | SignalRef)[];
 
   /* The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection */
   coefficient?: number;
@@ -262,7 +254,7 @@ export interface VgLayout {
 }
 
 export interface VgEventHandler {
-  events: string[] | VgSignalRef;
+  events: string[] | SignalRef;
   update?: string;
   encode?: string;
   force?: boolean;
@@ -276,7 +268,7 @@ export interface VgSignal {
   on?: VgEventHandler[];
   update?: string;
   react?: boolean;
-  value?: string | number | boolean | {} | VgSignalRef;
+  value?: string | number | boolean | {} | SignalRef;
   // only for nested signals
   push?: string;
 }
@@ -368,7 +360,7 @@ export interface VgAxis {
   title?: string;
   titlePadding?: number;
 
-  values?: any[] | VgSignalRef;
+  values?: any[] | SignalRef;
   zindex?: number;
 
   encode?: VgAxisEncode;
@@ -393,7 +385,7 @@ export interface VgLegend {
   tickCount?: number;
   title?: string;
   type?: LegendType;
-  values?: any[] | VgSignalRef;
+  values?: any[] | SignalRef;
   zindex?: number;
 
   encode?: VgLegendEncode;
@@ -460,7 +452,7 @@ export interface VgExtentTransform {
 
 export interface VgFoldTransform {
   type: 'fold';
-  fields: SignalLift<VgFieldRef[]>;
+  fields: VgFieldRef[] | SignalRef;
   as: [string, string];
 }
 
@@ -529,11 +521,11 @@ export interface VgWindowTransform {
   type: 'window';
   sort?: VgSortField;
   groupby?: VgFieldRef[];
-  ops?: VgVal<string>[];
+  ops?: (string | SignalRef)[];
   fields?: (VgFieldRef | null)[];
   params?: any[];
   as?: (string | null)[];
-  frame?: [VgVal<number> | null, VgVal<number> | null];
+  frame?: [number | null | SignalRef, number | null | SignalRef];
   ignorePeers?: boolean;
 }
 
