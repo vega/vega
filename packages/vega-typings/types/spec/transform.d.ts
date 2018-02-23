@@ -200,76 +200,7 @@ export interface VgEventHandler {
   between?: any[];
 }
 
-export interface VgSignal {
-  name: string;
-  bind?: string;
-  description?: string;
-  on?: VgEventHandler[];
-  update?: string;
-  react?: boolean;
-  value?: string | number | boolean | {} | SignalRef;
-  // only for nested signals
-  push?: string;
-}
-
-export type AxisOrient = 'top' | 'right' | 'left' | 'bottom';
-
-export interface VgAxis {
-  scale: string;
-  domain?: boolean;
-  format?: string;
-  grid?: boolean;
-  gridScale?: string;
-
-  labels?: boolean;
-
-  labelBound?: boolean | number;
-  labelFlush?: boolean | number;
-  labelPadding?: number;
-  labelOverlap?: boolean | 'parity' | 'greedy';
-  maxExtent?: number;
-  minExtent?: number;
-  offset?: number;
-  orient?: AxisOrient;
-  position?: number;
-
-  ticks?: boolean;
-  tickCount?: number;
-  tickSize?: number;
-
-  title?: string;
-  titlePadding?: number;
-
-  values?: any[] | SignalRef;
-  zindex?: number;
-
-  encode?: VgAxisEncode;
-}
-
 export type LegendType = 'symbol' | 'gradient';
-
-export interface VgLegend {
-  fill?: string;
-  stroke?: string;
-  size?: string;
-  shape?: string;
-  opacity?: string;
-
-  entryPadding?: number;
-  format?: string;
-
-  offset?: number;
-  orient?: LegendOrient;
-  padding?: number;
-
-  tickCount?: number;
-  title?: string;
-  type?: LegendType;
-  values?: any[] | SignalRef;
-  zindex?: number;
-
-  encode?: VgLegendEncode;
-}
 
 export interface BaseBin {
   /**
