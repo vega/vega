@@ -17,54 +17,54 @@ import {
   LegendOrient,
   FontStyle,
   FontWeight,
+  Vector2,
 } from '.';
 
 export type Transform =
-  | any
   | AggregateTransform
   | BinTransform
   | CollectTransform
   | CountPatternTransform
-  // TODO contour
-  // TODO cross
-  // TODO crossfilter
-  // TODO density
+  | _TODO_<'contour'>
+  | _TODO_<'cross'>
+  | _TODO_<'crossfilter'>
+  | _TODO_<'density'>
   | ExtentTransform
   | FilterTransform
-  // TODO flatten
+  | _TODO_<'flatten'>
   | FoldTransform
-  // TODO force
+  | _TODO_<'force'>
   | FormulaTransform
   | GeoJSONTransform
-  // TODO geopath
+  | _TODO_<'geopath'>
   | GeoPointTransform
   | GeoShapeTransform
   | IdentifierTransform
   | ImputeTransform
-  // TODO joinaggregate
-  // TODO linkpath
+  | _TODO_<'joinaggregate'>
+  | _TODO_<'linkpath'>
   | LookupTransform
-  // TODO nest
-  // TODO pack
-  // TODO partition
-  // TODO pie
-  // TODO project
-  // TODO resolvefilter
-  // TODO sample
-  // TODO sequence
+  | _TODO_<'nest'>
+  | _TODO_<'pack'>
+  | _TODO_<'partition'>
+  | _TODO_<'pie'>
+  | _TODO_<'project'>
+  | _TODO_<'resolvefilter'>
+  | _TODO_<'sample'>
+  | _TODO_<'sequence'>
   | StackTransform
-  // TODO stratify
-  // TODO tree
-  // TODO treelinks
-  // TODO treemap
-  // TODO voronoi
+  | _TODO_<'stratify'>
+  | _TODO_<'tree'>
+  | _TODO_<'treelinks'>
+  | _TODO_<'treemap'>
+  | _TODO_<'voronoi'>
   | WindowTransform
   | WordcloudTransform;
 
 export interface AggregateTransform {
   type: 'aggregate';
-  groupby?: FieldRef[];
-  fields?: FieldRef[];
+  groupby?: Field[];
+  fields?: Field[];
   ops?: AggregateOp[];
   as?: string[];
   cross?: boolean;
@@ -86,7 +86,7 @@ export interface CollectTransform {
 
 export interface CountPatternTransform {
   type: 'countpattern';
-  field: FieldRef;
+  field: Field;
   case?: string;
   pattern?: string;
   stopwords?: string;
@@ -106,7 +106,7 @@ export interface FilterTransform {
 
 export interface FoldTransform {
   type: 'fold';
-  fields: FieldRef[] | SignalRef;
+  fields: Field[] | SignalRef;
   as: [string, string];
 }
 
@@ -118,22 +118,22 @@ export interface FormulaTransform {
 
 export interface GeoJSONTransform {
   type: 'geojson';
-  fields?: FieldRef[];
-  geojson?: FieldRef;
+  fields?: Field[];
+  geojson?: Field;
   signal: string;
 }
 
 export interface GeoPointTransform {
   type: 'geopoint';
   projection: string; // projection name
-  fields: FieldRef[];
+  fields: Field[];
   as?: string[];
 }
 
 export interface GeoShapeTransform {
   type: 'geoshape';
   projection: string; // projection name
-  field?: FieldRef;
+  field?: Field;
   as?: string;
 }
 
@@ -149,7 +149,6 @@ export interface ImputeTransform {
   key: string;
   keyvals?: string[];
   method?: 'value' | 'median' | 'max' | 'min' | 'mean';
-  value?: any;
 }
 
 export interface LookupTransform {
@@ -162,23 +161,21 @@ export interface LookupTransform {
   default?: string;
 }
 
-export type StackOffset = 'zero' | 'center' | 'normalize';
-
 export interface StackTransform {
   type: 'stack';
+  field?: Field;
+  groupby?: Field[];
+  sort?: Compare;
   offset?: StackOffset;
-  groupby: string[];
-  field: string;
-  sort: Compare;
-  as: string[];
+  as?: Vector2<string>;
 }
+export type StackOffset = 'zero' | 'center' | 'normalize';
 
 export interface WindowTransform extends SingleSort {
   type: 'window';
-  groupby?: FieldRef[];
+  groupby?: Field[];
   ops?: (string | SignalRef)[];
-  fields?: (FieldRef | null)[];
-  params?: any[];
+  fields?: (Field | null)[];
   as?: (string | null)[];
   frame?: [number | null | SignalRef, number | null | SignalRef];
   ignorePeers?: boolean;
@@ -197,13 +194,19 @@ export interface WordcloudTransform {
   ];
   padding?: number | ProductionRule<NumericValueRef>;
   rotate?: number | ProductionRule<NumericValueRef>;
-  text?: FieldRef;
+  text?: Field;
   spiral?: string;
   as?: string[];
 }
 
-export type FieldRef =
+export type Field =
   | FieldValue
   | {
       field: FieldValue;
     };
+
+/** This transform has yet to be implemented */
+export interface _TODO_<Type extends string> {
+  type: Type;
+  [k: string]: any;
+}
