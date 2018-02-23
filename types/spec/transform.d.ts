@@ -1,6 +1,15 @@
-import { Expr, ProductionRule, NumericValueRef, ScaledValueRef, StringValueRef } from '.';
+import {
+  Expr,
+  ProductionRule,
+  NumericValueRef,
+  ScaledValueRef,
+  StringValueRef,
+  SignalRef,
+} from '.';
 
 export type VgVal<T> = T | ProductionRule<ScaledValueRef<T>>;
+
+export type SignalLift<T> = T | SignalRef;
 
 export interface VgParentRef {
   parent: string;
@@ -449,6 +458,12 @@ export interface VgExtentTransform {
   signal: string;
 }
 
+export interface VgFoldTransform {
+  type: 'fold';
+  fields: SignalLift<VgFieldRef[]>;
+  as: [string, string];
+}
+
 export interface VgFormulaTransform {
   type: 'formula';
   as: string;
@@ -543,6 +558,7 @@ export interface VgWordcloudTransform {
 export type Transform =
   | VgBinTransform
   | VgExtentTransform
+  | VgFoldTransform
   | VgFormulaTransform
   | VgAggregateTransform
   | VgFilterTransform
