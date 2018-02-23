@@ -176,8 +176,9 @@ export interface FoldTransform {
 
 export interface FormulaTransform {
   type: 'formula';
-  as: string;
   expr: string;
+  as: string;
+  initonly?: boolean;
 }
 
 export interface GeoJSONTransform {
