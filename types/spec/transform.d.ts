@@ -268,43 +268,6 @@ export interface VgImputeTransform {
   value?: any;
 }
 
-export type VgCheckboxBinding = {
-  input: 'checkbox';
-  element?: string;
-};
-
-export type VgRadioBinding = {
-  input: 'radio';
-  options: string[];
-  element?: string;
-};
-
-export type VgSelectBinding = {
-  input: 'select';
-  options: string[];
-  element?: string;
-};
-
-export type VgRangeBinding = {
-  input: 'range';
-  min?: number;
-  max?: number;
-  step?: number;
-  element?: string;
-};
-
-export type VgGenericBinding = {
-  input: string;
-  element?: string;
-};
-
-export type VgBinding =
-  | VgCheckboxBinding
-  | VgRadioBinding
-  | VgSelectBinding
-  | VgRangeBinding
-  | VgGenericBinding;
-
 /**
  * Base object for Vega's Axis and Axis Config.
  * All of these properties are both properties of Vega's Axis and Axis Config.
