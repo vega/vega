@@ -91,7 +91,7 @@ export interface BaseBin {
   nice?: boolean;
 }
 
-export interface VgBinTransform extends BaseBin {
+export interface BinTransform extends BaseBin {
   type: 'bin';
   extent?: number[] | { signal: string };
   field: string;
@@ -99,30 +99,30 @@ export interface VgBinTransform extends BaseBin {
   signal?: string;
 }
 
-export interface VgExtentTransform {
+export interface ExtentTransform {
   type: 'extent';
   field: string;
   signal: string;
 }
 
-export interface VgFoldTransform {
+export interface FoldTransform {
   type: 'fold';
   fields: FieldRef[] | SignalRef;
   as: [string, string];
 }
 
-export interface VgFormulaTransform {
+export interface FormulaTransform {
   type: 'formula';
   as: string;
   expr: string;
 }
 
-export interface VgFilterTransform {
+export interface FilterTransform {
   type: 'filter';
   expr: string;
 }
 
-export interface VgAggregateTransform {
+export interface AggregateTransform {
   type: 'aggregate';
   groupby?: FieldRef[];
   fields?: FieldRef[];
@@ -132,12 +132,12 @@ export interface VgAggregateTransform {
   drop?: boolean;
 }
 
-export interface VgCollectTransform {
+export interface CollectTransform {
   type: 'collect';
   sort: Compare;
 }
 
-export interface VgCountPatternTransform {
+export interface CountPatternTransform {
   type: 'countpattern';
   field: FieldRef;
   case?: string;
@@ -146,7 +146,7 @@ export interface VgCountPatternTransform {
   as?: string[];
 }
 
-export interface VgLookupTransform {
+export interface LookupTransform {
   type: 'lookup';
   from: string;
   key: string;
@@ -158,7 +158,7 @@ export interface VgLookupTransform {
 
 export type StackOffset = 'zero' | 'center' | 'normalize';
 
-export interface VgStackTransform {
+export interface StackTransform {
   type: 'stack';
   offset?: StackOffset;
   groupby: string[];
@@ -167,12 +167,12 @@ export interface VgStackTransform {
   as: string[];
 }
 
-export interface VgIdentifierTransform {
+export interface IdentifierTransform {
   type: 'identifier';
   as: string;
 }
 
-export interface VgWindowTransform extends SingleSort {
+export interface WindowTransform extends SingleSort {
   type: 'window';
   groupby?: FieldRef[];
   ops?: (string | SignalRef)[];
@@ -183,7 +183,7 @@ export interface VgWindowTransform extends SingleSort {
   ignorePeers?: boolean;
 }
 
-export interface VgWordcloudTransform {
+export interface WordcloudTransform {
   type: 'wordcloud';
   size?: [number | ProductionRule<NumericValueRef>, number | ProductionRule<NumericValueRef>];
   font?: string | ProductionRule<StringValueRef>;
@@ -202,66 +202,47 @@ export interface VgWordcloudTransform {
 }
 
 export type Transform =
-  | VgBinTransform
-  | VgExtentTransform
-  | VgFoldTransform
-  | VgFormulaTransform
-  | VgAggregateTransform
-  | VgFilterTransform
-  | VgImputeTransform
-  | VgStackTransform
-  | VgCollectTransform
-  | VgCountPatternTransform
-  | VgLookupTransform
-  | VgIdentifierTransform
-  | VgGeoPointTransform
-  | VgGeoJSONTransform
-  | VgGeoJSONTransform
-  | VgWindowTransform
-  | VgWordcloudTransform;
+  | BinTransform
+  | ExtentTransform
+  | FoldTransform
+  | FormulaTransform
+  | AggregateTransform
+  | FilterTransform
+  | ImputeTransform
+  | StackTransform
+  | CollectTransform
+  | CountPatternTransform
+  | LookupTransform
+  | IdentifierTransform
+  | GeoPointTransform
+  | GeoShapeTransform
+  | GeoJSONTransform
+  | GeoJSONTransform
+  | WindowTransform
+  | WordcloudTransform;
 
-export interface VgGeoPointTransform {
+export interface GeoPointTransform {
   type: 'geopoint';
   projection: string; // projection name
   fields: FieldRef[];
   as?: string[];
 }
 
-export interface VgGeoShapeTransform {
+export interface GeoShapeTransform {
   type: 'geoshape';
   projection: string; // projection name
   field?: FieldRef;
   as?: string;
 }
 
-export interface VgGeoJSONTransform {
+export interface GeoJSONTransform {
   type: 'geojson';
   fields?: FieldRef[];
   geojson?: FieldRef;
   signal: string;
 }
 
-export type VgPostEncodingTransform = VgGeoShapeTransform;
-
-export interface VgAxisEncode {
-  ticks?: VgGuideEncode;
-  labels?: VgGuideEncode;
-  title?: VgGuideEncode;
-  grid?: VgGuideEncode;
-  domain?: VgGuideEncode;
-}
-
-export interface VgLegendEncode {
-  title?: VgGuideEncode;
-  labels?: VgGuideEncode;
-  legend?: VgGuideEncode;
-  symbols?: VgGuideEncode;
-  gradient?: VgGuideEncode;
-}
-
-export type VgGuideEncode = any; // TODO: replace this (See guideEncode in Vega Schema)
-
-export interface VgImputeTransform {
+export interface ImputeTransform {
   type: 'impute';
   groupby?: string[];
   field: string;
