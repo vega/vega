@@ -1,4 +1,5 @@
 import { Spec } from 'vega';
+import { Transform } from 'types/spec/transform';
 
 const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v3.json",
