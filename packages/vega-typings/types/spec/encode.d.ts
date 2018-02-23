@@ -1,18 +1,14 @@
 import { SignalRef } from './signal';
-export type FieldRef =
-  | string
-  | SignalRef
-  | {
-      datum: FieldRef;
-    }
-  | GroupFieldRef
-  | ParentFieldRef;
+export type FieldValue = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
+export interface DatumFieldRef {
+  datum: FieldValue;
+}
 export interface GroupFieldRef {
-  group: FieldRef;
+  group: FieldValue;
   level?: number;
 }
 export interface ParentFieldRef {
-  parent: FieldRef;
+  parent: FieldValue;
   level?: number;
 }
 export type BaseValueRef<T> =
@@ -21,7 +17,7 @@ export type BaseValueRef<T> =
       value: T | null;
     }
   | {
-      field: FieldRef;
+      field: FieldValue;
     }
   | {
       range: number | boolean;
@@ -29,10 +25,10 @@ export type BaseValueRef<T> =
 export type ScaledValueRef<T> =
   | BaseValueRef<T>
   | (BaseValueRef<T> & {
-      scale: FieldRef;
+      scale: FieldValue;
     })
   | {
-      scale: FieldRef;
+      scale: FieldValue;
       band: boolean | number;
     };
 export type NumericValueRef = (ScaledValueRef<number> | {}) & {
@@ -67,7 +63,7 @@ export interface ColorHCL {
 export type ColorValueRef =
   | ScaledValueRef<string>
   | {
-      gradient: FieldRef;
+      gradient: FieldValue;
     }
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;

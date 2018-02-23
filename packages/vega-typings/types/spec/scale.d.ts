@@ -43,11 +43,19 @@ export interface MultiSort {
       };
 }
 export type ScaleField = string | SignalRef;
+
 export type ScaleInterpolate =
-  | string
+  | 'rgb'
+  | 'lab'
+  | 'hcl'
+  | 'hsl'
+  | 'hsl-long'
+  | 'hcl-long'
+  | 'cubehelix'
+  | 'cubehelix-long'
   | SignalRef
   | {
-      type: string | SignalRef;
+      type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
       gamma?: number | SignalRef;
     };
 export interface DataRef {

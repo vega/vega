@@ -10,12 +10,14 @@ import {
   MultiSort,
   DataRef,
   EventStream,
+  FieldValue,
 } from '.';
 
-export interface VgParentRef {
-  parent: string;
-}
-export type VgFieldRef = string | { field: string } | VgParentRef | VgParentRef[];
+export type FieldRef =
+  | FieldValue
+  | {
+      field: FieldValue;
+    };
 
 export type AggregateOp =
   | 'argmax'
@@ -39,168 +41,6 @@ export type AggregateOp =
   | 'values'
   | 'variance'
   | 'variancep';
-
-export type VgDataRef = DataRef & SingleSort;
-
-export type VgEventStream = EventStream;
-
-export interface DataRefUnionDomain extends MultiSort {
-  fields: (any[] | VgDataRef | SignalRef)[];
-}
-
-export interface VgFieldRefUnionDomain extends MultiSort {
-  data: string;
-  fields: VgFieldRef[];
-}
-
-export type VgScheme = { scheme: string; extent?: number[]; count?: number };
-export type VgRange =
-  | string
-  | VgDataRef
-  | (number | string | VgDataRef | SignalRef)[]
-  | VgScheme
-  | VgRangeStep;
-
-export type VgRangeStep = { step: number | SignalRef };
-
-// Domains that are not a union of domains
-export type VgNonUnionDomain = any[] | VgDataRef | SignalRef;
-export type VgDomain = VgNonUnionDomain | DataRefUnionDomain | VgFieldRefUnionDomain;
-
-export type VgMarkGroup = any;
-
-export type VgProjectionType =
-  | 'albers'
-  | 'albersUsa'
-  | 'azimuthalEqualArea'
-  | 'azimuthalEquidistant'
-  | 'conicConformal'
-  | 'conicEqualArea'
-  | 'conicEquidistant'
-  | 'equirectangular'
-  | 'gnomonic'
-  | 'mercator'
-  | 'orthographic'
-  | 'stereographic'
-  | 'transverseMercator';
-
-export type VgProjection = {
-  /*
-   * The name of the projection.
-   */
-  name: string;
-  /*
-   * The type of the projection.
-   */
-  type?: VgProjectionType;
-  /*
-   * The clip angle of the projection.
-   */
-  clipAngle?: number;
-  /*
-   * Sets the projection’s viewport clip extent to the specified bounds in pixels
-   */
-  clipExtent?: number[][];
-  /*
-   * Sets the projection’s scale factor to the specified value
-   */
-  scale?: number;
-  /*
-   * The translation of the projection.
-   */
-  translate?: number[];
-  /*
-   * The center of the projection.
-   */
-  center?: number[];
-  /**
-   * The rotation of the projection.
-   */
-  rotate?: number[];
-  /*
-   * The desired precision of the projection.
-   */
-  precision?: String;
-  /*
-   * GeoJSON data to which the projection should attempt to automatically fit the translate and scale parameters..
-   */
-  fit?: SignalRef | Object | any[];
-  /*
-   * Used in conjunction with fit, provides the pixel area to which the projection should be automatically fit.
-   */
-  extent?: SignalRef | number[][];
-  /*
-   * Used in conjunction with fit, provides the width and height in pixels of the area to which the projection should be automatically fit.
-   */
-  size?: SignalRef | (number | SignalRef)[];
-
-  /* The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection */
-  coefficient?: number;
-  distance?: number;
-  fraction?: number;
-  lobes?: number;
-  parallel?: number;
-  radius?: number;
-  ratio?: number;
-  spacing?: number;
-  tilt?: number;
-};
-
-export type ScaleInterpolate =
-  | 'rgb'
-  | 'lab'
-  | 'hcl'
-  | 'hsl'
-  | 'hsl-long'
-  | 'hcl-long'
-  | 'cubehelix'
-  | 'cubehelix-long';
-
-export interface ScaleInterpolateParams {
-  type: 'rgb' | 'cubehelix' | 'cubehelix-long';
-  gamma?: number;
-}
-
-export type VgLayoutAlign = 'none' | 'each' | 'all';
-
-export type RowCol<T> = {
-  row?: T;
-  column?: T;
-};
-
-export interface VgLayout {
-  padding: number | RowCol<number>;
-  headerBand?: number | RowCol<number>;
-  footerBand?: number | RowCol<number>;
-  offset:
-    | number
-    | {
-        rowHeader: number;
-        rowFooter: number;
-        rowTitle: number;
-        columnHeader: number;
-        columnFooter: number;
-        columnTitle: number;
-      };
-  bounds: 'full' | 'flush';
-  columns?: number | { signal: string };
-  align?:
-    | VgLayoutAlign
-    | {
-        row: VgLayoutAlign;
-        column: VgLayoutAlign;
-      };
-}
-
-export interface VgEventHandler {
-  events: string[] | SignalRef;
-  update?: string;
-  encode?: string;
-  force?: boolean;
-  between?: any[];
-}
-
-export type LegendType = 'symbol' | 'gradient';
 
 export interface BaseBin {
   /**
@@ -263,7 +103,7 @@ export interface VgExtentTransform {
 
 export interface VgFoldTransform {
   type: 'fold';
-  fields: VgFieldRef[] | SignalRef;
+  fields: FieldRef[] | SignalRef;
   as: [string, string];
 }
 
@@ -280,8 +120,8 @@ export interface VgFilterTransform {
 
 export interface VgAggregateTransform {
   type: 'aggregate';
-  groupby?: VgFieldRef[];
-  fields?: VgFieldRef[];
+  groupby?: FieldRef[];
+  fields?: FieldRef[];
   ops?: AggregateOp[];
   as?: string[];
   cross?: boolean;
@@ -295,7 +135,7 @@ export interface VgCollectTransform {
 
 export interface VgCountPatternTransform {
   type: 'countpattern';
-  field: VgFieldRef;
+  field: FieldRef;
   case?: string;
   pattern?: string;
   stopwords?: string;
@@ -330,9 +170,9 @@ export interface VgIdentifierTransform {
 
 export interface VgWindowTransform extends SingleSort {
   type: 'window';
-  groupby?: VgFieldRef[];
+  groupby?: FieldRef[];
   ops?: (string | SignalRef)[];
-  fields?: (VgFieldRef | null)[];
+  fields?: (FieldRef | null)[];
   params?: any[];
   as?: (string | null)[];
   frame?: [number | null | SignalRef, number | null | SignalRef];
@@ -352,7 +192,7 @@ export interface VgWordcloudTransform {
   ];
   padding?: number | ProductionRule<NumericValueRef>;
   rotate?: number | ProductionRule<NumericValueRef>;
-  text?: VgFieldRef;
+  text?: FieldRef;
   spiral?: string;
   as?: string[];
 }
@@ -379,21 +219,21 @@ export type Transform =
 export interface VgGeoPointTransform {
   type: 'geopoint';
   projection: string; // projection name
-  fields: VgFieldRef[];
+  fields: FieldRef[];
   as?: string[];
 }
 
 export interface VgGeoShapeTransform {
   type: 'geoshape';
   projection: string; // projection name
-  field?: VgFieldRef;
+  field?: FieldRef;
   as?: string;
 }
 
 export interface VgGeoJSONTransform {
   type: 'geojson';
-  fields?: VgFieldRef[];
-  geojson?: VgFieldRef;
+  fields?: FieldRef[];
+  geojson?: FieldRef;
   signal: string;
 }
 
