@@ -1,4 +1,6 @@
 import {
+  AggregateOp,
+  BaseBin,
   Expr,
   ProductionRule,
   NumericValueRef,
@@ -17,110 +19,47 @@ import {
   FontWeight,
 } from '.';
 
-export type FieldRef =
-  | FieldValue
-  | {
-      field: FieldValue;
-    };
-
-export type AggregateOp =
-  | 'argmax'
-  | 'argmin'
-  | 'average'
-  | 'count'
-  | 'distinct'
-  | 'max'
-  | 'mean'
-  | 'median'
-  | 'min'
-  | 'missing'
-  | 'q1'
-  | 'q3'
-  | 'ci0'
-  | 'ci1'
-  | 'stdev'
-  | 'stdevp'
-  | 'sum'
-  | 'valid'
-  | 'values'
-  | 'variance'
-  | 'variancep';
-
-export interface BaseBin {
-  /**
-   * The number base to use for automatic bin determination (default is base 10).
-   *
-   * __Default value:__ `10`
-   *
-   */
-  base?: number;
-  /**
-   * An exact step size to use between bins.
-   *
-   * __Note:__ If provided, options such as maxbins will be ignored.
-   */
-  step?: number;
-  /**
-   * An array of allowable step sizes to choose from.
-   * @minItems 1
-   */
-  steps?: number[];
-  /**
-   * A minimum allowable step size (particularly useful for integer values).
-   */
-  minstep?: number;
-  /**
-   * Scale factors indicating allowable subdivisions. The default value is [5, 2], which indicates that for base 10 numbers (the default base), the method may consider dividing bin sizes by 5 and/or 2. For example, for an initial step size of 10, the method can check if bin sizes of 2 (= 10/5), 5 (= 10/2), or 1 (= 10/(5*2)) might also satisfy the given constraints.
-   *
-   * __Default value:__ `[5, 2]`
-   *
-   * @minItems 1
-   */
-  divide?: number[];
-  /**
-   * Maximum number of bins.
-   *
-   * __Default value:__ `6` for `row`, `column` and `shape` channels; `10` for other channels
-   *
-   * @minimum 2
-   */
-  maxbins?: number;
-  /**
-   * If true (the default), attempts to make the bin boundaries use human-friendly boundaries, such as multiples of ten.
-   */
-  nice?: boolean;
-}
-
-export interface BinTransform extends BaseBin {
-  type: 'bin';
-  extent?: number[] | { signal: string };
-  field: string;
-  as: string[];
-  signal?: string;
-}
-
-export interface ExtentTransform {
-  type: 'extent';
-  field: string;
-  signal: string;
-}
-
-export interface FoldTransform {
-  type: 'fold';
-  fields: FieldRef[] | SignalRef;
-  as: [string, string];
-}
-
-export interface FormulaTransform {
-  type: 'formula';
-  as: string;
-  expr: string;
-}
-
-export interface FilterTransform {
-  type: 'filter';
-  expr: string;
-}
+export type Transform =
+  | any
+  | AggregateTransform
+  | BinTransform
+  | CollectTransform
+  | CountPatternTransform
+  // TODO contour
+  // TODO cross
+  // TODO crossfilter
+  // TODO density
+  | ExtentTransform
+  | FilterTransform
+  // TODO flatten
+  | FoldTransform
+  // TODO force
+  | FormulaTransform
+  | GeoJSONTransform
+  // TODO geopath
+  | GeoPointTransform
+  | GeoShapeTransform
+  | IdentifierTransform
+  | ImputeTransform
+  // TODO joinaggregate
+  // TODO linkpath
+  | LookupTransform
+  // TODO nest
+  // TODO pack
+  // TODO partition
+  // TODO pie
+  // TODO project
+  // TODO resolvefilter
+  // TODO sample
+  // TODO sequence
+  | StackTransform
+  // TODO stratify
+  // TODO tree
+  // TODO treelinks
+  // TODO treemap
+  // TODO voronoi
+  | WindowTransform
+  | WordcloudTransform;
 
 export interface AggregateTransform {
   type: 'aggregate';
@@ -130,6 +69,14 @@ export interface AggregateTransform {
   as?: string[];
   cross?: boolean;
   drop?: boolean;
+}
+
+export interface BinTransform extends BaseBin {
+  type: 'bin';
+  extent?: number[] | { signal: string };
+  field: string;
+  as: string[];
+  signal?: string;
 }
 
 export interface CollectTransform {
@@ -144,6 +91,65 @@ export interface CountPatternTransform {
   pattern?: string;
   stopwords?: string;
   as?: string[];
+}
+
+export interface ExtentTransform {
+  type: 'extent';
+  field: string;
+  signal: string;
+}
+
+export interface FilterTransform {
+  type: 'filter';
+  expr: string;
+}
+
+export interface FoldTransform {
+  type: 'fold';
+  fields: FieldRef[] | SignalRef;
+  as: [string, string];
+}
+
+export interface FormulaTransform {
+  type: 'formula';
+  as: string;
+  expr: string;
+}
+
+export interface GeoJSONTransform {
+  type: 'geojson';
+  fields?: FieldRef[];
+  geojson?: FieldRef;
+  signal: string;
+}
+
+export interface GeoPointTransform {
+  type: 'geopoint';
+  projection: string; // projection name
+  fields: FieldRef[];
+  as?: string[];
+}
+
+export interface GeoShapeTransform {
+  type: 'geoshape';
+  projection: string; // projection name
+  field?: FieldRef;
+  as?: string;
+}
+
+export interface IdentifierTransform {
+  type: 'identifier';
+  as: string;
+}
+
+export interface ImputeTransform {
+  type: 'impute';
+  groupby?: string[];
+  field: string;
+  key: string;
+  keyvals?: string[];
+  method?: 'value' | 'median' | 'max' | 'min' | 'mean';
+  value?: any;
 }
 
 export interface LookupTransform {
@@ -165,11 +171,6 @@ export interface StackTransform {
   field: string;
   sort: Compare;
   as: string[];
-}
-
-export interface IdentifierTransform {
-  type: 'identifier';
-  as: string;
 }
 
 export interface WindowTransform extends SingleSort {
@@ -201,53 +202,8 @@ export interface WordcloudTransform {
   as?: string[];
 }
 
-export type Transform =
-  | BinTransform
-  | ExtentTransform
-  | FoldTransform
-  | FormulaTransform
-  | AggregateTransform
-  | FilterTransform
-  | ImputeTransform
-  | StackTransform
-  | CollectTransform
-  | CountPatternTransform
-  | LookupTransform
-  | IdentifierTransform
-  | GeoPointTransform
-  | GeoShapeTransform
-  | GeoJSONTransform
-  | GeoJSONTransform
-  | WindowTransform
-  | WordcloudTransform;
-
-export interface GeoPointTransform {
-  type: 'geopoint';
-  projection: string; // projection name
-  fields: FieldRef[];
-  as?: string[];
-}
-
-export interface GeoShapeTransform {
-  type: 'geoshape';
-  projection: string; // projection name
-  field?: FieldRef;
-  as?: string;
-}
-
-export interface GeoJSONTransform {
-  type: 'geojson';
-  fields?: FieldRef[];
-  geojson?: FieldRef;
-  signal: string;
-}
-
-export interface ImputeTransform {
-  type: 'impute';
-  groupby?: string[];
-  field: string;
-  key: string;
-  keyvals?: string[];
-  method?: 'value' | 'median' | 'max' | 'min' | 'mean';
-  value?: any;
-}
+export type FieldRef =
+  | FieldValue
+  | {
+      field: FieldValue;
+    };
