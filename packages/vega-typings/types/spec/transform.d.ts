@@ -12,6 +12,7 @@ import {
   EventStream,
   FieldValue,
   Compare,
+  LegendOrient,
 } from '.';
 
 export type FieldRef =
@@ -507,15 +508,6 @@ export interface VgAxisConfig extends VgAxisBase {
    */
   titleY?: number;
 }
-
-export type LegendOrient =
-  | 'left'
-  | 'right'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right'
-  | 'none';
 
 export interface VgLegendBase {
   /**
