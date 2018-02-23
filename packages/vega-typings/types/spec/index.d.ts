@@ -16,11 +16,9 @@ export interface Spec extends Scope, Encode<EncodeEntry> {
   background?: Background;
 }
 
-export * from './aggregate';
 export * from './autosize';
 export * from './axis';
 export * from './background';
-export * from './bin';
 export * from './bind';
 export * from './config';
 export * from './data';
