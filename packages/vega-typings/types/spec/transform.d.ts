@@ -11,6 +11,7 @@ import {
   DataRef,
   EventStream,
   FieldValue,
+  Compare,
 } from '.';
 
 export type FieldRef =
@@ -130,7 +131,7 @@ export interface VgAggregateTransform {
 
 export interface VgCollectTransform {
   type: 'collect';
-  sort: VgSort;
+  sort: Compare;
 }
 
 export interface VgCountPatternTransform {
@@ -159,7 +160,7 @@ export interface VgStackTransform {
   offset?: StackOffset;
   groupby: string[];
   field: string;
-  sort: VgSort;
+  sort: Compare;
   as: string[];
 }
 
@@ -256,15 +257,6 @@ export interface VgLegendEncode {
 }
 
 export type VgGuideEncode = any; // TODO: replace this (See guideEncode in Vega Schema)
-export type VgSort =
-  | {
-      field: string;
-      order?: 'ascending' | 'descending';
-    }
-  | {
-      field: string[];
-      order?: ('ascending' | 'descending')[];
-    };
 
 export interface VgImputeTransform {
   type: 'impute';
