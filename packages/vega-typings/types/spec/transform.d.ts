@@ -93,9 +93,9 @@ export type AggregateOp =
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
-  extent?: number[] | { signal: string };
+  extent?: number[] | SignalRef;
   field: string;
-  as: string[];
+  as?: string[];
   signal?: string;
 }
 export interface BaseBin {
