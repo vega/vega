@@ -16,6 +16,7 @@ import {
   FontStyle,
   FontWeight,
   Vector2,
+  ExprRef,
 } from '.';
 
 export type Transform =
@@ -199,6 +200,7 @@ export interface GeoShapeTransform {
   type: 'geoshape';
   projection: string; // projection name
   field?: Field;
+  pointRadius?: number | SignalRef | ExprRef;
   as?: string;
 }
 
