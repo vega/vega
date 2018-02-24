@@ -33,7 +33,7 @@ export type FormatTopoJSON = {
   | {
       mesh?: 'string';
     });
-export type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON;
+export type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON | { parse: Parse };
 export type Data = (
   | {
       source: string;
