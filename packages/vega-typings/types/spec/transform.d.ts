@@ -25,7 +25,7 @@ export type Transform =
   | BinTransform
   | CollectTransform
   | CountPatternTransform
-  | _TODO_<'contour'>
+  | ContourTransform
   | _TODO_<'cross'>
   | _TODO_<'crossfilter'>
   | _TODO_<'density'>
@@ -164,6 +164,24 @@ export interface CountPatternTransform {
   stopwords?: string;
   as?: string[];
 }
+
+export type ContourTransform = {
+  type: 'contour';
+  signal?: string;
+  size: Vector2<number | SignalRef> | SignalRef;
+  values?: (number | SignalRef)[] | SignalRef;
+  x?: Field;
+  y?: Field;
+  cellSize?: number | SignalRef;
+  bandwidth?: number | SignalRef;
+} & (
+  | {
+      count?: number | SignalRef;
+      nice?: number | SignalRef;
+    }
+  | {
+      thresholds?: (number | SignalRef)[] | SignalRef;
+    });
 
 export interface ExtentTransform {
   type: 'extent';
