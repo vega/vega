@@ -49,7 +49,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["Title"],
-          "ops": ["distinct"],
+          "ops": ["distinct" as "distinct"],
           "signal": "aggregate"
         },
         {

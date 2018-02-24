@@ -1,18 +1,14 @@
 import { SignalRef } from './signal';
-export type FieldRef =
-  | string
-  | SignalRef
-  | {
-      datum: FieldRef;
-    }
-  | GroupFieldRef
-  | ParentFieldRef;
+export type FieldValue = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
+export interface DatumFieldRef {
+  datum: FieldValue;
+}
 export interface GroupFieldRef {
-  group: FieldRef;
+  group: FieldValue;
   level?: number;
 }
 export interface ParentFieldRef {
-  parent: FieldRef;
+  parent: FieldValue;
   level?: number;
 }
 export type BaseValueRef<T> =
@@ -21,7 +17,7 @@ export type BaseValueRef<T> =
       value: T | null;
     }
   | {
-      field: FieldRef;
+      field: FieldValue;
     }
   | {
       range: number | boolean;
@@ -29,10 +25,10 @@ export type BaseValueRef<T> =
 export type ScaledValueRef<T> =
   | BaseValueRef<T>
   | (BaseValueRef<T> & {
-      scale: FieldRef;
+      scale: FieldValue;
     })
   | {
-      scale: FieldRef;
+      scale: FieldValue;
       band: boolean | number;
     };
 export type NumericValueRef = (ScaledValueRef<number> | {}) & {
@@ -67,7 +63,7 @@ export interface ColorHCL {
 export type ColorValueRef =
   | ScaledValueRef<string>
   | {
-      gradient: FieldRef;
+      gradient: FieldValue;
     }
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;
@@ -131,17 +127,29 @@ export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
 }
+
+/**
+ * @TJS-type integer
+ * @minimum 100
+ * @maximum 900
+ */
 export type Interpolate =
   | 'basis'
+  | 'basis-open'
+  | 'basis-closed'
   | 'bundle'
   | 'cardinal'
+  | 'cardinal-open'
+  | 'cardinal-closed'
   | 'catmull-rom'
   | 'linear'
+  | 'linear-closed'
   | 'monotone'
   | 'natural'
   | 'step'
-  | 'step-after'
-  | 'step-before';
+  | 'step-before'
+  | 'step-after';
+
 export interface LineEncodeEntry extends EncodeEntry, DefinedProperty {
   interpolate?: ProductionRule<ScaledValueRef<Interpolate>>;
   tension?: ProductionRule<NumericValueRef>;
@@ -156,7 +164,7 @@ export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {
   shape?: ProductionRule<StringValueRef>;
 }
-export type SymbolShapes =
+export type SymbolShape =
   | 'circle'
   | 'square'
   | 'cross'
@@ -168,7 +176,7 @@ export type SymbolShapes =
   | string;
 export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
-  shape?: string | ProductionRule<ScaledValueRef<SymbolShapes>>;
+  shape?: string | ProductionRule<ScaledValueRef<SymbolShape>>;
 }
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';

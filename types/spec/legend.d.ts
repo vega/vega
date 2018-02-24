@@ -4,6 +4,7 @@ import {
   RectEncodeEntry,
   SymbolEncodeEntry,
   TextEncodeEntry,
+  FontWeight,
 } from './encode';
 import { SignalRef } from './signal';
 export interface GuideEncodeEntry<T> {
@@ -26,13 +27,29 @@ export type LegendOrient =
 export interface BaseLegend {
   name?: string;
   type?: LegendType;
+  /**
+   * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
+   *
+   * __Default value:__ `"right"`
+   */
   orient?: LegendOrient;
   title?: string | SignalRef;
   zindex?: number;
   interactive?: boolean;
+  /**
+   * The offset, in pixels, by which to displace the legend from the edge of the enclosing group or data rectangle.
+   *
+   * __Default value:__  `0`
+   */
   offset?: number | NumericValueRef;
+  /**
+   * The padding, in pixels, between the legend and axis.
+   */
   padding?: number | NumericValueRef;
   titlePadding?: number | NumericValueRef;
+  /**
+   * Padding (in pixels) between legend entries in a symbol legend.
+   */
   entryPadding?: number | NumericValueRef;
   tickCount?: number | SignalRef;
   format?: string | SignalRef;
@@ -45,6 +62,7 @@ export interface BaseLegend {
     gradient?: GuideEncodeEntry<RectEncodeEntry>;
   };
 }
+
 export interface SizeLegend extends BaseLegend {
   size: string;
 }
