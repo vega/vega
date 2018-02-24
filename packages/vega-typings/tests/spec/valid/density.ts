@@ -1,4 +1,6 @@
-import { Spec } from 'vega';
+import { Spec, AggregateOp } from 'vega';
+
+const ops: AggregateOp[] = ["mean", "stdev"];
 
 const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v3.json",
@@ -27,7 +29,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["u", "u"],
-          "ops": ["mean", "stdev"],
+          ops,
           "as": ["mean", "stdev"]
         }
       ]

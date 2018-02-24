@@ -46,7 +46,7 @@ const spec: Spec = {
           "type": "aggregate",
           "groupby": ["a", "b"],
           "fields": ["c"],
-          "ops": ["average"],
+          "ops": ["average" as "average"],
           "as": ["c"]
         }
       ]
