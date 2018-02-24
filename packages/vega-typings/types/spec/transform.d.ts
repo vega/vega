@@ -63,12 +63,13 @@ export type Transform =
 
 export interface AggregateTransform {
   type: 'aggregate';
-  groupby?: Field[];
-  fields?: Field[];
-  ops?: AggregateOp[];
-  as?: string[];
-  cross?: boolean;
-  drop?: boolean;
+  signal?: string;
+  groupby?: Field[] | SignalRef;
+  fields?: (Field | null)[] | SignalRef;
+  ops?: (AggregateOp | SignalRef)[] | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
+  drop?: boolean | SignalRef;
+  cross?: boolean | SignalRef;
   key?: Field;
 }
 export type AggregateOp =
