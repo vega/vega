@@ -11,8 +11,7 @@
     "typescript": "^2.7.2"
   },
   "scripts": {
-    "format":
-      "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
+    "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "test": "dtslint ."
   },
   "dependencies": {
