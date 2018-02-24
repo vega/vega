@@ -17,6 +17,7 @@ import {
   FontWeight,
   Vector2,
   ExprRef,
+  FieldParam,
 } from '.';
 
 export type Transform =
@@ -68,6 +69,7 @@ export interface AggregateTransform {
   as?: string[];
   cross?: boolean;
   drop?: boolean;
+  key?: string | SignalRef | FieldParam | ExprRef;
 }
 export type AggregateOp =
   | 'argmax'
