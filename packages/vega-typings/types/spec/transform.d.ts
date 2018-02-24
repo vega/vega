@@ -69,7 +69,7 @@ export interface AggregateTransform {
   as?: string[];
   cross?: boolean;
   drop?: boolean;
-  key?: string | SignalRef | FieldParam | ExprRef;
+  key?: Field;
 }
 export type AggregateOp =
   | 'argmax'
@@ -97,10 +97,12 @@ export type AggregateOp =
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
-  extent?: number[] | SignalRef;
-  field: string;
-  as?: string[];
+  extent: Vector2<number | SignalRef> | SignalRef;
+  field: Field;
+  as?: Vector2<string | SignalRef> | SignalRef;
   signal?: string;
+  anchor?: number | SignalRef;
+  name?: string | SignalRef;
 }
 export interface BaseBin {
   /**
@@ -132,7 +134,7 @@ export interface BaseBin {
    *
    * @minItems 1
    */
-  divide?: (number | SignalRef)[];
+  divide?: Vector2<number | SignalRef> | SignalRef;
   /**
    * Maximum number of bins.
    *
@@ -144,7 +146,7 @@ export interface BaseBin {
   /**
    * If true (the default), attempts to make the bin boundaries use human-friendly boundaries, such as multiples of ten.
    */
-  nice?: boolean;
+  nice?: boolean | SignalRef;
 }
 
 export interface CollectTransform {
@@ -269,11 +271,7 @@ export interface WordcloudTransform {
   as?: string[];
 }
 
-export type Field =
-  | FieldValue
-  | {
-      field: FieldValue;
-    };
+export type Field = string | SignalRef | FieldParam | ExprRef;
 
 /** This transform has yet to be implemented */
 export interface _TODO_<Type extends string> {
