@@ -164,7 +164,7 @@ export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {
   shape?: ProductionRule<StringValueRef>;
 }
-export type SymbolShapes =
+export type SymbolShape =
   | 'circle'
   | 'square'
   | 'cross'
@@ -176,7 +176,7 @@ export type SymbolShapes =
   | string;
 export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
-  shape?: string | ProductionRule<ScaledValueRef<SymbolShapes>>;
+  shape?: string | ProductionRule<ScaledValueRef<SymbolShape>>;
 }
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';
