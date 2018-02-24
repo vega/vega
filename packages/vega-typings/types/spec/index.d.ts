@@ -1,11 +1,11 @@
 import { AutoSize } from './autosize';
 import { Background } from './background';
 import { Config } from './config';
-import { EncodeEntry, Encode } from './encode';
+import { EncodeEntry, Encodable } from './encode';
 import { Padding } from './padding';
 import { Scope } from './scope';
 
-export interface Spec extends Scope, Encode<EncodeEntry> {
+export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
   width?: number;
   height?: number;

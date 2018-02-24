@@ -218,14 +218,15 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
   radius?: ProductionRule<NumericValueRef>;
 }
 export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty, ThetaProperty {}
-export interface Encode<T> {
-  encode?: {
-    enter?: T;
-    update?: T;
-    exit?: T;
-    hover?: T;
-    leave?: T;
-    select?: T;
-    release?: T;
-  };
+export interface Encodable<T> {
+  encode?: Encode<T>;
 }
+export type Encode<T> = Partial<Record<EncodeEntryName, T>>;
+export type EncodeEntryName =
+  | 'enter'
+  | 'update'
+  | 'exit'
+  | 'hover'
+  | 'leave'
+  | 'select'
+  | 'release';
