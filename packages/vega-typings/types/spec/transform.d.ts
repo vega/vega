@@ -39,6 +39,7 @@ export type Transform =
   | _TODO_<'geopath'>
   | GeoPointTransform
   | GeoShapeTransform
+  | GraticuleTransform
   | IdentifierTransform
   | ImputeTransform
   | _TODO_<'joinaggregate'>
@@ -208,6 +209,18 @@ export interface GeoShapeTransform {
   field?: Field;
   pointRadius?: number | SignalRef | ExprRef;
   as?: string;
+}
+
+export interface GraticuleTransform {
+  type: 'graticule';
+  signal?: string;
+  extent?: Vector2<any> | SignalRef;
+  extentMajor?: Vector2<any> | SignalRef;
+  extentMinor?: Vector2<any> | SignalRef;
+  step?: Vector2<number | SignalRef> | SignalRef;
+  stepMajor?: Vector2<number | SignalRef> | SignalRef;
+  stepMinor?: Vector2<number | SignalRef> | SignalRef;
+  precision?: number | SignalRef;
 }
 
 export interface IdentifierTransform {
