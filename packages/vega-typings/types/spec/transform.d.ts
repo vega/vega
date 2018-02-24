@@ -105,22 +105,22 @@ export interface BaseBin {
    * __Default value:__ `10`
    *
    */
-  base?: number;
+  base?: number | SignalRef;
   /**
    * An exact step size to use between bins.
    *
    * __Note:__ If provided, options such as maxbins will be ignored.
    */
-  step?: number;
+  step?: number | SignalRef;
   /**
    * An array of allowable step sizes to choose from.
    * @minItems 1
    */
-  steps?: number[];
+  steps?: (number | SignalRef)[];
   /**
    * A minimum allowable step size (particularly useful for integer values).
    */
-  minstep?: number;
+  minstep?: number | SignalRef;
   /**
    * Scale factors indicating allowable subdivisions. The default value is [5, 2], which indicates that for base 10 numbers (the default base), the method may consider dividing bin sizes by 5 and/or 2. For example, for an initial step size of 10, the method can check if bin sizes of 2 (= 10/5), 5 (= 10/2), or 1 (= 10/(5*2)) might also satisfy the given constraints.
    *
@@ -128,7 +128,7 @@ export interface BaseBin {
    *
    * @minItems 1
    */
-  divide?: number[];
+  divide?: (number | SignalRef)[];
   /**
    * Maximum number of bins.
    *
@@ -136,7 +136,7 @@ export interface BaseBin {
    *
    * @minimum 2
    */
-  maxbins?: number;
+  maxbins?: number | SignalRef;
   /**
    * If true (the default), attempts to make the bin boundaries use human-friendly boundaries, such as multiples of ten.
    */
