@@ -6,8 +6,8 @@ import {
   StringValueRef,
   SignalRef,
   SortOrder,
-  SingleSort,
-  MultiSort,
+  SortField,
+  UnionSortField,
   DataRef,
   EventStream,
   FieldValue,
@@ -275,8 +275,9 @@ export interface StackTransform {
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
 
-export interface WindowTransform extends SingleSort {
+export interface WindowTransform {
   type: 'window';
+  sort?: Compare;
   groupby?: Field[];
   ops?: (string | SignalRef)[];
   fields?: (Field | null)[];
