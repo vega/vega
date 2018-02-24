@@ -1,5 +1,5 @@
 import {
-  Encode,
+  Encodable,
   NumericValueRef,
   TextEncodeEntry,
   Baseline,
@@ -11,7 +11,7 @@ export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
 export type Title =
   | string
-  | (Encode<TextEncodeEntry> & {
+  | (Encodable<TextEncodeEntry> & {
       /**
        * The title text.
        */

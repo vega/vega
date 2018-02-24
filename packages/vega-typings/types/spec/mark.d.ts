@@ -59,41 +59,41 @@ export interface BaseMark {
   zindex?: number;
   on?: OnMarkTrigger[];
 }
-export interface ArcMark extends BaseMark, Encode.Encode<Encode.ArcEncodeEntry> {
+export interface ArcMark extends BaseMark, Encode.Encodable<Encode.ArcEncodeEntry> {
   type: 'arc';
 }
-export interface AreaMark extends BaseMark, Encode.Encode<Encode.AreaEncodeEntry> {
+export interface AreaMark extends BaseMark, Encode.Encodable<Encode.AreaEncodeEntry> {
   type: 'area';
 }
-export interface ImageMark extends BaseMark, Encode.Encode<Encode.ImageEncodeEntry> {
+export interface ImageMark extends BaseMark, Encode.Encodable<Encode.ImageEncodeEntry> {
   type: 'image';
 }
-export interface GroupMark extends BaseMark, Scope, Encode.Encode<Encode.GroupEncodeEntry> {
+export interface GroupMark extends BaseMark, Scope, Encode.Encodable<Encode.GroupEncodeEntry> {
   type: 'group';
   from?: FromFacet;
 }
-export interface LineMark extends BaseMark, Encode.Encode<Encode.LineEncodeEntry> {
+export interface LineMark extends BaseMark, Encode.Encodable<Encode.LineEncodeEntry> {
   type: 'line';
 }
-export interface PathMark extends BaseMark, Encode.Encode<Encode.PathEncodeEntry> {
+export interface PathMark extends BaseMark, Encode.Encodable<Encode.PathEncodeEntry> {
   type: 'path';
 }
-export interface RectMark extends BaseMark, Encode.Encode<Encode.RectEncodeEntry> {
+export interface RectMark extends BaseMark, Encode.Encodable<Encode.RectEncodeEntry> {
   type: 'rect';
 }
-export interface RuleMark extends BaseMark, Encode.Encode<Encode.RuleEncodeEntry> {
+export interface RuleMark extends BaseMark, Encode.Encodable<Encode.RuleEncodeEntry> {
   type: 'rule';
 }
-export interface ShapeMark extends BaseMark, Encode.Encode<Encode.ShapeEncodeEntry> {
+export interface ShapeMark extends BaseMark, Encode.Encodable<Encode.ShapeEncodeEntry> {
   type: 'shape';
 }
-export interface SymbolMark extends BaseMark, Encode.Encode<Encode.SymbolEncodeEntry> {
+export interface SymbolMark extends BaseMark, Encode.Encodable<Encode.SymbolEncodeEntry> {
   type: 'symbol';
 }
-export interface TextMark extends BaseMark, Encode.Encode<Encode.TextEncodeEntry> {
+export interface TextMark extends BaseMark, Encode.Encodable<Encode.TextEncodeEntry> {
   type: 'text';
 }
-export interface TrailMark extends BaseMark, Encode.Encode<Encode.TrailEncodeEntry> {
+export interface TrailMark extends BaseMark, Encode.Encodable<Encode.TrailEncodeEntry> {
   type: 'trail';
 }
 export type Mark =
