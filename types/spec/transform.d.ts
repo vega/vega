@@ -225,7 +225,7 @@ export interface LookupTransform {
   fields: string[];
   values?: string[];
   as?: string[];
-  default?: string;
+  default?: any;
 }
 
 export interface StackTransform {
