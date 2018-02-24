@@ -25,23 +25,19 @@ export type RangeBand =
       step: number | SignalRef;
     };
 export type SortOrder = 'ascending' | 'descending' | SignalRef;
-export interface SingleSort {
-  sort?:
-    | boolean
-    | {
-        field?: ScaleField;
-        op?: ScaleField;
-        order?: SortOrder;
-      };
-}
-export interface MultiSort {
-  sort?:
-    | boolean
-    | {
-        op?: 'count';
-        order?: SortOrder;
-      };
-}
+export type SortField =
+  | boolean
+  | {
+      field?: ScaleField;
+      op: ScaleField;
+      order?: SortOrder;
+    };
+export type UnionSortField =
+  | boolean
+  | {
+      op: 'count';
+      order?: SortOrder;
+    };
 export type ScaleField = string | SignalRef;
 
 export type ScaleInterpolate =
@@ -62,17 +58,17 @@ export interface DataRef {
   data: string;
   field: ScaleField;
 }
+export type MultiDataRef =
+  | {
+      data: string;
+      fields: ScaleField[];
+    }
+  | {
+      fields: ((string | number | boolean)[] | DataRef | SignalRef)[];
+    };
 export type ScaleData =
-  | (DataRef & SingleSort)
-  | (MultiSort &
-      (
-        | {
-            data: string;
-            fields: ScaleField[];
-          }
-        | {
-            fields: ((string | number | boolean)[] | DataRef | SignalRef)[];
-          }));
+  | (DataRef & { sort?: SortField })
+  | (MultiDataRef & { sort?: UnionSortField });
 export type QuantScaleType = 'linear' | 'pow' | 'sqrt' | 'log' | 'time' | 'utc' | 'sequential';
 export type DiscreteScaleType = 'ordinal' | 'band' | 'point';
 export type DiscretizingScaleType =
