@@ -198,7 +198,7 @@ export interface GeoPointTransform {
 
 export interface GeoShapeTransform {
   type: 'geoshape';
-  projection: string; // projection name
+  projection?: string;
   field?: Field;
   pointRadius?: number | SignalRef | ExprRef;
   as?: string;
