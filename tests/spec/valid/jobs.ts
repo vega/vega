@@ -1,4 +1,6 @@
-import { Spec } from 'vega';
+import { Spec, AggregateOp } from 'vega';
+
+const ops: AggregateOp[] = ["sum", "argmax"];
 
 const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v3.json",
@@ -49,7 +51,7 @@ const spec: Spec = {
           "type": "aggregate",
           "groupby": ["job", "sex"],
           "fields": ["perc", "perc"],
-          "ops": ["sum", "argmax"],
+          ops,
           "as": ["sum", "argmax"]
         }
       ]

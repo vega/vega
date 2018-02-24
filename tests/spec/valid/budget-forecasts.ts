@@ -1,4 +1,6 @@
-import { Spec } from 'vega';
+import { Spec, AggregateOp } from 'vega';
+
+const ops: AggregateOp[] = ["min", "argmin"];
 
 const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v3.json",
@@ -93,7 +95,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["value", "value"],
-          "ops": ["min", "argmin"],
+          ops,
           "as": ["min", "argmin"]
         },
         { "type": "formula", "as": "tooltipYear", "expr": "datum.argmin.budgetYear" }
