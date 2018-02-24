@@ -32,7 +32,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "key": "bin0", "groupby": ["bin0", "bin1"],
-          "fields": ["bin0"], "ops": ["count"], "as": ["count"]
+          "fields": ["bin0"], "ops": ["count" as "count"], "as": ["count"]
         }
       ]
     }
