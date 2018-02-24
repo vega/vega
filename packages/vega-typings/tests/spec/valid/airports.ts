@@ -67,7 +67,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "groupby": ["origin"],
-          "fields": ["count"], "ops": ["sum"], "as": ["flights"]
+          "fields": ["count"], "ops": ["sum" as "sum"], "as": ["flights"]
         }
       ]
     },
