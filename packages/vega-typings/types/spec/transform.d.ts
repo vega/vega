@@ -84,6 +84,7 @@ export type AggregateOp =
   | 'q3'
   | 'ci0'
   | 'ci1'
+  | 'stderr'
   | 'stdev'
   | 'stdevp'
   | 'sum'
