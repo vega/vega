@@ -1,23 +1,12 @@
 import {
-  Expr,
-  ProductionRule,
-  NumericValueRef,
-  ScaledValueRef,
-  StringValueRef,
   SignalRef,
-  SortOrder,
-  SortField,
-  UnionSortField,
-  DataRef,
-  EventStream,
-  FieldValue,
   Compare,
-  LegendOrient,
-  FontStyle,
-  FontWeight,
   Vector2,
   ExprRef,
   FieldParam,
+  FontWeight,
+  FontStyle,
+  Vector7,
 } from '.';
 
 export type Transform =
@@ -65,13 +54,13 @@ export type Transform =
 export interface AggregateTransform {
   type: 'aggregate';
   signal?: string;
-  groupby?: Field[] | SignalRef;
-  fields?: (Field | null)[] | SignalRef;
+  groupby?: (string | Field)[] | SignalRef;
+  fields?: ((string | Field) | null)[] | SignalRef;
   ops?: (AggregateOp | SignalRef)[] | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
   drop?: boolean | SignalRef;
   cross?: boolean | SignalRef;
-  key?: Field;
+  key?: string | Field;
 }
 export type AggregateOp =
   | 'argmax'
@@ -100,7 +89,7 @@ export type AggregateOp =
 export interface BinTransform extends BaseBin {
   type: 'bin';
   extent: Vector2<number | SignalRef> | SignalRef;
-  field: Field;
+  field: string | Field;
   as?: Vector2<string | SignalRef> | SignalRef;
   signal?: string;
   anchor?: number | SignalRef;
@@ -158,7 +147,7 @@ export interface CollectTransform {
 
 export interface CountPatternTransform {
   type: 'countpattern';
-  field: Field;
+  field: string | Field;
   case?: string;
   pattern?: string;
   stopwords?: string;
@@ -170,8 +159,8 @@ export type ContourTransform = {
   signal?: string;
   size: Vector2<number | SignalRef> | SignalRef;
   values?: (number | SignalRef)[] | SignalRef;
-  x?: Field;
-  y?: Field;
+  x?: string | Field;
+  y?: string | Field;
   cellSize?: number | SignalRef;
   bandwidth?: number | SignalRef;
 } & (
@@ -196,7 +185,7 @@ export interface FilterTransform {
 
 export interface FoldTransform {
   type: 'fold';
-  fields: Field[] | SignalRef;
+  fields: (string | Field)[] | SignalRef;
   as: [string, string];
 }
 
@@ -209,7 +198,7 @@ export interface FormulaTransform {
 
 export interface GeoJSONTransform {
   type: 'geojson';
-  fields?: Field[];
+  fields?: Vector2<string | Field> | SignalRef;
   geojson?: Field;
   signal: string;
 }
@@ -217,14 +206,14 @@ export interface GeoJSONTransform {
 export interface GeoPointTransform {
   type: 'geopoint';
   projection: string; // projection name
-  fields: Field[];
+  fields: Vector2<string | Field> | SignalRef;
   as?: string[];
 }
 
 export interface GeoShapeTransform {
   type: 'geoshape';
   projection?: string;
-  field?: Field;
+  field?: string | Field;
   pointRadius?: number | SignalRef | ExprRef;
   as?: string;
 }
@@ -267,8 +256,8 @@ export interface LookupTransform {
 
 export interface StackTransform {
   type: 'stack';
-  field?: Field;
-  groupby?: Field[];
+  field?: string | Field;
+  groupby?: (string | Field)[];
   sort?: Compare;
   offset?: StackOffset;
   as?: Vector2<string>;
@@ -278,33 +267,31 @@ export type StackOffset = 'zero' | 'center' | 'normalize';
 export interface WindowTransform {
   type: 'window';
   sort?: Compare;
-  groupby?: Field[];
+  groupby?: (string | Field)[] | SignalRef;
   ops?: (string | SignalRef)[];
-  fields?: (Field | null)[];
-  as?: (string | null)[];
-  frame?: [number | null | SignalRef, number | null | SignalRef];
+  fields?: (string | Field | null)[] | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
+  frame?: Vector2<number | SignalRef | null> | SignalRef;
   ignorePeers?: boolean;
 }
 
 export interface WordcloudTransform {
   type: 'wordcloud';
-  size?: [number | ProductionRule<NumericValueRef>, number | ProductionRule<NumericValueRef>];
-  font?: string | ProductionRule<StringValueRef>;
-  fontStyle?: FontStyle | ProductionRule<ScaledValueRef<FontWeight>>;
-  fontWeight?: FontWeight | ProductionRule<ScaledValueRef<FontWeight>>;
-  fontSize?: number | ProductionRule<NumericValueRef>;
-  fontSizeRange?: [
-    number | ProductionRule<NumericValueRef>,
-    number | ProductionRule<NumericValueRef>
-  ];
-  padding?: number | ProductionRule<NumericValueRef>;
-  rotate?: number | ProductionRule<NumericValueRef>;
-  text?: Field;
-  spiral?: string;
-  as?: string[];
+  signal?: string;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  font?: string | Field;
+  fontStyle?: FontStyle | Field;
+  fontWeight?: FontWeight | Field;
+  fontSize?: number | Field;
+  fontSizeRange?: Vector2<number | SignalRef> | SignalRef;
+  rotate?: number | Field;
+  text?: string | Field;
+  spiral?: 'archimedian' | 'rectangular';
+  padding?: number | Field;
+  as?: Vector7<string | SignalRef> | SignalRef;
 }
 
-export type Field = string | SignalRef | FieldParam | ExprRef;
+export type Field = SignalRef | FieldParam | ExprRef;
 
 /** This transform has yet to be implemented */
 export interface _TODO_<Type extends string> {
