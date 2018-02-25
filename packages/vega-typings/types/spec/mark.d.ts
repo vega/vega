@@ -58,6 +58,7 @@ export interface BaseMark {
   transform?: Transform[];
   zindex?: number;
   on?: OnMarkTrigger[];
+  style?: string | string[];
 }
 export interface ArcMark extends BaseMark, Encode.Encodable<Encode.ArcEncodeEntry> {
   type: 'arc';
