@@ -380,7 +380,7 @@ Returns the first index of _value_ in the input _array_.
 Tests whether _value_ lies within (or is equal to either) the first and last values of the _range_ array.
 
 <a name="lastindexof" href="#lastindexof">#</a>
-<b>lastindexof</b>(<i>array</i>)<br/>
+<b>lastindexof</b>(<i>array</i>, <i>value</i>)<br/>
 Returns the last index of _value_ in the input _array_.
 
 <a name="length" href="#length">#</a>
