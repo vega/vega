@@ -19,7 +19,7 @@
       "value": false,
       "on": [
         {"events": "@handle:mousedown", "update": "true"},
-        {"events": "mouseup", "update": "false"}
+        {"events": "window:mouseup", "update": "false"}
       ]
     },
     {
