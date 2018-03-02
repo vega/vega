@@ -40,6 +40,7 @@ export type NumericValueRef = (ScaledValueRef<number> | {}) & {
 };
 export type StringValueRef = ScaledValueRef<string>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
+export type ArbitraryValueRef = NumericValueRef | ColorValueRef | ScaledValueRef<any>;
 export interface ColorRGB {
   r: NumericValueRef;
   g: NumericValueRef;
@@ -93,8 +94,7 @@ export interface EncodeEntry {
   zindex?: ProductionRule<NumericValueRef>;
   cursor?: ProductionRule<StringValueRef>;
   tooltip?: ProductionRule<StringValueRef>;
-  xfocus?: ProductionRule<NumericValueRef>;
-  yfocus?: ProductionRule<NumericValueRef>;
+  [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 export type Align = 'left' | 'center' | 'right';
 export interface AlignProperty {
@@ -176,7 +176,7 @@ export type SymbolShape =
   | string;
 export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
-  shape?: string | ProductionRule<ScaledValueRef<SymbolShape>>;
+  shape?: ProductionRule<ScaledValueRef<SymbolShape>>;
 }
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';
