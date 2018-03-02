@@ -39,7 +39,7 @@ export type Data = (
       source: string;
     }
   | {
-      values: any[];
+      values: Datum[];
     }
   | {
       url: string;
@@ -50,3 +50,4 @@ export type Data = (
   format?: Format;
   transform?: Transform[];
 };
+export type Datum = any;
