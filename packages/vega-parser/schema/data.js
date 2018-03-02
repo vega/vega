@@ -30,6 +30,55 @@ export default {
     }
   },
   "defs": {
+    "dataFormat": {
+      "type": "object",
+      "anyOf": [
+        {
+          "properties": {
+            "type": {"enum": ["json"]},
+            "parse": parseDef,
+            "property": {"type": "string"},
+            "copy": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"enum": ["csv", "tsv"]},
+            "parse": parseDef
+          },
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"enum": ["dsv"]},
+            "delimiter": {"type": "string"},
+            "parse": parseDef
+          },
+          "additionalProperties": false
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "type": {"enum": ["topojson"]},
+                "feature": {"type": "string"},
+                "property": {"type": "string"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "type": {"enum": ["topojson"]},
+                "mesh": {"type": "string"},
+                "property": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
     "data": {
       "title": "Input data set definition",
       "type": "object",
@@ -41,56 +90,7 @@ export default {
               "type": "array",
               "items": {"$ref": "#/defs/transform"}
             },
-            "on": {"$ref": "#/defs/onTrigger"},
-            "format": {
-              "type": "object",
-              "anyOf": [
-                {
-                  "properties": {
-                    "type": {"enum": ["json"]},
-                    "parse": parseDef,
-                    "property": {"type": "string"},
-                    "copy": {"type": "boolean"}
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "properties": {
-                    "type": {"enum": ["csv", "tsv"]},
-                    "parse": parseDef
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "properties": {
-                    "type": {"enum": ["dsv"]},
-                    "delimiter": {"type": "string"},
-                    "parse": parseDef
-                  },
-                  "additionalProperties": false
-                },
-                {
-                  "oneOf": [
-                    {
-                      "properties": {
-                        "type": {"enum": ["topojson"]},
-                        "feature": {"type": "string"},
-                        "property": {"type": "string"}
-                      },
-                      "additionalProperties": false
-                    },
-                    {
-                      "properties": {
-                        "type": {"enum": ["topojson"]},
-                        "mesh": {"type": "string"},
-                        "property": {"type": "string"}
-                      },
-                      "additionalProperties": false
-                    }
-                  ]
-                }
-              ]
-            }
+            "on": {"$ref": "#/defs/onTrigger"}
           },
           "required": ["name"]
         },
@@ -117,11 +117,17 @@ export default {
                   "required": ["source"]
                 },
                 {
-                  "properties": {"values": {"type": "array"}},
+                  "properties": {
+                    "values": {"type": "array"},
+                    "format": {"$ref": "#/defs/dataFormat"}
+                  },
                   "required": ["values"]
                 },
                 {
-                  "properties": {"url": {"type": "string"}},
+                  "properties": {
+                    "url": {"type": "string"},
+                    "format": {"$ref": "#/defs/dataFormat"}
+                  },
                   "required": ["url"]
                 }
               ]
