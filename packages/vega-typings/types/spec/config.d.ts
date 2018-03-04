@@ -296,7 +296,7 @@ export type AxisConfigKeys =
   | 'axisRight'
   | 'axisBottom'
   | 'axisLeft'
-  | 'axisBand'; // ... others?
+  | 'axisBand';
 
 export interface AxisConfig extends Axis {
   /**
