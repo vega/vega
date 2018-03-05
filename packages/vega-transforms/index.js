@@ -20,6 +20,7 @@ export {default as lookup} from './src/Lookup';
 export {default as multiextent} from './src/MultiExtent';
 export {default as multivalues} from './src/MultiValues';
 export {default as params} from './src/Params';
+export {default as pivot} from './src/Pivot';
 export {default as prefacet} from './src/PreFacet';
 export {default as project} from './src/Project';
 export {default as proxy} from './src/Proxy';

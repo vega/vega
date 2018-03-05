@@ -14,6 +14,10 @@ export var AggregateOps = {
     name: 'count',
     set:  'cell.num'
   }),
+  '__count__': measure({
+    name: 'count',
+    set:  'this.missing + this.valid'
+  }),
   'missing': measure({
     name: 'missing',
     set:  'this.missing'
