@@ -110,7 +110,7 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 <body>
 <div id="view"></div>
 <script>
-  vega.embed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
+  vegaEmbed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
 </script>
 </body>
 ```
