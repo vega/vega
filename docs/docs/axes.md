@@ -57,8 +57,8 @@ Valid settings for the axis _orient_ parameter.
 Custom mark properties can be set for all axis elements using the _encode_ parameter. The addressable elements are:
 
 - `axis` for the axis [group](../marks/group) mark,
-- `ticks` for tick [rule](../mark/rule) marks,
-- `grid` for gridline [rule](../mark/rule) marks,
+- `ticks` for tick [rule](../marks/rule) marks,
+- `grid` for gridline [rule](../marks/rule) marks,
 - `labels` for label [text](../marks/text) marks,
 - `title` for the title [text](../marks/text) mark, and
 - `domain` for the axis domain [rule](../marks/rule) mark.
