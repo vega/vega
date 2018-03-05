@@ -16,7 +16,7 @@ Pivot transforms are useful for creating matrix or cross-tabulation data, acting
 | value               | {% include type t="Field" %}    | {% include required %} The field to populate pivoted fields. The aggregate values of this field become the values of the new pivoted fields.|
 | groupby             | {% include type t="Field[]" %}  | The optional data fields to group by. If not specified, a single group containing all data objects will be used.|
 | limit              | {% include type t="Number" %} | An optional parameter indicating the maximum number of pivoted fields to generate. The default (`0`) applies no limit. The pivoted _field_ names are sorted in ascending order prior to enforcing the limit.|
-| op                 | {% include type t="String" %} | The aggregation operations to apply to the grouped _value_ field values. The default is `sum`. See the [aggregate operation reference](../aggregate/#ops) for more.|
+| op                 | {% include type t="String" %} | The aggregation operation to apply to grouped _value_ field values. The default is `sum`. See the [aggregate operation reference](../aggregate/#ops) for more.|
 
 ## <a name="op"></a> Pivot Aggregate Operation Reference
 
