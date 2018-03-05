@@ -143,6 +143,11 @@ export default {
     "booleanValue": valueSchema("boolean"),
     "arrayValue": valueSchema("array"),
     "nullableStringValue": valueSchema("string", true),
+    "fontWeightValue": valueSchema([
+      null, "normal", "bold", "lighter", "bolder",
+      "100", "200", "300", "400", "500", "600", "700", "800", "900",
+      100, 200, 300, 400, 500, 600, 700, 800, 900
+    ]),
 
     "colorRGB": {
       "type": "object",
@@ -288,7 +293,7 @@ export default {
         "angle": {"$ref": "#/refs/numberValue"},
         "font": {"$ref": "#/refs/stringValue"},
         "fontSize": {"$ref": "#/refs/numberValue"},
-        "fontWeight": {"$ref": "#/refs/nullableStringValue"},
+        "fontWeight": {"$ref": "#/refs/fontWeightValue"},
         "fontStyle": {"$ref": "#/refs/stringValue"}
       },
       "additionalProperties": true
