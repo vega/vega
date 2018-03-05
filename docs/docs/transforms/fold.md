@@ -4,7 +4,9 @@ title: Fold Transform
 permalink: /docs/transforms/fold/index.html
 ---
 
-The **fold** transform collapses (or "folds") one or more data fields into two properties: a _key_ property (containing the original data field name) and a _value_ property (containing the data value). The fold transform is useful for mapping matrix or cross-tabulation data into a standardized format.
+The **fold** transform collapses (or "folds") one or more data fields into two properties: a _key_ property (containing the original data field name) and a _value_ property (containing the data value).
+
+The fold transform is useful for mapping matrix or cross-tabulation data into a standardized format, acting as an inverse to the [pivot](../pivot) transform.
 
 This transform generates a new data stream in which each data object consists of the _key_ and _value_ properties as well as all the original fields of the corresponding input data object.
 
