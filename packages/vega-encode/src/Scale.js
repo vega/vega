@@ -112,6 +112,12 @@ function configureDomain(scale, _, df) {
   // set the scale domain
   scale.domain(domain);
 
+  // if ordinal scale domain is defined, prevent implicit
+  // domain construction as side-effect of scale lookup
+  if (type === Ordinal) {
+    scale.unknown(undefined);
+  }
+
   // perform 'nice' adjustment as requested
   if (_.nice && scale.nice) {
     scale.nice((_.nice !== true && tickCount(scale, _.nice)) || null);
