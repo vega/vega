@@ -18,6 +18,7 @@ This module provides the following Vega data transforms:
 - [**Impute**](https://vega.github.io/vega/docs/transforms/Impute/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/impute.js "Source")
 - [**JoinAggregate**](https://vega.github.io/vega/docs/transforms/joinaggregate/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/JoinAggregate.js "Source")
 - [**Lookup**](https://vega.github.io/vega/docs/transforms/lookup/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Lookup.js "Source")
+- [**Pivot**](https://vega.github.io/vega/docs/transforms/pivot/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Pivot.js "Source")
 - [**Project**](https://vega.github.io/vega/docs/transforms/project/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Project.js "Source")
 - [**Sample**](https://vega.github.io/vega/docs/transforms/sample/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Sample.js "Source")
 - [**Sequence**](https://vega.github.io/vega/docs/transforms/sequence/) [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Sequence.js "Source")
