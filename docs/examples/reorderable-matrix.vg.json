@@ -83,7 +83,12 @@
       "name": "color",
       "type": "ordinal",
       "range": "category",
-      "domain": {"data": "nodes", "field": "group"}
+      "domain": {
+        "fields": [
+          {"data": "nodes", "field": "group"},
+          [-1]
+        ]
+      }
     },
     {
       "name": "labels",
