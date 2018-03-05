@@ -111,8 +111,15 @@ function sanitize(uri, options) {
     // set non-enumerable mode flag to indicate local file load
     Object.defineProperty(result, 'localFile', {value: !!loadFile});
 
-    // set uri and return
+    // set uri
     result.href = uri;
+
+    // set default result target, if specified
+    if (options.target) {
+      result.target = options.target + '';
+    }
+
+    // return
     accept(result);
   });
 }

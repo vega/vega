@@ -16,8 +16,19 @@ vega.<b>loader</b>([<i>options</i>])
 Creates a new loader instance with default *options*. A loader object
 provides methods for loading files from the network or disk, and for sanitizing
 requested URLs and filenames. If provided, the key-value pairs in the *options*
-object will be passed as default options to the various loader methods. See the
-[load](#load) method for supported option values.
+object will be passed as default options to the various loader methods.
+
+The *options* object can include the following entries:
+- *baseURL*: A base URL prefix to append to provided *uri* values. This can
+be useful for applications that load multiple data sets from the same domain.
+- *mode*: A string explicitly indicating the loading mode. One of `'file'`
+(server-side only) or `'http'`. If set to `'file'` mode, later *uri* parameters
+may safely omit a `'file://'` prefix.
+- *defaultProtocol*: The default protocol to use for protocol-relative *uri*
+values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
+- *target*: The browser target attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
+- *headers*: An object of key-values indicating custom request headers, used
+only when loading via HTTP.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
@@ -33,17 +44,6 @@ data, use the [read](#read) method.
 The *uri* argument is a value indicating the file to load. This is typically
 either an absolute or relative URL string. If running server-side via node.js,
 this argument might also be a file path (e.g., `'file:///path/to/file.txt'`).
-
-The *options* object can include the following entries:
-- *baseURL*: A base URL prefix to append to the provided *uri* value. This can
-be useful for applications that load multiple data sets from the same domain.
-- *mode*: A string explicitly indicating the loading mode. One of `'file'`
-(server-side only) or `'http'`. If set to `'file'` mode, the *uri* parameter
-may safely omit a `'file://'` prefix.
-- *defaultProtocol*: The default protocol to use for protocol-relative *uri*
-values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
-- *headers*: An object of key-values indicating custom request headers, used
-only when loading via HTTP.
 
 If provided, the *options* argument will be combined with any default options
 passed to the [loader](#loader) constructor. In the case of identical property
