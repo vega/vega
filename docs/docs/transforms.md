@@ -43,6 +43,7 @@ Transforms for processing streams of data objects.
 - [`impute`](impute) - Perform imputation of missing values.
 - [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
+- [`pivot`](pivot) - Pivot unique values to new aggregate fields.
 - [`project`](project) - Generate derived data objects with a selected set of fields.
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
