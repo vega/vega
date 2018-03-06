@@ -16580,7 +16580,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.2.0";
+var version = "3.2.1";
 
 var Default = 'default';
 
@@ -20807,16 +20807,17 @@ var parseProjection = function(proj, scope) {
 
   for (var name in proj) {
     if (name === 'name') continue;
-    params[name] = parseParameter(proj[name], scope);
+    params[name] = parseParameter(proj[name], name, scope);
   }
 
   scope.addProjection(proj.name, params);
 };
 
-function parseParameter(_$$1, scope) {
-  return isArray(_$$1) ? _$$1.map(function(_$$1) { return parseParameter(_$$1, scope); })
+function parseParameter(_$$1, name, scope) {
+  return isArray(_$$1) ? _$$1.map(function(_$$1) { return parseParameter(_$$1, name, scope); })
     : !isObject(_$$1) ? _$$1
     : _$$1.signal ? scope.signalRef(_$$1.signal)
+    : name === 'fit' ? _$$1
     : error$1('Unsupported parameter object: ' + $$2(_$$1));
 }
 
