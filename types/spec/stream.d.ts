@@ -1,5 +1,5 @@
-import { Expr } from './expr';
-import { MarkType } from './marktype';
+import { Expr, MarkType } from '.';
+
 export type EventSource = EventStream['source'] & {};
 export type EventType =
   | 'click'

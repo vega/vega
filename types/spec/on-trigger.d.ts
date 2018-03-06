@@ -1,4 +1,5 @@
-import { Expr } from './expr';
+import { Expr } from '.';
+
 export interface OnTrigger {
   trigger: Expr;
   insert?: Expr;

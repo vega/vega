@@ -1,13 +1,14 @@
 import {
   GroupEncodeEntry,
+  GuideEncodeEntry,
   NumericValueRef,
   RuleEncodeEntry,
+  SignalRef,
   TextEncodeEntry,
-  FontWeight,
-} from './encode';
-import { GuideEncodeEntry } from './legend';
-import { SignalRef } from './signal';
+} from '.';
+
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
+
 export interface Axis {
   orient: AxisOrient;
   scale: string;

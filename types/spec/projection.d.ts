@@ -1,4 +1,5 @@
 import { Vector2, SignalRef, Signal, Vector3 } from '.';
+
 export type GeoJsonFeature = any; // TODO
 export type GeoJsonFeatureCollection = any; // TODO
 export type Fit = GeoJsonFeature | GeoJsonFeatureCollection | GeoJsonFeature[];

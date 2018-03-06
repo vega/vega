@@ -1,12 +1,5 @@
-import {
-  Encodable,
-  NumericValueRef,
-  TextEncodeEntry,
-  Baseline,
-  FontWeight,
-  TextBaseline,
-} from './encode';
-import { SignalRef } from './signal';
+import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
+
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
 export type Title =

@@ -1,6 +1,5 @@
-import { Binding } from './bind';
-import { Expr } from './expr';
-import { OnEvent } from './on-events';
+import { Binding, Expr, OnEvent } from '.';
+
 export interface SignalRef {
   signal: string;
 }
