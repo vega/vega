@@ -1,4 +1,5 @@
-import { SignalRef } from './signal';
+import { SignalRef } from '.';
+
 export type LayoutAlign = 'all' | 'each' | 'none' | SignalRef;
 export type LayoutBounds = 'full' | 'flush' | SignalRef;
 export type LayoutOffset =

@@ -1,7 +1,5 @@
-import { Expr, ExprRef } from './expr';
-import { EventSelector } from './selector';
-import { SignalRef } from './signal';
-import { Stream } from './stream';
+import { Expr, ExprRef, EventSelector, SignalRef, Stream } from '.';
+
 export type Events =
   | EventSelector
   | SignalRef

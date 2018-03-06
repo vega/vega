@@ -14,8 +14,9 @@ import {
   BaseLegend,
   RangeScheme,
   SymbolShape,
+  Mark,
+  LegendOrient,
 } from '.';
-import { Mark, LegendOrient } from 'types';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,

@@ -1,12 +1,5 @@
-import { Axis } from './axis';
-import { Data } from './data';
-import { Layout } from './layout';
-import { Legend } from './legend';
-import { Mark } from './mark';
-import { Projection } from './projection';
-import { Scale } from './scale';
-import { Signal } from './signal';
-import { Title } from './title';
+import { Axis, Data, Layout, Legend, Mark, Projection, Scale, Signal, Title } from '.';
+
 export interface Scope {
   title?: Title;
   layout?: Layout;
