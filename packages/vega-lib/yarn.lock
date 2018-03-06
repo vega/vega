@@ -13,8 +13,8 @@ acorn@^3.0.4:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
 
 acorn@^5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.5.0.tgz#1abb587fbf051f94e3de20e6b26ef910b1828298"
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.5.1.tgz#84e05a9ea0acbe131227da50301e62464dc9c1d8"
 
 ajv-keywords@^2.1.0:
   version "2.1.1"
@@ -1392,8 +1392,8 @@ vega-loader@2:
     vega-util "1"
 
 vega-parser@2, vega-parser@^2.5:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-2.6.0.tgz#d0f29bacf80a6b22331b637b48ae4f31499e60aa"
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-2.6.1.tgz#7cde99153392c7452c53cac2c9d0726aead72912"
   dependencies:
     d3-array "1"
     d3-color "1"
@@ -1458,8 +1458,8 @@ vega-transforms@^1.2:
     vega-util "1"
 
 vega-typings@*:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.2.8.tgz#2b230a86e5c423e083acdb84d360de17cac6ddeb"
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.2.9.tgz#e52d1ed5792eed6097807876c419831e52eea053"
   dependencies:
     prettier "^1.10.2"
 
