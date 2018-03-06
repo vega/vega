@@ -5,8 +5,9 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
   FontWeight,
-} from './encode';
-import { SignalRef } from './signal';
+  SignalRef,
+} from '.';
+
 export interface GuideEncodeEntry<T> {
   name?: string;
   interactive?: boolean;

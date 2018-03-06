@@ -1,4 +1,5 @@
-import { SignalRef } from './signal';
+import { SignalRef } from '.';
+
 export type RangeEnum =
   | 'width'
   | 'height'

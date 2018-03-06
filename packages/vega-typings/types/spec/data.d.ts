@@ -1,5 +1,4 @@
-import { OnTrigger } from './on-trigger';
-import { Transform } from './transform';
+import { OnTrigger, Transform } from '.';
 
 export interface FieldParam {
   field: string;

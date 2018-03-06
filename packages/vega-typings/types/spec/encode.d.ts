@@ -1,5 +1,7 @@
-import { SignalRef } from './signal';
+import { SignalRef } from '.';
+
 export type FieldValue = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
+
 export interface DatumFieldRef {
   datum: FieldValue;
 }
