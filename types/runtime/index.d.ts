@@ -38,8 +38,12 @@ export class View {
   toSVG(): Promise<string>;
   toCanvas(): Promise<any>; // TODO node-canvas result
   signal(name: string, value: any): View;
+  signal(name: string): any;
   container(): HTMLElement | null;
-  addEventListener(type: string, handler: Handler): void;
+  addEventListener(type: string, handler: Handler): View;
+  removeEventListener(type: string, handler: Handler): View;
+  addSignalListener(name: string, handler: (name: string, value: any) => void): View;
+  removeSignalListener(name: string, handler: (name: string, value: any) => void): View;
 }
 
 export const Warn: number;
