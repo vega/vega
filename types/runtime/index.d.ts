@@ -6,8 +6,8 @@ export type Runtime = any;
 export const version: string;
 
 // Locale API
-export function formatLocale(definition:object): void;
-export function timeFormatLocale(definition:object): void;
+export function formatLocale(definition: object): void;
+export function timeFormatLocale(definition: object): void;
 
 export function parse(spec: Spec, opt?: any): Runtime;
 export function isString(value: any): value is string;
