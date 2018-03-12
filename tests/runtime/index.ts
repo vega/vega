@@ -9,10 +9,30 @@ import { histogram } from '../spec/examples'
 function clientSideApi() {
   var view;
 
+  // fr-FR locale example from d3-format
+  vega.formatLocale({
+    'decimal': ',',
+    'thousands': '\u00a0',
+    'grouping': [3],
+    'currency': ['', '\u00a0€'],
+    'percent': '\u202f%'
+  });
+  // fr-FR locale example from d3-time-format
+  vega.timeFormatLocale({
+    'dateTime': '%A, le %e %B %Y, %X',
+    'date': '%d/%m/%Y',
+    'time': '%H:%M:%S',
+    'periods': ['AM', 'PM'],
+    'days': ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+    'shortDays': ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+    'months': ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+    'shortMonths': ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
+  });
+
   vega
     .loader()
     .load('https://vega.github.io/vega/examples/bar-chart.vg.json')
-    .then(function(data) {
+    .then(function (data) {
       render(JSON.parse(data));
     });
 
@@ -32,22 +52,22 @@ function serverSideApi() {
   // generate a static SVG image
   view
     .toSVG()
-    .then(function(svg) {
+    .then(function (svg) {
       // process svg string
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.error(err);
     });
 
   // generate a static PNG image
   view
     .toCanvas()
-    .then(function(canvas) {
+    .then(function (canvas) {
       // process node-canvas instance
       // for example, generate a PNG stream to write
       var stream = canvas.createPNGStream();
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.error(err);
     });
 }
