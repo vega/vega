@@ -86,8 +86,10 @@
     "vega-wordcloud": "^2.1",
     "yargs": "4"
   },
+  "peerDependencies": {
+    "canvas": "^1.6"
+  },
   "optionalDependencies": {
-    "canvas": "^1.6",
     "canvas-prebuilt": "^1.6"
   },
   "devDependencies": {
