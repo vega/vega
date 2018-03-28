@@ -595,7 +595,7 @@ To do so, we can create a [Voronoi diagram](https://en.wikipedia.org/wiki/Vorono
 
 The `voronoi` transform computes the enclosing cells for each airport using the `x` and `y` coordinates. The output is an SVG path string written to the `path` property.
 
-Next, we add the Voronoi cells to the visualization as an invisible set of `path` marks. We add the following to the `data` array, right _after_ the airport `symbol` marks:
+Next, we add the Voronoi cells to the visualization as an invisible set of `path` marks. We add the following to the `marks` array, right _after_ the airport `symbol` marks:
 
 {: .suppress-error}
 ```json
