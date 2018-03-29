@@ -3,6 +3,7 @@ export interface BaseBinding {
   type?: string;
   element?: Element;
   debounce?: number;
+  name?: string;
 }
 export interface BindCheckbox extends BaseBinding {
   input: 'checkbox';
