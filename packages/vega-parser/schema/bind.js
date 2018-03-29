@@ -12,7 +12,8 @@ export default {
           "properties": {
             "input": {"enum": ["checkbox"]},
             "element": {"$ref": "#/refs/element"},
-            "debounce": {"type": "number"}
+            "debounce": {"type": "number"},
+            "name": {"type": "string"}
           },
           "required": ["input"]
         },
@@ -22,7 +23,8 @@ export default {
             "input": {"enum": ["radio", "select"]},
             "element": {"$ref": "#/refs/element"},
             "options": {"type": "array"},
-            "debounce": {"type": "number"}
+            "debounce": {"type": "number"},
+            "name": {"type": "string"}
           },
           "additionalProperties": false,
           "required": ["input", "options"]
@@ -35,7 +37,8 @@ export default {
             "min": {"type": "number"},
             "max": {"type": "number"},
             "step": {"type": "number"},
-            "debounce": {"type": "number"}
+            "debounce": {"type": "number"},
+            "name": {"type": "string"}
           },
           "additionalProperties": false,
           "required": ["input"]
@@ -47,7 +50,8 @@ export default {
               "not": {"enum": ["checkbox", "radio", "range", "select"]}
             },
             "element": {"$ref": "#/refs/element"},
-            "debounce": {"type": "number"}
+            "debounce": {"type": "number"},
+            "name": {"type": "string"}
           },
           "additionalProperties": true
         },
