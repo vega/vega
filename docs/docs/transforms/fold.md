@@ -10,7 +10,7 @@ The fold transform is useful for mapping matrix or cross-tabulation data into a 
 
 This transform generates a new data stream in which each data object consists of the _key_ and _value_ properties as well as all the original fields of the corresponding input data object.
 
-**Note:** The `fold` transform only works with a list of known fields set by the `fields` parameter. If your data is a nested structure, where data items (datums) contain a field which itself is a list of data items, you may need to use [flatten](../flatten) transform instead.
+_Note:_ The `fold` transform only applies to a list of known fields (set using the `fields` parameter). If your data objects instead contain array-typed fields, you may wish to use the [flatten](../flatten) transform instead.
 
 ## Transform Parameters
 
