@@ -29,6 +29,7 @@ export class View {
 
   hover(): View;
   run(): View;
+  runAsync(): Promise<View>;
   change(name: string, changeset: any): View;
   changeset(): any;
   data(name: string): object[];
