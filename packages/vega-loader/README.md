@@ -32,7 +32,7 @@ only when loading via HTTP.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
-[<>](https://github.com/vega/vega-loader/blob/master/src/load.js "Source")
+[<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
 Loads a file from either the network or disk, and returns a
 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
