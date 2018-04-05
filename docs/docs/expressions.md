@@ -669,16 +669,16 @@ Given a power scale _domain_ array with numeric or datetime values and the given
 Functions for analyzing geographic regions represented as GeoJSON features.
 
 <a name="geoArea" href="#geoArea">#</a>
-<b>geoArea</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>)<br/>
-Returns the projected planar area (typically in square pixels) of a GeoJSON _feature_ according to the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses [d3-geo's path.area](https://github.com/d3/d3-geo#path_area).
+<b>geoArea</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
+Returns the projected planar area (typically in square pixels) of a GeoJSON _feature_ according to the named _projection_. If the _projection_ argument is `null`, computes the spherical area in steradians using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoArea](https://github.com/d3/d3-geo#geoArea) and [path.area](https://github.com/d3/d3-geo#path_area) methods.
 
 <a name="geoBounds" href="#geoBounds">#</a>
-<b>geoBounds</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>)<br/>
-Returns the projected planar bounding box (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. The bounding box is represented by a two-dimensional array: [[_x₀_, _y₀_], [_x₁_, _y₁_]], where _x₀_ is the minimum x-coordinate, _y₀_ is the minimum y-coordinate, _x₁_ is the maximum x-coordinate, and _y₁_ is the maximum y-coordinate. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses [d3-geo's path.bounds](https://github.com/d3/d3-geo#path_bounds).
+<b>geoBounds</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
+Returns the projected planar bounding box (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. The bounding box is represented by a two-dimensional array: [[_x₀_, _y₀_], [_x₁_, _y₁_]], where _x₀_ is the minimum x-coordinate, _y₀_ is the minimum y-coordinate, _x₁_ is the maximum x-coordinate, and _y₁_ is the maximum y-coordinate. If the _projection_ argument is `null`, computes the spherical bounding box using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoBounds](https://github.com/d3/d3-geo#geoBounds) and [path.bounds](https://github.com/d3/d3-geo#path_bounds) methods.
 
 <a name="geoCentroid" href="#geoCentroid">#</a>
-<b>geoCentroid</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>)<br/>
-Returns the projected planar centroid (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses [d3-geo's path.centroid](https://github.com/d3/d3-geo#path_centroid).
+<b>geoCentroid</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
+Returns the projected planar centroid (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. If the _projection_ argument is `null`, computes the spherical centroid using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoCentroid](https://github.com/d3/d3-geo#geoCentroid) and [path.centroid](https://github.com/d3/d3-geo#path_centroid) methods.
 
 [Back to Top](#reference)
 
