@@ -11,7 +11,8 @@ Vega can be **extended** at runtime with new [scales](../../scales), [projection
 - [Projections](#projections)
 - [Scales](#scales)
 - [Schemes](#schemes)
-- [Transforms](#transforms)
+- [Transforms](#transform)
+- [Expression Functions](#expressions)
 
 
 ## <a name="projections"></a>Projections
@@ -112,7 +113,7 @@ Valid schemes are either arrays of color values (e.g., applicable to
 functions (e.g., applicable to `'sequential'` scales.)
 
 
-## <a name="transforms"></a>Transforms
+## <a name="transform"></a>Transforms
 
 <a name="transforms" href="#transforms">#</a>
 vega.<b>transforms</b>
@@ -127,3 +128,20 @@ the necessary metadata and parameter information. The [vega-transforms](https://
 
 Note that if a transform is added at runtime, any Vega JSON specifications using the new transform will fail JSON schema validation, as the new transform is not included in the default schema definition. To include new transforms within a custom JSON schema, developers can create a custom Vega build, adding new
 transforms to the vega-dataflow `transforms` export during the build process.
+
+## <a name="expressions"></a>Expression Functions
+
+<a name="expressionFunction" href="#expressionFunction">#</a>
+vega.<b>expressionFunction</b>(<i>name</i>[, <i>fn</i>, <i>visitor</i>])
+[<>](https://github.com/vega/vega-parser/blob/master/src/parsers/expression/codegen.js "Source")
+
+Registry function for adding and accessing expression functions.
+The *name* argument is a String indicating the name of the function, as used within the [Vega expression language](../../expressions).
+If the *fn* argument is not specified, this method returns the matching
+function value in the registry, or `undefined` if not found.
+If the *fn* argument is provided, it must be a valid JavaScript [`function`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions) to add to the registry under the given *name*.
+Once added, the parser will accept Vega specifications with expressions invoking this named function.
+
+The *visitor* argument is an expression AST (abstract syntax tree) visitor function which can be used to perform dependency analysis (e.g., for scale or data source lookups), and is used internally by Vega. For most basic functions no visitor is needed, in which case this argument can be omitted.
+
+Note that new expressions must be added _before_ parsing a spec that uses the custom function. After registering a new expression function, all subsequently parsed Vega specifications will have access to the function.
