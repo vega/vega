@@ -4,8 +4,8 @@
   "height": 300,
   "padding": {
     "top":    10,
-    "left":   30,
-    "bottom": 30,
+    "left":   40,
+    "bottom": 20,
     "right":  10
   },
   "autosize": "none",
@@ -210,6 +210,7 @@
     {
       "type": "symbol",
       "from": {"data": "points"},
+      "clip": true,
       "encode": {
         "enter": {
           "fillOpacity": {"value": 0.6},
