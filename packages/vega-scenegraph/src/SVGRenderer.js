@@ -216,9 +216,10 @@ prototype._dirtyCheck = function() {
 
     if (mark.zdirty && mark.dirty !== id) {
       this._dirtyAll = false;
-      mark.dirty = id;
-      dirtyParents(mark.group, id);
+      dirtyParents(item, id);
+      mark.items.forEach(function(i) { i.dirty = id; });
     }
+    if (mark.zdirty) continue; // handle in standard drawing pass
 
     if (item.exit) { // EXIT
       if (mdef.nested && mark.items.length) {
@@ -267,6 +268,7 @@ prototype.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
 
   var renderer = this,
+      svg = this._svg,
       mdef = marks[scene.marktype],
       events = scene.interactive === false ? 'none' : null,
       isGroup = mdef.tag === 'g',
@@ -274,7 +276,7 @@ prototype.draw = function(el, scene, prev) {
       i = 0,
       parent;
 
-  parent = bind(scene, el, prev, 'g');
+  parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
   if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
@@ -287,7 +289,7 @@ prototype.draw = function(el, scene, prev) {
 
   function process(item) {
     var dirty = renderer.isDirty(item),
-        node = bind(item, parent, sibling, mdef.tag);
+        node = bind(item, parent, sibling, mdef.tag, svg);
 
     if (dirty) {
       renderer._update(mdef, node, item);
@@ -324,7 +326,7 @@ function recurse(renderer, el, group) {
 
 // Bind a scenegraph item to an SVG DOM element.
 // Create new SVG elements as needed.
-function bind(item, el, sibling, tag) {
+function bind(item, el, sibling, tag, svg) {
   var node = item._svg, doc;
 
   // create a new dom node if needed
@@ -351,11 +353,17 @@ function bind(item, el, sibling, tag) {
     }
   }
 
-  if (doc || node.previousSibling !== sibling || !sibling) {
+  // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
+  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
+}
+
+function hasSiblings(item) {
+  var parent = item.mark || item.group;
+  return parent && parent.items.length > 1;
 }
 
 
