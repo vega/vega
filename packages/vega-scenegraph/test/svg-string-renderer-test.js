@@ -242,7 +242,6 @@ tape('SVGStringRenderer should support enter-group redraw', function(test) {
 });
 
 tape('SVGStringRenderer should handle empty item sets', function(test) {
-  var scene = {marktype:'', items:[]};
   var types = [
     'arc',
     'area',
@@ -255,10 +254,10 @@ tape('SVGStringRenderer should handle empty item sets', function(test) {
     'symbol',
     'text'
   ];
-  var file, str;
+  var scene, file, str;
 
   for (var i=0; i<types.length; ++i) {
-    scene.marktype = types[i];
+    scene = {marktype:types[i], items:[]};
     file = 'svg/marks-empty-' + types[i] + '.svg';
     str = render(scene, 500, 500);
     generate(file, str);
