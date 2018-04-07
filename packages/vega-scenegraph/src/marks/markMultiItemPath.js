@@ -35,7 +35,7 @@ export default function(type, shape) {
       return null;
     }
 
-    if (context.pixelRatio > 1) {
+    if (context.pixelRatio !== 1) {
       x *= context.pixelRatio;
       y *= context.pixelRatio;
     }
