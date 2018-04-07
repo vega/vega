@@ -11,6 +11,7 @@ import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
+import defaultTooltip from './tooltip';
 
 import {Dataflow} from 'vega-dataflow';
 import {error, extend, inherits, stringValue} from 'vega-util';
@@ -44,6 +45,7 @@ export default function View(spec, options) {
 
   // initialize renderer, handler and event management
   view._renderer = null;
+  view._tooltip = options.tooltip || defaultTooltip,
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
   view._preventDefault = false;
@@ -180,10 +182,16 @@ prototype.renderer = function(type) {
   if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
-    if (this._renderer) {
-      this._renderer = null;
-      this.initialize(this._el);
-    }
+    this._resetRenderer();
+  }
+  return this;
+};
+
+prototype.tooltip = function(handler) {
+  if (!arguments.length) return this._tooltip;
+  if (handler !== this._tooltip) {
+    this._tooltip = handler;
+    this._resetRenderer();
   }
   return this;
 };
@@ -194,7 +202,7 @@ prototype.loader = function(loader) {
     Dataflow.prototype.loader.call(this, loader);
     if (this._renderer) {
       this._renderer = null;
-      this.initialize(this._el);
+      this._resetRenderer();
     }
   }
   return this;
@@ -203,6 +211,13 @@ prototype.loader = function(loader) {
 prototype.resize = function() {
   this._autosize = 1;
   return this;
+};
+
+prototype._resetRenderer = function() {
+  if (this._renderer) {
+    this._renderer = null;
+    this.initialize(this._el);
+  }
 };
 
 // -- SIZING ----
