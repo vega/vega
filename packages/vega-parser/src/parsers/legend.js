@@ -4,6 +4,7 @@ import legendLabels from './guides/legend-labels';
 import legendSymbols from './guides/legend-symbols';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
+import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, encoder, extendEncode} from './encode/encode-util';
@@ -31,7 +32,7 @@ export default function(spec, scope) {
     error('Missing valid scale for legend.');
   }
 
-  // single-element data source for axis group
+  // single-element data source for legend group
   datum = {
     orient: value(spec.orient, config.orient),
     title:  spec.title != null
@@ -39,13 +40,12 @@ export default function(spec, scope) {
   dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
-
   legendEncode = extendEncode({
     enter: legendEnter(config),
     update: {
-      offset:        encoder(value(spec.offset, config.offset)),
-      padding:       encoder(value(spec.padding, config.padding)),
-      titlePadding:  encoder(value(spec.titlePadding, config.titlePadding))
+      offset:       encoder(value(spec.offset, config.offset)),
+      padding:      encoder(value(spec.padding, config.padding)),
+      titlePadding: encoder(value(spec.titlePadding, config.titlePadding))
     }
   }, legendEncode, Skip);
 
@@ -101,7 +101,7 @@ export default function(spec, scope) {
     title = legendTitle(spec, config, encode.title, dataRef);
     entryEncode.update.y.offset = {
       field: {group: 'titlePadding'},
-      offset: getValue(scope, title.encode, 'fontSize', GuideTitleStyle)
+      offset: get('fontSize', title.encode, scope, GuideTitleStyle)
     };
     children.push(title);
   }
@@ -115,13 +115,13 @@ export default function(spec, scope) {
 }
 
 function sizeExpression(spec, scope, marks) {
-  var fontSize = getValue(scope, marks[1].encode, 'fontSize', GuideLabelStyle);
-  if (spec.size) {
-    return {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'};
-  } else {
-    var symbolSize = getValue(scope, marks[0].encode, 'size');
-    return Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
-  }
+  var fontSize = get('fontSize', marks[1].encode, scope, GuideLabelStyle),
+      symbolSize = spec.size
+        ? 'scale("' + spec.size + '",datum)'
+        : deref(get('size', marks[0].encode, scope)),
+      expr = 'max(ceil(sqrt(' + symbolSize + ')),' + deref(fontSize) + ')';
+
+  return parseExpression(expr, scope);
 }
 
 function legendEnter(config) {
@@ -134,11 +134,16 @@ function legendEnter(config) {
   return count ? enter : undefined;
 }
 
-function getValue(scope, encode, name, style) {
+function deref(v) {
+  return v && v.signal || v;
+}
+
+function get(name, encode, scope, style) {
   var v = encode && (
     (encode.update && encode.update[name]) ||
     (encode.enter && encode.enter[name])
   );
-  return +(v ? v.value // TODO support signal?
-    : (style && (v = scope.config.style[style]) && v[name]));
+  return v && v.signal ? v
+    : v ? +v.value
+    : ((v = scope.config.style[style]) && +v[name]);
 }
