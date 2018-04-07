@@ -181,7 +181,7 @@ is equivalent to `view.signal('padding'[, padding])`.
 view.<b>resize</b>()
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
-Sets a flag indicating that layout auto-size calculations should be re-run
+Sets a flag indicating that layout autosize calculations should be re-run
 on the next pulse propagation cycle. If an autosize method of `"pad"` or
 `"fit"` is being used, calling this method will cause the chart bounds layout
 to be recomputed the next time the [run](#view_run) method is invoked.
@@ -250,6 +250,15 @@ view.<b>scenegraph</b>()
 
 Returns the [Vega scenegraph](https://github.com/vega/vega-scenegraph)
 instance for this view.
+
+<a name="view_origin" href="#view_origin">#</a>
+view.<b>origin</b>()
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+
+Returns the [x, y] origin coordinates for the current view. The origin
+coordinates indicate the translation of the view's primary coordinate
+system, encompassing the left and top padding values as well as any
+additional padding due to autosize calculations.
 
 
 ### Signals
