@@ -1,10 +1,15 @@
 import {domCreate} from './util/dom';
 import {loader} from 'vega-loader';
 
-export default function Handler(customLoader) {
+export default function Handler(customLoader, customTooltip) {
   this._active = null;
   this._handlers = {};
   this._loader = customLoader || loader();
+  this._tooltip = customTooltip || defaultTooltip;
+}
+
+function defaultTooltip(handler, event, item, value) {
+  handler.element().setAttribute('title', value || '');
 }
 
 var prototype = Handler.prototype;
@@ -73,6 +78,9 @@ prototype.handleHref = function(event, item, href) {
     .catch(function() { /* do nothing */ });
 };
 
-prototype.handleTooltip = function(event, item, tooltipText) {
-  this._el.setAttribute('title', tooltipText || '');
+prototype.handleTooltip = function(event, item, show) {
+  if (item && item.tooltip != null) {
+    this._tooltip.call(this._obj, this, event, item,
+      show ? item.tooltip : null);
+  }
 };
