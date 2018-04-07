@@ -4,8 +4,8 @@ import point from './util/point';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';
 
-export default function CanvasHandler(loader) {
-  Handler.call(this, loader);
+export default function CanvasHandler(loader, tooltip) {
+  Handler.call(this, loader, tooltip);
   this._down = null;
   this._touch = null;
   this._first = true;
@@ -143,8 +143,8 @@ prototype.fire = function(type, evt, touch) {
   // if hyperlinked, handle link first
   if (type === 'click' && a && a.href) {
     this.handleHref(evt, a, a.href);
-  } else if ((type === 'mouseover' || type === 'mouseout') && a && a.tooltip) {
-    this.handleTooltip(evt, a, type === 'mouseover' ? a.tooltip : null);
+  } else if ((type === 'mouseover' || type === 'mouseout')) {
+    this.handleTooltip(evt, a, type === 'mouseover');
   }
 
   // invoke all registered handlers

@@ -2,16 +2,14 @@ import Handler from './Handler';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';
 
-export default function SVGHandler(loader) {
-  Handler.call(this, loader);
+export default function SVGHandler(loader, tooltip) {
+  Handler.call(this, loader, tooltip);
   var h = this;
   h._hrefHandler = listener(h, function(evt, item) {
     if (item && item.href) h.handleHref(evt, item, item.href);
   });
   h._tooltipHandler = listener(h, function(evt, item) {
-    if (item && item.tooltip) {
-      h.handleTooltip(evt, item, evt.type === 'mouseover' ? item.tooltip : null);
-    }
+    h.handleTooltip(evt, item, evt.type === 'mouseover');
   });
 }
 
