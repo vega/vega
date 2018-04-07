@@ -1,4 +1,7 @@
-var Padding = 'padding';
+var Width = 'width',
+    Height = 'height',
+    Padding = 'padding',
+    Skip = {skip: true};
 
 export function viewWidth(view, width) {
   var a = view.autosize(),
@@ -14,9 +17,9 @@ export function viewHeight(view, height) {
 
 export function initializeResize(view) {
   var s = view._signals,
-      w = s.width,
-      h = s.height,
-      p = s.padding;
+      w = s[Width],
+      h = s[Height],
+      p = s[Padding];
 
   function resetSize() {
     view._autosize = view._resize = 1;
@@ -61,15 +64,15 @@ export function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
     // width value changed: update signal, skip resize op
     if (view.width() !== width) {
       rerun = 1;
-      view.width(width);
-      view._resizeWidth.skip(true);
+      view.signal(Width, width, Skip); // set width, skip update calc
+      view._resizeWidth.skip(true); // skip width resize handler
     }
 
     // height value changed: update signal, skip resize op
     if (view.height() !== height) {
       rerun = 1;
-      view.height(height);
-      view._resizeHeight.skip(true);
+      view.signal(Height, height, Skip); // set height, skip update calc
+      view._resizeHeight.skip(true); // skip height resize handler
     }
 
     // view width changed: update view property, set resize flag
