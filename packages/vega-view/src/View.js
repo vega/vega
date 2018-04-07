@@ -132,6 +132,10 @@ prototype.scenegraph = function() {
   return this._scenegraph;
 };
 
+prototype.origin = function() {
+  return this._origin.slice();
+};
+
 function lookupSignal(view, name) {
   return view._signals.hasOwnProperty(name)
     ? view._signals[name]
