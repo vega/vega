@@ -141,12 +141,13 @@ Note that a polyfill is necessary only for Internet Explorer support. Recent ver
 
 Vega includes two node.js-based command line utilities &ndash; `vg2png` and `vg2svg` &ndash; for rendering static visualization images. These commands render to PNG or SVG images, respectively.
 
-- **vg2png**: `vg2png [-b basedir] vega_json_file [output_png_file]`
+- **vg2png**: `vg2png [-b basedir] [-s scalefactor] vega_json_file [output_png_file]`
 - **vg2svg**: `vg2svg [-b basedir] [-h] vega_json_file [output_svg_file]`
 
 If no output file is given, the resulting PNG or SVG data will be written to standard output, and so can be piped into other applications. The programs also accept the following (optional) parameters:
 
 * __-b__, __--base__ - [String] A base directory to use for data and image loading. For web retrieval, use `-b http://host/data/`. For files, use `-b file:///dir/data/` (absolute path) or `-b data/` (relative path).
+* __-s__, __--scale__ - [Number] [Default:1] For png output, a resolution scale factor.  For example, `-s 2` results in a doubling of the output resolution.
 * __-h__, __--header__ - [Flag] Includes XML header and DOCTYPE in SVG output (vg2svg only).
 
 Within the Vega project directories, you can use `./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, the commands are accessible either locally (`./node_modules/bin/vg2png`) or globally (`vg2png`) depending on how you install the Vega package. The `vg2png` utility requires that the optional [node-canvas](https://github.com/Automattic/node-canvas) dependency is installed. See below for more [information about Vega and node-canvas](#node-canvas).
@@ -177,6 +178,12 @@ Render the arc example to SVG and pipe through svg2pdf (requires [svg2pdf](http:
 
 ```
 bin/vg2svg spec/arc.vg.json | svg2pdf > arc.pdf
+```
+
+Render the bar chart example to a PNG file at double resolution:
+
+```
+bin/vg2png -s 2 spec/bar.vg.json bar.png
 ```
 
 [Back to reference](#reference)
