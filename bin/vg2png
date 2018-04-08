@@ -19,8 +19,13 @@ var path = require('path'),
 var args = require('yargs')
   .usage(helpText)
   .demand(0)
-  .string('b').alias('b', 'base')
-  .describe('b', 'Base directory for data loading.')
+  .string('b')
+    .alias('b', 'base')
+    .describe('b', 'Base directory for data loading.')
+  .number('s')
+    .alias('s', 'scale')
+    .default('s', 1)
+    .describe('s', 'Output resolution scale factor.')
   .help()
   .version()
   .argv;
@@ -53,7 +58,7 @@ function render(spec) {
       renderer: 'none'
     })
     .initialize()
-    .toCanvas()
+    .toCanvas(args.s)
     .then(function(canvas) { writePNG(canvas, outputFile); })
     .catch(function(err) { console.error(err); });
 }
