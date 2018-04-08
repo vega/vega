@@ -137,6 +137,7 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | input               | {% include type t="String" %}  | {% include required %} The type of input element to use. The valid values are `checkbox`, `radio`, `range`, `select`, and any other legal [HTML form input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).|
 | element             | {% include type t="String" %}  | An optional CSS selector string indicating the parent element to which the input element should be added. By default, all input elements are added within the parent container of the Vega view.|
 | debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
+| name                | {% include type t="String" %}  | An optional label to show next to the control. If not specified, Vega will use the name of the signal. |
 
 ### Radio and Select Input Properties
 
