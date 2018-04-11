@@ -1,0 +1,89 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 300,
+  "height": 100,
+  "padding": 5,
+  "signals": [
+    {"name": "generate", "value": true, "bind": {"input": "checkbox"}}
+  ],
+  "data": [
+    {
+      "name": "tree",
+      "values": [
+        {"id": "A", "job": "Doctor", "region": "East"},
+        {"id": "B", "job": "Doctor", "region": "East"},
+        {"id": "C", "job": "Lawyer", "region": "East"},
+        {"id": "D", "job": "Lawyer", "region": "East"},
+        {"id": "E", "job": "Doctor", "region": "West"},
+        {"id": "F", "job": "Doctor", "region": "West"},
+        {"id": "G", "job": "Lawyer", "region": "West"},
+        {"id": "H", "job": "Lawyer", "region": "West"}
+      ],
+      "transform": [
+        {
+          "type": "nest",
+          "generate": {"signal": "generate"},
+          "keys": ["job", "region"]
+        },
+        {
+          "type": "tree",
+          "method": "tidy",
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    },
+    {
+      "name": "links",
+      "source": "tree",
+      "transform": [{"type": "treelinks"}, {"type": "linkpath"}]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category20"}
+    }
+  ],
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "links"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "#ccc"},
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "color", "field": "id"},
+          "stroke": {"value": "white"},
+          "size": {"value": 600},
+          "x": {"field": "x"},
+          "y": {"field": "y"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "text": {"field": "id"},
+          "stroke": {"value": "white"},
+          "fill": {"value": "white"},
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+          "fontWeight": {"value": "normal"},
+          "fontSize": {"value": 16}
+        },
+        "update": {"x": {"field": "x"}, "y": {"field": "y"}}
+      }
+    }
+  ]
+}
