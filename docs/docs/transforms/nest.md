@@ -6,6 +6,10 @@ permalink: /docs/transforms/nest/index.html
 
 The **nest** transform generates a hierarchical (tree) data structure from input data objects, based on dividing children into groups based on distinct field values. Internally, this transform generates a set of tree node objects that can then be processed by tree layout methods such as [tree](../tree), [treemap](../treemap), [pack](../pack), and [partition](../partition).
 
+## Example
+
+{% include embed spec="nest" %}
+
 ## Transform Parameters
 
 | Property            | Type                           | Description   |
