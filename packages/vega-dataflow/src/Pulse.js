@@ -128,6 +128,22 @@ prototype.fork = function(flags) {
 };
 
 /**
+ * Creates a copy of this pulse with new materialized array
+ * instances for the ADD, REM, MOD, and SOURCE arrays.
+ * The dataflow, time stamp and field modification values are copied over.
+ * @return {Pulse} - The cloned pulse instance.
+ * @see init
+ */
+prototype.clone = function() {
+  var p = this.fork(ALL);
+  p.add = p.add.slice();
+  p.rem = p.rem.slice();
+  p.mod = p.mod.slice();
+  if (p.source) p.source = p.source.slice();
+  return p.materialize(ALL | SOURCE);
+};
+
+/**
  * Returns a pulse that adds all tuples from a backing source. This is
  * useful for cases where operators are added to a dataflow after an
  * upstream data pipeline has already been processed, ensuring that
