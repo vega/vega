@@ -21,7 +21,7 @@ export default function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true, "generates": true},
+  "metadata": {"treesource": true, "changes": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
     { "name": "key", "type": "field" },
@@ -43,13 +43,12 @@ prototype.transform = function(_, pulse) {
   var key = _.key || tupleid,
       gen = _.generate,
       mod = _.modified(),
-      out = gen || mod ? pulse.fork(pulse.ALL) : pulse,
+      out = pulse.clone(),
       root, tree, map;
 
   if (!this.value || mod || pulse.changed()) {
     // collect nodes to remove
     if (gen && this.value) {
-      out.materialize(out.REM);
       this.value.each(function(node) {
         if (node.children) out.rem.push(node);
       });
@@ -58,13 +57,11 @@ prototype.transform = function(_, pulse) {
     // generate new tree structure
     root = array(_.keys)
       .reduce(function(n, k) { n.key(k); return n; }, nest())
-      .entries(out.materialize(out.SOURCE).source);
+      .entries(out.source);
     this.value = tree = hierarchy({values: root}, children);
 
     // collect nodes to add
     if (gen) {
-      out.materialize(out.ADD);
-      out.source = out.source.slice();
       tree.each(function(node) {
         if (node.children) {
           node = ingest(node.data);
