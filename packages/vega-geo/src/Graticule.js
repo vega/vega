@@ -13,7 +13,7 @@ export default function Graticule(params) {
 
 Graticule.Definition = {
   "type": "Graticule",
-  "metadata": {"source": true, "generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "extent", "type": "array", "array": true, "length": 2,
       "content": {"type": "number", "array": true, "length": 2} },
@@ -31,8 +31,7 @@ Graticule.Definition = {
 var prototype = inherits(Graticule, Transform);
 
 prototype.transform = function(_, pulse) {
-  var out = pulse.fork(),
-      src = this.value,
+  var src = this.value,
       gen = this.generator, t;
 
   if (!src.length || _.modified()) {
@@ -45,12 +44,11 @@ prototype.transform = function(_, pulse) {
 
   t = gen();
   if (src.length) {
-    out.mod.push(replace(src[0], t));
+    pulse.mod.push(replace(src[0], t));
   } else {
-    out.add.push(ingest(t));
+    pulse.add.push(ingest(t));
   }
   src[0] = t;
-  out.source = src;
 
-  return out;
+  return pulse;
 };
