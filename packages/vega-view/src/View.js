@@ -200,10 +200,7 @@ prototype.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
-    if (this._renderer) {
-      this._renderer = null;
-      this._resetRenderer();
-    }
+    this._resetRenderer();
   }
   return this;
 };
