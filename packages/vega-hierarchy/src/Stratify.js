@@ -31,19 +31,23 @@ prototype.transform = function(_, pulse) {
   }
 
   var mod = _.modified(), tree, map,
+      out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
       run = !this.value
          || mod
          || pulse.changed(pulse.ADD_REM)
          || pulse.modified(_.key.fields)
          || pulse.modified(_.parentKey.fields);
 
+  // prevent upstream source pollution
+  out.source = out.source.slice();
+
   if (run) {
-    tree = stratify().id(_.key).parentId(_.parentKey)(pulse.source);
+    tree = stratify().id(_.key).parentId(_.parentKey)(out.source);
     map = tree.lookup = {};
     tree.each(function(node) { map[_.key(node.data)] = node; });
     this.value = tree;
   }
 
-  pulse.source.root = this.value;
-  return mod ? pulse.fork(pulse.ALL) : pulse;
+  out.source.root = this.value;
+  return out;
 };
