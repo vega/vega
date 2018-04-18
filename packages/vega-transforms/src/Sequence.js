@@ -16,7 +16,7 @@ export default function Sequence(params) {
 
 Sequence.Definition = {
   "type": "Sequence",
-  "metadata": {"generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "start", "type": "number", "required": true },
     { "name": "stop", "type": "number", "required": true },

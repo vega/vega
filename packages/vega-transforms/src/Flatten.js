@@ -20,7 +20,7 @@ export default function Flatten(params) {
 
 Flatten.Definition = {
   "type": "Flatten",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "fields", "type": "field", "array": true, "required": true },
     { "name": "as", "type": "string", "array": true }

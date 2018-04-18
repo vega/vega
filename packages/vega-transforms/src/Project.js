@@ -20,7 +20,7 @@ export default function Project(params) {
 
 Project.Definition = {
   "type": "Project",
-  "metadata": {"generates": true, "changes": true, "modifies": true},
+  "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "fields", "type": "field", "array": true },
     { "name": "as", "type": "string", "null": true, "array": true },
