@@ -166,66 +166,28 @@ function layoutAxis(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.y = -s;
-          s += title.bounds.height();
-          bounds.add(title.bounds.x1, 0)
-                .add(title.bounds.x2, 0);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, -1, bounds);
       bounds.add(0, -s).add(range, 0);
       break;
     case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = -s;
-          s += title.bounds.width();
-          bounds.add(0, title.bounds.y1)
-                .add(0, title.bounds.y2);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, -1, bounds);
       bounds.add(-s, 0).add(0, range);
       break;
     case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = s;
-          s += title.bounds.width();
-          bounds.add(0, title.bounds.y1)
-                .add(0, title.bounds.y2);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, 1, bounds);
       bounds.add(0, 0).add(s, range);
       break;
     case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) if (title.auto) {
-        s += titlePadding;
-        title.y = s;
-        s += title.bounds.height();
-        bounds.add(title.bounds.x1, 0)
-              .add(title.bounds.x2, 0);
-      } else {
-        bounds.union(title.bounds);
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, 1, bounds);
       bounds.add(0, 0).add(range, s);
       break;
     default:
@@ -244,6 +206,33 @@ function layoutAxis(view, axis, width, height) {
   }
 
   return item.mark.bounds.clear().union(bounds);
+}
+
+function layoutAxisTitle(title, offset, pad, isYAxis, sign, bounds) {
+  var b = title.bounds, dx = 0, dy = 0;
+
+  if (title.auto) {
+    offset += pad;
+
+    isYAxis
+      ? dx = (title.x || 0) - (title.x = sign * offset)
+      : dy = (title.y || 0) - (title.y = sign * offset);
+
+    b.translate(-dx, -dy);
+    title.mark.bounds.set(b.x1, b.y1, b.x2, b.y2);
+
+    if (isYAxis) {
+      bounds.add(0, b.y1).add(0, b.y2);
+      offset += b.width();
+    } else {
+      bounds.add(b.x1, 0).add(b.x2, 0);
+      offset += b.height();
+    }
+  } else {
+    bounds.union(b);
+  }
+
+  return offset;
 }
 
 function layoutTitle(view, title, axisBounds) {
