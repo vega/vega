@@ -37,7 +37,7 @@ export default function Impute(params) {
 
 Impute.Definition = {
   "type": "Impute",
-  "metadata": {"generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
     { "name": "key", "type": "field", "required": true },
