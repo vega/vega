@@ -66,6 +66,10 @@ export function aggrField(op, field) {
 
 // -----
 
+export var Scope = 'scope';
+
+export var View = 'view';
+
 export function isSignal(_) {
   return _ && _.signal;
 }

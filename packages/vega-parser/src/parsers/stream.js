@@ -1,8 +1,6 @@
 import parseExpression from './expression';
+import {View, Scope} from '../util';
 import {array, error, stringValue} from 'vega-util';
-
-var VIEW = 'view',
-    SCOPE = 'scope';
 
 export default function(stream, scope) {
   return stream.signal ? scope.getSignal(stream.signal).id
@@ -11,7 +9,7 @@ export default function(stream, scope) {
 }
 
 function eventSource(source) {
-   return source === SCOPE ? VIEW : (source || VIEW);
+   return source === Scope ? View : (source || View);
 }
 
 function parseStream(stream, scope) {
@@ -63,7 +61,7 @@ function streamParameters(entry, stream, scope) {
     // add filter for mark type, name and/or role
     param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
   }
-  if (stream.source === SCOPE) {
+  if (stream.source === Scope) {
     // add filter to limit events from sub-scope only
     param.push('inScope(event.item)');
   }
