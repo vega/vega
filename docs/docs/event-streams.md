@@ -60,7 +60,7 @@ A basic event stream consists of an event source and type:
 
 | Property    | Type                          | Description   |
 | :---------- | :---------------------------: | :------------ |
-| source      | {% include type t="String" %} | The input event source. This defaults to `"view"` to monitor events from the current Vega view component. Other legal values are `"scope"` (indicating only events originating within the group in which the event stream is defined), `"window"` for the browser window object, or a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) string indicating external DOM elements.|
+| source      | {% include type t="String" %} | The input event source. For event streams defined in the top-level scope of a Vega specification, this property defaults to `"view"`, which monitors all input events in the current Vega view component (including those targeting the containing Canvas or SVG component itself). For event streams defined within nested scopes, this property defaults to `"scope"`, which limits consideration to only events originating within the group in which the event stream is defined. Othe legal values include `"window"` for the browser window object, or a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) string indicating external DOM elements.|
 | type        | {% include type t="String" %} | {% include required %} The event type to monitor (e.g., `"click"`, `"keydown"`). For more, see the [supported event types list](#types).|
 
 Any event stream object may also include the following properties for filtering or modifying an event stream:
@@ -161,10 +161,11 @@ The general form of a basic selector (using a regexp-style syntax) is:
 
 The _source_ property supports the following options:
 
-- If undefined, all marks and the view itself will be monitored, equivalent to an event object with _source_ property `"view"`.
+- If undefined, uses the default _source_ property (either `view` or `scope`) as described in the [_source_ property documentation](#event-stream-objects).
 - A valid [mark type](../marks). For example, `arc`, `image`, or `rect`.
 - A mark name preprended by `@`. For example, `@cell`. Matching items must have the _name_ property specified in their [mark definition](../marks).
-- The string `*`, indicating any mark type, but not the view component itself.
+- The string `*`, indicating any mark type, but excluding the view component itself.
+- The string `view` or `scope`, indicating event scopes as described in the [_source_ property documentation](#event-stream-objects)
 - The string `window`, indicating the [browser window object](https://developer.mozilla.org/en-US/docs/Web/API/Window).
 - If none of the above, _source_ will be interpreted as a [CSS selector string](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) indicating DOM elements to monitor.
 
