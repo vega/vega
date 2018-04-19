@@ -24,7 +24,7 @@ export default function(spec, scale, config, userEncode) {
   encode.update = update = {
     x: zero,
     y: zero,
-    fill: {gradient: scale},
+    fill: {gradient: scale, start: [0,0], stop: [1,0]},
     opacity: {value: 1}
   };
   addEncode(update, 'width', config.gradientWidth);
