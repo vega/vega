@@ -8,6 +8,7 @@ import {
   geoConicEquidistant,
   geoEquirectangular,
   geoGnomonic,
+  geoIdentity,
   geoMercator,
   geoOrthographic,
   geoStereographic,
@@ -27,6 +28,8 @@ export var projectionProperties = [
   'rotate',
   'parallels',
   'precision',
+  'reflectX',
+  'reflectY',
 
   // extended properties in d3-geo-projections
   'coefficient',
@@ -92,6 +95,7 @@ var projections = {
   conicequidistant:     geoConicEquidistant,
   equirectangular:      geoEquirectangular,
   gnomonic:             geoGnomonic,
+  identity:             geoIdentity,
   mercator:             geoMercator,
   orthographic:         geoOrthographic,
   stereographic:        geoStereographic,
