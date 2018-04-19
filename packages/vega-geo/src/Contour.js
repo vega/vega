@@ -3,7 +3,7 @@ import {inherits} from 'vega-util';
 import {extent} from 'd3-array';
 import {contours, contourDensity} from 'd3-contour';
 
-var CONTOUR_PARAMS = ['values', 'size'];
+var CONTOUR_PARAMS = ['size', 'smooth'];
 var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
 
 /**
@@ -28,6 +28,9 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
  *   threshold values should be automatically aligned to "nice"
  *   human-friendly values. Setting this flag may cause the number of
  *   thresholds to deviate from the specified count.
+ * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
+ *   polygons should be smoothed using linear interpolation. The default is
+ *   true. The parameter is ignored when using density estimation.
  */
 export default function Contour(params) {
   Transform.call(this, null, params);
@@ -44,7 +47,8 @@ Contour.Definition = {
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
     { "name": "count", "type": "number" },
-    { "name": "nice", "type": "number", "default": false },
+    { "name": "smooth", "type": "boolean" },
+    { "name": "nice", "type": "boolean", "default": false },
     { "name": "thresholds", "type": "number", "array": true }
   ]
 };
