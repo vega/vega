@@ -56,8 +56,9 @@ Vega includes all cartographic projections provided by the [d3-geo](https://gith
 | [conicConformal](https://github.com/d3/d3-geo#geoConicConformal) | The conic conformal projection. The parallels default to [30&deg;, 30&deg;] resulting in flat top. |
 | [conicEqualArea](https://github.com/d3/d3-geo#geoConicEqualArea) | The Albers’ equal-area conic projection. |
 | [conicEquidistant](https://github.com/d3/d3-geo#geoConicEquidistant) | The conic equidistant projection. |
-| [equirectangular](https://github.com/d3/d3-geo#geoEquirectangular) | The equirectangular (plate carr&eacute;e) projection, akin to use longitude, latitude directly. |
+| [equirectangular](https://github.com/d3/d3-geo#geoEquirectangular) | The equirectangular (plate carr&eacute;e) projection, akin to using longitude, latitude directly. |
 | [gnomonic](https://github.com/d3/d3-geo#geoGnomonic) | The gnomonic projection. |
+| [identity](https://github.com/d3/d3-geo#geoIdentity) | The identity transform, which can be used to translate, scale, and clip planar geometry. Also supports additional boolean *reflectX* and *reflectY* parameters. |
 | [mercator](https://github.com/d3/d3-geo#geoMercator) | The spherical Mercator projection. Uses a default `clipExtent` such that the world is projected to a square, clipped to approximately ±85&deg; latitude. |
 | [orthographic](https://github.com/d3/d3-geo#geoOrthographic) | The orthographic projection. |
 | [stereographic](https://github.com/d3/d3-geo#geoStereographic) | The stereographic projection. |
