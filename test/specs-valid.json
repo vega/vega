@@ -16,6 +16,7 @@
   "choropleth",
   "contour-map",
   "contour-scatter",
+  "contour-volcano",
   "crossfilter",
   "crossfilter-multi",
   "density",
