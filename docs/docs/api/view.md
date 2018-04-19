@@ -37,6 +37,8 @@ of the following properties:
 method.
 - *renderer*: The type of renderer to use (`'canvas'` or `'svg'`). See the
 [renderer](#view_renderer) method.
+- *tooltip*: Handler function invoked to support tooltip display. See the
+[tooltip](#view_tooltip) method.
 
 The View constructor call is typically followed by a chain of method calls
 to setup the desired view configuration. At the end of this chain,
@@ -113,7 +115,7 @@ parent class. The valid *level* values are `vega.None` (the default),
 view.<b>renderer</b>(<i>type</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
-Sets the renderer type (e.g., to `'canvas'` (the default) or `'svg'`) and
+Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and
 returns this view instance. While typically invoked immediately upon view
 creation, this method can be called at any time to change the renderer.
 
@@ -122,6 +124,43 @@ Additional renderer types may be used if registered via the
 method exported by [vega-scenegraph](https://github.com/vega/vega-scenegraph);
 for an example see the
 [vega-webgl-renderer](https://github.com/vega/vega-webgl-renderer).
+
+<a name="view_tooltip" href="#view_tooltip">#</a>
+view.<b>tooltip</b>(<i>tooltipHandler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+
+Get or set the tooltip handler function, which is invoked to handle display
+of tooltips (for example, when users hover the mouse cursor over an item).
+The *tooltipHandler* argument should be a function that respects the
+following method signature:
+
+```js
+function(handler, event, item, value) {
+  // perform custom tooltip presentation
+}
+```
+
+The *tooltipHandler* function arguments are:
+
+- *handler* - The scenegraph input [Handler](https://github.com/vega/vega-scenegraph/blob/master/src/Handler.js) instance
+that invoked the *tooltipHandler* function.
+- *event* - The [event](https://developer.mozilla.org/en-US/docs/Web/Events)
+that caused an update to the tooltip display.
+- *item* - The scenegraph item corresponding to the tooltip.
+- *value* - The tooltip value to display. If `null` or `undefined`, indicates
+that no tooltip should be shown. The tooltip *value* may have an arbitrary
+type, including Object and Array values. It is up the *tooltipHandler* to
+appropriately interpret and display this value.
+- In addition, Vega invokes the *tooltipHander* using the current View as the
+*this* context for the function.
+
+The default handler uses built-in browser support to show tooltips. It takes
+a value to show in a tooltip, transforms it to a string value, and sets the
+HTML `"title"` attribute on the element containing the View. The default
+handler will coerce literal values to strings, and will show the contents
+of Object or Array values (up to one level of depth). For Object values, each
+key-value pair is displayed on its own line of text
+(`"key1: value\nkey2: value2"`).
 
 <a name="view_hover" href="#view_hover">#</a>
 view.<b>hover</b>([<i>hoverSet</i>, <i>updateSet</i>])
@@ -181,7 +220,7 @@ is equivalent to `view.signal('padding'[, padding])`.
 view.<b>resize</b>()
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
-Sets a flag indicating that layout auto-size calculations should be re-run
+Sets a flag indicating that layout autosize calculations should be re-run
 on the next pulse propagation cycle. If an autosize method of `"pad"` or
 `"fit"` is being used, calling this method will cause the chart bounds layout
 to be recomputed the next time the [run](#view_run) method is invoked.
@@ -262,6 +301,15 @@ view.<b>scenegraph</b>()
 
 Returns the [Vega scenegraph](https://github.com/vega/vega-scenegraph)
 instance for this view.
+
+<a name="view_origin" href="#view_origin">#</a>
+view.<b>origin</b>()
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+
+Returns the [x, y] origin coordinates for the current view. The origin
+coordinates indicate the translation of the view's primary coordinate
+system, encompassing the left and top padding values as well as any
+additional padding due to autosize calculations.
 
 [Back to reference](#reference)
 
