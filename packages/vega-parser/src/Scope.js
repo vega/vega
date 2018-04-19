@@ -66,6 +66,10 @@ prototype.fork = function() {
   return new Subscope(this);
 };
 
+prototype.isSubscope = function() {
+  return this._subid > 0;
+};
+
 prototype.toRuntime = function() {
   this.finish();
   return {
