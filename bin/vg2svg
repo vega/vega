@@ -24,16 +24,30 @@ var path = require('path'),
 var args = require('yargs')
   .usage(helpText)
   .demand(0)
-  .string('b').alias('b', 'base')
-  .describe('b', 'Base directory for data loading.')
-  .boolean('h').alias('h', 'header')
-  .describe('h', 'Include XML header and SVG doctype.')
+  .string('b')
+    .alias('b', 'base')
+    .describe('b', 'Base directory for data loading.')
+  .number('seed')
+    .describe('seed', 'Plug-in a deterministic random number generator with a specific seed for testing.')
+  .boolean('h')
+    .alias('h', 'header')
+    .describe('h', 'Include XML header and SVG doctype.')
   .help()
   .version()
   .argv;
 
 // set baseURL if provided on command line
 var base = args.b ? args.b + path.sep : null;
+
+var seed = args.s;
+if (typeof seed !== 'undefined') {
+  // Plug-in a deterministic random number generator for testing.
+  // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
+  vega.setRandom(function () {
+    seed = (1103515245 * seed + 12345) % 2147483647;
+    return seed / 2147483647;
+  });
+}
 
 // input / output files
 var header = args.h ? svgHeader : '',
