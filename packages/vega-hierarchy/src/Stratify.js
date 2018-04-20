@@ -1,5 +1,6 @@
+import lookup from './lookup';
 import {Transform} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
+import {error, inherits, truthy} from 'vega-util';
 import {stratify} from 'd3-hierarchy';
 
  /**
@@ -30,7 +31,7 @@ prototype.transform = function(_, pulse) {
     error('Stratify transform requires an upstream data source.');
   }
 
-  var mod = _.modified(), tree, map,
+  var mod = _.modified(),
       out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
       run = !this.value
          || mod
@@ -42,10 +43,10 @@ prototype.transform = function(_, pulse) {
   out.source = out.source.slice();
 
   if (run) {
-    tree = stratify().id(_.key).parentId(_.parentKey)(out.source);
-    map = tree.lookup = {};
-    tree.each(function(node) { map[_.key(node.data)] = node; });
-    this.value = tree;
+    this.value = lookup(
+      stratify().id(_.key).parentId(_.parentKey)(out.source),
+      _.key, truthy
+    );
   }
 
   out.source.root = this.value;
