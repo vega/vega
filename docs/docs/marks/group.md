@@ -4,7 +4,7 @@ title: Group Mark
 permalink: /docs/marks/group/index.html
 ---
 
-**Group** marks are containers for other marks, and used to create visualizations with multiple views or layers. Each group instance recursively defines its own nested visualization specification. Group marks provide their own coordinate space and can include nested [data](../../data), [signal](../../signals), [scale](../../scales), [axis](../../axes), [legend](../../legends), [title](../../title) and [mark](../) definitions. In addition a group mark may have a colored background, similar to a `rect` mark.
+**Group** marks are containers for other marks, and used to create visualizations with multiple views or layers. Each group instance recursively defines its own nested visualization specification. Group marks provide their own coordinate space and can include nested [data](../../data), [signal](../../signals), [scale](../../scales), [axis](../../axes), [legend](../../legends), [title](../../title) and [mark](../) definitions. In addition a group mark may have a colored background, similar to a `rect` mark. Note that unlike `rect` mark, a named `group` mark still cannot participate in the event capturing unless it has a fill color, possibly transparent (`opacity = 0`).
 
 ## Example
 
