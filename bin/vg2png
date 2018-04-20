@@ -13,6 +13,7 @@ var helpText =
 // import required libraries
 var path = require('path'),
     fs = require('fs'),
+    lcg = require('./lcg'),
     vega = require('../');
 
 // arguments
@@ -27,7 +28,7 @@ var args = require('yargs')
     .default('s', 1)
     .describe('s', 'Output resolution scale factor.')
   .number('seed')
-    .describe('seed', 'Plug-in a deterministic random number generator with a specific seed for testing.')
+    .describe('seed', 'Seed for random number generation.')
   .help()
   .version()
   .argv;
@@ -35,14 +36,10 @@ var args = require('yargs')
 // set baseURL if provided on command line
 var base = args.b ? args.b + path.sep : null;
 
-var seed = args.s;
-if (typeof seed !== 'undefined') {
-  // Plug-in a deterministic random number generator for testing.
-  // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
-  vega.setRandom(function () {
-    seed = (1103515245 * seed + 12345) % 2147483647;
-    return seed / 2147483647;
-  });
+// Plug-in a deterministic random number generator for testing.
+if (typeof args.seed !== 'undefined') {
+  if (isNaN(args.seed)) throw 'Illegal seed value: must be a valid number.';
+  vega.setRandom(lcg(args.seed));
 }
 
 // input / output files
