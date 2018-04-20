@@ -236,6 +236,9 @@
             },
             "debounce": {
               "type": "number"
+            },
+            "name": {
+              "type": "string"
             }
           },
           "required": [
@@ -259,6 +262,9 @@
             },
             "debounce": {
               "type": "number"
+            },
+            "name": {
+              "type": "string"
             }
           },
           "additionalProperties": false,
@@ -289,6 +295,9 @@
             },
             "debounce": {
               "type": "number"
+            },
+            "name": {
+              "type": "string"
             }
           },
           "additionalProperties": false,
@@ -314,6 +323,9 @@
             },
             "debounce": {
               "type": "number"
+            },
+            "name": {
+              "type": "string"
             }
           },
           "additionalProperties": true
@@ -5892,10 +5904,20 @@
             }
           ]
         },
+        "smooth": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
         "nice": {
           "anyOf": [
             {
-              "type": "number"
+              "type": "boolean"
             },
             {
               "$ref": "#/refs/signal"

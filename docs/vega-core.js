@@ -2213,6 +2213,22 @@ prototype$4.fork = function(flags) {
 };
 
 /**
+ * Creates a copy of this pulse with new materialized array
+ * instances for the ADD, REM, MOD, and SOURCE arrays.
+ * The dataflow, time stamp and field modification values are copied over.
+ * @return {Pulse} - The cloned pulse instance.
+ * @see init
+ */
+prototype$4.clone = function() {
+  var p = this.fork(ALL);
+  p.add = p.add.slice();
+  p.rem = p.rem.slice();
+  p.mod = p.mod.slice();
+  if (p.source) p.source = p.source.slice();
+  return p.materialize(ALL | SOURCE);
+};
+
+/**
  * Returns a pulse that adds all tuples from a backing source. This is
  * useful for cases where operators are added to a dataflow after an
  * upstream data pipeline has already been processed, ensuring that
@@ -5151,7 +5167,7 @@ function Flatten(params) {
 
 Flatten.Definition = {
   "type": "Flatten",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "fields", "type": "field", "array": true, "required": true },
     { "name": "as", "type": "string", "array": true }
@@ -5204,7 +5220,7 @@ function Fold(params) {
 
 Fold.Definition = {
   "type": "Fold",
-  "metadata": {"generates": true, "source": true},
+  "metadata": {"generates": true},
   "params": [
     { "name": "fields", "type": "field", "array": true, "required": true },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
@@ -5367,7 +5383,7 @@ function Impute(params) {
 
 Impute.Definition = {
   "type": "Impute",
-  "metadata": {"generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
     { "name": "key", "type": "field", "required": true },
@@ -5860,7 +5876,7 @@ function Project(params) {
 
 Project.Definition = {
   "type": "Project",
-  "metadata": {"generates": true, "changes": true, "modifies": true},
+  "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "fields", "type": "field", "array": true },
     { "name": "as", "type": "string", "null": true, "array": true },
@@ -6101,7 +6117,7 @@ function Sequence(params) {
 
 Sequence.Definition = {
   "type": "Sequence",
-  "metadata": {"generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "start", "type": "number", "required": true },
     { "name": "stop", "type": "number", "required": true },
@@ -8165,10 +8181,8 @@ function pick(test) {
   if (!test) test = trueFunc;
 
   return function(context, scene, x, y, gx, gy) {
-    if (context.pixelRatio > 1) {
-      x *= context.pixelRatio;
-      y *= context.pixelRatio;
-    }
+    x *= context.pixelRatio;
+    y *= context.pixelRatio;
 
     return pickVisit(scene, function(item) {
       var b = item.bounds;
@@ -8279,10 +8293,8 @@ var markMultiItemPath = function(type, shape) {
       return null;
     }
 
-    if (context$$1.pixelRatio > 1) {
-      x *= context$$1.pixelRatio;
-      y *= context$$1.pixelRatio;
-    }
+    x *= context$$1.pixelRatio;
+    y *= context$$1.pixelRatio;
     return hit(context$$1, items, x, y) ? items[0] : null;
   }
 
@@ -8357,6 +8369,14 @@ function bound(bounds, group) {
   return bounds.translate(group.x || 0, group.y || 0);
 }
 
+function backgroundPath(context, group) {
+  var offset = group.stroke ? StrokeOffset : 0;
+  context.beginPath();
+  rectangle(context, group, offset, offset);
+}
+
+var hitBackground = hitPath(backgroundPath);
+
 function draw(context, scene, bounds) {
   var renderer = this;
 
@@ -8365,7 +8385,7 @@ function draw(context, scene, bounds) {
         gy = group.y || 0,
         w = group.width || 0,
         h = group.height || 0,
-        offset, opacity;
+        opacity;
 
     // setup graphics context
     context.save();
@@ -8375,9 +8395,7 @@ function draw(context, scene, bounds) {
     if (group.stroke || group.fill) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
-        context.beginPath();
-        offset = group.stroke ? StrokeOffset : 0;
-        rectangle(context, group, offset, offset);
+        backgroundPath(context, group);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
         }
@@ -8411,7 +8429,9 @@ function pick$1(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  var handler = this;
+  var handler = this,
+      cx = x * context.pixelRatio,
+      cy = y * context.pixelRatio;
 
   return pickVisit(scene, function(group) {
     var hit, dx, dy, b;
@@ -8431,23 +8451,22 @@ function pick$1(context, scene, x, y, gx, gy) {
     dx = gx - dx;
     dy = gy - dy;
 
+    // hit test against contained marks
     hit = pickVisit(group, function(mark) {
       return pickMark(mark, dx, dy)
         ? handler.pick(mark, x, y, dx, dy)
         : null;
     });
 
+    // hit test against group background
+    if (!hit && scene.interactive !== false
+        && (group.fill || group.stroke)
+        && hitBackground(context, group, cx, cy)) {
+      hit = group;
+    }
+
     context.restore();
-    if (hit) return hit;
-
-    hit = scene.interactive !== false
-      && (group.fill || group.stroke)
-      && dx >= 0
-      && dx <= group.width
-      && dy >= 0
-      && dy <= group.height;
-
-    return hit ? group : null;
+    return hit || null;
   });
 }
 
@@ -9134,10 +9153,15 @@ function cssClass(mark) {
     + (mark.name ? ' ' + mark.name : '');
 }
 
-function Handler(customLoader) {
+function Handler(customLoader, customTooltip) {
   this._active = null;
   this._handlers = {};
   this._loader = customLoader || loader();
+  this._tooltip = customTooltip || defaultTooltip;
+}
+
+function defaultTooltip(handler, event, item, value) {
+  handler.element().setAttribute('title', value || '');
 }
 
 var prototype$42 = Handler.prototype;
@@ -9206,8 +9230,11 @@ prototype$42.handleHref = function(event, item, href) {
     .catch(function() { /* do nothing */ });
 };
 
-prototype$42.handleTooltip = function(event, item, tooltipText) {
-  this._el.setAttribute('title', tooltipText || '');
+prototype$42.handleTooltip = function(event, item, show) {
+  if (item && item.tooltip != null) {
+    this._tooltip.call(this._obj, this, event, item,
+      show ? item.tooltip : null);
+  }
 };
 
 /**
@@ -9400,8 +9427,8 @@ var point = function(event, el) {
   ];
 };
 
-function CanvasHandler(loader) {
-  Handler.call(this, loader);
+function CanvasHandler(loader, tooltip) {
+  Handler.call(this, loader, tooltip);
   this._down = null;
   this._touch = null;
   this._first = true;
@@ -9539,8 +9566,8 @@ prototype$44.fire = function(type, evt, touch) {
   // if hyperlinked, handle link first
   if (type === 'click' && a && a.href) {
     this.handleHref(evt, a, a.href);
-  } else if ((type === 'mouseover' || type === 'mouseout') && a && a.tooltip) {
-    this.handleTooltip(evt, a, type === 'mouseover' ? a.tooltip : null);
+  } else if ((type === 'mouseover' || type === 'mouseout')) {
+    this.handleTooltip(evt, a, type === 'mouseover');
   }
 
   // invoke all registered handlers
@@ -9612,8 +9639,11 @@ var clip$1 = function(context, scene) {
   context.clip();
 };
 
-var devicePixelRatio = typeof window !== 'undefined'
-  ? window.devicePixelRatio || 1 : 1;
+function devicePixelRatio() {
+  return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+}
+
+var pixelRatio = devicePixelRatio();
 
 var resize = function(canvas, width, height, origin, scaleFactor) {
   var inDOM = typeof HTMLElement !== 'undefined'
@@ -9621,7 +9651,7 @@ var resize = function(canvas, width, height, origin, scaleFactor) {
     && canvas.parentNode != null;
 
   var context = canvas.getContext('2d'),
-      ratio = inDOM ? devicePixelRatio : scaleFactor;
+      ratio = inDOM ? pixelRatio : scaleFactor;
 
   canvas.width = width * ratio;
   canvas.height = height * ratio;
@@ -9749,16 +9779,14 @@ prototype$45.clear = function(x, y, w, h) {
   }
 };
 
-function SVGHandler(loader) {
-  Handler.call(this, loader);
+function SVGHandler(loader, tooltip) {
+  Handler.call(this, loader, tooltip);
   var h = this;
   h._hrefHandler = listener(h, function(evt, item) {
     if (item && item.href) h.handleHref(evt, item, item.href);
   });
   h._tooltipHandler = listener(h, function(evt, item) {
-    if (item && item.tooltip) {
-      h.handleTooltip(evt, item, evt.type === 'mouseover' ? item.tooltip : null);
-    }
+    h.handleTooltip(evt, item, evt.type === 'mouseover');
   });
 }
 
@@ -10086,9 +10114,10 @@ prototype$47._dirtyCheck = function() {
 
     if (mark.zdirty && mark.dirty !== id$$1) {
       this._dirtyAll = false;
-      mark.dirty = id$$1;
-      dirtyParents(mark.group, id$$1);
+      dirtyParents(item, id$$1);
+      mark.items.forEach(function(i) { i.dirty = id$$1; });
     }
+    if (mark.zdirty) continue; // handle in standard drawing pass
 
     if (item.exit) { // EXIT
       if (mdef.nested && mark.items.length) {
@@ -10137,6 +10166,7 @@ prototype$47.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
 
   var renderer = this,
+      svg = this._svg,
       mdef = marks[scene.marktype],
       events = scene.interactive === false ? 'none' : null,
       isGroup = mdef.tag === 'g',
@@ -10144,7 +10174,7 @@ prototype$47.draw = function(el, scene, prev) {
       i = 0,
       parent;
 
-  parent = bind(scene, el, prev, 'g');
+  parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
   if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
@@ -10157,7 +10187,7 @@ prototype$47.draw = function(el, scene, prev) {
 
   function process(item) {
     var dirty = renderer.isDirty(item),
-        node = bind(item, parent, sibling, mdef.tag);
+        node = bind(item, parent, sibling, mdef.tag, svg);
 
     if (dirty) {
       renderer._update(mdef, node, item);
@@ -10194,7 +10224,7 @@ function recurse(renderer, el, group) {
 
 // Bind a scenegraph item to an SVG DOM element.
 // Create new SVG elements as needed.
-function bind(item, el, sibling, tag) {
+function bind(item, el, sibling, tag, svg) {
   var node = item._svg, doc;
 
   // create a new dom node if needed
@@ -10221,11 +10251,17 @@ function bind(item, el, sibling, tag) {
     }
   }
 
-  if (doc || node.previousSibling !== sibling || !sibling) {
+  // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
+  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
+}
+
+function hasSiblings(item) {
+  var parent = item.mark || item.group;
+  return parent && parent.items.length > 1;
 }
 
 
@@ -11520,66 +11556,28 @@ function layoutAxis(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.y = -s;
-          s += title.bounds.height();
-          bounds.add(title.bounds.x1, 0)
-                .add(title.bounds.x2, 0);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, -1, bounds);
       bounds.add(0, -s).add(range$$1, 0);
       break;
     case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = -s;
-          s += title.bounds.width();
-          bounds.add(0, title.bounds.y1)
-                .add(0, title.bounds.y2);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, -1, bounds);
       bounds.add(-s, 0).add(0, range$$1);
       break;
     case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) {
-        if (title.auto) {
-          s += titlePadding;
-          title.x = s;
-          s += title.bounds.width();
-          bounds.add(0, title.bounds.y1)
-                .add(0, title.bounds.y2);
-        } else {
-          bounds.union(title.bounds);
-        }
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, 1, bounds);
       bounds.add(0, 0).add(s, range$$1);
       break;
     case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) if (title.auto) {
-        s += titlePadding;
-        title.y = s;
-        s += title.bounds.height();
-        bounds.add(title.bounds.x1, 0)
-              .add(title.bounds.x2, 0);
-      } else {
-        bounds.union(title.bounds);
-      }
+      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, 1, bounds);
       bounds.add(0, 0).add(range$$1, s);
       break;
     default:
@@ -11598,6 +11596,33 @@ function layoutAxis(view, axis, width, height) {
   }
 
   return item.mark.bounds.clear().union(bounds);
+}
+
+function layoutAxisTitle(title, offset, pad$$1, isYAxis, sign, bounds) {
+  var b = title.bounds, dx = 0, dy = 0;
+
+  if (title.auto) {
+    offset += pad$$1;
+
+    isYAxis
+      ? dx = (title.x || 0) - (title.x = sign * offset)
+      : dy = (title.y || 0) - (title.y = sign * offset);
+
+    b.translate(-dx, -dy);
+    title.mark.bounds.set(b.x1, b.y1, b.x2, b.y2);
+
+    if (isYAxis) {
+      bounds.add(0, b.y1).add(0, b.y2);
+      offset += b.width();
+    } else {
+      bounds.add(b.x1, 0).add(b.x2, 0);
+      offset += b.height();
+    }
+  } else {
+    bounds.union(b);
+  }
+
+  return offset;
 }
 
 function layoutTitle(view, title, axisBounds) {
@@ -12768,6 +12793,7 @@ prototype$56.transform = function(_$$1, pulse) {
   if (isArray(encode)) {
     if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
       encode = encode[0];
+      out.encode = null; // consume targeted encode directive
     } else {
       return pulse.StopPropagation;
     }
@@ -13986,7 +14012,7 @@ var contourDensity = function() {
   return density;
 };
 
-var CONTOUR_PARAMS = ['values', 'size'];
+var CONTOUR_PARAMS = ['size', 'smooth'];
 var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
 
 /**
@@ -14011,6 +14037,9 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
  *   threshold values should be automatically aligned to "nice"
  *   human-friendly values. Setting this flag may cause the number of
  *   thresholds to deviate from the specified count.
+ * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
+ *   polygons should be smoothed using linear interpolation. The default is
+ *   true. The parameter is ignored when using density estimation.
  */
 function Contour(params) {
   Transform.call(this, null, params);
@@ -14027,7 +14056,8 @@ Contour.Definition = {
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
     { "name": "count", "type": "number" },
-    { "name": "nice", "type": "number", "default": false },
+    { "name": "smooth", "type": "boolean" },
+    { "name": "nice", "type": "boolean", "default": false },
     { "name": "thresholds", "type": "number", "array": true }
   ]
 };
@@ -14170,6 +14200,8 @@ var projectionProperties = [
   'rotate',
   'parallels',
   'precision',
+  'reflectX',
+  'reflectY',
 
   // extended properties in d3-geo-projections
   'coefficient',
@@ -14235,6 +14267,7 @@ var projections = {
   conicequidistant:     d3Geo.geoConicEquidistant,
   equirectangular:      d3Geo.geoEquirectangular,
   gnomonic:             d3Geo.geoGnomonic,
+  identity:             d3Geo.geoIdentity,
   mercator:             d3Geo.geoMercator,
   orthographic:         d3Geo.geoOrthographic,
   stereographic:        d3Geo.geoStereographic,
@@ -14445,7 +14478,7 @@ function Graticule(params) {
 
 Graticule.Definition = {
   "type": "Graticule",
-  "metadata": {"source": true, "generates": true, "changes": true},
+  "metadata": {"changes": true},
   "params": [
     { "name": "extent", "type": "array", "array": true, "length": 2,
       "content": {"type": "number", "array": true, "length": 2} },
@@ -14463,8 +14496,7 @@ Graticule.Definition = {
 var prototype$68 = inherits(Graticule, Transform);
 
 prototype$68.transform = function(_$$1, pulse) {
-  var out = pulse.fork(),
-      src = this.value,
+  var src = this.value,
       gen = this.generator, t;
 
   if (!src.length || _$$1.modified()) {
@@ -14477,14 +14509,13 @@ prototype$68.transform = function(_$$1, pulse) {
 
   t = gen();
   if (src.length) {
-    out.mod.push(replace(src[0], t));
+    pulse.mod.push(replace(src[0], t));
   } else {
-    out.add.push(ingest(t));
+    pulse.add.push(ingest(t));
   }
   src[0] = t;
-  out.source = src;
 
-  return out;
+  return pulse;
 };
 
 /**
@@ -14825,7 +14856,7 @@ function Nest(params) {
 
 Nest.Definition = {
   "type": "Nest",
-  "metadata": {"treesource": true, "generates": true},
+  "metadata": {"treesource": true, "changes": true},
   "params": [
     { "name": "keys", "type": "field", "array": true },
     { "name": "key", "type": "field" },
@@ -14847,13 +14878,12 @@ prototype$71.transform = function(_$$1, pulse) {
   var key$$1 = _$$1.key || tupleid,
       gen = _$$1.generate,
       mod = _$$1.modified(),
-      out = gen || mod ? pulse.fork(pulse.ALL) : pulse,
+      out = pulse.clone(),
       root, tree$$1, map;
 
   if (!this.value || mod || pulse.changed()) {
     // collect nodes to remove
     if (gen && this.value) {
-      out.materialize(out.REM);
       this.value.each(function(node) {
         if (node.children) out.rem.push(node);
       });
@@ -14862,13 +14892,11 @@ prototype$71.transform = function(_$$1, pulse) {
     // generate new tree structure
     root = array(_$$1.keys)
       .reduce(function(n, k) { n.key(k); return n; }, d3Collection.nest())
-      .entries(out.materialize(out.SOURCE).source);
+      .entries(out.source);
     this.value = tree$$1 = d3Hierarchy.hierarchy({values: root}, children);
 
     // collect nodes to add
     if (gen) {
-      out.materialize(out.ADD);
-      out.source = out.source.slice();
       tree$$1.each(function(node) {
         if (node.children) {
           node = ingest(node.data);
@@ -15037,21 +15065,25 @@ prototype$75.transform = function(_$$1, pulse) {
   }
 
   var mod = _$$1.modified(), tree$$1, map,
+      out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
       run = !this.value
          || mod
          || pulse.changed(pulse.ADD_REM)
          || pulse.modified(_$$1.key.fields)
          || pulse.modified(_$$1.parentKey.fields);
 
+  // prevent upstream source pollution
+  out.source = out.source.slice();
+
   if (run) {
-    tree$$1 = d3Hierarchy.stratify().id(_$$1.key).parentId(_$$1.parentKey)(pulse.source);
+    tree$$1 = d3Hierarchy.stratify().id(_$$1.key).parentId(_$$1.parentKey)(out.source);
     map = tree$$1.lookup = {};
     tree$$1.each(function(node) { map[_$$1.key(node.data)] = node; });
     this.value = tree$$1;
   }
 
-  pulse.source.root = this.value;
-  return mod ? pulse.fork(pulse.ALL) : pulse;
+  out.source.root = this.value;
+  return out;
 };
 
 var Layouts = {
@@ -16580,7 +16612,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.2.1";
+var version = "3.3.0";
 
 var Default = 'default';
 
@@ -16879,7 +16911,7 @@ function invoke(name) {
 
 var hover = function(hoverSet, leaveSet) {
   hoverSet = [hoverSet || 'hover'];
-  leaveSet = [leaveSet || 'update', hoverSet];
+  leaveSet = [leaveSet || 'update', hoverSet[0]];
 
   // invoke hover set upon mouseover
   this.on(
@@ -17163,12 +17195,11 @@ var initializeRenderer = function(view, r, el, constructor, scaleFactor) {
 };
 
 var initializeHandler = function(view, prevHandler, el, constructor) {
-  var handler = new constructor(view.loader())
+  var handler = new constructor(view.loader(), view.tooltip())
     .scene(view.scenegraph().root)
     .initialize(el, offset$1(view), view);
 
   if (prevHandler) {
-    handler.handleTooltip = prevHandler.handleTooltip;
     prevHandler.handlers().forEach(function(h) {
       handler.on(h.type, h.handler);
     });
@@ -20047,8 +20078,83 @@ var parseExpression = function(expr, scope, preamble) {
   };
 };
 
-var VIEW$1 = 'view';
-var SCOPE = 'scope';
+function Entry(type, value, params, parent) {
+  this.id = -1;
+  this.type = type;
+  this.value = value;
+  this.params = params;
+  if (parent) this.parent = parent;
+}
+
+function entry(type, value, params, parent) {
+  return new Entry(type, value, params, parent);
+}
+
+function operator(value, params) {
+  return entry('operator', value, params);
+}
+
+// -----
+
+function ref(op) {
+  var ref = {$ref: op.id};
+  // if operator not yet registered, cache ref to resolve later
+  if (op.id < 0) (op.refs = op.refs || []).push(ref);
+  return ref;
+}
+
+var tupleidRef = {
+  $tupleid: 1,
+  toString: function() { return ':_tupleid_:'; }
+};
+
+function fieldRef(field$$1, name) {
+  return name ? {$field: field$$1, $name: name} : {$field: field$$1};
+}
+
+var keyFieldRef = fieldRef('key');
+
+function compareRef(fields, orders) {
+  return {$compare: fields, $order: orders};
+}
+
+function keyRef(fields, flat) {
+  var ref = {$key: fields};
+  if (flat) ref.$flat = true;
+  return ref;
+}
+
+// -----
+
+var Ascending  = 'ascending';
+
+var Descending = 'descending';
+
+function sortKey(sort) {
+  return !isObject(sort) ? ''
+    : (sort.order === Descending ? '-' : '+')
+      + aggrField(sort.op, sort.field);
+}
+
+function aggrField(op, field$$1) {
+  return (op && op.signal ? '$' + op.signal : op || '')
+    + (op && field$$1 ? '_' : '')
+    + (field$$1 && field$$1.signal ? '$' + field$$1.signal : field$$1 || '');
+}
+
+// -----
+
+var Scope = 'scope';
+
+var View$1 = 'view';
+
+function isSignal(_$$1) {
+  return _$$1 && _$$1.signal;
+}
+
+function value(specValue, defaultValue) {
+  return specValue != null ? specValue : defaultValue;
+}
 
 var parseStream = function(stream, scope) {
   return stream.signal ? scope.getSignal(stream.signal).id
@@ -20057,7 +20163,7 @@ var parseStream = function(stream, scope) {
 };
 
 function eventSource(source) {
-   return source === SCOPE ? VIEW$1 : (source || VIEW$1);
+   return source === Scope ? View$1 : (source || View$1);
 }
 
 function parseStream$1(stream, scope) {
@@ -20074,31 +20180,31 @@ function mergeStream(stream, scope) {
     return parseStream$1(s, scope);
   });
 
-  var entry = streamParameters({merge: list}, stream, scope);
-  return scope.addStream(entry).id;
+  var entry$$1 = streamParameters({merge: list}, stream, scope);
+  return scope.addStream(entry$$1).id;
 }
 
 function nestedStream(stream, scope) {
   var id$$1 = parseStream$1(stream.stream, scope),
-      entry = streamParameters({stream: id$$1}, stream, scope);
-  return scope.addStream(entry).id;
+      entry$$1 = streamParameters({stream: id$$1}, stream, scope);
+  return scope.addStream(entry$$1).id;
 }
 
 function eventStream(stream, scope) {
   var id$$1 = scope.event(eventSource(stream.source), stream.type),
-      entry = streamParameters({stream: id$$1}, stream, scope);
-  return Object.keys(entry).length === 1 ? id$$1
-    : scope.addStream(entry).id;
+      entry$$1 = streamParameters({stream: id$$1}, stream, scope);
+  return Object.keys(entry$$1).length === 1 ? id$$1
+    : scope.addStream(entry$$1).id;
 }
 
-function streamParameters(entry, stream, scope) {
+function streamParameters(entry$$1, stream, scope) {
   var param = stream.between;
 
   if (param) {
     if (param.length !== 2) {
       error$1('Stream "between" parameter must have 2 entries: ' + $$2(stream));
     }
-    entry.between = [
+    entry$$1.between = [
       parseStream$1(param[0], scope),
       parseStream$1(param[1], scope)
     ];
@@ -20109,27 +20215,27 @@ function streamParameters(entry, stream, scope) {
     // add filter for mark type, name and/or role
     param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
   }
-  if (stream.source === SCOPE) {
+  if (stream.source === Scope) {
     // add filter to limit events from sub-scope only
     param.push('inScope(event.item)');
   }
   if (param.length) {
-    entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
+    entry$$1.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
   }
 
   if ((param = stream.throttle) != null) {
-    entry.throttle = +param;
+    entry$$1.throttle = +param;
   }
 
   if ((param = stream.debounce) != null) {
-    entry.debounce = +param;
+    entry$$1.debounce = +param;
   }
 
   if (stream.consume) {
-    entry.consume = true;
+    entry$$1.consume = true;
   }
 
-  return entry;
+  return entry$$1;
 }
 
 function filterMark(type, name, role) {
@@ -20145,12 +20251,12 @@ function filterMark(type, name, role) {
  * Returns an array of event stream definitions.
  */
 var selector = function(selector, source, marks) {
-  DEFAULT_SOURCE = source || VIEW$2;
+  DEFAULT_SOURCE = source || VIEW$1;
   MARKS = marks || DEFAULT_MARKS;
   return parseMerge(selector.trim()).map(parseSelector);
 };
 
-var VIEW$2    = 'view';
+var VIEW$1    = 'view';
 var LBRACK  = '[';
 var RBRACK  = ']';
 var LBRACE  = '{';
@@ -20356,7 +20462,7 @@ var parseUpdate = function(spec, scope, target) {
       update = spec.update,
       encode = spec.encode,
       sources = [],
-      value = '', entry;
+      value$$1 = '', entry$$1;
 
   if (!events) {
     error$1('Signal update missing events specification.');
@@ -20364,7 +20470,7 @@ var parseUpdate = function(spec, scope, target) {
 
   // interpret as an event selector string
   if (isString(events)) {
-    events = selector(events);
+    events = selector(events, scope.isSubscope() ? Scope : View$1);
   }
 
   // separate event streams from signal updates
@@ -20388,7 +20494,7 @@ var parseUpdate = function(spec, scope, target) {
   }
 
   // resolve update value
-  value = isString(update) ? parseExpression(update, scope, preamble)
+  value$$1 = isString(update) ? parseExpression(update, scope, preamble)
     : update.expr != null ? parseExpression(update.expr, scope, preamble)
     : update.value != null ? update.value
     : update.signal != null ? {
@@ -20397,18 +20503,18 @@ var parseUpdate = function(spec, scope, target) {
       }
     : error$1('Invalid signal update specification.');
 
-  entry = {
+  entry$$1 = {
     target: target,
-    update: value
+    update: value$$1
   };
 
   if (spec.force) {
-    entry.options = {force: true};
+    entry$$1.options = {force: true};
   }
 
   sources.forEach(function(source) {
     source = {source: parseStream(source, scope)};
-    scope.addUpdate(extend(source, entry));
+    scope.addUpdate(extend(source, entry$$1));
   });
 };
 
@@ -20427,80 +20533,6 @@ var parseSignalUpdates = function(signal, scope) {
     });
   }
 };
-
-function Entry(type, value, params, parent) {
-  this.id = -1;
-  this.type = type;
-  this.value = value;
-  this.params = params;
-  if (parent) this.parent = parent;
-}
-
-function entry(type, value, params, parent) {
-  return new Entry(type, value, params, parent);
-}
-
-function operator(value, params) {
-  return entry('operator', value, params);
-}
-
-// -----
-
-function ref(op) {
-  var ref = {$ref: op.id};
-  // if operator not yet registered, cache ref to resolve later
-  if (op.id < 0) (op.refs = op.refs || []).push(ref);
-  return ref;
-}
-
-var tupleidRef = {
-  $tupleid: 1,
-  toString: function() { return ':_tupleid_:'; }
-};
-
-function fieldRef$1(field$$1, name) {
-  return name ? {$field: field$$1, $name: name} : {$field: field$$1};
-}
-
-var keyFieldRef = fieldRef$1('key');
-
-function compareRef(fields, orders) {
-  return {$compare: fields, $order: orders};
-}
-
-function keyRef(fields, flat) {
-  var ref = {$key: fields};
-  if (flat) ref.$flat = true;
-  return ref;
-}
-
-// -----
-
-var Ascending  = 'ascending';
-
-var Descending = 'descending';
-
-function sortKey(sort) {
-  return !isObject(sort) ? ''
-    : (sort.order === Descending ? '-' : '+')
-      + aggrField(sort.op, sort.field);
-}
-
-function aggrField(op, field$$1) {
-  return (op && op.signal ? '$' + op.signal : op || '')
-    + (op && field$$1 ? '_' : '')
-    + (field$$1 && field$$1.signal ? '$' + field$$1.signal : field$$1 || '');
-}
-
-// -----
-
-function isSignal(_$$1) {
-  return _$$1 && _$$1.signal;
-}
-
-function value(specValue, defaultValue) {
-  return specValue != null ? specValue : defaultValue;
-}
 
 function transform$2(name) {
   return function(params, value$$1, parent) {
@@ -20647,7 +20679,7 @@ function multipleDomain(domain, spec, scope) {
   var data = domain.data,
       fields = domain.fields.reduce(function(dom, d) {
         d = isString(d) ? {data: data, field: d}
-          : (isArray(d) || d.signal) ? fieldRef(d, scope)
+          : (isArray(d) || d.signal) ? fieldRef$1(d, scope)
           : d;
         dom.push(d);
         return dom;
@@ -20658,7 +20690,7 @@ function multipleDomain(domain, spec, scope) {
     : numericMultipleDomain)(domain, scope, fields);
 }
 
-function fieldRef(data, scope) {
+function fieldRef$1(data, scope) {
   var name = '_:vega:_' + (FIELD_REF_ID++),
       coll = Collect$1({});
 
@@ -21261,7 +21293,7 @@ var legendGradient = function(spec, scale, config, userEncode) {
   encode.update = update = {
     x: zero,
     y: zero,
-    fill: {gradient: scale},
+    fill: {gradient: scale, start: [0,0], stop: [1,0]},
     opacity: {value: 1}
   };
   addEncode(update, 'width', config.gradientWidth);
@@ -21559,10 +21591,10 @@ function parameterValue(def, value$$1, scope) {
   } else {
     var expr = def.expr || isField(type);
     return expr && outerExpr(value$$1) ? parseExpression(value$$1.expr, scope)
-         : expr && outerField(value$$1) ? fieldRef$1(value$$1.field)
+         : expr && outerField(value$$1) ? fieldRef(value$$1.field)
          : isExpr(type) ? parseExpression(value$$1, scope)
          : isData(type) ? ref(scope.getData(value$$1).values)
-         : isField(type) ? fieldRef$1(value$$1)
+         : isField(type) ? fieldRef(value$$1)
          : isCompare(type) ? scope.compareRef(value$$1)
          : value$$1;
   }
@@ -21912,7 +21944,7 @@ var parseMark = function(spec, scope) {
 
   // data join to map tuples to visual items
   op = scope.add(DataJoin$1({
-    key:   input.key || (spec.key ? fieldRef$1(spec.key) : undefined),
+    key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
     pulse: input.pulse,
     clean: !group
   }));
@@ -22046,7 +22078,7 @@ var parseLegend = function(spec, scope) {
     error$1('Missing valid scale for legend.');
   }
 
-  // single-element data source for axis group
+  // single-element data source for legend group
   datum = {
     orient: value(spec.orient, config.orient),
     title:  spec.title != null
@@ -22054,13 +22086,12 @@ var parseLegend = function(spec, scope) {
   dataRef = ref(scope.add(Collect$1(null, [datum])));
 
   // encoding properties for legend group
-
   legendEncode = extendEncode({
     enter: legendEnter(config),
     update: {
-      offset:        encoder(value(spec.offset, config.offset)),
-      padding:       encoder(value(spec.padding, config.padding)),
-      titlePadding:  encoder(value(spec.titlePadding, config.titlePadding))
+      offset:       encoder(value(spec.offset, config.offset)),
+      padding:      encoder(value(spec.padding, config.padding)),
+      titlePadding: encoder(value(spec.titlePadding, config.titlePadding))
     }
   }, legendEncode, Skip);
 
@@ -22116,7 +22147,7 @@ var parseLegend = function(spec, scope) {
     title = legendTitle(spec, config, encode.title, dataRef);
     entryEncode.update.y.offset = {
       field: {group: 'titlePadding'},
-      offset: getValue$1(scope, title.encode, 'fontSize', GuideTitleStyle)
+      offset: get$2('fontSize', title.encode, scope, GuideTitleStyle)
     };
     children.push(title);
   }
@@ -22130,13 +22161,13 @@ var parseLegend = function(spec, scope) {
 };
 
 function sizeExpression(spec, scope, marks) {
-  var fontSize = getValue$1(scope, marks[1].encode, 'fontSize', GuideLabelStyle);
-  if (spec.size) {
-    return {$expr: 'Math.max(Math.ceil(Math.sqrt(_.scale(datum))),' + fontSize + ')'};
-  } else {
-    var symbolSize = getValue$1(scope, marks[0].encode, 'size');
-    return Math.max(Math.ceil(Math.sqrt(symbolSize)), fontSize);
-  }
+  var fontSize = get$2('fontSize', marks[1].encode, scope, GuideLabelStyle),
+      symbolSize = spec.size
+        ? 'scale("' + spec.size + '",datum)'
+        : deref(get$2('size', marks[0].encode, scope)),
+      expr = 'max(ceil(sqrt(' + symbolSize + ')),' + deref(fontSize) + ')';
+
+  return parseExpression(expr, scope);
 }
 
 function legendEnter(config) {
@@ -22149,13 +22180,18 @@ function legendEnter(config) {
   return count ? enter : undefined;
 }
 
-function getValue$1(scope, encode, name, style) {
+function deref(v) {
+  return v && v.signal || v;
+}
+
+function get$2(name, encode, scope, style) {
   var v = encode && (
     (encode.update && encode.update[name]) ||
     (encode.enter && encode.enter[name])
   );
-  return +(v ? v.value // TODO support signal?
-    : (style && (v = scope.config.style[style]) && v[name]));
+  return v && v.signal ? v
+    : v ? +v.value
+    : ((v = scope.config.style[style]) && +v[name]);
 }
 
 var parseTitle = function(spec, scope) {
@@ -22810,7 +22846,7 @@ function parseView(spec, scope) {
   return scope;
 }
 
-function Scope(config) {
+function Scope$1(config) {
   this.config = config;
 
   this.bindings = [];
@@ -22861,12 +22897,16 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype$85 = Scope.prototype = Subscope.prototype;
+var prototype$85 = Scope$1.prototype = Subscope.prototype;
 
 // ----
 
 prototype$85.fork = function() {
   return new Subscope(this);
+};
+
+prototype$85.isSubscope = function() {
+  return this._subid > 0;
 };
 
 prototype$85.toRuntime = function() {
@@ -22987,7 +23027,7 @@ prototype$85.markpath = function() {
 // ----
 
 prototype$85.fieldRef = function(field$$1, name) {
-  if (isString(field$$1)) return fieldRef$1(field$$1, name);
+  if (isString(field$$1)) return fieldRef(field$$1, name);
   if (!field$$1.signal) {
     error$1('Unsupported field reference: ' + $$2(field$$1));
   }
@@ -23452,7 +23492,7 @@ function defaults$1() {
 
 var parse$2 = function(spec, config) {
   if (!isObject(spec)) error$1('Input Vega specification must be an object.');
-  return parseView(spec, new Scope(defaults([config, spec.config])))
+  return parseView(spec, new Scope$1(defaults([config, spec.config])))
     .toRuntime();
 };
 
@@ -23971,7 +24011,10 @@ var runtime = function(view, spec, functions) {
   return parseDataflow(spec, context$2(view, transforms, fn));
 };
 
+var Width = 'width';
+var Height = 'height';
 var Padding$1 = 'padding';
+var Skip$2 = {skip: true};
 
 function viewWidth(view, width) {
   var a = view.autosize(),
@@ -23987,9 +24030,9 @@ function viewHeight(view, height) {
 
 function initializeResize(view) {
   var s = view._signals,
-      w = s.width,
-      h = s.height,
-      p = s.padding;
+      w = s[Width],
+      h = s[Height],
+      p = s[Padding$1];
 
   function resetSize() {
     view._autosize = view._resize = 1;
@@ -24034,15 +24077,15 @@ function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
     // width value changed: update signal, skip resize op
     if (view.width() !== width) {
       rerun = 1;
-      view.width(width);
-      view._resizeWidth.skip(true);
+      view.signal(Width, width, Skip$2); // set width, skip update calc
+      view._resizeWidth.skip(true); // skip width resize handler
     }
 
     // height value changed: update signal, skip resize op
     if (view.height() !== height) {
       rerun = 1;
-      view.height(height);
-      view._resizeHeight.skip(true);
+      view.signal(Height, height, Skip$2); // set height, skip update calc
+      view._resizeHeight.skip(true); // skip height resize handler
     }
 
     // view width changed: update view property, set resize flag
@@ -24119,6 +24162,34 @@ function setState$1(state) {
   return this;
 }
 
+var defaultTooltip$1 = function(handler, event, item, value) {
+  handler.element().setAttribute('title', formatTooltip(value));
+};
+
+function formatTooltip(value) {
+  return value == null ? ''
+    : isArray(value) ? formatArray(value)
+    : isObject(value) && !isDate(value) ? formatObject(value)
+    : value + '';
+}
+
+function formatObject(obj) {
+  return Object.keys(obj).map(function(key$$1) {
+    var v = obj[key$$1];
+    return key$$1 + ': ' + (isArray(v) ? formatArray(v) : formatValue$1(v));
+  }).join('\n');
+}
+
+function formatArray(value) {
+  return '[' + value.map(formatValue$1).join(', ') + ']';
+}
+
+function formatValue$1(value) {
+  return isArray(value) ? '[\u2026]'
+    : isObject(value) && !isDate(value) ? '{\u2026}'
+    : value;
+}
+
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
  * The generated View will not immediately be ready for display. Callers
@@ -24144,6 +24215,7 @@ function View(spec, options) {
 
   // initialize renderer, handler and event management
   view._renderer = null;
+  view._tooltip = options.tooltip || defaultTooltip$1,
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
   view._preventDefault = false;
@@ -24232,6 +24304,10 @@ prototype$83.scenegraph = function() {
   return this._scenegraph;
 };
 
+prototype$83.origin = function() {
+  return this._origin.slice();
+};
+
 function lookupSignal(view, name) {
   return view._signals.hasOwnProperty(name)
     ? view._signals[name]
@@ -24276,10 +24352,16 @@ prototype$83.renderer = function(type) {
   if (!renderModule(type)) error$1('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
     this._renderType = type;
-    if (this._renderer) {
-      this._renderer = null;
-      this.initialize(this._el);
-    }
+    this._resetRenderer();
+  }
+  return this;
+};
+
+prototype$83.tooltip = function(handler) {
+  if (!arguments.length) return this._tooltip;
+  if (handler !== this._tooltip) {
+    this._tooltip = handler;
+    this._resetRenderer();
   }
   return this;
 };
@@ -24288,10 +24370,7 @@ prototype$83.loader = function(loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
-    if (this._renderer) {
-      this._renderer = null;
-      this.initialize(this._el);
-    }
+    this._resetRenderer();
   }
   return this;
 };
@@ -24299,6 +24378,13 @@ prototype$83.loader = function(loader) {
 prototype$83.resize = function() {
   this._autosize = 1;
   return this;
+};
+
+prototype$83._resetRenderer = function() {
+  if (this._renderer) {
+    this._renderer = null;
+    this.initialize(this._el);
+  }
 };
 
 // -- SIZING ----
