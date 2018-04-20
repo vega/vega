@@ -6,10 +6,8 @@ export function pick(test) {
   if (!test) test = trueFunc;
 
   return function(context, scene, x, y, gx, gy) {
-    if (context.pixelRatio !== 1) {
-      x *= context.pixelRatio;
-      y *= context.pixelRatio;
-    }
+    x *= context.pixelRatio;
+    y *= context.pixelRatio;
 
     return pickVisit(scene, function(item) {
       var b = item.bounds;
