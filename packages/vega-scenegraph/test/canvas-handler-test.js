@@ -126,7 +126,7 @@ tape('CanvasHandler should pick area mark', function(test) {
 
   mark = marks['area-v'];
   handler = new Handler().initialize(render(mark, 500, 500));
-  handler.context().pixelratio = 0.99; // for test coverage
+  handler.context().pixelRatio = 0.99; // for test coverage
   test.ok(handler.pick(mark, 100, 100, 100, 100));
   test.notOk(handler.pick(mark, 50, 50, 50, 50));
   test.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -135,9 +135,15 @@ tape('CanvasHandler should pick area mark', function(test) {
 });
 
 tape('CanvasHandler should pick group mark', function(test) {
-  var mark = marks.group;
+  var mark = {
+    "marktype": "group",
+    "name": "class-name",
+    "items": [
+      {"x":5, "y":5, "width":100, "height":56, "fill":"steelblue", "clip":true, "items":[]}
+    ]
+  };
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 300, 50, 300, 50));
+  test.ok(handler.pick(mark, 50, 50, 50, 50));
   test.notOk(handler.pick(mark, 800, 800, 800, 800));
   test.end();
 });
@@ -161,7 +167,7 @@ tape('CanvasHandler should pick line mark', function(test) {
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
-  g.pixelratio = 1.1;
+  g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
   test.ok(handler.pick(mark, 0, 144, 0, 144));
 
@@ -203,7 +209,7 @@ tape('CanvasHandler should pick rule mark', function(test) {
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
-  g.pixelratio = 1.1;
+  g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
   test.ok(handler.pick(mark, 5, 0, 5, 0));
 
