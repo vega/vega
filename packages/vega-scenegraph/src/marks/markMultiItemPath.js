@@ -35,10 +35,8 @@ export default function(type, shape) {
       return null;
     }
 
-    if (context.pixelRatio !== 1) {
-      x *= context.pixelRatio;
-      y *= context.pixelRatio;
-    }
+    x *= context.pixelRatio;
+    y *= context.pixelRatio;
     return hit(context, items, x, y) ? items[0] : null;
   }
 
