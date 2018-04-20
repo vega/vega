@@ -3,6 +3,7 @@ import boundStroke from '../bound/boundStroke';
 import {visit, pickVisit} from '../util/visit';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
+import {hitPath} from '../util/canvas/pick';
 import clip from '../util/svg/clip';
 import translateItem from '../util/svg/translateItem';
 
@@ -41,6 +42,14 @@ function bound(bounds, group) {
   return bounds.translate(group.x || 0, group.y || 0);
 }
 
+function backgroundPath(context, group) {
+  var offset = group.stroke ? StrokeOffset : 0;
+  context.beginPath();
+  rectangle(context, group, offset, offset);
+}
+
+var hitBackground = hitPath(backgroundPath);
+
 function draw(context, scene, bounds) {
   var renderer = this;
 
@@ -49,7 +58,7 @@ function draw(context, scene, bounds) {
         gy = group.y || 0,
         w = group.width || 0,
         h = group.height || 0,
-        offset, opacity;
+        opacity;
 
     // setup graphics context
     context.save();
@@ -59,9 +68,7 @@ function draw(context, scene, bounds) {
     if (group.stroke || group.fill) {
       opacity = group.opacity == null ? 1 : group.opacity;
       if (opacity > 0) {
-        context.beginPath();
-        offset = group.stroke ? StrokeOffset : 0;
-        rectangle(context, group, offset, offset);
+        backgroundPath(context, group);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
         }
@@ -95,7 +102,9 @@ function pick(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  var handler = this;
+  var handler = this,
+      cx = x * context.pixelRatio,
+      cy = y * context.pixelRatio;
 
   return pickVisit(scene, function(group) {
     var hit, dx, dy, b;
@@ -115,23 +124,22 @@ function pick(context, scene, x, y, gx, gy) {
     dx = gx - dx;
     dy = gy - dy;
 
+    // hit test against contained marks
     hit = pickVisit(group, function(mark) {
       return pickMark(mark, dx, dy)
         ? handler.pick(mark, x, y, dx, dy)
         : null;
     });
 
+    // hit test against group background
+    if (!hit && scene.interactive !== false
+        && (group.fill || group.stroke)
+        && hitBackground(context, group, cx, cy)) {
+      hit = group;
+    }
+
     context.restore();
-    if (hit) return hit;
-
-    hit = scene.interactive !== false
-      && (group.fill || group.stroke)
-      && dx >= 0
-      && dx <= group.width
-      && dy >= 0
-      && dy <= group.height;
-
-    return hit ? group : null;
+    return hit || null;
   });
 }
 
