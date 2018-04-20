@@ -28,6 +28,7 @@ prototype.transform = function(_, pulse) {
   if (isArray(encode)) {
     if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
       encode = encode[0];
+      out.encode = null; // consume targeted encode directive
     } else {
       return pulse.StopPropagation;
     }
