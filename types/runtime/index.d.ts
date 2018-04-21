@@ -47,17 +47,25 @@ export class View {
   signal(name: string, value: any): View;
   signal(name: string): any;
   container(): HTMLElement | null;
-  addEventListener(type: string, handler: Handler): View;
-  removeEventListener(type: string, handler: Handler): View;
-  addSignalListener(name: string, handler: (name: string, value: any) => void): View;
-  removeSignalListener(name: string, handler: (name: string, value: any) => void): View;
-  tooltip(handler: any, event: Event, item: any, value: any): View;
+  addEventListener(type: string, handler: EventListenerHandler): View;
+  removeEventListener(type: string, handler: EventListenerHandler): View;
+  addSignalListener(name: string, handler: SignalListenerHandler): View;
+  removeSignalListener(name: string, handler: SignalListenerHandler): View;
+  addResizeListener(handler: ResizeHandler): View;
+  removeResizeListener(handler: ResizeHandler): View;
+  tooltip(handler: TooltipHandler): View;
 }
+
+export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 
 export const Warn: number;
 export const changeset: any;
 export function loader(opt?: any): Loader;
-export type Handler = (event: Event, item?: Item) => void;
+export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
+export type SignalListenerHandler = (name: string, value: any) => void;
+export type ResizeHandler = (width: number, height: number) => void;
+export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
+
 export interface Item<T = any> {
   /**
    * The underlying data element to which this item corresponds.
