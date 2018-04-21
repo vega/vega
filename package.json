@@ -8,8 +8,8 @@
   "license": "BSD-3",
   "devDependencies": {
     "dtslint": "^0.2.0",
-    "prettier": "^1.11.1",
-    "typescript": "^2.8.1"
+    "prettier": "^1.12.1",
+    "typescript": "^2.8.3"
   },
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
