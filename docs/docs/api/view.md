@@ -484,7 +484,7 @@ view.addResizeListener(function(width, height) {
 ```
 
 <a name="view_removeResizeListener" href="#view_removeResizeListener">#</a>
-view.<b>removeResizeListener</b>(<i>type</i>, <i>handler</i>)
+view.<b>removeResizeListener</b>(<i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
 Removes a listener registered with the
