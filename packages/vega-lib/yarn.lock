@@ -1321,8 +1321,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 uglify-js@3:
-  version "3.3.21"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.21.tgz#851a34cbb31840ecb881968ed07dd3a61e7264a0"
+  version "3.3.22"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.22.tgz#e5f0e50ddd386b7e35b728b51600bf7a7ad0b0dc"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
@@ -1451,8 +1451,8 @@ vega-scale@2, vega-scale@^2.1:
     vega-util "1"
 
 vega-scenegraph@2, vega-scenegraph@^2.3:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.4.1.tgz#25418ddbc98096937f0778aadc42ed51700719ee"
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-2.4.2.tgz#1835c63a66984a368633dfcfd8fa7495ee12ff25"
   dependencies:
     d3-path "1"
     d3-shape "1"
@@ -1476,8 +1476,8 @@ vega-transforms@^1.2:
     vega-util "1"
 
 vega-typings@*:
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.2.13.tgz#809077cb8737bb6383cf5b6d71f86f85e108218c"
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.2.15.tgz#7c973f7f342efe82fb9c4ad96833431c11cd5911"
 
 vega-util@1, vega-util@^1.7:
   version "1.7.0"
@@ -1492,8 +1492,8 @@ vega-view-transforms@^1.2:
     vega-util "1"
 
 vega-view@^2.2:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.3.1.tgz#df22aee6b3cbe4e2de7813a5d60167357ccc79f2"
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-2.3.2.tgz#037040b8e64d9dbf7900e86bbc8e952f0b99a119"
   dependencies:
     d3-array "1"
     vega-dataflow "3"
