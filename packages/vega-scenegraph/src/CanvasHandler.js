@@ -1,5 +1,6 @@
 import Handler from './Handler';
 import Marks from './marks/index';
+import {Events, HrefEvent, TooltipShowEvent, TooltipHideEvent} from './util/events';
 import point from './util/point';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';
@@ -42,26 +43,7 @@ prototype.context = function() {
 };
 
 // supported events
-prototype.events = [
-  'keydown',
-  'keypress',
-  'keyup',
-  'dragenter',
-  'dragleave',
-  'dragover',
-  'mousedown',
-  'mouseup',
-  'mousemove',
-  'mouseout',
-  'mouseover',
-  'click',
-  'dblclick',
-  'wheel',
-  'mousewheel',
-  'touchstart',
-  'touchmove',
-  'touchend'
-];
+prototype.events = Events;
 
 // to keep old versions of firefox happy
 prototype.DOMMouseScroll = function(evt) {
@@ -144,10 +126,10 @@ prototype.fire = function(type, evt, touch) {
   evt.vegaType = type;
 
   // handle hyperlinks and tooltips first
-  if (type === 'click' && a && a.href) {
+  if (type === HrefEvent && a && a.href) {
     this.handleHref(evt, a, a.href);
-  } else if ((type === 'mouseover' || type === 'mouseout')) {
-    this.handleTooltip(evt, a, type === 'mouseover');
+  } else if (type === TooltipShowEvent || type === TooltipHideEvent) {
+    this.handleTooltip(evt, a, type !== TooltipHideEvent);
   }
 
   // invoke all registered handlers
