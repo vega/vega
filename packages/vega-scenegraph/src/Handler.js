@@ -1,4 +1,5 @@
 import {domCreate} from './util/dom';
+import {resolveItem} from './util/pickPath';
 import {loader} from 'vega-loader';
 
 export default function Handler(customLoader, customTooltip) {
@@ -80,7 +81,8 @@ prototype.handleHref = function(event, item, href) {
 
 prototype.handleTooltip = function(event, item, show) {
   if (item && item.tooltip != null) {
-    this._tooltip.call(this._obj, this, event, item,
-      show ? item.tooltip : null);
+    item = resolveItem(item, event, this._el.firstChild, this._origin);
+    var value = (show && item && item.tooltip) || null;
+    this._tooltip.call(this._obj, this, event, item, value);
   }
 };

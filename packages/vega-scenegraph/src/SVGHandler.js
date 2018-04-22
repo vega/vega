@@ -1,5 +1,6 @@
 import Handler from './Handler';
 import {domFind} from './util/dom';
+import {HrefEvent, TooltipShowEvent, TooltipHideEvent} from './util/events';
 import {inherits} from 'vega-util';
 
 export default function SVGHandler(loader, tooltip) {
@@ -9,7 +10,7 @@ export default function SVGHandler(loader, tooltip) {
     if (item && item.href) h.handleHref(evt, item, item.href);
   });
   h._tooltipHandler = listener(h, function(evt, item) {
-    h.handleTooltip(evt, item, evt.type === 'mouseover');
+    h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
   });
 }
 
@@ -18,15 +19,15 @@ var prototype = inherits(SVGHandler, Handler);
 prototype.initialize = function(el, origin, obj) {
   var svg = this._svg;
   if (svg) {
-    svg.removeEventListener('click', this._hrefHandler);
-    svg.removeEventListener('mouseover', this._tooltipHandler);
-    svg.removeEventListener('mouseout', this._tooltipHandler);
+    svg.removeEventListener(HrefEvent, this._hrefHandler);
+    svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
+    svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
   }
   this._svg = svg = el && domFind(el, 'svg');
   if (svg) {
-    svg.addEventListener('click', this._hrefHandler);
-    svg.addEventListener('mouseover', this._tooltipHandler);
-    svg.addEventListener('mouseout', this._tooltipHandler);
+    svg.addEventListener(HrefEvent, this._hrefHandler);
+    svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
+    svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
   }
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };

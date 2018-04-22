@@ -3,7 +3,7 @@ import context from '../bound/boundContext';
 import {drawOne} from '../util/canvas/draw';
 import {hitPath} from '../util/canvas/pick';
 
-export default function(type, shape) {
+export default function(type, shape, tip) {
 
   function attr(emit, item) {
     var items = item.mark.items;
@@ -47,7 +47,8 @@ export default function(type, shape) {
     attr:   attr,
     bound:  bound,
     draw:   drawOne(draw),
-    pick:   pick
+    pick:   pick,
+    tip:    tip
   };
 
 }
