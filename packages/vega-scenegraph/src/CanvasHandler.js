@@ -140,7 +140,10 @@ prototype.fire = function(type, evt, touch) {
   var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
 
-  // if hyperlinked, handle link first
+  // set event type relative to scenegraph items
+  evt.vegaType = type;
+
+  // handle hyperlinks and tooltips first
   if (type === 'click' && a && a.href) {
     this.handleHref(evt, a, a.href);
   } else if ((type === 'mouseover' || type === 'mouseout')) {
@@ -149,7 +152,6 @@ prototype.fire = function(type, evt, touch) {
 
   // invoke all registered handlers
   if (h) {
-    evt.vegaType = type;
     for (i=0, len=h.length; i<len; ++i) {
       h[i].handler.call(this._obj, evt, a);
     }
