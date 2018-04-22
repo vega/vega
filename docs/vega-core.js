@@ -9563,7 +9563,10 @@ prototype$44.fire = function(type, evt, touch) {
   var a = touch ? this._touch : this._active,
       h = this._handlers[type], i, len;
 
-  // if hyperlinked, handle link first
+  // set event type relative to scenegraph items
+  evt.vegaType = type;
+
+  // handle hyperlinks and tooltips first
   if (type === 'click' && a && a.href) {
     this.handleHref(evt, a, a.href);
   } else if ((type === 'mouseover' || type === 'mouseout')) {
@@ -9572,7 +9575,6 @@ prototype$44.fire = function(type, evt, touch) {
 
   // invoke all registered handlers
   if (h) {
-    evt.vegaType = type;
     for (i=0, len=h.length; i<len; ++i) {
       h[i].handler.call(this._obj, evt, a);
     }
@@ -16612,7 +16614,7 @@ var xf = Object.freeze({
 	resolvefilter: ResolveFilter
 });
 
-var version = "3.3.0";
+var version = "3.3.1";
 
 var Default = 'default';
 
@@ -17195,7 +17197,7 @@ var initializeRenderer = function(view, r, el, constructor, scaleFactor) {
 };
 
 var initializeHandler = function(view, prevHandler, el, constructor) {
-  var handler = new constructor(view.loader(), view.tooltip())
+  var handler = new constructor(view.loader(), tooltip(view))
     .scene(view.scenegraph().root)
     .initialize(el, offset$1(view), view);
 
@@ -17207,6 +17209,24 @@ var initializeHandler = function(view, prevHandler, el, constructor) {
 
   return handler;
 };
+
+// wrap tooltip handler to trap errors
+function tooltip(view) {
+  var handler = view.tooltip(),
+      tooltip = null;
+
+  if (handler) {
+    tooltip = function() {
+      try {
+        handler.apply(this, arguments);
+      } catch (error) {
+        view.error(error);
+      }
+    };
+  }
+
+  return tooltip;
+}
 
 var initialize$1 = function(el, elBind) {
   var view = this,
