@@ -45,6 +45,8 @@
   "main": "build/vega.js",
   "module": "index",
   "jsnext:main": "index",
+  "unpkg": "build/vega.min.js",
+  "jsdelivr": "build/vega.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/vega/vega-lib.git"
