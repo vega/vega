@@ -495,6 +495,9 @@ instance.
 view.<b>tooltipHandler</b>(<i>handler</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
+**This method is deprecated and will be removed in the future.
+Use the [tooltip](#view_tooltip) method instead.**
+
 Gets or sets the *handler* function used to display tooltips. The default
 handler uses built-in browser mechanisms by setting the `"title"` attribute
 of the Canvas or SVG element containing the visualization. To use custom
