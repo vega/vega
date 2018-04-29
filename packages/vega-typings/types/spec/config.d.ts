@@ -351,6 +351,11 @@ export interface AxisConfig extends Partial<Axis> {
   tickColor?: string;
 
   /**
+   * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
+   */
+  tickExtra?: boolean;
+
+  /**
    * The rotation angle of the axis labels.
    *
    * __Default value:__ `-90` for nominal and ordinal fields; `0` otherwise.
