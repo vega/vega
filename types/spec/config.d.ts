@@ -299,7 +299,7 @@ export type AxisConfigKeys =
   | 'axisLeft'
   | 'axisBand';
 
-export interface AxisConfig extends Axis {
+export interface AxisConfig extends Partial<Axis> {
   /**
    * An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands.
    */
