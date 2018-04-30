@@ -59,8 +59,8 @@ export function resolveItem(item, event, el, origin) {
     p[0] -= origin[0];
     p[1] -= origin[1];
     while (item = item.mark.group) {
-      p[0] -= item.x;
-      p[1] -= item.y;
+      p[0] -= item.x || 0;
+      p[1] -= item.y || 0;
     }
     item = mdef.tip(mark.items, p);
   }
