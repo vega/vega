@@ -476,32 +476,6 @@ Removes a listener registered with the
 [addResizeListener](#view_addResizeListener) method and returns this view
 instance.
 
-<a name="view_tooltipHandler" href="#view_tooltipHandler">#</a>
-view.<b>tooltipHandler</b>(<i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
-
-Gets or sets the *handler* function used to display tooltips, as defined via
-the `tooltip` property of a mark. The default handler uses built-in browser
-mechanisms by setting the `"title"` attribute of the Canvas or SVG element
-containing the visualization. To use custom tooltips, a new handler function
-can be provided to process tooltip events. If *handler* is `null`,
-the tooltip handler will reset to the default.
-
-The tooltip handler has the method signature `handler(event, item, text)`,
-where *event* is the triggering DOM mouseover or mouseout event, *item*
-is the corresponding scenegraph item, and *text* is the tooltip text to
-display (or `null` to hide tooltips).
-
-```js
-// suppress tooltips over the visualization, print to console instead
-view.tooltipHandler(function(event, item, text) {
-  console.log('TOOLTIP TEXT', text);
-});
-
-// restore the default tooltip handler
-view.tooltipHandler(null);
-```
-
 
 ### Image Export
 

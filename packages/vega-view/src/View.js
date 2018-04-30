@@ -17,7 +17,7 @@ import trap from './trap';
 import {Dataflow} from 'vega-dataflow';
 import {error, extend, inherits, stringValue} from 'vega-util';
 import {
-  Handler, CanvasHandler, Scenegraph,
+  CanvasHandler, Scenegraph,
   renderModule, RenderType
 } from 'vega-scenegraph';
 
@@ -286,16 +286,6 @@ prototype.preventDefault = function(_) {
     return this;
   } else {
     return this._preventDefault;
-  }
-};
-
-prototype.tooltipHandler = function(_) {
-  var h = this._handler;
-  if (!arguments.length) {
-    return h.handleTooltip;
-  } else {
-    h.handleTooltip = _ || Handler.prototype.handleTooltip;
-    return this;
   }
 };
 
