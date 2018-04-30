@@ -229,7 +229,7 @@ function flip(array, reverse) {
 
 function quantize(interpolator, count) {
   var samples = new Array(count),
-      n = (count - 1) || 1;
-  for (var i = 0; i < count; ++i) samples[i] = interpolator(i / n);
+      n = count + 2;
+  for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
   return samples;
 }
