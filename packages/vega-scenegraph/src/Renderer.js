@@ -24,7 +24,7 @@ var prototype = Renderer.prototype;
  *   The coordinate system will be translated to this point.
  * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
  *   the width and height to determine the final pixel size.
- * @return {Renderer} - This renderer instance;
+ * @return {Renderer} - This renderer instance.
  */
 prototype.initialize = function(el, width, height, origin, scaleFactor) {
   this._el = el;
@@ -44,7 +44,7 @@ prototype.element = function() {
  * Subclasses must override if the first child is not the scene element.
  * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
  */
-prototype.scene = function() {
+prototype.canvas = function() {
   return this._el && this._el.firstChild;
 };
 

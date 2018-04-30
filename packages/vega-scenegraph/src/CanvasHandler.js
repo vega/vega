@@ -33,6 +33,7 @@ prototype.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
+// return the backing canvas instance
 prototype.canvas = function() {
   return this._canvas;
 };

@@ -25,6 +25,10 @@ prototype.element = function() {
   return this._el;
 };
 
+prototype.canvas = function() {
+  return this._el && this._el.firstChild;
+};
+
 prototype.origin = function(origin) {
   if (arguments.length) {
     this._origin = origin || [0, 0];
@@ -85,7 +89,7 @@ prototype.handleHref = function(event, item, href) {
 
 prototype.handleTooltip = function(event, item, show) {
   if (item && item.tooltip != null) {
-    item = resolveItem(item, event, this._el.firstChild, this._origin);
+    item = resolveItem(item, event, this.canvas(), this._origin);
     var value = (show && item && item.tooltip) || null;
     this._tooltip.call(this._obj, this, event, item, value);
   }

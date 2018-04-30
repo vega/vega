@@ -65,7 +65,7 @@ tape('SVGHandler should handle input events', function(test) {
 
   test.equal(handler.scene(), scene);
 
-  var svg = handler.svg();
+  var svg = handler.canvas();
   var count = 0;
   var increment = function() { count++; };
 
