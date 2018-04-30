@@ -94,8 +94,8 @@ export function tickValues(scale, count) {
  * @return {function(*):string} - The generated label formatter.
  */
 export function tickFormat(scale, count, specifier) {
-  var format = scale.tickFormat
-    ? scale.tickFormat(count, specifier)
+  var format = scale.tickFormat ? scale.tickFormat(count, specifier)
+    : specifier ? numberFormat(specifier)
     : String;
 
   return (scale.type === Log)
