@@ -26,8 +26,12 @@ prototype.element = function() {
 };
 
 prototype.origin = function(origin) {
-  this._origin = origin || [0, 0];
-  return this;
+  if (arguments.length) {
+    this._origin = origin || [0, 0];
+    return this;
+  } else {
+    return this._origin.slice();
+  }
 };
 
 prototype.scene = function(scene) {
