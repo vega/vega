@@ -1,5 +1,4 @@
 import {extend, isFunction, stringValue} from 'vega-util';
-import {request} from 'd3-request';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
@@ -7,14 +6,6 @@ var protocol_re = /^([A-Za-z]+:)?\/\//;
 
 // Special treatment in node.js for the file: protocol
 var fileProtocol = 'file://';
-
-// Request options to check for d3-request
-var requestOptions = [
-  'mimeType',
-  'responseType',
-  'user',
-  'password'
-];
 
 /**
  * Creates a new loader instance that provides methods for requesting files
@@ -30,10 +21,6 @@ export default function(options) {
     file: file,
     http: http
   };
-}
-
-function marshall(loader, options) {
-  return extend({}, loader.options, options);
 }
 
 /**
@@ -68,7 +55,8 @@ function load(uri, options) {
  *  provided by the 'href' property of the returned object.
  */
 function sanitize(uri, options) {
-  options = marshall(this, options);
+  options = extend({}, this.options, options);
+
   return new Promise(function(accept, reject) {
     var result = {href: null},
         isFile, hasProtocol, loadFile, base;
@@ -131,30 +119,11 @@ function sanitize(uri, options) {
  * @return {Promise} - A promise that resolves to the file contents.
  */
 function http(url, options) {
-  options = marshall(this, options);
-  return new Promise(function(accept, reject) {
-    var req = request(url),
-        name;
-
-    for (name in options.headers) {
-      req.header(name, options.headers[name]);
-    }
-
-    requestOptions.forEach(function(name) {
-      if (options[name]) req[name](options[name]);
+  return request(url, extend({}, this.options.http, options))
+    .then(function(response) {
+      if (!response.ok) throw response.status + '' + response.statusText;
+      return response.text();
     });
-
-    req.on('error', function(error) {
-        reject(error || 'Error loading URL: ' + url);
-      })
-      .on('load', function(result) {
-        var text = result && result.responseText;
-        (!result || result.status === 0)
-          ? reject(text || 'Error')
-          : accept(text);
-      })
-      .get();
-  });
 }
 
 /**
@@ -171,6 +140,11 @@ function file(filename) {
         })
       : reject('No file system access for ' + filename);
   });
+}
+
+function request(url, init) {
+  var f = typeof fetch === 'function' ? fetch : require('node-fetch');
+  return f ? f(url, init) : Promise.reject('No fetch method available.');
 }
 
 function fs() {
