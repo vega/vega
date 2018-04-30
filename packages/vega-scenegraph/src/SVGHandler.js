@@ -32,7 +32,7 @@ prototype.initialize = function(el, origin, obj) {
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-prototype.svg = function() {
+prototype.canvas = function() {
   return this._svg;
 };
 

@@ -67,6 +67,10 @@ prototype.resize = function(width, height, origin, scaleFactor) {
   return this;
 };
 
+prototype.canvas = function() {
+  return this._svg;
+};
+
 prototype.svg = function() {
   if (!this._svg) return null;
 
