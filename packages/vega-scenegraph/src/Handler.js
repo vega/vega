@@ -158,3 +158,41 @@ prototype.handleTooltip = function(event, item, show) {
     this._tooltip.call(this._obj, this, event, item, value);
   }
 };
+
+/**
+ * Returns the size of a scenegraph item and its position relative
+ * to the viewport.
+ * @param {Item} item - The scenegraph item.
+ * @return {object} - A bounding box object (compatible with the
+ *   DOMRect type) consisting of x, y, width, heigh, top, left,
+ *   right, and bottom properties.
+ */
+prototype.getItemBoundingClientRect = function(item) {
+  if (!(el = this.canvas())) return;
+
+  var el, rect = el.getBoundingClientRect(),
+      origin = this._origin,
+      itemBounds = item.bounds,
+      x = itemBounds.x1 + origin[0] + rect.left,
+      y = itemBounds.y1 + origin[1] + rect.top,
+      w = itemBounds.width(),
+      h = itemBounds.height();
+
+  // translate coordinate for each parent group
+  while (item.mark && (item = item.mark.group)) {
+    x += item.x || 0;
+    y += item.y || 0;
+  }
+
+  // return DOMRect-compatible bounding box
+  return {
+    x:      x,
+    y:      y,
+    width:  w,
+    height: h,
+    left:   x,
+    top:    y,
+    right:  x + w,
+    bottom: y + h
+  };
+};
