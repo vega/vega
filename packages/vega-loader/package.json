@@ -1,13 +1,13 @@
 {
   "name": "vega-loader",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",
     "loader",
     "file",
     "http",
-    "xhr",
+    "fetch",
     "json",
     "csv",
     "tsv",
@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "d3-dsv": "1",
-    "d3-request": "1",
     "d3-time-format": "2",
+    "node-fetch": "2",
     "topojson-client": "3",
     "vega-util": "1"
   },
@@ -50,6 +50,7 @@
   },
   "browser": {
     "buffer": false,
-    "fs": false
+    "fs": false,
+    "node-fetch": false
   }
 }

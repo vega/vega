@@ -26,9 +26,11 @@ be useful for applications that load multiple data sets from the same domain.
 may safely omit a `'file://'` prefix.
 - *defaultProtocol*: The default protocol to use for protocol-relative *uri*
 values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
-- *target*: The browser target attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
-- *headers*: An object of key-values indicating custom request headers, used
-only when loading via HTTP.
+- *target*: The browser target attribute for hyperlinks. Only applies when
+sanitizing *uri* values for use as a hyperlink.
+- *http*: HTTP request parameters passed to underlying calls to
+[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API); see
+[RequestInit](https://fetch.spec.whatwg.org/#requestinit) for allowed properties.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
@@ -82,13 +84,16 @@ names, values from the *options* argument for this method will be used.
 loader.<b>http</b>(<i>url</i>, <i>options</i>)
 [<>](https://github.com/vega/vega-loader/blob/master/src/loader.js "Source")
 
-Function used internally by [load](#load) for servicing HTTP requests. This
-method is over-writable for clients who wish to implement custom HTTP request
-handling. Uses [d3-request](https://github.com/d3/d3-request) by default.
+Function used internally by [load](#load) for servicing HTTP requests. Uses
+[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) by default.
+Clients may overwrite this method to perform custom HTTP request handling.
 
-If provided, the *options* argument will be combined with any default options
-passed to the [loader](#loader) constructor. In the case of identical property
-names, values from the *options* argument for this method will be used.
+If provided, the *options* argument may include any valid fetch
+[RequestInit](https://fetch.spec.whatwg.org/#requestinit) properties. The
+provided *options* will be combined with any default options passed to the
+[loader](#loader) constructor under the *http* property. In the case of
+identical property names, values from the *options* argument for this
+method will be used.
 
 <a name="load_file" href="load_file">#</a>
 loader.<b>file</b>(<i>filename</i>)
