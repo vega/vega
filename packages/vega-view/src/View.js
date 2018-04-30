@@ -12,6 +12,7 @@ import runtime from './runtime';
 import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
 import defaultTooltip from './tooltip';
+import trap from './trap';
 
 import {Dataflow} from 'vega-dataflow';
 import {error, extend, inherits, stringValue} from 'vega-util';
@@ -264,7 +265,7 @@ prototype.addSignalListener = function(name, handler) {
       h = findHandler(s, handler);
 
   if (!h) {
-    h = function() { handler(name, s.value); };
+    h = trap(this, function() { handler(name, s.value); });
     h.handler = handler;
     this.on(s, null, h);
   }
