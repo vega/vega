@@ -31,14 +31,14 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-hierarchy.zip -- LICENSE README.md build/vega-hierarchy.js build/vega-hierarchy.min.js"
   },
   "dependencies": {
-    "d3-collection": "1",
-    "d3-hierarchy": "1",
-    "vega-dataflow": "^3.1",
-    "vega-util": "1"
+    "d3-collection": "^1.0.4",
+    "d3-hierarchy": "^1.1.6",
+    "vega-dataflow": "^4.0.0",
+    "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "uglify-js": "3"
   }
