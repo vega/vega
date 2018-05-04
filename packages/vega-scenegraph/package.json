@@ -32,17 +32,17 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-scenegraph.zip -- LICENSE README.md build/vega-scenegraph-schema.json build/vega-scenegraph.js build/vega-scenegraph.min.js"
   },
   "dependencies": {
-    "d3-path": "1",
-    "d3-shape": "1",
-    "vega-canvas": "1",
-    "vega-loader": "2",
-    "vega-util": "^1.7"
+    "d3-path": "^1.0.5",
+    "d3-shape": "^1.2.0",
+    "vega-canvas": "^1.0.1",
+    "vega-loader": "^2.1.0",
+    "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "canvas": "^1.6",
+    "canvas": "^1.6.10",
     "eslint": "4",
     "jsdom": "11",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "tv4": "1",
     "uglify-js": "3"
