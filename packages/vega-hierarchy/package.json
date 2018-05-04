@@ -40,6 +40,7 @@
     "eslint": "4",
     "rollup": "0.58.2",
     "tape": "4",
-    "uglify-js": "3"
+    "uglify-js": "3",
+    "vega-transforms": "^2.0.0"
   }
 }
