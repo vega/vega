@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -28,18 +28,18 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-geo.zip -- LICENSE README.md build/vega-geo.js build/vega-geo.min.js"
   },
   "dependencies": {
-    "d3-array": "1",
-    "d3-contour": "1",
-    "d3-geo": "1",
-    "vega-dataflow": "3",
-    "vega-projection": "1",
-    "vega-util": "1"
+    "d3-array": "^1.2.1",
+    "d3-contour": "^1.2.0",
+    "d3-geo": "^1.10.0",
+    "vega-dataflow": "^4.0.0",
+    "vega-projection": "^1.1.0",
+    "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "uglify-js": "3",
-    "vega-transforms": "1"
+    "vega-transforms": "^2.0.0"
   }
 }
