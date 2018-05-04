@@ -1,21 +1,20 @@
+import {Symbols, Discrete} from './legend-types';
 import {Quantile, Quantize, Threshold, BinLinear, BinOrdinal} from './scale-types';
 import {tickValues} from './ticks';
 import {peek} from 'vega-util';
 
-var discrete = {};
-discrete[Quantile] = quantile;
-discrete[Quantize] = quantize;
-discrete[Threshold] = threshold;
-discrete[BinLinear] = bin;
-discrete[BinOrdinal] = bin;
+var symbols = {};
+symbols[Quantile] = quantileSymbols;
+symbols[Quantize] = quantizeSymbols;
+symbols[Threshold] = thresholdSymbols;
+symbols[BinLinear] = symbols[BinOrdinal] = binSymbols;
 
-export function labelValues(scale, count, gradient) {
-  if (gradient) return scale.domain();
-  var values = discrete[scale.type];
+export function labelValues(scale, count) {
+  var values = symbols[scale.type];
   return values ? values(scale) : tickValues(scale, count);
 }
 
-function quantize(scale) {
+function quantizeSymbols(scale) {
   var domain = scale.domain(),
       x0 = domain[0],
       x1 = peek(domain),
@@ -30,29 +29,31 @@ function quantize(scale) {
   return values;
 }
 
-function quantile(scale) {
+function quantileSymbols(scale) {
   var values = [-Infinity].concat(scale.quantiles());
   values.max = +Infinity;
 
   return values;
 }
 
-function threshold(scale) {
+function thresholdSymbols(scale) {
   var values = [-Infinity].concat(scale.domain());
   values.max = +Infinity;
 
   return values;
 }
 
-function bin(scale) {
+function binSymbols(scale) {
   var values = scale.domain();
   values.max = values.pop();
 
   return values;
 }
 
-export function labelFormat(scale, format) {
-  return discrete[scale.type] ? formatRange(format) : formatPoint(format);
+export function labelFormat(scale, format, type) {
+  return type === Symbols && symbols[scale.type] ? formatRange(format)
+    : type === Discrete ? formatDiscrete(format)
+    : formatPoint(format);
 }
 
 function formatRange(format) {
@@ -64,12 +65,37 @@ function formatRange(format) {
   };
 }
 
-function formatValue(value, format) {
-  return isFinite(value) ? format(value) : null;
+function formatDiscrete(format) {
+  return function(value, index) {
+    return index ? format(value) : null;
+  }
 }
 
 function formatPoint(format) {
   return function(value) {
     return format(value);
+  };
+}
+
+function formatValue(value, format) {
+  return isFinite(value) ? format(value) : null;
+}
+
+export function labelFraction(scale) {
+  var domain = scale.domain(),
+      count = domain.length - 1,
+      lo = +domain[0],
+      hi = +peek(domain),
+      span = hi - lo;
+
+  if (scale.type === Threshold) {
+    var adjust = count ? span / count : 0.1;
+    lo -= adjust;
+    hi += adjust;
+    span = hi - lo;
+  }
+
+  return function(value) {
+    return (value - lo) / span;
   };
 }
