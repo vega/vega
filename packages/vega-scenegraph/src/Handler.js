@@ -1,5 +1,5 @@
 import {domCreate} from './util/dom';
-import {resolveItem} from './util/pickPath';
+import resolveItem from './util/resolveItem';
 import {loader} from 'vega-loader';
 
 /**

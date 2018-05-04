@@ -1,6 +1,3 @@
-import marks from '../marks/index';
-import point from './point';
-
 export function pickArea(a, p) {
   var v = a[0].orient === 'horizontal' ? p[1] : p[0],
       z = a[0].orient === 'horizontal' ? 'y' : 'x',
@@ -48,22 +45,4 @@ export function pickTrail(a, p) {
   }
 
   return null;
-}
-
-export function resolveItem(item, event, el, origin) {
-  var mark = item && item.mark,
-      mdef, p;
-
-  if (mark && (mdef = marks[mark.marktype]).tip) {
-    p = point(event, el);
-    p[0] -= origin[0];
-    p[1] -= origin[1];
-    while (item = item.mark.group) {
-      p[0] -= item.x || 0;
-      p[1] -= item.y || 0;
-    }
-    item = mdef.tip(mark.items, p);
-  }
-
-  return item;
 }
