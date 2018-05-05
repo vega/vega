@@ -1,5 +1,6 @@
 import {Left, Top, Bottom, Value} from './constants';
 import guideMark from './guide-mark';
+import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisGridRole} from '../marks/roles';
 import {addEncode} from '../encode/encode-util';
@@ -15,24 +16,24 @@ export default function(spec, config, userEncode, dataRef) {
   encode.enter = enter = {
     opacity: zero
   };
-  addEncode(enter, 'stroke', config.gridColor);
-  addEncode(enter, 'strokeWidth', config.gridWidth);
-  addEncode(enter, 'strokeDash', config.gridDash);
+  addEncode(enter, 'stroke',      lookup('gridColor', spec, config));
+  addEncode(enter, 'strokeWidth', lookup('gridWidth', spec, config));
+  addEncode(enter, 'strokeDash',  lookup('gridDash', spec, config));
 
   encode.exit = exit = {
     opacity: zero
   };
 
   encode.update = update = {};
-  addEncode(update, 'opacity', config.gridOpacity);
+  addEncode(update, 'opacity', lookup('gridOpacity', spec, config));
 
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   config.bandPosition,
-    round:  config.tickRound,
-    extra:  config.tickExtra,
-    offset: config.tickOffset
+    band:   lookup('bandPosition', spec, config),
+    round:  lookup('tickRound', spec, config),
+    extra:  lookup('tickExtra', spec, config),
+    offset: lookup('tickOffset', spec, config)
   };
 
   if (orient === Top || orient === Bottom) {

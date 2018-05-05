@@ -1,5 +1,6 @@
 import {Top, Left, Bottom, Value} from './constants';
 import guideMark from './guide-mark';
+import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
@@ -13,8 +14,8 @@ export default function(spec, config, userEncode, dataRef, size) {
   encode.enter = enter = {
     opacity: zero
   };
-  addEncode(enter, 'stroke', config.tickColor);
-  addEncode(enter, 'strokeWidth', config.tickWidth);
+  addEncode(enter, 'stroke',      lookup('tickColor', spec, config));
+  addEncode(enter, 'strokeWidth', lookup('tickWidth', spec, config));
 
   encode.exit = exit = {
     opacity: zero
@@ -30,10 +31,10 @@ export default function(spec, config, userEncode, dataRef, size) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   config.bandPosition,
-    round:  config.tickRound,
-    extra:  config.tickExtra,
-    offset: config.tickOffset
+    band:   lookup('bandPosition', spec, config),
+    round:  lookup('tickRound', spec, config),
+    extra:  lookup('tickExtra', spec, config),
+    offset: lookup('tickOffset', spec, config)
   };
 
   if (orient === Top || orient === Bottom) {

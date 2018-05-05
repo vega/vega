@@ -5,6 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
+import {lookup} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
@@ -24,10 +25,10 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    ticks:  !!value(spec.ticks, config.ticks),
-    labels: !!value(spec.labels, config.labels),
-    grid:   !!value(spec.grid, config.grid),
-    domain: !!value(spec.domain, config.domain),
+    ticks:  !!lookup('ticks',  spec, config),
+    labels: !!lookup('labels', spec, config),
+    grid:   !!lookup('grid',   spec, config),
+    domain: !!lookup('domain', spec, config),
     title:  !!value(spec.title, false)
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
@@ -38,16 +39,16 @@ export default function(spec, scope) {
       range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
       offset:       encoder(value(spec.offset, 0)),
       position:     encoder(value(spec.position, 0)),
-      titlePadding: encoder(value(spec.titlePadding, config.titlePadding)),
-      minExtent:    encoder(value(spec.minExtent, config.minExtent)),
-      maxExtent:    encoder(value(spec.maxExtent, config.maxExtent))
+      titlePadding: encoder(lookup('titlePadding', spec, config)),
+      minExtent:    encoder(lookup('minExtent', spec, config)),
+      maxExtent:    encoder(lookup('maxExtent', spec, config))
     }
   }, encode.axis, Skip);
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({
     scale:  scope.scaleRef(spec.scale),
-    extra:  config.tickExtra,
+    extra:  scope.property(lookup('tickExtra', spec, config)),
     count:  scope.objectProperty(spec.tickCount),
     values: scope.objectProperty(spec.values),
     formatSpecifier: scope.property(spec.format)
@@ -63,7 +64,7 @@ export default function(spec, scope) {
 
   // include axis ticks if requested
   if (datum.ticks) {
-    size = value(spec.tickSize, config.tickSize);
+    size = lookup('tickSize', spec, config);
     children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
   }
 
