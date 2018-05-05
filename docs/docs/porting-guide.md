@@ -4,7 +4,7 @@ title: Porting Guide from Vega 2
 permalink: /docs/porting-guide/index.html
 ---
 
-This document describes the various changes needed to port Vega 2.x visualizations to the 3.0 specification. It also introduces a subset of the new features introduced in Vega 3. While the listing below is intended to cover the most salient differences between these major versions, readers are also encouraged to dive in and study the [example gallery](../../examples).
+This document describes the various changes needed to port Vega 2.x specifications to more recent versions. It also introduces a subset of the new features that were introduced in Vega 3. While the listing below is intended to cover the most salient differences between these major versions, readers are also encouraged to dive in and study the [example gallery](../../examples).
 
 ## <a name="outline"></a>Porting Guide Outline
 
@@ -80,9 +80,9 @@ This document describes the various changes needed to port Vega 2.x visualizatio
   }]
   ```
 
-- Vega 3 includes a new `shape` mark type. Shape marks are similar in functionality to `path` marks. However, while `path` marks require a materialized SVG path string, `shape` marks are generated procedurally by passing a path-rendering function to the renderer. This allows drawing of shapes without passing through the intermediate representation of a path string, which can considerably improve rendering time when using a canvas renderer. For SVG renderers, the shape type generates an SVG path string (but at render time, not visual encoding time) to include in the SVG DOM.
+- Vega 3 added a new `shape` mark type. Shape marks are similar in functionality to `path` marks. However, while `path` marks require a materialized SVG path string, `shape` marks are generated procedurally by passing a path-rendering function to the renderer. This allows drawing of shapes without passing through the intermediate representation of a path string, which can considerably improve rendering time when using a canvas renderer. For SVG renderers, the shape type generates an SVG path string (but at render time, not visual encoding time) to include in the SVG DOM.
 
-- Vega 3 adds z-index support for changing the layering order of sibling elements. Z-index values are expected to be non-negative integers. All scenegraph items default to a `zindex` of zero. Higher values indicate elements that should be drawn on top of their sibling marks. Mark, axis and legend definitions accept a `"zindex"` property, and `"zindex"` can also be used as an individual visual encoding property (e.g., in a `"hover"` or `"update"` set). Z-index sorting is performed at the sibling-level *only*; for example, it can not be used to force a single item in one mark set to be drawn on top of items in another mark set.
+- Vega 3 added z-index support for changing the layering order of sibling elements. Z-index values are expected to be non-negative integers. All scenegraph items default to a `zindex` of zero. Higher values indicate elements that should be drawn on top of their sibling marks. Mark, axis and legend definitions accept a `"zindex"` property, and `"zindex"` can also be used as an individual visual encoding property (e.g., in a `"hover"` or `"update"` set). Z-index sorting is performed at the sibling-level *only*; for example, it can not be used to force a single item in one mark set to be drawn on top of items in another mark set.
 
 [Back to outline](#outline)
 
@@ -116,12 +116,12 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - The chart `"width"` and `"height"` are automatically bound to signals with the same name. The top-level `"width"` and `"height"` properties can be omitted from the definition and instead replaced by signal definitions whose `"update"` function dynamically sets the width and/or height value.
 
-- Vega 3 adds a new top-level `"autosize"` property to set the layout mode. The legal values are:
+- Vega 3 added a new top-level `"autosize"` property to set the layout mode. The legal values are:
   - `"pad"` (default) - The width/height values determine the data rectangle for plotting. Axes and legends use additional space, with extra padding added to accommodate those elements. This is akin to `"padding": "auto"` in Vega 2.
   - `"fit"` - The width/height indicates the final size (minus any explicit padding). The actual width and height signals will be automatically resized to accommodate axes and legends within the given fit size. If elements are too large to fit in the given size, clipping may occur. This is akin to `"padding": "strict"` in Vega 2.
   - `"none`" - No automatic adjustment of size is performed. The final size is strictly the sum of the width/height and any explicit padding. Clipping may occur.
 
-- Vega 3 removes the `"auto"` and `"strict"` options for view `"padding"`. Instead, `"padding"` now always defines a fixed padding margin around the visualization. If the `"autosize"` property is set to `"pad"`, the padding values will be added to the results of the auto-size calculation.
+- Vega 3 removed the `"auto"` and `"strict"` options for view `"padding"`. Instead, `"padding"` now always defines a fixed padding margin around the visualization. If the `"autosize"` property is set to `"pad"`, the padding values will be added to the results of the auto-size calculation.
 
 - SVG rendering now supports some basic responsive resizing. Generated SVG output now includes a `viewBox` attribute. This allows you to resize the SVG element and have the resulting visualization content scale accordingly.
 
@@ -171,13 +171,13 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 ## <a name="scales"></a>Scales
 
-- Following D3 4.0's design, the `"ordinal"` scale type has now been broken up into three different scale types: `"ordinal"` (for strict lookup tables), `"band"` (for spatial ordinal scales) and `"point"` (spatial ordinal scales with no padding, similar to `{"point": true}` in Vega 2).
+- Following D3 4.0's design, the `"ordinal"` scale type was been broken up into three different scale types: `"ordinal"` (for strict lookup tables), `"band"` (for spatial ordinal scales) and `"point"` (spatial ordinal scales with no padding, similar to `{"point": true}` in Vega 2).
 
-- Vega 3 includes D3 4.0's `"sequential"` scale type and corresponding color scales. Use the `"scheme"` property to set the range to a named color scale (e.g., `"viridis"`, `"plasma"`, or `"magma"`). To see the list of supported built-in schemes, or to add new custom schemes, see the [scheme documentation](../schemes).
+- Vega 3 added D3 4.0+'s `"sequential"` scale type and corresponding color scales. Use the `"scheme"` property to set the range to a named color scale (e.g., `"viridis"`, `"plasma"`, or `"magma"`). To see the list of supported built-in schemes, or to add new custom schemes, see the [scheme documentation](../schemes).
 
 - The `"category10"`, `"category20"` and similar color palettes are no longer available as built-in range names. Instead, they are available using the scale `"scheme"` property, which can be specified instead of a scale range for `"ordinal"` and `"sequential"` scales. However, Vega 3 does support a built-in `"category"` short-hand for ordinal scale ranges, which can be re-defined as part of the theme configuration.
 
-- Vega 3 adds a new `"index"` scale type which maps an ordinal domain to a quantitative range (e.g., as supported by `"linear"` or `"sequential"` scales). This is particularly useful for creating ordered color ramps for ordinal data.
+- Vega 3 added a new `"index"` scale type which maps an ordinal domain to a quantitative range (e.g., as supported by `"linear"` or `"sequential"` scales). This is particularly useful for creating ordered color ramps for ordinal data.
 
 - Scale domains involving multiple data fields from the same table must now be listed under the `"fields"` property, not `"field"`. For example, `"domain": {"data": "table", "fields": ["fieldA", "fieldB"]}`.
 
@@ -186,7 +186,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 ## <a name="transforms"></a>Data Transforms
 
-- Vega 3 also introduces a number of new transforms, and modifications to previous transforms (including a dramatically improved `"force"` transform and improved hierarchical layout support). Web-based documentation is still forthcoming. However, most of these transforms are demonstrated in the example specifications included in this repo. In addition, the parameters accepted by each transform are documented via JSDoc comments in the source code. Please consult the appropriate Vega module repositories for further information.
+- Vega 3 also introduced a number of new transforms, and modifications to previous transforms (including a dramatically improved `"force"` transform and improved hierarchical layout support). Web-based documentation is still forthcoming. However, most of these transforms are demonstrated in the example specifications included in this repo. In addition, the parameters accepted by each transform are documented via JSDoc comments in the source code. Please consult the appropriate Vega module repositories for further information.
 
 - Vega 2.x transform `"output"` maps for determining output field names have been removed. Instead, the relevant transforms accept an `"as"` parameter that (depending on the transform type) takes either a single string or an ordered array of strings, each representing a desired output field name. See the documentation (including JSDoc source code comments) for individual transforms for more information.
 
@@ -196,7 +196,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - For layout transforms such as `"pie"`, `"stack"`, and `"bin"`, midpoint calculations (e.g., `layout_mid`) are no longer included as output. Instead, one can use a `"signal"` expression to calculate a midpoint. For example, to compute the midpoints after a stack transform: `"y": {"scale": "yscale", "signal": "0.5 * (datum.y0 + datum.y1)"}).
 
-- The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
+- The `"aggregate"` transform no longer uses a `"summarize"` block for defining aggregation operations. In Vega 3 onward, we instead use a flat set of (equal-length) arrays specifying the aggregation fields, operations and output field names:
 
   {:.suppress-error}
   ```json
@@ -217,7 +217,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 - For the `"lookup"` transform, the `"on"`, `"onKey"` and `"keys"` parameters have been renamed `"from"`, `"key"`, and `"fields"`.
 
-- The `"sort"` transform has been removed. In Vega 2, the sort transform was actually a no-op that added a special annotation to the pulse passing through it, which was later used to sort tuples at the _end_ of a transform pipeline. Vega 3 drops this behavior. Instead, there are two options for achieving sorting in a visualization: (1) Use a `"sort"` directive as part of a scale `"domain"` definition, or (2) use a `"collect"` transform and provide `"sort"` parameter. This ensures that sorting occurs immediately at the point at which it is requested, not at an indeterminate point down stream in the dataflow. We recommend using option (1) if workable, and (2) otherwise.
+- The `"sort"` transform has been removed. In Vega 2, the sort transform was actually a no-op that added a special annotation to the pulse passing through it, which was later used to sort tuples at the _end_ of a transform pipeline. Vega 3 dropped this behavior. Instead, there are two options for achieving sorting in a visualization: (1) Use a `"sort"` directive as part of a scale `"domain"` definition, or (2) use a `"collect"` transform and provide `"sort"` parameter. This ensures that sorting occurs immediately at the point at which it is requested, not at an indeterminate point down stream in the dataflow. We recommend using option (1) if workable, and (2) otherwise.
 
 - The `"stack"` transform `"sortby"` parameter has been renamed `"sort"`.
 
@@ -239,7 +239,7 @@ This document describes the various changes needed to port Vega 2.x visualizatio
 
 ## <a name="animation"></a>Animation
 
-- Animated transitions are not currently supported by Vega 3.0. As a result, the `"delay"` and `"ease"` properties are no longer used.
+- Animated transitions are not currently supported by Vega 3.0 and later. As a result, the `"delay"` and `"ease"` properties are no longer used.
 
 [Back to outline](#outline)
 
