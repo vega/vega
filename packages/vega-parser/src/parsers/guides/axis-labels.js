@@ -1,9 +1,9 @@
 import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle} from './constants';
 import guideMark from './guide-mark';
+import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
-import {value} from '../../util';
 
 function flushExpr(scale, threshold, a, b, c) {
   return {
@@ -17,24 +17,23 @@ export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       scale = spec.scale,
-      pad = value(spec.labelPadding, config.labelPadding),
-      bound = value(spec.labelBound, config.labelBound),
-      flush = value(spec.labelFlush, config.labelFlush),
+      bound = lookup('labelBound', spec, config),
+      flush = lookup('labelFlush', spec, config),
       flushOn = flush != null && flush !== false && (flush = +flush) === flush,
-      flushOffset = +value(spec.labelFlushOffset, config.labelFlushOffset),
-      overlap = value(spec.labelOverlap, config.labelOverlap),
+      flushOffset = +lookup('labelFlushOffset', spec, config),
+      overlap = lookup('labelOverlap', spec, config),
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
   encode.enter = enter = {
     opacity: zero
   };
-  addEncode(enter, 'angle', config.labelAngle);
-  addEncode(enter, 'fill', config.labelColor);
-  addEncode(enter, 'font', config.labelFont);
-  addEncode(enter, 'fontSize', config.labelFontSize);
-  addEncode(enter, 'fontWeight', config.labelFontWeight);
-  addEncode(enter, 'limit', config.labelLimit);
+  addEncode(enter, 'angle',      lookup('labelAngle', spec, config));
+  addEncode(enter, 'fill',       lookup('labelColor', spec, config));
+  addEncode(enter, 'font',       lookup('labelFont', spec, config));
+  addEncode(enter, 'fontSize',   lookup('labelFontSize', spec, config));
+  addEncode(enter, 'fontWeight', lookup('labelFontWeight', spec, config));
+  addEncode(enter, 'limit',      lookup('labelLimit', spec, config));
 
   encode.exit = exit = {
     opacity: zero
@@ -47,14 +46,14 @@ export default function(spec, config, userEncode, dataRef, size) {
 
   tickSize = encoder(size);
   tickSize.mult = sign;
-  tickSize.offset = encoder(pad);
+  tickSize.offset = encoder(lookup('labelPadding', spec, config) || 0);
   tickSize.offset.mult = sign;
 
   tickPos = {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: config.tickOffset
+    offset: lookup('tickOffset', spec, config)
   };
 
   if (orient === Top || orient === Bottom) {

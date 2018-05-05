@@ -1,5 +1,6 @@
 import {Top, Bottom} from './constants';
 import guideMark from './guide-mark';
+import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisDomainRole} from '../marks/roles';
 import {addEncode} from '../encode/encode-util';
@@ -12,8 +13,8 @@ export default function(spec, config, userEncode, dataRef) {
   encode.enter = enter = {
     opacity: zero
   };
-  addEncode(enter, 'stroke', config.domainColor);
-  addEncode(enter, 'strokeWidth', config.domainWidth);
+  addEncode(enter, 'stroke',      lookup('domainColor', spec, config));
+  addEncode(enter, 'strokeWidth', lookup('domainWidth', spec, config));
 
   encode.exit = {
     opacity: zero

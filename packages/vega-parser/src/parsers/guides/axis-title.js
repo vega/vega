@@ -1,13 +1,13 @@
 import {Top, Bottom, Left, GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
-import {has} from '../encode/encode-util';
+import {lookup} from './guide-util';
+import {encoder, has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
 import {addEncode} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
-      title = spec.title,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       encode = {}, enter, update, titlePos;
@@ -15,12 +15,12 @@ export default function(spec, config, userEncode, dataRef) {
   encode.enter = enter = {
     opacity: {value: 0}
   };
-  addEncode(enter, 'align', config.titleAlign);
-  addEncode(enter, 'fill', config.titleColor);
-  addEncode(enter, 'font', config.titleFont);
-  addEncode(enter, 'fontSize', config.titleFontSize);
-  addEncode(enter, 'fontWeight', config.titleFontWeight);
-  addEncode(enter, 'limit', config.titleLimit);
+  addEncode(enter, 'align',      lookup('titleAlign', spec, config));
+  addEncode(enter, 'fill',       lookup('titleColor', spec, config));
+  addEncode(enter, 'font',       lookup('titleFont', spec, config));
+  addEncode(enter, 'fontSize',   lookup('titleFontSize', spec, config));
+  addEncode(enter, 'fontWeight', lookup('titleFontWeight', spec, config));
+  addEncode(enter, 'limit',      lookup('titleLimit', spec, config));
 
   encode.exit = {
     opacity: {value: 0}
@@ -28,7 +28,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.update = update = {
     opacity: {value: 1},
-    text: title && title.signal ? {signal: title.signal} : {value: title + ''}
+    text: encoder(spec.title)
   };
 
   titlePos = {
@@ -46,14 +46,14 @@ export default function(spec, config, userEncode, dataRef) {
     update.baseline = {value: 'bottom'};
   }
 
-  addEncode(update, 'angle', config.titleAngle);
-  addEncode(update, 'baseline', config.titleBaseline);
+  addEncode(update, 'angle',    lookup('titleAngle', spec, config));
+  addEncode(update, 'baseline', lookup('titleBaseline', spec, config));
 
-  !addEncode(update, 'x', config.titleX)
+  !addEncode(update, 'x', lookup('titleX', spec, config))
     && horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
-  !addEncode(update, 'y', config.titleY)
+  !addEncode(update, 'y', lookup('titleY', spec, config))
     && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
