@@ -3,7 +3,7 @@ import {FrameRole, MarkRole} from '../marks/roles';
 import {array, extend, isArray, isObject} from 'vega-util';
 
 export function encoder(_) {
-  return isObject(_) ? _ : {value: _};
+  return isObject(_) ? extend({}, _) : {value: _};
 }
 
 export function addEncode(object, name, value) {
@@ -56,7 +56,7 @@ function applyDefaults(encode, type, role, style, config) {
       || (key === 'fill' || key === 'stroke')
       && (has('fill', encode) || has('stroke', encode));
 
-    if (!skip) enter[key] = {value: props[key]};
+    if (!skip) enter[key] = defaultEncode(props[key]);
   }
 
   // resolve styles, apply with increasing precedence
@@ -64,7 +64,7 @@ function applyDefaults(encode, type, role, style, config) {
     var props = config.style && config.style[name];
     for (var key in props) {
       if (!has(key, encode)) {
-        enter[key] = {value: props[key]};
+        enter[key] = defaultEncode(props[key]);
       }
     }
   });
@@ -73,6 +73,12 @@ function applyDefaults(encode, type, role, style, config) {
   encode.enter = extend(enter, encode.enter);
 
   return encode;
+}
+
+function defaultEncode(value) {
+  return value && value.signal
+    ? {signal: value.signal}
+    : {value: value};
 }
 
 export function has(key, encode) {
