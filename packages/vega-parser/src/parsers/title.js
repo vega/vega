@@ -1,12 +1,34 @@
-import {Top, Bottom, Left, GroupTitleStyle} from './guides/constants';
+import {
+  Top, Bottom, Left, Right, Center,
+  Start, End, GroupTitleStyle
+} from './guides/constants';
 import guideMark from './guides/guide-mark';
+import {lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole} from './marks/roles';
 import {addEncode, encoder} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
-import {extend, isObject, isString} from 'vega-util';
+import {extend, isString, stringValue} from 'vega-util';
+
+function anchorExpr(startValue, endValue, centerValue) {
+  return 'item.anchor==="' + Start + '"?' + startValue
+    + ':item.anchor==="' + End + '"?' + endValue
+    + ':' + centerValue;
+}
+
+// title text alignment
+var alignExpr = anchorExpr(
+  stringValue(Left), stringValue(Right), stringValue(Center)
+);
+
+// multiplication factor for anchor positioning
+var multExpr = anchorExpr(
+  '+(item.orient==="' + Right + '")',
+  '+(item.orient!=="' + Left + '")',
+  '0.5'
+);
 
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
@@ -17,7 +39,7 @@ export default function(spec, scope) {
 
   // single-element data source for group title
   datum = {
-    orient: spec.orient != null ? spec.orient : config.orient
+    orient: lookup('orient', spec, config)
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 
@@ -32,68 +54,58 @@ export default function(spec, scope) {
 }
 
 function buildTitle(spec, config, userEncode, dataRef) {
-  var title = spec.text,
-      orient = spec.orient || config.orient,
-      anchor = spec.anchor || config.anchor,
+  var zero = {value: 0},
+      title = spec.text,
+      orient = lookup('orient', spec, config),
+      anchor = lookup('anchor', spec, config),
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       extent = {group: (horizontal ? 'width' : 'height')},
-      encode = {}, enter, update, pos, opp, mult, align;
+      encode = {}, enter, update, pos, opp;
 
-  encode.enter = enter = {
-    opacity: {value: 0}
-  };
-  addEncode(enter, 'fill', config.color);
-  addEncode(enter, 'font', config.font);
-  addEncode(enter, 'fontSize', config.fontSize);
-  addEncode(enter, 'fontWeight', config.fontWeight);
+  // title positioning along orientation axis
+  pos = {field: extent, mult: {signal: multExpr}};
 
-  encode.exit = {
-    opacity: {value: 0}
-  };
+  // title baseline position
+  opp = sign < 0 ? zero
+    : horizontal ? {field: {group: 'height'}}
+    : {field: {group: 'width'}};
+
+  encode.enter = enter = {opacity: zero};
+  addEncode(enter, 'fill',       lookup('fill', spec, config));
+  addEncode(enter, 'font',       lookup('font', spec, config));
+  addEncode(enter, 'fontSize',   lookup('fontSize', spec, config));
+  addEncode(enter, 'fontWeight', lookup('fontWeight', spec, config));
+
+  encode.exit = {opacity: zero};
 
   encode.update = update = {
     opacity: {value: 1},
-    text: isObject(title) ? title : {value: title + ''},
-    offset: encoder((spec.offset != null ? spec.offset : config.offset) || 0)
+    text:   encoder(title),
+    anchor: encoder(anchor),
+    orient: encoder(orient),
+    extent: {field: extent},
+    align:  {signal: alignExpr}
   };
-
-  if (anchor === 'start') {
-    mult = 0;
-    align = 'left';
-  } else {
-    if (anchor === 'end') {
-      mult = 1;
-      align = 'right';
-    } else {
-      mult = 0.5;
-      align = 'center';
-    }
-  }
-
-  pos = {field: extent, mult: mult};
-
-  opp = sign < 0 ? {value: 0}
-    : horizontal ? {field: {group: 'height'}}
-    : {field: {group: 'width'}};
 
   if (horizontal) {
     update.x = pos;
     update.y = opp;
-    update.angle = {value: 0};
-    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+    update.angle = zero;
+    update.baseline = {value: orient === Top ? Bottom : Top};
   } else {
     update.x = opp;
     update.y = pos;
     update.angle = {value: sign * 90};
-    update.baseline = {value: 'bottom'};
+    update.baseline = {value: Bottom};
   }
-  update.align = {value: align};
-  update.limit = {field: extent};
 
-  addEncode(update, 'angle', config.angle);
-  addEncode(update, 'baseline', config.baseline);
-  addEncode(update, 'limit', config.limit);
+  addEncode(update, 'offset',   lookup('offset', spec, config) || 0);
+  addEncode(update, 'frame',    lookup('frame', spec, config));
+  addEncode(update, 'angle',    lookup('angle', spec, config));
+  addEncode(update, 'baseline', lookup('baseline', spec, config));
+  addEncode(update, 'limit',    lookup('limit', spec, config));
 
-  return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle, null, dataRef, encode, userEncode);
+  return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle,
+                   null, dataRef, encode, userEncode);
 }
