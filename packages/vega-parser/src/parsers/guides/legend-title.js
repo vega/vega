@@ -1,12 +1,12 @@
 import {GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
+import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncode, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
-      title = spec.title,
       encode = {}, enter;
 
   encode.enter = enter = {
@@ -14,13 +14,13 @@ export default function(spec, config, userEncode, dataRef) {
     y: {field: {group: 'padding'}},
     opacity: zero
   };
-  addEncode(enter, 'align', config.titleAlign);
-  addEncode(enter, 'baseline', config.titleBaseline);
-  addEncode(enter, 'fill', config.titleColor);
-  addEncode(enter, 'font', config.titleFont);
-  addEncode(enter, 'fontSize', config.titleFontSize);
-  addEncode(enter, 'fontWeight', config.titleFontWeight);
-  addEncode(enter, 'limit', config.titleLimit);
+  addEncode(enter, 'align',      lookup('titleAlign', spec, config));
+  addEncode(enter, 'baseline',   lookup('titleBaseline', spec, config));
+  addEncode(enter, 'fill',       lookup('titleColor', spec, config));
+  addEncode(enter, 'font',       lookup('titleFont', spec, config));
+  addEncode(enter, 'fontSize',   lookup('titleFontSize', spec, config));
+  addEncode(enter, 'fontWeight', lookup('titleFontWeight', spec, config));
+  addEncode(enter, 'limit',      lookup('titleLimit', spec, config));
 
   encode.exit = {
     opacity: zero
@@ -28,7 +28,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode.update = {
     opacity: {value: 1},
-    text: title && title.signal ? {signal: title.signal} : {value: title + ''}
+    text: encoder(spec.title)
   };
 
   return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
