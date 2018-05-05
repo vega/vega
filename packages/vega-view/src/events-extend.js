@@ -29,7 +29,7 @@ import {point} from 'vega-scenegraph';
  * @return {Event} - The extended input event.
  */
 export default function(view, event, item) {
-  var el = view._renderer.scene(),
+  var el = view._renderer.canvas(),
       p, e, translate;
 
   if (el) {
