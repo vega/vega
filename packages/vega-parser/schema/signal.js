@@ -8,6 +8,12 @@ export default {
       },
       "required": ["signal"]
     },
+    "arrayOrSignal": {
+      "oneOf": [
+        {"type": "array"},
+        {"$ref": "#/refs/signal"}
+      ]
+    },
     "booleanOrSignal": {
       "oneOf": [
         {"type": "boolean"},

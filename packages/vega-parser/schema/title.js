@@ -1,3 +1,8 @@
+import {
+  numberValue, stringValue, colorValue, baselineValue, fontWeightValue,
+  anchorValue, stringOrSignal
+} from './util';
+
 export default {
   "defs": {
     "titleEncode": {
@@ -24,24 +29,28 @@ export default {
               ],
               "default": "top"
             },
-            "anchor": {
-              "enum": [
-                "start",
-                "middle",
-                "end"
-              ],
-              "default": "middle"
-            },
+            "anchor": anchorValue,
             "style": {"$ref": "#/refs/style"},
-            "text": {"$ref": "#/refs/stringOrSignal"},
+            "text": stringOrSignal,
             "zindex": {"type": "number"},
             "interactive": {"type": "boolean"},
-            "offset": {
+
+
+            "fill": colorValue,
+            "font": stringValue,
+            "fontSize": numberValue,
+            "fontWeight": fontWeightValue,
+            "offset": numberValue,
+            "frame": {
               "oneOf": [
-                {"type": "number"},
-                {"$ref": "#/refs/numberValue"}
+                {"enum": ["group", "bounds"]},
+                {"$ref": "#/refs/stringValue"}
               ]
             },
+            "angle": numberValue,
+            "baseline": baselineValue,
+            "limit": numberValue,
+
             "encode": {"$ref": "#/defs/titleEncode"}
           },
           "required": ["text"],
