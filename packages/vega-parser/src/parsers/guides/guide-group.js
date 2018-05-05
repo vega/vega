@@ -1,6 +1,6 @@
 import {GroupMark} from '../marks/marktypes';
 
-export default function(role, style, name, dataRef, interactive, encode, marks) {
+export default function(role, style, name, dataRef, interactive, encode, marks, layout) {
   return {
     type: GroupMark,
     name: name,
@@ -9,6 +9,7 @@ export default function(role, style, name, dataRef, interactive, encode, marks) 
     from: dataRef,
     interactive: interactive || false,
     encode: encode,
-    marks: marks
+    marks: marks,
+    layout: layout
   };
 }
