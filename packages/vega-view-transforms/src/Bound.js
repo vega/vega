@@ -1,3 +1,4 @@
+import {Group, LegendRole} from './constants';
 import {Transform} from 'vega-dataflow';
 import {boundClip, Marks} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
@@ -31,7 +32,7 @@ prototype.transform = function(_, pulse) {
     });
   }
 
-  else if (type === 'group' || _.modified()) {
+  else if (type === Group || _.modified()) {
     // operator parameters modified -> re-bound all items
     // updates group bounds in response to modified group content
     pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
@@ -39,6 +40,10 @@ prototype.transform = function(_, pulse) {
     mark.items.forEach(function(item) {
       markBounds.union(boundItem(item, bound));
     });
+
+    // force reflow for legends to propagate any layout changes
+    // suppress other types to prevent overall layout jumpiness
+    if (mark.role === LegendRole) pulse.reflow();
   }
 
   else {
