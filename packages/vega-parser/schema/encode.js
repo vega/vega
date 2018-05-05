@@ -1,6 +1,18 @@
 import {isArray} from 'vega-util';
 
-function valueSchema(type, nullable) {
+export var fontWeightEnum = [
+  null, "normal", "bold", "lighter", "bolder",
+  "100", "200", "300", "400", "500", "600", "700", "800", "900",
+  100, 200, 300, 400, 500, 600, 700, 800, 900
+];
+
+export var alignEnum = ["left", "right", "center"];
+
+export var baselineEnum = ["top", "middle", "bottom", "alphabetic"];
+
+export var areaOrientEnum = ["horizontal", "vertical"];
+
+export function valueSchema(type, nullable) {
   type = isArray(type) ? {"enum": type} : {"type": type};
 
   var modType = type.type === "number" ? "number" : "string",
@@ -143,11 +155,11 @@ export default {
     "booleanValue": valueSchema("boolean"),
     "arrayValue": valueSchema("array"),
     "nullableStringValue": valueSchema("string", true),
-    "fontWeightValue": valueSchema([
-      null, "normal", "bold", "lighter", "bolder",
-      "100", "200", "300", "400", "500", "600", "700", "800", "900",
-      100, 200, 300, 400, 500, 600, 700, 800, 900
-    ]),
+    "fontWeightValue": valueSchema(fontWeightEnum),
+
+    "alignValue": valueSchema(alignEnum),
+    "baselineValue": valueSchema(baselineEnum),
+    "orientValue": valueSchema(areaOrientEnum),
 
     "colorRGB": {
       "type": "object",
@@ -255,12 +267,7 @@ export default {
 
         // Symbol-mark properties
         "size": {"$ref": "#/refs/numberValue"},
-        "shape": {
-          "anyOf": [
-            {"type": "string"},
-            {"$ref": "#/refs/stringValue"}
-          ]
-        },
+        "shape": {"$ref": "#/refs/stringValue"},
 
         // Path-mark properties
         "path": {"$ref": "#/refs/stringValue"},
@@ -274,12 +281,12 @@ export default {
         // Area- and line-mark properties
         "interpolate": {"$ref": "#/refs/stringValue"},
         "tension": {"$ref": "#/refs/numberValue"},
-        "orient": valueSchema(["horizontal", "vertical"]),
+        "orient": {"$ref": "#/refs/orientValue"},
 
         // Image-mark properties
         "url": {"$ref": "#/refs/stringValue"},
-        "align": valueSchema(["left", "right", "center"]),
-        "baseline": valueSchema(["top", "middle", "bottom", "alphabetic"]),
+        "align": {"$ref": "#/refs/alignValue"},
+        "baseline": {"$ref": "#/refs/baselineValue"},
 
         // Text-mark properties
         "text": {"$ref": "#/refs/stringValue"},

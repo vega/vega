@@ -1,3 +1,10 @@
+import {layoutAlign} from './layout';
+import {
+  numberValue, stringValue, colorValue,
+  alignValue, baselineValue, fontWeightValue,
+  numberOrSignal, stringOrSignal, arrayOrSignal
+} from './util';
+
 export default {
   "defs": {
     "guideEncode": {
@@ -22,8 +29,10 @@ export default {
         "opacity":    {"type": "string"},
         "strokeDash": {"type": "string"},
         "type": {
-          "enum": ["gradient", "symbol"],
-          "default": "symbol"
+          "enum": ["gradient", "symbol"]
+        },
+        "direction": {
+          "enum": ["vertical", "horizontal"]
         },
         "orient": {
           "enum": [
@@ -39,49 +48,70 @@ export default {
           ],
           "default": "right"
         },
-        "title": {"$ref": "#/refs/stringOrSignal"},
+        "format": stringOrSignal,
+        "title": stringOrSignal,
+        "tickCount": {"$ref": "#/refs/tickCount"},
+        "values": arrayOrSignal,
         "zindex": {"type": "number"},
 
-        "offset": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "padding": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "titlePadding": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "entryPadding": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
+        // LEGEND GROUP CONFIG
+        "cornerRadius": numberValue,
+        "fillColor": colorValue,
+        "offset": numberValue,
+        "padding": numberValue,
+        "strokeColor": colorValue,
+        "strokeWidth": numberValue,
 
-        "tickCount": {"$ref": "#/refs/tickCount"},
-        "format": {"$ref": "#/refs/stringOrSignal"},
-        "values": {
-          "oneOf": [
-            {"type": "array"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
+        // LEGEND TITLE CONFIG
+        "titleAlign": alignValue,
+        "titleBaseline": baselineValue,
+        "titleColor": colorValue,
+        "titleFont": stringValue,
+        "titleFontSize": numberValue,
+        "titleFontWeight": fontWeightValue,
+        "titleLimit": numberValue,
+        "titlePadding": numberValue,
 
+        // GRADIENT CONFIG
+        "gradientLength": numberOrSignal,
+        "gradientThickness": numberOrSignal,
+        "gradientStrokeColor": colorValue,
+        "gradientStrokeWidth": colorValue,
+
+        // SYMBOL LAYOUT CONFIG
+        "clipHeight": numberOrSignal,
+        "columns": numberOrSignal,
+        "columnPadding": numberOrSignal,
+        "rowPadding": numberOrSignal,
+        "gridAlign": layoutAlign,
+
+        // SYMBOL CONFIG
+        "symbolFillColor": colorValue,
+        "symbolOffset": numberValue,
+        "symbolSize": numberValue,
+        "symbolStrokeColor": colorValue,
+        "symbolStrokeWidth": numberValue,
+        "symbolType": stringValue,
+
+        // LABEL CONFIG
+        "labelAlign": alignValue,
+        "labelBaseline": baselineValue,
+        "labelColor": colorValue,
+        "labelFont": stringValue,
+        "labelFontSize": numberValue,
+        "labelFontWeight": fontWeightValue,
+        "labelLimit": numberValue,
+        "labelOffset": numberValue,
+        "labelOverlap": {"$ref": "#/refs/labelOverlap"},
+
+        // CUSTOMIZED ENCODERS
         "encode": {
           "type": "object",
           "properties": {
             "title": {"$ref": "#/defs/guideEncode"},
             "labels": {"$ref": "#/defs/guideEncode"},
             "legend": {"$ref": "#/defs/guideEncode"},
+            "entries": {"$ref": "#/defs/guideEncode"},
             "symbols": {"$ref": "#/defs/guideEncode"},
             "gradient": {"$ref": "#/defs/guideEncode"}
           },

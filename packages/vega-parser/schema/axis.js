@@ -1,7 +1,18 @@
 import {timeIntervals} from './scale';
+import {
+  numberValue, stringValue, booleanValue, colorValue,
+  alignValue, baselineValue, fontWeightValue, dashArrayValue,
+  booleanOrNumber, arrayOrSignal, numberOrSignal, stringOrSignal
+} from './util';
 
 export default {
   "refs": {
+    "labelOverlap": {
+      "oneOf": [
+        {"type": "boolean"},
+        {"enum": ["parity", "greedy"], "type": "string"}
+      ]
+    },
     "tickCount": {
       "oneOf": [
         {"type": "number"},
@@ -15,7 +26,7 @@ export default {
                 {"$ref": "#/refs/signal"}
               ]
             },
-            "step": {"$ref": "#/refs/numberOrSignal"}
+            "step": numberOrSignal
           },
           "required": ["interval"]
         },
@@ -29,75 +40,67 @@ export default {
       "properties": {
         "orient": {"enum": ["top", "bottom", "left", "right"]},
         "scale": {"type": "string"},
-        "title": {"$ref": "#/refs/stringOrSignal"},
+        "format": stringOrSignal,
+        "minExtent": numberValue,
+        "maxExtent": numberValue,
+        "offset": numberValue,
+        "position": numberValue,
+        "bandPosition": numberValue,
+        "values": arrayOrSignal,
         "zindex": {"type": "number"},
-        "ticks": {"type": "boolean"},
-        "labels": {"type": "boolean"},
+
+        // TITLE CONFIG
+        "title": stringOrSignal,
+        "titlePadding": numberValue,
+        "titleAlign": alignValue,
+        "titleAngle": numberValue,
+        "titleX": numberValue,
+        "titleY": numberValue,
+        "titleBaseline": baselineValue,
+        "titleColor": colorValue,
+        "titleFont": stringValue,
+        "titleFontSize": numberValue,
+        "titleFontWeight": fontWeightValue,
+        "titleLimit": numberValue,
+
+        // DOMAIN CONFIG
         "domain": {"type": "boolean"},
+        "domainColor": colorValue,
+        "domainWidth": numberValue,
+
+        // TICK CONFIG
+        "ticks": {"type": "boolean"},
+        "tickCount": {"$ref": "#/refs/tickCount"},
+        "tickColor": colorValue,
+        "tickExtra": numberOrSignal,
+        "tickOffset": numberValue,
+        "tickRound": booleanValue,
+        "tickSize": numberValue,
+        "tickWidth": numberValue,
+
+        // GRID CONFIG
         "grid": {"type": "boolean"},
         "gridScale": {"type": "string"},
-        "tickSize": {"type": "number"},
-        "labelPadding": {"type": "number"},
-        "labelFlush": {
-          "oneOf": [
-            {"type": "boolean"},
-            {"type": "number"}
-          ]
-        },
+        "gridColor": colorValue,
+        "gridDash": dashArrayValue,
+        "gridOpacity": numberValue,
+        "gridWidth": numberValue,
+
+        // LABEL CONFIG
+        "labels": {"type": "boolean"},
+        "labelBound": booleanOrNumber,
+        "labelFlush": booleanOrNumber,
         "labelFlushOffset": {"type": "number"},
-        "labelOverlap": {
-          "oneOf": [
-            {"type": "boolean"},
-            {"enum": ["parity", "greedy"], "type": "string"}
-          ]
-        },
-        "labelBound": {
-          "oneOf": [
-            {"type": "boolean"},
-            {"type": "number"}
-          ]
-        },
+        "labelOverlap": {"$ref": "#/refs/labelOverlap"},
+        "labelAngle": numberValue,
+        "labelColor": colorValue,
+        "labelFont": stringValue,
+        "labelFontSize": numberValue,
+        "labelFontWeight": fontWeightValue,
+        "labelLimit": numberValue,
+        "labelPadding": numberValue,
 
-        "tickCount": {"$ref": "#/refs/tickCount"},
-        "format": {"$ref": "#/refs/stringOrSignal"},
-        "values": {
-          "oneOf": [
-            {"type": "array"},
-            {"$ref": "#/refs/signal"}
-          ]
-        },
-
-        "offset": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "position": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "titlePadding": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "minExtent": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-        "maxExtent": {
-          "oneOf": [
-            {"type": "number"},
-            {"$ref": "#/refs/numberValue"}
-          ]
-        },
-
+        // CUSTOMIZED ENCODERS
         "encode": {
           "type": "object",
           "properties": {

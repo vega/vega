@@ -1,6 +1,8 @@
-var align = {
+export var layoutAlignEnum = ["all", "each", "none"];
+
+export var layoutAlign = {
   "oneOf": [
-    {"enum": ["all", "each", "none"]},
+    {"enum": layoutAlignEnum},
     {"$ref": "#/refs/signal"}
   ]
 };
@@ -29,12 +31,12 @@ export default {
           "properties": {
             "align": {
               "oneOf": [
-                align,
+                layoutAlign,
                 {
                   "type": "object",
                   "properties": {
-                    "row": align,
-                    "column": align
+                    "row": layoutAlign,
+                    "column": layoutAlign
                   },
                   "additionalProperties": false
                 }
@@ -44,6 +46,19 @@ export default {
               "oneOf": [
                 {"enum": ["full", "flush"]},
                 {"$ref": "#/refs/signal"}
+              ]
+            },
+            "center": {
+              "oneOf": [
+                {"$ref": "#/refs/booleanOrSignal"},
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {"$ref": "#/refs/booleanOrSignal"},
+                    "column": {"$ref": "#/refs/booleanOrSignal"}
+                  },
+                  "additionalProperties": false
+                }
               ]
             },
             "columns": {"$ref": "#/refs/numberOrSignal"},
