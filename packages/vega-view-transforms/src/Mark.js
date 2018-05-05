@@ -1,3 +1,4 @@
+import {Group} from './constants';
 import {Transform} from 'vega-dataflow';
 import {Item, GroupItem} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
@@ -31,14 +32,14 @@ prototype.transform = function(_, pulse) {
   }
 
   // initialize entering items
-  var Init = mark.marktype === 'group' ? GroupItem : Item;
+  var Init = mark.marktype === Group ? GroupItem : Item;
   pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
 
   // update clipping and/or interactive status
   if (_.modified('clip') || _.modified('interactive')) {
     mark.clip = _.clip;
     mark.interactive = !!_.interactive;
-    mark.zdirty = true; // force re-eval
+    mark.zdirty = true; // force scenegraph re-eval
     pulse.reflow();
   }
 
