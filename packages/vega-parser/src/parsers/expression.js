@@ -1,6 +1,6 @@
 import {codeGenerator, codegenParams} from './expression/codegen';
 import {parse} from 'vega-expression';
-import {error, stringValue} from 'vega-util';
+import {error, isString, stringValue} from 'vega-util';
 
 export var signalPrefix = '$';
 
@@ -9,9 +9,10 @@ export default function(expr, scope, preamble) {
 
   // parse the expression to an abstract syntax tree (ast)
   try {
+    expr = isString(expr) ? expr : (stringValue(expr) + '');
     ast = parse(expr);
   } catch (err) {
-    error('Expression parse error: ' + stringValue(expr));
+    error('Expression parse error: ' + expr);
   }
 
   // analyze ast function calls for dependencies
