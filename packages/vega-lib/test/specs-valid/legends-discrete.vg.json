@@ -1,0 +1,172 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "padding": 5,
+
+  "config": {
+    "legend": {
+      "offset": 5,
+      "gradientDirection": "horizontal",
+      "gradientLength": 300,
+      "gradientWidth": 15
+    }
+  },
+
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {"a": "A", "b": 28},
+        {"a": "B", "b": 59},
+        {"a": "C", "b": 43},
+        {"a": "D", "b": 91},
+        {"a": "E", "b": 81},
+        {"a": "F", "b": 53},
+        {"a": "G", "b": 19},
+        {"a": "H", "b": 87},
+        {"a": "I", "b": 50}
+      ]
+    },
+    {
+      "name": "binned",
+      "values": [
+        {"v": 28}, {"v": 55}, {"v": 43}, {"v": 91}, {"v": 34}, {"v": 81},
+        {"v": 53}, {"v": 19}, {"v": 87}, {"v": 38}, {"v": 52}, {"v": 48},
+        {"v": 24}, {"v": 49}, {"v": 87}, {"v": 66}, {"v": 17}, {"v": 27},
+        {"v": 68}, {"v": 12}, {"v": 49}, {"v":  4}
+      ],
+      "transform": [
+        {
+          "type": "extent", "field": "v",
+          "signal": "extent"
+        },
+        {
+          "type": "bin", "maxbins": 5, "signal": "bins5",
+          "field": "v", "extent": {"signal": "extent"}
+        },
+        {
+          "type": "bin", "maxbins": 10, "signal": "bins10",
+          "field": "v", "extent": {"signal": "extent"}
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "qua2",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 2}
+    },
+    {
+      "name": "qua3",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 3}
+    },
+    {
+      "name": "qua4",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 4}
+    },
+    {
+      "name": "qua5",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 5}
+    },
+    {
+      "name": "qua6",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 6}
+    },
+    {
+      "name": "qua7",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 7}
+    },
+    {
+      "name": "qua8",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 8}
+    },
+    {
+      "name": "qua9",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 9}
+    },
+    {
+      "name": "tile3",
+      "type": "quantile",
+      "range": {"scheme": "redyellowblue", "count": 3},
+      "domain": {"data": "source", "field": "b"}
+    },
+    {
+      "name": "tile5",
+      "type": "quantile",
+      "range": {"scheme": "redyellowblue", "count": 5},
+      "domain": {"data": "source", "field": "b"}
+    },
+    {
+      "name": "tile7",
+      "type": "quantile",
+      "range": {"scheme": "redyellowblue", "count": 7},
+      "domain": {"data": "source", "field": "b"}
+    },
+    {
+      "name": "thresh1",
+      "type": "threshold",
+      "range": {"scheme": "viridis"},
+      "domain": [50]
+    },
+    {
+      "name": "thresh2",
+      "type": "threshold",
+      "range": {"scheme": "viridis"},
+      "domain": [30, 70]
+    },
+    {
+      "name": "thresh3",
+      "type": "threshold",
+      "range": {"scheme": "viridis"},
+      "domain": [30, 70, 90]
+    },
+    {
+      "name": "bins5",
+      "type": "bin-ordinal",
+      "range": {"scheme": "purpleorange"},
+      "domain": {"signal": "sequence(bins5.start, bins5.stop + bins5.step, bins5.step)"}
+    },
+    {
+      "name": "bins10",
+      "type": "bin-ordinal",
+      "range": {"scheme": "purpleorange"},
+      "domain": {"signal": "sequence(bins10.start, bins10.stop + bins10.step, bins10.step)"}
+    }
+  ],
+
+  "legends": [
+    {"orient": "left",  "type": "gradient", "fill": "qua2", "title": "Quantize 2", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua3", "title": "Quantize 3", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua4", "title": "Quantize 4", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua5", "title": "Quantize 5", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua6", "title": "Quantize 6", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua7", "title": "Quantize 7", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua8", "title": "Quantize 8", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua9", "title": "Quantize 9", "format": ".3f"},
+
+    {"orient": "right", "type": "gradient", "fill": "tile3", "title": "Quantile 3", "format": ".0f"},
+    {"orient": "right", "type": "gradient", "fill": "tile5", "title": "Quantile 5", "format": ".0f"},
+    {"orient": "right", "type": "gradient", "fill": "tile7", "title": "Quantile 7", "format": ".0f"},
+    {"orient": "right", "type": "gradient", "fill": "thresh1", "title": "Threshold 1", "format": ".1f"},
+    {"orient": "right", "type": "gradient", "fill": "thresh2", "title": "Threshold 2", "format": ".1f"},
+    {"orient": "right", "type": "gradient", "fill": "thresh3", "title": "Threshold 3", "format": ".1f"},
+    {"orient": "right", "type": "gradient", "fill": "bins5", "title": "Bin-Ordinal 5", "format": ".1f"},
+    {"orient": "right", "type": "gradient", "fill": "bins10", "title": "Bin-Ordinal 10", "format": ".1f"}
+  ]
+}

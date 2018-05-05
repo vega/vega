@@ -1,0 +1,156 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "padding": 5,
+
+  "config": {
+    "legend": {
+      "offset": 5,
+      "gradientDirection": "horizontal",
+      "gradientLength": 300
+    }
+  },
+
+  "signals": [
+    {"name": "seqScheme", "value": "blues"},
+    {"name": "linearRange", "value": ["purple", "orange"]}
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"u": -10}, {"u": 10}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "seq0",
+      "type": "sequential",
+      "range": {"scheme": {"signal": "seqScheme"}},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "seq1",
+      "type": "sequential",
+      "range": {"scheme": {"signal": "seqScheme"}, "extent": [0, 1]},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "seq2",
+      "type": "sequential",
+      "range": {"scheme": {"signal": "seqScheme"}, "extent": [0.2, 1]},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "seq3",
+      "type": "sequential",
+      "range": {"scheme": {"signal": "seqScheme"}, "extent": [0.2, 1]},
+      "reverse": true,
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "seq4",
+      "type": "sequential",
+      "range": {"scheme": {"signal": "seqScheme"}, "extent": [1, 0.2]},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "seq5",
+      "type": "sequential",
+      "range": "diverging",
+      "domain": {"data": "table", "field": "u"},
+      "domainMid": 0
+    },
+    {
+      "name": "seq6",
+      "type": "sequential",
+      "range": ["purple", "orange", "gold"],
+      "domain": {"data": "table", "field": "u"},
+      "domainMid": 2
+    },
+    {
+      "name": "seq7",
+      "type": "linear",
+      "range": ["purple", "orange", "gold"],
+      "domain": {"data": "table", "field": "u"},
+      "domainMid": 2
+    },
+
+    {
+      "name": "lin0",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin1",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "rgb",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin2",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": {"type": "rgb", "gamma": 2.2},
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin3",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "lab",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin4",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "hcl",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin5",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "hsl",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin6",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "hsl-long",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "lin7",
+      "type": "linear",
+      "range": {"signal": "linearRange"},
+      "interpolate": "hcl-long",
+      "domain": {"data": "table", "field": "u"}
+    }
+  ],
+
+  "legends": [
+    {"orient": "left",  "type": "gradient", "fill": "seq0", "title": "Sequential"},
+    {"orient": "left",  "type": "gradient", "fill": "seq1", "title": "Sequential [0, 1]"},
+    {"orient": "left",  "type": "gradient", "fill": "seq2", "title": "Sequential [0.2, 1]"},
+    {"orient": "left",  "type": "gradient", "fill": "seq3", "title": "Sequential [0.2, 1] Reverse"},
+    {"orient": "left",  "type": "gradient", "fill": "seq4", "title": "Sequential [1, 0.2]"},
+    {"orient": "left",  "type": "gradient", "fill": "seq5", "title": "Sequential Diverging"},
+    {"orient": "left",  "type": "gradient", "fill": "seq6", "title": "Sequential Diverging Uneven"},
+    {"orient": "left",  "type": "gradient", "fill": "seq7", "title": "Linear Diverging Uneven"},
+    {"orient": "right", "type": "gradient", "fill": "lin0", "title": "Linear"},
+    {"orient": "right", "type": "gradient", "fill": "lin1", "title": "Linear RGB"},
+    {"orient": "right", "type": "gradient", "fill": "lin2", "title": "Linear RGB Gamma(2.2)"},
+    {"orient": "right", "type": "gradient", "fill": "lin3", "title": "Linear LAB"},
+    {"orient": "right", "type": "gradient", "fill": "lin4", "title": "Linear HCL"},
+    {"orient": "right", "type": "gradient", "fill": "lin5", "title": "Linear HSL"},
+    {"orient": "right", "type": "gradient", "fill": "lin6", "title": "Linear HSL-Long"},
+    {"orient": "right", "type": "gradient", "fill": "lin7", "title": "Linear HCL-Long"}
+  ]
+}

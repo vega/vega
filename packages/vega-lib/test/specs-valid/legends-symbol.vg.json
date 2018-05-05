@@ -1,0 +1,170 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 0,
+  "height": 0,
+  "padding": 5,
+  "autosize": {"type": "pad", "resize": true},
+
+  "config": {
+    "legend": {
+      "offset": 10,
+      "padding": 5,
+      "strokeColor": "#ccc",
+      "cornerRadius": 4,
+      "symbolOffset": 2,
+      "symbolStrokeWidth": 2,
+      "symbolStrokeColor": "#000",
+      "clipHeight": 12,
+      "rowPadding": 2
+    }
+  },
+
+  "signals": [
+    {
+      "name": "colPadding", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 20, "step": 1}
+    },
+    {
+      "name": "rowPadding", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 20, "step": 1}
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "size",
+      "type": "linear",
+      "range": [400, 2500],
+      "domain": [-100, 100],
+      "nice": false, "zero": false
+    },
+    {
+      "name": "fill",
+      "type": "linear",
+      "range": ["#bef", "#28f"],
+      "domain": [-100, 100],
+      "nice": false, "zero": false
+    }
+  ],
+
+  "legends": [
+    {
+      "title": "Vertical",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "left",
+      "direction": "vertical",
+      "offset": 0,
+      "clipHeight": 0,
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        },
+        "symbols": {
+          "interactive": true,
+          "update": {"size": {"scale": "size", "field": "value"}},
+          "hover": {"size": {"value": 10000}}
+        }
+      }
+    },
+    {
+      "title": "Clipped",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "left",
+      "direction": "vertical",
+      "offset": 0,
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        }
+      }
+    },
+    {
+      "title": "Clipped - Columns",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "right",
+      "direction": "vertical",
+      "columns": 2,
+      "columnPadding": {"signal": "colPadding"},
+      "rowPadding": {"signal": "rowPadding"},
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        },
+        "symbols": {
+          "interactive": true,
+          "update": {"size": {"scale": "size", "field": "value"}},
+          "hover": {"size": {"value": 10000}}
+        },
+        "title": {
+          "interactive": true,
+          "update": {"fontSize": {"value": 11}},
+          "hover": {"fontSize": {"value": 20}}
+        }
+      }
+    },
+    {
+      "title": "Clipped - Columns + Padding",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "right",
+      "direction": "vertical",
+      "columns": 2,
+      "columnPadding": 15,
+      "rowPadding": 2,
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        }
+      }
+    },
+    {
+      "title": "Horizontal",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "right",
+      "direction": "horizontal",
+      "clipHeight": 0,
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        }
+      }
+    },
+    {
+      "title": "Horizontal - Clipped",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "right",
+      "direction": "horizontal",
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        }
+      }
+    },
+    {
+      "title": "Horizontal - Columns",
+      "type": "symbol", "size": "size", "fill": "fill",
+      "orient": "right",
+      "direction": "horizontal",
+      "columns": 3,
+      "rowPadding": 6,
+      "encode": {
+        "entries": {
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}},
+          "hover": {"fill": {"value": "#fcc"}}
+        }
+      }
+    }
+  ]
+}

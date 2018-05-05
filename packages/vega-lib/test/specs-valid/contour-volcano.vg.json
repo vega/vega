@@ -1,0 +1,77 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 960,
+  "height": 673,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "volcano",
+      "update": "data('volcano')[0]"
+    },
+    {
+      "name": "smooth", "value": true,
+      "bind": {"input": "radio", "options": [true, false]}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "volcano",
+      "url": "data/volcano.json"
+    },
+    {
+      "name": "contours",
+      "transform": [
+        {
+          "type": "contour",
+          "values": {"signal": "volcano.values"},
+          "size": [
+            {"signal": "volcano.width"},
+            {"signal": "volcano.height"}
+          ],
+          "smooth": {"signal": "smooth"},
+          "thresholds": {"signal": "sequence(90, 195, 5)"}
+        }
+      ]
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection",
+      "type": "identity",
+      "scale": {"signal": "width / volcano.width"}
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "sequential",
+      "domain": [90, 190],
+      "range": "heatmap"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#777"},
+          "strokeWidth": {"value": 1},
+          "fill": {"scale": "color", "field": "value"}
+        }
+      },
+      "transform": [
+        {
+          "type": "geopath",
+          "field": "datum",
+          "projection": "projection"
+        }
+      ]
+    }
+  ]
+}
