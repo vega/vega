@@ -7,3 +7,15 @@ Include Vega in client-side projects using minimal dependencies.
 The **vega-lib** repository packages up the Vega codebase for use in client-side projects (for example, using [Webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/)) with minimal server-side dependencies. We exclude [node-canvas](https://github.com/Automattic/node-canvas) dependencies to remove compilation steps and associated overhead.
 
 For more about Vega, including support for server-side rendering, see the main [Vega repository](https://github.com/vega/vega) and [Vega website](https://vega.github.io/vega).
+
+## Basic Setup and Testing
+
+For a basic setup allowing you to build Vega and run examples:
+
+- Clone `https://github.com/vega/vega-lib`.
+- Run `yarn` to install dependencies. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install.
+- Once installation is complete, use `npm run test` to run tests and `npm run build` to build output files.
+
+This repository includes web-based demos within the `test` folder. To run these, launch a local web server in the top-level directory for the repo and point your browser to the right place (e.g., `http://localhost:8080/test/`).
+
+Need help launching a local web server? Run `npm install -g http-server` to install a node.js-based web server, then run `http-server -p 8080` to serve files from the current directory on port 8080.
