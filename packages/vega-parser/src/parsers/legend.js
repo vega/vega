@@ -1,109 +1,110 @@
+import {
+  GuideLabelStyle, Skip,
+  Symbols, Gradient, Discrete, LegendScales
+} from './guides/constants';
 import legendGradient from './guides/legend-gradient';
+import legendGradientDiscrete from './guides/legend-gradient-discrete';
 import legendGradientLabels from './guides/legend-gradient-labels';
-import legendLabels from './guides/legend-labels';
-import legendSymbols from './guides/legend-symbols';
+import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
+import {getEncoding, getStyle, gradientLength, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
+import {isContinuous, isDiscretizing} from './scale';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, encoder, extendEncode} from './encode/encode-util';
-import {GuideLabelStyle, GuideTitleStyle, Skip} from './guides/constants';
-import {ref, value} from '../util';
+import {ref, deref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var type = spec.type || 'symbol',
-      config = scope.config.legend,
+  var config = scope.config.legend,
       encode = spec.encode || {},
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
       interactive = legendEncode.interactive,
       style = legendEncode.style,
-      datum, dataRef, entryRef, group, title,
-      entryEncode, params, children;
+      entryEncode, entryLayout, params, children,
+      type, datum, dataRef, entryRef, group;
 
   // resolve 'canonical' scale name
-  var scale = spec.size || spec.shape || spec.fill || spec.stroke
-           || spec.strokeDash || spec.opacity;
+  var scale = LegendScales.reduce(function(a, b) { return a || spec[b]; }, 0);
+  if (!scale) error('Missing valid scale for legend.');
 
-  if (!scale) {
-    error('Missing valid scale for legend.');
-  }
+  // resolve legend type (symbol, gradient, or discrete gradient)
+  type = legendType(spec, scope.scaleType(scale));
 
   // single-element data source for legend group
   datum = {
-    orient: value(spec.orient, config.orient),
-    title:  spec.title != null
+    orient: lookup('orient', spec, config),
+    title:  spec.title != null,
+    type:   type
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
   legendEncode = extendEncode({
-    enter: legendEnter(config),
+    enter: legendEnter(spec, config),
     update: {
-      offset:       encoder(value(spec.offset, config.offset)),
-      padding:      encoder(value(spec.padding, config.padding)),
-      titlePadding: encoder(value(spec.titlePadding, config.titlePadding))
+      offset:       encoder(lookup('offset', spec, config)),
+      padding:      encoder(lookup('padding', spec, config)),
+      titlePadding: encoder(lookup('titlePadding', spec, config))
     }
   }, legendEncode, Skip);
 
   // encoding properties for legend entry sub-group
-  entryEncode = {
-    update: {
-      x: {field: {group: 'padding'}},
-      y: {field: {group: 'padding'}},
-      entryPadding: encoder(value(spec.entryPadding, config.entryPadding))
-    }
-  };
+  entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
 
-  if (type === 'gradient') {
-    // data source for gradient labels
-    entryRef = ref(scope.add(LegendEntries({
-      type:   'gradient',
-      scale:  scope.scaleRef(scale),
-      count:  scope.objectProperty(spec.tickCount),
-      values: scope.objectProperty(spec.values),
-      formatSpecifier: scope.property(spec.format)
-    })));
+  // data source for legend values
+  entryRef = ref(scope.add(LegendEntries(params = {
+    type:   type,
+    scale:  scope.scaleRef(scale),
+    count:  scope.objectProperty(spec.tickCount),
+    values: scope.objectProperty(spec.values),
+    formatSpecifier: scope.property(spec.format)
+  })));
 
+  // continuous gradient legend
+  if (type === Gradient) {
     children = [
       legendGradient(spec, scale, config, encode.gradient),
       legendGradientLabels(spec, config, encode.labels, entryRef)
     ];
+    // adjust default tick count based on the gradient length
+    params.count = params.count || scope.signalRef(
+      'max(2,2*floor(' + deref(gradientLength(spec, config)) + '/100))'
+    );
   }
 
-  else {
-    // data source for legend entries
-    entryRef = ref(scope.add(LegendEntries(params = {
-      scale:  scope.scaleRef(scale),
-      count:  scope.objectProperty(spec.tickCount),
-      values: scope.objectProperty(spec.values),
-      formatSpecifier: scope.property(spec.format)
-    })));
-
+  // discrete gradient legend
+  else if (type === Discrete) {
     children = [
-      legendSymbols(spec, config, encode.symbols, entryRef),
-      legendLabels(spec, config, encode.labels, entryRef)
+      legendGradientDiscrete(spec, scale, config, encode.gradient, entryRef),
+      legendGradientLabels(spec, config, encode.labels, entryRef)
     ];
+  }
 
-    params.size = sizeExpression(spec, scope, children);
+  // symbol legend
+  else {
+    // determine legend symbol group layout
+    entryLayout = legendSymbolLayout(spec, config);
+    children = [
+      legendSymbolGroups(spec, config, encode, entryRef, deref(entryLayout.columns))
+    ];
+    // pass symbol size information to legend entry generator
+    params.size = sizeExpression(spec, scope, children[0].marks);
   }
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, null, null, dataRef, interactive, entryEncode, children)
+    guideGroup(LegendEntryRole, null, null, dataRef, interactive,
+               entryEncode, children, entryLayout)
   ];
 
   // include legend title if defined
   if (datum.title) {
-    title = legendTitle(spec, config, encode.title, dataRef);
-    entryEncode.update.y.offset = {
-      field: {group: 'titlePadding'},
-      offset: get('fontSize', title.encode, scope, GuideTitleStyle)
-    };
-    children.push(title);
+    children.push(legendTitle(spec, config, encode.title, dataRef));
   }
 
   // build legend specification
@@ -114,36 +115,54 @@ export default function(spec, scope) {
   return parseMark(group, scope);
 }
 
+function legendType(spec, scaleType) {
+  var type = spec.type || Symbols;
+
+  if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
+    type = isContinuous(scaleType) ? Gradient
+      : isDiscretizing(scaleType) ? Discrete
+      : Symbols;
+  }
+
+  return type !== Gradient ? type
+    : isDiscretizing(scaleType) ? Discrete
+    : Gradient;
+}
+
+function scaleCount(spec) {
+  return LegendScales.reduce(function(count, type) {
+    return count + (spec[type] ? 1 : 0);
+  }, 0);
+}
+
+function legendEnter(s, c) {
+  var enter = {},
+      count = addEncode(enter, 'fill',         lookup('fillColor', s, c))
+            + addEncode(enter, 'stroke',       lookup('strokeColor', s, c))
+            + addEncode(enter, 'strokeWidth',  lookup('strokeWidth', s, c))
+            + addEncode(enter, 'cornerRadius', lookup('cornerRadius', s, c))
+            + addEncode(enter, 'strokeDash',   c.strokeDash)
+  return count ? enter : undefined;
+}
+
 function sizeExpression(spec, scope, marks) {
-  var fontSize = get('fontSize', marks[1].encode, scope, GuideLabelStyle),
-      symbolSize = spec.size
-        ? 'scale("' + spec.size + '",datum)'
-        : deref(get('size', marks[0].encode, scope)),
-      expr = 'max(ceil(sqrt(' + symbolSize + ')),' + deref(fontSize) + ')';
+  var fontSize, size, strokeWidth, expr;
+
+  strokeWidth = getEncoding('strokeWidth', marks[0].encode);
+
+  size = spec.size ? 'scale("' + spec.size + '",datum)'
+    : getEncoding('size', marks[0].encode, scope);
+
+  fontSize = getFontSize(marks[1].encode, scope, GuideLabelStyle);
+
+  expr = 'max('
+    + 'ceil(sqrt(' + deref(size) + ')+' + deref(strokeWidth) + '),'
+    + deref(fontSize)
+    + ')';
 
   return parseExpression(expr, scope);
 }
 
-function legendEnter(config) {
-  var enter = {},
-      count = addEncode(enter, 'fill', config.fillColor)
-            + addEncode(enter, 'stroke', config.strokeColor)
-            + addEncode(enter, 'strokeWidth', config.strokeWidth)
-            + addEncode(enter, 'strokeDash', config.strokeDash)
-            + addEncode(enter, 'cornerRadius', config.cornerRadius);
-  return count ? enter : undefined;
-}
-
-function deref(v) {
-  return v && v.signal || v;
-}
-
-function get(name, encode, scope, style) {
-  var v = encode && (
-    (encode.update && encode.update[name]) ||
-    (encode.enter && encode.enter[name])
-  );
-  return v && v.signal ? v
-    : v ? +v.value
-    : ((v = scope.config.style[style]) && +v[name]);
+function getFontSize(encode, scope, style) {
+  return getEncoding('fontSize', encode) || getStyle('fontSize', scope, style);
 }

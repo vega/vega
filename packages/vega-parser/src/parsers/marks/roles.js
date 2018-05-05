@@ -10,6 +10,7 @@ export var AxisTickRole = 'axis-tick';
 export var AxisTitleRole = 'axis-title';
 
 export var LegendRole = 'legend';
+export var LegendBandRole = 'legend-band';
 export var LegendEntryRole = 'legend-entry';
 export var LegendGradientRole = 'legend-gradient';
 export var LegendLabelRole = 'legend-label';
