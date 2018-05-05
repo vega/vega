@@ -1,25 +1,14 @@
+import {
+  Group, AxisRole, LegendRole, TitleRole, FrameRole, ScopeRole,
+  RowHeader, RowFooter, RowTitle, ColHeader, ColFooter, ColTitle,
+  Top, Bottom, Left, Right, Start, End,
+  TopLeft, TopRight, BottomLeft, BottomRight,
+  Fit, FitX, FitY, Pad, None, Padding, Symbols
+} from './constants';
 import {gridLayout} from './gridLayout';
-import {Top, Bottom, Left, Right} from './orient';
 import {Transform} from 'vega-dataflow';
 import {Bounds, boundStroke} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
-
-var Fit = 'fit',
-    FitX = 'fit-x',
-    FitY = 'fit-y',
-    Pad = 'pad',
-    None = 'none',
-    Padding = 'padding';
-
-var AxisRole = 'axis',
-    TitleRole = 'title',
-    FrameRole = 'frame',
-    LegendRole = 'legend',
-    ScopeRole = 'scope',
-    RowHeader = 'row-header',
-    RowFooter = 'row-footer',
-    ColHeader = 'column-header',
-    ColFooter = 'column-footer';
 
 var AxisOffset = 0.5,
     tempBounds = new Bounds();
@@ -44,6 +33,7 @@ prototype.transform = function(_, pulse) {
     if (_.layout) gridLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });
+  if (_.modified()) pulse.reflow();
   return pulse;
 };
 
@@ -52,7 +42,6 @@ function layoutGroup(view, group, _) {
       width = Math.max(0, group.width || 0),
       height = Math.max(0, group.height || 0),
       viewBounds = new Bounds().set(0, 0, width, height),
-      axisBounds = viewBounds.clone(),
       xBounds = viewBounds.clone(),
       yBounds = viewBounds.clone(),
       legends = [], title,
@@ -63,8 +52,8 @@ function layoutGroup(view, group, _) {
     mark = items[i];
     switch (mark.role) {
       case AxisRole:
-        axisBounds.union(b = layoutAxis(view, mark, width, height));
-        (isYAxis(mark) ? xBounds : yBounds).union(b);
+        b = isYAxis(mark) ? xBounds : yBounds;
+        b.union(axisLayout(view, mark, width, height));
         break;
       case TitleRole:
         title = mark; break;
@@ -74,8 +63,10 @@ function layoutGroup(view, group, _) {
       case ScopeRole:
       case RowHeader:
       case RowFooter:
+      case RowTitle:
       case ColHeader:
       case ColFooter:
+      case ColTitle:
         xBounds.union(mark.bounds);
         yBounds.union(mark.bounds);
         break;
@@ -84,21 +75,19 @@ function layoutGroup(view, group, _) {
     }
   }
 
-  // layout title, adjust bounds
-  if (title) {
-    axisBounds.union(b = layoutTitle(view, title, axisBounds));
-    (isYAxis(title) ? xBounds : yBounds).union(b);
-  }
-
   // layout legends, adjust viewBounds
   if (legends.length) {
-    flow = {left: 0, right: 0, top: 0, bottom: 0, margin: _.legendMargin || 8};
+    flow = {
+      leftWidth: legendPreprocess(view, legends),
+      margin: _.legendMargin || 8,
+      left: 0, right: 0, top: 0, bottom: 0
+    };
 
     for (i=0, n=legends.length; i<n; ++i) {
-      b = layoutLegend(view, legends[i], flow, xBounds, yBounds, width, height);
+      b = legendLayout(view, legends[i], flow, xBounds, yBounds, width, height);
       if (_.autosize && _.autosize.type === Fit) {
-        // for autosize fit, incorporate the orthogonal dimension only
-        // legends that overrun the chart area will then be clipped
+        // For autosize fit, incorporate the orthogonal dimension only.
+        // Legends that overrun the chart area will then be clipped;
         // otherwise the chart area gets reduced to nothing!
         var orient = legends[i].items[0].datum.orient;
         if (orient === Left || orient === Right) {
@@ -112,9 +101,16 @@ function layoutGroup(view, group, _) {
     }
   }
 
+  // combine bounding boxes
+  viewBounds.union(xBounds).union(yBounds);
+
+  // layout title, adjust bounds
+  if (title) {
+    viewBounds.union(titleLayout(view, title, width, height, viewBounds));
+  }
+
   // perform size adjustment
-  viewBounds.union(xBounds).union(yBounds).union(axisBounds);
-  layoutSize(view, group, viewBounds, _);
+  viewSizeLayout(view, group, viewBounds, _);
 }
 
 function set(item, property, value) {
@@ -140,7 +136,7 @@ function axisIndices(datum) {
   ];
 }
 
-function layoutAxis(view, axis, width, height) {
+function axisLayout(view, axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       orient = datum.orient,
@@ -166,28 +162,28 @@ function layoutAxis(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, -1, bounds);
+      if (title) s = axisTitleLayout(title, s, titlePadding, 0, -1, bounds);
       bounds.add(0, -s).add(range, 0);
       break;
     case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, -1, bounds);
+      if (title) s = axisTitleLayout(title, s, titlePadding, 1, -1, bounds);
       bounds.add(-s, 0).add(0, range);
       break;
     case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) s = layoutAxisTitle(title, s, titlePadding, 1, 1, bounds);
+      if (title) s = axisTitleLayout(title, s, titlePadding, 1, 1, bounds);
       bounds.add(0, 0).add(s, range);
       break;
     case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) s = layoutAxisTitle(title, s, titlePadding, 0, 1, bounds);
+      if (title) s = axisTitleLayout(title, s, titlePadding, 0, 1, bounds);
       bounds.add(0, 0).add(range, s);
       break;
     default:
@@ -208,7 +204,7 @@ function layoutAxis(view, axis, width, height) {
   return item.mark.bounds.clear().union(bounds);
 }
 
-function layoutAxisTitle(title, offset, pad, isYAxis, sign, bounds) {
+function axisTitleLayout(title, offset, pad, isYAxis, sign, bounds) {
   var b = title.bounds, dx = 0, dy = 0;
 
   if (title.auto) {
@@ -235,33 +231,49 @@ function layoutAxisTitle(title, offset, pad, isYAxis, sign, bounds) {
   return offset;
 }
 
-function layoutTitle(view, title, axisBounds) {
+function titleLayout(view, title, width, height, viewBounds) {
   var item = title.items[0],
-      datum = item.datum,
-      orient = datum.orient,
+      orient = item.orient,
+      frame = item.frame,
+      anchor = item.anchor,
       offset = item.offset,
       bounds = item.bounds,
-      x = 0, y = 0;
+      vertical = (orient === Left || orient === Right),
+      start = 0,
+      end = vertical ? height : width,
+      x = 0, y = 0, pos;
+
+  if (frame !== Group) {
+    orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
+      : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
+      : (start = viewBounds.x1, end = viewBounds.x2);
+  } else if (orient === Left) {
+    start = height, end = 0;
+  }
+
+  pos = (anchor === Start) ? start
+    : (anchor === End) ? end
+    : (start + end) / 2;
 
   tempBounds.clear().union(bounds);
 
-  // position axis group and title
+  // position title text
   switch (orient) {
     case Top:
-      x = item.x;
-      y = axisBounds.y1 - offset;
+      x = pos;
+      y = viewBounds.y1 - offset;
       break;
     case Left:
-      x = axisBounds.x1 - offset;
-      y = item.y;
+      x = viewBounds.x1 - offset;
+      y = pos;
       break;
     case Right:
-      x = axisBounds.x2 + offset;
-      y = item.y;
+      x = viewBounds.x2 + offset;
+      y = pos;
       break;
     case Bottom:
-      x = item.x;
-      y = axisBounds.y2 + offset;
+      x = pos;
+      y = viewBounds.y2 + offset;
       break;
     default:
       x = item.x;
@@ -280,7 +292,42 @@ function layoutTitle(view, title, axisBounds) {
   return title.bounds.clear().union(bounds);
 }
 
-function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
+function legendPreprocess(view, legends) {
+  return legends.reduce(function(w, legend) {
+    var item = legend.items[0];
+
+    // adjust entry to accommodate padding and title
+    legendGroupLayout(view, item, item.items[0].items[0]);
+
+    if (item.datum.orient === Left) {
+      var b = tempBounds.clear();
+      item.items.forEach(function(_) { b.union(_.bounds); });
+      w = Math.max(w, Math.round(b.width()) + 2 * item.padding - 1);
+    }
+
+    return w;
+  }, 0);
+}
+
+function legendGroupLayout(view, item, entry) {
+  var x = item.padding - entry.x,
+      y = item.padding - entry.y;
+
+  if (item.datum.title) {
+    var title = item.items[1].items[0];
+    y += item.titlePadding + title.fontSize;
+  }
+
+  if (x || y) {
+    entry.x += x;
+    entry.y += y;
+    entry.bounds.translate(x, y);
+    entry.mark.bounds.translate(x, y);
+    view.dirty(entry);
+  }
+}
+
+function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {
   var item = legend.items[0],
       datum = item.datum,
       orient = datum.orient,
@@ -307,9 +354,13 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
   w = Math.round(bounds.width()) + 2 * item.padding - 1;
   h = Math.round(bounds.height()) + 2 * item.padding - 1;
 
+  if (datum.type === Symbols) {
+    legendEntryLayout(item.items[0].items[0].items[0].items);
+  }
+
   switch (orient) {
     case Left:
-      x -= w + offset - Math.floor(axisBounds.x1);
+      x -= flow.leftWidth + offset - Math.floor(axisBounds.x1);
       flow.left += h + flow.margin;
       break;
     case Right:
@@ -324,19 +375,19 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
       y += offset + Math.ceil(axisBounds.y2);
       flow.bottom += w + flow.margin;
       break;
-    case 'top-left':
+    case TopLeft:
       x += offset;
       y += offset;
       break;
-    case 'top-right':
+    case TopRight:
       x += width - w - offset;
       y += offset;
       break;
-    case 'bottom-left':
+    case BottomLeft:
       x += offset;
       y += height - h - offset;
       break;
-    case 'bottom-right':
+    case BottomRight:
       x += width - w - offset;
       y += height - h - offset;
       break;
@@ -360,7 +411,21 @@ function layoutLegend(view, legend, flow, xBounds, yBounds, width, height) {
   return item.mark.bounds.clear().union(bounds);
 }
 
-function layoutSize(view, group, viewBounds, _) {
+function legendEntryLayout(entries) {
+  // get max widths for each column
+  var widths = entries.reduce(function(w, g) {
+    w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
+    return w;
+  }, {});
+
+  // set dimensions of legend entry groups
+  entries.forEach(function(g) {
+    g.width  = widths[g.column];
+    g.height = g.bounds.y2 - g.y;
+  });
+}
+
+function viewSizeLayout(view, group, viewBounds, _) {
   var auto = _.autosize || {},
       type = auto.type,
       viewWidth = view._width,

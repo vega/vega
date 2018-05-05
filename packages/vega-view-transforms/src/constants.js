@@ -3,6 +3,11 @@ export var Left = 'left';
 export var Right = 'right';
 export var Bottom = 'bottom';
 
+export var TopLeft = 'top-left';
+export var TopRight = 'top-right';
+export var BottomLeft = 'bottom-left';
+export var BottomRight = 'bottom-right';
+
 export var Start = 'start';
 export var Middle = 'middle';
 export var End = 'end';
@@ -23,6 +28,8 @@ export var ColFooter = 'column-footer';
 export var ColTitle  = 'column-title';
 
 export var Padding = 'padding';
+
+export var Symbols = 'symbol';
 
 export var Fit  = 'fit';
 export var FitX = 'fit-x';
