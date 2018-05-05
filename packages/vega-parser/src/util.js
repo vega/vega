@@ -77,3 +77,7 @@ export function isSignal(_) {
 export function value(specValue, defaultValue) {
   return specValue != null ? specValue : defaultValue;
 }
+
+export function deref(v) {
+  return v && v.signal || v;
+}
