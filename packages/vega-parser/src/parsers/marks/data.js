@@ -17,7 +17,7 @@ export default function(from, group, scope) {
 
     // use pre-faceted source data, if available
     if (facet.field != null) {
-      dataRef = parent = ref(scope.getData(facet.data).output);
+      dataRef = parent = getDataRef(facet, scope);
     } else {
       // generate facet aggregates if no direct data specification
       if (!from.data) {
@@ -26,7 +26,7 @@ export default function(from, group, scope) {
           groupby: array(facet.groupby)
         }, facet.aggregate), scope);
         op.params.key = scope.keyRef(facet.groupby);
-        op.params.pulse = ref(scope.getData(facet.data).output);
+        op.params.pulse = getDataRef(facet, scope);
         dataRef = parent = ref(scope.add(op));
       } else {
         parent = ref(scope.getData(from.data).aggregate);
@@ -38,8 +38,7 @@ export default function(from, group, scope) {
 
   // if not yet defined, get source data reference
   if (!dataRef) {
-    dataRef = from.$ref ? from
-      : ref(scope.getData(from.data).output);
+    dataRef = getDataRef(from, scope);
   }
 
   return {
@@ -47,4 +46,10 @@ export default function(from, group, scope) {
     pulse: dataRef,
     parent: parent
   };
+}
+
+export function getDataRef(from, scope) {
+  return from.$ref ? from
+    : from.data && from.data.$ref ? from.data
+    : ref(scope.getData(from.data).output);
 }
