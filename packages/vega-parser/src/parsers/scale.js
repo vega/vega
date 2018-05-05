@@ -8,16 +8,26 @@ var types = [
   'identity',
   'ordinal', 'band', 'point',
   'bin-linear', 'bin-ordinal',
+  'quantize', 'quantile', 'threshold',
   'linear', 'pow', 'sqrt', 'log', 'sequential',
-  'time', 'utc',
-  'quantize', 'quantile', 'threshold'
+  'time', 'utc'
 ];
 
 var allTypes = toSet(types),
+    discreteTypes = toSet(types.slice(4, 9)),
+    continuousTypes = toSet(types.slice(9)),
     ordinalTypes = toSet(types.slice(1, 6));
 
 export function isOrdinal(type) {
   return ordinalTypes.hasOwnProperty(type);
+}
+
+export function isDiscretizing(type) {
+  return discreteTypes.hasOwnProperty(type);
+}
+
+export function isContinuous(type) {
+  return continuousTypes.hasOwnProperty(type);
 }
 
 export function isQuantile(type) {
