@@ -308,6 +308,7 @@ Properties defining default settings for titles. These properties are defined un
 | font                  | {% include type t="String" %}   | Font name for title text. |
 | fontSize              | {% include type t="Number" %}   | Font size in pixels for title text. |
 | fontWeight            | {% include type t="String" %}   | Font weight for title text. |
+| frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
 | limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
 | orient                | {% include type t="String" %}   | Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`). |
