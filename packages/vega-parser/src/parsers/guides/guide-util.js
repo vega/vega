@@ -26,7 +26,7 @@ export function gradientThickness(spec, config) {
 export function entryColumns(spec, config) {
   return value(
     spec.columns,
-    value(config.columns, +isVertical(spec, config.entryDirection))
+    value(config.columns, +isVertical(spec, config.symbolDirection))
   );
 }
 
