@@ -35,8 +35,7 @@ export default {
             "zindex": {"type": "number"},
             "interactive": {"type": "boolean"},
 
-
-            "fill": colorValue,
+            "color": colorValue,
             "font": stringValue,
             "fontSize": numberValue,
             "fontWeight": fontWeightValue,
