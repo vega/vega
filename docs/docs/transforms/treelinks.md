@@ -8,9 +8,7 @@ The **treelinks** transform generates a new stream of data objects representing 
 
 ## Transform Parameters
 
-| Property            | Type                           | Description   |
-| :------------------ | :----------------------------: | :------------ |
-| key                 | {% include type t="Field" %}   | A data field containing a unique key (identifier) for each node. This should be the same field used by any upstream [stratify](../stratify) transform. If unspecified, Vega's internal data object ids will be used.|
+_None._
 
 ## Usage
 
@@ -35,8 +33,7 @@ This example generates a tree data structure using a `stratify` transform, then 
       "source": "tree",
       "transform": [
         {
-          "type": "treelinks",
-          "key": "id"
+          "type": "treelinks"
         }
       ]
     }
@@ -72,4 +69,3 @@ This example generates a tree data structure using a `nest` transform, using `"g
   ]
 }
 ```
-
