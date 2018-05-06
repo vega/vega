@@ -71,7 +71,7 @@ Load a delimited text file with a custom delimiter.
 
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| delimiter     | {% include type t="String" %} | {% include required %} The delimiter string between records.|
+| delimiter     | {% include type t="String" %} | {% include required %} The delimiter between records. The delimiter must be a single character (i.e., a single 16-bit code unit); so, ASCII delimiters are fine, but emoji delimiters are not.|
 
 ### <a name="topojson"></a>topojson
 
