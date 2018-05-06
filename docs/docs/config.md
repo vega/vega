@@ -192,8 +192,9 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFlushOffset| {% include type t="Number" %} | Offset in pixels for flush-adjusted labels (default `0`). |
 | labelFont       | {% include type t="String" %}   | Font name for axis tick labels. |
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
-| labelFontWeight | {% include type t="String" %}   | Font weight of axis tick labels. |
+| labelFontWeight | {% include type t="String|Number" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
+| labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelPadding    | {% include type t="Number" %}   | Padding in pixels between axis ticks and tick labels. |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
@@ -210,7 +211,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
-| titleFontWeight | {% include type t="String" %}   | Font weight of axis titles. |
+| titleFontWeight | {% include type t="String|Number" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
@@ -255,7 +256,7 @@ Properties defining default settings for legends. These properties are defined u
 | labelColor            | {% include type t="Color" %}    | Text color for legend labels. |
 | labelFont             | {% include type t="String" %}   | Font name for legend labels. |
 | labelFontSize         | {% include type t="Number" %}   | Font size in pixels for legend labels. |
-| labelFontWeight       | {% include type t="String" %}   | Font weight of legend labels. |
+| labelFontWeight       | {% include type t="String|Number" %}   | Font weight of legend labels. |
 | labelLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. |
@@ -266,7 +267,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleColor            | {% include type t="Color" %}    | Text color for legend titles. |
 | titleFont             | {% include type t="String" %}   | Font name for legend titles. |
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels for legend titles. |
-| titleFontWeight       | {% include type t="String" %}   | Font weight for legend titles. |
+| titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 | strokeColor           | {% include type t="Color" %}    | Border stroke color for the full legend. |
@@ -307,7 +308,7 @@ Properties defining default settings for titles. These properties are defined un
 | color                 | {% include type t="Color" %}    | Text color for title text. |
 | font                  | {% include type t="String" %}   | Font name for title text. |
 | fontSize              | {% include type t="Number" %}   | Font size in pixels for title text. |
-| fontWeight            | {% include type t="String" %}   | Font weight for title text. |
+| fontWeight            | {% include type t="String|Number" %}   | Font weight for title text. |
 | frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
 | limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
