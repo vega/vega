@@ -72,7 +72,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
     : {field: {group: 'width'}};
 
   encode.enter = enter = {opacity: zero};
-  addEncode(enter, 'fill',       lookup('fill', spec, config));
+  addEncode(enter, 'fill',       lookup('color', spec, config));
   addEncode(enter, 'font',       lookup('font', spec, config));
   addEncode(enter, 'fontSize',   lookup('fontSize', spec, config));
   addEncode(enter, 'fontWeight', lookup('fontWeight', spec, config));
