@@ -113,7 +113,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
   };
 
   // annotate and sort groups to ensure correct ordering
-  if (isVertical(spec, config.entryDirection)) {
+  if (isVertical(spec, config.symbolDirection)) {
     nrows = 'ceil(item.mark.items.length/' + ncols + ')';
     update.row.signal = index + '%' + nrows;
     update.column.signal = 'floor(' + index + '/' + nrows + ')';
