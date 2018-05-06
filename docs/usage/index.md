@@ -120,19 +120,20 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 
 ### <a name="ie"></a>Supporting Internet Explorer
 
-Vega is compatible with Internet Explorer versions 10 and 11, with one notable caveat: Internet Explorer does not natively support ES6 [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) or [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Vega uses Symbols to add unique identifiers to data objects, and uses Promises for asynchronous tasks such as data and image loading. For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol and Promise support.
+Vega is compatible with Internet Explorer versions 10 and 11, but with caveats. Internet Explorer does not natively support [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol),[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), or the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). Vega uses Symbols to add unique identifiers to data objects, uses Promises for asynchronous tasks such as data and image loading, and uses Fetch to load external files. For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol, Promise, and Fetch support.
 
-For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) library. Web pages should first import any polyfill scripts, then import Vega:
+For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) and the [github/fetch](https://github.com/github/fetch) libraries. Web pages should first import any polyfill scripts, then import Vega:
 
 ```html
 <head>
   <script src="https://vega.github.io/vega/assets/promise.min.js"></script>
   <script src="https://vega.github.io/vega/assets/symbol.min.js"></script>
+  <script src="https://vega.github.io/vega/assets/fetch.min.js"></script>
   <script src="https://vega.github.io/vega/vega.min.js"></script>
 </head>
 ```
 
-Note that a polyfill is necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Symbol and Promise support.
+Note that a polyfill is necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Symbol, Promise, and Fetch support.
 
 [Back to reference](#reference)
 
@@ -193,7 +194,7 @@ bin/vg2png -s 2 spec/bar.vg.json bar.png
 
 To include Vega in a node project, first install it from the command line using npm (`npm install vega`) or by including `"vega"` among the installed dependencies in your package.json file. In your node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
 
-<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas project](https://github.com/Automattic/node-canvas) &ndash; an optional dependency of Vega &ndash; must be installed. However, be aware that some system configurations may initially run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/wiki/_pages) if installation fails. That said, in most cases Vega can be used without node-canvas to generate static SVG files.
+<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas project](https://github.com/Automattic/node-canvas) &ndash; an optional dependency of Vega &ndash; must be installed. However, be aware that some system configurations may initially run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/wiki/_pages) if installation fails.
 
 ### Example
 
