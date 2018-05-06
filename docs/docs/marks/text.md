@@ -23,7 +23,7 @@ permalink: /docs/marks/text/index.html
 | ellipsis            | {% include type t="String" %}  | The ellipsis string for text truncated in response to the _limit_ parameter (default "&hellip;").|
 | font                | {% include type t="String" %}  | The typeface to set the text in (e.g., `Helvetica Neue`).|
 | fontSize            | {% include type t="Number" %}  | The font size in pixels.|
-| fontWeight          | {% include type t="String" %}  | The font weight (e.g., `normal` or `bold`).|
+| fontWeight          | {% include type t="String|Number" %}  | The font weight (e.g., `normal` or `bold`).|
 | fontStyle           | {% include type t="String" %}  | The font style (e.g., `normal` or `italic`).|
 | limit               | {% include type t="Number" %}  | The maximum length of the text mark in pixels (default `0`, indicating no limit). The _text_ value will be automatically truncated if the rendered size exceeds the limit.|
 | radius              | {% include type t="Number" %}  | Polar coordinate radial offset in pixels, relative to the origin determined by the _x_ and _y_ properties (default `0`).|
