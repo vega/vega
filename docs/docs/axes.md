@@ -36,7 +36,7 @@ Properties for specifying a coordinate axis.
 | labelFontSize | {% include type t="Number" %}  | Font size of axis tick labels. |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of axis tick labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of axis tick labels. |
-| labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
+| labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelPadding  | {% include type t="Number" %}  | The padding in pixels between labels and ticks.|
 | minExtent     | {% include type t="Number|Value" %} | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.|
 | maxExtent     | {% include type t="Number|Value" %} | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles.|
