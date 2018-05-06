@@ -1,9 +1,0 @@
-#!/usr/bin/env node
-
-var vega = require('../'),
-    schema = require('../node_modules/vega-parser/build/vega-schema'),
-    defs = Object.keys(vega.transforms)
-            .map(vega.definition)
-            .filter(function(d) { return d; });
-
-process.stdout.write(JSON.stringify(schema(defs), 0, 2));
