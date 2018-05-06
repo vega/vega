@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import * as vega from 'vega'
 
 import { histogram } from '../spec/examples'
@@ -7,7 +5,7 @@ import { histogram } from '../spec/examples'
 // Runtime examples from https://vega.github.io/vega/usage/
 
 function clientSideApi() {
-  var view;
+  let view;
 
   // fr-FR locale example from d3-format
   vega.formatLocale({
@@ -32,7 +30,7 @@ function clientSideApi() {
   vega
     .loader()
     .load('https://vega.github.io/vega/examples/bar-chart.vg.json')
-    .then(function (data) {
+    .then((data) => {
       render(JSON.parse(data));
     });
 
@@ -47,27 +45,27 @@ function clientSideApi() {
 
 function serverSideApi() {
   // create a new view instance for a given Vega JSON spec
-  var view = new vega.View(vega.parse(histogram)).renderer('none').initialize();
+  const view = new vega.View(vega.parse(histogram)).renderer('none').initialize();
 
   // generate a static SVG image
   view
     .toSVG()
-    .then(function (svg) {
+    .then((svg) => {
       // process svg string
     })
-    .catch(function (err) {
+    .catch((err) => {
       console.error(err);
     });
 
   // generate a static PNG image
   view
     .toCanvas()
-    .then(function (canvas) {
+    .then((canvas) => {
       // process node-canvas instance
       // for example, generate a PNG stream to write
-      var stream = canvas.createPNGStream();
+      const stream = canvas.createPNGStream();
     })
-    .catch(function (err) {
+    .catch((err) => {
       console.error(err);
     });
 }
