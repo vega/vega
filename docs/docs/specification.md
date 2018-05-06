@@ -11,7 +11,7 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 {: .suppress-error}
 ```json
 {
-  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "description": "A specification outline example.",
   "width": 500,
   "height": 200,
