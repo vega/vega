@@ -13,7 +13,8 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 
 | Property      | Type                           | Description    |
 | :------------ |:------------------------------:| :------------- |
-| type          | {% include type t="String" %}  | The type of legend to include. One of `symbol` (the default) for discrete symbol legends, or `gradient` for a continuous color gradient. If `gradient` is used only the _fill_ or _stroke_ scale parameters are considered.|
+| type          | {% include type t="String" %}  | The type of legend to include. One of `symbol` for discrete symbol legends, or `gradient` for a continuous color gradient. If `gradient` is used only the _fill_ or _stroke_ scale parameters are considered. If unspecified, the _type_ will be inferred based on the scale parameters used and their backing scale types.|
+| direction     | {% include type t="String" %}  | The direction of the legend, one of `"vertical"` (default) or `"horizontal"`.|
 | orient        | {% include type t="String" %}  | The orientation of the legend, determining where the legend is placed relative to a chart's data rectangle (default `right`). See the [legend orientation reference](#orientation).|
 | fill          | {% include type t="String" %}  | The name of a scale that maps to a fill color.|
 | opacity       | {% include type t="String" %}  | The name of a scale that maps to an opacity value.|
@@ -21,14 +22,48 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | size          | {% include type t="String" %}  | The name of a scale that maps to a size (area) value.|
 | stroke        | {% include type t="String" %}  | The name of a scale that maps to a stroke color.|
 | strokeDash    | {% include type t="String" %}  | The name of a scale that maps to a stroke dash value.|
-| encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
-| entryPadding  | {% include type t="Number|Value" %} | The padding between entries in a symbol legend.|
+| encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `entries`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
 | format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
+| gridAlign     | {% include type t="String" %}  | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
+| clipHeight    | {% include type t="Number" %}  | The height in pixels to clip symbol legend entries and limit their size. By default no clipping is performed. |
+| columns       | {% include type t="Number" %}  | The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry. The default is `0` for horizontal symbol legends and `1` for vertical symbol legends. |
+| columnPadding | {% include type t="Number" %}  | The horizontal padding in pixels between symbol legend entries. |
+| rowPadding    | {% include type t="Number" %}  | The vertical padding in pixels between symbol legend entries. |
+| cornerRadius  | {% include type t="Number" %}  | Corner radius for the full legend. |
+| fillColor     | {% include type t="Color" %}   | Background fill color for the full legend. |
 | offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes.|
 | padding       | {% include type t="Number|Value" %} | The padding between the border and content of the legend group.|
+| strokeColor   | {% include type t="Color" %}   | Border stroke color for the full legend. |
+| strokeWidth   | {% include type t="Number" %}  | Border stroke width for the full legend. |
+| gradientLength      | {% include type t="Number" %} | The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient. |
+| gradientThickness   | {% include type t="Number" %} | The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient. |
+| gradientStrokeColor | {% include type t="Color" %}  | Stroke color of the color gradient border. |
+| gradientStrokeWidth | {% include type t="Number" %} | Stroke width of the color gradient border. |
+| labelAlign    | {% include type t="String" %}  | Horizontal text alignment for legend labels. |
+| labelBaseline | {% include type t="String" %}  | Vertical text baseline for legend labels. |
+| labelColor    | {% include type t="Color" %}   | Text color for legend labels. |
+| labelFont     | {% include type t="String" %}  | Font name for legend labels. |
+| labelFontSize | {% include type t="Number" %}  | Font size in pixels for legend labels. |
+| labelFontWeight | {% include type t="String|Number" %} | Font weight of legend labels. |
+| labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of legend labels. |
+| labelOffset   | {% include type t="Number" %}  | Offset in pixels between legend labels their corresponding symbol or gradient. |
+| labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
+| symbolFillColor | {% include type t="Color" %}  | Fill color for legend symbols. |
+| symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
+| symbolSize    | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
+| symbolStrokeColor | {% include type t="Color" %}  | Stroke color for legend symbols. |
+| symbolStrokeWidth | {% include type t="Number" %} | Default legend symbol stroke width. |
+| symbolType    | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
 | tickCount     | {% include type t="Number|String|Object" %}  | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
-| titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
+| titleAlign    | {% include type t="String" %}  | Horizontal text alignment for legend titles. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline for legend titles. |
+| titleColor    | {% include type t="Color" %}   | Text color for legend titles. |
+| titleFont     | {% include type t="String" %}  | Font name for legend titles. |
+| titleFontSize | {% include type t="Number" %}  | Font size in pixels for legend titles. |
+| titleFontWeight | {% include type t="String|Number" %} | Font weight for legend titles. |
+| titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of legend titles. |
+| titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups. The default value is `0`.|
 
@@ -63,8 +98,9 @@ Custom mark properties can be set for all legend elements using the _encode_ par
 - `legend` for the legend [group](../marks/group) mark,
 - `title` for the title [text](../marks/text) mark,
 - `labels` for label [text](../marks/text) marks,
-- `symbols` for legend [symbol](../marks/symbol) marks, and
-- `gradient` for a gradient-filled [rect](../marks/rect) mark.
+- `symbols` for legend [symbol](../marks/symbol) marks,
+- `entries` for symbol legend [group](../marks/group) marks containing a symbol / label pair, and
+- `gradient` for a gradient [rect](../marks/rect) marks: one rect with gradient fill for continuous gradient legends, multiple rect marks with solid fill for discrete gradient legends.
 
 Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../types/#Value).
 

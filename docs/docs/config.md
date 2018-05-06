@@ -241,16 +241,21 @@ Properties defining default settings for legends. These properties are defined u
 
 | Property              | Type                            | Description    |
 | :-------------------- | :-----------------------------: | :------------- |
+| clipHeight            | {% include type t="Number" %}   | The height in pixels to clip symbol legend entries and limit their size. |
+| columns               | {% include type t="Number" %}   | The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry. |
+| columnPadding         | {% include type t="Number" %}   | The horizontal padding in pixels between symbol legend entries. |
 | cornerRadius          | {% include type t="Number" %}   | Corner radius for the full legend. |
-| entryPadding          | {% include type t="Number" %}   | Padding in pixels between legend entries in a symbol legend. |
 | fillColor             | {% include type t="Color" %}    | Background fill color for the full legend. |
-| gradientWidth         | {% include type t="Number" %}   | Width in pixels of color ramp gradients. |
-| gradientHeight        | {% include type t="Number" %}   | Height in pixels of color ramp gradients. |
+| gradientDirection     | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for gradient legends. |
+| gradientLength        | {% include type t="Number" %}   | The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient. |
+| gradientThickness     | {% include type t="Number" %}   | The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient. |
+| gradientWidth         | {% include type t="Number" %}   | Deprecated, use _gradientLength_ instead. If _gradientLength_ is not defined, this value will be used instead. |
+| gradientHeight        | {% include type t="Number" %}   | Deprecated, use _gradientThickness_ instead. If _gradientThickness_ is not defined, this value will be used instead. |
 | gradientStrokeColor   | {% include type t="Color" %}    | Stroke color for color ramp gradient borders. |
 | gradientStrokeWidth   | {% include type t="Number" %}   | Stroke width for color ramp gradient borders. |
-| gradientLabelBaseline | {% include type t="String" %}   | Text baseline for color ramp gradient labels. |
 | gradientLabelLimit    | {% include type t="Number" %}   | The maximum allowed length in pixels of color ramp gradient labels. |
 | gradientLabelOffset   | {% include type t="Number" %}   | Vertical offset in pixels for color ramp gradient labels. |
+| gridAlign             | {% include type t="String" %}   | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
 | labelAlign            | {% include type t="String" %}   | Horizontal text alignment for legend labels. |
 | labelBaseline         | {% include type t="String" %}   | Vertical text baseline for legend labels. |
 | labelColor            | {% include type t="Color" %}    | Text color for legend labels. |
@@ -259,9 +264,23 @@ Properties defining default settings for legends. These properties are defined u
 | labelFontWeight       | {% include type t="String|Number" %}   | Font weight of legend labels. |
 | labelLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
+| labelOverlap          | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
 | offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. |
 | orient                | {% include type t="String" %}   | Default legend orientation (e.g., `"right"` or `"left"`). |
 | padding               | {% include type t="Number" %}   | Padding in pixels between legend border and contents. |
+| rowPadding            | {% include type t="Number" %}   | The vertical padding in pixels between symbol legend entries. |
+| strokeColor           | {% include type t="Color" %}    | Border stroke color for the full legend. |
+| strokeDash            | {% include type t="Number[]" %} | Border stroke dash pattern for the full legend. |
+| strokeWidth           | {% include type t="Number" %}   | Border stroke width for the full legend. |
+| symbolBaseFillColor   | {% include type t="Color" %}    | Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
+| symbolBaseStrokeColor | {% include type t="Color" %}    | Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
+| symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
+| symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
+| symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
+| symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
+| symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
+| symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
+| symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
 | titleAlign            | {% include type t="String" %}   | Horizontal text alignment for legend titles. |
 | titleBaseline         | {% include type t="String" %}   | Vertical text baseline for legend titles. |
 | titleColor            | {% include type t="Color" %}    | Text color for legend titles. |
@@ -270,14 +289,6 @@ Properties defining default settings for legends. These properties are defined u
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
-| strokeColor           | {% include type t="Color" %}    | Border stroke color for the full legend. |
-| strokeDash            | {% include type t="Number[]" %} | Border stroke dash pattern for the full legend. |
-| strokeWidth           | {% include type t="Number" %}   | Border stroke width for the full legend. |
-| symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
-| symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
-| symbolFillColor       | {% include type t="Color" %}    | Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
-| symbolStrokeColor     | {% include type t="Color" %}    | Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
-| symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 
 ### Usage
 
