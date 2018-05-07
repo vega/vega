@@ -92,7 +92,7 @@
       "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},
-      "zero": false, "nice": false
+      "zero": false, "nice": true
     }
   ],
 
