@@ -4,13 +4,12 @@
   "height": 500,
   "padding": 5,
 
-  "config": {
-    "title": {"fontSize": 14}
-  },
-
   "title": {
     "text": "Seattle Annual Temperatures",
-    "anchor": "start", "offset": 4
+    "anchor": "middle",
+    "fontSize": 16,
+    "frame": "group",
+    "offset": 4
   },
 
   "signals": [
@@ -65,7 +64,7 @@
       "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
       "transform": [
         {"type": "formula", "as": "hour", "expr": "hours(datum.date)"},
-        { "type": "formula", "as": "date",
+        { "type": "formula", "as": "day",
           "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"}
       ]
     }
@@ -75,7 +74,7 @@
     {
       "name": "x",
       "type": "time",
-      "domain": {"data": "temperature", "field": "date"},
+      "domain": {"data": "temperature", "field": "day"},
       "range": "width"
     },
     {
@@ -112,7 +111,14 @@
   ],
 
   "legends": [
-    {"fill": "color", "type": "gradient", "title": "Avg. Temp (°F)"}
+    {
+      "fill": "color",
+      "type": "gradient",
+      "title": "Avg. Temp (°F)",
+      "titleFontSize": 12,
+      "titlePadding": 4,
+      "gradientLength": {"signal": "height - 16"}
+    }
   ],
 
   "marks": [
@@ -121,10 +127,11 @@
       "from": {"data": "temperature"},
       "encode": {
         "enter": {
-          "x": {"scale": "x", "field": "date"},
-          "width": {"value": 5},
+          "x": {"scale": "x", "field": "day"},
           "y": {"scale": "y", "field": "hour"},
-          "height": {"scale": "y", "band": 1}
+          "width": {"value": 5},
+          "height": {"scale": "y", "band": 1},
+          "tooltip": {"signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temp + '°'"}
         },
         "update": {
           "fill": {"scale": "color", "field": "temp"}
