@@ -73,7 +73,7 @@ export default function(spec, scope) {
     ];
     // adjust default tick count based on the gradient length
     params.count = params.count || scope.signalRef(
-      'max(2,2*floor(' + deref(gradientLength(spec, config)) + '/100))'
+      'max(2,2*floor((' + deref(gradientLength(spec, config)) + ')/100))'
     );
   }
 
