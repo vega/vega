@@ -44,7 +44,8 @@
         {"name": "earthquakes"},
         {"name": "projections"},
         {"name": "zoomable-world-map"},
-        {"name": "distortion-comparison"}
+        {"name": "distortion-comparison"},
+        {"name": "volcano-contours"}
     ],
     "Tree Diagrams": [
         {"name": "tree-layout"},

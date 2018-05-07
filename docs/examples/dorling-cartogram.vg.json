@@ -6,8 +6,9 @@
 
   "config": {
     "legend": {
-      "gradientWidth": 120,
-      "gradientHeight": 10
+      "gradientDirection": "horizontal",
+      "gradientLength": 120,
+      "gradientThickness": 10
     }
   },
 
@@ -51,7 +52,8 @@
     {
       "name": "size",
       "domain": {"data": "obesity", "field": "rate"},
-      "range": [0, 5000]
+      "zero": false,
+      "range": [1000, 5000]
     },
     {
       "name": "color",
@@ -66,9 +68,11 @@
     {
       "title": "% of Obese Adults",
       "orient": "bottom-right",
-      "type": "gradient",
+      "type": "symbol",
+      "size": "size",
       "fill": "color",
-      "format": ".1%"
+      "format": ".1%",
+      "clipHeight": 16
     }
   ],
 
