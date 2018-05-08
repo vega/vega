@@ -6,6 +6,7 @@
 
   "signals": [
     { "name": "cellSize", "value": 10 },
+    { "name": "count", "update": "length(data('nodes'))" },
     { "name": "width", "update": "span(range('position'))" },
     { "name": "height", "update": "width" },
     {
@@ -16,17 +17,19 @@
       ]
     },
     {
-      "name": "dest", "value": {},
+      "name": "dest", "value": -1,
       "on": [
         {
-          "events": "[text:mousedown, window:mouseup] > text:mouseover",
-          "update": "src.name != null ? datum : dest"
+          "events": "[@columns:mousedown, window:mouseup] > window:mousemove",
+          "update": "src.name && datum !== src ? (0.5 + count * clamp(x(), 0, width) / width) : dest"
         },
-        {"events": "text:mouseout", "update": "{}"}
+        {
+          "events": "[@rows:mousedown, window:mouseup] > window:mousemove",
+          "update": "src.name && datum !== src ? (0.5 + count * clamp(y(), 0, height) / height) : dest"
+        },
+        {"events": "window:mouseup", "update": "-1"}
       ]
-    },
-    {"name": "destOrder", "update": "dest.order"},
-    {"name": "dragging",  "update": "src.name && dest.name"}
+    }
   ],
 
   "data": [
@@ -35,15 +38,17 @@
       "url": "data/miserables.json",
       "format": {"type": "json", "property": "nodes"},
       "transform": [
-        { "type": "collect", "sort": {"field": "group"} },
-        { "type": "window", "ops": ["rank"], "as": ["order"] },
         {
           "type": "formula", "as": "order",
-          "expr": "dragging && datum === dest ? src.order : datum.order"
+          "expr": "datum.group"
         },
         {
-          "type": "formula", "as": "order",
-          "expr": "dragging && datum === src ? destOrder : datum.order"
+          "type": "formula", "as": "score",
+          "expr": "dest >= 0 && datum === src ? dest : datum.order"
+        },
+        {
+          "type": "window", "sort": {"field": "score"},
+          "ops": ["row_number"], "as": ["order"]
         }
       ]
     },
@@ -57,9 +62,8 @@
           "fields": ["source", "target"], "as": ["sourceNode", "targetNode"]
         },
         {
-          "type": "formula",
-          "as": "group",
-          "expr": "datum.sourceNode.group === datum.targetNode.group ? datum.sourceNode.group : -1"
+          "type": "formula", "as": "group",
+          "expr": "datum.sourceNode.group === datum.targetNode.group ? datum.sourceNode.group : count"
         }
       ]
     },
@@ -86,15 +90,10 @@
       "domain": {
         "fields": [
           {"data": "nodes", "field": "group"},
-          [-1]
-        ]
+          {"signal": "count"}
+        ],
+        "sort": true
       }
-    },
-    {
-      "name": "labels",
-      "type": "ordinal",
-      "domain": {"data": "nodes", "field": "order"},
-      "range": {"data": "nodes", "field": "name"}
     }
   ],
 
@@ -134,8 +133,8 @@
       "encode": {
         "update": {
           "x": {"scale": "position", "field": "targetNode.order"},
-          "width": {"scale": "position", "band": 1, "offset": -1},
           "y": {"scale": "position", "field": "sourceNode.order"},
+          "width": {"scale": "position", "band": 1, "offset": -1},
           "height": {"scale": "position", "band": 1, "offset": -1},
           "fill": {"scale": "color", "field": "group"}
         }
@@ -143,12 +142,12 @@
     },
     {
       "type": "text",
+      "name": "columns",
       "from": {"data": "nodes"},
       "encode": {
         "update": {
-          "x": {"scale": "position", "field": "order"},
+          "x": {"scale": "position", "field": "order", "band": 0.5},
           "y": {"offset": -2},
-          "dy": {"scale": "position", "band": 0.5},
           "text": {"field": "name"},
           "fontSize": {"value": 10},
           "angle": {"value": -90},
@@ -163,12 +162,12 @@
     },
     {
       "type": "text",
+      "name": "rows",
       "from": {"data": "nodes"},
       "encode": {
         "update": {
           "x": {"offset": -2},
-          "y": {"scale": "position", "field": "order"},
-          "dy": {"scale": "position", "band": 0.5},
+          "y": {"scale": "position", "field": "order", "band": 0.5},
           "text": {"field": "name"},
           "fontSize": {"value": 10},
           "align": {"value": "right"},
