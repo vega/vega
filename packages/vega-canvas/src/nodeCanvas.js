@@ -1,18 +1,16 @@
 var NodeCanvas;
 
-try {
-  // try to load canvas module
-  NodeCanvas = require('canvas');
-  if (!NodeCanvas) throw 1;
-} catch (e) {
+['canvas', 'canvas-prebuilt'].some(function(libName) {
   try {
-    // if canvas fails, try to load canvas-prebuilt
-    NodeCanvas = require('canvas-prebuilt');
-  } catch (e2) {
-    // if all options fail, set to null
+    NodeCanvas = require(libName);
+    if (typeof NodeCanvas !== 'function') {
+      NodeCanvas = null;
+    }
+  } catch (error) {
     NodeCanvas = null;
   }
-}
+  return NodeCanvas;
+});
 
 export function nodeCanvas(w, h) {
   if (NodeCanvas) {
@@ -26,5 +24,5 @@ export function nodeCanvas(w, h) {
 }
 
 export function nodeImage() {
-  return NodeCanvas && NodeCanvas.Image || null;
+  return (NodeCanvas && NodeCanvas.Image) || null;
 }
