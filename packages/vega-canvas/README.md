@@ -9,7 +9,7 @@ This module attempts three forms of canvas creation, in this order:
 - If the [node-canvas-prebuilt](https://github.com/node-gfx/node-canvas-prebuilt) library is present, use that.
 - Otherwise, return `null`.
 
-To enable error-free build processes for client-side code, **this module does not include any direct or optional dependencies on the [node-canvas](https://github.com/Automattic/node-canvas) and [node-canvas-prebuilt](https://github.com/node-gfx/node-canvas-prebuilt) libraries**. Projects that use this module and require canvas support for server-side (node.js) operations must include the desired dependencies in their own `package.json` file. Projects that use this module should also ensure that bundlers such as Webpack and Browserify appropriately exclude canvas dependencies by including `{"canvas": null, "canvas-prebuilt": null}` under the `"browser"` property in their `package.json` file.
+To enable error-free build processes for client-side code, **this module does not include any direct or optional dependencies on the [node-canvas](https://github.com/Automattic/node-canvas) and [node-canvas-prebuilt](https://github.com/node-gfx/node-canvas-prebuilt) libraries**. Projects that use this module and require canvas support for server-side (node.js) operations must include the desired dependencies in their own `package.json` file.
 
 _Note:_ As a result of the design decision to exclude direct dependencies on canvas libraries, linking to this module locally via `npm link` can result in `require(...)` errors due to node's module resolution algorithm. To ensure successful resolution of canvas libraries, this module should be included as a direct subfolder (not a symlink).
 
