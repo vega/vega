@@ -26,7 +26,7 @@
     "schema": "rollup -f umd -g vega-util:vega -n vega.schema -o build/vega-schema.js -- schema/index.js",
     "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-schema.js build/vega-parser.js build/vega-parser.min.js"
   },
   "dependencies": {
