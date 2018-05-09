@@ -34,12 +34,12 @@
     "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
     "pretest": "rm -rf build && mkdir build && npm run rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-event-selector.zip -- LICENSE README.md build/vega-event-selector.js build/vega-event-selector.min.js"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "uglify-js": "3"
   }
