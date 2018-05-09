@@ -25,7 +25,7 @@
     "build": "npm run test && uglifyjs build/vega-dataflow.js -c -m -o build/vega-dataflow.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g vega-loader:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-dataflow.zip -- LICENSE README.md build/vega-dataflow.js build/vega-dataflow.min.js"
   },
   "dependencies": {
