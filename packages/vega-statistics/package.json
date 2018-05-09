@@ -24,15 +24,15 @@
     "build": "npm run test && uglifyjs build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3 -f umd -n vega -o build/vega-statistics.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-statistics.zip -- LICENSE README.md build/vega-statistics.js build/vega-statistics.min.js"
   },
   "dependencies": {
-    "d3-array": "1"
+    "d3-array": "^1.2.1"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "uglify-js": "3"
   }
