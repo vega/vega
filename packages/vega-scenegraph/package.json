@@ -28,7 +28,7 @@
     "build": "npm run test && uglifyjs build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-scenegraph.zip -- LICENSE README.md build/vega-scenegraph-schema.json build/vega-scenegraph.js build/vega-scenegraph.min.js"
   },
   "dependencies": {
