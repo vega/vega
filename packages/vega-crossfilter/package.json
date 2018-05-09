@@ -22,7 +22,7 @@
     "build": "npm run test && uglifyjs build/vega-crossfilter.js -c -m -o build/vega-crossfilter.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-crossfilter.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-crossfilter.zip -- LICENSE README.md build/vega-crossfilter.js build/vega-crossfilter.min.js"
   },
   "dependencies": {
