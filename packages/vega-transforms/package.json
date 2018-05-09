@@ -30,7 +30,7 @@
     "build": "npm run test && uglifyjs build/vega-transforms.js -c -m -o build/vega-transforms.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,vega-dataflow:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-transforms.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-transforms.zip -- LICENSE README.md build/vega-transforms.js build/vega-transforms.min.js"
   },
   "dependencies": {
