@@ -24,12 +24,12 @@
     "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-util.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "tsc": "tsc",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-util.zip -- LICENSE README.md build/vega-util.js build/vega-util.min.js"
   },
   "devDependencies": {
     "eslint": "2",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "typescript": "2",
     "uglify-js": "3"
