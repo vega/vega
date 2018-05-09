@@ -34,15 +34,15 @@
     "build": "npm run test && uglifyjs build/vega-expression.js -c -m -o build/vega-expression.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-expression.zip -- LICENSE README.md build/vega-expression.js build/vega-expression.min.js"
   },
   "dependencies": {
-    "vega-util": "1"
+    "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.43",
+    "rollup": "0.58.2",
     "tape": "4",
     "uglify-js": "3"
   }
