@@ -28,6 +28,7 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-util.zip -- LICENSE README.md build/vega-util.js build/vega-util.min.js"
   },
   "devDependencies": {
+    "@types/node": "9",
     "eslint": "2",
     "rollup": "0.58.2",
     "tape": "4",
