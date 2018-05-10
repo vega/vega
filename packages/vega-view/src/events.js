@@ -3,7 +3,8 @@ import {EventStream} from 'vega-dataflow';
 import {extend, isArray, toSet} from 'vega-util';
 
 var VIEW = 'view',
-    WINDOW = 'window';
+    WINDOW = 'window',
+    NO_TRAP = {trap: false};
 
 /**
  * Initialize event handling configuration.
@@ -63,7 +64,8 @@ export function events(source, type, filter) {
       sources;
 
   if (source === VIEW) {
-    view.addEventListener(type, send);
+    // send traps errors, so use {trap: false} option
+    view.addEventListener(type, send, NO_TRAP);
     return s;
   }
 

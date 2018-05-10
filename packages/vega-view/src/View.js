@@ -223,13 +223,30 @@ prototype._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
-prototype.addEventListener = function(type, handler) {
-  this._handler.on(type, handler);
+prototype.addEventListener = function(type, handler, options) {
+  var callback = handler;
+  if (!(options && options.trap === false)) {
+    // wrap callback in error handler
+    callback = trap(this, handler);
+    callback.raw = handler;
+  }
+  this._handler.on(type, callback);
   return this;
 };
 
 prototype.removeEventListener = function(type, handler) {
-  this._handler.off(type, handler);
+  var handlers = this._handler.handlers(type),
+      i = handlers.length, h, t;
+
+  // search registered handlers, remove if match found
+  while (--i >= 0) {
+    t = handlers[i].type;
+    h = handlers[i].handler;
+    if (type === t && (handler === h || handler === h.raw)) {
+      this._handler.off(t, h);
+      break;
+    }
+  }
   return this;
 };
 
