@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Vega Spec Test</title>
-    <script src="../../build/vega.js"></script>
+    <script src="../build/vega.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; position: relative; }
       #header {
@@ -104,12 +104,11 @@ function load(name) {
 
 function visualize(spec) {
   if (view) view.finalize(); // finalize existing view
-  view = new vega.View(runtime = vega.parse(spec));
-  view.logLevel(vega.Warn)
-    .renderer(renderType)
-    .initialize(container)
-    .hover()
-    .run();
+  view = new vega.View(runtime = vega.parse(spec), {
+    logLevel: vega.Warn,
+    renderer: renderType
+  });
+  view.initialize(container).hover().run();
 }
     </script>
   </body>
