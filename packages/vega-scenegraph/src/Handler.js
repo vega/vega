@@ -106,12 +106,20 @@ prototype._handlerIndex = function(h, type, handler) {
 };
 
 /**
- * Returns an array with all registered event handlers.
+ * Returns an array with registered event handlers.
+ * @param {string} [type] - The event type to query. Any annotations
+ *   are ignored; for example, for the argument "click.foo", ".foo" will
+ *   be ignored and the method returns all "click" handlers. If type is
+ *   null or unspecified, this method returns handlers for all types.
  * @return {Array} - A new array containing all registered event handlers.
  */
-prototype.handlers = function() {
+prototype.handlers = function(type) {
   var h = this._handlers, a = [], k;
-  for (k in h) { a.push.apply(a, h[k]); }
+  if (type) {
+    a.push.apply(a, h[this.eventName(type)]);
+  } else {
+    for (k in h) { a.push.apply(a, h[k]); }
+  }
   return a;
 };
 
