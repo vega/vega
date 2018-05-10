@@ -16,4 +16,4 @@ A Vega _specification_ defines an interactive visualization in a [JSON](http://e
 
 To get started with Vega, take a look at the [tutorials](tutorials), [example gallery](examples), and [usage guide](usage), or read [about the project's goals](about). To create common statistical graphics in a more concise form, check out [Vega-Lite](https://vega.github.io/vega-lite), a higher-level language built on top of Vega.
 
-Need help? Join the [Vega mailing list](https://groups.google.com/forum/#!forum/vega-js).
+Need help or want to share examples? Join the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or the [Vega Slack organization](http://bit.ly/vega-slack)!

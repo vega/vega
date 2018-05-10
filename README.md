@@ -35,6 +35,8 @@ folder. The last command launches a local webserver. Now, you can open
 [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the
 website.
 
-## Contributions and Development
+## Contributions, Development, and Support
 
 Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
+
+Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum]((https://groups.google.com/forum/#!forum/vega-js)) or join the [Vega slack organization](http://bit.ly/vega-slack)!
