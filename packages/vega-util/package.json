@@ -22,7 +22,7 @@
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-util.js -c -m -o build/vega-util.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-util.js -- index.js",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test && tsc",
     "tsc": "tsc",
     "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-util.zip -- LICENSE README.md build/vega-util.js build/vega-util.min.js"
