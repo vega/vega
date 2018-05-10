@@ -237,6 +237,8 @@ prototype.addResizeListener = function(handler) {
   var l = this._resizeListeners;
   if (l.indexOf(handler) < 0) {
     // add handler if it isn't already registered
+    // note: error trapping handled elsewhere, so
+    // no need to wrap handlers here
     l.push(handler);
   }
   return this;
@@ -251,7 +253,7 @@ prototype.removeResizeListener = function(handler) {
   return this;
 };
 
-function findHandler(signal, handler) {
+function findSignalHandler(signal, handler) {
   var t = signal._targets || [],
       h = t.filter(function(op) {
             var u = op._update;
@@ -262,7 +264,7 @@ function findHandler(signal, handler) {
 
 prototype.addSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
-      h = findHandler(s, handler);
+      h = findSignalHandler(s, handler);
 
   if (!h) {
     h = trap(this, function() { handler(name, s.value); });
@@ -274,7 +276,7 @@ prototype.addSignalListener = function(name, handler) {
 
 prototype.removeSignalListener = function(name, handler) {
   var s = lookupSignal(this, name),
-      h = findHandler(s, handler);
+      h = findSignalHandler(s, handler);
 
   if (h) s._targets.remove(h);
   return this;
