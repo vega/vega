@@ -27,6 +27,10 @@ export function resizeRenderer(view) {
   view._handler.origin(origin);
 
   view._resizeListeners.forEach(function(handler) {
-    handler(w, h);
+    try {
+      handler(w, h);
+    } catch (error) {
+      view.error(error);
+    }
   });
 }
