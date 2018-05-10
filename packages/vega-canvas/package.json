@@ -32,7 +32,7 @@
     "tape": "4",
     "uglify-js": "3",
     "canvas": "^1.6.10",
-    "canvas-prebuilt": "^1.6.0"
+    "canvas-prebuilt": "^1.6.5-prerelease.1"
   },
   "browser": {
     "./build/vega-canvas.node.js": "./build/vega-canvas.js",
