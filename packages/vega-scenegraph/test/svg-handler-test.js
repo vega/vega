@@ -57,6 +57,56 @@ function event(name, x, y) {
   return evt;
 }
 
+tape('SVGHandler should add/remove event callbacks', function(test) {
+  var array = function(_) { return _ || []; },
+      object = function(_) { return _ || {}; },
+      handler = new Handler(),
+      h = handler._handlers,
+      f = function() {},
+      atype = 'click',
+      btype = 'click.foo',
+      ctype = 'mouseover';
+
+  // add event callbacks
+  handler.on(atype, f);
+  handler.on(btype, f);
+  handler.on(ctype, f);
+
+  test.equal(Object.keys(h).length, 2);
+  test.equal(array(h[atype]).length, 2);
+  test.equal(array(h[ctype]).length, 1);
+
+  test.equal(object(h[atype][0]).type, atype);
+  test.equal(object(h[atype][1]).type, btype);
+  test.equal(object(h[ctype][0]).type, ctype);
+
+  test.equal(object(h[atype][0]).handler, f);
+  test.equal(object(h[atype][1]).handler, f);
+  test.equal(object(h[ctype][0]).handler, f);
+
+  // remove event callback by type
+  handler.off(atype);
+
+  test.equal(Object.keys(h).length, 2);
+  test.equal(array(h[atype]).length, 1);
+  test.equal(array(h[ctype]).length, 1);
+
+  test.equal(object(h[atype][0]).type, btype);
+  test.equal(object(h[ctype][0]).type, ctype);
+
+  test.equal(object(h[atype][0]).handler, f);
+  test.equal(object(h[ctype][0]).handler, f);
+
+  // remove all event callbacks
+  handler.off(btype, f);
+  handler.off(ctype, f);
+
+  test.equal(array(h[atype]).length, 0);
+  test.equal(array(h[ctype]).length, 0);
+
+  test.end();
+});
+
 tape('SVGHandler should handle input events', function(test) {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()

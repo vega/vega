@@ -98,7 +98,7 @@ prototype.off = function(/*type, handler*/) {};
  */
 prototype._handlerIndex = function(h, type, handler) {
   for (var i = h ? h.length : 0; --i>=0;) {
-    if (h[i].type === type && !handler || h[i].handler === handler) {
+    if (h[i].type === type && (!handler || h[i].handler === handler)) {
       return i;
     }
   }
