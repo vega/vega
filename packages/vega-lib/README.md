@@ -12,7 +12,7 @@ For more about Vega, including support for server-side rendering, see the main [
 
 For a basic setup allowing you to build Vega and run examples:
 
-- Clone `https://github.com/vega/vega-lib`.
+- Run `git clone git@github.com:vega/vega-lib.git` to clone this repository.
 - Run `yarn` to install dependencies. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install.
 - Once installation is complete, use `yarn test` to run tests and `yarn run build` to build output files.
 
