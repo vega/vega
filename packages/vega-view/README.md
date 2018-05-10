@@ -418,7 +418,7 @@ custom event streams if desired. This method assumes that the view is running
 in a browser environment, otherwise invoking this method may have no effect.
 
 <a name="view_addEventListener" href="#view_addEventListener">#</a>
-view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>)
+view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>[, <i>options</i>])
 [<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
 
 Registers an event listener for input events and returns this view instance.
@@ -427,6 +427,8 @@ supported by [vega-scenegraph](https://github.com/vega/vega-scenegraph)
 event handlers. Examples include `"mouseover"`, `"click"`, `"keydown"` and
 `"touchstart"`. This method is idempotent: adding the same handler for the
 same event type multiple times has no effect beyond the first call.
+
+The optional _options_ hash accepts one parameter (_options.trap_): if _options.trap_ is set to `false`, automatic error trapping for event handler functions is disabled.
 
 When events occur, the *handler* function is invoked with two arguments: the
 *event* instance and the currently active scenegraph *item* (which is `null`
