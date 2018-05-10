@@ -14,7 +14,7 @@ For a basic setup allowing you to build Vega and run examples:
 
 - Clone `https://github.com/vega/vega-lib`.
 - Run `yarn` to install dependencies. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install.
-- Once installation is complete, use `npm run test` to run tests and `npm run build` to build output files.
+- Once installation is complete, use `yarn test` to run tests and `yarn run build` to build output files.
 
 This repository includes web-based demos within the `test` folder. To run these, launch a local web server in the top-level directory for the repo and point your browser to the right place (e.g., `http://localhost:8080/test/`).
 
