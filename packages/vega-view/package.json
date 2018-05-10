@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -29,9 +29,9 @@
   "dependencies": {
     "d3-array": "^1.2.1",
     "vega-dataflow": "^4.0.0",
-    "vega-parser": "^3.0.0",
+    "vega-parser": "^3.0.2",
     "vega-runtime": "^3.0.0",
-    "vega-scenegraph": "^3.0.0",
+    "vega-scenegraph": "^3.1.0",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
