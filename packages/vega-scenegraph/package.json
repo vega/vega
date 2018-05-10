@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": {
