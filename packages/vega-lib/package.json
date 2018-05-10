@@ -76,7 +76,7 @@
     "vega-projection": "^1.1.0",
     "vega-runtime": "^3.0.0",
     "vega-scale": "^2.1.1",
-    "vega-scenegraph": "^3.0.0",
+    "vega-scenegraph": "^3.0.1",
     "vega-statistics": "^1.2.1",
     "vega-transforms": "^2.0.0",
     "vega-typings": "*",
@@ -97,8 +97,6 @@
   },
   "browser": {
     "buffer": false,
-    "canvas": false,
-    "canvas-prebuilt": false,
     "fs": false
   }
 }
