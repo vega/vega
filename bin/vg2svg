@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render a Vega specification to SVG
 
-var helpText =
+const helpText =
   'Render a Vega specification to SVG.\n\n' +
   'Usage: vg2svg [vega_json_file] [output_svg_file]\n' +
   '  If no arguments are provided, reads from stdin.\n' +
@@ -10,19 +10,20 @@ var helpText =
   '  For web retrieval, use `-b http://host/data/`. \n' +
   '  For files, use `-b file:///dir/data/` (absolute) or `-b data/` (relative).';
 
-var svgHeader =
+const svgHeader =
   '<?xml version="1.0" encoding="utf-8"?>\n' +
   '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
   '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
 
 // import required libraries
-var path = require('path'),
-    fs = require('fs'),
-    lcg = require('./lcg'),
-    vega = require('../');
+const path = require('path'),
+      fs = require('fs'),
+      lcg = require('./lcg'),
+      read = require('./read'),
+      vega = require('../');
 
 // arguments
-var args = require('yargs')
+const args = require('yargs')
   .usage(helpText)
   .demand(0)
   .string('b')
@@ -38,7 +39,7 @@ var args = require('yargs')
   .argv;
 
 // set baseURL if provided on command line
-var base = args.b ? args.b + path.sep : null;
+const base = args.b ? args.b + path.sep : null;
 
 // Plug-in a deterministic random number generator for testing.
 if (typeof args.seed !== 'undefined') {
@@ -46,29 +47,16 @@ if (typeof args.seed !== 'undefined') {
   vega.setRandom(lcg(args.seed));
 }
 
-// input / output files
-var header = args.h ? svgHeader : '',
-    specFile = args._[0] || '/dev/stdin',
-    outputFile = args._[1] || null;
+// SVG header string
+const header = args.h ? svgHeader : '';
 
-// load spec, render to png
-fs.readFile(specFile, 'utf8', function(err, text) {
-  if (err) throw err;
-  render(JSON.parse(text));
-});
+// output file
+const outputFile = args._[1] || null;
 
-// ---
-
-function writeSVG(svg, file) {
-  svg = header + svg;
-  if (file) {
-    // write to file
-    fs.writeFile(file, svg, function(err) { if (err) throw err; });
-  } else {
-    // write to stdout
-    process.stdout.write(svg);
-  }
-}
+// read input from file or stdin
+read(args._[0] || null)
+  .then(text => { render(JSON.parse(text)); })
+  .catch(err => { console.error(err); });
 
 function render(spec) {
   new vega.View(vega.parse(spec), {
@@ -77,7 +65,19 @@ function render(spec) {
       renderer: 'none'
     })
     .initialize()
+    .finalize()
     .toSVG()
-    .then(function(svg) { writeSVG(svg, outputFile); })
-    .catch(function(err) { console.error(err); });
+    .then(svg => { writeSVG(svg, outputFile); })
+    .catch(err => { console.error(err); });
+}
+
+function writeSVG(svg, file) {
+  svg = header + svg;
+  if (file) {
+    // write to file
+    fs.writeFile(file, svg, err => { if (err) throw err; });
+  } else {
+    // write to stdout
+    process.stdout.write(svg);
+  }
 }

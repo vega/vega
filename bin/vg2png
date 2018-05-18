@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render a Vega specification to PNG, using node canvas
 
-var helpText =
+const helpText =
   'Render a Vega specification to PNG.\n\n' +
   'Usage: vg2png [vega_json_file] [output_png_file]\n' +
   '  If no arguments are provided, reads from stdin.\n' +
@@ -11,13 +11,14 @@ var helpText =
   '  For files, use `-b file:///dir/data/` (absolute) or `-b data/` (relative).';
 
 // import required libraries
-var path = require('path'),
-    fs = require('fs'),
-    lcg = require('./lcg'),
-    vega = require('../');
+const path = require('path'),
+      fs = require('fs'),
+      lcg = require('./lcg'),
+      read = require('./read'),
+      vega = require('../');
 
 // arguments
-var args = require('yargs')
+const args = require('yargs')
   .usage(helpText)
   .demand(0)
   .string('b')
@@ -34,7 +35,7 @@ var args = require('yargs')
   .argv;
 
 // set baseURL if provided on command line
-var base = args.b ? args.b + path.sep : null;
+const base = args.b ? args.b + path.sep : null;
 
 // Plug-in a deterministic random number generator for testing.
 if (typeof args.seed !== 'undefined') {
@@ -42,23 +43,13 @@ if (typeof args.seed !== 'undefined') {
   vega.setRandom(lcg(args.seed));
 }
 
-// input / output files
-var specFile = args._[0] || '/dev/stdin',
-    outputFile = args._[1] || null;
+// output file
+const outputFile = args._[1] || null;
 
-// load spec, render to png
-fs.readFile(specFile, 'utf8', function(err, text) {
-  if (err) throw err;
-  render(JSON.parse(text));
-});
-
-// ---
-
-function writePNG(canvas, file) {
-  var out = file ? fs.createWriteStream(file) : process.stdout;
-  var stream = canvas.createPNGStream();
-  stream.on('data', function(chunk) { out.write(chunk); });
-}
+// read input from file or stdin
+read(args._[0] || null)
+  .then(text => { render(JSON.parse(text)); })
+  .catch(err => { console.error(err); });
 
 function render(spec) {
   new vega.View(vega.parse(spec), {
@@ -67,7 +58,14 @@ function render(spec) {
       renderer: 'none'
     })
     .initialize()
+    .finalize()
     .toCanvas(args.s)
-    .then(function(canvas) { writePNG(canvas, outputFile); })
-    .catch(function(err) { console.error(err); });
+    .then(canvas => { writePNG(canvas, outputFile); })
+    .catch(err => { console.error(err); });
+}
+
+function writePNG(canvas, file) {
+  const out = file ? fs.createWriteStream(file) : process.stdout,
+        stream = canvas.createPNGStream();
+  stream.on('data', chunk => { out.write(chunk); });
 }
