@@ -2,23 +2,19 @@ import parseExpression from './expression';
 import {View, Scope} from '../util';
 import {array, error, stringValue} from 'vega-util';
 
-export default function(stream, scope) {
-  return stream.signal ? scope.getSignal(stream.signal).id
-    : stream.scale ? scope.getScale(stream.scale).id
-    : parseStream(stream, scope);
-}
+var Timer = 'timer';
 
-function eventSource(source) {
-   return source === Scope ? View : (source || View);
-}
-
-function parseStream(stream, scope) {
+export default function parseStream(stream, scope) {
   var method = stream.merge ? mergeStream
     : stream.stream ? nestedStream
     : stream.type ? eventStream
     : error('Invalid stream specification: ' + stringValue(stream));
 
   return method(stream, scope);
+}
+
+function eventSource(source) {
+   return source === Scope ? View : (source || View);
 }
 
 function mergeStream(stream, scope) {
@@ -37,9 +33,18 @@ function nestedStream(stream, scope) {
 }
 
 function eventStream(stream, scope) {
-  var id = scope.event(eventSource(stream.source), stream.type),
-      entry = streamParameters({stream: id}, stream, scope);
-  return Object.keys(entry).length === 1 ? id
+  var id, entry;
+
+  if (stream.type === Timer) {
+    id = scope.event(Timer, stream.throttle);
+    stream = {between: stream.between, filter: stream.filter};
+  } else {
+    id = scope.event(eventSource(stream.source), stream.type);
+  }
+
+  entry = streamParameters({stream: id}, stream, scope);
+  return Object.keys(entry).length === 1
+    ? id
     : scope.addStream(entry).id;
 }
 
