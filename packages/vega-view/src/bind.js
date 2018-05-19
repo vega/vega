@@ -32,8 +32,10 @@ export default function(view, el, binding) {
       active: false,
       set: null,
       update: function(value) {
-        bind.source = true;
-        view.signal(param.signal, value).run();
+        if (value !== view.signal(param.signal)) {
+          bind.source = true;
+          view.signal(param.signal, value).run();
+        }
       }
     };
     if (param.debounce) {
@@ -221,7 +223,6 @@ function range(bind, el, param, value) {
   }
 
   // subscribe to both input and change
-  // signal updates halt redundant values, maintaining performance
   node.addEventListener('input', update);
   node.addEventListener('change', update);
 
