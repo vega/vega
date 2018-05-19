@@ -3,9 +3,9 @@ var tape = require('tape'),
 
 tape('Parser parses stream definitions', function(test) {
   var scope = new vega.Scope(),
-      dom, view, between, merge, signal, nested;
+      dom, view, between, merge, nested, timer;
 
-  scope.addSignal('drag', true);
+  scope.addSignal('zero', true); // id zero
 
   dom = vega.stream({
     source:   'window',
@@ -40,10 +40,6 @@ tape('Parser parses stream definitions', function(test) {
     ]
   }, scope);
 
-  signal = vega.stream({
-    signal: 'drag'
-  }, scope);
-
   nested = vega.stream({
     stream: {
       source:   'window',
@@ -59,9 +55,12 @@ tape('Parser parses stream definitions', function(test) {
     ]
   }, scope);
 
-  test.equal(scope.streams.length, 11);
+  timer = vega.stream({
+    type:     'timer',
+    throttle: 500
+  }, scope);
 
-  test.equal(signal, 0);
+  test.equal(scope.streams.length, 12);
 
   test.deepEqual(scope.streams[0], {
     id: 1,
@@ -130,6 +129,12 @@ tape('Parser parses stream definitions', function(test) {
     id: nested,
     stream: 8,
     between: [9, 10]
+  });
+
+  test.deepEqual(scope.streams[11], {
+    id: timer,
+    source: 'timer',
+    type: 500
   });
 
   test.end();

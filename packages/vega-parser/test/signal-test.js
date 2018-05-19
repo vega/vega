@@ -97,7 +97,7 @@ tape('Parser parses signals with event-driven updates', function(test) {
   test.equal(update.options.force, true);
 
   update = scope.updates[1];
-  test.equal(update.source, a);
+  test.equal(update.source && update.source.$ref, a);
   test.equal(update.target, c);
   test.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
   test.equal(update.options, undefined);

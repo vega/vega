@@ -62,7 +62,14 @@ export default function(spec, scope, target) {
   }
 
   sources.forEach(function(source) {
-    source = {source: parseStream(source, scope)};
-    scope.addUpdate(extend(source, entry));
+    scope.addUpdate(extend(streamSource(source, scope), entry));
   });
+}
+
+function streamSource(stream, scope) {
+  return {
+    source: stream.signal ? scope.signalRef(stream.signal)
+          : stream.scale ? scope.scaleRef(stream.scale)
+          : parseStream(stream, scope)
+  };
 }
