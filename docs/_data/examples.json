@@ -83,6 +83,7 @@
         {"name": "zoomable-scatter-plot"},
         {"name": "global-development"},
         {"name": "interactive-legend"},
-        {"name": "stock-index-chart"}
+        {"name": "stock-index-chart"},
+        {"name": "pi-monte-carlo"}
     ]
 }
