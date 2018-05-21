@@ -40,7 +40,7 @@ export class View {
   height(h: number): View;
   padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): View;
 
-  toImageURL(type: string): Promise<string>;
+  toImageURL(type: string, scaleFactor?: number): Promise<string>;
   toSVG(): Promise<string>;
   toCanvas(): Promise<any>; // TODO node-canvas result
 
