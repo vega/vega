@@ -22,6 +22,7 @@ import clampRange from './clamp-range';
 import {pinchDistance, pinchAngle} from './pinch';
 import {containerSize, screen, windowSize} from './window';
 import flush from './flush';
+import merge from './merge';
 import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
@@ -79,6 +80,7 @@ export var functionContext = {
   containerSize: containerSize,
   windowSize: windowSize,
   span: span,
+  merge: merge,
   flush: flush,
   bandspace: bandspace,
   inrange: inrange,
