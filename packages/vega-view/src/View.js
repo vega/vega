@@ -11,6 +11,7 @@ import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
+import timer from './timer';
 import defaultTooltip from './tooltip';
 import trap from './trap';
 
@@ -50,6 +51,7 @@ export default function View(spec, options) {
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
   view._preventDefault = false;
+  view._timers = [];
   view._eventListeners = [];
   view._resizeListeners = [];
 
@@ -308,6 +310,7 @@ prototype.preventDefault = function(_) {
   }
 };
 
+prototype.timer = timer;
 prototype.events = events;
 prototype.finalize = finalize;
 prototype.hover = hover;

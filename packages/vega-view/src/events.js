@@ -3,6 +3,7 @@ import {EventStream} from 'vega-dataflow';
 import {extend, isArray, toSet} from 'vega-util';
 
 var VIEW = 'view',
+    TIMER = 'timer',
     WINDOW = 'window',
     NO_TRAP = {trap: false};
 
@@ -63,32 +64,36 @@ export function events(source, type, filter) {
       },
       sources;
 
-  if (source === VIEW) {
+  if (source === TIMER) {
+    view.timer(send, type);
+  }
+
+  else if (source === VIEW) {
     // send traps errors, so use {trap: false} option
     view.addEventListener(type, send, NO_TRAP);
-    return s;
   }
 
-  if (source === WINDOW) {
-    if (typeof window !== 'undefined') sources = [window];
-  } else if (typeof document !== 'undefined') {
-    sources = document.querySelectorAll(source);
-  }
+  else {
+    if (source === WINDOW) {
+      if (typeof window !== 'undefined') sources = [window];
+    } else if (typeof document !== 'undefined') {
+      sources = document.querySelectorAll(source);
+    }
 
-  if (!sources) {
-    view.warn('Can not resolve event source: ' + source);
-    return s;
-  }
+    if (!sources) {
+      view.warn('Can not resolve event source: ' + source);
+    } else {
+      for (var i=0, n=sources.length; i<n; ++i) {
+        sources[i].addEventListener(type, send);
+      }
 
-  for (var i=0, n=sources.length; i<n; ++i) {
-    sources[i].addEventListener(type, send);
+      view._eventListeners.push({
+        type:    type,
+        sources: sources,
+        handler: send
+      });
+    }
   }
-
-  view._eventListeners.push({
-    type:    type,
-    sources: sources,
-    handler: send
-  });
 
   return s;
 }
