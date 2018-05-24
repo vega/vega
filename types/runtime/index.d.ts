@@ -11,6 +11,8 @@ export function timeFormatLocale(definition: object): void;
 
 export function parse(spec: Spec, opt?: any): Runtime;
 export function isString(value: any): value is string;
+export function truthy(): boolean;
+export function falsy(): boolean;
 
 export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
@@ -54,6 +56,13 @@ export class View {
   addResizeListener(handler: ResizeHandler): View;
   removeResizeListener(handler: ResizeHandler): View;
   tooltip(handler: TooltipHandler): View;
+
+  getState(options?: {
+    signals?: (name?: string, operator?: any) => boolean;
+    data?: (name?: string, object?: any) => boolean;
+    recurse?: boolean;
+  }): { signals?: any; data?: any };
+  setState(state: { signals?: any; data?: any }): View;
 }
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
