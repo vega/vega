@@ -24,6 +24,7 @@ This page documents the expression language. If you are interested in implementa
 - [Date/Time Functions](#datetime-functions)
 - [Array Functions](#array-functions)
 - [String Functions](#string-functions)
+- [Object Functions](#object-functions)
 - [Formatting Functions](#format-functions)
 - [Regular Expression Functions](#regexp-functions)
 - [Color Functions](#color-functions)
@@ -458,6 +459,16 @@ Truncates an input _string_ to a target _length_. The optional _align_ argument 
 <b>upper</b>(<i>string</i>)<br/>
 Transforms _string_ to upper-case letters.
 
+[Back to Top](#reference)
+
+
+## <a name="object-functions"></a>Object Functions
+
+Functions for manipulating object instances.
+
+<a name="merge" href="#merge">#</a>
+<b>merge</b>(<i>object1</i>[, <i>object2</i>, ...])<br/>
+Merges the input objects _object1_, _object2_, etc into a new output object. Inputs are visited in sequential order, such that key values from later arguments can overwrite those from earlier arguments. Example: `merge({a:1, b:2}, {a:3}) -> {a:3, b:2}`.
 
 [Back to Top](#reference)
 
