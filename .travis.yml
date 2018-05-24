@@ -1,6 +1,18 @@
 language: node_js
 node_js:
-  - 8
+- '6'
+- '10'
 script:
-  - yarn test
-  - yarn format
+- yarn test
+- yarn format
+cache: yarn
+deploy:
+  provider: npm
+  skip_cleanup: true
+  email: domoritz@gmail.com
+  on:
+    tags: true
+    repo: vega/vega-typings
+    node: '10'
+  api_key:
+    secure: 2Wsj+yedH2PiPMbh0IzOlTpM38EKvD4qTm7UTMZq0SuE16IsQMzdPWKT3G/Sv731sKoIY7GFEzwUsK9vz6MZGJJZMwFDOmjZ8No+hbdTMdQMDL4uWvO2Ftca03wUKFaxF91QcH0EzBx/xjzMMKM/91x9j7tUiNSOsw4rMhNJTYX5NExBmDaBiDrzZQse2y9us8m9mkD1VU9oopCHFq6q6QofNKK8ozCoK4Kc4hQwMHnig4Qe8xmz58ikq5MsbZqwGA+2Bs2I1dfE1z+6SEMF0cantbX3fPpa327MM4tWh3aOVtnpRxz42wqbjT++KUvROXaOs/99KKy1wsXQBrGkS48JDfUq0MmSfX3iMYomw6UWIvRU8mBWMpirGJSjy9AcmsQ61amASW9IzotZwSq7DmsuogqKbZhpuki0E97moO8LkFk7m5KZ6hKiNFoAcKVR6egJxF/nEdiu0hS4XoiS7Mvlg16plX4k99MvitThG/bG4padEJdoQIRuGNYHN1xCV5nExJO4OIBt81UBQVZtMCnlFQ4SU8Du2SAsjg8CllREYrNw/KqUEAOsXDiOEjz9z0LxmdY0+HKGoG3HyYAP6rnFuGLcch6Sy2Luc0QTB6F5Yt1nvrK0wNp6CgA1SOJjifGQZdR4nbb3fqNsSqf/bAVLRsD11PRc4gzHbTciYPo=
