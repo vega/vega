@@ -5,7 +5,7 @@ Scales and color schemes for visual encoding.
 This module provides [scale](#scale) and [scheme](#scheme) methods for
 managing scale mappings and color schemes. By default, the scale and
 scheme registries include all scale types and color schemes provided
-by the D3 4.0 [d3-scale](https://github.com/d3/d3-scale) and
+by the [d3-scale](https://github.com/d3/d3-scale) and
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) modules.
 
 This module also provides augmented implementations of `'band'`, `'point'`,
@@ -74,7 +74,7 @@ If the *scheme* argument is provided, it must be a valid color array or
 to add to the registry under the given *name*.
 
 By default, the scheme registry includes entries for all scheme types
-provided by D3 4.0's [d3-scale](https://github.com/d3/d3-scale) and
+provided by the
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) module.
 Valid schemes are either arrays of color values (e.g., applicable to
 `'ordinal'` scales) or
