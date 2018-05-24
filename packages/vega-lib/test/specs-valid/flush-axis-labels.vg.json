@@ -1,0 +1,34 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "width": 300,
+  "height": 4,
+  "padding": 5,
+  "scales": [
+    {
+      "name": "forwards",
+      "domain": [0, 1000000],
+      "range": "width"
+    },
+    {
+      "name": "backwards",
+      "domain": [0, 1000000],
+      "range": "width",
+      "reverse": true
+    }
+  ],
+  "axes": [
+    {
+      "orient": "top",
+      "scale": "forwards",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "format": "s"
+    },
+    {
+      "orient": "bottom",
+      "scale": "backwards",
+      "labelFlush": true,
+      "labelOverlap": true
+    }
+  ]
+}

@@ -51,6 +51,7 @@ tape('Vega generates scenegraphs for specifications', function(test) {
       console.error('ERROR', err);
       test.fail(name);
     }).then(function() {
+      view.finalize();
       if (--count === 0) test.end();
     });
   });
