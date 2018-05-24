@@ -36,6 +36,10 @@ var schemes = {
   inferno:     _.interpolateInferno,
   plasma:      _.interpolatePlasma,
 
+  // cyclic interpolators
+  rainbow:     _.interpolateRainbow,
+  sinebow:     _.interpolateSinebow,
+
   // extended interpolators
   blueorange:  interpolateRgbBasis(peek(blueOrange))
 };
