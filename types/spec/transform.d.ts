@@ -186,7 +186,7 @@ export interface FilterTransform {
 export interface FoldTransform {
   type: 'fold';
   fields: (string | Field)[] | SignalRef;
-  as: [string, string];
+  as?: [string, string];
 }
 
 export interface FormulaTransform {
