@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Usage - Supporting Internet Explorerer
+title: Supporting Internet Explorerer
 menu: usage
 permalink: /usage/internet-explorer/index.html
 ---
