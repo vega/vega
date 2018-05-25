@@ -53,7 +53,7 @@ The supported DOM event types for mark items are:
 
 Other event types supported by the browser (e.g., [`resize`](https://developer.mozilla.org/en-US/docs/Web/Events/resize) events on the window object) may be captured from DOM elements on the same web page as the Vega visualization. The list above applies _only_ to mark items contained within the Vega view's scenegraph.
 
-In addition, Vega supports a `timer` event, which fires a new event at a specified time interval (in milliseconds) determined by the event `"throttle"` parameter.
+In addition, Vega supports a `timer` event, which fires a new event at a specified time interval (in milliseconds) determined by the event stream _throttle_ property.
 
 
 ## <a name="object"></a>Event Stream Objects
