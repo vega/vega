@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Usage - Supporting Internet Explorerer
+title: Supporting Internet Explorerer
 menu: usage
 permalink: /usage/internet-explorer/index.html
 ---
@@ -9,7 +9,7 @@ Vega is compatible with Internet Explorer versions 10 and 11, but with some nota
 
 ## Enabling Internet Explorer Support
 
-Vega is compatible with Internet Explorer versions 10 and 11, but with caveats: Internet Explorer does not natively support [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol),[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), or the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). Vega uses Symbols to add unique identifiers to data objects, uses Promises for asynchronous tasks such as data and image loading, and uses Fetch to load external files.
+Vega is compatible with Internet Explorer versions 10 and 11, but with caveats: Internet Explorer does not natively support [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol), [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), or the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). Vega uses Symbols to add unique identifiers to data objects, uses Promises for asynchronous tasks such as data and image loading, and uses Fetch to load external files.
 
 For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol, Promise, and Fetch support. For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) and the [github/fetch](https://github.com/github/fetch) libraries. Web pages should first import any polyfill scripts, then import Vega:
 
