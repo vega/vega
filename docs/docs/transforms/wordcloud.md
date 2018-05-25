@@ -24,6 +24,7 @@ In this example, word angles are randomly selected from the set [-rotate, 0, rot
 | padding             | {% include type t="Number|Expr" %}| The padding in pixels to place around a word.|
 | rotate              | {% include type t="Number|Expr" %}| The angle in degrees to use for a word.|
 | text                | {% include type t="Field" %}      | The data field with the word text.|
+| size                | {% include type t="Number[]" %}   | The size of the layout, provided as a [width, height] array.|
 | spiral              | {% include type t="String" %}     | The spiral layout method used to place words. One of `archimedean` (the default) or `rectangular`.|
 | as                  | {% include type t="String[]" %}   | The output fields written by the transform. The default is `["x", "y", "font", "fontSize", "fontStyle", "fontWeight", "angle"]`|
 
