@@ -20,7 +20,7 @@ export type Transform =
   | _TODO_<'density'>
   | ExtentTransform
   | FilterTransform
-  | _TODO_<'flatten'>
+  | FlattenTransform
   | FoldTransform
   | _TODO_<'force'>
   | FormulaTransform
@@ -181,6 +181,12 @@ export interface ExtentTransform {
 export interface FilterTransform {
   type: 'filter';
   expr: string;
+}
+
+export interface FlattenTransform {
+  type: 'flatten';
+  fields: (string | Field)[] | SignalRef;
+  as?: string[];
 }
 
 export interface FoldTransform {
