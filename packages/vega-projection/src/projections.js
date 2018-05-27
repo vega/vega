@@ -10,6 +10,7 @@ import {
   geoGnomonic,
   geoIdentity,
   geoMercator,
+  geoNaturalEarth1,
   geoOrthographic,
   geoStereographic,
   geoTransverseMercator,
@@ -97,6 +98,7 @@ var projections = {
   gnomonic:             geoGnomonic,
   identity:             geoIdentity,
   mercator:             geoMercator,
+  naturalEarth1:        geoNaturalEarth1,
   orthographic:         geoOrthographic,
   stereographic:        geoStereographic,
   transversemercator:   geoTransverseMercator
