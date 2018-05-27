@@ -4,7 +4,7 @@ Projections for cartographic mapping.
 
 This module provides a [projection](#projection) method for managing
 registered cartographic projections. By default, the projection registry
-include all projection types provided by the D3 4.0 [d3-geo](https://github.com/d3/d3-geo) module.
+includes all projection types provided by the [d3-geo](https://github.com/d3/d3-geo) module.
 
 ## API Reference
 
@@ -20,7 +20,7 @@ If the *projection* argument is provided, it must be a projection constructor
 function to add to the registry under the given *type* name.
 
 By default, the projection registry includes entries for all projection types
-provided by D3 4.0's [d3-geo](https://github.com/d3/d3-geo) module.
+provided by the [d3-geo](https://github.com/d3/d3-geo) module.
 Projections created using the constructor returned by this method are
 augmented with the following additional properties:
 
