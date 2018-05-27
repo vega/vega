@@ -16,6 +16,8 @@
   "main": "build/vega-projections.js",
   "module": "index",
   "jsnext:main": "index",
+  "unpkg": "build/vega-projections.min.js",
+  "jsdelivr": "build/vega-projections.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/vega/vega-projection-extended.git"
