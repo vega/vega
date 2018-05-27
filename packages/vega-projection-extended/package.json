@@ -1,0 +1,43 @@
+{
+  "name": "vega-projection-extended",
+  "version": "1.0.0",
+  "description": "Extended projections for cartographic mapping.",
+  "keywords": [
+    "vega",
+    "geo",
+    "projection",
+    "extended"
+  ],
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "main": "build/vega-projections.js",
+  "module": "index",
+  "jsnext:main": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vega/vega-projection-extended.git"
+  },
+  "scripts": {
+    "build": "npm run rollup && bin/rollup -e",
+    "postbuild": "uglifyjs build/vega-projections.js -c -m -o build/vega-projections.min.js && uglifyjs build/vega-projections-core.js -c -m -o build/vega-projections-core.min.js",
+    "rollup": "rm -rf build && mkdir build && bin/rollup",
+    "pretest": "npm run rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-projection-extended.zip -- LICENSE README.md build/vega-projections.js build/vega-projections.min.js build/vega-projections-core.js build/vega-projections-core.min.js"
+  },
+  "dependencies": {
+    "d3-geo-projection": "^2.4.0",
+    "vega-projection": "^1.2.0"
+  },
+  "devDependencies": {
+    "eslint": "4",
+    "rollup": "0.59.3",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "tape": "4",
+    "uglify-js": "3"
+  }
+}
