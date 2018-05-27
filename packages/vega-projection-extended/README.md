@@ -6,7 +6,10 @@ This module extends Vega's set of cartographic projections with those provided b
 
 ## Usage Instructions
 
-To use this module in a web application, include the appropriate compiled JavaScript file as a script import on a web page. The library produces two output files: `vega-projections.js` contains all extended projections plus required methods from the d3-array and d3-geo libraries, `vega-projections-core.js` contains the extended projections only and expects a stand-alone version of D3 to have already been imported.
+To use this module in a web application, include the appropriate compiled JavaScript file as a script import on a web page. The library produces two output files:
+
+1. `vega-projections.js` contains all extended projections plus required methods from the [d3-array](https://github.com/d3/d3-array) and [d3-geo](https://github.com/d3/d3-geo) libraries.
+2. `vega-projections-core.js` contains the extended projections only and expects a stand-alone version of D3 to have already been imported.
 
 If you are using the standard `vega.js` or `vega.min.js` builds, include the following _after_ Vega has been imported:
 
