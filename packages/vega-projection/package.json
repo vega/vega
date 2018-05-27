@@ -1,6 +1,6 @@
 {
   "name": "vega-projection",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "npm run test && uglifyjs build/vega-projection.js -c -m -o build/vega-projection.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-contour:d3,d3-geo:d3 -f umd -n vega -o build/vega-projection.js -- index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -g d3-geo:d3 -f umd -n vega -o build/vega-projection.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega-projection.zip -- LICENSE README.md build/vega-projection.js build/vega-projection.min.js"
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.58.2",
+    "rollup": "0.59.3",
     "tape": "4",
     "uglify-js": "3"
   }
