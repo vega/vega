@@ -103,3 +103,5 @@ export interface DefineMark<T extends string, I = {}, R extends string = never> 
   items: Item<I>[];
   group: any;
 }
+
+export function projection(type: string, projection: any): View;
