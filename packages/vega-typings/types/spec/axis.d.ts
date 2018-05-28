@@ -1,6 +1,7 @@
 import {
   GroupEncodeEntry,
   GuideEncodeEntry,
+  TimeInterval,
   NumericValueRef,
   RuleEncodeEntry,
   SignalRef,
@@ -68,7 +69,7 @@ export interface Axis {
    * @minimum 0
    */
   tickSize?: number;
-  tickCount?: number | SignalRef;
+  tickCount?: number | TimeInterval | SignalRef;
   format?: string | SignalRef;
   values?: any[] | SignalRef;
   offset?: number | NumericValueRef;
