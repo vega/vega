@@ -114,23 +114,23 @@ export interface SequentialScale extends BaseScale {
   range: RangeScheme;
   clamp?: boolean | SignalRef;
   zero?: boolean | SignalRef;
-  nice?: boolean | Nice | SignalRef;
+  nice?: boolean | TimeInterval | SignalRef;
 }
-export type Nice = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+export type TimeInterval = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 export interface TimeScale extends BaseScale {
   type: 'time' | 'utc';
   range?: RangeScheme;
   clamp?: boolean | SignalRef;
-  nice?: boolean | Nice | SignalRef;
+  nice?: boolean | TimeInterval | SignalRef;
 }
 export interface IdentityScale extends BaseScale {
   type: 'identity';
-  nice?: Nice;
+  nice?: TimeInterval;
 }
 export interface DiscretizingScale extends BaseScale {
   type: DiscreteScaleType;
   range?: RangeScheme;
-  nice?: boolean | Nice | SignalRef;
+  nice?: boolean | TimeInterval | SignalRef;
   zero?: boolean | SignalRef;
 }
 export interface LinearScale extends BaseScale {
