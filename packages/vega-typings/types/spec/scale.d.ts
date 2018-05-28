@@ -116,7 +116,15 @@ export interface SequentialScale extends BaseScale {
   zero?: boolean | SignalRef;
   nice?: boolean | TimeInterval | SignalRef;
 }
-export type TimeInterval = 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+export type TimeInterval =
+  | 'millisecond'
+  | 'second'
+  | 'minute'
+  | 'hour'
+  | 'day'
+  | 'week'
+  | 'month'
+  | 'year';
 export interface TimeScale extends BaseScale {
   type: 'time' | 'utc';
   range?: RangeScheme;
