@@ -40,7 +40,7 @@ export type Transform =
   | _TODO_<'pie'>
   | _TODO_<'project'>
   | _TODO_<'resolvefilter'>
-  | _TODO_<'sample'>
+  | SampleTransform
   | _TODO_<'sequence'>
   | StackTransform
   | _TODO_<'stratify'>
@@ -258,6 +258,11 @@ export interface LookupTransform {
   values?: string[];
   as?: string[];
   default?: any;
+}
+
+export interface SampleTransform {
+  type: 'sample';
+  size: number | SignalRef;
 }
 
 export interface StackTransform {
