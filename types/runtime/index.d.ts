@@ -10,9 +10,6 @@ export function formatLocale(definition: object): void;
 export function timeFormatLocale(definition: object): void;
 
 export function parse(spec: Spec, opt?: any): Runtime;
-export function isString(value: any): value is string;
-export function truthy(): boolean;
-export function falsy(): boolean;
 
 export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
@@ -105,3 +102,5 @@ export interface DefineMark<T extends string, I = {}, R extends string = never> 
 }
 
 export function projection(type: string, projection: any): View;
+
+export * from 'vega-util';
