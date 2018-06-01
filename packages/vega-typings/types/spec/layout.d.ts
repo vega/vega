@@ -20,18 +20,19 @@ export type RowColumnParam =
       row?: number | SignalRef;
       column?: number | SignalRef;
     };
-export type Layout =
-  | SignalRef
-  | {
-      align?:
-        | LayoutAlign
-        | {
-            row?: LayoutAlign;
-            column?: LayoutAlign;
-          };
-      bounds?: LayoutBounds;
-      columns?: number | SignalRef;
-      padding?: RowColumnParam;
-      offset?: LayoutOffset;
-      titleBand?: RowColumnParam;
-    };
+
+export interface LayoutParams {
+  align?:
+    | LayoutAlign
+    | {
+        row?: LayoutAlign;
+        column?: LayoutAlign;
+      };
+  bounds?: LayoutBounds;
+  columns?: number | SignalRef;
+  padding?: RowColumnParam;
+  offset?: LayoutOffset;
+  titleBand?: RowColumnParam;
+}
+
+export type Layout = SignalRef | LayoutParams;
