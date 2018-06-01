@@ -25,6 +25,9 @@ export interface LayoutParams {
   columns?: number | SignalRef;
   padding?: number | SignalRef | RowColumn<number>;
   offset?: LayoutOffset;
+
+  headerBand?: number | SignalRef | RowColumn<number>;
+  footerBand?: number | SignalRef | RowColumn<number>;
   titleBand?: number | SignalRef | RowColumn<number>;
 }
 
