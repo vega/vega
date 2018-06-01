@@ -1,6 +1,6 @@
 import { SignalRef } from '.';
 
-export type LayoutAlign = 'all' | 'each' | 'none' | SignalRef;
+export type LayoutAlign = 'all' | 'each' | 'none';
 export type LayoutBounds = 'full' | 'flush' | SignalRef;
 export type LayoutOffset =
   | number
@@ -13,26 +13,19 @@ export type LayoutOffset =
       columnFooter?: number | SignalRef;
       columnTitle?: number | SignalRef;
     };
-export type RowColumnParam =
-  | number
-  | SignalRef
-  | {
-      row?: number | SignalRef;
-      column?: number | SignalRef;
-    };
+
+export interface RowColumn<T> {
+  row?: T | SignalRef;
+  column?: T | SignalRef;
+}
 
 export interface LayoutParams {
-  align?:
-    | LayoutAlign
-    | {
-        row?: LayoutAlign;
-        column?: LayoutAlign;
-      };
+  align?: LayoutAlign | SignalRef | RowColumn<LayoutAlign>;
   bounds?: LayoutBounds;
   columns?: number | SignalRef;
-  padding?: RowColumnParam;
+  padding?: number | SignalRef | RowColumn<number>;
   offset?: LayoutOffset;
-  titleBand?: RowColumnParam;
+  titleBand?: number | SignalRef | RowColumn<number>;
 }
 
 export type Layout = SignalRef | LayoutParams;
