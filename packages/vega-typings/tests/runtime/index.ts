@@ -60,10 +60,18 @@ function serverSideApi() {
   // generate a static PNG image
   view
     .toCanvas()
-    .then((canvas) => {
-      // process node-canvas instance
-      // for example, generate a PNG stream to write
-      const stream = canvas.createPNGStream();
+    .then(canvas => {
+      const filename = 'chart.png';
+      if (canvas.msToBlob) {
+        window.navigator.msSaveBlob(canvas.msToBlob(), filename);
+      } else {
+        const url = canvas.toDataURL();
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('target', '_blank');
+        link.setAttribute('download', filename);
+        link.dispatchEvent(new MouseEvent('click'));
+      }
     })
     .catch((err) => {
       console.error(err);
