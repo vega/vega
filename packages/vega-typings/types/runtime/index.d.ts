@@ -41,7 +41,7 @@ export class View {
 
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
   toSVG(): Promise<string>;
-  toCanvas(): Promise<any>; // TODO node-canvas result
+  toCanvas(): Promise<HTMLCanvasElement>;
 
   signal(name: string, value: any): View;
   signal(name: string): any;
