@@ -29,6 +29,8 @@ export class View {
   hover(): View;
   run(): View;
   runAsync(): Promise<View>;
+  insert(name: string, tuples: any): View;
+  remove(name: string, tuples: any): View;
   change(name: string, changeset: any): View;
   changeset(): any;
   data(name: string): object[];
