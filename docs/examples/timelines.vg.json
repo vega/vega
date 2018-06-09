@@ -47,12 +47,12 @@
     },
     {
       "name": "events",
-      "format": {"type":"json", "parse":{"when":"date"}},
+      "format": { "type": "json", "parse": { "when": "date" } },
       "values": [
-        { "name":"Decl. of Independence", "when":"July 4, 1776" },
-        { "name":"U.S. Constitution",     "when":"3/4/1789" },
-        { "name":"Louisiana Purchase",    "when":"April 30, 1803" },
-        { "name":"Monroe Doctrine",       "when":"Dec 2, 1823" }
+        { "name": "Decl. of Independence", "when": "July 4, 1776" },
+        { "name": "U.S. Constitution", "when": "3/4/1789" },
+        { "name": "Louisiana Purchase", "when": "April 30, 1803" },
+        { "name": "Monroe Doctrine", "when": "Dec 2, 1823" }
       ]
     }
   ],
@@ -61,86 +61,84 @@
     {
       "name": "yscale",
       "type": "band",
-      "range": [0, {"signal": "height"}],
-      "domain": {"data": "people", "field": "label"}
+      "range": [0, { "signal": "height" }],
+      "domain": { "data": "people", "field": "label" }
     },
     {
       "name": "xscale",
       "type": "time",
       "range": "width",
       "round": true,
-      "domain": {"data": "people", "fields": ["born", "died"]}
+      "domain": { "data": "people", "fields": ["born", "died"] }
     }
   ],
 
-  "axes": [
-    {"orient": "bottom", "scale": "xscale"}
-  ],
+  "axes": [{ "orient": "bottom", "scale": "xscale", "format": "%Y" }],
 
   "marks": [
     {
       "type": "text",
-      "from": {"data": "events"},
+      "from": { "data": "events" },
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "when"},
-          "y": {"value": -10},
-          "angle": {"value": -25},
-          "fill": {"value": "#000"},
-          "text": {"field": "name"},
-          "fontSize": {"value": 10}
+          "x": { "scale": "xscale", "field": "when" },
+          "y": { "value": -10 },
+          "angle": { "value": -25 },
+          "fill": { "value": "#000" },
+          "text": { "field": "name" },
+          "fontSize": { "value": 10 }
         }
       }
     },
     {
       "type": "rect",
-      "from": {"data": "events"},
+      "from": { "data": "events" },
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "when"},
-          "y": {"value": -8},
-          "width": {"value": 1},
-          "height": {"field": {"group": "height"}, "offset": 8},
-          "fill": {"value": "#888"}
+          "x": { "scale": "xscale", "field": "when" },
+          "y": { "value": -8 },
+          "width": { "value": 1 },
+          "height": { "field": { "group": "height" }, "offset": 8 },
+          "fill": { "value": "#888" }
         }
       }
     },
     {
       "type": "text",
-      "from": {"data": "people"},
+      "from": { "data": "people" },
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "born"},
-          "y": {"scale": "yscale", "field": "label", "offset": -3},
-          "fill": {"value": "#000"},
-          "text": {"field": "label"},
-          "fontSize": {"value": 10}
+          "x": { "scale": "xscale", "field": "born" },
+          "y": { "scale": "yscale", "field": "label", "offset": -3 },
+          "fill": { "value": "#000" },
+          "text": { "field": "label" },
+          "fontSize": { "value": 10 }
         }
       }
     },
     {
       "type": "rect",
-      "from": {"data": "people"},
+      "from": { "data": "people" },
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "born"},
-          "x2": {"scale": "xscale", "field": "died"},
-          "y": {"scale": "yscale", "field": "label"},
-          "height": {"value": 2},
-          "fill": {"value": "#557"}
+          "x": { "scale": "xscale", "field": "born" },
+          "x2": { "scale": "xscale", "field": "died" },
+          "y": { "scale": "yscale", "field": "label" },
+          "height": { "value": 2 },
+          "fill": { "value": "#557" }
         }
       }
     },
     {
       "type": "rect",
-      "from": {"data": "people"},
+      "from": { "data": "people" },
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "enter"},
-          "x2": {"scale": "xscale", "field": "leave"},
-          "y": {"scale": "yscale", "field": "label", "offset":-1},
-          "height": {"value": 4},
-          "fill": {"value": "#e44"}
+          "x": { "scale": "xscale", "field": "enter" },
+          "x2": { "scale": "xscale", "field": "leave" },
+          "y": { "scale": "yscale", "field": "label", "offset": -1 },
+          "height": { "value": 4 },
+          "fill": { "value": "#e44" }
         }
       }
     }
