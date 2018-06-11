@@ -74,7 +74,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale"}
+    {"orient": "bottom", "scale": "xscale", "format": "%Y"}
   ],
 
   "marks": [
