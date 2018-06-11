@@ -2,7 +2,7 @@ import Renderer from './Renderer';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {font, textValue} from './util/text';
+import {fontFamily, fontSize, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
@@ -243,7 +243,11 @@ function applyStyles(o, mark, tag, defs) {
   }
 
   if (tag === 'text') {
-    s += 'font: ' + font(o) + '; ';
+    s += 'font-family: ' + fontFamily(o) + '; ';
+    s += 'font-size: ' + fontSize(o) + 'px; ';
+    if (o.fontStyle) s += 'font-style: ' + o.fontStyle + '; ';
+    if (o.fontVariant) s += 'font-variant: ' + o.fontVariant + '; ';
+    if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
   }
 
   for (i=0, n=styleProperties.length; i<n; ++i) {

@@ -32,7 +32,7 @@ export {default as pathRender} from './src/path/render';
 export {default as point} from './src/util/point';
 export {domCreate, domFind, domChild, domClear} from './src/util/dom';
 export {openTag, closeTag} from './src/util/tags';
-export {font, textMetrics} from './src/util/text';
+export {font, fontFamily, fontSize, textMetrics} from './src/util/text';
 export {resetSVGClipId} from './src/util/svg/clip';
 
 export {sceneEqual, pathEqual} from './src/util/equal';

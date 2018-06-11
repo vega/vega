@@ -1,10 +1,10 @@
 import {canvas} from 'vega-canvas';
 
 var context,
-    fontHeight;
+    currFontHeight;
 
 export var textMetrics = {
-  height: height,
+  height: fontSize,
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
   width: estimateWidth,
@@ -15,12 +15,12 @@ useCanvas(true);
 
 // make dumb, simple estimate if no canvas is available
 function estimateWidth(item) {
-  fontHeight = height(item);
+  currFontHeight = fontSize(item);
   return estimate(textValue(item));
 }
 
 function estimate(text) {
-  return ~~(0.8 * text.length * fontHeight);
+  return ~~(0.8 * text.length * currFontHeight);
 }
 
 // measure text width if canvas is available
@@ -33,7 +33,7 @@ function measure(text) {
   return context.measureText(text).width;
 }
 
-function height(item) {
+export function fontSize(item) {
   return item.fontSize != null ? item.fontSize : 11;
 }
 
@@ -60,7 +60,7 @@ export function truncate(item) {
     context.font = font(item);
     width = measure;
   } else {
-    fontHeight = height(item);
+    currFontHeight = fontSize(item);
     width = estimate;
   }
 
@@ -90,25 +90,27 @@ export function truncate(item) {
   }
 }
 
+export function fontFamily(item, quote) {
+  var font = item.font;
+  return (quote && font
+    ? String(font).replace(/"/g, '\'')
+    : font) || 'sans-serif';
+}
 
 export function font(item, quote) {
-  var font = item.font;
-  if (quote && font) {
-    font = String(font).replace(/"/g, '\'');
-  }
   return '' +
     (item.fontStyle ? item.fontStyle + ' ' : '') +
     (item.fontVariant ? item.fontVariant + ' ' : '') +
     (item.fontWeight ? item.fontWeight + ' ' : '') +
-    height(item) + 'px ' +
-    (font || 'sans-serif');
+    fontSize(item) + 'px ' +
+    fontFamily(item, quote);
 }
 
 export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
   var baseline = item.baseline,
-      h = height(item);
+      h = fontSize(item);
   return Math.round(
     baseline === 'top'    ?  0.79*h :
     baseline === 'middle' ?  0.30*h :
