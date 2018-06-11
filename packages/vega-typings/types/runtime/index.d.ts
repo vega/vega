@@ -69,7 +69,14 @@ export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 
 export const Warn: number;
 export const changeset: any;
-export function loader(opt?: any): Loader;
+export interface LoaderOptions {
+  baseURL: string;
+  mode: 'file' | 'http';
+  defaultProtocol: 'http' | 'https' | string;
+  target: string;
+  http: RequestInit;
+}
+export function loader(opt?: LoaderOptions): Loader;
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
