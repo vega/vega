@@ -2,7 +2,7 @@ import Renderer from './Renderer';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {font, textValue} from './util/text';
+import {fontFamily, fontSize, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
@@ -394,18 +394,32 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    var str = textValue(item);
-    if (str !== values.text) {
-      el.textContent = str;
-      values.text = str;
+    var value;
+
+    value = textValue(item);
+    if (value !== values.text) {
+      el.textContent = value;
+      values.text = value;
     }
-    str = font(item);
-    if (str !== values.font) {
-      el.style.setProperty('font', str);
-      values.font = str;
-    }
+
+    setStyle(el, 'font-family', fontFamily(item));
+    setStyle(el, 'font-size', fontSize(item) + 'px');
+    setStyle(el, 'font-style', item.fontStyle);
+    setStyle(el, 'font-variant', item.fontVariant);
+    setStyle(el, 'font-weight', item.fontWeight);
   }
 };
+
+function setStyle(el, name, value) {
+  if (value !== values[name]) {
+    if (value == null) {
+      el.style.removeProperty(name);
+    } else {
+      el.style.setProperty(name, value + '');
+    }
+    values[name] = value;
+  }
+}
 
 prototype._update = function(mdef, el, item) {
   // set dom element and values cache
@@ -456,6 +470,11 @@ prototype.style = function(el, o) {
   for (i=0, n=styleProperties.length; i<n; ++i) {
     prop = styleProperties[i];
     value = o[prop];
+
+    if (prop === 'font') {
+      value = fontFamily(o);
+    }
+
     if (value === values[prop]) continue;
 
     name = styles[prop];
@@ -471,7 +490,7 @@ prototype.style = function(el, o) {
         this._defs.gradient[value.id] = value;
         value = 'url(' + href() + '#' + value.id + ')';
       }
-      el.style.setProperty(name, value+'');
+      el.style.setProperty(name, value + '');
     }
 
     values[prop] = value;
