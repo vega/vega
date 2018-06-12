@@ -104,3 +104,35 @@ produces the output:
   {"foo": "b", "count": 1}
 ]
 ```
+
+## Usage with nested fields
+
+For the following input data:
+
+```json
+[
+  {"foo": {"baz": "a"}, "bar": 1},
+  {"foo": {"baz": "a"}, "bar": 2},
+  {"foo": {"baz": "b"}, "bar": 3}
+]
+```
+
+The aggregate transform
+
+```json
+{
+  "type": "aggregate",
+  "groupby": ["foo.baz"],
+}
+```
+
+produces the output:
+
+```json
+[
+  {"foo.baz": "a", "count": 2},
+  {"foo.baz": "b", "count": 1}
+]
+```
+
+The field name `"foo.baz"` is now a flat string, _not_ a nested field reference. To reference this field name elsewhere in a specification, you must escape the dot character like so: `"foo\\.baz"`. Otherwise, Vega will try to parse it as a nested field name. To avoid this nuisance, you can use the [`project`](../project) transform to unnest the data prior to aggregation.
