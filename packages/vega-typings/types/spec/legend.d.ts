@@ -2,10 +2,9 @@ import {
   GroupEncodeEntry,
   NumericValueRef,
   RectEncodeEntry,
+  SignalRef,
   SymbolEncodeEntry,
   TextEncodeEntry,
-  FontWeight,
-  SignalRef,
 } from '.';
 
 export interface GuideEncodeEntry<T> {
@@ -27,18 +26,57 @@ export type LegendOrient =
   | 'top-right'
   | 'bottom-left'
   | 'bottom-right';
+
+export type Color = string;
+
 export interface BaseLegend {
   name?: string;
   type?: LegendType;
+  direction?: 'horizontal' | 'vertical';
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
    *
    * __Default value:__ `"right"`
    */
   orient?: LegendOrient;
+  gridAlign?: 'all' | 'each' | 'none';
+  clipHeight?: number | SignalRef;
+  columns?: number | SignalRef;
+  columnPadding?: number | SignalRef;
+  rowPadding?: number | SignalRef;
+  cornerRadius?: number | SignalRef;
+  fillColor?: Color | SignalRef;
+  strokeColor?: Color | SignalRef;
+  strokeWidth?: number | SignalRef;
+  gradientLength?: number | SignalRef;
+  gradientThickness?: number | SignalRef;
+  gradientStrokeColor?: Color | SignalRef;
+  gradientStrokeWidth?: number | SignalRef;
+  labelAlign?: string | SignalRef;
+  labelBaseline?: string | SignalRef;
+  labelColor?: Color | SignalRef;
+  labelFont?: string | SignalRef;
+  labelFontSize?: number | SignalRef;
+  labelFontWeight?: string | number | SignalRef;
+  labelLimit?: number | SignalRef;
+  labelOffset?: number | SignalRef;
+  labelOverlap?: Boolean | string | SignalRef;
+  symbolFillColor?: Color | SignalRef;
+  symbolOffset?: number | SignalRef;
+  symbolSize?: number | SignalRef;
+  symbolStrokeColor?: Color | SignalRef;
+  symbolStrokeWidth?: number | SignalRef;
+  symbolType?: string | SignalRef;
+  titleAlign?: string | SignalRef;
+  titleBaseline?: string | SignalRef;
+  titleColor?: Color | SignalRef;
+  titleFont?: string | SignalRef;
+  titleFontSize?: number | SignalRef;
+  titleFontWeight?: string | number | SignalRef;
+  titleLimit?: number | SignalRef;
   title?: string | SignalRef;
   zindex?: number;
-  interactive?: boolean;
+
   /**
    * The offset, in pixels, by which to displace the legend from the edge of the enclosing group or data rectangle.
    *
