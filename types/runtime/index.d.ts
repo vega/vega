@@ -70,11 +70,11 @@ export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 export const Warn: number;
 export const changeset: any;
 export interface LoaderOptions {
-  baseURL: string;
-  mode: 'file' | 'http';
-  defaultProtocol: 'http' | 'https' | string;
-  target: string;
-  http: RequestInit;
+  baseURL?: string;
+  mode?: 'file' | 'http';
+  defaultProtocol?: 'http' | 'https' | string;
+  target?: string;
+  http?: RequestInit;
 }
 export function loader(opt?: LoaderOptions): Loader;
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
