@@ -27,3 +27,33 @@ Generates a stream of derived data objects containing only the fields `"foo"` an
 ```
 
 Generates a stream of derived data objects with fields `"a"` and `"b"` containing the values of the source fields `"foo"` and `"bar"`, respectively.
+
+The project transform can also be used to un-nest properties. For example, consider the following input data:
+
+```json
+[
+  {"foo": {"a": 5, "b": "abc"}, "bar": 0},
+  {"foo": {"a": 6, "b": "def"}, "bar": 1},
+  {"foo": {"a": 7, "b": "ghi"}, "bar": 2}
+]
+```
+
+To extract the `"bar"` field along with the `"a"` and `"b"` sub-fields into new objects, use the transform:
+
+```json
+{
+  "type": "project",
+  "fields": ["bar", "foo.a", "foo.b"],
+  "as": ["bar", "a", "b"]
+}
+```
+
+This produces the following output:
+
+```json
+[
+  {"bar":0, "a":5, "b":"abc"},
+  {"bar":1, "a":6, "b":"def"},
+  {"bar":2, "a":7, "b":"ghi"}
+]
+```
