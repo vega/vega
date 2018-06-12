@@ -60,7 +60,7 @@ export interface BaseLegend {
   labelFontWeight?: string | number | SignalRef;
   labelLimit?: number | SignalRef;
   labelOffset?: number | SignalRef;
-  labelOverlap?: Boolean | string | SignalRef;
+  labelOverlap?: boolean | string | SignalRef;
   symbolFillColor?: Color | SignalRef;
   symbolOffset?: number | SignalRef;
   symbolSize?: number | SignalRef;
