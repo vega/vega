@@ -44,7 +44,7 @@
       "name": "links",
       "source": "tree",
       "transform": [
-        { "type": "treelinks", "key": "id" },
+        { "type": "treelinks" },
         {
           "type": "linkpath",
           "orient": "horizontal",
