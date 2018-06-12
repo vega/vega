@@ -539,13 +539,16 @@ log level to use (one of [None](#none), [Warn](#warn), [Info](#info), or
 The generated logger instance provides the following methods:
 * <b>level</b>(<i>value</i>): Sets the current logging level. Only messages
 with a log level less than or equal to *value* will be written to the console.
+* <b>error</b>(<i>message1</i>[, <i>message2</i>, …]): Logs an error message.
+The messages will be written to the console using the `console.error` method
+if the current log level is [Error](#error) or higher.
 * <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a warning message.
 The messages will be written to the console using the `console.warn` method
 if the current log level is [Warn](#warn) or higher.
 * <b>info</b>(<i>message1</i>[, <i>message2</i>, …]): Logs an informative
 message. The messages will be written to the console using the `console.log`
 method if the current log level is [Info](#info) or higher.
-* <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a debugging message.
+* <b>debug</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a debugging message.
 The messages will be written to the console using the `console.log` method
 if the current log level is [Debug](#debug) or higher.
 
