@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.58.2",
+    "rollup": "0.60.4",
     "tape": "4",
     "uglify-js": "3"
   }
