@@ -369,7 +369,7 @@ Returns the milliseconds component for the given _datetime_ value, in UTC time.
 Functions for working with arrays of values.
 
 <a name="clamprange" href="#clamprange">#</a>
-<b>clamprange</b>(<i>range</i>, <i>min</i>, <i>max</i>)<br/>
+<b>clampRange</b>(<i>range</i>, <i>min</i>, <i>max</i>)<br/>
 Clamps a two-element _range_ array in a span-preserving manner. If the span of the input _range_ is less than _(max - min)_ and an endpoint exceeds either the _min_ or _max_ value, the range is translated such that the span is preserved and one endpoint touches the boundary of the _[min, max]_ range. If the span exceeds _(max - min)_, the range _[min, max]_ is returned.
 
 <a name="indexof" href="#indexof">#</a>
