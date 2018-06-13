@@ -81,6 +81,25 @@ Valid schemes are either arrays of color values (e.g., applicable to
 [interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
 functions (e.g., applicable to `'sequential'` scales.)
 
+<a name="schemeDiscretize" href="#schemeDiscretize">#</a>
+vega.<b>schemeDiscretize</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
+[<>](https://github.com/vega/vega-scale/blob/master/src/schemes.js "Source")
+
+Registry function for adding and accessing discretized color schemes,
+consisting of an array of color schemes for specific value counts.
+The *name* argument is a String indicating the name of the color scheme.
+If the *schemes* argument is not specified, this method returns the matching
+array of color schemes value in the registry, or `null` if not found.
+If the *schemes* argument is provided, it must be an array of valid color
+arrays, with non-null entries at indices for each supported value count.
+For example, the array at index 3 should be a 3-color array. The optional
+*interpolator* argument provides a continuous color
+[interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
+to use when a specific item count is not provided or undefined. If the
+*interpolator* argument is not provided, an interpolator will be
+automatically created using basis spline interpolation in the RGB color
+space for the last (largest) color array in *schemes*.
+
 <a name="interpolate" href="#interpolate">#</a>
 vega.<b>interpolate</b>(<i>name</i>[, <i>gamma</i>])
 [<>](https://github.com/vega/vega-scale/blob/master/src/interpolate.js "Source")
