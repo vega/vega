@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -29,7 +29,7 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-dataflow.zip -- LICENSE README.md build/vega-dataflow.js build/vega-dataflow.min.js"
   },
   "dependencies": {
-    "vega-loader": "^3.0.0",
+    "vega-loader": "^3.0.1",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
