@@ -1,6 +1,6 @@
 {
   "name": "vega-loader",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.58.2",
+    "rollup": "0.60.4",
     "tape": "4",
     "uglify-js": "3"
   },
