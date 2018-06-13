@@ -965,9 +965,9 @@ util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
 
-vega-loader@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-3.0.0.tgz#0df9eb2fc52073cfc372d23decfdb99e075c9e6f"
+vega-loader@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-3.0.1.tgz#728426b54e74de7dbc91d418e05230bc7ee23a88"
   dependencies:
     d3-dsv "^1.0.8"
     d3-time-format "^2.1.1"
