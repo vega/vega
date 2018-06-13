@@ -55,7 +55,7 @@ If the *scale* argument is provided, it must be a scale constructor function
 to add to the registry under the given *type* name.
 
 By default, the scale registry includes entries for all scale types provided
-by D3 4.0's [d3-scale](https://github.com/d3/d3-scale) module. Scales created
+by the [d3-scale](https://github.com/d3/d3-scale) module. Scales created
 using the constructor returned by this method have an additional `type`
 property indicating the scale type. All scales supporting either an `invert`
 or `invertExtent` method are augmented with an additional `invertRange`
@@ -99,19 +99,37 @@ vega.<b>scheme</b>(<i>name</i>[, <i>scheme</i>])
 Registry function for adding and accessing color schemes.
 The *name* argument is a String indicating the name of the color scheme.
 If the *scheme* argument is not specified, this method returns the matching
-scheme value in the registry, or `null` if not found.
+scheme value in the registry, or `undefined` if not found.
 If the *scheme* argument is provided, it must be a valid color array or
 [interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
 to add to the registry under the given *name*.
 
-By default, the scheme registry includes entries for all scheme types
-provided by D3 4.0's [d3-scale](https://github.com/d3/d3-scale) and
+By default, the scheme registry includes entries for all scheme types provided
+by the
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) module.
 Valid schemes are either arrays of color values (e.g., applicable to
 `'ordinal'` scales) or
 [interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
 functions (e.g., applicable to `'sequential'` scales.)
 
+<a name="schemeDiscretized" href="#schemeDiscretized">#</a>
+vega.<b>schemeDiscretized</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
+[<>](https://github.com/vega/vega-scale/blob/master/src/schemes.js "Source")
+
+Registry function for adding and accessing discretized color schemes,
+consisting of an array of color schemes for specific value counts.
+The *name* argument is a String indicating the name of the color scheme.
+If the *schemes* argument is not specified, this method returns the matching
+array of color schemes value in the registry, or `undefined` if not found.
+If the *schemes* argument is provided, it must be an array of valid color
+arrays, with non-null entries at indices for each supported value count.
+For example, the array at index 3 should be a 3-color array. The optional
+*interpolator* argument provides a continuous color
+[interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
+to use when a specific item count is not provided or undefined. If the
+*interpolator* argument is not provided, an interpolator will be
+automatically created using basis spline interpolation in the RGB color
+space for the last (largest) color array in *schemes*.
 
 ## <a name="transform"></a>Transforms
 
