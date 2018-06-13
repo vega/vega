@@ -81,8 +81,8 @@ Valid schemes are either arrays of color values (e.g., applicable to
 [interpolator](https://github.com/d3/d3-scale#sequential_interpolator)
 functions (e.g., applicable to `'sequential'` scales.)
 
-<a name="schemeDiscretize" href="#schemeDiscretize">#</a>
-vega.<b>schemeDiscretize</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
+<a name="schemeDiscretized" href="#schemeDiscretized">#</a>
+vega.<b>schemeDiscretized</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
 [<>](https://github.com/vega/vega-scale/blob/master/src/schemes.js "Source")
 
 Registry function for adding and accessing discretized color schemes,
