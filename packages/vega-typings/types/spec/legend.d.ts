@@ -5,6 +5,7 @@ import {
   SignalRef,
   SymbolEncodeEntry,
   TextEncodeEntry,
+  Orientation,
 } from '.';
 
 export interface GuideEncodeEntry<T> {
@@ -32,7 +33,7 @@ export type Color = string;
 export interface BaseLegend {
   name?: string;
   type?: LegendType;
-  direction?: 'horizontal' | 'vertical';
+  direction?: Orientation;
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
    *
