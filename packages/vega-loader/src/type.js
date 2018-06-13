@@ -26,19 +26,24 @@ var typeList = [
 export function inferType(values, field) {
   if (!values || !values.length) return 'unknown';
 
-  var tests = typeTests.slice(),
-      value, i, n, j;
+  var value, i, j, t = 0,
+      n = values.length,
+      m = typeTests.length,
+      a = typeTests.map(function(_, i) { return i + 1; });
 
   for (i=0, n=values.length; i<n; ++i) {
     value = field ? values[i][field] : values[i];
-    for (j=0; j<tests.length; ++j) {
-      if (isValid(value) && !tests[j](value)) {
-        tests.splice(j, 1); --j;
+    for (j=0; j<m; ++j) {
+      if (a[j] && isValid(value) && !typeTests[j](value)) {
+        a[j] = 0;
+        ++t;
+        if (t === typeTests.length) return 'string';
       }
     }
-    if (tests.length === 0) return 'string';
   }
-  return typeList[typeTests.indexOf(tests[0])];
+
+  t = a.reduce(function(u, v) { return u === 0 ? v : u; }, 0) - 1;
+  return typeList[t];
 }
 
 export function inferTypes(data, fields) {
