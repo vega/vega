@@ -7,7 +7,7 @@ import * as _ from 'd3-scale-chromatic';
 import {interpolateRgbBasis} from 'd3-interpolate';
 import {peek} from 'vega-util';
 
-var discrete = {
+var discretized = {
   blueorange:  blueOrange
 };
 
@@ -46,7 +46,7 @@ var schemes = {
 
 function add(name, suffix) {
   schemes[name] = _['interpolate' + suffix];
-  discrete[name] = _['scheme' + suffix];
+  discretized[name] = _['scheme' + suffix];
 }
 
 // sequential single-hue
@@ -82,7 +82,7 @@ add('yellowgreen',       'YlGn');
 add('yelloworangebrown', 'YlOrBr');
 add('yelloworangered',   'YlOrRd');
 
-export default function(name, scheme) {
+export function scheme(name, scheme) {
   if (arguments.length > 1) {
     schemes[name] = scheme;
     return this;
@@ -92,7 +92,19 @@ export default function(name, scheme) {
   name = part[0];
   part = +part[1] + 1;
 
-  return part && discrete.hasOwnProperty(name) ? discrete[name][part-1]
+  return part && discretized.hasOwnProperty(name) ? discretized[name][part-1]
     : !part && schemes.hasOwnProperty(name) ? schemes[name]
+    : undefined;
+}
+
+export function schemeDiscretized(name, schemeArray, interpolator) {
+  if (arguments.length > 1) {
+    discretized[name] = schemeArray;
+    schemes[name] = interpolator || interpolateRgbBasis(peek(schemeArray));
+    return this;
+  }
+
+  return discretized.hasOwnProperty(name)
+    ? discretized[name]
     : undefined;
 }
