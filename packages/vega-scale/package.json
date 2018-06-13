@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.59.3",
+    "rollup": "0.60.2",
     "tape": "4",
     "uglify-js": "3"
   }
