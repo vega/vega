@@ -27,7 +27,7 @@ If the *scale* argument is provided, it must be a scale constructor function
 to add to the registry under the given *type* name.
 
 By default, the scale registry includes entries for all scale types provided
-by D3 4.0's [d3-scale](https://github.com/d3/d3-scale) module. Scales created
+by the [d3-scale](https://github.com/d3/d3-scale) module. Scales created
 using the constructor returned by this method have an additional `type`
 property indicating the scale type. All scales supporting either an `invert`
 or `invertExtent` method are augmented with an additional `invertRange`
