@@ -88,6 +88,8 @@ export default {
 
         // LABEL CONFIG
         "labels": {"type": "boolean"},
+        "labelAlign": alignValue,
+        "labelBaseline": baselineValue,
         "labelBound": booleanOrNumber,
         "labelFlush": booleanOrNumber,
         "labelFlushOffset": {"type": "number"},

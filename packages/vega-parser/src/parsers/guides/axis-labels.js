@@ -22,6 +22,8 @@ export default function(spec, config, userEncode, dataRef, size) {
       flushOn = flush != null && flush !== false && (flush = +flush) === flush,
       flushOffset = +lookup('labelFlushOffset', spec, config),
       overlap = lookup('labelOverlap', spec, config),
+      labelAlign = lookup('labelAlign', spec, config),
+      labelBaseline = lookup('labelBaseline', spec, config),
       zero = {value: 0},
       encode = {}, enter, exit, update, tickSize, tickPos;
 
@@ -59,23 +61,31 @@ export default function(spec, config, userEncode, dataRef, size) {
   if (orient === Top || orient === Bottom) {
     update.y = enter.y = tickSize;
     update.x = enter.x = exit.x = tickPos;
-    addEncode(update, 'align', flushOn
-      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-      : 'center');
-    if (flushOn && flushOffset) {
-      addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
+    if (labelAlign) {
+      addEncode(update, 'align', labelAlign);
+    } else {
+      addEncode(update, 'align', flushOn
+        ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
+        : 'center');
+      if (flushOn && flushOffset) {
+        addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
+      }
     }
+    addEncode(update, 'baseline', labelBaseline || (orient === Top ? 'bottom' : 'top'));
 
-    addEncode(update, 'baseline', orient === Top ? 'bottom' : 'top');
   } else {
     update.x = enter.x = tickSize;
     update.y = enter.y = exit.y = tickPos;
-    addEncode(update, 'align', orient === Right ? 'left' : 'right');
-    addEncode(update, 'baseline', flushOn
-      ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
-      : 'middle');
-    if (flushOn && flushOffset) {
-      addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
+    addEncode(update, 'align', labelAlign || (orient === Right ? 'left' : 'right'));
+    if (labelBaseline) {
+      addEncode(update, 'baseline', labelBaseline);
+    } else {
+      addEncode(update, 'baseline', flushOn
+        ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
+        : 'middle');
+      if (flushOn && flushOffset) {
+        addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
+      }
     }
   }
 
