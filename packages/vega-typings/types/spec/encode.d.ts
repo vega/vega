@@ -93,6 +93,9 @@ export interface EncodeEntry {
   strokeOpacity?: ProductionRule<NumericValueRef>;
   strokeDash?: ProductionRule<ScaledValueRef<number[]>>;
   strokeDashOffset?: ProductionRule<NumericValueRef>;
+  strokeCap?: ProductionRule<StringValueRef>;
+  strokeJoin?: ProductionRule<StringValueRef>;
+  strokeMiterLimit?: ProductionRule<NumericValueRef>;
   zindex?: ProductionRule<NumericValueRef>;
   cursor?: ProductionRule<StringValueRef>;
   tooltip?: ProductionRule<StringValueRef>;

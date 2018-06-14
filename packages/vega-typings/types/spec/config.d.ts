@@ -110,6 +110,27 @@ export interface MarkConfig {
    */
   strokeDashOffset?: number;
 
+  /**
+   * The stroke cap for line ending style.
+   *
+   * __Default value:__ `butt`
+   *
+   */
+  strokeCap?: string;
+
+  /**
+   * The stroke line join method.
+   *
+   * __Default value:__ `miter`
+   *
+   */
+  strokeJoin?: string;
+
+  /**
+   * The miter limit at which to bevel a line join.
+   */
+  strokeMiterLimit?: number;
+
   // ---------- Orientation: Bar, Tick, Line, Area ----------
   /**
    * The orientation of a non-stacked bar, tick, area, and line charts.
