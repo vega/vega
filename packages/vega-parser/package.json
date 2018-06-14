@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
@@ -35,17 +35,17 @@
     "d3-format": "^1.3.0",
     "d3-geo": "^1.10.0",
     "d3-time-format": "^2.1.1",
-    "vega-dataflow": "^4.0.1",
+    "vega-dataflow": "^4.0.3",
     "vega-event-selector": "^2.0.0",
     "vega-expression": "^2.3.1",
-    "vega-scale": "^2.1.1",
-    "vega-scenegraph": "^3.1.0",
+    "vega-scale": "^2.3.0",
+    "vega-scenegraph": "^3.2.1",
     "vega-statistics": "^1.2.1",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.58.2",
+    "rollup": "0.60.5",
     "tape": "4",
     "uglify-js": "3",
     "vega-transforms": "^2.0.0"
