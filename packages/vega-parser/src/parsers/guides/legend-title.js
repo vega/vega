@@ -27,6 +27,8 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   encode.update = {
+    x: {field: {group: 'padding'}},
+    y: {field: {group: 'padding'}},
     opacity: {value: 1},
     text: encoder(spec.title)
   };
