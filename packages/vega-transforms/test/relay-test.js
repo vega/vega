@@ -45,7 +45,14 @@ tape('Relay relays derived tuples', function(test) {
   test.deepEqual(p.add.map(id), [0, 1]);
 
   // test simultaneous remove and add
-  df.pulse(c, changeset().remove(data[0]).insert(data[0])).run();
+  // fake changeset to test invalid configuration
+  df.pulse(c, {
+    pulse: function(p) {
+      p.add.push(data[0]);
+      p.rem.push(data[0]);
+      return p;
+    }
+  }).run();
   p = r.pulse;
   test.equal(p.add.length, 1);
   test.equal(p.rem.length, 1);
@@ -73,6 +80,7 @@ tape('Relay relays derived tuples', function(test) {
   test.equal(p.add.length, 0);
   test.equal(p.rem.length, 2);
   test.equal(p.mod.length, 0);
+  p.rem.sort(function(a, b) { return a.id - b.id; });
   test.notEqual(p.rem[0], data[0]);
   test.notEqual(p.rem[1], data[1]);
   test.deepEqual(p.rem.map(id), [2, 3]);
