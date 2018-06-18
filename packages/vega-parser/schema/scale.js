@@ -246,7 +246,8 @@ export default {
                 "type": {"enum": ["ordinal"]},
                 "range": {
                   "oneOf": schemeRangeDef.concat({"$ref": "#/refs/scaleData"})
-                }
+                },
+                "domainImplicit": {"$ref": "#/refs/booleanOrSignal"}
               },
               "required": ["type"]
             },
