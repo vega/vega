@@ -745,49 +745,86 @@
         return this;
       },
       pulse: function(pulse, tuples) {
-        var out, i, n, m, f, t, id$$1;
+        var cur = {}, out = {}, i, n, m, f, t, id$$1;
 
-        // add
-        for (i=0, n=add.length; i<n; ++i) {
-          pulse.add.push(ingest(add[i]));
+        // build lookup table of current tuples
+        for (i=0, n=tuples.length; i<n; ++i) {
+          cur[tupleid(tuples[i])] = 1;
         }
 
-        // remove
-        for (out={}, i=0, n=rem.length; i<n; ++i) {
+        // process individual tuples to remove
+        for (i=0, n=rem.length; i<n; ++i) {
           t = rem[i];
-          out[tupleid(t)] = t;
+          cur[tupleid(t)] = -1;
         }
+
+        // process predicate-based removals
         for (i=0, n=remp.length; i<n; ++i) {
           f = remp[i];
           tuples.forEach(function(t) {
-            if (f(t)) out[tupleid(t)] = t;
+            if (f(t)) cur[tupleid(t)] = -1;
           });
         }
-        for (id$$1 in out) pulse.rem.push(out[id$$1]);
 
-        // modify
+        // process all add tuples
+        for (i=0, n=add.length; i<n; ++i) {
+          t = add[i];
+          id$$1 = tupleid(t);
+          if (cur[id$$1]) {
+            // tuple already resides in dataset
+            // if flagged for both add and remove, cancel
+            cur[id$$1] = 1;
+          } else {
+            // tuple does not reside in dataset, add
+            pulse.add.push(ingest(add[i]));
+          }
+        }
+
+        // populate pulse rem list
+        for (i=0, n=tuples.length; i<n; ++i) {
+          t = tuples[i];
+          if (cur[tupleid(t)] < 0) pulse.rem.push(t);
+        }
+
+        // modify helper method
         function modify(t, f, v) {
-          if (v) t[f] = v(t); else pulse.encode = f;
+          if (v) {
+            t[f] = v(t);
+          } else {
+            pulse.encode = f;
+          }
           if (!reflow) out[tupleid(t)] = t;
         }
-        for (out={}, i=0, n=mod.length; i<n; ++i) {
+
+        // process individual tuples to modify
+        for (i=0, n=mod.length; i<n; ++i) {
           m = mod[i];
-          modify(m.tuple, m.field, m.value);
-          pulse.modifies(m.field);
+          t = m.tuple;
+          f = m.field;
+          id$$1 = cur[tupleid(t)];
+          if (id$$1 > 0) {
+            modify(t, f, m.value);
+            pulse.modifies(f);
+          }
         }
+
+        // process predicate-based modifications
         for (i=0, n=modp.length; i<n; ++i) {
           m = modp[i];
           f = m.filter;
           tuples.forEach(function(t) {
-            if (f(t)) modify(t, m.field, m.value);
+            if (f(t) && cur[tupleid(t)] > 0) {
+              modify(t, m.field, m.value);
+            }
           });
           pulse.modifies(m.field);
         }
 
-        // reflow?
+        // upon reflow request, populate mod with all non-removed tuples
+        // otherwise, populate mod with modified tuples only
         if (reflow) {
           pulse.mod = rem.length || remp.length
-            ? tuples.filter(function(t) { return out.hasOwnProperty(tupleid(t)); })
+            ? tuples.filter(function(t) { return cur[tupleid(t)] > 0; })
             : tuples.slice();
         } else {
           for (id$$1 in out) pulse.mod.push(out[id$$1]);
@@ -1498,19 +1535,24 @@
   function inferType(values, field$$1) {
     if (!values || !values.length) return 'unknown';
 
-    var tests = typeTests.slice(),
-        value, i, n, j;
+    var value, i, j, t = 0,
+        n = values.length,
+        m = typeTests.length,
+        a = typeTests.map(function(_, i) { return i + 1; });
 
     for (i=0, n=values.length; i<n; ++i) {
       value = field$$1 ? values[i][field$$1] : values[i];
-      for (j=0; j<tests.length; ++j) {
-        if (isValid(value) && !tests[j](value)) {
-          tests.splice(j, 1); --j;
+      for (j=0; j<m; ++j) {
+        if (a[j] && isValid(value) && !typeTests[j](value)) {
+          a[j] = 0;
+          ++t;
+          if (t === typeTests.length) return 'string';
         }
       }
-      if (tests.length === 0) return 'string';
     }
-    return typeList[typeTests.indexOf(tests[0])];
+
+    t = a.reduce(function(u, v) { return u === 0 ? v : u; }, 0) - 1;
+    return typeList[t];
   }
 
   function inferTypes(data, fields) {
@@ -2049,6 +2091,7 @@
       return (end - start) / k;
     });
   };
+  var milliseconds = millisecond.range;
 
   var durationSecond = 1e3;
   var durationMinute = 6e4;
@@ -2065,6 +2108,7 @@
   }, function(date) {
     return date.getUTCSeconds();
   });
+  var seconds = second.range;
 
   var minute = newInterval(function(date) {
     date.setTime(Math.floor(date / durationMinute) * durationMinute);
@@ -2075,6 +2119,7 @@
   }, function(date) {
     return date.getMinutes();
   });
+  var minutes = minute.range;
 
   var hour = newInterval(function(date) {
     var offset = date.getTimezoneOffset() * durationMinute % durationHour;
@@ -2087,6 +2132,7 @@
   }, function(date) {
     return date.getHours();
   });
+  var hours = hour.range;
 
   var day = newInterval(function(date) {
     date.setHours(0, 0, 0, 0);
@@ -2097,6 +2143,7 @@
   }, function(date) {
     return date.getDate() - 1;
   });
+  var days = day.range;
 
   function weekday(i) {
     return newInterval(function(date) {
@@ -2117,6 +2164,10 @@
   var friday = weekday(5);
   var saturday = weekday(6);
 
+  var sundays = sunday.range;
+  var mondays = monday.range;
+  var thursdays = thursday.range;
+
   var month = newInterval(function(date) {
     date.setDate(1);
     date.setHours(0, 0, 0, 0);
@@ -2127,6 +2178,7 @@
   }, function(date) {
     return date.getMonth();
   });
+  var months = month.range;
 
   var year = newInterval(function(date) {
     date.setMonth(0, 1);
@@ -2149,6 +2201,7 @@
       date.setFullYear(date.getFullYear() + step * k);
     });
   };
+  var years = year.range;
 
   var utcMinute = newInterval(function(date) {
     date.setUTCSeconds(0, 0);
@@ -2159,6 +2212,7 @@
   }, function(date) {
     return date.getUTCMinutes();
   });
+  var utcMinutes = utcMinute.range;
 
   var utcHour = newInterval(function(date) {
     date.setUTCMinutes(0, 0, 0);
@@ -2169,6 +2223,7 @@
   }, function(date) {
     return date.getUTCHours();
   });
+  var utcHours = utcHour.range;
 
   var utcDay = newInterval(function(date) {
     date.setUTCHours(0, 0, 0, 0);
@@ -2179,6 +2234,7 @@
   }, function(date) {
     return date.getUTCDate() - 1;
   });
+  var utcDays = utcDay.range;
 
   function utcWeekday(i) {
     return newInterval(function(date) {
@@ -2199,6 +2255,10 @@
   var utcFriday = utcWeekday(5);
   var utcSaturday = utcWeekday(6);
 
+  var utcSundays = utcSunday.range;
+  var utcMondays = utcMonday.range;
+  var utcThursdays = utcThursday.range;
+
   var utcMonth = newInterval(function(date) {
     date.setUTCDate(1);
     date.setUTCHours(0, 0, 0, 0);
@@ -2209,6 +2269,7 @@
   }, function(date) {
     return date.getUTCMonth();
   });
+  var utcMonths = utcMonth.range;
 
   var utcYear = newInterval(function(date) {
     date.setUTCMonth(0, 1);
@@ -2231,6 +2292,7 @@
       date.setUTCFullYear(date.getUTCFullYear() + step * k);
     });
   };
+  var utcYears = utcYear.range;
 
   function localDate(d) {
     if (0 <= d.y && d.y < 100) {
@@ -4614,7 +4676,7 @@
     return [min, max];
   }
 
-  function sequence(start, stop, step) {
+  function range(start, stop, step) {
     start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
 
     var i = -1,
@@ -4680,11 +4742,11 @@
     return stop < start ? -step1 : step1;
   }
 
-  function sturges(values) {
+  function thresholdSturges(values) {
     return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
   }
 
-  function threshold(values, p, valueof) {
+  function quantile(values, p, valueof) {
     if (valueof == null) valueof = number$1;
     if (!(n = values.length)) return;
     if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
@@ -4778,7 +4840,7 @@
       }
     }
 
-    return threshold(numbers.sort(ascending), 0.5);
+    return quantile(numbers.sort(ascending), 0.5);
   }
 
   function merge$2(arrays) {
@@ -4879,8 +4941,8 @@
     }
 
     return [
-      threshold(mu.sort(ascending), alpha/2),
-      threshold(mu, 1-(alpha/2))
+      quantile(mu.sort(ascending), alpha/2),
+      quantile(mu, 1-(alpha/2))
     ];
   }
 
@@ -4888,9 +4950,9 @@
     var values = numbers(array, f);
 
     return [
-      threshold(values.sort(ascending), 0.25),
-      threshold(values, 0.50),
-      threshold(values, 0.75)
+      quantile(values.sort(ascending), 0.25),
+      quantile(values, 0.50),
+      quantile(values, 0.75)
     ];
   }
 
@@ -6207,7 +6269,7 @@
       var as = _.as || ['value', 'density'],
           domain = _.extent || extent(dist.data()),
           step = (domain[1] - domain[0]) / (_.steps || 100),
-          values = sequence(domain[0], domain[1] + step/2, step)
+          values = range(domain[0], domain[1] + step/2, step)
             .map(function(v) {
               var tuple = {};
               tuple[as[0]] = v;
@@ -7536,7 +7598,7 @@
     var out = pulse.materialize().fork(pulse.MOD);
 
     out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
-    this.value = sequence(_.start, _.stop, _.step || 1).map(ingest);
+    this.value = range(_.start, _.stop, _.step || 1).map(ingest);
     out.add = pulse.add.concat(this.value);
     return out;
   };
@@ -7983,12 +8045,12 @@
 
   function processPartition(list, state, _) {
     var sort = _.sort,
-        range = sort && !_.ignorePeers,
+        range$$1 = sort && !_.ignorePeers,
         frame = _.frame || [null, 0],
         data = list.data(sort),
         n = data.length,
         i = 0,
-        b = range ? bisector(sort) : null,
+        b = range$$1 ? bisector(sort) : null,
         w = {
           i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
           data: data, compare: sort || constant(-1)
@@ -7996,7 +8058,7 @@
 
     for (state.init(); i<n; ++i) {
       setWindow(w, frame, i, n);
-      if (range) adjustRange(w, b);
+      if (range$$1) adjustRange(w, b);
       state.update(w, data[i]);
     }
   }
@@ -11684,10 +11746,10 @@
   var symbol$1 = markItemPath('symbol', symbol$$1);
 
   var context$1,
-      fontHeight;
+      currFontHeight;
 
   var textMetrics = {
-    height: height,
+    height: fontSize,
     measureWidth: measureWidth,
     estimateWidth: estimateWidth,
     width: estimateWidth,
@@ -11698,12 +11760,12 @@
 
   // make dumb, simple estimate if no canvas is available
   function estimateWidth(item) {
-    fontHeight = height(item);
+    currFontHeight = fontSize(item);
     return estimate(textValue(item));
   }
 
   function estimate(text) {
-    return ~~(0.8 * text.length * fontHeight);
+    return ~~(0.8 * text.length * currFontHeight);
   }
 
   // measure text width if canvas is available
@@ -11716,7 +11778,7 @@
     return context$1.measureText(text).width;
   }
 
-  function height(item) {
+  function fontSize(item) {
     return item.fontSize != null ? item.fontSize : 11;
   }
 
@@ -11743,7 +11805,7 @@
       context$1.font = font(item);
       width = measure$1;
     } else {
-      fontHeight = height(item);
+      currFontHeight = fontSize(item);
       width = estimate;
     }
 
@@ -11773,25 +11835,27 @@
     }
   }
 
+  function fontFamily(item, quote) {
+    var font = item.font;
+    return (quote && font
+      ? String(font).replace(/"/g, '\'')
+      : font) || 'sans-serif';
+  }
 
   function font(item, quote) {
-    var font = item.font;
-    if (quote && font) {
-      font = String(font).replace(/"/g, '\'');
-    }
     return '' +
       (item.fontStyle ? item.fontStyle + ' ' : '') +
       (item.fontVariant ? item.fontVariant + ' ' : '') +
       (item.fontWeight ? item.fontWeight + ' ' : '') +
-      height(item) + 'px ' +
-      (font || 'sans-serif');
+      fontSize(item) + 'px ' +
+      fontFamily(item, quote);
   }
 
   function offset(item) {
     // perform our own font baseline calculation
     // why? not all browsers support SVG 1.1 'alignment-baseline' :(
     var baseline = item.baseline,
-        h = height(item);
+        h = fontSize(item);
     return Math.round(
       baseline === 'top'    ?  0.79*h :
       baseline === 'middle' ?  0.30*h :
@@ -13407,18 +13471,32 @@
       }
     },
     text: function(mdef, el, item) {
-      var str = textValue(item);
-      if (str !== values.text) {
-        el.textContent = str;
-        values.text = str;
+      var value;
+
+      value = textValue(item);
+      if (value !== values.text) {
+        el.textContent = value;
+        values.text = value;
       }
-      str = font(item);
-      if (str !== values.font) {
-        el.style.setProperty('font', str);
-        values.font = str;
-      }
+
+      setStyle(el, 'font-family', fontFamily(item));
+      setStyle(el, 'font-size', fontSize(item) + 'px');
+      setStyle(el, 'font-style', item.fontStyle);
+      setStyle(el, 'font-variant', item.fontVariant);
+      setStyle(el, 'font-weight', item.fontWeight);
     }
   };
+
+  function setStyle(el, name, value) {
+    if (value !== values[name]) {
+      if (value == null) {
+        el.style.removeProperty(name);
+      } else {
+        el.style.setProperty(name, value + '');
+      }
+      values[name] = value;
+    }
+  }
 
   prototype$K._update = function(mdef, el, item) {
     // set dom element and values cache
@@ -13469,6 +13547,11 @@
     for (i=0, n=styleProperties.length; i<n; ++i) {
       prop = styleProperties[i];
       value = o[prop];
+
+      if (prop === 'font') {
+        value = fontFamily(o);
+      }
+
       if (value === values[prop]) continue;
 
       name = styles[prop];
@@ -13484,7 +13567,7 @@
           this._defs.gradient[value.id] = value;
           value = 'url(' + href() + '#' + value.id + ')';
         }
-        el.style.setProperty(name, value+'');
+        el.style.setProperty(name, value + '');
       }
 
       values[prop] = value;
@@ -13732,7 +13815,11 @@
     }
 
     if (tag === 'text') {
-      s += 'font: ' + font(o) + '; ';
+      s += 'font-family: ' + fontFamily(o) + '; ';
+      s += 'font-size: ' + fontSize(o) + 'px; ';
+      if (o.fontStyle) s += 'font-style: ' + o.fontStyle + '; ';
+      if (o.fontVariant) s += 'font-variant: ' + o.fontVariant + '; ';
+      if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
     }
 
     for (i=0, n=styleProperties.length; i<n; ++i) {
@@ -14817,7 +14904,7 @@
       if (item.datum.orient === Left) {
         var b = tempBounds$2.clear();
         item.items.forEach(function(_) { b.union(_.bounds); });
-        w = Math.max(w, Math.round(b.width()) + 2 * item.padding - 1);
+        w = Math.max(w, Math.ceil(b.width() + 2 * item.padding - 1));
       }
 
       return w;
@@ -14866,8 +14953,8 @@
     // aggregate bounds to determine size
     // shave off 1 pixel because it looks better...
     item.items.forEach(function(_) { bounds.union(_.bounds); });
-    w = Math.round(bounds.width()) + 2 * item.padding - 1;
-    h = Math.round(bounds.height()) + 2 * item.padding - 1;
+    w = Math.ceil(bounds.width() + 2 * item.padding - 1);
+    h = Math.ceil(bounds.height() + 2 * item.padding - 1);
 
     if (datum.type === Symbols) {
       legendEntryLayout(item.items[0].items[0].items[0].items);
@@ -15023,6 +15110,11 @@
   var BinOrdinal = 'bin-ordinal';
   var Sequential = 'sequential';
 
+  function bandSpace(count, paddingInner, paddingOuter) {
+    var space = count - paddingInner + paddingOuter * 2;
+    return count ? (space > 0 ? space : 1) : 0;
+  }
+
   function invertRange(scale) {
     return function(_) {
       var lo = _[0],
@@ -15072,11 +15164,6 @@
         hi[1] === undefined ? hi[0] : hi[1]
       ];
     }
-  }
-
-  function bandSpace(count, paddingInner, paddingOuter) {
-    var space = count - paddingInner + paddingOuter * 2;
-    return count ? (space > 0 ? space : 1) : 0;
   }
 
   var prefix = "$";
@@ -15956,7 +16043,7 @@
         c = new Array(nb),
         i;
 
-    for (i = 0; i < na; ++i) x[i] = interpolateValue(a[i], b[i]);
+    for (i = 0; i < na; ++i) x[i] = value(a[i], b[i]);
     for (; i < nb; ++i) c[i] = b[i];
 
     return function(t) {
@@ -15972,7 +16059,7 @@
     };
   }
 
-  function reinterpolate(a, b) {
+  function number$2(a, b) {
     return a = +a, b -= a, function(t) {
       return a + b * t;
     };
@@ -15988,7 +16075,7 @@
 
     for (k in b) {
       if (k in a) {
-        i[k] = interpolateValue(a[k], b[k]);
+        i[k] = value(a[k], b[k]);
       } else {
         c[k] = b[k];
       }
@@ -16040,7 +16127,7 @@
         else s[++i] = bm;
       } else { // interpolate non-matching numbers
         s[++i] = null;
-        q.push({i: i, x: reinterpolate(am, bm)});
+        q.push({i: i, x: number$2(am, bm)});
       }
       bi = reB.lastIndex;
     }
@@ -16063,16 +16150,16 @@
           });
   }
 
-  function interpolateValue(a, b) {
+  function value(a, b) {
     var t = typeof b, c;
     return b == null || t === "boolean" ? constant$4(b)
-        : (t === "number" ? reinterpolate
+        : (t === "number" ? number$2
         : t === "string" ? ((c = color$1(b)) ? (b = c, rgb$1) : string)
         : b instanceof color$1 ? rgb$1
         : b instanceof Date ? date
         : Array.isArray(b) ? array$3
         : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object$2
-        : reinterpolate)(a, b);
+        : number$2)(a, b);
   }
 
   function interpolateRound(a, b) {
@@ -16141,7 +16228,7 @@
     function translate(xa, ya, xb, yb, s, q) {
       if (xa !== xb || ya !== yb) {
         var i = s.push("translate(", null, pxComma, null, pxParen);
-        q.push({i: i - 4, x: reinterpolate(xa, xb)}, {i: i - 2, x: reinterpolate(ya, yb)});
+        q.push({i: i - 4, x: number$2(xa, xb)}, {i: i - 2, x: number$2(ya, yb)});
       } else if (xb || yb) {
         s.push("translate(" + xb + pxComma + yb + pxParen);
       }
@@ -16150,7 +16237,7 @@
     function rotate(a, b, s, q) {
       if (a !== b) {
         if (a - b > 180) b += 360; else if (b - a > 180) a += 360; // shortest path
-        q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: reinterpolate(a, b)});
+        q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: number$2(a, b)});
       } else if (b) {
         s.push(pop(s) + "rotate(" + b + degParen);
       }
@@ -16158,7 +16245,7 @@
 
     function skewX(a, b, s, q) {
       if (a !== b) {
-        q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: reinterpolate(a, b)});
+        q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: number$2(a, b)});
       } else if (b) {
         s.push(pop(s) + "skewX(" + b + degParen);
       }
@@ -16167,7 +16254,7 @@
     function scale(xa, ya, xb, yb, s, q) {
       if (xa !== xb || ya !== yb) {
         var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-        q.push({i: i - 4, x: reinterpolate(xa, xb)}, {i: i - 2, x: reinterpolate(ya, yb)});
+        q.push({i: i - 4, x: number$2(xa, xb)}, {i: i - 2, x: number$2(ya, yb)});
       } else if (xb !== 1 || yb !== 1) {
         s.push(pop(s) + "scale(" + xb + "," + yb + ")");
       }
@@ -16355,12 +16442,12 @@
 
 
   var $$1 = /*#__PURE__*/Object.freeze({
-    interpolate: interpolateValue,
+    interpolate: value,
     interpolateArray: array$3,
     interpolateBasis: basis$1,
     interpolateBasisClosed: basisClosed,
     interpolateDate: date,
-    interpolateNumber: reinterpolate,
+    interpolateNumber: number$2,
     interpolateObject: object$2,
     interpolateRound: interpolateRound,
     interpolateString: string,
@@ -16387,7 +16474,7 @@
     };
   }
 
-  function number$2(x) {
+  function number$3(x) {
     return +x;
   }
 
@@ -16406,22 +16493,22 @@
     };
   }
 
-  function reinterpolateClamp(reinterpolate$$1) {
+  function reinterpolateClamp(reinterpolate) {
     return function(a, b) {
-      var r = reinterpolate$$1(a = +a, b = +b);
+      var r = reinterpolate(a = +a, b = +b);
       return function(t) { return t <= 0 ? a : t >= 1 ? b : r(t); };
     };
   }
 
-  function bimap(domain, range, deinterpolate, reinterpolate$$1) {
-    var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-    if (d1 < d0) d0 = deinterpolate(d1, d0), r0 = reinterpolate$$1(r1, r0);
-    else d0 = deinterpolate(d0, d1), r0 = reinterpolate$$1(r0, r1);
+  function bimap(domain, range$$1, deinterpolate, reinterpolate) {
+    var d0 = domain[0], d1 = domain[1], r0 = range$$1[0], r1 = range$$1[1];
+    if (d1 < d0) d0 = deinterpolate(d1, d0), r0 = reinterpolate(r1, r0);
+    else d0 = deinterpolate(d0, d1), r0 = reinterpolate(r0, r1);
     return function(x) { return r0(d0(x)); };
   }
 
-  function polymap(domain, range, deinterpolate, reinterpolate$$1) {
-    var j = Math.min(domain.length, range.length) - 1,
+  function polymap(domain, range$$1, deinterpolate, reinterpolate) {
+    var j = Math.min(domain.length, range$$1.length) - 1,
         d = new Array(j),
         r = new Array(j),
         i = -1;
@@ -16429,12 +16516,12 @@
     // Reverse descending domains.
     if (domain[j] < domain[0]) {
       domain = domain.slice().reverse();
-      range = range.slice().reverse();
+      range$$1 = range$$1.slice().reverse();
     }
 
     while (++i < j) {
       d[i] = deinterpolate(domain[i], domain[i + 1]);
-      r[i] = reinterpolate$$1(range[i], range[i + 1]);
+      r[i] = reinterpolate(range$$1[i], range$$1[i + 1]);
     }
 
     return function(x) {
@@ -16453,39 +16540,39 @@
 
   // deinterpolate(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
   // reinterpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding domain value x in [a,b].
-  function continuous(deinterpolate, reinterpolate$$1) {
+  function continuous(deinterpolate, reinterpolate) {
     var domain = unit,
-        range = unit,
-        interpolate$$1 = interpolateValue,
+        range$$1 = unit,
+        interpolate$$1 = value,
         clamp = false,
         piecewise$$1,
         output,
         input;
 
     function rescale() {
-      piecewise$$1 = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
+      piecewise$$1 = Math.min(domain.length, range$$1.length) > 2 ? polymap : bimap;
       output = input = null;
       return scale;
     }
 
     function scale(x) {
-      return (output || (output = piecewise$$1(domain, range, clamp ? deinterpolateClamp(deinterpolate) : deinterpolate, interpolate$$1)))(+x);
+      return (output || (output = piecewise$$1(domain, range$$1, clamp ? deinterpolateClamp(deinterpolate) : deinterpolate, interpolate$$1)))(+x);
     }
 
     scale.invert = function(y) {
-      return (input || (input = piecewise$$1(range, domain, deinterpolateLinear, clamp ? reinterpolateClamp(reinterpolate$$1) : reinterpolate$$1)))(+y);
+      return (input || (input = piecewise$$1(range$$1, domain, deinterpolateLinear, clamp ? reinterpolateClamp(reinterpolate) : reinterpolate)))(+y);
     };
 
     scale.domain = function(_) {
-      return arguments.length ? (domain = map$2.call(_, number$2), rescale()) : domain.slice();
+      return arguments.length ? (domain = map$2.call(_, number$3), rescale()) : domain.slice();
     };
 
     scale.range = function(_) {
-      return arguments.length ? (range = slice$2.call(_), rescale()) : range.slice();
+      return arguments.length ? (range$$1 = slice$2.call(_), rescale()) : range$$1.slice();
     };
 
     scale.rangeRound = function(_) {
-      return range = slice$2.call(_), interpolate$$1 = interpolateRound, rescale();
+      return range$$1 = slice$2.call(_), interpolate$$1 = interpolateRound, rescale();
     };
 
     scale.clamp = function(_) {
@@ -16889,7 +16976,7 @@
   }
 
   function linear$1() {
-    var scale = continuous(deinterpolateLinear, reinterpolate);
+    var scale = continuous(deinterpolateLinear, number$2);
 
     scale.copy = function() {
       return copy(scale, linear$1());
@@ -16908,7 +16995,7 @@
     scale.invert = scale;
 
     scale.domain = scale.range = function(_) {
-      return arguments.length ? (domain = map$2.call(_, number$2), scale) : domain.slice();
+      return arguments.length ? (domain = map$2.call(_, number$3), scale) : domain.slice();
     };
 
     scale.copy = function() {
@@ -16943,7 +17030,7 @@
         : constant$5(b);
   }
 
-  function reinterpolate$1(a, b) {
+  function reinterpolate(a, b) {
     return a < 0
         ? function(t) { return -Math.pow(-b, t) * Math.pow(-a, 1 - t); }
         : function(t) { return Math.pow(b, t) * Math.pow(a, 1 - t); };
@@ -16973,7 +17060,7 @@
   }
 
   function log$2() {
-    var scale = continuous(deinterpolate, reinterpolate$1).domain([1, 10]),
+    var scale = continuous(deinterpolate, reinterpolate).domain([1, 10]),
         domain = scale.domain,
         base = 10,
         logs = logp(10),
@@ -17095,24 +17182,24 @@
     return pow$1().exponent(0.5);
   }
 
-  function quantile$$1() {
+  function quantile$1() {
     var domain = [],
-        range = [],
+        range$$1 = [],
         thresholds = [];
 
     function rescale() {
-      var i = 0, n = Math.max(1, range.length);
+      var i = 0, n = Math.max(1, range$$1.length);
       thresholds = new Array(n - 1);
-      while (++i < n) thresholds[i - 1] = threshold(domain, i / n);
+      while (++i < n) thresholds[i - 1] = quantile(domain, i / n);
       return scale;
     }
 
     function scale(x) {
-      if (!isNaN(x = +x)) return range[bisectRight(thresholds, x)];
+      if (!isNaN(x = +x)) return range$$1[bisectRight(thresholds, x)];
     }
 
     scale.invertExtent = function(y) {
-      var i = range.indexOf(y);
+      var i = range$$1.indexOf(y);
       return i < 0 ? [NaN, NaN] : [
         i > 0 ? thresholds[i - 1] : domain[0],
         i < thresholds.length ? thresholds[i] : domain[domain.length - 1]
@@ -17128,7 +17215,7 @@
     };
 
     scale.range = function(_) {
-      return arguments.length ? (range = slice$2.call(_), rescale()) : range.slice();
+      return arguments.length ? (range$$1 = slice$2.call(_), rescale()) : range$$1.slice();
     };
 
     scale.quantiles = function() {
@@ -17136,9 +17223,9 @@
     };
 
     scale.copy = function() {
-      return quantile$$1()
+      return quantile$1()
           .domain(domain)
-          .range(range);
+          .range(range$$1);
     };
 
     return scale;
@@ -17149,10 +17236,10 @@
         x1 = 1,
         n = 1,
         domain = [0.5],
-        range = [0, 1];
+        range$$1 = [0, 1];
 
     function scale(x) {
-      if (x <= x) return range[bisectRight(domain, x, 0, n)];
+      if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
     }
 
     function rescale() {
@@ -17167,11 +17254,11 @@
     };
 
     scale.range = function(_) {
-      return arguments.length ? (n = (range = slice$2.call(_)).length - 1, rescale()) : range.slice();
+      return arguments.length ? (n = (range$$1 = slice$2.call(_)).length - 1, rescale()) : range$$1.slice();
     };
 
     scale.invertExtent = function(y) {
-      var i = range.indexOf(y);
+      var i = range$$1.indexOf(y);
       return i < 0 ? [NaN, NaN]
           : i < 1 ? [x0, domain[0]]
           : i >= n ? [domain[n - 1], x1]
@@ -17181,38 +17268,38 @@
     scale.copy = function() {
       return quantize$2()
           .domain([x0, x1])
-          .range(range);
+          .range(range$$1);
     };
 
     return linearish(scale);
   }
 
-  function threshold$1() {
+  function threshold() {
     var domain = [0.5],
-        range = [0, 1],
+        range$$1 = [0, 1],
         n = 1;
 
     function scale(x) {
-      if (x <= x) return range[bisectRight(domain, x, 0, n)];
+      if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
     }
 
     scale.domain = function(_) {
-      return arguments.length ? (domain = slice$2.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
+      return arguments.length ? (domain = slice$2.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : domain.slice();
     };
 
     scale.range = function(_) {
-      return arguments.length ? (range = slice$2.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
+      return arguments.length ? (range$$1 = slice$2.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : range$$1.slice();
     };
 
     scale.invertExtent = function(y) {
-      var i = range.indexOf(y);
+      var i = range$$1.indexOf(y);
       return [domain[i - 1], domain[i]];
     };
 
     scale.copy = function() {
-      return threshold$1()
+      return threshold()
           .domain(domain)
-          .range(range);
+          .range(range$$1);
     };
 
     return scale;
@@ -17230,12 +17317,12 @@
     return new Date(t);
   }
 
-  function number$3(t) {
+  function number$4(t) {
     return t instanceof Date ? +t : +new Date(+t);
   }
 
   function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1, millisecond$$1, format) {
-    var scale = continuous(deinterpolateLinear, reinterpolate),
+    var scale = continuous(deinterpolateLinear, number$2),
         invert = scale.invert,
         domain = scale.domain;
 
@@ -17309,7 +17396,7 @@
     };
 
     scale.domain = function(_) {
-      return arguments.length ? domain(map$2.call(_, number$3)) : domain().map(date$1);
+      return arguments.length ? domain(map$2.call(_, number$4)) : domain().map(date$1);
     };
 
     scale.ticks = function(interval, step) {
@@ -17381,7 +17468,7 @@
         start = Math.round(start);
         bandwidth = Math.round(bandwidth);
       }
-      var values = sequence(n).map(function(i) { return start + step * i; });
+      var values = range(n).map(function(i) { return start + step * i; });
       return ordinalRange(reverse ? values.reverse() : values);
     }
 
@@ -17597,12 +17684,12 @@
 
   function binOrdinal() {
     var domain = [],
-        range = [];
+        range$$1 = [];
 
     function scale(x) {
       return x == null || x !== x
         ? undefined
-        : range[(bisectRight(domain, x) - 1) % range.length];
+        : range$$1[(bisectRight(domain, x) - 1) % range$$1.length];
     }
 
     scale.domain = function(_) {
@@ -17616,10 +17703,10 @@
 
     scale.range = function(_) {
       if (arguments.length) {
-        range = slice$3.call(_);
+        range$$1 = slice$3.call(_);
         return scale;
       } else {
-        return range.slice();
+        return range$$1.slice();
       }
     };
 
@@ -17723,9 +17810,9 @@
     ordinal:       ordinal,
     pow:           pow$1,
     sqrt:          sqrt$1,
-    quantile:      quantile$$1,
+    quantile:      quantile$1,
     quantize:      quantize$2,
-    threshold:     threshold$1,
+    threshold:     threshold,
     time:          time,
     utc:           utcTime,
 
@@ -17739,6 +17826,39 @@
 
   for (var key$1 in scales) {
     scale$1(key$1, scales[key$1]);
+  }
+
+  function interpolateRange(interpolator, range) {
+    var start = range[0],
+        span = peek(range) - start;
+    return function(i) { return interpolator(start + i * span); };
+  }
+
+  function scaleFraction(scale, min, max) {
+    var delta = max - min;
+    return !delta ? constant(0)
+      : scale.type === 'linear' || scale.type === 'sequential'
+        ? function(_) { return (_ - min) / delta; }
+        : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
+  }
+
+  function lerp(a, b) {
+    var span = b - a;
+    return function(i) { return a + i * span; }
+  }
+
+  function interpolate(type, gamma) {
+    var interp = $$1[method(type)];
+    return (gamma != null && interp && interp.gamma)
+      ? interp.gamma(gamma)
+      : interp;
+  }
+
+  function method(type) {
+    return 'interpolate' + type.toLowerCase()
+      .split('-')
+      .map(function(s) { return s[0].toUpperCase() + s.slice(1); })
+      .join('');
   }
 
   function colors(specifier) {
@@ -18271,7 +18391,7 @@
     interpolatePlasma: plasma
   });
 
-  var discrete = {
+  var discretized = {
     blueorange:  blueOrange
   };
 
@@ -18310,7 +18430,7 @@
 
   function add$2(name, suffix) {
     schemes[name] = _['interpolate' + suffix];
-    discrete[name] = _['scheme' + suffix];
+    discretized[name] = _['scheme' + suffix];
   }
 
   // sequential single-hue
@@ -18346,7 +18466,7 @@
   add$2('yelloworangebrown', 'YlOrBr');
   add$2('yelloworangered',   'YlOrRd');
 
-  function getScheme(name, scheme$$1) {
+  function scheme$r(name, scheme$$1) {
     if (arguments.length > 1) {
       schemes[name] = scheme$$1;
       return this;
@@ -18356,42 +18476,9 @@
     name = part[0];
     part = +part[1] + 1;
 
-    return part && discrete.hasOwnProperty(name) ? discrete[name][part-1]
+    return part && discretized.hasOwnProperty(name) ? discretized[name][part-1]
       : !part && schemes.hasOwnProperty(name) ? schemes[name]
       : undefined;
-  }
-
-  function interpolateRange(interpolator, range) {
-    var start = range[0],
-        span = peek(range) - start;
-    return function(i) { return interpolator(start + i * span); };
-  }
-
-  function scaleFraction(scale, min, max) {
-    var delta = max - min;
-    return !delta ? constant(0)
-      : scale.type === 'linear' || scale.type === 'sequential'
-        ? function(_) { return (_ - min) / delta; }
-        : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
-  }
-
-  function lerp(a, b) {
-    var span = b - a;
-    return function(i) { return a + i * span; }
-  }
-
-  function interpolate(type, gamma) {
-    var interp = $$1[method(type)];
-    return (gamma != null && interp && interp.gamma)
-      ? interp.gamma(gamma)
-      : interp;
-  }
-
-  function method(type) {
-    return 'interpolate' + type.toLowerCase()
-      .split('-')
-      .map(function(s) { return s[0].toUpperCase() + s.slice(1); })
-      .join('');
   }
 
   var time$1 = {
@@ -19207,7 +19294,7 @@
         n = values.length,
         a = start,
         k = (stop - start) / sum(values),
-        index = sequence(n),
+        index = range(n),
         i, t, v;
 
     if (_.sort) {
@@ -19235,7 +19322,7 @@
 
   var SKIP$2 = toSet([
     'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
-    'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
+    'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'domainImplicit', 'nice', 'zero',
     'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
   ]);
 
@@ -19316,7 +19403,7 @@
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
     if (type === Ordinal) {
-      scale$$1.unknown(undefined);
+      scale$$1.unknown(_.domainImplicit ? implicit : undefined);
     }
 
     // perform 'nice' adjustment as requested
@@ -19377,7 +19464,7 @@
     } else if (isFunction(scale$$1.round)) {
       scale$$1.round(round);
     } else if (isFunction(scale$$1.rangeRound)) {
-      scale$$1.interpolate(round ? interpolateRound : interpolateValue);
+      scale$$1.interpolate(round ? interpolateRound : value);
     }
 
     if (range) scale$$1.range(flip(range, _.reverse));
@@ -19397,7 +19484,7 @@
 
   function configureScheme(type, _, count) {
     var name = _.scheme.toLowerCase(),
-        scheme$$1 = getScheme(name),
+        scheme$$1 = scheme$r(name),
         extent = _.schemeExtent,
         discrete;
 
@@ -19413,7 +19500,7 @@
 
     // adjust and/or quantize scheme as appropriate
     return type === Sequential ? adjustScheme(scheme$$1, extent, _.reverse)
-      : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
+      : !extent && (discrete = scheme$r(name + '-' + count)) ? discrete
       : isFunction(scheme$$1) ? quantize$3(adjustScheme(scheme$$1, extent), count)
       : type === Ordinal ? scheme$$1 : scheme$$1.slice(0, count);
   }
@@ -19430,7 +19517,7 @@
 
   function quantize$3(interpolator, count) {
     var samples = new Array(count),
-        n = count + 2;
+        n = count + 1;
     for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
     return samples;
   }
@@ -19488,9 +19575,9 @@
     ]
   };
 
-  var prototype = inherits(Stack, Transform);
+  var prototype$_ = inherits(Stack, Transform);
 
-  prototype.transform = function(_, pulse) {
+  prototype$_.transform = function(_, pulse) {
     var as = _.as || ['y0', 'y1'],
         y0 = as[0],
         y1 = as[1],
@@ -19678,17 +19765,17 @@
   function contours() {
     var dx = 1,
         dy = 1,
-        threshold$$1 = sturges,
+        threshold = thresholdSturges,
         smooth = smoothLinear;
 
     function contours(values) {
-      var tz = threshold$$1(values);
+      var tz = threshold(values);
 
       // Convert number of thresholds into uniform thresholds.
       if (!Array.isArray(tz)) {
         var domain = extent(values), start = domain[0], stop = domain[1];
         tz = tickStep(start, stop, tz);
-        tz = sequence(Math.floor(start / tz) * tz, Math.floor(stop / tz) * tz, tz);
+        tz = range(Math.floor(start / tz) * tz, Math.floor(stop / tz) * tz, tz);
       } else {
         tz = tz.slice().sort(ascending$2);
       }
@@ -19842,7 +19929,7 @@
     };
 
     contours.thresholds = function(_) {
-      return arguments.length ? (threshold$$1 = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), contours) : threshold$$1;
+      return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), contours) : threshold;
     };
 
     contours.smooth = function(_) {
@@ -19914,7 +20001,7 @@
         o = r * 3, // grid offset, to pad for blur
         n = (dx + o * 2) >> k, // grid width
         m = (dy + o * 2) >> k, // grid height
-        threshold$$1 = constant$6(20);
+        threshold = constant$6(20);
 
     function density(data) {
       var values0 = new Float32Array(n * m),
@@ -19936,13 +20023,13 @@
       blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
       blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
 
-      var tz = threshold$$1(values0);
+      var tz = threshold(values0);
 
       // Convert number of thresholds into uniform thresholds.
       if (!Array.isArray(tz)) {
         var stop = max(values0);
         tz = tickStep(0, stop, tz);
-        tz = sequence(0, Math.floor(stop / tz) * tz, tz);
+        tz = range(0, Math.floor(stop / tz) * tz, tz);
         tz.shift();
       }
 
@@ -20002,7 +20089,7 @@
     };
 
     density.thresholds = function(_) {
-      return arguments.length ? (threshold$$1 = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), density) : threshold$$1;
+      return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$6(slice$4.call(_)) : constant$6(_), density) : threshold;
     };
 
     density.bandwidth = function(_) {
@@ -20064,9 +20151,9 @@
     ]
   };
 
-  var prototype$_ = inherits(Contour, Transform);
+  var prototype$10 = inherits(Contour, Transform);
 
-  prototype$_.transform = function(_, pulse) {
+  prototype$10.transform = function(_, pulse) {
     if (this.value && !pulse.changed() && !_.modified())
       return pulse.StopPropagation;
 
@@ -20137,9 +20224,9 @@
     ]
   };
 
-  var prototype$10 = inherits(GeoJSON, Transform);
+  var prototype$11 = inherits(GeoJSON, Transform);
 
-  prototype$10.transform = function(_, pulse) {
+  prototype$11.transform = function(_, pulse) {
     var features = this._features,
         points = this._points,
         fields = _.fields,
@@ -20442,7 +20529,7 @@
       p0, // previous 3D point
       deltaSum = adder(),
       ranges,
-      range;
+      range$1;
 
   var boundsStream = {
     point: boundsPoint,
@@ -20463,12 +20550,12 @@
       if (areaRingSum < 0) lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
       else if (deltaSum > epsilon$2) phi1 = 90;
       else if (deltaSum < -epsilon$2) phi0 = -90;
-      range[0] = lambda0$1, range[1] = lambda1;
+      range$1[0] = lambda0$1, range$1[1] = lambda1;
     }
   };
 
   function boundsPoint(lambda, phi) {
-    ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+    ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
   }
@@ -20515,7 +20602,7 @@
         }
       }
     } else {
-      ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+      ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
     }
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
@@ -20527,7 +20614,7 @@
   }
 
   function boundsLineEnd() {
-    range[0] = lambda0$1, range[1] = lambda1;
+    range$1[0] = lambda0$1, range$1[1] = lambda1;
     boundsStream.point = boundsPoint;
     p0 = null;
   }
@@ -20551,7 +20638,7 @@
     boundsRingPoint(lambda00$1, phi00$1);
     areaStream.lineEnd();
     if (abs$1(deltaSum) > epsilon$2) lambda0$1 = -(lambda1 = 180);
-    range[0] = lambda0$1, range[1] = lambda1;
+    range$1[0] = lambda0$1, range$1[1] = lambda1;
     p0 = null;
   }
 
@@ -20600,7 +20687,7 @@
       }
     }
 
-    ranges = range = null;
+    ranges = range$1 = null;
 
     return lambda0$1 === Infinity || phi0 === Infinity
         ? [[NaN, NaN], [NaN, NaN]]
@@ -21674,12 +21761,12 @@
   var lengthSum = adder();
 
   function graticuleX(y0, y1, dy) {
-    var y = sequence(y0, y1 - epsilon$2, dy).concat(y1);
+    var y = range(y0, y1 - epsilon$2, dy).concat(y1);
     return function(x) { return y.map(function(y) { return [x, y]; }); };
   }
 
   function graticuleY(x0, x1, dx) {
-    var x = sequence(x0, x1 - epsilon$2, dx).concat(x1);
+    var x = range(x0, x1 - epsilon$2, dx).concat(x1);
     return function(y) { return x.map(function(x) { return [x, y]; }); };
   }
 
@@ -21695,10 +21782,10 @@
     }
 
     function lines() {
-      return sequence(ceil(X0 / DX) * DX, X1, DX).map(X)
-          .concat(sequence(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
-          .concat(sequence(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$2; }).map(x))
-          .concat(sequence(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$2; }).map(y));
+      return range(ceil(X0 / DX) * DX, X1, DX).map(X)
+          .concat(range(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+          .concat(range(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$2; }).map(x))
+          .concat(range(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$2; }).map(y));
     }
 
     graticule.lines = function() {
@@ -22870,6 +22957,32 @@
     };
   }
 
+  function naturalEarth1Raw(lambda, phi) {
+    var phi2 = phi * phi, phi4 = phi2 * phi2;
+    return [
+      lambda * (0.8707 - 0.131979 * phi2 + phi4 * (-0.013791 + phi4 * (0.003971 * phi2 - 0.001529 * phi4))),
+      phi * (1.007226 + phi2 * (0.015085 + phi4 * (-0.044475 + 0.028874 * phi2 - 0.005916 * phi4)))
+    ];
+  }
+
+  naturalEarth1Raw.invert = function(x, y) {
+    var phi = y, i = 25, delta;
+    do {
+      var phi2 = phi * phi, phi4 = phi2 * phi2;
+      phi -= delta = (phi * (1.007226 + phi2 * (0.015085 + phi4 * (-0.044475 + 0.028874 * phi2 - 0.005916 * phi4))) - y) /
+          (1.007226 + phi2 * (0.015085 * 3 + phi4 * (-0.044475 * 7 + 0.028874 * 9 * phi2 - 0.005916 * 11 * phi4)));
+    } while (abs$1(delta) > epsilon$2 && --i > 0);
+    return [
+      x / (0.8707 + (phi2 = phi * phi) * (-0.131979 + phi2 * (-0.013791 + phi2 * phi2 * phi2 * (0.003971 - 0.001529 * phi2)))),
+      phi
+    ];
+  };
+
+  function geoNaturalEarth1() {
+    return projection(naturalEarth1Raw)
+        .scale(175.295);
+  }
+
   function orthographicRaw(x, y) {
     return [cos$1(y) * sin$1(x), sin$1(y)];
   }
@@ -23003,6 +23116,7 @@
     gnomonic:             geoGnomonic,
     identity:             geoIdentity,
     mercator:             geoMercator,
+    naturalEarth1:        geoNaturalEarth1,
     orthographic:         geoOrthographic,
     stereographic:        geoStereographic,
     transversemercator:   geoTransverseMercator
@@ -23038,9 +23152,9 @@
     ]
   };
 
-  var prototype$11 = inherits(GeoPath, Transform);
+  var prototype$12 = inherits(GeoPath, Transform);
 
-  prototype$11.transform = function(_, pulse) {
+  prototype$12.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         path = this.value,
         field$$1 = _.field || identity,
@@ -23100,9 +23214,9 @@
     ]
   };
 
-  var prototype$12 = inherits(GeoPoint, Transform);
+  var prototype$13 = inherits(GeoPoint, Transform);
 
-  prototype$12.transform = function(_, pulse) {
+  prototype$13.transform = function(_, pulse) {
     var proj = _.projection,
         lon = _.fields[0],
         lat = _.fields[1],
@@ -23159,9 +23273,9 @@
     ]
   };
 
-  var prototype$13 = inherits(GeoShape, Transform);
+  var prototype$14 = inherits(GeoShape, Transform);
 
-  prototype$13.transform = function(_, pulse) {
+  prototype$14.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         shape = this.value,
         datum = _.field || field('datum'),
@@ -23227,9 +23341,9 @@
     ]
   };
 
-  var prototype$14 = inherits(Graticule, Transform);
+  var prototype$15 = inherits(Graticule, Transform);
 
-  prototype$14.transform = function(_, pulse) {
+  prototype$15.transform = function(_, pulse) {
     var src = this.value,
         gen = this.generator, t;
 
@@ -23262,9 +23376,9 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$15 = inherits(Projection, Transform);
+  var prototype$16 = inherits(Projection, Transform);
 
-  prototype$15.transform = function(_, pulse) {
+  prototype$16.transform = function(_, pulse) {
     var proj = this.value;
 
     if (!proj || _.modified('type')) {
@@ -24637,9 +24751,9 @@
     ]
   };
 
-  var prototype$16 = inherits(Force, Transform);
+  var prototype$17 = inherits(Force, Transform);
 
-  prototype$16.transform = function(_, pulse) {
+  prototype$17.transform = function(_, pulse) {
     var sim = this.value,
         change = pulse.changed(pulse.ADD_REM),
         params = _.modified(ForceParams),
@@ -24682,7 +24796,7 @@
     return this.finish(_, pulse);
   };
 
-  prototype$16.finish = function(_, pulse) {
+  prototype$17.finish = function(_, pulse) {
     var dataflow = pulse.dataflow;
 
     // inspect dependencies, touch link source data
@@ -26079,13 +26193,13 @@
     ]
   };
 
-  var prototype$17 = inherits(Nest, Transform);
+  var prototype$18 = inherits(Nest, Transform);
 
   function children(n) {
     return n.values;
   }
 
-  prototype$17.transform = function(_, pulse) {
+  prototype$18.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Nest transform requires an upstream data source.');
     }
@@ -26140,9 +26254,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$18 = inherits(HierarchyLayout, Transform);
+  var prototype$19 = inherits(HierarchyLayout, Transform);
 
-  prototype$18.transform = function(_, pulse) {
+  prototype$19.transform = function(_, pulse) {
     if (!pulse.source || !pulse.source.root) {
       error(this.constructor.name
         + ' transform requires a backing tree data source.');
@@ -26207,13 +26321,13 @@
     ]
   };
 
-  var prototype$19 = inherits(Pack, HierarchyLayout);
+  var prototype$1a = inherits(Pack, HierarchyLayout);
 
-  prototype$19.layout = pack$1;
+  prototype$1a.layout = pack$1;
 
-  prototype$19.params = ['size', 'padding'];
+  prototype$1a.params = ['size', 'padding'];
 
-  prototype$19.fields = Output;
+  prototype$1a.fields = Output;
 
   var Output$1 = ["x0", "y0", "x1", "y1", "depth", "children"];
 
@@ -26240,13 +26354,13 @@
     ]
   };
 
-  var prototype$1a = inherits(Partition, HierarchyLayout);
+  var prototype$1b = inherits(Partition, HierarchyLayout);
 
-  prototype$1a.layout = partition$2;
+  prototype$1b.layout = partition$2;
 
-  prototype$1a.params = ['size', 'round', 'padding'];
+  prototype$1b.params = ['size', 'round', 'padding'];
 
-  prototype$1a.fields = Output$1;
+  prototype$1b.fields = Output$1;
 
   /**
     * Stratify a collection of tuples into a tree structure based on
@@ -26269,9 +26383,9 @@
     ]
   };
 
-  var prototype$1b = inherits(Stratify, Transform);
+  var prototype$1c = inherits(Stratify, Transform);
 
-  prototype$1b.transform = function(_, pulse) {
+  prototype$1c.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Stratify transform requires an upstream data source.');
     }
@@ -26328,20 +26442,20 @@
     ]
   };
 
-  var prototype$1c = inherits(Tree, HierarchyLayout);
+  var prototype$1d = inherits(Tree, HierarchyLayout);
 
   /**
    * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
    */
-  prototype$1c.layout = function(method) {
+  prototype$1d.layout = function(method) {
     var m = method || 'tidy';
     if (Layouts.hasOwnProperty(m)) return Layouts[m]();
     else error('Unrecognized Tree layout method: ' + m);
   };
 
-  prototype$1c.params = ['size', 'nodeSize', 'separation'];
+  prototype$1d.params = ['size', 'nodeSize', 'separation'];
 
-  prototype$1c.fields = Output$2;
+  prototype$1d.fields = Output$2;
 
   /**
     * Generate tuples representing links between tree nodes.
@@ -26360,9 +26474,9 @@
     "params": []
   };
 
-  var prototype$1d = inherits(TreeLinks, Transform);
+  var prototype$1e = inherits(TreeLinks, Transform);
 
-  prototype$1d.transform = function(_, pulse) {
+  prototype$1e.transform = function(_, pulse) {
     var links = this.value,
         tree = pulse.source && pulse.source.root,
         out = pulse.fork(pulse.NO_SOURCE),
@@ -26446,13 +26560,13 @@
     ]
   };
 
-  var prototype$1e = inherits(Treemap, HierarchyLayout);
+  var prototype$1f = inherits(Treemap, HierarchyLayout);
 
   /**
    * Treemap layout generator. Adds 'method' and 'ratio' parameters
    * to configure the underlying tile method.
    */
-  prototype$1e.layout = function() {
+  prototype$1f.layout = function() {
     var x = treemap();
     x.ratio = function(_) {
       var t = x.tile();
@@ -26465,13 +26579,13 @@
     return x;
   };
 
-  prototype$1e.params = [
+  prototype$1f.params = [
     'method', 'ratio', 'size', 'round',
     'padding', 'paddingInner', 'paddingOuter',
     'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
   ];
 
-  prototype$1e.fields = Output$3;
+  prototype$1f.fields = Output$3;
 
 
 
@@ -27490,11 +27604,11 @@
     ]
   };
 
-  var prototype$1f = inherits(Voronoi, Transform);
+  var prototype$1g = inherits(Voronoi, Transform);
 
   var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 
-  prototype$1f.transform = function(_, pulse) {
+  prototype$1g.transform = function(_, pulse) {
     var as = _.as || 'path',
         data = pulse.source,
         diagram, polygons, i, n;
@@ -27979,9 +28093,9 @@
     ]
   };
 
-  var prototype$1g = inherits(Wordcloud, Transform);
+  var prototype$1h = inherits(Wordcloud, Transform);
 
-  prototype$1g.transform = function(_, pulse) {
+  prototype$1h.transform = function(_, pulse) {
     function modp(param) {
       var p = _[param];
       return isFunction(p) && pulse.modified(p.fields);
@@ -28271,7 +28385,7 @@
       }
     }
 
-    function bisect(range, array) {
+    function bisect(range$$1, array) {
       var n;
       if (array) {
         n = array.length;
@@ -28280,8 +28394,8 @@
         n = size;
       }
       return [
-        bisectLeft(array, range[0], 0, n),
-        bisectRight(array, range[1], 0, n)
+        bisectLeft(array, range$$1[0], 0, n),
+        bisectRight(array, range$$1[1], 0, n)
       ];
     }
 
@@ -28351,9 +28465,9 @@
     ]
   };
 
-  var prototype$1h = inherits(CrossFilter, Transform);
+  var prototype$1i = inherits(CrossFilter, Transform);
 
-  prototype$1h.transform = function(_, pulse) {
+  prototype$1i.transform = function(_, pulse) {
     if (!this._dims) {
       return this.init(_, pulse);
     } else {
@@ -28366,7 +28480,7 @@
     }
   };
 
-  prototype$1h.init = function(_, pulse) {
+  prototype$1i.init = function(_, pulse) {
     var fields = _.fields,
         query = _.query,
         indices = this._indices = {},
@@ -28384,7 +28498,7 @@
     return this.eval(_, pulse);
   };
 
-  prototype$1h.reinit = function(_, pulse) {
+  prototype$1i.reinit = function(_, pulse) {
     var output = pulse.materialize().fork(),
         fields = _.fields,
         query = _.query,
@@ -28451,7 +28565,7 @@
     return output;
   };
 
-  prototype$1h.eval = function(_, pulse) {
+  prototype$1i.eval = function(_, pulse) {
     var output = pulse.materialize().fork(),
         m = this._dims.length,
         mask = 0;
@@ -28479,7 +28593,7 @@
     return output;
   };
 
-  prototype$1h.insert = function(_, pulse, output) {
+  prototype$1i.insert = function(_, pulse, output) {
     var tuples = pulse.add,
         bits = this.value,
         dims = this._dims,
@@ -28513,7 +28627,7 @@
     }
   };
 
-  prototype$1h.modify = function(pulse, output) {
+  prototype$1i.modify = function(pulse, output) {
     var out = output.mod,
         bits = this.value,
         curr = bits.curr(),
@@ -28527,7 +28641,7 @@
     }
   };
 
-  prototype$1h.remove = function(_, pulse, output) {
+  prototype$1i.remove = function(_, pulse, output) {
     var indices = this._indices,
         bits = this.value,
         curr = bits.curr(),
@@ -28557,7 +28671,7 @@
   };
 
   // reindex filters and indices after propagation completes
-  prototype$1h.reindex = function(pulse, num, map) {
+  prototype$1i.reindex = function(pulse, num, map) {
     var indices = this._indices,
         bits = this.value;
 
@@ -28567,7 +28681,7 @@
     });
   };
 
-  prototype$1h.update = function(_, pulse, output) {
+  prototype$1i.update = function(_, pulse, output) {
     var dims = this._dims,
         query = _.query,
         stamp = pulse.stamp,
@@ -28597,7 +28711,7 @@
     return mask;
   };
 
-  prototype$1h.incrementAll = function(dim, query, stamp, out) {
+  prototype$1i.incrementAll = function(dim, query, stamp, out) {
     var bits = this.value,
         seen = bits.seen(),
         curr = bits.curr(),
@@ -28661,7 +28775,7 @@
     dim.range = query.slice();
   };
 
-  prototype$1h.incrementOne = function(dim, query, add, rem) {
+  prototype$1i.incrementOne = function(dim, query, add, rem) {
     var bits = this.value,
         curr = bits.curr(),
         index = dim.index(),
@@ -28731,9 +28845,9 @@
     ]
   };
 
-  var prototype$1i = inherits(ResolveFilter, Transform);
+  var prototype$1j = inherits(ResolveFilter, Transform);
 
-  prototype$1i.transform = function(_, pulse) {
+  prototype$1j.transform = function(_, pulse) {
     var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
         bitmap = _.filter,
         mask = bitmap.mask;
@@ -28786,7 +28900,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "4.0.0-rc.2";
+  var version = "4.0.0-rc.3";
 
   var Default = 'default';
 
@@ -28868,7 +28982,7 @@
     return Math.max(0, view._viewWidth + padding.left + padding.right);
   }
 
-  function height$1(view) {
+  function height(view) {
     var padding = view.padding();
     return Math.max(0, view._viewHeight + padding.top + padding.bottom);
   }
@@ -28885,7 +28999,7 @@
   function resizeRenderer(view) {
     var origin = offset$1(view),
         w = width(view),
-        h = height$1(view);
+        h = height(view);
 
     view._renderer.background(view._background);
     view._renderer.resize(w, h, origin);
@@ -29228,7 +29342,7 @@
       case 'checkbox': input = checkbox; break;
       case 'select':   input = select; break;
       case 'radio':    input = radio; break;
-      case 'range':    input = range$1; break;
+      case 'range':    input = range$2; break;
     }
 
     input(bind, div, param, value);
@@ -29349,7 +29463,7 @@
   /**
    * Generates a slider input element.
    */
-  function range$1(bind, el, param, value) {
+  function range$2(bind, el, param, value) {
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
     var min$$1 = param.min || Math.min(0, +value) || 0,
@@ -29393,7 +29507,7 @@
   function initializeRenderer(view, r, el, constructor, scaleFactor) {
     r = r || new constructor(view.loader());
     return r
-      .initialize(el, width(view), height$1(view), offset$1(view), scaleFactor)
+      .initialize(el, width(view), height(view), offset$1(view), scaleFactor)
       .background(view._background);
   }
 
@@ -29560,15 +29674,15 @@
     spec = spec || config.padding;
     return isObject(spec)
       ? {
-          top:    number$4(spec.top),
-          bottom: number$4(spec.bottom),
-          left:   number$4(spec.left),
-          right:  number$4(spec.right)
+          top:    number$5(spec.top),
+          bottom: number$5(spec.bottom),
+          left:   number$5(spec.left),
+          right:  number$5(spec.right)
         }
-      : paddingObject(number$4(spec));
+      : paddingObject(number$5(spec));
   }
 
-  function number$4(_) {
+  function number$5(_) {
     return +_ || 0;
   }
 
@@ -31606,7 +31720,7 @@
     }
   }
 
-  function range$2(name, group) {
+  function range$3(name, group) {
     var s = getScale(name, (group || this).context);
     return s && s.range ? s.range() : [];
   }
@@ -32181,7 +32295,7 @@
     lab: lab,
     hcl: hcl,
     hsl: hsl,
-    sequence: sequence,
+    sequence: range,
     format: format$1,
     utcFormat: utcFormat$1,
     utcParse: utcParse$1,
@@ -32246,7 +32360,7 @@
   expressionFunction('bandwidth', bandwidth, scaleVisitor);
   expressionFunction('copy', copy$1, scaleVisitor);
   expressionFunction('domain', domain, scaleVisitor);
-  expressionFunction('range', range$2, scaleVisitor);
+  expressionFunction('range', range$3, scaleVisitor);
   expressionFunction('invert', invert, scaleVisitor);
   expressionFunction('scale', scale$2, scaleVisitor);
   expressionFunction('gradient', scaleGradient, scaleVisitor);
@@ -32288,7 +32402,7 @@
 
   var signalPrefix = '$';
 
-  function parseExpression$1(expr, scope, preamble) {
+  function expression(expr, scope, preamble) {
     var params = {}, ast, gen;
 
     // parse the expression to an abstract syntax tree (ast)
@@ -32400,7 +32514,7 @@
     return _ && _.signal;
   }
 
-  function value(specValue, defaultValue) {
+  function value$1(specValue, defaultValue) {
     return specValue != null ? specValue : defaultValue;
   }
 
@@ -32477,7 +32591,7 @@
       param.push('inScope(event.item)');
     }
     if (param.length) {
-      entry$$1.filter = parseExpression$1('(' + param.join(')&&(') + ')').$expr;
+      entry$$1.filter = expression('(' + param.join(')&&(') + ')').$expr;
     }
 
     if ((param = stream.throttle) != null) {
@@ -32719,7 +32833,7 @@
         update = spec.update,
         encode = spec.encode,
         sources = [],
-        value$$1 = '', entry$$1;
+        value = '', entry$$1;
 
     if (!events) {
       error('Signal update missing events specification.');
@@ -32751,8 +32865,8 @@
     }
 
     // resolve update value
-    value$$1 = isString(update) ? parseExpression$1(update, scope, preamble)
-      : update.expr != null ? parseExpression$1(update.expr, scope, preamble)
+    value = isString(update) ? expression(update, scope, preamble)
+      : update.expr != null ? expression(update.expr, scope, preamble)
       : update.value != null ? update.value
       : update.signal != null ? {
           $expr:   '_.value',
@@ -32762,7 +32876,7 @@
 
     entry$$1 = {
       target: target,
-      update: value$$1
+      update: value
     };
 
     if (spec.force) {
@@ -32786,7 +32900,7 @@
     var op = scope.getSignal(signal.name);
 
     if (signal.update) {
-      var expr = parseExpression$1(signal.update, scope);
+      var expr = expression(signal.update, scope);
       op.update = expr.$expr;
       op.params = expr.$params;
     }
@@ -32799,8 +32913,8 @@
   }
 
   function transform$3(name) {
-    return function(params, value$$1, parent) {
-      return entry(name, value$$1, params || undefined, parent);
+    return function(params, value, parent) {
+      return entry(name, value, params || undefined, parent);
     };
   }
 
@@ -33225,8 +33339,8 @@
       : null;
   }
 
-  function expression(code, scope, params, fields) {
-    var expr = parseExpression$1(code, scope);
+  function expression$1(code, scope, params, fields) {
+    var expr = expression(code, scope);
     expr.$fields.forEach(function(name) { fields[name] = 1; });
     extend(params, expr.$params);
     return expr.$expr;
@@ -33241,7 +33355,7 @@
 
     if (ref.signal) {
       object = 'datum';
-      field$$1 = expression(ref.signal, scope, params, fields);
+      field$$1 = expression$1(ref.signal, scope, params, fields);
     } else if (ref.group || ref.parent) {
       level = Math.max(1, ref.level || 1);
       object = 'item';
@@ -33335,7 +33449,7 @@
       }
       scaleName = $(scalePrefix) + '+'
         + (name.signal
-          ? '(' + expression(name.signal, scope, params, fields) + ')'
+          ? '(' + expression$1(name.signal, scope, params, fields) + ')'
           : field$1(name, scope, params, fields));
     }
 
@@ -33362,7 +33476,7 @@
       return gradient$1(enc, scope, params, fields);
     }
 
-    var value = enc.signal ? expression(enc.signal, scope, params, fields)
+    var value = enc.signal ? expression$1(enc.signal, scope, params, fields)
       : enc.color ? color$2(enc.color, scope, params, fields)
       : enc.field != null ? field$1(enc.field, scope, params, fields)
       : enc.value !== undefined ? $(enc.value)
@@ -33406,7 +33520,7 @@
     rules.forEach(function(rule) {
       var value = entry$1(channel, rule, scope, params, fields);
       code += rule.test
-        ? expression(rule.test, scope, params, fields) + '?' + value + ':'
+        ? expression$1(rule.test, scope, params, fields) + '?' + value + ':'
         : value;
     });
 
@@ -33559,31 +33673,31 @@
   }
 
   function lookup$4(name, spec, config) {
-    return value(spec[name], config[name]);
+    return value$1(spec[name], config[name]);
   }
 
   function isVertical(spec, configVal) {
-    return value(spec.direction, configVal) === Vertical;
+    return value$1(spec.direction, configVal) === Vertical;
   }
 
   function gradientLength(spec, config) {
-    return value(
+    return value$1(
       spec.gradientLength,
       config.gradientLength || config.gradientWidth
     );
   }
 
   function gradientThickness(spec, config) {
-    return value(
+    return value$1(
       spec.gradientThickness,
       config.gradientThickness || config.gradientHeight
     );
   }
 
   function entryColumns(spec, config) {
-    return value(
+    return value$1(
       spec.columns,
-      value(config.columns, +isVertical(spec, config.symbolDirection))
+      value$1(config.columns, +isVertical(spec, config.symbolDirection))
     );
   }
 
@@ -33700,7 +33814,7 @@
     addEncode(enter, 'font',       lookup$4('labelFont', spec, config));
     addEncode(enter, 'fontSize',   lookup$4('labelFontSize', spec, config));
     addEncode(enter, 'fontWeight', lookup$4('labelFontWeight', spec, config));
-    addEncode(enter, 'limit',      value(spec.labelLimit, config.gradientLabelLimit));
+    addEncode(enter, 'limit',      value$1(spec.labelLimit, config.gradientLabelLimit));
 
     encode.exit = {
       opacity: zero
@@ -33724,7 +33838,7 @@
     enter[u] = update[u] = {signal: adjust + 'datum.' + Perc, mult: length};
 
     enter[v] = update[v] = thickness;
-    thickness.offset = value(spec.labelOffset, config.gradientLabelOffset) || 0;
+    thickness.offset = value$1(spec.labelOffset, config.gradientLabelOffset) || 0;
 
     spec = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
     if (overlap) spec.overlap = {method: overlap, order:  'datum.' + Index};
@@ -33908,6 +34022,8 @@
     };
 
     encode.update = {
+      x: {field: {group: 'padding'}},
+      y: {field: {group: 'padding'}},
       opacity: {value: 1},
       text: encoder(spec.title)
     };
@@ -33992,11 +34108,11 @@
    */
   function parseParameter$1(def, spec, scope) {
     var type = def.type,
-        value$$1 = spec[def.name];
+        value = spec[def.name];
 
     if (type === 'index') {
       return parseIndexParameter(def, spec, scope);
-    } else if (value$$1 === undefined) {
+    } else if (value === undefined) {
       if (def.required) {
         error('Missing required ' + $(spec.type)
             + ' parameter: ' + $(def.name));
@@ -34008,31 +34124,31 @@
       return scope.projectionRef(spec[def.name]);
     }
 
-    return def.array && !isSignal(value$$1)
-      ? value$$1.map(function(v) { return parameterValue(def, v, scope); })
-      : parameterValue(def, value$$1, scope);
+    return def.array && !isSignal(value)
+      ? value.map(function(v) { return parameterValue(def, v, scope); })
+      : parameterValue(def, value, scope);
   }
 
   /**
    * Parse a single parameter value.
    */
-  function parameterValue(def, value$$1, scope) {
+  function parameterValue(def, value, scope) {
     var type = def.type;
 
-    if (isSignal(value$$1)) {
+    if (isSignal(value)) {
       return isExpr(type) ? error('Expression references can not be signals.')
-           : isField(type) ? scope.fieldRef(value$$1)
-           : isCompare(type) ? scope.compareRef(value$$1)
-           : scope.signalRef(value$$1.signal);
+           : isField(type) ? scope.fieldRef(value)
+           : isCompare(type) ? scope.compareRef(value)
+           : scope.signalRef(value.signal);
     } else {
       var expr = def.expr || isField(type);
-      return expr && outerExpr(value$$1) ? parseExpression$1(value$$1.expr, scope)
-           : expr && outerField(value$$1) ? fieldRef(value$$1.field)
-           : isExpr(type) ? parseExpression$1(value$$1, scope)
-           : isData(type) ? ref(scope.getData(value$$1).values)
-           : isField(type) ? fieldRef(value$$1)
-           : isCompare(type) ? scope.compareRef(value$$1)
-           : value$$1;
+      return expr && outerExpr(value) ? expression(value.expr, scope)
+           : expr && outerField(value) ? fieldRef(value.field)
+           : isExpr(type) ? expression(value, scope)
+           : isData(type) ? ref(scope.getData(value).values)
+           : isField(type) ? fieldRef(value)
+           : isCompare(type) ? scope.compareRef(value)
+           : value;
     }
   }
 
@@ -34050,39 +34166,39 @@
    * Parse a parameter that contains one or more sub-parameter objects.
    */
   function parseSubParameters(def, spec, scope) {
-    var value$$1 = spec[def.name];
+    var value = spec[def.name];
 
     if (def.array) {
-      if (!isArray(value$$1)) { // signals not allowed!
-        error('Expected an array of sub-parameters. Instead: ' + $(value$$1));
+      if (!isArray(value)) { // signals not allowed!
+        error('Expected an array of sub-parameters. Instead: ' + $(value));
       }
-      return value$$1.map(function(v) {
+      return value.map(function(v) {
         return parseSubParameter(def, v, scope);
       });
     } else {
-      return parseSubParameter(def, value$$1, scope);
+      return parseSubParameter(def, value, scope);
     }
   }
 
   /**
    * Parse a sub-parameter object.
    */
-  function parseSubParameter(def, value$$1, scope) {
+  function parseSubParameter(def, value, scope) {
     var params, pdef, k, i, n;
 
     // loop over defs to find matching key
     for (i=0, n=def.params.length; i<n; ++i) {
       pdef = def.params[i];
       for (k in pdef.key) {
-        if (pdef.key[k] !== value$$1[k]) { pdef = null; break; }
+        if (pdef.key[k] !== value[k]) { pdef = null; break; }
       }
       if (pdef) break;
     }
     // raise error if matching key not found
-    if (!pdef) error('Unsupported parameter: ' + $(value$$1));
+    if (!pdef) error('Unsupported parameter: ' + $(value));
 
     // parse params, create Params transform, return ref
-    params = extend(parseParameters(pdef, value$$1, scope), pdef.key);
+    params = extend(parseParameters(pdef, value, scope), pdef.key);
     return ref(scope.add(Params$2(params)));
   }
 
@@ -34195,9 +34311,9 @@
     return new DataScope(scope, input, output, values, aggr);
   };
 
-  var prototype$1j = DataScope.prototype;
+  var prototype$1k = DataScope.prototype;
 
-  prototype$1j.countsRef = function(scope, field$$1, sort) {
+  prototype$1k.countsRef = function(scope, field$$1, sort) {
     var ds = this,
         cache = ds.counts || (ds.counts = {}),
         k = fieldKey(field$$1), v, a, p;
@@ -34271,27 +34387,27 @@
     return v;
   }
 
-  prototype$1j.tuplesRef = function() {
+  prototype$1k.tuplesRef = function() {
     return ref(this.values);
   };
 
-  prototype$1j.extentRef = function(scope, field$$1) {
+  prototype$1k.extentRef = function(scope, field$$1) {
     return cache(scope, this, 'extent', 'extent', field$$1, false);
   };
 
-  prototype$1j.domainRef = function(scope, field$$1) {
+  prototype$1k.domainRef = function(scope, field$$1) {
     return cache(scope, this, 'domain', 'values', field$$1, false);
   };
 
-  prototype$1j.valuesRef = function(scope, field$$1, sort) {
+  prototype$1k.valuesRef = function(scope, field$$1, sort) {
     return cache(scope, this, 'vals', 'values', field$$1, sort || true);
   };
 
-  prototype$1j.lookupRef = function(scope, field$$1) {
+  prototype$1k.lookupRef = function(scope, field$$1) {
     return cache(scope, this, 'lookup', 'tupleindex', field$$1, false);
   };
 
-  prototype$1j.indataRef = function(scope, field$$1) {
+  prototype$1k.indataRef = function(scope, field$$1) {
     return cache(scope, this, 'indata', 'tupleindex', field$$1, true, true);
   };
 
@@ -34365,7 +34481,7 @@
           .join(',')
       + '),0)';
 
-    expr = parseExpression$1(update, scope);
+    expr = expression(update, scope);
     op.update = expr.$expr;
     op.params = expr.$params;
   }
@@ -34642,7 +34758,7 @@
       + deref(fontSize)
       + ')';
 
-    return parseExpression$1(expr, scope);
+    return expression(expr, scope);
   }
 
   function getFontSize(encode, scope, style) {
@@ -35001,6 +35117,8 @@
         flushOn = flush != null && flush !== false && (flush = +flush) === flush,
         flushOffset = +lookup$4('labelFlushOffset', spec, config),
         overlap = lookup$4('labelOverlap', spec, config),
+        labelAlign = lookup$4('labelAlign', spec, config),
+        labelBaseline = lookup$4('labelBaseline', spec, config),
         zero = {value: 0},
         encode = {}, enter, exit, update, tickSize, tickPos;
 
@@ -35038,23 +35156,31 @@
     if (orient === Top$1 || orient === Bottom$1) {
       update.y = enter.y = tickSize;
       update.x = enter.x = exit.x = tickPos;
-      addEncode(update, 'align', flushOn
-        ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-        : 'center');
-      if (flushOn && flushOffset) {
-        addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
+      if (labelAlign) {
+        addEncode(update, 'align', labelAlign);
+      } else {
+        addEncode(update, 'align', flushOn
+          ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
+          : 'center');
+        if (flushOn && flushOffset) {
+          addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
+        }
       }
+      addEncode(update, 'baseline', labelBaseline || (orient === Top$1 ? 'bottom' : 'top'));
 
-      addEncode(update, 'baseline', orient === Top$1 ? 'bottom' : 'top');
     } else {
       update.x = enter.x = tickSize;
       update.y = enter.y = exit.y = tickPos;
-      addEncode(update, 'align', orient === Right$1 ? 'left' : 'right');
-      addEncode(update, 'baseline', flushOn
-        ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
-        : 'middle');
-      if (flushOn && flushOffset) {
-        addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
+      addEncode(update, 'align', labelAlign || (orient === Right$1 ? 'left' : 'right'));
+      if (labelBaseline) {
+        addEncode(update, 'baseline', labelBaseline);
+      } else {
+        addEncode(update, 'baseline', flushOn
+          ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
+          : 'middle');
+        if (flushOn && flushOffset) {
+          addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
+        }
       }
     }
 
@@ -35139,7 +35265,7 @@
       labels: !!lookup$4('labels', spec, config),
       grid:   !!lookup$4('grid',   spec, config),
       domain: !!lookup$4('domain', spec, config),
-      title:  !!value(spec.title, false)
+      title:  !!value$1(spec.title, false)
     };
     dataRef = ref(scope.add(Collect$1({}, [datum])));
 
@@ -35147,8 +35273,8 @@
     axisEncode = extendEncode({
       update: {
         range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
-        offset:       encoder(value(spec.offset, 0)),
-        position:     encoder(value(spec.position, 0)),
+        offset:       encoder(value$1(spec.offset, 0)),
+        position:     encoder(value$1(spec.position, 0)),
         titlePadding: encoder(lookup$4('titlePadding', spec, config)),
         minExtent:    encoder(lookup$4('minExtent', spec, config)),
         maxExtent:    encoder(lookup$4('maxExtent', spec, config))
@@ -35358,19 +35484,19 @@
     this._markpath = scope._markpath;
   }
 
-  var prototype$1k = Scope$1.prototype = Subscope.prototype;
+  var prototype$1l = Scope$1.prototype = Subscope.prototype;
 
   // ----
 
-  prototype$1k.fork = function() {
+  prototype$1l.fork = function() {
     return new Subscope(this);
   };
 
-  prototype$1k.isSubscope = function() {
+  prototype$1l.isSubscope = function() {
     return this._subid > 0;
   };
 
-  prototype$1k.toRuntime = function() {
+  prototype$1l.toRuntime = function() {
     this.finish();
     return {
       background:  this.background,
@@ -35382,11 +35508,11 @@
     };
   };
 
-  prototype$1k.id = function() {
+  prototype$1l.id = function() {
     return (this._subid ? this._subid + ':' : 0) + this._id++;
   };
 
-  prototype$1k.add = function(op) {
+  prototype$1l.add = function(op) {
     this.operators.push(op);
     op.id = this.id();
     // if pre-registration references exist, resolve them now
@@ -35397,24 +35523,24 @@
     return op;
   };
 
-  prototype$1k.proxy = function(op) {
+  prototype$1l.proxy = function(op) {
     var vref = op instanceof Entry ? ref(op) : op;
     return this.add(Proxy$1({value: vref}));
   };
 
-  prototype$1k.addStream = function(stream) {
+  prototype$1l.addStream = function(stream) {
     this.streams.push(stream);
     stream.id = this.id();
     return stream;
   };
 
-  prototype$1k.addUpdate = function(update) {
+  prototype$1l.addUpdate = function(update) {
     this.updates.push(update);
     return update;
   };
 
   // Apply metadata
-  prototype$1k.finish = function() {
+  prototype$1l.finish = function() {
     var name, ds;
 
     // annotate root
@@ -35454,40 +35580,40 @@
 
   // ----
 
-  prototype$1k.pushState = function(encode, parent, lookup) {
+  prototype$1l.pushState = function(encode, parent, lookup) {
     this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
     this._parent.push(parent);
     this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
     this._markpath.push(-1);
   };
 
-  prototype$1k.popState = function() {
+  prototype$1l.popState = function() {
     this._encode.pop();
     this._parent.pop();
     this._lookup.pop();
     this._markpath.pop();
   };
 
-  prototype$1k.parent = function() {
+  prototype$1l.parent = function() {
     return peek(this._parent);
   };
 
-  prototype$1k.encode = function() {
+  prototype$1l.encode = function() {
     return peek(this._encode);
   };
 
-  prototype$1k.lookup = function() {
+  prototype$1l.lookup = function() {
     return peek(this._lookup);
   };
 
-  prototype$1k.markpath = function() {
+  prototype$1l.markpath = function() {
     var p = this._markpath;
     return ++p[p.length-1];
   };
 
   // ----
 
-  prototype$1k.fieldRef = function(field$$1, name) {
+  prototype$1l.fieldRef = function(field$$1, name) {
     if (isString(field$$1)) return fieldRef(field$$1, name);
     if (!field$$1.signal) {
       error('Unsupported field reference: ' + $(field$$1));
@@ -35505,7 +35631,7 @@
     return f;
   };
 
-  prototype$1k.compareRef = function(cmp, stable) {
+  prototype$1l.compareRef = function(cmp, stable) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -35529,7 +35655,7 @@
       : compareRef(fields, orders);
   };
 
-  prototype$1k.keyRef = function(fields, flat) {
+  prototype$1l.keyRef = function(fields, flat) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -35548,7 +35674,7 @@
       : keyRef(fields, flat);
   };
 
-  prototype$1k.sortRef = function(sort) {
+  prototype$1l.sortRef = function(sort) {
     if (!sort) return sort;
 
     // including id ensures stable sorting
@@ -35565,7 +35691,7 @@
 
   // ----
 
-  prototype$1k.event = function(source, type) {
+  prototype$1l.event = function(source, type) {
     var key$$1 = source + ':' + type;
     if (!this.events[key$$1]) {
       var id$$1 = this.id();
@@ -35581,22 +35707,22 @@
 
   // ----
 
-  prototype$1k.addSignal = function(name, value$$1) {
+  prototype$1l.addSignal = function(name, value) {
     if (this.signals.hasOwnProperty(name)) {
       error('Duplicate signal name: ' + $(name));
     }
-    var op = value$$1 instanceof Entry ? value$$1 : this.add(operator(value$$1));
+    var op = value instanceof Entry ? value : this.add(operator(value));
     return this.signals[name] = op;
   };
 
-  prototype$1k.getSignal = function(name) {
+  prototype$1l.getSignal = function(name) {
     if (!this.signals[name]) {
       error('Unrecognized signal name: ' + $(name));
     }
     return this.signals[name];
   };
 
-  prototype$1k.signalRef = function(s) {
+  prototype$1l.signalRef = function(s) {
     if (this.signals[s]) {
       return ref(this.signals[s]);
     } else if (!this.lambdas.hasOwnProperty(s)) {
@@ -35605,22 +35731,22 @@
     return ref(this.lambdas[s]);
   };
 
-  prototype$1k.parseLambdas = function() {
+  prototype$1l.parseLambdas = function() {
     var code = Object.keys(this.lambdas);
     for (var i=0, n=code.length; i<n; ++i) {
       var s = code[i],
-          e = parseExpression$1(s, this),
+          e = expression(s, this),
           op = this.lambdas[s];
       op.params = e.$params;
       op.update = e.$expr;
     }
   };
 
-  prototype$1k.property = function(spec) {
+  prototype$1l.property = function(spec) {
     return spec && spec.signal ? this.signalRef(spec.signal) : spec;
   };
 
-  prototype$1k.objectProperty = function(spec) {
+  prototype$1l.objectProperty = function(spec) {
     return (!spec || !isObject(spec)) ? spec
       : this.signalRef(spec.signal || propertyLambda(spec));
   };
@@ -35633,14 +35759,14 @@
     var code = '[',
         i = 0,
         n = array$$1.length,
-        value$$1;
+        value;
 
     for (; i<n; ++i) {
-      value$$1 = array$$1[i];
+      value = array$$1[i];
       code += (i > 0 ? ',' : '')
-        + (isObject(value$$1)
-          ? (value$$1.signal || propertyLambda(value$$1))
-          : $(value$$1));
+        + (isObject(value)
+          ? (value.signal || propertyLambda(value))
+          : $(value));
     }
     return code + ']';
   }
@@ -35648,20 +35774,20 @@
   function objectLambda(obj) {
     var code = '{',
         i = 0,
-        key$$1, value$$1;
+        key$$1, value;
 
     for (key$$1 in obj) {
-      value$$1 = obj[key$$1];
+      value = obj[key$$1];
       code += (++i > 1 ? ',' : '')
         + $(key$$1) + ':'
-        + (isObject(value$$1)
-          ? (value$$1.signal || propertyLambda(value$$1))
-          : $(value$$1));
+        + (isObject(value)
+          ? (value.signal || propertyLambda(value))
+          : $(value));
     }
     return code + '}';
   }
 
-  prototype$1k.addBinding = function(name, bind) {
+  prototype$1l.addBinding = function(name, bind) {
     if (!this.bindings) {
       error('Nested signals do not support binding: ' + $(name));
     }
@@ -35670,55 +35796,55 @@
 
   // ----
 
-  prototype$1k.addScaleProj = function(name, transform) {
+  prototype$1l.addScaleProj = function(name, transform) {
     if (this.scales.hasOwnProperty(name)) {
       error('Duplicate scale or projection name: ' + $(name));
     }
     this.scales[name] = this.add(transform);
   };
 
-  prototype$1k.addScale = function(name, params) {
+  prototype$1l.addScale = function(name, params) {
     this.addScaleProj(name, Scale$1(params));
   };
 
-  prototype$1k.addProjection = function(name, params) {
+  prototype$1l.addProjection = function(name, params) {
     this.addScaleProj(name, Projection$1(params));
   };
 
-  prototype$1k.getScale = function(name) {
+  prototype$1l.getScale = function(name) {
     if (!this.scales[name]) {
       error('Unrecognized scale name: ' + $(name));
     }
     return this.scales[name];
   };
 
-  prototype$1k.projectionRef =
-  prototype$1k.scaleRef = function(name) {
+  prototype$1l.projectionRef =
+  prototype$1l.scaleRef = function(name) {
     return ref(this.getScale(name));
   };
 
-  prototype$1k.projectionType =
-  prototype$1k.scaleType = function(name) {
+  prototype$1l.projectionType =
+  prototype$1l.scaleType = function(name) {
     return this.getScale(name).params.type;
   };
 
   // ----
 
-  prototype$1k.addData = function(name, dataScope) {
+  prototype$1l.addData = function(name, dataScope) {
     if (this.data.hasOwnProperty(name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return (this.data[name] = dataScope);
   };
 
-  prototype$1k.getData = function(name) {
+  prototype$1l.getData = function(name) {
     if (!this.data[name]) {
       error('Undefined data set name: ' + $(name));
     }
     return this.data[name];
   };
 
-  prototype$1k.addDataPipeline = function(name, entries) {
+  prototype$1l.addDataPipeline = function(name, entries) {
     if (this.data.hasOwnProperty(name)) {
       error('Duplicate data set name: ' + $(name));
     }
@@ -35965,7 +36091,7 @@
   /**
    * Parse an expression given the argument signature and body code.
    */
-  function expression$1(args, code, ctx) {
+  function expression$2(args, code, ctx) {
     // wrap code in return statement if expression does not terminate
     if (code[code.length-1] !== ';') {
       code = 'return(' + code + ');';
@@ -35978,35 +36104,35 @@
    * Parse an expression used to update an operator value.
    */
   function operatorExpression(code, ctx) {
-    return expression$1(['_'], code, ctx);
+    return expression$2(['_'], code, ctx);
   }
 
   /**
    * Parse an expression provided as an operator parameter value.
    */
   function parameterExpression(code, ctx) {
-    return expression$1(['datum', '_'], code, ctx);
+    return expression$2(['datum', '_'], code, ctx);
   }
 
   /**
    * Parse an expression applied to an event stream.
    */
   function eventExpression(code, ctx) {
-    return expression$1(['event'], code, ctx);
+    return expression$2(['event'], code, ctx);
   }
 
   /**
    * Parse an expression used to handle an event-driven operator update.
    */
   function handlerExpression(code, ctx) {
-    return expression$1(['_', 'event'], code, ctx);
+    return expression$2(['_', 'event'], code, ctx);
   }
 
   /**
    * Parse an expression that performs visual encoding.
    */
   function encodeExpression(code, ctx) {
-    return expression$1(['item', '_'], code, ctx);
+    return expression$2(['item', '_'], code, ctx);
   }
 
   /**
@@ -36737,11 +36863,11 @@
     cursor(view);
   }
 
-  var prototype$1l = inherits(View$1, Dataflow);
+  var prototype$1m = inherits(View$1, Dataflow);
 
   // -- DATAFLOW / RENDERING ----
 
-  prototype$1l.run = function(encode) {
+  prototype$1m.run = function(encode) {
     Dataflow.prototype.run.call(this, encode);
     if (this._redraw || this._resize) {
       try {
@@ -36753,7 +36879,7 @@
     return this;
   };
 
-  prototype$1l.render = function() {
+  prototype$1m.render = function() {
     if (this._renderer) {
       if (this._resize) {
         this._resize = 0;
@@ -36765,22 +36891,22 @@
     return this;
   };
 
-  prototype$1l.dirty = function(item) {
+  prototype$1m.dirty = function(item) {
     this._redraw = true;
     this._renderer && this._renderer.dirty(item);
   };
 
   // -- GET / SET ----
 
-  prototype$1l.container = function() {
+  prototype$1m.container = function() {
     return this._el;
   };
 
-  prototype$1l.scenegraph = function() {
+  prototype$1m.scenegraph = function() {
     return this._scenegraph;
   };
 
-  prototype$1l.origin = function() {
+  prototype$1m.origin = function() {
     return this._origin.slice();
   };
 
@@ -36790,14 +36916,14 @@
       : error('Unrecognized signal name: ' + $(name));
   }
 
-  prototype$1l.signal = function(name, value, options) {
+  prototype$1m.signal = function(name, value, options) {
     var op = lookupSignal(this, name);
     return arguments.length === 1
       ? op.value
       : this.update(op, value, options);
   };
 
-  prototype$1l.background = function(_) {
+  prototype$1m.background = function(_) {
     if (arguments.length) {
       this._background = _;
       this._resize = 1;
@@ -36807,23 +36933,23 @@
     }
   };
 
-  prototype$1l.width = function(_) {
+  prototype$1m.width = function(_) {
     return arguments.length ? this.signal('width', _) : this.signal('width');
   };
 
-  prototype$1l.height = function(_) {
+  prototype$1m.height = function(_) {
     return arguments.length ? this.signal('height', _) : this.signal('height');
   };
 
-  prototype$1l.padding = function(_) {
+  prototype$1m.padding = function(_) {
     return arguments.length ? this.signal('padding', _) : this.signal('padding');
   };
 
-  prototype$1l.autosize = function(_) {
+  prototype$1m.autosize = function(_) {
     return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
   };
 
-  prototype$1l.renderer = function(type) {
+  prototype$1m.renderer = function(type) {
     if (!arguments.length) return this._renderType;
     if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
     if (type !== this._renderType) {
@@ -36833,7 +36959,7 @@
     return this;
   };
 
-  prototype$1l.tooltip = function(handler) {
+  prototype$1m.tooltip = function(handler) {
     if (!arguments.length) return this._tooltip;
     if (handler !== this._tooltip) {
       this._tooltip = handler;
@@ -36842,7 +36968,7 @@
     return this;
   };
 
-  prototype$1l.loader = function(loader) {
+  prototype$1m.loader = function(loader) {
     if (!arguments.length) return this._loader;
     if (loader !== this._loader) {
       Dataflow.prototype.loader.call(this, loader);
@@ -36851,12 +36977,12 @@
     return this;
   };
 
-  prototype$1l.resize = function() {
+  prototype$1m.resize = function() {
     this._autosize = 1;
     return this;
   };
 
-  prototype$1l._resetRenderer = function() {
+  prototype$1m._resetRenderer = function() {
     if (this._renderer) {
       this._renderer = null;
       this.initialize(this._el);
@@ -36864,11 +36990,11 @@
   };
 
   // -- SIZING ----
-  prototype$1l._resizeView = resizeView;
+  prototype$1m._resizeView = resizeView;
 
   // -- EVENT HANDLING ----
 
-  prototype$1l.addEventListener = function(type, handler, options) {
+  prototype$1m.addEventListener = function(type, handler, options) {
     var callback = handler;
     if (!(options && options.trap === false)) {
       // wrap callback in error handler
@@ -36879,7 +37005,7 @@
     return this;
   };
 
-  prototype$1l.removeEventListener = function(type, handler) {
+  prototype$1m.removeEventListener = function(type, handler) {
     var handlers = this._handler.handlers(type),
         i = handlers.length, h, t;
 
@@ -36895,7 +37021,7 @@
     return this;
   };
 
-  prototype$1l.addResizeListener = function(handler) {
+  prototype$1m.addResizeListener = function(handler) {
     var l = this._resizeListeners;
     if (l.indexOf(handler) < 0) {
       // add handler if it isn't already registered
@@ -36906,7 +37032,7 @@
     return this;
   };
 
-  prototype$1l.removeResizeListener = function(handler) {
+  prototype$1m.removeResizeListener = function(handler) {
     var l = this._resizeListeners,
         i = l.indexOf(handler);
     if (i >= 0) {
@@ -36924,7 +37050,7 @@
     return h.length ? h[0] : null;
   }
 
-  prototype$1l.addSignalListener = function(name, handler) {
+  prototype$1m.addSignalListener = function(name, handler) {
     var s = lookupSignal(this, name),
         h = findSignalHandler(s, handler);
 
@@ -36936,7 +37062,7 @@
     return this;
   };
 
-  prototype$1l.removeSignalListener = function(name, handler) {
+  prototype$1m.removeSignalListener = function(name, handler) {
     var s = lookupSignal(this, name),
         h = findSignalHandler(s, handler);
 
@@ -36944,7 +37070,7 @@
     return this;
   };
 
-  prototype$1l.preventDefault = function(_) {
+  prototype$1m.preventDefault = function(_) {
     if (arguments.length) {
       this._preventDefault = _;
       return this;
@@ -36953,28 +37079,28 @@
     }
   };
 
-  prototype$1l.timer = timer$1;
-  prototype$1l.events = events$1;
-  prototype$1l.finalize = finalize;
-  prototype$1l.hover = hover;
+  prototype$1m.timer = timer$1;
+  prototype$1m.events = events$1;
+  prototype$1m.finalize = finalize;
+  prototype$1m.hover = hover;
 
   // -- DATA ----
-  prototype$1l.data = data;
-  prototype$1l.change = change;
-  prototype$1l.insert = insert;
-  prototype$1l.remove = remove;
+  prototype$1m.data = data;
+  prototype$1m.change = change;
+  prototype$1m.insert = insert;
+  prototype$1m.remove = remove;
 
   // -- INITIALIZATION ----
-  prototype$1l.initialize = initialize$1;
+  prototype$1m.initialize = initialize$1;
 
   // -- HEADLESS RENDERING ----
-  prototype$1l.toImageURL = renderToImageURL;
-  prototype$1l.toCanvas = renderToCanvas;
-  prototype$1l.toSVG = renderToSVG;
+  prototype$1m.toImageURL = renderToImageURL;
+  prototype$1m.toCanvas = renderToCanvas;
+  prototype$1m.toSVG = renderToSVG;
 
   // -- SAVE / RESTORE STATE ----
-  prototype$1l.getState = getState$1;
-  prototype$1l.setState = setState$1;
+  prototype$1m.getState = getState$1;
+  prototype$1m.setState = setState$1;
 
   // -- Transforms -----
   extend(transforms, tx, vtx, encode, geo, force, tree$1, voronoi$1, wordcloud, xf);
@@ -36995,7 +37121,7 @@
   exports.transforms = transforms;
   exports.tupleid = tupleid;
   exports.scale = scale$1;
-  exports.scheme = getScheme;
+  exports.scheme = scheme$r;
   exports.interpolate = interpolate;
   exports.interpolateRange = interpolateRange;
   exports.timeInterval = timeInterval;
@@ -37111,6 +37237,8 @@
   exports.openTag = openTag;
   exports.closeTag = closeTag;
   exports.font = font;
+  exports.fontFamily = fontFamily;
+  exports.fontSize = fontSize;
   exports.textMetrics = textMetrics;
   exports.resetSVGClipId = resetSVGClipId;
   exports.sceneEqual = sceneEqual;

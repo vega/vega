@@ -408,6 +408,35 @@
         "labels": {
           "type": "boolean"
         },
+        "labelAlign": {
+          "oneOf": [
+            {
+              "enum": [
+                "left",
+                "right",
+                "center"
+              ]
+            },
+            {
+              "$ref": "#/refs/alignValue"
+            }
+          ]
+        },
+        "labelBaseline": {
+          "oneOf": [
+            {
+              "enum": [
+                "top",
+                "middle",
+                "bottom",
+                "alphabetic"
+              ]
+            },
+            {
+              "$ref": "#/refs/baselineValue"
+            }
+          ]
+        },
         "labelBound": {
           "oneOf": [
             {
@@ -2476,6 +2505,9 @@
                       "$ref": "#/refs/scaleData"
                     }
                   ]
+                },
+                "domainImplicit": {
+                  "$ref": "#/refs/booleanOrSignal"
                 }
               },
               "required": [
