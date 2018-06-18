@@ -60,6 +60,7 @@ Vega includes all cartographic projections provided by the [d3-geo](https://gith
 | [gnomonic](https://github.com/d3/d3-geo#geoGnomonic) | The gnomonic projection. |
 | [identity](https://github.com/d3/d3-geo#geoIdentity) | The identity transform, which can be used to translate, scale, and clip planar geometry. Also supports additional boolean [`reflectX`](https://github.com/d3/d3-geo#identity_reflectX) and [`reflectY`](https://github.com/d3/d3-geo#identity_reflectY) parameters. |
 | [mercator](https://github.com/d3/d3-geo#geoMercator) | The spherical Mercator projection. Uses a default `clipExtent` such that the world is projected to a square, clipped to approximately ±85&deg; latitude. |
+| [naturalEarth1](https://github.com/d3/d3-geo#geoNaturalEarth1) | The [Natural Earth projection](http://www.shadedrelief.com/NE_proj/) is a pseudocylindrical projection designed by Tom Patterson. It is neither conformal nor equal-area, but appealing to the eye for small-scale maps of the whole world. |
 | [orthographic](https://github.com/d3/d3-geo#geoOrthographic) | The orthographic projection. |
 | [stereographic](https://github.com/d3/d3-geo#geoStereographic) | The stereographic projection. |
 | [transverseMercator](https://github.com/d3/d3-geo#geoTransverseMercator) | The transverse spherical Mercator projection. Uses a default `clipExtent` such that the world is projected to a square, clipped to approximately ±85&deg; latitude. |
