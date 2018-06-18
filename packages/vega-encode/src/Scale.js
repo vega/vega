@@ -17,7 +17,8 @@ import {
   interpolateRange,
   interpolate as getInterpolate,
   scale as getScale,
-  scheme as getScheme
+  scheme as getScheme,
+  scaleImplicit
 } from 'vega-scale';
 
 import {
@@ -34,7 +35,7 @@ var INCLUDE_PAD = toSet([Linear, Log, Pow, Sqrt, Time, Utc]);
 
 var SKIP = toSet([
   'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
-  'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'nice', 'zero',
+  'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'domainImplicit', 'nice', 'zero',
   'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
 ]);
 
@@ -115,7 +116,7 @@ function configureDomain(scale, _, df) {
   // if ordinal scale domain is defined, prevent implicit
   // domain construction as side-effect of scale lookup
   if (type === Ordinal) {
-    scale.unknown(undefined);
+    scale.unknown(_.domainImplicit ? scaleImplicit : undefined);
   }
 
   // perform 'nice' adjustment as requested
@@ -229,7 +230,7 @@ function flip(array, reverse) {
 
 function quantize(interpolator, count) {
   var samples = new Array(count),
-      n = count + 2;
+      n = count + 1;
   for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
   return samples;
 }
