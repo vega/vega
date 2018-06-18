@@ -185,7 +185,9 @@ Additional property blocks can target more specific axis types based on the orie
 | gridOpacity     | {% include type t="Number" %}   | Opacity of axis grid lines. |
 | gridWidth       | {% include type t="Number" %}   | Stroke width of axis grid lines. |
 | labels          | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick labels should be included by default. |
-| labelAngle      | {% include type t="Number" %}   | Angle in degrees of axis tick labels. |
+| labelAlign    | {% include type t="String" %}  | Horizontal text alignment of axis tick labels, overriding the default setting for the axis orientation. |
+| labelAngle    | {% include type t="Number" %}  | Angle in degrees of axis tick labels. |
+| labelBaseline   | {% include type t="String" %}  | Vertical text baseline of axis tick labels, overriding the default setting for the axis orientation. |
 | labelBound      | {% include type t="Boolean|Number" %} | Boolean flag or pixel tolerance value for removal of labels that exceed the axis range. |
 | labelColor      | {% include type t="Color" %}    | Text color of axis tick labels. |
 | labelFlush      | {% include type t="Boolean|Number" %} | Boolean flag or pixel distance threshold value for performing a "flush" layout of axis labels. For an x-axis, flush alignment will left-align the left-most labels (if within the distance threshold from the axis start) and similarly right-align the right-most labels. If `true`, a pixel tolerance of 1 is used. |

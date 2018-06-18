@@ -27,7 +27,9 @@ Properties for specifying a coordinate axis.
 | gridScale     | {% include type t="String" %}  | The name of the scale to use for including grid lines. By default grid lines are driven by the same scale as the ticks and labels.|
 | gridWidth     | {% include type t="Number" %}  | Stroke width of axis grid lines. |
 | labels        | {% include type t="Boolean" %} | A boolean flag indicating if labels should be included as part of the axis (default `true`).|
+| labelAlign    | {% include type t="String" %}  | Horizontal text alignment of axis tick labels, overriding the default setting for the current axis orientation. |
 | labelAngle    | {% include type t="Number" %}  | Angle in degrees of axis tick labels. |
+| labelBaseline   | {% include type t="String" %}  | Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation. |
 | labelBound    | {% include type t="Boolean|Number" %} | Indicates if labels should be hidden if they exceed the axis range. If `false` (the default) no bounds overlap analysis is performed. If `true`, labels will be hidden if they exceed the axis range by more than 1 pixel. If this property is a number, it specifies the pixel tolerance: the maximum amount by which a label bounding box may exceed the axis range.|
 | labelColor    | {% include type t="Color" %}   | Text color of axis tick labels. |
 | labelFlush    | {% include type t="Boolean|Number" %} | Indicates if labels at the beginning or end of the axis should be aligned flush with the scale range. If a number, indicates a pixel distance threshold: labels with anchor coordinates within the threshold distance for an axis end-point will be flush-adjusted. If `true`, a default threshold of 1 pixel is used. Flush alignment for a horizontal axis will left-align labels near the beginning of the axis and right-align labels near the end. For vertical axes, bottom and top text baselines will be applied instead.|
