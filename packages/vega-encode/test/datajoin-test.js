@@ -27,7 +27,13 @@ tape('DataJoin joins tuples and items', function(test) {
   test.equal(dj.pulse.add[2].datum, data[2]);
 
   // Redundant add should not change output size
-  df.pulse(c0, changeset().insert(data[0])).run();
+  // Fake changeset to test invalid insert
+  df.pulse(c0, {
+    pulse: function(p) {
+      p.add.push(data[0]);
+      return p;
+    }
+  }).run();
   test.equal(dj.pulse.add.length, 0);
   test.equal(dj.pulse.rem.length, 0);
   test.equal(dj.pulse.mod.length, 1);
