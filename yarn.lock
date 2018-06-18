@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
 "@types/node@*":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.1.2.tgz#1b928a0baa408fc8ae3ac012cc81375addc147c6"
+  version "10.3.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.3.tgz#8798d9e39af2fa604f715ee6a6b19796528e46c3"
 
 abbrev@1:
   version "1.1.1"
@@ -25,8 +25,8 @@ acorn@^3.0.4:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
 
 acorn@^5.5.0:
-  version "5.5.3"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.5.3.tgz#f473dd47e0277a08e28e9bec5aeeb04751f0b8c9"
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.1.tgz#f095829297706a7c9776958c0afc8930a9b9d9d8"
 
 ajv-keywords@^2.1.0:
   version "2.1.1"
@@ -185,8 +185,8 @@ braces@^1.8.2:
     repeat-element "^1.1.2"
 
 buffer-from@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.0.0.tgz#4cb8832d23612589b0406e9e2956c17f06fdf531"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -281,14 +281,14 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
 color-convert@^1.9.0:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.1.tgz#c1261107aeb2f294ebffec9ed9ecad529a6097ed"
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.2.tgz#49881b8fba67df12a96bdf3f56c0aab9e7913147"
   dependencies:
-    color-name "^1.1.1"
+    color-name "1.1.1"
 
-color-name@^1.1.1:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.3.tgz#a7d0558bd89c42f795dd42328f740831ca53bc25"
+color-name@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.1.tgz#4b1415304cf50028ea81643643bd82ea05803689"
 
 combined-stream@^1.0.5, combined-stream@~1.0.5:
   version "1.0.6"
@@ -404,11 +404,11 @@ d3-force@^1.1.0:
     d3-quadtree "1"
     d3-timer "1"
 
-d3-format@1, d3-format@^1.2.2, d3-format@^1.3.0:
+d3-format@1, d3-format@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.3.0.tgz#a3ac44269a2011cdb87c7b5693040c18cddfff11"
 
-d3-geo@1, d3-geo@^1.10.0:
+d3-geo@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.10.0.tgz#2972d18014f1e38fc1f8bb6d545377bdfb00c9ab"
   dependencies:
@@ -418,7 +418,7 @@ d3-hierarchy@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/d3-hierarchy/-/d3-hierarchy-1.1.6.tgz#842c1372090f870b7ea013ebae5c0c8d9f56229c"
 
-d3-interpolate@1, d3-interpolate@^1.1.6, d3-interpolate@^1.2.0:
+d3-interpolate@1, d3-interpolate@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/d3-interpolate/-/d3-interpolate-1.2.0.tgz#40d81bd8e959ff021c5ea7545bc79b8d22331c41"
   dependencies:
@@ -439,9 +439,9 @@ d3-scale-chromatic@^1.3.0:
     d3-color "1"
     d3-interpolate "1"
 
-d3-scale@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/d3-scale/-/d3-scale-2.0.0.tgz#fd8ac78381bc2ed741d8c71770437a5e0549a5a5"
+d3-scale@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/d3-scale/-/d3-scale-2.1.0.tgz#8d3fd3e2a7c9080782a523c08507c5248289eef8"
   dependencies:
     d3-array "^1.2.0"
     d3-collection "1"
@@ -500,9 +500,9 @@ deep-equal@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
 
-deep-extend@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.5.1.tgz#b894a9dd90d3023fbf1c55a394fb858eb2066f1f"
+deep-extend@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
 
 deep-is@~0.1.3:
   version "0.1.3"
@@ -562,8 +562,8 @@ error-ex@^1.2.0:
     is-arrayish "^0.2.1"
 
 es-abstract@^1.5.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.11.0.tgz#cce87d518f0496893b1a30cd8461835535480681"
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.12.0.tgz#9dbbdd27c6856f0001421ca18782d786bf8a6165"
   dependencies:
     es-to-primitive "^1.1.1"
     function-bind "^1.1.1"
@@ -765,11 +765,11 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-for-each@~0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/for-each/-/for-each-0.3.2.tgz#2c40450b9348e97f281322593ba96704b9abd4d4"
+for-each@~0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/for-each/-/for-each-0.3.3.tgz#69b447e88a0a5d32c3e7084f3f1710034b21376e"
   dependencies:
-    is-function "~1.0.0"
+    is-callable "^1.1.3"
 
 for-in@^1.0.1:
   version "1.0.2"
@@ -917,11 +917,11 @@ has-unicode@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/has-unicode/-/has-unicode-2.0.1.tgz#e0e6fe6a28cf51138855e086d1691e771de2a8b9"
 
-has@^1.0.1, has@~1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/has/-/has-1.0.1.tgz#8461733f538b0837c9361e39a9ab9e9704dc2f28"
+has@^1.0.1, has@~1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/has/-/has-1.0.3.tgz#722d7cbfc1f6aa8241f16dd814e011e1f41e8796"
   dependencies:
-    function-bind "^1.0.2"
+    function-bind "^1.1.1"
 
 hawk@3.1.3, hawk@~3.1.3:
   version "3.1.3"
@@ -1050,10 +1050,6 @@ is-fullwidth-code-point@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz#a3b30a5c4f199183167aaab93beefae3ddfb654f"
 
-is-function@~1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/is-function/-/is-function-1.0.1.tgz#12cfb98b65b57dd3d193a3121f5f6e2f437602b5"
-
 is-glob@^2.0.0, is-glob@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-2.0.1.tgz#d096f926a3ded5600f3fdfd91198cb0888c2d863"
@@ -1151,8 +1147,8 @@ js-tokens@^3.0.2:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
 js-yaml@^3.9.1:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -1379,13 +1375,13 @@ object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
-object-inspect@~1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.5.0.tgz#9d876c11e40f485c79215670281b767488f9bfe3"
+object-inspect@~1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.6.0.tgz#c70b6cbf72f274aab4c34c0c82f5167bf82cf15b"
 
 object-keys@^1.0.8:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.11.tgz#c54601778ad560f1142ce0e01bcca8b56d13426d"
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.12.tgz#09c53855377575310cca62f55bb334abff7b3ed2"
 
 object.omit@^2.0.0:
   version "2.0.1"
@@ -1552,10 +1548,10 @@ randomatic@^3.0.0:
     math-random "^1.0.1"
 
 rc@^1.1.7:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.7.tgz#8a10ca30d588d00464360372b890d06dacd02297"
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
   dependencies:
-    deep-extend "^0.5.1"
+    deep-extend "^0.6.0"
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
@@ -1656,14 +1652,14 @@ resolve-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-1.0.1.tgz#26cbfe935d1aeeeabb29bc3fe5aeb01e93d44226"
 
 resolve@^1.1.6:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.7.1.tgz#aadd656374fd298aee895bc026b8297418677fd3"
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.8.1.tgz#82f1ec19a423ac1fbd080b0bab06ba36e84a7a26"
   dependencies:
     path-parse "^1.0.5"
 
-resolve@~1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.5.0.tgz#1f09acce796c9a762579f31b2c1cc4c3cddf9f36"
+resolve@~1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.7.1.tgz#aadd656374fd298aee895bc026b8297418677fd3"
   dependencies:
     path-parse "^1.0.5"
 
@@ -1707,9 +1703,9 @@ rollup-pluginutils@^2.2.0:
     estree-walker "^0.5.2"
     micromatch "^2.3.11"
 
-rollup@0.59.3:
-  version "0.59.3"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.59.3.tgz#15dae74cb1b6a6b39a63c7096c1d6f47d8f2a5bd"
+rollup@0.60.7:
+  version "0.60.7"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.60.7.tgz#2b62ef9306f719b1ab85a7814b3e6596ac51fae8"
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "*"
@@ -1738,7 +1734,7 @@ safe-buffer@^5.0.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
 
-"safer-buffer@>= 2.1.2 < 3":
+"safer-buffer@>= 2.1.2 < 3", safer-buffer@^2.0.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
@@ -1807,13 +1803,14 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
 sshpk@^1.7.0:
-  version "1.14.1"
-  resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.14.1.tgz#130f5975eddad963f1d56f92b9ac6c51fa9f83eb"
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.14.2.tgz#c6fc61648a3d9c4e764fd3fcdf4ea105e492ba98"
   dependencies:
     asn1 "~0.2.3"
     assert-plus "^1.0.0"
     dashdash "^1.12.0"
     getpass "^0.1.1"
+    safer-buffer "^2.0.2"
   optionalDependencies:
     bcrypt-pbkdf "^1.0.0"
     ecc-jsbn "~0.1.1"
@@ -1897,19 +1894,19 @@ table@4.0.2:
     string-width "^2.1.1"
 
 tape@4:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/tape/-/tape-4.9.0.tgz#855c08360395133709d34d3fbf9ef341eb73ca6a"
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/tape/-/tape-4.9.1.tgz#1173d7337e040c76fbf42ec86fcabedc9b3805c9"
   dependencies:
     deep-equal "~1.0.1"
     defined "~1.0.0"
-    for-each "~0.3.2"
+    for-each "~0.3.3"
     function-bind "~1.1.1"
     glob "~7.1.2"
-    has "~1.0.1"
+    has "~1.0.3"
     inherits "~2.0.3"
     minimist "~1.2.0"
-    object-inspect "~1.5.0"
-    resolve "~1.5.0"
+    object-inspect "~1.6.0"
+    resolve "~1.7.1"
     resumer "~0.0.0"
     string.prototype.trim "~1.1.2"
     through "~2.3.8"
@@ -1990,8 +1987,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 uglify-js@3:
-  version "3.3.27"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.27.tgz#eb8c3c9429969f86ff5b0a2422ffc78c3cea8cc0"
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.0.tgz#796762282b5b5f0eafe7d5c8c708d1d7bd5ba11d"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
@@ -2038,26 +2035,26 @@ vega-crossfilter@^3.0.0:
     vega-dataflow "^4.0.0"
     vega-util "^1.7.0"
 
-vega-dataflow@^4.0.0, vega-dataflow@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.1.tgz#fc30daef4dba310f4c45b9d276a80b55565a3df8"
+vega-dataflow@^4.0.0, vega-dataflow@^4.0.1, vega-dataflow@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.3.tgz#053e697fd7220329be5903c7f400ee657e2d2f6a"
   dependencies:
-    vega-loader "^3.0.0"
+    vega-loader "^3.0.1"
     vega-util "^1.7.0"
 
 vega-datasets@^1.19.0:
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.19.0.tgz#0d853f7c6ea0a623d85d60ad42d895313e26acb8"
 
-vega-encode@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.0.0.tgz#a131c617584ee3c6759ac0afbbd6b64ec9b34483"
+vega-encode@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.1.0.tgz#f67c68a04d0b6719f0ac162db3113b18411ee39f"
   dependencies:
     d3-array "^1.2.1"
-    d3-format "^1.2.2"
-    d3-interpolate "^1.1.6"
-    vega-dataflow "^4.0.0"
-    vega-scale "^2.1.1"
+    d3-format "^1.3.0"
+    d3-interpolate "^1.2.0"
+    vega-dataflow "^4.0.3"
+    vega-scale "^2.4.0"
     vega-util "^1.7.0"
 
 vega-event-selector@^2.0.0:
@@ -2089,45 +2086,45 @@ vega-geo@^3.0.0:
     vega-projection "^1.1.0"
     vega-util "^1.7.0"
 
-vega-hierarchy@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/vega-hierarchy/-/vega-hierarchy-3.0.0.tgz#5f68dc44fbd9c385a7788d892d3d2b0b155a811e"
+vega-hierarchy@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/vega-hierarchy/-/vega-hierarchy-3.0.1.tgz#8c4b4a49397a82f677000ae83854380089d1ee0a"
   dependencies:
     d3-collection "^1.0.4"
     d3-hierarchy "^1.1.6"
-    vega-dataflow "^4.0.0"
+    vega-dataflow "^4.0.3"
     vega-util "^1.7.0"
 
-vega-lib@4.0.0-rc.2:
-  version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/vega-lib/-/vega-lib-4.0.0-rc.2.tgz#c77fba0adb55d85b44d2bd3421dc5d0ef22fdd9b"
+vega-lib@4.0.0-rc.3:
+  version "4.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/vega-lib/-/vega-lib-4.0.0-rc.3.tgz#d263e0e2271c1d09b022afde0a21e6284e28b3f7"
   dependencies:
     vega-crossfilter "^3.0.0"
-    vega-dataflow "^4.0.1"
-    vega-encode "^3.0.0"
+    vega-dataflow "^4.0.3"
+    vega-encode "^3.1.0"
     vega-event-selector "^2.0.0"
     vega-expression "^2.3.1"
     vega-force "^3.0.0"
     vega-geo "^3.0.0"
-    vega-hierarchy "^3.0.0"
-    vega-loader "^3.0.0"
-    vega-parser "^3.1.0"
-    vega-projection "^1.1.0"
+    vega-hierarchy "^3.0.1"
+    vega-loader "^3.0.1"
+    vega-parser "^3.2.0"
+    vega-projection "^1.2.0"
     vega-runtime "^3.0.1"
-    vega-scale "^2.2.0"
-    vega-scenegraph "^3.1.0"
+    vega-scale "^2.4.0"
+    vega-scenegraph "^3.2.1"
     vega-statistics "^1.2.1"
     vega-transforms "^2.0.0"
     vega-typings "*"
     vega-util "^1.7.0"
-    vega-view "^3.2.0"
-    vega-view-transforms "^2.0.0"
+    vega-view "^3.2.2"
+    vega-view-transforms "^2.0.1"
     vega-voronoi "^3.0.0"
     vega-wordcloud "^3.0.0"
 
-vega-loader@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-3.0.0.tgz#0df9eb2fc52073cfc372d23decfdb99e075c9e6f"
+vega-loader@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-3.0.1.tgz#728426b54e74de7dbc91d418e05230bc7ee23a88"
   dependencies:
     d3-dsv "^1.0.8"
     d3-time-format "^2.1.1"
@@ -2135,28 +2132,28 @@ vega-loader@^3.0.0:
     topojson-client "^3.0.0"
     vega-util "^1.7.0"
 
-vega-parser@3.1.0, vega-parser@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.1.0.tgz#8d83cfc613428885cbe9e1103674aeca2d0b2945"
+vega-parser@3.3.0, vega-parser@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.3.0.tgz#890fdf6edafdea89e3abc837fa4def87c18eb530"
   dependencies:
     d3-array "^1.2.1"
     d3-color "^1.2.0"
     d3-format "^1.3.0"
     d3-geo "^1.10.0"
     d3-time-format "^2.1.1"
-    vega-dataflow "^4.0.1"
+    vega-dataflow "^4.0.3"
     vega-event-selector "^2.0.0"
     vega-expression "^2.3.1"
-    vega-scale "^2.1.1"
-    vega-scenegraph "^3.1.0"
+    vega-scale "^2.4.0"
+    vega-scenegraph "^3.2.1"
     vega-statistics "^1.2.1"
     vega-util "^1.7.0"
 
-vega-projection@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-projection/-/vega-projection-1.1.0.tgz#46452fd12927201d1a7f7ef8f61d6e24253dbcd2"
+vega-projection@^1.1.0, vega-projection@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vega-projection/-/vega-projection-1.2.0.tgz#812c955251dab495fda83d9406ba72d9833a2014"
   dependencies:
-    d3-geo "1"
+    d3-geo "^1.10.0"
 
 vega-runtime@^3.0.1:
   version "3.0.1"
@@ -2165,25 +2162,25 @@ vega-runtime@^3.0.1:
     vega-dataflow "^4.0.1"
     vega-util "^1.7.0"
 
-vega-scale@^2.1.1, vega-scale@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.2.0.tgz#676c0aa2e744ee378bc5dc3fc1251d249f468d40"
+vega-scale@^2.1.1, vega-scale@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-2.4.0.tgz#184b11979e643463ed45dfae9142e42b5a35eecc"
   dependencies:
     d3-array "^1.2.1"
     d3-interpolate "^1.2.0"
-    d3-scale "^2.0.0"
+    d3-scale "^2.1.0"
     d3-scale-chromatic "^1.3.0"
     d3-time "^1.0.8"
     vega-util "^1.7.0"
 
-vega-scenegraph@^3.0.0, vega-scenegraph@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-3.1.0.tgz#f8c6d022a1584f9247a7aa98ad264b10e91e9d2f"
+vega-scenegraph@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-3.2.1.tgz#a944335de43d8bf7e02b56ef70c3418cd56cc01d"
   dependencies:
     d3-path "^1.0.5"
     d3-shape "^1.2.0"
     vega-canvas "^1.1.0"
-    vega-loader "^3.0.0"
+    vega-loader "^3.0.1"
     vega-util "^1.7.0"
 
 vega-statistics@^1.2.1:
@@ -2193,40 +2190,42 @@ vega-statistics@^1.2.1:
     d3-array "1"
 
 vega-transforms@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.0.0.tgz#fe8cc7829d04dd4dd39e3c6a0a9edfdaed5a2aeb"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.0.1.tgz#1bcfd1a3a55c666b2f179c9aade9729dce966b85"
   dependencies:
     d3-array "^1.2.1"
-    vega-dataflow "^4.0.0"
+    vega-dataflow "^4.0.3"
     vega-statistics "^1.2.1"
     vega-util "^1.7.0"
 
 vega-typings@*:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.1.tgz#bd9485ed7332ced0815f65c0447f73eefd8ff1fe"
+  version "0.3.16"
+  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.16.tgz#d35d9e50fe0aed80ecfd8f4e1bbc2260c4196f72"
+  dependencies:
+    vega-util "^1.7.0"
 
 vega-util@1, vega-util@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.7.0.tgz#0ca0512bb8dcc6541165c34663d115d0712e0cf1"
 
-vega-view-transforms@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.0.tgz#b1f790af9e510ec9eecde522d11891d48c80ae79"
+vega-view-transforms@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.1.tgz#49d3c1407c948d49a9b108ad009ff62c4412cae1"
   dependencies:
-    vega-dataflow "^4.0.0"
-    vega-scenegraph "^3.0.0"
+    vega-dataflow "^4.0.3"
+    vega-scenegraph "^3.2.1"
     vega-util "^1.7.0"
 
-vega-view@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-3.2.0.tgz#b64ccc60ef21bc636dbcfd91e3be61f25991b5f2"
+vega-view@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-3.2.2.tgz#eb08ae5a0045e59e309b630bd1fdbb7976e98e66"
   dependencies:
     d3-array "^1.2.1"
     d3-timer "^1.0.7"
-    vega-dataflow "^4.0.1"
-    vega-parser "^3.1.0"
+    vega-dataflow "^4.0.3"
+    vega-parser "^3.2.0"
     vega-runtime "^3.0.1"
-    vega-scenegraph "^3.1.0"
+    vega-scenegraph "^3.2.1"
     vega-util "^1.7.0"
 
 vega-voronoi@^3.0.0:
@@ -2264,8 +2263,8 @@ which-module@^1.0.0:
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"
 
 which@^1.2.9:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/which/-/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
   dependencies:
     isexe "^2.0.0"
 
