@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
 "@types/node@*":
-  version "10.3.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.3.tgz#8798d9e39af2fa604f715ee6a6b19796528e46c3"
+  version "10.3.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.4.tgz#c74e8aec19e555df44609b8057311052a2c84d9e"
 
 acorn-jsx@^3.0.0:
   version "3.0.1"
@@ -1025,7 +1025,7 @@ vega-canvas@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vega-canvas/-/vega-canvas-1.1.0.tgz#99ce74d4510a46fc9ed1a8721014da725898ec9f"
 
-vega-dataflow@^4.0.0, vega-dataflow@^4.0.3:
+vega-dataflow@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.3.tgz#053e697fd7220329be5903c7f400ee657e2d2f6a"
   dependencies:
@@ -1079,12 +1079,12 @@ vega-statistics@^1.2.1:
   dependencies:
     d3-array "1"
 
-vega-transforms@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.0.0.tgz#fe8cc7829d04dd4dd39e3c6a0a9edfdaed5a2aeb"
+vega-transforms@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.0.1.tgz#1bcfd1a3a55c666b2f179c9aade9729dce966b85"
   dependencies:
     d3-array "^1.2.1"
-    vega-dataflow "^4.0.0"
+    vega-dataflow "^4.0.3"
     vega-statistics "^1.2.1"
     vega-util "^1.7.0"
 
