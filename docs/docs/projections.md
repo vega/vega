@@ -67,11 +67,19 @@ Vega includes all cartographic projections provided by the [d3-geo](https://gith
 
 ## <a name="register"></a>Register Additional Projections
 
-Vega can be extended with additional projections, such as those found in the [d3-geo-projection](https://github.com/d3/d3-geo-projection) library. For example:
+Vega can be extended with additional projections, such as those found in the [d3-geo-projection](https://github.com/d3/d3-geo-projection) library.
+
+To register all extended projections from d3-geo-projection with Vega, simply import the [vega-projection-extended](https://github.com/vega/vega-projection-extended) library:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.0"></script>
+```
+
+Alternatively, custom projections can be manually registered using the `vega.projection` method:
 
 ```js
-// d3-geo-projections must be imported and added to d3 object
-// to register with Vega, provide a name and d3 projection function
+// Assumes d3-geo-projection is imported under the d3 variable.
+// To register with Vega, provide a name and projection function.
 vega.projection('winkel3', d3.geoWinkel3);
 
 // Vega parser and runtime now support the 'winkel3' projection
