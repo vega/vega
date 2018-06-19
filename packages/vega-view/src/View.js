@@ -9,6 +9,7 @@ import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
+import {scale} from './scale';
 import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
 import {getState, setState} from './state';
 import timer from './timer';
@@ -320,6 +321,9 @@ prototype.data = data;
 prototype.change = change;
 prototype.insert = insert;
 prototype.remove = remove;
+
+// -- SCALES --
+prototype.scale = scale;
 
 // -- INITIALIZATION ----
 prototype.initialize = initialize;
