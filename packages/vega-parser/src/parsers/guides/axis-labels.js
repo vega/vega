@@ -81,7 +81,7 @@ export default function(spec, config, userEncode, dataRef, size) {
       addEncode(update, 'baseline', labelBaseline);
     } else {
       addEncode(update, 'baseline', flushOn
-        ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
+        ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
         : 'middle');
       if (flushOn && flushOffset) {
         addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
