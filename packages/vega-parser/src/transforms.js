@@ -13,6 +13,7 @@ export var Collect = transform('collect');
 export var Compare = transform('compare');
 export var DataJoin = transform('datajoin');
 export var Encode = transform('encode');
+export var Expression = transform('expression');
 export var Extent = transform('extent');
 export var Facet = transform('facet');
 export var Field = transform('field');

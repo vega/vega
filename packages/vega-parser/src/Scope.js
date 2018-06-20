@@ -4,7 +4,7 @@ import {
   fieldRef, keyRef, tupleidRef, isSignal, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
-import {Compare, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
+import {Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
 import {array, error, extend, isArray, isString, isObject, peek, stringValue} from 'vega-util';
 
 export default function Scope(config) {
@@ -197,7 +197,7 @@ prototype.fieldRef = function(field, name) {
       f = this.field[s],
       params;
 
-  if (!f) { // TODO: replace with update signalRef?
+  if (!f) {
     params = {name: this.signalRef(s)};
     if (name) params.as = name;
     this.field[s] = f = ref(this.add(Field(params)));
@@ -359,6 +359,12 @@ function objectLambda(obj) {
         : stringValue(value));
   }
   return code + '}';
+}
+
+prototype.exprRef = function(code, name) {
+  var params = {expr: parseExpression(code, this)};
+  if (name) params.expr.$name = name;
+  return ref(this.add(Expression(params)));
 }
 
 prototype.addBinding = function(name, bind) {

@@ -69,8 +69,8 @@ function parameterValue(def, value, scope) {
          : scope.signalRef(value.signal);
   } else {
     var expr = def.expr || isField(type);
-    return expr && outerExpr(value) ? parseExpression(value.expr, scope)
-         : expr && outerField(value) ? fieldRef(value.field)
+    return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
+         : expr && outerField(value) ? fieldRef(value.field, value.as)
          : isExpr(type) ? parseExpression(value, scope)
          : isData(type) ? ref(scope.getData(value).values)
          : isField(type) ? fieldRef(value)
