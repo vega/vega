@@ -491,8 +491,8 @@ glob@^7.0.3, glob@^7.0.5, glob@^7.1.2, glob@~7.1.2:
     path-is-absolute "^1.0.0"
 
 globals@^11.0.1:
-  version "11.5.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-11.5.0.tgz#6bc840de6771173b191f13d3a9c94d441ee92642"
+  version "11.6.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-11.6.0.tgz#7e4d12ffd6b8d174851ff5a246bfb2b8b002a6c7"
 
 globby@^5.0.0:
   version "5.0.0"
@@ -1011,8 +1011,8 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
 uglify-js@3:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.0.tgz#796762282b5b5f0eafe7d5c8c708d1d7bd5ba11d"
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.1.tgz#006da540dc25e9319d106a99a5ef1d24ae04ce60"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
@@ -1080,8 +1080,8 @@ vega-statistics@^1.2.1:
     d3-array "1"
 
 vega-transforms@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.0.1.tgz#1bcfd1a3a55c666b2f179c9aade9729dce966b85"
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.1.0.tgz#314f3effe98db50e76d820cd89fbd8acc1fc50f3"
   dependencies:
     d3-array "^1.2.1"
     vega-dataflow "^4.0.3"
