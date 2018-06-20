@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -37,6 +37,6 @@
     "tape": "4",
     "uglify-js": "3",
     "vega-encode": "^3.1.0",
-    "vega-transforms": "^2.0.1"
+    "vega-transforms": "^2.1.0"
   }
 }
