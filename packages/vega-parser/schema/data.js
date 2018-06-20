@@ -23,7 +23,8 @@ export default {
     "paramField": {
       "type": "object",
       "properties": {
-        "field": {"type": "string"}
+        "field": {"type": "string"},
+        "as": {"type": "string"}
       },
       "additionalProperties": false,
       "required": ["field"]
