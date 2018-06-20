@@ -89,7 +89,7 @@ Accepts a string indicating the name of a data set. For example: `"table"`, `"no
 
 Accepts a string indicating the name of a data field. For example: `"amount"`, `"source.x"`, `"target['x']"`.
 
-Alternatively, accepts an object with a single, string-valued `field` parameter. For example: `{"field": "amount"}`, `{"field": "source.x"}`.
+Alternatively, accepts an object with a string-valued `field` parameter. For example: `{"field": "amount"}`, `{"field": "source.x"}`. In addition, the `as` parameter can be used to specify a different output name for a field. For example: `{"field": "inputName", "as": "outputName"}`.
 
 Valid JavaScript object access paths using either dot (`.`) or bracket (`foo['bar']`) notation will be converted into lookups on nested objects. To specify field names that contain dots but are _not_ nested lookups, escape the dot inline (`"my\\.field"`) or enclose the field name in brackets (`"[my.field]"`).
 
@@ -155,7 +155,7 @@ A _field_ reference results in a field lookup, identical to [field-typed paramet
 }
 ```
 
-An _expr_ references provides an [expression](../expressions) string that should be evaluated once per datum:
+An _expr_ reference provides an [expression](../expressions) string that should be evaluated once per datum:
 
 {: .suppress-error}
 ```json
@@ -167,6 +167,8 @@ An _expr_ references provides an [expression](../expressions) string that should
 ```
 
 Unlike [signal references](#Signal) that are evaluated once per parameter, _expr_ references behave like [anonymous (or lambda) functions](https://en.wikipedia.org/wiki/Anonymous_function) that are evaluated once per data object.
+
+Both _field_ and _expr_ references may include an `as` property that indicates the output field name to use.
 
 [Back to top](#reference)
 
