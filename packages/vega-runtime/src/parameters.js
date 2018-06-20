@@ -13,14 +13,9 @@ export default function parseParameters(spec, ctx, params) {
   for (key in spec) {
     value = spec[key];
 
-    if (value && value.$expr && value.$params) {
-      // if expression, parse its parameters
-      parseParameters(value.$params, ctx, params);
-    }
-
     params[key] = isArray(value)
-      ? value.map(function(v) { return parseParameter(v, ctx); })
-      : parseParameter(value, ctx);
+      ? value.map(function(v) { return parseParameter(v, ctx, params); })
+      : parseParameter(value, ctx, params);
   }
   return params;
 }
@@ -28,13 +23,13 @@ export default function parseParameters(spec, ctx, params) {
 /**
  * Parse a single parameter.
  */
-function parseParameter(spec, ctx) {
+function parseParameter(spec, ctx, params) {
   if (!spec || !isObject(spec)) return spec;
 
   for (var i=0, n=PARSERS.length, p; i<n; ++i) {
     p = PARSERS[i];
     if (spec.hasOwnProperty(p.key)) {
-      return p.parse(spec, ctx);
+      return p.parse(spec, ctx, params);
     }
   }
   return spec;
@@ -63,7 +58,10 @@ function getOperator(_, ctx) {
 /**
  * Resolve an expression reference.
  */
-function getExpression(_, ctx) {
+function getExpression(_, ctx, params) {
+  if (_.$params) { // parse expression parameters
+    parseParameters(_.$params, ctx, params);
+  }
   var k = 'e:' + _.$expr;
   return ctx.fn[k]
     || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
@@ -113,7 +111,7 @@ function getEncode(_, ctx) {
 }
 
 /**
- * Resolve an context reference.
+ * Resolve a context reference.
  */
 function getContext(_, ctx) {
   return ctx;
