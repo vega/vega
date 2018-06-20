@@ -62,7 +62,7 @@ function getExpression(_, ctx, params) {
   if (_.$params) { // parse expression parameters
     parseParameters(_.$params, ctx, params);
   }
-  var k = 'e:' + _.$expr;
+  var k = 'e:' + _.$expr + '_' + _.$name;
   return ctx.fn[k]
     || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
 }
