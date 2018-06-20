@@ -1029,7 +1029,7 @@ vega-canvas@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vega-canvas/-/vega-canvas-1.1.0.tgz#99ce74d4510a46fc9ed1a8721014da725898ec9f"
 
-vega-dataflow@^4.0.1, vega-dataflow@^4.0.3:
+vega-dataflow@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.3.tgz#053e697fd7220329be5903c7f400ee657e2d2f6a"
   dependencies:
@@ -1056,9 +1056,9 @@ vega-loader@^3.0.1:
     topojson-client "^3.0.0"
     vega-util "^1.7.0"
 
-vega-parser@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.3.1.tgz#d08b6e98edf38e998bc631a7d8bb173dc23d325f"
+vega-parser@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.4.0.tgz#c6b632efaf7051124fac4ce1580aae9cdb467ccb"
   dependencies:
     d3-array "^1.2.1"
     d3-color "^1.2.0"
@@ -1073,11 +1073,11 @@ vega-parser@^3.3.1:
     vega-statistics "^1.2.1"
     vega-util "^1.7.0"
 
-vega-runtime@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-3.0.1.tgz#d90ee0ed1c1e992df90399ebfc363583a9cc916d"
+vega-runtime@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/vega-runtime/-/vega-runtime-3.0.3.tgz#f4595dd1487a5d56d842a7f07b7db5ce1f772f97"
   dependencies:
-    vega-dataflow "^4.0.1"
+    vega-dataflow "^4.0.3"
     vega-util "^1.7.0"
 
 vega-scale@^2.4.0:
