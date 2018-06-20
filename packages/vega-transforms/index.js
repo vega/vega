@@ -5,6 +5,7 @@ export {default as compare} from './src/Compare';
 export {default as countpattern} from './src/CountPattern';
 export {default as cross} from './src/Cross';
 export {default as density} from './src/Density';
+export {default as expression} from './src/Expression';
 export {default as extent} from './src/Extent';
 export {default as facet} from './src/Facet';
 export {default as field} from './src/Field';

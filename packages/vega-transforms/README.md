@@ -27,6 +27,7 @@ This module provides the following Vega data transforms:
 And also provides the following internal transforms:
 
 - **Compare** [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Compare.js "Source")
+- **Expression** [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Expression.js "Source")
 - **Facet** [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Facet.js "Source")
 - **Field** [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Field.js "Source")
 - **Generate** [&lt;&gt;](https://github.com/vega/vega-transforms/blob/master/src/Generate.js "Source")
