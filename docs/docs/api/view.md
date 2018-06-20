@@ -14,7 +14,7 @@ A **View** instantiates a Vega dataflow graph and provides a component for visua
 - [Signals](#signals)
 - [Event Handling](#event-handling)
 - [Image Export](#image-export)
-- [Data](#data)
+- [Data and Scales](#data)
 
 ## <a name="view-construction"></a>View Construction
 
@@ -548,10 +548,19 @@ view.toImageURL('png').then(function(url) {
 
 [Back to reference](#reference)
 
+## <a name="data"></a>Data and Scales
 
-## <a name="data"></a>Data
+Methods for accessing *scales* or *data* sets, and performing streaming updates.
 
-Methods for accessing *data* sets and performing streaming updates.
+<a name="view_scale" href="#view_scale">#</a>
+view.<b>scale</b>(<i>name</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/scale.js "Source")
+
+Returns the [scale](https://github.com/vega/vega-scale) or
+[projection](https://github.com/vega/vega-projection) instance
+with the given *name*. The  return value is a *live* instance used
+by the underlying dataflow. Callers should take care not to modify
+the returned instance!
 
 <a name="view_data" href="#view_data">#</a>
 view.<b>data</b>(<i>name</i>)
