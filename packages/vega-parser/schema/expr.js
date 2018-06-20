@@ -4,7 +4,8 @@ export default {
       "title": "ExpressionRef",
       "type": "object",
       "properties": {
-        "expr": {"type": "string"}
+        "expr": {"type": "string"},
+        "as": {"type": "string"}
       },
       "required": ["expr"]
     },
