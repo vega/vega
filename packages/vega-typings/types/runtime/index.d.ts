@@ -1,3 +1,4 @@
+import { Renderer, Renderers } from './renderer';
 import { Spec } from '..';
 
 // TODO
@@ -20,49 +21,49 @@ export interface Loader {
 
 export class View {
   constructor(runtime: Runtime, config?: any);
-  initialize(dom?: Element | string): View;
+  initialize(dom?: Element | string): this;
   finalize(): void;
-  logLevel(level: number): View;
-  renderer(renderer: 'canvas' | 'svg' | 'none'): View;
-  loader(loader: Loader): View;
+  logLevel(level: number): this;
+  renderer(renderer: Renderers): this;
+  loader(loader: Loader): this;
 
-  hover(): View;
-  run(): View;
-  runAfter(callback: (view: View) => void, enqueue?: boolean, priority?: number): View;
+  hover(): this;
+  run(): this;
+  runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
   runAsync(): Promise<View>;
-  insert(name: string, tuples: any): View;
-  remove(name: string, tuples: any): View;
-  change(name: string, changeset: any): View;
+  insert(name: string, tuples: any): this;
+  remove(name: string, tuples: any): this;
+  change(name: string, changeset: any): this;
   changeset(): any;
   data(name: string): object[];
 
   width(): number;
-  width(w: number): View;
+  width(w: number): this;
   height(): number;
-  height(h: number): View;
-  padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): View;
+  height(h: number): this;
+  padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): this;
 
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
   toSVG(): Promise<string>;
   toCanvas(): Promise<HTMLCanvasElement>;
 
-  signal(name: string, value: any): View;
+  signal(name: string, value: any): this;
   signal(name: string): any;
   container(): HTMLElement | null;
-  addEventListener(type: string, handler: EventListenerHandler): View;
-  removeEventListener(type: string, handler: EventListenerHandler): View;
-  addSignalListener(name: string, handler: SignalListenerHandler): View;
-  removeSignalListener(name: string, handler: SignalListenerHandler): View;
-  addResizeListener(handler: ResizeHandler): View;
-  removeResizeListener(handler: ResizeHandler): View;
-  tooltip(handler: TooltipHandler): View;
+  addEventListener(type: string, handler: EventListenerHandler): this;
+  removeEventListener(type: string, handler: EventListenerHandler): this;
+  addSignalListener(name: string, handler: SignalListenerHandler): this;
+  removeSignalListener(name: string, handler: SignalListenerHandler): this;
+  addResizeListener(handler: ResizeHandler): this;
+  removeResizeListener(handler: ResizeHandler): this;
+  tooltip(handler: TooltipHandler): this;
 
   getState(options?: {
     signals?: (name?: string, operator?: any) => boolean;
     data?: (name?: string, object?: any) => boolean;
     recurse?: boolean;
   }): { signals?: any; data?: any };
-  setState(state: { signals?: any; data?: any }): View;
+  setState(state: { signals?: any; data?: any }): this;
 }
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
@@ -114,3 +115,5 @@ export interface DefineMark<T extends string, I = {}, R extends string = never> 
 export function projection(type: string, projection: any): View;
 
 export * from 'vega-util';
+export * from './renderer';
+export * from './scene';
