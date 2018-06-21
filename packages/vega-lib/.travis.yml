@@ -5,12 +5,3 @@ node_js:
   - "10"
 script:
   - yarn test
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - build-essential
-      - g++-4.9
-env:
-  - CXX=g++-4.9
