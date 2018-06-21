@@ -15,22 +15,20 @@ import {
   monthFormat, monthAbbrevFormat,
   dayFormat, dayAbbrevFormat
 } from './format';
+import {extent, inrange, clampRange, span} from './arrays';
 import {quarter, utcquarter} from './quarter';
 import {warn, info, debug} from './log';
 import inScope from './inscope';
-import clampRange from './clamp-range';
 import {pinchDistance, pinchAngle} from './pinch';
 import {containerSize, screen, windowSize} from './window';
 import flush from './flush';
 import merge from './merge';
-import span from './span';
 import {range, domain, bandwidth, bandspace, copy, scale, invert, scaleVisitor} from './scale';
 import scaleGradient from './scale-gradient';
 import {geoArea, geoBounds, geoCentroid} from './geo';
 import {geoShape, pathShape} from './shape';
 import {data, indata, setdata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
-import inrange from './inrange';
 import encode from './encode';
 import modify from './modify';
 import {vlPoint, vlPointDomain, vlMultiVisitor, vlInterval, vlIntervalDomain} from './selection';
@@ -72,6 +70,7 @@ export var functionContext = {
   warn: warn,
   info: info,
   debug: debug,
+  extent: extent,
   inScope: inScope,
   clampRange: clampRange,
   pinchDistance: pinchDistance,
