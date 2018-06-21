@@ -24,4 +24,4 @@ This repository includes the website and documentation in the `docs` folder. To 
 
 Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
 
-Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum]((https://groups.google.com/forum/#!forum/vega-js)) or join the [Vega slack organization](https://join.slack.com/t/vega-js/shared_invite/enQtMzg1ODUzMzM5OTcwLTJlZjJmNzI1OWJkNDY5MzNmYjYwYzQ0OGM3NzMzOThjMjhjMDRmN2JiMTYxNTlhODE4YmZlOTAzOGI4OTRiZGU)!
+Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum]((https://groups.google.com/forum/#!forum/vega-js)) or join the [Vega slack organization](https://bit.ly/join-vega-slack)!
