@@ -1,6 +1,6 @@
+import {inrange} from './arrays';
 import {Literal} from './ast';
 import {dataVisitor} from './data';
-import inrange from './inrange';
 import {indexPrefix} from './prefixes';
 import {error, field, isNumber, isString, isDate, toNumber} from 'vega-util';
 
