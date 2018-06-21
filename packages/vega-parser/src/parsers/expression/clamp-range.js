@@ -20,7 +20,7 @@ export default function(range, min, max) {
   return span >= (max - min)
     ? [min, max]
     : [
-        Math.min(Math.max(lo, min), max - span),
-        Math.min(Math.max(hi, span), max)
+        (lo = Math.min(Math.max(lo, min), max - span)),
+        lo + span
       ];
 }
