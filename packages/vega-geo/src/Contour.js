@@ -4,7 +4,7 @@ import {extent} from 'd3-array';
 import {contours, contourDensity} from 'd3-contour';
 
 var CONTOUR_PARAMS = ['size', 'smooth'];
-var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
+var DENSITY_PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
 
 /**
  * Generate contours based on kernel-density estimation of point data.
@@ -19,6 +19,7 @@ var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
  *  using values drawn from data tuples in the input pulse.
  * @param {function(object): number} [params.x] - The pixel x-coordinate accessor for density estimation.
  * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
+ * @param {function(object): number} [params.weight] - The data point weight accessor for density estimation.
  * @param {number} [params.cellSize] - Contour density calculation cell size.
  * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
  * @param {Array<number>} [params.thresholds] - Contour threshold array. If
@@ -44,6 +45,7 @@ Contour.Definition = {
     { "name": "values", "type": "number", "array": true },
     { "name": "x", "type": "field" },
     { "name": "y", "type": "field" },
+    { "name": "weight", "type": "field" },
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
     { "name": "count", "type": "number" },
