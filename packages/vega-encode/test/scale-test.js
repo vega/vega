@@ -208,3 +208,23 @@ tape('Scale respects range color schemes', function(test) {
 
   test.end();
 });
+
+tape('Scale warns for zero in log domain', function(test) {
+  function logScale(domain) {
+    return function() {
+      var df = new vega.Dataflow();
+      df.add(encode.scale, {type: 'log', domain: domain});
+      df.error = df.warn = util.error; // throw on warning
+      df.run();
+    };
+  }
+
+  test.throws(logScale([0, 1]));
+  test.throws(logScale([-1, 0]));
+  test.throws(logScale([-1, 1]));
+  test.throws(logScale([1, 0, 2]));
+  test.doesNotThrow(logScale([1, 2]));
+  test.doesNotThrow(logScale([-2, -1]));
+
+  test.end();
+});
