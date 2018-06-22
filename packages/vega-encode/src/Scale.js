@@ -1,8 +1,8 @@
 import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
 import {
-  error, inherits, isFunction, peek, toSet,
-  zoomLinear, zoomLog, zoomPow
+  error, inherits, isFunction, peek, stringValue,
+  toSet, zoomLinear, zoomLog, zoomPow
 } from 'vega-util';
 
 import {
@@ -76,7 +76,7 @@ prototype.transform = function(_, pulse) {
 
 function configureDomain(scale, _, df) {
   // check raw domain, if provided use that and exit early
-  var raw = rawDomain(scale, _.domainRaw);
+  var raw = rawDomain(scale, _.domainRaw, df);
   if (raw > -1) return raw;
 
   var domain = _.domain,
@@ -111,7 +111,7 @@ function configureDomain(scale, _, df) {
   }
 
   // set the scale domain
-  scale.domain(domain);
+  scale.domain(domainCheck(type, domain, df));
 
   // if ordinal scale domain is defined, prevent implicit
   // domain construction as side-effect of scale lookup
@@ -128,9 +128,9 @@ function configureDomain(scale, _, df) {
   return domain.length;
 }
 
-function rawDomain(scale, raw) {
+function rawDomain(scale, raw, df) {
   if (raw) {
-    scale.domain(raw);
+    scale.domain(domainCheck(scale.type, raw, df));
     return raw.length;
   } else {
     return -1;
@@ -148,6 +148,21 @@ function padDomain(type, domain, range, pad, exponent) {
   domain = domain.slice();
   domain[0] = d[0];
   domain[domain.length-1] = d[1];
+  return domain;
+}
+
+function domainCheck(type, domain, df) {
+  if (type === Log) {
+    // sum signs of domain values
+    // if all pos or all neg, abs(sum) === domain.length
+    var s = Math.abs(domain.reduce(function(s, v) {
+      return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
+    }, 0));
+
+    if (s !== domain.length) {
+      df.warn('Log scale domain includes zero: ' + stringValue(domain));
+    }
+  }
   return domain;
 }
 
