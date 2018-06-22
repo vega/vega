@@ -495,8 +495,8 @@ glob@^7.0.3, glob@^7.0.5, glob@^7.1.2, glob@~7.1.2:
     path-is-absolute "^1.0.0"
 
 globals@^11.0.1:
-  version "11.6.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-11.6.0.tgz#7e4d12ffd6b8d174851ff5a246bfb2b8b002a6c7"
+  version "11.7.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-11.7.0.tgz#a583faa43055b1aca771914bf68258e2fc125673"
 
 globby@^5.0.0:
   version "5.0.0"
@@ -536,8 +536,8 @@ iconv-lite@0.4, iconv-lite@^0.4.17:
     safer-buffer ">= 2.1.2 < 3"
 
 ignore@^3.3.3:
-  version "3.3.8"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.8.tgz#3f8e9c35d38708a3a7e0e9abb6c73e7ee7707b2b"
+  version "3.3.10"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.10.tgz#0a97fb876986e8081c631160f8f9f389157f0043"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -841,9 +841,9 @@ rimraf@^2.2.8:
   dependencies:
     glob "^7.0.5"
 
-rollup@0.60.7:
-  version "0.60.7"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.60.7.tgz#2b62ef9306f719b1ab85a7814b3e6596ac51fae8"
+rollup@0.61.1:
+  version "0.61.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.61.1.tgz#65a12f27c2094e6d643fb9cca6a3057190ecc5fe"
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "*"
@@ -1056,9 +1056,9 @@ vega-loader@^3.0.1:
     topojson-client "^3.0.0"
     vega-util "^1.7.0"
 
-vega-parser@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.4.0.tgz#c6b632efaf7051124fac4ce1580aae9cdb467ccb"
+vega-parser@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.5.0.tgz#eeb1e323e1535479cd40587352e08dbbccd24eed"
   dependencies:
     d3-array "^1.2.1"
     d3-color "^1.2.0"

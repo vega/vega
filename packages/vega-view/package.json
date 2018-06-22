@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -30,14 +30,14 @@
     "d3-array": "^1.2.1",
     "d3-timer": "^1.0.7",
     "vega-dataflow": "^4.0.3",
-    "vega-parser": "^3.4.0",
+    "vega-parser": "^3.5.0",
     "vega-runtime": "^3.0.3",
     "vega-scenegraph": "^3.2.1",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.60.7",
+    "rollup": "0.61.1",
     "tape": "4",
     "uglify-js": "3"
   }
