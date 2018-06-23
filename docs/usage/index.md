@@ -70,7 +70,9 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
 ```html
 <head>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-
+</head>
+<body>
+  <div id="view"></div>
   <script type="text/javascript">
     var view;
 
@@ -86,9 +88,6 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
         .run();
     }
   </script>
-</head>
-<body>
-  <div id="view"></div>
 </body>
 ```
 
@@ -108,10 +107,10 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}"></script>
 </head>
 <body>
-<div id="view"></div>
-<script>
-  vegaEmbed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
-</script>
+  <div id="view"></div>
+  <script>
+    vegaEmbed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
+  </script>
 </body>
 ```
 
