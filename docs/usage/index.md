@@ -63,6 +63,31 @@ If you have already imported d3 and want to use a smaller Vega bundle without d3
 [Back to reference](#reference)
 
 
+### <a name="embed"></a>Using the Vega-Embed Module
+
+The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenient method for adding either Vega or Vega-Lite visualizations to a web page. This module will take care of steps such as loading specification files from a URL and generating views with standard configuration options. In addition, you can include accompanying links to export images and view source. For more, see the [Vega-Embed repository](https://github.com/vega/vega-embed).
+
+```html
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}"></script>
+</head>
+<body>
+  <div id="view"></div>
+  <script>
+    vegaEmbed(
+      '#view',
+      'https://vega.github.io/vega/examples/bar-chart.vg.json',
+      { { defaultStyle: true } }
+    );
+  </script>
+</body>
+```
+
+[Back to reference](#reference)
+
+
 ### <a name="view"></a>Using the Vega View API
 
 Vega's [View component](../docs/api/view) takes a parsed specification and configuration options as input and sets up an interactive web component. The View API also provides methods for streaming data updates, exporting static images, and accessing internal data for debugging purposes. For more, see the [View component](../docs/api/view) documentation.
@@ -92,27 +117,6 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
 ```
 
 Vega visualizations will be added to a parent DOM element. This element must be provided to the `initialize` method by passing a DOM object or a CSS selector string. **Note:** Any existing content within the parent element _will be removed_ upon view initialization.
-
-[Back to reference](#reference)
-
-
-### <a name="embed"></a>Using the Vega-Embed Module
-
-The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenient method for adding either Vega or Vega-Lite visualizations to a web page. This module will take care of steps such as loading specification files from a URL and generating views with standard configuration options. In addition, you can include accompanying links to export images and view source. For more, see the [Vega-Embed repository](https://github.com/vega/vega-embed).
-
-```html
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}"></script>
-</head>
-<body>
-  <div id="view"></div>
-  <script>
-    vegaEmbed('#view', 'https://vega.github.io/vega/examples/bar-chart.vg.json');
-  </script>
-</body>
-```
 
 [Back to reference](#reference)
 
