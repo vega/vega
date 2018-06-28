@@ -1,4 +1,5 @@
 import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
+import { Baseline } from './encode';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
@@ -18,11 +19,19 @@ export type Title =
        * The anchor position for placing the title. One of `"start"`, `"middle"` (the default), or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
        */
       anchor?: TitleAnchor;
-      zindex?: number;
+      angle?: number;
+      baseline?: Baseline;
+      color?: string;
+      font?: string;
+      fontSize?: number;
+      fontWeight?: number;
+      frame?: 'bounds' | 'group';
+      limit?: number;
       interactive?: boolean;
       /**
        * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
        */
       offset?: number | NumericValueRef;
       style?: string | string[];
+      zindex?: number;
     });
