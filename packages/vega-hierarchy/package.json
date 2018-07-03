@@ -1,6 +1,6 @@
 {
   "name": "vega-hierarchy",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Hierarchical layout transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -38,9 +38,9 @@
   },
   "devDependencies": {
     "eslint": "4",
-    "rollup": "0.60.7",
+    "rollup": "0.62.0",
     "tape": "4",
     "uglify-js": "3",
-    "vega-transforms": "^2.0.0"
+    "vega-transforms": "^2.1.0"
   }
 }
