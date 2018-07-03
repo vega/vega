@@ -23,7 +23,7 @@ Pack.Definition = {
     { "name": "padding", "type": "number", "default": 0 },
     { "name": "radius", "type": "field", "default": null },
     { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 3, "default": Output }
+    { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
   ]
 };
 
