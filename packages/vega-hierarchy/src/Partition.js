@@ -2,7 +2,7 @@ import HierarchyLayout from './HierarchyLayout';
 import {inherits} from 'vega-util';
 import {partition} from 'd3-hierarchy';
 
-var Output = ["x0", "y0", "x1", "y1", "depth", "children"];
+var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
 /**
  * Partition tree layout.
@@ -23,7 +23,7 @@ Partition.Definition = {
     { "name": "padding", "type": "number", "default": 0 },
     { "name": "round", "type": "boolean", "default": false },
     { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output }
+    { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
   ]
 };
 

@@ -19,7 +19,7 @@ var Tiles = {
   resquarify: treemapResquarify
 };
 
-var Output = ["x0", "y0", "x1", "y1", "depth", "children"];
+var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
 /**
  * Treemap layout.
@@ -49,7 +49,7 @@ Treemap.Definition = {
     { "name": "ratio", "type": "number", "default": 1.618033988749895 },
     { "name": "round", "type": "boolean", "default": false },
     { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output }
+    { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
   ]
 };
 

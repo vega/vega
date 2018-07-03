@@ -7,7 +7,7 @@ var Layouts = {
   cluster: cluster
 };
 
-var Output = ["x", "y", "depth", "children"];
+var Output = ['x', 'y', 'depth', 'children'];
 
 /**
  * Tree layout. Depending on the method parameter, performs either
@@ -28,7 +28,7 @@ Tree.Definition = {
     { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
     { "name": "size", "type": "number", "array": true, "length": 2 },
     { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 4, "default": Output }
+    { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
   ]
 };
 
