@@ -6456,6 +6456,19 @@
             }
           ]
         },
+        "weight": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
         "cellSize": {
           "anyOf": [
             {
@@ -7481,8 +7494,8 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 3,
-          "minItems": 3,
+          "maxItems": 5,
+          "minItems": 5,
           "default": [
             "x",
             "y",
@@ -7585,8 +7598,8 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 4,
-          "minItems": 4,
+          "maxItems": 6,
+          "minItems": 6,
           "default": [
             "x0",
             "y0",
@@ -7960,8 +7973,8 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 4,
-          "minItems": 4,
+          "maxItems": 6,
+          "minItems": 6,
           "default": [
             "x0",
             "y0",
@@ -8458,6 +8471,9 @@
       "type": "object",
       "properties": {
         "field": {
+          "type": "string"
+        },
+        "as": {
           "type": "string"
         }
       },
@@ -10329,6 +10345,9 @@
       "type": "object",
       "properties": {
         "expr": {
+          "type": "string"
+        },
+        "as": {
           "type": "string"
         }
       },
