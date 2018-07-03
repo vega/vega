@@ -10,6 +10,9 @@ Tutorials for learning how to use Vega.
 
 _Skill level: Beginner._ Learn the basic elements of Vega by creating a bar chart with interactive tooltips.
 
+### [A Guide to Guides: Axes &amp; Legends](https://beta.observablehq.com/@jheer/a-guide-to-guides-axes-legends-in-vega)
+
+_Skill level: Intermediate._ Tour the various types of axes and legends in Vega, learn how to parameterize them and adjust their layout.
 
 ### [Mapping Airport Connections](airports/)
 
