@@ -6289,6 +6289,33 @@
   }
 
   /**
+   * Wraps an expression function with access to external parameters.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function} params.expr - The expression function. The
+   *  function should accept both a datum and a parameter object.
+   *  This operator's value will be a new function that wraps the
+   *  expression function with access to this operator's parameters.
+   */
+  function Expression(params) {
+    Operator.call(this, null, update$2, params);
+    this.modified(true);
+  }
+
+  inherits(Expression, Operator);
+
+  function update$2(_) {
+    var expr = _.expr;
+    return this.value && !_.modified('expr')
+      ? this.value
+      : accessor(
+          function(datum) { return expr(datum, _); },
+          accessorFields(expr),
+          accessorName(expr)
+        );
+  }
+
+  /**
    * Computes extents (min/max) for a data field.
    * @constructor
    * @param {object} params - The parameters for this operator.
@@ -6526,12 +6553,12 @@
    * @param {string} params.as - The accessor function name.
    */
   function Field(params) {
-    Operator.call(this, null, update$2, params);
+    Operator.call(this, null, update$3, params);
   }
 
   inherits(Field, Operator);
 
-  function update$2(_) {
+  function update$3(_) {
     return (this.value && !_.modified()) ? this.value
       : isArray(_.name) ? array(_.name).map(function(f) { return field(f); })
       : field(_.name, _.as);
@@ -7024,12 +7051,12 @@
    *  lookups normally indicated by dot or bracket notation.
    */
   function Key(params) {
-    Operator.call(this, null, update$3, params);
+    Operator.call(this, null, update$4, params);
   }
 
   inherits(Key, Operator);
 
-  function update$3(_) {
+  function update$4(_) {
     return (this.value && !_.modified()) ? this.value : key(_.fields, _.flat);
   }
 
@@ -7124,12 +7151,12 @@
    * @param {Array<Array<number>>} params.extents - The input extents.
    */
   function MultiExtent(params) {
-    Operator.call(this, null, update$4, params);
+    Operator.call(this, null, update$5, params);
   }
 
   inherits(MultiExtent, Operator);
 
-  function update$4(_) {
+  function update$5(_) {
     if (this.value && !_.modified()) {
       return this.value;
     }
@@ -7154,12 +7181,12 @@
    * @param {Array<Array<*>>} params.values - The input value arrrays.
    */
   function MultiValues(params) {
-    Operator.call(this, null, update$5, params);
+    Operator.call(this, null, update$6, params);
   }
 
   inherits(MultiValues, Operator);
 
-  function update$5(_) {
+  function update$6(_) {
     return (this.value && !_.modified())
       ? this.value
       : _.values.reduce(function(data, _) { return data.concat(_); }, []);
@@ -8093,6 +8120,7 @@
     countpattern: CountPattern,
     cross: Cross,
     density: Density,
+    expression: Expression,
     extent: Extent,
     facet: Facet,
     field: Field,
@@ -19363,7 +19391,7 @@
 
   function configureDomain(scale$$1, _, df) {
     // check raw domain, if provided use that and exit early
-    var raw = rawDomain(scale$$1, _.domainRaw);
+    var raw = rawDomain(scale$$1, _.domainRaw, df);
     if (raw > -1) return raw;
 
     var domain = _.domain,
@@ -19398,7 +19426,7 @@
     }
 
     // set the scale domain
-    scale$$1.domain(domain);
+    scale$$1.domain(domainCheck(type, domain, df));
 
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
@@ -19415,9 +19443,9 @@
     return domain.length;
   }
 
-  function rawDomain(scale$$1, raw) {
+  function rawDomain(scale$$1, raw, df) {
     if (raw) {
-      scale$$1.domain(raw);
+      scale$$1.domain(domainCheck(scale$$1.type, raw, df));
       return raw.length;
     } else {
       return -1;
@@ -19435,6 +19463,21 @@
     domain = domain.slice();
     domain[0] = d[0];
     domain[domain.length-1] = d[1];
+    return domain;
+  }
+
+  function domainCheck(type, domain, df) {
+    if (type === Log) {
+      // sum signs of domain values
+      // if all pos or all neg, abs(sum) === domain.length
+      var s = Math.abs(domain.reduce(function(s, v) {
+        return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
+      }, 0));
+
+      if (s !== domain.length) {
+        df.warn('Log scale domain includes zero: ' + $(domain));
+      }
+    }
     return domain;
   }
 
@@ -19991,9 +20034,14 @@
     return d[1];
   }
 
+  function defaultWeight() {
+    return 1;
+  }
+
   function contourDensity() {
     var x = defaultX,
         y = defaultY,
+        weight = defaultWeight,
         dx = 960,
         dy = 500,
         r = 20, // blur radius
@@ -20008,10 +20056,11 @@
           values1 = new Float32Array(n * m);
 
       data.forEach(function(d, i, data) {
-        var xi = (x(d, i, data) + o) >> k,
-            yi = (y(d, i, data) + o) >> k;
+        var xi = (+x(d, i, data) + o) >> k,
+            yi = (+y(d, i, data) + o) >> k,
+            wi = +weight(d, i, data);
         if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
-          ++values0[xi + yi * n];
+          values0[xi + yi * n] += wi;
         }
       });
 
@@ -20075,6 +20124,10 @@
       return arguments.length ? (y = typeof _ === "function" ? _ : constant$6(+_), density) : y;
     };
 
+    density.weight = function(_) {
+      return arguments.length ? (weight = typeof _ === "function" ? _ : constant$6(+_), density) : weight;
+    };
+
     density.size = function(_) {
       if (!arguments.length) return [dx, dy];
       var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
@@ -20102,7 +20155,7 @@
   }
 
   var CONTOUR_PARAMS = ['size', 'smooth'];
-  var DENSITY_PARAMS = ['x', 'y', 'size', 'cellSize', 'bandwidth'];
+  var DENSITY_PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
 
   /**
    * Generate contours based on kernel-density estimation of point data.
@@ -20117,6 +20170,7 @@
    *  using values drawn from data tuples in the input pulse.
    * @param {function(object): number} [params.x] - The pixel x-coordinate accessor for density estimation.
    * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
+   * @param {function(object): number} [params.weight] - The data point weight accessor for density estimation.
    * @param {number} [params.cellSize] - Contour density calculation cell size.
    * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
    * @param {Array<number>} [params.thresholds] - Contour threshold array. If
@@ -20142,6 +20196,7 @@
       { "name": "values", "type": "number", "array": true },
       { "name": "x", "type": "field" },
       { "name": "y", "type": "field" },
+      { "name": "weight", "type": "field" },
       { "name": "cellSize", "type": "number" },
       { "name": "bandwidth", "type": "number" },
       { "name": "count", "type": "number" },
@@ -26317,7 +26372,7 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "radius", "type": "field", "default": null },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 3, "default": Output }
+      { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
     ]
   };
 
@@ -26329,7 +26384,7 @@
 
   prototype$1a.fields = Output;
 
-  var Output$1 = ["x0", "y0", "x1", "y1", "depth", "children"];
+  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Partition tree layout.
@@ -26350,7 +26405,7 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$1 }
+      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
     ]
   };
 
@@ -26417,7 +26472,7 @@
     cluster: cluster
   };
 
-  var Output$2 = ["x", "y", "depth", "children"];
+  var Output$2 = ['x', 'y', 'depth', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -26438,7 +26493,7 @@
       { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
       { "name": "size", "type": "number", "array": true, "length": 2 },
       { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$2 }
+      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
     ]
   };
 
@@ -26526,7 +26581,7 @@
     resquarify: treemapResquarify
   };
 
-  var Output$3 = ["x0", "y0", "x1", "y1", "depth", "children"];
+  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Treemap layout.
@@ -26556,7 +26611,7 @@
       { "name": "ratio", "type": "number", "default": 1.618033988749895 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 4, "default": Output$3 }
+      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
     ]
   };
 
@@ -28900,7 +28955,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "4.0.0-rc.3";
+  var version = "4.0.0";
 
   var Default = 'default';
 
@@ -31550,6 +31605,86 @@
     return time$2(0, 2 + day, '%a');
   }
 
+  /**
+   * Return an array with minimum and maximum values, in the
+   * form [min, max]. Ignores null, undefined, and NaN values.
+   */
+  function extent$3(array) {
+    var i = 0, n, v, min, max;
+
+    if (array && (n = array.length)) {
+      // find first valid value
+      for (v = array[i]; v == null || v !== v; v = array[++i]);
+      min = max = v;
+
+      // visit all other values
+      for (; i<n; ++i) {
+        v = array[i];
+        // skip null/undefined; NaN will fail all comparisons
+        if (v != null) {
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+      }
+    }
+
+    return [min, max];
+  }
+
+  /**
+   * Predicate that returns true if the value lies within the span
+   * of the given range. The left and right flags control the use
+   * of inclusive (true) or exclusive (false) comparisons.
+   */
+  function inrange(value, range, left, right) {
+    var r0 = range[0], r1 = range[range.length-1], t;
+    if (r0 > r1) {
+      t = r0;
+      r0 = r1;
+      r1 = t;
+    }
+    left = left === undefined || left;
+    right = right === undefined || right;
+
+    return (left ? r0 <= value : r0 < value) &&
+      (right ? value <= r1 : value < r1);
+  }
+
+  /**
+   * Span-preserving range clamp. If the span of the input range is less
+   * than (max - min) and an endpoint exceeds either the min or max value,
+   * the range is translated such that the span is preserved and one
+   * endpoint touches the boundary of the min/max range.
+   * If the span exceeds (max - min), the range [min, max] is returned.
+   */
+  function clampRange(range, min, max) {
+    var lo = range[0],
+        hi = range[1],
+        span;
+
+    if (hi < lo) {
+      span = hi;
+      hi = lo;
+      lo = span;
+    }
+    span = hi - lo;
+
+    return span >= (max - min)
+      ? [min, max]
+      : [
+          (lo = Math.min(Math.max(lo, min), max - span)),
+          lo + span
+        ];
+  }
+
+  /**
+   * Return the numerical span of an array: the difference between
+   * the last and first values.
+   */
+  function span(array) {
+    return (array[array.length-1] - array[0]) || 0;
+  }
+
   function quarter(date) {
     return 1 + ~~(new Date(date).getMonth() / 3);
   }
@@ -31588,33 +31723,6 @@
       item = item.mark.group;
     }
     return value;
-  }
-
-  /**
-   * Span-preserving range clamp. If the span of the input range is less
-   * than (max - min) and an endpoint exceeds either the min or max value,
-   * the range is translated such that the span is preserved and one
-   * endpoint touches the boundary of the min/max range.
-   * If the span exceeds (max - min), the range [min, max] is returned.
-   */
-  function clampRange(range, min, max) {
-    var lo = range[0],
-        hi = range[1],
-        span;
-
-    if (hi < lo) {
-      span = hi;
-      hi = lo;
-      lo = span;
-    }
-    span = hi - lo;
-
-    return span >= (max - min)
-      ? [min, max]
-      : [
-          Math.min(Math.max(lo, min), max - span),
-          Math.min(Math.max(hi, span), max)
-        ];
   }
 
   function pinchDistance(event) {
@@ -31676,10 +31784,6 @@
     var args = [].slice.call(arguments);
     args.unshift({});
     return extend.apply(null, args);
-  }
-
-  function span(array) {
-    return (array[array.length-1] - array[0]) || 0;
   }
 
   var Literal = 'Literal';
@@ -31876,20 +31980,6 @@
   function treeAncestors(name, node) {
     var n = treeNodes(name, this)[node];
     return n ? n.ancestors().map(datum) : undefined;
-  }
-
-  function inrange(value, range, left, right) {
-    var r0 = range[0], r1 = range[range.length-1], t;
-    if (r0 > r1) {
-      t = r0;
-      r0 = r1;
-      r1 = t;
-    }
-    left = left === undefined || left;
-    right = right === undefined || right;
-
-    return (left ? r0 <= value : r0 < value) &&
-      (right ? value <= r1 : value < r1);
   }
 
   function encode$1(item, name, retval) {
@@ -32310,6 +32400,7 @@
     warn: warn,
     info: info,
     debug: debug,
+    extent: extent$3,
     inScope: inScope,
     clampRange: clampRange,
     pinchDistance: pinchDistance,
@@ -32925,6 +33016,7 @@
   var Compare$1 = transform$3('compare');
   var DataJoin$1 = transform$3('datajoin');
   var Encode$1 = transform$3('encode');
+  var Expression$1 = transform$3('expression');
   var Facet$1 = transform$3('facet');
   var Field$1 = transform$3('field');
   var Key$1 = transform$3('key');
@@ -34142,8 +34234,8 @@
            : scope.signalRef(value.signal);
     } else {
       var expr = def.expr || isField(type);
-      return expr && outerExpr(value) ? expression(value.expr, scope)
-           : expr && outerField(value) ? fieldRef(value.field)
+      return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
+           : expr && outerField(value) ? fieldRef(value.field, value.as)
            : isExpr(type) ? expression(value, scope)
            : isData(type) ? ref(scope.getData(value).values)
            : isField(type) ? fieldRef(value)
@@ -35176,7 +35268,7 @@
         addEncode(update, 'baseline', labelBaseline);
       } else {
         addEncode(update, 'baseline', flushOn
-          ? flushExpr(scale, flush, '"bottom"', '"top"', '"middle"')
+          ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
           : 'middle');
         if (flushOn && flushOffset) {
           addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
@@ -35623,7 +35715,7 @@
         f = this.field[s],
         params;
 
-    if (!f) { // TODO: replace with update signalRef?
+    if (!f) {
       params = {name: this.signalRef(s)};
       if (name) params.as = name;
       this.field[s] = f = ref(this.add(Field$1(params)));
@@ -35786,6 +35878,12 @@
     }
     return code + '}';
   }
+
+  prototype$1l.exprRef = function(code, name) {
+    var params = {expr: expression(code, this)};
+    if (name) params.expr.$name = name;
+    return ref(this.add(Expression$1(params)));
+  };
 
   prototype$1l.addBinding = function(name, bind) {
     if (!this.bindings) {
@@ -36145,14 +36243,9 @@
     for (key$$1 in spec) {
       value = spec[key$$1];
 
-      if (value && value.$expr && value.$params) {
-        // if expression, parse its parameters
-        parseParameters$1(value.$params, ctx, params);
-      }
-
       params[key$$1] = isArray(value)
-        ? value.map(function(v) { return parseParameter$2(v, ctx); })
-        : parseParameter$2(value, ctx);
+        ? value.map(function(v) { return parseParameter$2(v, ctx, params); })
+        : parseParameter$2(value, ctx, params);
     }
     return params;
   }
@@ -36160,13 +36253,13 @@
   /**
    * Parse a single parameter.
    */
-  function parseParameter$2(spec, ctx) {
+  function parseParameter$2(spec, ctx, params) {
     if (!spec || !isObject(spec)) return spec;
 
     for (var i=0, n=PARSERS.length, p; i<n; ++i) {
       p = PARSERS[i];
       if (spec.hasOwnProperty(p.key)) {
-        return p.parse(spec, ctx);
+        return p.parse(spec, ctx, params);
       }
     }
     return spec;
@@ -36195,8 +36288,11 @@
   /**
    * Resolve an expression reference.
    */
-  function getExpression(_, ctx) {
-    var k = 'e:' + _.$expr;
+  function getExpression(_, ctx, params) {
+    if (_.$params) { // parse expression parameters
+      parseParameters$1(_.$params, ctx, params);
+    }
+    var k = 'e:' + _.$expr + '_' + _.$name;
     return ctx.fn[k]
       || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
   }
@@ -36245,7 +36341,7 @@
   }
 
   /**
-   * Resolve an context reference.
+   * Resolve a context reference.
    */
   function getContext(_, ctx) {
     return ctx;
@@ -36602,6 +36698,14 @@
   function runtime(view, spec, functions) {
     var fn = functions || functionContext;
     return parseDataflow(spec, context$2(view, transforms, fn));
+  }
+
+  function scale$4(name) {
+    var scales = this._runtime.scales;
+    if (!scales.hasOwnProperty(name)) {
+      error('Unrecognized scale or projection: ' + name);
+    }
+    return scales[name].value;
   }
 
   var Width = 'width',
@@ -37089,6 +37193,9 @@
   prototype$1m.change = change;
   prototype$1m.insert = insert;
   prototype$1m.remove = remove;
+
+  // -- SCALES --
+  prototype$1m.scale = scale$4;
 
   // -- INITIALIZATION ----
   prototype$1m.initialize = initialize$1;
