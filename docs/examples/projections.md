@@ -14,5 +14,7 @@ This example uses projections from the [d3-geo-projection](https://github.com/d3
 <script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.0"></script>
 ```
 
+<br/>
+
 {% include projections %}
 {% include example spec=page.spec %}
