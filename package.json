@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "4.0.0-rc.3",
+  "version": "4.0.0",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -61,18 +61,17 @@
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
-    "vega-lib": "4.0.0-rc.3",
-    "vega-parser": "3.3.0",
+    "vega-lib": "4.0.0",
+    "vega-parser": "3.5.0",
     "vega-typings": "*",
-    "yargs": "4"
+    "yargs": "12"
   },
   "optionalDependencies": {
     "canvas": "^1.6.11",
     "canvas-prebuilt": "1.6.5-prerelease.1"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.60.7",
+    "rollup": "0.62.0",
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "tape": "4",
