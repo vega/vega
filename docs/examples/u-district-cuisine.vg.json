@@ -134,7 +134,6 @@
     "orient": "top",
     "anchor": "start",
     "frame": "group",
-    "offset": 48,
     "encode": {
       "update": {
         "dx": {"value": -1}
