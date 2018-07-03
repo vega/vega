@@ -22,7 +22,8 @@
 
   "title": {
     "text": {"signal": "'Top Directors by ' + label[op] + ' Worldwide Gross'"},
-    "anchor": "start"
+    "anchor": "start",
+    "frame": "group"
   },
 
   "data": [

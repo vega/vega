@@ -133,6 +133,7 @@
     "text": "A Mile-Long Global Food Market: Mapping Cuisine from “The Ave”",
     "orient": "top",
     "anchor": "start",
+    "frame": "group",
     "offset": 48,
     "encode": {
       "update": {
