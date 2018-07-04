@@ -14,7 +14,7 @@ import {
   TitleAnchor,
   TitleOrient,
 } from '.';
-import { BaseLegendConfig, LegendDirection } from './legend';
+import { BaseLegend, LegendDirection } from './legend';
 import { SignalRef, WithSignal } from './signal';
 
 export interface Config
@@ -472,7 +472,10 @@ export interface AxisConfig extends Partial<Axis> {
   titleY?: number;
 }
 
-export interface LegendConfigNoSignals extends BaseLegendConfig {
+/**
+ * Legend Config without signals so we can use it in Vega-Lite.
+ */
+export interface BaseLegendConfig extends BaseLegend {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -526,7 +529,7 @@ export interface LegendConfigNoSignals extends BaseLegendConfig {
   strokeDash?: number[];
 }
 
-export type LegendConfig = WithSignal<LegendConfigNoSignals>;
+export type LegendConfig = WithSignal<BaseLegendConfig>;
 
 export interface TitleConfig {
   /**

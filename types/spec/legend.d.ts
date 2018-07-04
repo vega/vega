@@ -34,7 +34,7 @@ export type LegendOrient =
 
 export type LegendDirection = 'vertical' | 'horizontal';
 
-export interface Legend extends WithSignal<BaseLegendConfig> {
+export interface Legend extends WithSignal<BaseLegend> {
   size?: string;
   shape?: string;
   fill?: string;
@@ -103,7 +103,10 @@ export interface LegendEncode {
   gradient?: GuideEncodeEntry<RectEncodeEntry>;
 }
 
-export interface BaseLegendConfig {
+/**
+ * Properties shared between legends and legend configs. Without signals so we can use it in Vega-Lite.
+ */
+export interface BaseLegend {
   // ---------- Legend Group ----------
   /**
    * Corner radius for the full legend.
