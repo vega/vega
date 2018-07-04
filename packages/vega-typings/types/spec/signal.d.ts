@@ -18,3 +18,5 @@ export interface NewSignal extends BaseSignal {
   bind?: Binding;
 }
 export type Signal = NewSignal | PushSignal;
+
+export type WithSignal<T> = { [P in keyof T]: T[P] | SignalRef };
