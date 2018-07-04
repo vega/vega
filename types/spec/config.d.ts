@@ -16,6 +16,7 @@ import {
 } from '.';
 import { BaseLegend, LegendDirection } from './legend';
 import { SignalRef, WithSignal } from './signal';
+import { Omit } from './util';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -529,7 +530,9 @@ export interface BaseLegendConfig extends BaseLegend {
   strokeDash?: number[];
 }
 
-export type LegendConfig = WithSignal<BaseLegendConfig>;
+export interface LegendConfig
+  extends WithSignal<Omit<BaseLegendConfig, 'orient'>>,
+    Pick<BaseLegendConfig, 'orient'> {}
 
 export interface TitleConfig {
   /**
