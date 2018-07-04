@@ -1,6 +1,6 @@
 {
   "name": "vega-encode",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -36,10 +36,10 @@
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.61.1",
+    "eslint": "5",
+    "rollup": "0.62.0",
     "tape": "4",
     "uglify-js": "3",
-    "vega-transforms": "^2.0.0"
+    "vega-transforms": "^2.1.0"
   }
 }
