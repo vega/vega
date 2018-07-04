@@ -1,23 +1,21 @@
 import {
-  AutoSize,
-  EventType,
-  Orientation,
-  Interpolate,
   Align,
-  TextBaseline,
+  AutoSize,
+  Axis,
+  EventType,
   FontStyle,
   FontWeight,
-  TitleAnchor,
-  TitleOrient,
-  Axis,
-  Legend,
-  BaseLegend,
+  Interpolate,
+  Mark,
+  Orientation,
   RangeScheme,
   SymbolShape,
-  Mark,
-  LegendOrient,
+  TextBaseline,
+  TitleAnchor,
+  TitleOrient,
 } from '.';
-import { LegendDirection } from './legend';
+import { BaseLegendConfig, LegendDirection } from './legend';
+import { SignalRef, WithSignal } from './signal';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -474,83 +472,13 @@ export interface AxisConfig extends Partial<Axis> {
   titleY?: number;
 }
 
-export interface LegendConfig extends BaseLegend {
-  /**
-   * The height in pixels to clip symbol legend entries and limit their size.
-   */
-  clipHeight?: number;
-
-  /**
-   * The alignment to apply to symbol legends rows and columns. The supported string values are `"all"`, `"each"` (the default), and `none`. For more information, see the [grid layout documentation](https://vega.github.io/vega/docs/layout).
-   */
-  gridAlign?: 'all' | 'each' | 'none';
-
-  /**
-   * The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry.
-   */
-  columns?: number;
-
-  /**
-   * The horizontal padding in pixels between symbol legend entries.
-   */
-  columnPadding?: number;
-
-  /**
-   * The vertical padding in pixels between symbol legend entries.
-   */
-  rowPadding?: number;
-
-  /**
-   * Corner radius for the full legend.
-   */
-  cornerRadius?: number;
-
-  /**
-   * Background fill color for the full legend.
-   */
-  fillColor?: string;
-
-  /**
-   * Border stroke color for the full legend.
-   */
-  strokeColor?: string;
-
-  /**
-   * Border stroke dash pattern for the full legend.
-   */
-  strokeDash?: number[];
-
-  /**
-   * Border stroke width for the full legend.
-   */
-  strokeWidth?: number;
-  // ---------- Gradient ----------
+export interface LegendConfigNoSignals extends BaseLegendConfig {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
+   *
+   * __Default value:__ `"vertical"`.
    */
   gradientDirection?: LegendDirection;
-
-  /**
-   * The color of the gradient stroke, can be in hex color code or regular color name.
-   */
-  gradientStrokeColor?: string;
-
-  /**
-   * The width of the gradient stroke, in pixels.
-   * @minimum 0
-   */
-  gradientStrokeWidth?: number;
-
-  /**
-   * The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient.
-   * @minimum 0
-   */
-  gradientLength?: number;
-
-  /**
-   * Text baseline for color ramp gradient labels.
-   */
-  gradientLabelBaseline?: string;
 
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
@@ -559,133 +487,46 @@ export interface LegendConfig extends BaseLegend {
 
   /**
    * Vertical offset in pixels for color ramp gradient labels.
+   *
+   * __Default value:__ `2`.
    */
   gradientLabelOffset?: number;
 
   /**
-   * The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient.
-   * @minimum 0
-   */
-  gradientThickness?: number;
-
-  // ---------- Label ----------
-  /**
-   * The alignment of the legend label, can be left, middle or right.
-   */
-  labelAlign?: string;
-
-  /**
-   * The position of the baseline of legend label, can be top, middle or bottom.
-   */
-  labelBaseline?: string;
-
-  /**
-   * The color of the legend label, can be in hex color code or regular color name.
-   */
-  labelColor?: string;
-
-  /**
-   * The font of the legend label.
-   */
-  labelFont?: string;
-
-  /**
-   * The font size of legend label.
+   * Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
-   * __Default value:__ `10`.
+   * __Default value:__ `"transparent"`.
+   */
+  symbolBaseFillColor?: string;
+
+  /**
+   * Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
-   * @minimum 0
+   * __Default value:__ `"gray"`.
    */
-  labelFontSize?: number;
+  symbolBaseStrokeColor?: string;
 
   /**
-   * Maximum allowed pixel width of axis tick labels.
+   * The default direction (`"horizontal"` or `"vertical"`) for symbol legends.
    *
-   * __Default value:__ `160`.
+   * __Default value:__ `"vertical"`.
    */
-  labelLimit?: number;
+  symbolDirection?: LegendDirection;
 
   /**
-   * The offset of the legend label.
-   * @minimum 0
+   * Horizontal pixel offset for legend symbols.
    *
-   * __Default value:__ `4`.
+   * __Default value:__ `0`.
    */
-  labelOffset?: number;
-
-  // ---------- Symbols ----------
-  /**
-   * The color of the legend symbol,
-   */
-  symbolColor?: string;
+  symbolOffset?: number;
 
   /**
-   * Default shape type (such as "circle") for legend symbols.
+   * Border stroke dash pattern for the full legend.
    */
-  symbolType?: SymbolShape;
-
-  /**
-   * The size of the legend symbol, in pixels.
-   * @minimum 0
-   */
-  symbolSize?: number;
-
-  /**
-   * The width of the symbol's stroke.
-   * @minimum 0
-   */
-  symbolStrokeWidth?: number;
-
-  // ---------- Title ----------
-  /**
-   * Horizontal text alignment for legend titles.
-   *
-   * __Default value:__ `"left"`.
-   */
-  titleAlign?: string;
-
-  /**
-   * Vertical text baseline for legend titles.
-   *
-   * __Default value:__ `"top"`.
-   */
-  titleBaseline?: string;
-  /**
-   * The color of the legend title, can be in hex color code or regular color name.
-   */
-  titleColor?: string;
-
-  /**
-   * The font of the legend title.
-   */
-  titleFont?: string;
-
-  /**
-   * The font size of the legend title.
-   */
-  titleFontSize?: number;
-
-  /**
-   * The font weight of the legend title.
-   * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
-   */
-  titleFontWeight?: FontWeight;
-
-  /**
-   * Maximum allowed pixel width of axis titles.
-   *
-   * __Default value:__ `180`.
-   * @minimum 0
-   */
-  titleLimit?: number;
-
-  /**
-   * The padding, in pixels, between title and legend.
-   *
-   * __Default value:__ `5`.
-   */
-  titlePadding?: number;
+  strokeDash?: number[];
 }
+
+export type LegendConfig = WithSignal<LegendConfigNoSignals>;
 
 export interface TitleConfig {
   /**
