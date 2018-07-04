@@ -1,1 +1,7 @@
+.editorconfig
+.prettierignore
+.prettierrc.yml
+.travis.yml
+.vscode
 tests
+tslint.json
