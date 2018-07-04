@@ -70,7 +70,7 @@ prototype.transform = function(_, pulse) {
   }
 
   else if (type === Gradient) {
-    domain = _.values ? scale.domain() : values,
+    domain = scale.domain(),
     fraction = scaleFraction(scale, domain[0], peek(domain));
 
     items = values.map(function(value, index) {
