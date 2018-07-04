@@ -28,6 +28,8 @@ export type LegendOrient =
   | 'bottom-left'
   | 'bottom-right';
 
+export type LegendDirection = 'vertical' | 'horizontal';
+
 export type Color = string;
 
 export interface BaseLegend {

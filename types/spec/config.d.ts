@@ -17,6 +17,7 @@ import {
   Mark,
   LegendOrient,
 } from '.';
+import { LegendDirection } from './legend';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -475,6 +476,31 @@ export interface AxisConfig extends Partial<Axis> {
 
 export interface LegendConfig extends BaseLegend {
   /**
+   * The height in pixels to clip symbol legend entries and limit their size.
+   */
+  clipHeight?: number;
+
+  /**
+   * The alignment to apply to symbol legends rows and columns. The supported string values are `"all"`, `"each"` (the default), and `none`. For more information, see the [grid layout documentation](https://vega.github.io/vega/docs/layout).
+   */
+  gridAlign?: 'all' | 'each' | 'none';
+
+  /**
+   * The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry.
+   */
+  columns?: number;
+
+  /**
+   * The horizontal padding in pixels between symbol legend entries.
+   */
+  columnPadding?: number;
+
+  /**
+   * The vertical padding in pixels between symbol legend entries.
+   */
+  rowPadding?: number;
+
+  /**
    * Corner radius for the full legend.
    */
   cornerRadius?: number;
@@ -500,6 +526,11 @@ export interface LegendConfig extends BaseLegend {
   strokeWidth?: number;
   // ---------- Gradient ----------
   /**
+   * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
+   */
+  gradientDirection?: LegendDirection;
+
+  /**
    * The color of the gradient stroke, can be in hex color code or regular color name.
    */
   gradientStrokeColor?: string;
@@ -511,10 +542,10 @@ export interface LegendConfig extends BaseLegend {
   gradientStrokeWidth?: number;
 
   /**
-   * The height of the gradient, in pixels.
+   * The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient.
    * @minimum 0
    */
-  gradientHeight?: number;
+  gradientLength?: number;
 
   /**
    * Text baseline for color ramp gradient labels.
@@ -532,10 +563,10 @@ export interface LegendConfig extends BaseLegend {
   gradientLabelOffset?: number;
 
   /**
-   * The width of the gradient, in pixels.
+   * The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient.
    * @minimum 0
    */
-  gradientWidth?: number;
+  gradientThickness?: number;
 
   // ---------- Label ----------
   /**
@@ -569,12 +600,16 @@ export interface LegendConfig extends BaseLegend {
 
   /**
    * Maximum allowed pixel width of axis tick labels.
+   *
+   * __Default value:__ `160`.
    */
   labelLimit?: number;
 
   /**
    * The offset of the legend label.
    * @minimum 0
+   *
+   * __Default value:__ `4`.
    */
   labelOffset?: number;
 
@@ -604,11 +639,15 @@ export interface LegendConfig extends BaseLegend {
   // ---------- Title ----------
   /**
    * Horizontal text alignment for legend titles.
+   *
+   * __Default value:__ `"left"`.
    */
   titleAlign?: string;
 
   /**
    * Vertical text baseline for legend titles.
+   *
+   * __Default value:__ `"top"`.
    */
   titleBaseline?: string;
   /**
@@ -634,11 +673,16 @@ export interface LegendConfig extends BaseLegend {
 
   /**
    * Maximum allowed pixel width of axis titles.
+   *
+   * __Default value:__ `180`.
+   * @minimum 0
    */
   titleLimit?: number;
 
   /**
    * The padding, in pixels, between title and legend.
+   *
+   * __Default value:__ `5`.
    */
   titlePadding?: number;
 }
