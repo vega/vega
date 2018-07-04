@@ -8,6 +8,7 @@ import {
 } from '.';
 import { FontWeight, SymbolShape } from './encode';
 import { WithSignal } from './signal';
+import { Omit } from './util';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -34,7 +35,7 @@ export type LegendOrient =
 
 export type LegendDirection = 'vertical' | 'horizontal';
 
-export interface Legend extends WithSignal<BaseLegend> {
+export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<BaseLegend, 'orient'> {
   size?: string;
   shape?: string;
   fill?: string;
@@ -53,13 +54,6 @@ export interface Legend extends WithSignal<BaseLegend> {
    * __Default value:__ `"vertical"`
    */
   direction?: LegendDirection;
-
-  /**
-   * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
-   *
-   * __Default value:__ `"right"`
-   */
-  orient?: LegendOrient;
 
   /**
    * The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
@@ -107,6 +101,13 @@ export interface LegendEncode {
  * Properties shared between legends and legend configs. Without signals so we can use it in Vega-Lite.
  */
 export interface BaseLegend {
+  /**
+   * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
+   *
+   * __Default value:__ `"right"`
+   */
+  orient?: LegendOrient;
+
   // ---------- Legend Group ----------
   /**
    * Corner radius for the full legend.
