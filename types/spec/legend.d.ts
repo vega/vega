@@ -6,9 +6,10 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { FontWeight, SymbolShape } from './encode';
+import { FontWeight, SymbolShape, TextBaseline } from './encode';
 import { WithSignal } from './signal';
 import { Omit } from './util';
+import { TimeInterval } from './scale';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -33,8 +34,6 @@ export type LegendOrient =
   | 'bottom-left'
   | 'bottom-right';
 
-export type LegendDirection = 'vertical' | 'horizontal';
-
 export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<BaseLegend, 'orient'> {
   size?: string;
   shape?: string;
@@ -53,7 +52,7 @@ export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<Bas
    *
    * __Default value:__ `"vertical"`
    */
-  direction?: LegendDirection;
+  direction?: Orientation;
 
   /**
    * The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
@@ -68,7 +67,7 @@ export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<Bas
   /**
    * The desired number of tick values for quantitative legends.
    */
-  tickCount?: number | SignalRef;
+  tickCount?: number | TimeInterval;
 
   /**
    * Explicitly set the visible legend values.
@@ -76,7 +75,7 @@ export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<Bas
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups.
+   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
    *
    * @TJS-type integer
    * @minimum 0
@@ -92,7 +91,8 @@ export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<Bas
 export interface LegendEncode {
   title?: GuideEncodeEntry<GroupEncodeEntry>;
   labels?: GuideEncodeEntry<TextEncodeEntry>;
-  legend?: GuideEncodeEntry<TextEncodeEntry>;
+  legend?: GuideEncodeEntry<GroupEncodeEntry>;
+  entries?: GuideEncodeEntry<TextEncodeEntry>;
   symbols?: GuideEncodeEntry<SymbolEncodeEntry>;
   gradient?: GuideEncodeEntry<RectEncodeEntry>;
 }
@@ -156,7 +156,7 @@ export interface BaseLegend {
    *
    * __Default value:__ `"top"`.
    */
-  titleBaseline?: string;
+  titleBaseline?: TextBaseline;
   /**
    * The color of the legend title, can be in hex color code or regular color name.
    */
@@ -294,16 +294,16 @@ export interface BaseLegend {
 
   // ---------- Label ----------
   /**
-   * The alignment of the legend label, can be left, middle or right.
+   * The alignment of the legend label, can be left, center, or right.
    */
   labelAlign?: string;
 
   /**
-   * The position of the baseline of legend label, can be top, middle or bottom.
+   * The position of the baseline of legend label, can be top, middle, bottom, or alphabetic.
    *
    * __Default value:__ `"middle"`.
    */
-  labelBaseline?: string;
+  labelBaseline?: TextBaseline;
 
   /**
    * The color of the legend label, can be in hex color code or regular color name.

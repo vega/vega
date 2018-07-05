@@ -1,7 +1,6 @@
 import {
   Align,
   AutoSize,
-  Axis,
   EventType,
   FontStyle,
   FontWeight,
@@ -14,8 +13,9 @@ import {
   TitleAnchor,
   TitleOrient,
 } from '.';
-import { BaseLegend, LegendDirection } from './legend';
-import { SignalRef, WithSignal } from './signal';
+import { BaseAxis } from './axis';
+import { BaseLegend } from './legend';
+import { WithSignal } from './signal';
 import { Omit } from './util';
 
 export interface Config
@@ -320,158 +320,9 @@ export type AxisConfigKeys =
   | 'axisLeft'
   | 'axisBand';
 
-export interface AxisConfig extends Partial<Axis> {
-  /**
-   * An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands.
-   */
-  bandPosition?: number;
-  /**
-   * Stroke width of axis domain line
-   *
-   * __Default value:__  (none, using Vega default).
-   */
-  domainWidth?: number;
+export interface BaseAxisConfig extends BaseAxis {}
 
-  /**
-   * Color of axis domain line.
-   *
-   * __Default value:__  (none, using Vega default).
-   */
-  domainColor?: string;
-
-  // ---------- Grid ----------
-  /**
-   * Color of gridlines.
-   */
-  gridColor?: string;
-
-  /**
-   * The offset (in pixels) into which to begin drawing with the grid dash array.
-   */
-  gridDash?: number[];
-
-  /**
-   * The stroke opacity of grid (value between [0,1])
-   *
-   * __Default value:__ (`1` by default)
-   * @minimum 0
-   * @maximum 1
-   */
-  gridOpacity?: number;
-
-  /**
-   * The grid width, in pixels.
-   * @minimum 0
-   */
-  gridWidth?: number;
-
-  // ---------- Ticks ----------
-  /**
-   * The color of the axis's tick.
-   */
-  tickColor?: string;
-
-  /**
-   * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
-   */
-  tickExtra?: boolean;
-
-  /**
-   * The rotation angle of the axis labels.
-   *
-   * __Default value:__ `-90` for nominal and ordinal fields; `0` otherwise.
-   *
-   * @minimum -360
-   * @maximum 360
-   */
-  labelAngle?: number;
-
-  /**
-   * The color of the tick label, can be in hex color code or regular color name.
-   */
-  labelColor?: string;
-
-  /**
-   * The font of the tick label.
-   */
-  labelFont?: string;
-
-  /**
-   * The font size of the label, in pixels.
-   *
-   * @minimum 0
-   */
-  labelFontSize?: number;
-
-  /**
-   * Maximum allowed pixel width of axis tick labels.
-   */
-  labelLimit?: number;
-
-  /**
-   * Boolean flag indicating if pixel position values should be rounded to the nearest integer.
-   */
-  tickRound?: boolean;
-
-  /**
-   * The width, in pixels, of ticks.
-   *
-   * @minimum 0
-   */
-  tickWidth?: number;
-
-  // ---------- Title ----------
-  /**
-   * Horizontal text alignment of axis titles.
-   */
-  titleAlign?: string;
-
-  /**
-   * Angle in degrees of axis titles.
-   */
-  titleAngle?: number;
-  /**
-   * Vertical text baseline for axis titles.
-   */
-  titleBaseline?: string;
-  /**
-   * Color of the title, can be in hex color code or regular color name.
-   */
-  titleColor?: string;
-
-  /**
-   * Font of the title. (e.g., `"Helvetica Neue"`).
-   */
-  titleFont?: string;
-
-  /**
-   * Font size of the title.
-   *
-   * @minimum 0
-   */
-  titleFontSize?: number;
-
-  /**
-   * Font weight of the title.
-   * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
-   */
-  titleFontWeight?: FontWeight;
-
-  /**
-   * Maximum allowed pixel width of axis titles.
-   */
-  titleLimit?: number;
-
-  /**
-   * X-coordinate of the axis title relative to the axis group.
-   */
-  titleX?: number;
-
-  /**
-   * Y-coordinate of the axis title relative to the axis group.
-   */
-  titleY?: number;
-}
+export type AxisConfig = WithSignal<BaseAxisConfig>;
 
 /**
  * Legend Config without signals so we can use it in Vega-Lite.
@@ -482,7 +333,7 @@ export interface BaseLegendConfig extends BaseLegend {
    *
    * __Default value:__ `"vertical"`.
    */
-  gradientDirection?: LegendDirection;
+  gradientDirection?: Orientation;
 
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
@@ -515,7 +366,7 @@ export interface BaseLegendConfig extends BaseLegend {
    *
    * __Default value:__ `"vertical"`.
    */
-  symbolDirection?: LegendDirection;
+  symbolDirection?: Orientation;
 
   /**
    * Horizontal pixel offset for legend symbols.
