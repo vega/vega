@@ -4,6 +4,15 @@
   "height": 500,
   "padding": 5,
 
+  "config": {
+    "axis": {
+      "domain": false,
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "tickSize": 0
+    }
+  },
+
   "data": [
     {
       "name": "drive",
@@ -61,54 +70,28 @@
       "orient": "top",
       "scale": "x",
       "tickCount": 5,
-      "tickSize": 0,
-      "grid": true,
-      "domain": false,
-      "encode": {
-        "domain": {
-          "enter": { "stroke": {"value": "transparent"} }
-        },
-        "labels": {
-          "enter": {
-            "align": {"value": "left"},
-            "baseline": {"value": "top"},
-            "fontSize": {"value": 12},
-            "fontWeight": {"value": "bold"}
-          }
-        }
-      }
+      "grid": true
     },
     {
+      "orient": "bottom",
+      "scale": "x",
       "title": "Miles driven per capita each year",
-      "orient": "bottom", "scale": "x",
-      "domain": false, "ticks": false, "labels": false
+      "ticks": false,
+      "labels": false
     },
     {
       "orient": "left",
       "scale": "y",
       "tickCount": 5,
-      "tickSize": 0,
       "grid": true,
-      "domain": false,
-      "format": "$0.2f",
-      "encode": {
-        "domain": {
-          "enter": {"stroke": {"value": "transparent"}}
-        },
-        "labels": {
-          "enter": {
-            "align": {"value": "left"},
-            "baseline": {"value": "bottom"},
-            "fontSize": {"value": 12},
-            "fontWeight": {"value": "bold"}
-          }
-        }
-      }
+      "format": "$0.2f"
     },
     {
+      "orient": "right",
+      "scale": "y",
       "title": "Price of a gallon of gasoline (adjusted for inflation)",
-      "orient": "right", "scale": "y",
-      "domain": false, "ticks": false, "labels": false
+      "ticks": false,
+      "labels": false
     }
   ],
 
