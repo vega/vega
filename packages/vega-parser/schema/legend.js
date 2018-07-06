@@ -76,7 +76,7 @@ export default {
         "gradientLength": numberOrSignal,
         "gradientThickness": numberOrSignal,
         "gradientStrokeColor": colorValue,
-        "gradientStrokeWidth": colorValue,
+        "gradientStrokeWidth": numberOrSignal,
 
         // SYMBOL LAYOUT CONFIG
         "clipHeight": numberOrSignal,
