@@ -285,7 +285,7 @@ export default {
                 "type": {"enum": ["time", "utc"]},
                 "range": {"oneOf": schemeRangeDef},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"type": "number"},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -351,7 +351,7 @@ export default {
                 "range": {"oneOf": schemeRangeDef},
                 "interpolate": {"$ref": "#/refs/scaleInterpolate"},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"type": "number"},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -369,7 +369,7 @@ export default {
                 "interpolate": {"$ref": "#/refs/scaleInterpolate"},
                 "base": {"$ref": "#/refs/numberOrSignal"},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"type": "number"},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},
@@ -388,7 +388,7 @@ export default {
                 "interpolate": {"$ref": "#/refs/scaleInterpolate"},
                 "clamp": {"$ref": "#/refs/booleanOrSignal"},
                 "exponent": {"$ref": "#/refs/numberOrSignal"},
-                "padding": {"type": "number"},
+                "padding": {"$ref": "#/refs/numberOrSignal"},
                 "nice": {
                   "oneOf": [
                     {"type": "boolean"},

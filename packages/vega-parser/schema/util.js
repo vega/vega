@@ -71,10 +71,11 @@ export var stringValue = {
   ]
 };
 
-export var booleanOrNumber = {
+export var booleanOrNumberOrSignal = {
   "oneOf": [
     {"type": "boolean"},
-    {"type": "number"}
+    {"type": "number"},
+    {"$ref": "#/refs/signal"}
   ]
 };
 
