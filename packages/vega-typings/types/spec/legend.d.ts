@@ -16,8 +16,10 @@ import {
   TextBaselineValue,
   SymbolShapeValue,
   ColorValue,
+  BooleanValue,
 } from './values';
 import { LayoutAlign } from './layout';
+import { LabelOverlap } from './axis';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -111,12 +113,14 @@ export interface LegendEncode {
 export interface BaseLegend<
   N = NumberValue,
   NS = number | SignalRef,
+  B = BooleanValue,
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
   A = AlignValue,
-  B = TextBaselineValue,
+  TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
+  LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue
 > {
   /**
@@ -174,7 +178,7 @@ export interface BaseLegend<
    *
    * __Default value:__ `"top"`.
    */
-  titleBaseline?: B;
+  titleBaseline?: TB;
   /**
    * The color of the legend title, can be in hex color code or regular color name.
    */
@@ -205,6 +209,11 @@ export interface BaseLegend<
   titleLimit?: N;
 
   /**
+   * Opacity of the legend title.
+   */
+  titleOpacity?: N;
+
+  /**
    * The padding, in pixels, between title and legend.
    *
    * __Default value:__ `5`.
@@ -220,6 +229,11 @@ export interface BaseLegend<
    * @minimum 0
    */
   gradientLength?: NS;
+
+  /**
+   * Opacity of the color gradient.
+   */
+  gradientOpacity?: N;
 
   /**
    * The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient.
@@ -242,7 +256,7 @@ export interface BaseLegend<
    * __Default value:__ `0`.
    * @minimum 0
    */
-  gradientStrokeWidth?: NS;
+  gradientStrokeWidth?: N;
 
   // ---------- Symbol Layout ----------
   /**
@@ -290,6 +304,11 @@ export interface BaseLegend<
   symbolOffset?: N;
 
   /**
+   * Opacity of the legend symbols.
+   */
+  symbolOpacity?: N;
+
+  /**
    * The size of the legend symbol, in pixels.
    *
    * __Default value:__ `100`.
@@ -328,7 +347,7 @@ export interface BaseLegend<
    *
    * __Default value:__ `"middle"`.
    */
-  labelBaseline?: B;
+  labelBaseline?: TB;
 
   /**
    * The color of the legend label, can be in hex color code or regular color name.
@@ -362,6 +381,16 @@ export interface BaseLegend<
   labelLimit?: N;
 
   /**
+   * Opacity of labels.
+   */
+  labelOpacity?: N;
+
+  /**
+   * Padding in pixels between the legend and legend labels.
+   */
+  labelPadding?: N;
+
+  /**
    * The offset of the legend label.
    * @minimum 0
    *
@@ -374,5 +403,5 @@ export interface BaseLegend<
    *
    * __Default value:__ `true`.
    */
-  labelOverlap?: boolean | 'parity' | 'greedy';
+  labelOverlap?: LabelOverlap;
 }

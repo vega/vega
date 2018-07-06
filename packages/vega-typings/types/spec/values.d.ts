@@ -12,6 +12,7 @@ import {
   SymbolShapeValueRef,
   Baseline,
   TextBaseline,
+  BooleanValueRef,
 } from './encode';
 
 export type NumberValue = number | NumericValueRef;
@@ -27,3 +28,5 @@ export type AlignValue = Align | AlignValueRef;
 export type TextBaselineValue = TextBaseline | TextBaselineValueRef;
 
 export type SymbolShapeValue = SymbolShape | SymbolShapeValueRef;
+
+export type BooleanValue = boolean | BooleanValueRef;

@@ -13,7 +13,7 @@ import {
   TitleAnchor,
   TitleOrient,
 } from '.';
-import { BaseAxis } from './axis';
+import { BaseAxis, LabelOverlap } from './axis';
 import { BaseLegend } from './legend';
 import {
   NumberValue,
@@ -23,6 +23,7 @@ import {
   AlignValue,
   TextBaselineValue,
   SymbolShapeValue,
+  BooleanValue,
 } from './values';
 import { SignalRef } from './signal';
 import { LayoutAlign } from './layout';
@@ -337,14 +338,16 @@ export type AxisConfig = BaseAxis;
 export interface LegendConfig<
   N = NumberValue,
   NS = number | SignalRef,
+  B = BooleanValue,
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
   A = AlignValue,
-  B = TextBaselineValue,
+  TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
+  LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue
-> extends BaseLegend<N, NS, S, C, FW, A, B, LA, SY> {
+> extends BaseLegend<N, NS, B, S, C, FW, A, TB, LA, LO, SY> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
