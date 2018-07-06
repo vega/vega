@@ -11,21 +11,23 @@ export default function(spec, config, userEncode, dataRef) {
       sign = (orient === Left || orient === Top) ? 1 : -1,
       offset = sign * spec.offset || 0,
       zero = {value: 0},
-      encode = {}, enter, exit, update, tickPos, u, v, v2, s;
+      encode, enter, exit, update, tickPos, u, v, v2, s;
 
-  encode.enter = enter = {
-    opacity: zero
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1}
+    },
+    exit: exit = {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'stroke',      lookup('gridColor', spec, config));
-  addEncode(enter, 'strokeWidth', lookup('gridWidth', spec, config));
-  addEncode(enter, 'strokeDash',  lookup('gridDash', spec, config));
-
-  encode.exit = exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {};
-  addEncode(update, 'opacity', lookup('gridOpacity', spec, config));
+  addEncode(encode, 'stroke',        lookup('gridColor', spec, config));
+  addEncode(encode, 'strokeDash',    lookup('gridDash', spec, config));
+  addEncode(encode, 'strokeOpacity', lookup('gridOpacity', spec, config));
+  addEncode(encode, 'strokeWidth',   lookup('gridWidth', spec, config));
 
   tickPos = {
     scale:  spec.scale,

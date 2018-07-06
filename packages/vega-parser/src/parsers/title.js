@@ -61,7 +61,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       extent = {group: (horizontal ? 'width' : 'height')},
-      encode = {}, enter, update, pos, opp;
+      encode, enter, update, pos, opp;
 
   // title positioning along orientation axis
   pos = {field: extent, mult: {signal: multExpr}};
@@ -71,40 +71,44 @@ function buildTitle(spec, config, userEncode, dataRef) {
     : horizontal ? {field: {group: 'height'}}
     : {field: {group: 'width'}};
 
-  encode.enter = enter = {opacity: zero};
-  addEncode(enter, 'fill',       lookup('color', spec, config));
-  addEncode(enter, 'font',       lookup('font', spec, config));
-  addEncode(enter, 'fontSize',   lookup('fontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('fontWeight', spec, config));
-
-  encode.exit = {opacity: zero};
-
-  encode.update = update = {
-    opacity: {value: 1},
-    text:   encoder(title),
-    anchor: encoder(anchor),
-    orient: encoder(orient),
-    extent: {field: extent},
-    align:  {signal: alignExpr}
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1},
+      text:   encoder(title),
+      anchor: encoder(anchor),
+      orient: encoder(orient),
+      extent: {field: extent},
+      align:  {signal: alignExpr}
+    },
+    exit: {
+      opacity: zero
+    }
   };
 
   if (horizontal) {
     update.x = pos;
     update.y = opp;
-    update.angle = zero;
-    update.baseline = {value: orient === Top ? Bottom : Top};
+    enter.angle = zero;
+    enter.baseline = {value: orient === Top ? Bottom : Top};
   } else {
     update.x = opp;
     update.y = pos;
-    update.angle = {value: sign * 90};
-    update.baseline = {value: Bottom};
+    enter.angle = {value: sign * 90};
+    enter.baseline = {value: Bottom};
   }
 
-  addEncode(update, 'offset',   lookup('offset', spec, config) || 0);
-  addEncode(update, 'frame',    lookup('frame', spec, config));
-  addEncode(update, 'angle',    lookup('angle', spec, config));
-  addEncode(update, 'baseline', lookup('baseline', spec, config));
-  addEncode(update, 'limit',    lookup('limit', spec, config));
+  addEncode(encode, 'angle',      lookup('angle', spec, config));
+  addEncode(encode, 'baseline',   lookup('baseline', spec, config));
+  addEncode(encode, 'fill',       lookup('color', spec, config));
+  addEncode(encode, 'font',       lookup('font', spec, config));
+  addEncode(encode, 'fontSize',   lookup('fontSize', spec, config));
+  addEncode(encode, 'fontWeight', lookup('fontWeight', spec, config));
+  addEncode(encode, 'frame',      lookup('frame', spec, config));
+  addEncode(encode, 'limit',      lookup('limit', spec, config));
+  addEncode(encode, 'offset',     lookup('offset', spec, config) || 0);
 
   return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle,
                    null, dataRef, encode, userEncode);

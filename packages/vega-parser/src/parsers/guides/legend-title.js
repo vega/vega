@@ -7,31 +7,32 @@ import {addEncode, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var zero = {value: 0},
-      encode = {}, enter;
+      encode, enter;
 
-  encode.enter = enter = {
-    x: {field: {group: 'padding'}},
-    y: {field: {group: 'padding'}},
-    opacity: zero
+  encode = {
+    enter: enter = {
+      opacity: zero,
+      x: {field: {group: 'padding'}},
+      y: {field: {group: 'padding'}}
+    },
+    update: {
+      opacity: {value: 1},
+      text: encoder(spec.title),
+      x: enter.x,
+      y: enter.y
+    },
+    exit: {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'align',      lookup('titleAlign', spec, config));
-  addEncode(enter, 'baseline',   lookup('titleBaseline', spec, config));
-  addEncode(enter, 'fill',       lookup('titleColor', spec, config));
-  addEncode(enter, 'font',       lookup('titleFont', spec, config));
-  addEncode(enter, 'fontSize',   lookup('titleFontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('titleFontWeight', spec, config));
-  addEncode(enter, 'limit',      lookup('titleLimit', spec, config));
-
-  encode.exit = {
-    opacity: zero
-  };
-
-  encode.update = {
-    x: {field: {group: 'padding'}},
-    y: {field: {group: 'padding'}},
-    opacity: {value: 1},
-    text: encoder(spec.title)
-  };
+  addEncode(encode, 'align',       lookup('titleAlign', spec, config));
+  addEncode(encode, 'baseline',    lookup('titleBaseline', spec, config));
+  addEncode(encode, 'fill',        lookup('titleColor', spec, config));
+  addEncode(encode, 'font',        lookup('titleFont', spec, config));
+  addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
+  addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
+  addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
+  addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));
 
   return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 }

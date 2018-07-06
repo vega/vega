@@ -3,13 +3,14 @@ import {gradientLength, gradientThickness, isVertical, lookup} from './guide-uti
 import {RectMark} from '../marks/marktypes';
 import {LegendGradientRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
+import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {
   var zero = {value: 0},
       vertical = isVertical(spec, config.gradientDirection),
       thickness = gradientThickness(spec, config),
       length = gradientLength(spec, config),
-      encode = {}, enter, update, start, stop, width, height;
+      encode, enter, start, stop, width, height;
 
   if (vertical) {
     start = [0, 1];
@@ -23,27 +24,25 @@ export default function(spec, scale, config, userEncode) {
     height = thickness;
   }
 
-  encode.enter = enter = {
-    opacity: zero,
-    x: zero,
-    y: zero
+  encode = {
+    enter: enter = {
+      opacity: zero,
+      x: zero,
+      y: zero,
+      width: encoder(width),
+      height: encoder(height)
+    },
+    update: extend({}, enter, {
+      opacity: {value: 1},
+      fill: {gradient: scale, start: start, stop: stop}
+    }),
+    exit: {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'stroke',      lookup('gradientStrokeColor', spec, config));
-  addEncode(enter, 'strokeWidth', lookup('gradientStrokeWidth', spec, config));
-
-  encode.exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {
-    x: zero,
-    y: zero,
-    fill: {gradient: scale, start: start, stop: stop},
-    opacity: {value: 1}
-  };
-
-  enter.width = update.width = encoder(width);
-  enter.height = update.height = encoder(height);
+  addEncode(encode, 'stroke',      lookup('gradientStrokeColor', spec, config));
+  addEncode(encode, 'strokeWidth', lookup('gradientStrokeWidth', spec, config));
+  addEncode(encode, 'opacity',     lookup('gradientOpacity', spec, config), 'update');
 
   return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
 }

@@ -16,35 +16,15 @@ function flushExpr(scale, threshold, a, b, c) {
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
+      isX = (orient === Top || orient === Bottom),
       scale = spec.scale,
-      bound = lookup('labelBound', spec, config),
       flush = lookup('labelFlush', spec, config),
       flushOn = flush != null && flush !== false && (flush = +flush) === flush,
       flushOffset = +lookup('labelFlushOffset', spec, config),
-      overlap = lookup('labelOverlap', spec, config),
       labelAlign = lookup('labelAlign', spec, config),
       labelBaseline = lookup('labelBaseline', spec, config),
       zero = {value: 0},
-      encode = {}, enter, exit, update, tickSize, tickPos;
-
-  encode.enter = enter = {
-    opacity: zero
-  };
-  addEncode(enter, 'angle',      lookup('labelAngle', spec, config));
-  addEncode(enter, 'fill',       lookup('labelColor', spec, config));
-  addEncode(enter, 'font',       lookup('labelFont', spec, config));
-  addEncode(enter, 'fontSize',   lookup('labelFontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('labelFontWeight', spec, config));
-  addEncode(enter, 'limit',      lookup('labelLimit', spec, config));
-
-  encode.exit = exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {
-    opacity: {value: 1},
-    text: {field: Label}
-  };
+      encode, enter, tickSize, tickPos, align, baseline, dx, dy, bound, overlap;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -58,38 +38,64 @@ export default function(spec, config, userEncode, dataRef, size) {
     offset: lookup('tickOffset', spec, config)
   };
 
-  if (orient === Top || orient === Bottom) {
-    update.y = enter.y = tickSize;
-    update.x = enter.x = exit.x = tickPos;
-    if (labelAlign) {
-      addEncode(update, 'align', labelAlign);
-    } else {
-      addEncode(update, 'align', flushOn
-        ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-        : 'center');
-      if (flushOn && flushOffset) {
-        addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
-      }
-    }
-    addEncode(update, 'baseline', labelBaseline || (orient === Top ? 'bottom' : 'top'));
+  if (isX) {
+    align = labelAlign || (flushOn
+      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
+      : 'center');
 
+    baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
+
+    dx = !labelAlign && flushOn && flushOffset
+      ? flushExpr(scale, flush, -flushOffset, flushOffset, 0)
+      : null;
   } else {
-    update.x = enter.x = tickSize;
-    update.y = enter.y = exit.y = tickPos;
-    addEncode(update, 'align', labelAlign || (orient === Right ? 'left' : 'right'));
-    if (labelBaseline) {
-      addEncode(update, 'baseline', labelBaseline);
-    } else {
-      addEncode(update, 'baseline', flushOn
-        ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-        : 'middle');
-      if (flushOn && flushOffset) {
-        addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
-      }
-    }
+    align = labelAlign || (orient === Right ? 'left' : 'right');
+
+    baseline = labelBaseline || (flushOn
+      ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
+      : 'middle');
+
+    dy = !labelAlign && flushOn && flushOffset
+      ? flushExpr(scale, flush, flushOffset, -flushOffset, 0)
+      : null;
   }
 
+  encode = {
+    enter: enter = {
+      opacity: zero,
+      x: isX ? tickPos : tickSize,
+      y: isX ? tickSize : tickPos
+    },
+    update: {
+      opacity: {value: 1},
+      text: {field: Label},
+      x: enter.x,
+      y: enter.y
+    },
+    exit: {
+      opacity: zero,
+      x: enter.x,
+      y: enter.y
+    }
+  };
+
+  addEncode(encode, 'align',       align);
+  addEncode(encode, 'baseline',    baseline);
+  addEncode(encode, 'dx',          dx);
+  addEncode(encode, 'dy',          dy);
+  addEncode(encode, 'angle',       lookup('labelAngle', spec, config));
+  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
+  addEncode(encode, 'font',        lookup('labelFont', spec, config));
+  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
+  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
+  addEncode(encode, 'limit',       lookup('labelLimit', spec, config));
+  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
+  bound   = lookup('labelBound', spec, config);
+  overlap = lookup('labelOverlap', spec, config);
+
   spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
+
+  // if overlap method or bound defined, request label overlap removal
   if (overlap || bound) {
     spec.overlap = {
       method: overlap,
@@ -97,5 +103,6 @@ export default function(spec, config, userEncode, dataRef, size) {
       bound:  bound ? {scale: scale, orient: orient, tolerance: +bound} : null
     };
   }
+
   return spec;
 }

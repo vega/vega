@@ -8,21 +8,22 @@ import {addEncode} from '../encode/encode-util';
 export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       zero = {value: 0},
-      encode = {}, enter, update, u, u2, v;
+      encode, enter, update, u, u2, v;
 
-  encode.enter = enter = {
-    opacity: zero
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1}
+    },
+    exit: {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'stroke',      lookup('domainColor', spec, config));
-  addEncode(enter, 'strokeWidth', lookup('domainWidth', spec, config));
-
-  encode.exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {
-    opacity: {value: 1}
-  };
+  addEncode(encode, 'stroke',        lookup('domainColor', spec, config));
+  addEncode(encode, 'strokeWidth',   lookup('domainWidth', spec, config));
+  addEncode(encode, 'strokeOpacity', lookup('domainOpacity', spec, config));
 
   if (orient === Top || orient === Bottom) {
     u = 'x';

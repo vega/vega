@@ -18,25 +18,26 @@ export default function(spec, config, userEncode, dataRef) {
       thickness = encoder(gradientThickness(spec, config)),
       length = gradientLength(spec, config),
       overlap = lookup('labelOverlap', spec, config),
-      encode = {}, enter, update, u, v, adjust = '';
+      encode, enter, update, u, v, adjust = '';
 
-  encode.enter = enter = {
-    opacity: zero
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1},
+      text: {field: Label}
+    },
+    exit: {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'fill',       lookup('labelColor', spec, config));
-  addEncode(enter, 'font',       lookup('labelFont', spec, config));
-  addEncode(enter, 'fontSize',   lookup('labelFontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('labelFontWeight', spec, config));
-  addEncode(enter, 'limit',      value(spec.labelLimit, config.gradientLabelLimit));
-
-  encode.exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {
-    opacity: {value: 1},
-    text: {field: Label}
-  };
+  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
+  addEncode(encode, 'font',        lookup('labelFont', spec, config));
+  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
+  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
+  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
+  addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
 
   if (vertical) {
     enter.align = {value: 'left'};
