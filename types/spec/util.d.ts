@@ -4,5 +4,3 @@ export type Vector4<T> = [T, T, T, T];
 export type Vector5<T> = [T, T, T, T, T];
 export type Vector6<T> = [T, T, T, T, T, T];
 export type Vector7<T> = [T, T, T, T, T, T, T];
-
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

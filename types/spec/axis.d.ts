@@ -8,11 +8,10 @@ import {
   TextEncodeEntry,
 } from '.';
 import { FontWeight, Align, TextBaseline } from './encode';
-import { WithSignal } from './signal';
 
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
-export interface Axis extends WithSignal<BaseAxis> {
+export interface Axis extends BaseAxis {
   /**
    * The orientation of the axis.
    */
@@ -31,19 +30,16 @@ export interface Axis extends WithSignal<BaseAxis> {
   /**
    * The orthogonal offset in pixels by which to displace the axis from its position along the edge of the chart.
    */
-
   offset?: number | NumericValueRef;
 
   /**
    * The anchor position of the axis in pixels (default 0). For x-axes with top or bottom orientation, this sets the axis group x coordinate. For y-axes with left or right orientation, this sets the axis group y coordinate.
    */
-
   position?: number | NumericValueRef;
 
   /**
    * Explicitly set the visible axis tick and label values.
    */
-
   values?: any[] | SignalRef;
 
   /**
