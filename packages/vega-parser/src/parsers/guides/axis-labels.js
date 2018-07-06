@@ -4,6 +4,7 @@ import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncode, encoder} from '../encode/encode-util';
+import {deref} from '../../util';
 
 function flushExpr(scale, threshold, a, b, c) {
   return {
@@ -16,15 +17,15 @@ function flushExpr(scale, threshold, a, b, c) {
 export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      isX = (orient === Top || orient === Bottom),
+      isXAxis = (orient === Top || orient === Bottom),
       scale = spec.scale,
-      flush = lookup('labelFlush', spec, config),
-      flushOn = flush != null && flush !== false && (flush = +flush) === flush,
-      flushOffset = +lookup('labelFlushOffset', spec, config),
+      flush = deref(lookup('labelFlush', spec, config)),
+      flushOffset = deref(lookup('labelFlushOffset', spec, config)),
+      flushOn = flush === 0 || !!flush,
       labelAlign = lookup('labelAlign', spec, config),
       labelBaseline = lookup('labelBaseline', spec, config),
       zero = {value: 0},
-      encode, enter, tickSize, tickPos, align, baseline, dx, dy, bound, overlap;
+      encode, enter, tickSize, tickPos, align, baseline, offset, bound, overlap;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -38,33 +39,30 @@ export default function(spec, config, userEncode, dataRef, size) {
     offset: lookup('tickOffset', spec, config)
   };
 
-  if (isX) {
+  if (isXAxis) {
     align = labelAlign || (flushOn
       ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
       : 'center');
-
     baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
-
-    dx = !labelAlign && flushOn && flushOffset
-      ? flushExpr(scale, flush, -flushOffset, flushOffset, 0)
-      : null;
+    offset = !labelAlign;
   } else {
-    align = labelAlign || (orient === Right ? 'left' : 'right');
 
+    align = labelAlign || (orient === Right ? 'left' : 'right');
     baseline = labelBaseline || (flushOn
       ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
       : 'middle');
-
-    dy = !labelAlign && flushOn && flushOffset
-      ? flushExpr(scale, flush, flushOffset, -flushOffset, 0)
-      : null;
+    offset = !labelBaseline;
   }
+
+  offset = offset && flushOn && flushOffset
+    ? flushExpr(scale, flush, '-' + flushOffset, flushOffset, 0)
+    : null;
 
   encode = {
     enter: enter = {
       opacity: zero,
-      x: isX ? tickPos : tickSize,
-      y: isX ? tickSize : tickPos
+      x: isXAxis ? tickPos : tickSize,
+      y: isXAxis ? tickSize : tickPos
     },
     update: {
       opacity: {value: 1},
@@ -79,10 +77,9 @@ export default function(spec, config, userEncode, dataRef, size) {
     }
   };
 
+  addEncode(encode, isXAxis ? 'dx' : 'dy', offset);
   addEncode(encode, 'align',       align);
   addEncode(encode, 'baseline',    baseline);
-  addEncode(encode, 'dx',          dx);
-  addEncode(encode, 'dy',          dy);
   addEncode(encode, 'angle',       lookup('labelAngle', spec, config));
   addEncode(encode, 'fill',        lookup('labelColor', spec, config));
   addEncode(encode, 'font',        lookup('labelFont', spec, config));
@@ -100,7 +97,7 @@ export default function(spec, config, userEncode, dataRef, size) {
     spec.overlap = {
       method: overlap,
       order:  'datum.index',
-      bound:  bound ? {scale: scale, orient: orient, tolerance: +bound} : null
+      bound:  bound ? {scale: scale, orient: orient, tolerance: bound} : null
     };
   }
 

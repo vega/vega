@@ -12,7 +12,7 @@ import parseTransform from './transform';
 import parseTrigger from './trigger';
 import parseSpec from './spec';
 import DataScope from '../DataScope';
-import {fieldRef, ref} from '../util';
+import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
@@ -112,20 +112,9 @@ export default function(spec, scope) {
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }
   }
 
+  // if requested, add overlap removal transform
   if (overlap) {
-    op = {
-      method: overlap.method === true ? 'parity' : overlap.method,
-      pulse:  boundRef
-    };
-    if (overlap.order) {
-      op.sort = scope.compareRef({field: overlap.order});
-    }
-    if (overlap.bound) {
-      op.boundScale = scope.scaleRef(overlap.bound.scale);
-      op.boundOrient = overlap.bound.orient;
-      op.boundTolerance = overlap.bound.tolerance;
-    }
-    boundRef = ref(scope.add(Overlap(op)));
+    boundRef = parseOverlap(overlap, boundRef, scope);
   }
 
   // render / sieve items
@@ -144,4 +133,27 @@ export default function(spec, scope) {
       parseTrigger(on, scope, name);
     });
   }
+}
+
+function parseOverlap(overlap, source, scope) {
+  var method = overlap.method,
+      bound = overlap.bound, tol;
+
+  var params = {
+    method: isSignal(method) ? scope.signalRef(method.signal) : method,
+    pulse:  source
+  };
+
+  if (overlap.order) {
+    params.sort = scope.compareRef({field: overlap.order});
+  }
+
+  if (bound) {
+    tol = bound.tolerance;
+    params.boundTolerance = isSignal(tol) ? scope.signalRef(tol.signal) : +tol;
+    params.boundScale = scope.scaleRef(bound.scale);
+    params.boundOrient = bound.orient;
+  }
+
+  return ref(scope.add(Overlap(params)));
 }

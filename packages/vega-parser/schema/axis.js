@@ -2,7 +2,7 @@ import {timeIntervals} from './scale';
 import {
   numberValue, stringValue, booleanValue, colorValue,
   alignValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrNumber, arrayOrSignal, numberOrSignal, stringOrSignal
+  booleanOrNumberOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal
 } from './util';
 
 export default {
@@ -10,7 +10,8 @@ export default {
     "labelOverlap": {
       "oneOf": [
         {"type": "boolean"},
-        {"enum": ["parity", "greedy"], "type": "string"}
+        {"enum": ["parity", "greedy"], "type": "string"},
+        {"$ref": "#/refs/signal"}
       ]
     },
     "tickCount": {
@@ -93,9 +94,9 @@ export default {
         "labels": {"type": "boolean"},
         "labelAlign": alignValue,
         "labelBaseline": baselineValue,
-        "labelBound": booleanOrNumber,
-        "labelFlush": booleanOrNumber,
-        "labelFlushOffset": {"type": "number"},
+        "labelBound": booleanOrNumberOrSignal,
+        "labelFlush": booleanOrNumberOrSignal,
+        "labelFlushOffset": numberOrSignal,
         "labelOverlap": {"$ref": "#/refs/labelOverlap"},
         "labelAngle": numberValue,
         "labelColor": colorValue,
