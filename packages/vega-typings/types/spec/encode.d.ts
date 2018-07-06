@@ -41,6 +41,10 @@ export type NumericValueRef = (ScaledValueRef<number> | {}) & {
   extra?: boolean;
 };
 export type StringValueRef = ScaledValueRef<string>;
+export type SymbolShapeValueRef = ScaledValueRef<SymbolShape>;
+export type FontWeightValueRef = ScaledValueRef<FontWeight>;
+export type AlignValueRef = ScaledValueRef<Align>;
+export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
 export type ArbitraryValueRef = NumericValueRef | ColorValueRef | ScaledValueRef<any>;
 export interface ColorRGB {
