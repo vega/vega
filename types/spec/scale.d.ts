@@ -113,6 +113,7 @@ export interface SequentialScale extends BaseScale {
   type: 'sequential';
   range: RangeScheme;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   zero?: boolean | SignalRef;
   nice?: boolean | TimeInterval | SignalRef;
 }
@@ -129,6 +130,7 @@ export interface TimeScale extends BaseScale {
   type: 'time' | 'utc';
   range?: RangeScheme;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   nice?: boolean | TimeInterval | SignalRef;
 }
 export interface IdentityScale extends BaseScale {
@@ -146,6 +148,7 @@ export interface LinearScale extends BaseScale {
   range?: RangeScheme;
   interpolate?: ScaleInterpolate;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
@@ -155,6 +158,7 @@ export interface LogScale extends BaseScale {
   interpolate?: ScaleInterpolate;
   base?: number | SignalRef;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
 }
 export interface PowScale extends BaseScale {
@@ -163,6 +167,7 @@ export interface PowScale extends BaseScale {
   range?: RangeScheme;
   interpolate?: ScaleInterpolate;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
@@ -171,6 +176,7 @@ export interface SqrtScale extends BaseScale {
   range?: RangeScheme;
   interpolate?: ScaleInterpolate;
   clamp?: boolean | SignalRef;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
@@ -183,18 +189,21 @@ export interface QuantileScale extends BaseScale {
 export interface QuantizeScale extends BaseScale {
   type?: 'quantize';
   range?: RangeScheme;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
 export interface ThresholdScale extends BaseScale {
   type?: 'threshold';
   range?: RangeScheme;
+  padding?: number | SignalRef;
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
 export interface BinLinearScale extends BaseScale {
   type: 'bin-linear';
   range?: RangeScheme;
+  padding?: number | SignalRef;
   interpolate?: ScaleInterpolate;
 }
 export interface BinOrdinalScale extends BaseScale {

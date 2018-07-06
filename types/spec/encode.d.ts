@@ -46,6 +46,7 @@ export type FontWeightValueRef = ScaledValueRef<FontWeight>;
 export type AlignValueRef = ScaledValueRef<Align>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
+export type ArrayValueRef = ScaledValueRef<any[]>;
 export type ArbitraryValueRef = NumericValueRef | ColorValueRef | ScaledValueRef<any>;
 export interface ColorRGB {
   r: NumericValueRef;
