@@ -278,7 +278,7 @@ The trickiest part of using binned linear scales is retrieving the correct set o
 
 ### <a name="bin-ordinal"></a>Bin-Ordinal Scales
 
-Binned ordinal scales (`bin-ordinal`) are a special type of [ordinal scale](#ordical) for use with data that has been subdivided into bins (for example, using Vega's [bin transform](../transforms/bin)). The _domain_ values for a binned ordinal scale must be the set of all bin boundaries, from the minimum bin start to maximum bin end. Input domain values are discretized to the appropriate bin, which is then treated as a standard ordinal scale input. The main benefit of using `bin-ordinal` scales is that they provide "bin-aware" routines for sampling values and generating labels for inclusion in [legends](../legends). They are particularly useful for creating binned color encodings.
+Binned ordinal scales (`bin-ordinal`) are a special type of [ordinal scale](#ordinal) for use with data that has been subdivided into bins (for example, using Vega's [bin transform](../transforms/bin)). The _domain_ values for a binned ordinal scale must be the set of all bin boundaries, from the minimum bin start to maximum bin end. Input domain values are discretized to the appropriate bin, which is then treated as a standard ordinal scale input. The main benefit of using `bin-ordinal` scales is that they provide "bin-aware" routines for sampling values and generating labels for inclusion in [legends](../legends). They are particularly useful for creating binned color encodings.
 
 The trickiest part of using binned ordinal scales is retrieving the correct set of bin boundaries for the _domain_ property. Here is one way to do this in conjunction with a [bin transform](../transforms/bin):
 
