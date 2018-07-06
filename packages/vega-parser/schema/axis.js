@@ -2,7 +2,8 @@ import {timeIntervals} from './scale';
 import {
   numberValue, stringValue, booleanValue, colorValue,
   alignValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrNumberOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal
+  booleanOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal,
+  booleanOrNumberOrSignal
 } from './util';
 
 export default {
@@ -73,14 +74,15 @@ export default {
 
         // TICK CONFIG
         "ticks": {"type": "boolean"},
-        "tickCount": {"$ref": "#/refs/tickCount"},
         "tickColor": colorValue,
-        "tickExtra": numberOrSignal,
         "tickOffset": numberValue,
         "tickOpacity": numberValue,
         "tickRound": booleanValue,
         "tickSize": numberValue,
         "tickWidth": numberValue,
+
+        "tickCount": {"$ref": "#/refs/tickCount"},
+        "tickExtra": booleanOrSignal,
 
         // GRID CONFIG
         "grid": {"type": "boolean"},
