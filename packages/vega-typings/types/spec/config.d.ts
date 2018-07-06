@@ -15,8 +15,17 @@ import {
 } from '.';
 import { BaseAxis } from './axis';
 import { BaseLegend } from './legend';
-import { WithSignal } from './signal';
-import { Omit } from './util';
+import {
+  NumberValue,
+  StringValue,
+  ColorValue,
+  FontWeightValue,
+  AlignValue,
+  TextBaselineValue,
+  SymbolShapeValue,
+} from './values';
+import { SignalRef } from './signal';
+import { LayoutAlign } from './layout';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -320,14 +329,22 @@ export type AxisConfigKeys =
   | 'axisLeft'
   | 'axisBand';
 
-export interface BaseAxisConfig extends BaseAxis {}
-
-export type AxisConfig = WithSignal<BaseAxisConfig>;
+export type AxisConfig = BaseAxis;
 
 /**
  * Legend Config without signals so we can use it in Vega-Lite.
  */
-export interface BaseLegendConfig extends BaseLegend {
+export interface LegendConfig<
+  N = NumberValue,
+  NS = number | SignalRef,
+  S = StringValue,
+  C = ColorValue,
+  FW = FontWeightValue,
+  A = AlignValue,
+  B = TextBaselineValue,
+  LA = LayoutAlign | SignalRef,
+  SY = SymbolShapeValue
+> extends BaseLegend<N, NS, S, C, FW, A, B, LA, SY> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -338,28 +355,28 @@ export interface BaseLegendConfig extends BaseLegend {
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
    */
-  gradientLabelLimit?: number;
+  gradientLabelLimit?: N;
 
   /**
    * Vertical offset in pixels for color ramp gradient labels.
    *
    * __Default value:__ `2`.
    */
-  gradientLabelOffset?: number;
+  gradientLabelOffset?: N;
 
   /**
    * Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"transparent"`.
    */
-  symbolBaseFillColor?: string;
+  symbolBaseFillColor?: C;
 
   /**
    * Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"gray"`.
    */
-  symbolBaseStrokeColor?: string;
+  symbolBaseStrokeColor?: C;
 
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for symbol legends.
@@ -369,21 +386,10 @@ export interface BaseLegendConfig extends BaseLegend {
   symbolDirection?: Orientation;
 
   /**
-   * Horizontal pixel offset for legend symbols.
-   *
-   * __Default value:__ `0`.
-   */
-  symbolOffset?: number;
-
-  /**
    * Border stroke dash pattern for the full legend.
    */
   strokeDash?: number[];
 }
-
-export interface LegendConfig
-  extends WithSignal<Omit<BaseLegendConfig, 'orient'>>,
-    Pick<BaseLegendConfig, 'orient'> {}
 
 export interface TitleConfig {
   /**

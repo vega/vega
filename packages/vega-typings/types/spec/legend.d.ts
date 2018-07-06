@@ -6,10 +6,18 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { FontWeight, SymbolShape, TextBaseline } from './encode';
-import { WithSignal } from './signal';
-import { Omit } from './util';
+import { FontWeight, SymbolShape, TextBaseline, ColorValueRef } from './encode';
 import { TimeInterval } from './scale';
+import {
+  NumberValue,
+  StringValue,
+  AlignValue,
+  FontWeightValue,
+  TextBaselineValue,
+  SymbolShapeValue,
+  ColorValue,
+} from './values';
+import { LayoutAlign } from './layout';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -34,7 +42,7 @@ export type LegendOrient =
   | 'bottom-left'
   | 'bottom-right';
 
-export interface Legend extends WithSignal<Omit<BaseLegend, 'orient'>>, Pick<BaseLegend, 'orient'> {
+export interface Legend extends BaseLegend {
   size?: string;
   shape?: string;
   fill?: string;
@@ -98,9 +106,19 @@ export interface LegendEncode {
 }
 
 /**
- * Properties shared between legends and legend configs. Without signals so we can use it in Vega-Lite.
+ * Properties shared between legends and legend configs.
  */
-export interface BaseLegend {
+export interface BaseLegend<
+  N = NumberValue,
+  NS = number | SignalRef,
+  S = StringValue,
+  C = ColorValue,
+  FW = FontWeightValue,
+  A = AlignValue,
+  B = TextBaselineValue,
+  LA = LayoutAlign | SignalRef,
+  SY = SymbolShapeValue
+> {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
    *
@@ -112,36 +130,36 @@ export interface BaseLegend {
   /**
    * Corner radius for the full legend.
    */
-  cornerRadius?: number;
+  cornerRadius?: N;
 
   /**
    * Background fill color for the full legend.
    */
-  fillColor?: string;
+  fillColor?: C;
 
   /**
    * The offset in pixels by which to displace the legend from the data rectangle and axes.
    *
    * __Default value:__ `18`.
    */
-  offset?: number;
+  offset?: N;
 
   /**
    * The padding between the border and content of the legend group.
    *
    * __Default value:__ `0`.
    */
-  padding?: number;
+  padding?: N;
 
   /**
    * Border stroke color for the full legend.
    */
-  strokeColor?: string;
+  strokeColor?: C;
 
   /**
    * Border stroke width for the full legend.
    */
-  strokeWidth?: number;
+  strokeWidth?: N;
 
   // ---------- Title ----------
   /**
@@ -149,34 +167,34 @@ export interface BaseLegend {
    *
    * __Default value:__ `"left"`.
    */
-  titleAlign?: string;
+  titleAlign?: A;
 
   /**
    * Vertical text baseline for legend titles.
    *
    * __Default value:__ `"top"`.
    */
-  titleBaseline?: TextBaseline;
+  titleBaseline?: B;
   /**
    * The color of the legend title, can be in hex color code or regular color name.
    */
-  titleColor?: string;
+  titleColor?: C;
 
   /**
    * The font of the legend title.
    */
-  titleFont?: string;
+  titleFont?: S;
 
   /**
    * The font size of the legend title.
    */
-  titleFontSize?: number;
+  titleFontSize?: N;
 
   /**
    * The font weight of the legend title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  titleFontWeight?: FontWeight;
+  titleFontWeight?: FW;
 
   /**
    * Maximum allowed pixel width of axis titles.
@@ -184,14 +202,14 @@ export interface BaseLegend {
    * __Default value:__ `180`.
    * @minimum 0
    */
-  titleLimit?: number;
+  titleLimit?: N;
 
   /**
    * The padding, in pixels, between title and legend.
    *
    * __Default value:__ `5`.
    */
-  titlePadding?: number;
+  titlePadding?: N;
 
   // ---------- Gradient ----------
 
@@ -201,7 +219,7 @@ export interface BaseLegend {
    * __Default value:__ `200`.
    * @minimum 0
    */
-  gradientLength?: number;
+  gradientLength?: NS;
 
   /**
    * The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient.
@@ -209,14 +227,14 @@ export interface BaseLegend {
    * __Default value:__ `16`.
    * @minimum 0
    */
-  gradientThickness?: number;
+  gradientThickness?: NS;
 
   /**
    * The color of the gradient stroke, can be in hex color code or regular color name.
    *
    * __Default value:__ `"lightGray"`.
    */
-  gradientStrokeColor?: string;
+  gradientStrokeColor?: C;
 
   /**
    * The width of the gradient stroke, in pixels.
@@ -224,45 +242,52 @@ export interface BaseLegend {
    * __Default value:__ `0`.
    * @minimum 0
    */
-  gradientStrokeWidth?: number;
+  gradientStrokeWidth?: NS;
 
   // ---------- Symbol Layout ----------
   /**
    * The height in pixels to clip symbol legend entries and limit their size.
    */
-  clipHeight?: number;
+  clipHeight?: NS;
 
   /**
    * The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry.
    */
-  columns?: number;
+  columns?: NS;
 
   /**
    * The horizontal padding in pixels between symbol legend entries.
    *
    * __Default value:__ `10`.
    */
-  columnPadding?: number;
+  columnPadding?: NS;
 
   /**
    * The vertical padding in pixels between symbol legend entries.
    *
    * __Default value:__ `2`.
    */
-  rowPadding?: number;
+  rowPadding?: NS;
 
   /**
    * The alignment to apply to symbol legends rows and columns. The supported string values are `"all"`, `"each"` (the default), and `none`. For more information, see the [grid layout documentation](https://vega.github.io/vega/docs/layout).
    *
    * __Default value:__ `"each"`.
    */
-  gridAlign?: 'all' | 'each' | 'none';
+  gridAlign?: LA;
 
   // ---------- Symbols ----------
   /**
    * The color of the legend symbol,
    */
-  symbolFillColor?: string;
+  symbolFillColor?: C;
+
+  /**
+   * Horizontal pixel offset for legend symbols.
+   *
+   * __Default value:__ `0`.
+   */
+  symbolOffset?: N;
 
   /**
    * The size of the legend symbol, in pixels.
@@ -270,12 +295,12 @@ export interface BaseLegend {
    * __Default value:__ `100`.
    * @minimum 0
    */
-  symbolSize?: number;
+  symbolSize?: N;
 
   /**
    * Stroke color for legend symbols.
    */
-  symbolStrokeColor?: string;
+  symbolStrokeColor?: C;
 
   /**
    * The width of the symbol's stroke.
@@ -283,37 +308,37 @@ export interface BaseLegend {
    * __Default value:__ `1.5`.
    * @minimum 0
    */
-  symbolStrokeWidth?: number;
+  symbolStrokeWidth?: N;
 
   /**
    * Default shape type (such as "circle") for legend symbols.
    *
    * __Default value:__ `"circle"`.
    */
-  symbolType?: SymbolShape;
+  symbolType?: SY;
 
   // ---------- Label ----------
   /**
    * The alignment of the legend label, can be left, center, or right.
    */
-  labelAlign?: string;
+  labelAlign?: A;
 
   /**
    * The position of the baseline of legend label, can be top, middle, bottom, or alphabetic.
    *
    * __Default value:__ `"middle"`.
    */
-  labelBaseline?: TextBaseline;
+  labelBaseline?: B;
 
   /**
    * The color of the legend label, can be in hex color code or regular color name.
    */
-  labelColor?: string;
+  labelColor?: C;
 
   /**
    * The font of the legend label.
    */
-  labelFont?: string;
+  labelFont?: S;
 
   /**
    * The font size of legend label.
@@ -322,19 +347,19 @@ export interface BaseLegend {
    *
    * @minimum 0
    */
-  labelFontSize?: number;
+  labelFontSize?: N;
 
   /**
    * The font weight of legend label.
    */
-  labelFontWeight?: FontWeight;
+  labelFontWeight?: FW;
 
   /**
    * Maximum allowed pixel width of axis tick labels.
    *
    * __Default value:__ `160`.
    */
-  labelLimit?: number;
+  labelLimit?: N;
 
   /**
    * The offset of the legend label.
@@ -342,7 +367,7 @@ export interface BaseLegend {
    *
    * __Default value:__ `4`.
    */
-  labelOffset?: number;
+  labelOffset?: N;
 
   /**
    * The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label (this often works better for log-scaled axes).
