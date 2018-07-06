@@ -79,6 +79,10 @@ export var booleanOrNumberOrSignal = {
   ]
 };
 
+export var booleanOrSignal = {
+  "$ref": "#/refs/booleanOrSignal"
+};
+
 export var arrayOrSignal = {
   "$ref": "#/refs/arrayOrSignal"
 };
