@@ -10,25 +10,20 @@ export default function(spec, config, userEncode, dataRef) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
-      encode = {}, enter, update, titlePos;
+      zero = {value: 0},
+      encode, enter, update, titlePos;
 
-  encode.enter = enter = {
-    opacity: {value: 0}
-  };
-  addEncode(enter, 'align',      lookup('titleAlign', spec, config));
-  addEncode(enter, 'fill',       lookup('titleColor', spec, config));
-  addEncode(enter, 'font',       lookup('titleFont', spec, config));
-  addEncode(enter, 'fontSize',   lookup('titleFontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('titleFontWeight', spec, config));
-  addEncode(enter, 'limit',      lookup('titleLimit', spec, config));
-
-  encode.exit = {
-    opacity: {value: 0}
-  };
-
-  encode.update = update = {
-    opacity: {value: 1},
-    text: encoder(spec.title)
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1},
+      text: encoder(spec.title)
+    },
+    exit: {
+      opacity: zero
+    }
   };
 
   titlePos = {
@@ -38,22 +33,29 @@ export default function(spec, config, userEncode, dataRef) {
 
   if (horizontal) {
     update.x = titlePos;
-    update.angle = {value: 0};
-    update.baseline = {value: orient === Top ? 'bottom' : 'top'};
+    enter.angle = {value: 0};
+    enter.baseline = {value: orient === Top ? 'bottom' : 'top'};
   } else {
     update.y = titlePos;
-    update.angle = {value: sign * 90};
-    update.baseline = {value: 'bottom'};
+    enter.angle = {value: sign * 90};
+    enter.baseline = {value: 'bottom'};
   }
 
-  addEncode(update, 'angle',    lookup('titleAngle', spec, config));
-  addEncode(update, 'baseline', lookup('titleBaseline', spec, config));
+  addEncode(encode, 'align',       lookup('titleAlign', spec, config));
+  addEncode(encode, 'angle',       lookup('titleAngle', spec, config));
+  addEncode(encode, 'baseline',    lookup('titleBaseline', spec, config));
+  addEncode(encode, 'fill',        lookup('titleColor', spec, config));
+  addEncode(encode, 'font',        lookup('titleFont', spec, config));
+  addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
+  addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
+  addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
+  addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));
 
-  !addEncode(update, 'x', lookup('titleX', spec, config))
+  !addEncode(encode, 'x', lookup('titleX', spec, config), 'update')
     && horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
-  !addEncode(update, 'y', lookup('titleY', spec, config))
+  !addEncode(encode, 'y', lookup('titleY', spec, config), 'update')
     && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 

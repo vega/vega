@@ -62,10 +62,12 @@ export default {
         "titleFontSize": numberValue,
         "titleFontWeight": fontWeightValue,
         "titleLimit": numberValue,
+        "titleOpacity": numberValue,
 
         // DOMAIN CONFIG
         "domain": {"type": "boolean"},
         "domainColor": colorValue,
+        "domainOpacity": numberValue,
         "domainWidth": numberValue,
 
         // TICK CONFIG
@@ -74,6 +76,7 @@ export default {
         "tickColor": colorValue,
         "tickExtra": numberOrSignal,
         "tickOffset": numberValue,
+        "tickOpacity": numberValue,
         "tickRound": booleanValue,
         "tickSize": numberValue,
         "tickWidth": numberValue,
@@ -100,6 +103,7 @@ export default {
         "labelFontSize": numberValue,
         "labelFontWeight": fontWeightValue,
         "labelLimit": numberValue,
+        "labelOpacity": numberValue,
         "labelPadding": numberValue,
 
         // CUSTOMIZED ENCODERS

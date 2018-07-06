@@ -13,7 +13,7 @@ import parseExpression from './expression';
 import parseMark from './mark';
 import {isContinuous, isDiscretizing} from './scale';
 import {LegendRole, LegendEntryRole} from './marks/roles';
-import {addEncode, encoder, extendEncode} from './encode/encode-util';
+import {addEncode, extendEncode} from './encode/encode-util';
 import {ref, deref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 import {error} from 'vega-util';
@@ -44,14 +44,9 @@ export default function(spec, scope) {
   dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
-  legendEncode = extendEncode({
-    enter: legendEnter(spec, config),
-    update: {
-      offset:       encoder(lookup('offset', spec, config)),
-      padding:      encoder(lookup('padding', spec, config)),
-      titlePadding: encoder(lookup('titlePadding', spec, config))
-    }
-  }, legendEncode, Skip);
+  legendEncode = extendEncode(
+    buildLegendEncode(spec, config),legendEncode, Skip
+  );
 
   // encoding properties for legend entry sub-group
   entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
@@ -135,14 +130,19 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function legendEnter(s, c) {
-  var enter = {},
-      count = addEncode(enter, 'fill',         lookup('fillColor', s, c))
-            + addEncode(enter, 'stroke',       lookup('strokeColor', s, c))
-            + addEncode(enter, 'strokeWidth',  lookup('strokeWidth', s, c))
-            + addEncode(enter, 'cornerRadius', lookup('cornerRadius', s, c))
-            + addEncode(enter, 'strokeDash',   c.strokeDash)
-  return count ? enter : undefined;
+function buildLegendEncode(spec, config) {
+  var encode = {enter: {}, update: {}};
+
+  addEncode(encode, 'offset',       lookup('offset', spec, config));
+  addEncode(encode, 'padding',      lookup('padding', spec, config));
+  addEncode(encode, 'titlePadding', lookup('titlePadding', spec, config));
+  addEncode(encode, 'fill',         lookup('fillColor', spec, config));
+  addEncode(encode, 'stroke',       lookup('strokeColor', spec, config));
+  addEncode(encode, 'strokeWidth',  lookup('strokeWidth', spec, config));
+  addEncode(encode, 'cornerRadius', lookup('cornerRadius', spec, config));
+  addEncode(encode, 'strokeDash',   config.strokeDash);
+
+  return encode;
 }
 
 function sizeExpression(spec, scope, marks) {

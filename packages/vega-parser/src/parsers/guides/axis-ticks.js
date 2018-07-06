@@ -9,21 +9,22 @@ export default function(spec, config, userEncode, dataRef, size) {
   var orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       zero = {value: 0},
-      encode = {}, enter, exit, update, tickSize, tickPos;
+      encode, enter, exit, update, tickSize, tickPos;
 
-  encode.enter = enter = {
-    opacity: zero
+  encode = {
+    enter: enter = {
+      opacity: zero
+    },
+    update: update = {
+      opacity: {value: 1}
+    },
+    exit: exit = {
+      opacity: zero
+    }
   };
-  addEncode(enter, 'stroke',      lookup('tickColor', spec, config));
-  addEncode(enter, 'strokeWidth', lookup('tickWidth', spec, config));
-
-  encode.exit = exit = {
-    opacity: zero
-  };
-
-  encode.update = update = {
-    opacity: {value: 1}
-  };
+  addEncode(encode, 'stroke',        lookup('tickColor', spec, config));
+  addEncode(encode, 'strokeOpacity', lookup('tickOpacity', spec, config));
+  addEncode(encode, 'strokeWidth',   lookup('tickWidth', spec, config));
 
   tickSize = encoder(size);
   tickSize.mult = sign;

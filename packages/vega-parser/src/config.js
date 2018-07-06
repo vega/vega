@@ -139,7 +139,6 @@ function defaults() {
       grid: false,
       gridWidth: 1,
       gridColor: lightGray,
-      gridOpacity: 1,
       labels: true,
       labelAngle: 0,
       labelLimit: 180,

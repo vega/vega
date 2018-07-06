@@ -70,13 +70,15 @@ export default {
         "titleFontSize": numberValue,
         "titleFontWeight": fontWeightValue,
         "titleLimit": numberValue,
+        "titleOpacity": numberValue,
         "titlePadding": numberValue,
 
         // GRADIENT CONFIG
         "gradientLength": numberOrSignal,
-        "gradientThickness": numberOrSignal,
+        "gradientOpacity": numberValue,
         "gradientStrokeColor": colorValue,
-        "gradientStrokeWidth": numberOrSignal,
+        "gradientStrokeWidth": numberValue,
+        "gradientThickness": numberOrSignal,
 
         // SYMBOL LAYOUT CONFIG
         "clipHeight": numberOrSignal,
@@ -88,6 +90,7 @@ export default {
         // SYMBOL CONFIG
         "symbolFillColor": colorValue,
         "symbolOffset": numberValue,
+        "symbolOpacity": numberValue,
         "symbolSize": numberValue,
         "symbolStrokeColor": colorValue,
         "symbolStrokeWidth": numberValue,
@@ -102,6 +105,7 @@ export default {
         "labelFontWeight": fontWeightValue,
         "labelLimit": numberValue,
         "labelOffset": numberValue,
+        "labelOpacity": numberValue,
         "labelOverlap": {"$ref": "#/refs/labelOverlap"},
 
         // CUSTOMIZED ENCODERS

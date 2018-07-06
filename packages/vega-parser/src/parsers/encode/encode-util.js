@@ -6,9 +6,14 @@ export function encoder(_) {
   return isObject(_) ? extend({}, _) : {value: _};
 }
 
-export function addEncode(object, name, value) {
+export function addEncode(object, name, value, set) {
   if (value != null) {
-    object[name] = isObject(value) && !isArray(value) ? value : {value: value};
+    if (isObject(value) && !isArray(value)) {
+      object.update[name] = value;
+    } else {
+      object[set || 'enter'][name] = {value: value};
+    }
+    // object[name] = isObject(value) && !isArray(value) ? value : {value: value};
     return 1;
   } else {
     return 0;

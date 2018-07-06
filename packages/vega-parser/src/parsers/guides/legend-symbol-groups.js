@@ -26,31 +26,35 @@ export default function(spec, config, userEncode, dataRef, columns) {
       ncols = 'max(1,' + columns + ')',
       enter, update, labelOffset, symbols, labels, nrows, sort;
 
+  yEncode.mult = 0.5;
+
   // -- LEGEND SYMBOLS --
   encode = {
-    enter:  enter = {opacity: zero},
-    exit:   {opacity: zero},
-    update: update = {opacity: {value: 1}}
+    enter:  enter = {
+      opacity: zero,
+      x: {signal: xSignal, mult: 0.5, offset: symbolOffset},
+      y: yEncode
+    },
+    update: update = {
+      opacity: {value: 1},
+      x: enter.x,
+      y: enter.y
+    },
+    exit: {
+      opacity: zero
+    }
   };
 
   if (!spec.fill) {
-    addEncode(enter, 'fill',   config.symbolBaseFillColor);
-    addEncode(enter, 'stroke', config.symbolBaseStrokeColor);
+    addEncode(encode, 'fill',   config.symbolBaseFillColor);
+    addEncode(encode, 'stroke', config.symbolBaseStrokeColor);
   }
-  addEncode(enter, 'shape',       lookup('symbolType', spec, config));
-  addEncode(enter, 'size',        lookup('symbolSize', spec, config));
-  addEncode(enter, 'strokeWidth', lookup('symbolStrokeWidth', spec, config));
-  addEncode(enter, 'fill',        lookup('symbolFillColor', spec, config));
-  addEncode(enter, 'stroke',      lookup('symbolStrokeColor', spec, config));
-
-  enter.x = update.x = {
-    signal: xSignal,
-    mult:   0.5,
-    offset: symbolOffset
-  };
-
-  yEncode.mult = 0.5;
-  enter.y = update.y = yEncode;
+  addEncode(encode, 'shape',       lookup('symbolType', spec, config));
+  addEncode(encode, 'size',        lookup('symbolSize', spec, config));
+  addEncode(encode, 'strokeWidth', lookup('symbolStrokeWidth', spec, config));
+  addEncode(encode, 'fill',        lookup('symbolFillColor', spec, config));
+  addEncode(encode, 'stroke',      lookup('symbolStrokeColor', spec, config));
+  addEncode(encode, 'opacity',     lookup('symbolOpacity', spec, config), 'update');
 
   LegendScales.forEach(function(scale) {
     if (spec[scale]) {
@@ -65,32 +69,34 @@ export default function(spec, config, userEncode, dataRef, columns) {
   if (height) symbols.clip = true;
 
   // -- LEGEND LABELS --
-  encode = {
-    enter:  enter = {opacity: zero},
-    exit:   {opacity: zero},
-    update: update = {
-      opacity: {value: 1},
-      text: {field: Label}
-    }
-  };
-
-  addEncode(enter, 'align',      lookup('labelAlign', spec, config));
-  addEncode(enter, 'baseline',   lookup('labelBaseline', spec, config));
-  addEncode(enter, 'fill',       lookup('labelColor', spec, config));
-  addEncode(enter, 'font',       lookup('labelFont', spec, config));
-  addEncode(enter, 'fontSize',   lookup('labelFontSize', spec, config));
-  addEncode(enter, 'fontWeight', lookup('labelFontWeight', spec, config));
-  addEncode(enter, 'limit',      lookup('labelLimit', spec, config));
-
   labelOffset = encoder(symbolOffset);
   labelOffset.offset = lookup('labelOffset', spec, config);
 
-  enter.x = update.x = {
-    signal: xSignal,
-    offset: labelOffset
+  encode = {
+    enter:  enter = {
+      opacity: zero,
+      x: {signal: xSignal, offset: labelOffset},
+      y: yEncode
+    },
+    update: update = {
+      opacity: {value: 1},
+      text: {field: Label},
+      x: enter.x,
+      y: enter.y
+    },
+    exit: {
+      opacity: zero
+    }
   };
 
-  enter.y = update.y = yEncode;
+  addEncode(encode, 'align',       lookup('labelAlign', spec, config));
+  addEncode(encode, 'baseline',    lookup('labelBaseline', spec, config));
+  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
+  addEncode(encode, 'font',        lookup('labelFont', spec, config));
+  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
+  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
+  addEncode(encode, 'limit',       lookup('labelLimit', spec, config));
+  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
 
   labels = guideMark(
     TextMark, LegendLabelRole, GuideLabelStyle,
