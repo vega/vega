@@ -89,11 +89,33 @@ function boundTest(scale, orient, tolerance) {
   };
 }
 
+// reset all items to be fully opaque
+function reset(source) {
+  source.forEach(function(item) { item.opacity = 1; });
+  return source;
+}
+
+// add all tuples to mod, fork pulse if parameters were modified
+// fork prevents cross-stream tuple pollution (e.g., pulse from scale)
+function reflow(pulse, _) {
+  return pulse.reflow(_.modified()).modifies('opacity');
+}
+
 prototype.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
-      source = pulse.materialize(pulse.SOURCE).source;
+      source = pulse.materialize(pulse.SOURCE).source,
+      items, test;
 
   if (!source) return;
+
+  if (!_.method) {
+    // early exit if method is falsy
+    if (_.modified('method')) {
+      reset(source);
+      pulse = reflow(pulse, _);
+    }
+    return pulse;
+  }
 
   if (_.sort) {
     source = source.slice().sort(_.sort);
@@ -103,13 +125,10 @@ prototype.transform = function(_, pulse) {
     source = source.filter(hasBounds);
   }
 
-  // reset all items to be fully opaque
-  source.forEach(function(item) { item.opacity = 1; });
-
-  var items = source;
+  items = reset(source);
+  pulse = reflow(pulse, _);
 
   if (items.length >= 3 && hasOverlap(items)) {
-    pulse = pulse.reflow(_.modified()).modifies('opacity');
     do {
       items = reduce(items);
     } while (items.length >= 3 && hasOverlap(items));
@@ -120,8 +139,8 @@ prototype.transform = function(_, pulse) {
     }
   }
 
-  if (_.boundScale) {
-    var test = boundTest(_.boundScale, _.boundOrient, _.boundTolerance);
+  if (_.boundScale && _.boundTolerance >= 0) {
+    test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
     source.forEach(function(item) {
       if (!test(item)) item.opacity = 0;
     })
