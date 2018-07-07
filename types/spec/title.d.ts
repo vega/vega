@@ -1,5 +1,5 @@
 import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
-import { Baseline } from './encode';
+import { TextBaseline } from './encode';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
@@ -20,7 +20,7 @@ export type Title =
        */
       anchor?: TitleAnchor;
       angle?: number;
-      baseline?: Baseline;
+      baseline?: TextBaseline;
       color?: string;
       font?: string;
       fontSize?: number;
