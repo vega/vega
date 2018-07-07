@@ -17,6 +17,7 @@ import {
   TextBaselineValue,
   SymbolShapeValue,
   BooleanValue,
+  DashArrayValue,
 } from './values';
 import { LayoutAlign } from './layout';
 
@@ -127,7 +128,7 @@ export interface BaseAxis<
   LA = LayoutAlign | SignalRef,
   SY = SymbolShapeValue,
   LO = LabelOverlap | SignalRef,
-  DA = number[] | ArrayValueRef
+  DA = DashArrayValue
 > {
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
