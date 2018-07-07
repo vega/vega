@@ -403,5 +403,5 @@ export interface BaseLegend<
    *
    * __Default value:__ `true`.
    */
-  labelOverlap?: LabelOverlap;
+  labelOverlap?: LO;
 }
