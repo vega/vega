@@ -1,19 +1,17 @@
 import {
-  NumericValueRef,
-  FontWeight,
-  StringValueRef,
-  FontWeightValueRef,
-  ColorValueRef,
-  AlignProperty,
   Align,
   AlignValueRef,
-  TextBaselineValueRef,
+  ArrayValueRef,
+  BooleanValueRef,
+  ColorValueRef,
+  FontWeight,
+  FontWeightValueRef,
+  NumericValueRef,
+  StringValueRef,
   SymbolShape,
   SymbolShapeValueRef,
-  Baseline,
   TextBaseline,
-  BooleanValueRef,
-  ArrayValueRef,
+  TextBaselineValueRef,
 } from './encode';
 
 export type NumberValue = number | NumericValueRef;
