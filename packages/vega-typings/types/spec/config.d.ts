@@ -338,7 +338,6 @@ export type AxisConfig = BaseAxis;
 export interface LegendConfig<
   N = NumberValue,
   NS = number | SignalRef,
-  B = BooleanValue,
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
@@ -347,7 +346,7 @@ export interface LegendConfig<
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue
-> extends BaseLegend<N, NS, B, S, C, FW, A, TB, LA, LO, SY> {
+> extends BaseLegend<N, NS, S, C, FW, A, TB, LA, LO, SY> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
