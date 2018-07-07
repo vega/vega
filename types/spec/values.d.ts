@@ -13,6 +13,7 @@ import {
   Baseline,
   TextBaseline,
   BooleanValueRef,
+  ArrayValueRef,
 } from './encode';
 
 export type NumberValue = number | NumericValueRef;
@@ -30,3 +31,5 @@ export type TextBaselineValue = TextBaseline | TextBaselineValueRef;
 export type SymbolShapeValue = SymbolShape | SymbolShapeValueRef;
 
 export type BooleanValue = boolean | BooleanValueRef;
+
+export type DashArrayValue = number[] | ArrayValueRef;
