@@ -113,7 +113,6 @@ export interface LegendEncode {
 export interface BaseLegend<
   N = NumberValue,
   NS = number | SignalRef,
-  B = BooleanValue,
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
