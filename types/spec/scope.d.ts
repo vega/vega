@@ -1,7 +1,7 @@
 import { Axis, Data, Layout, Legend, Mark, Projection, Scale, Signal, Title } from '.';
 
 export interface Scope {
-  title?: Title;
+  title?: string | Title;
   layout?: Layout;
   signals?: Signal[];
   projections?: Projection[];
