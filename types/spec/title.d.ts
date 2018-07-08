@@ -1,8 +1,18 @@
 import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
 import { TextBaseline } from './encode';
+import {
+  NumberValue,
+  StringValue,
+  AnchorValue,
+  FontWeightValue,
+  ColorValue,
+  TextBaselineValue,
+} from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
+export type TitleFrame = 'bounds' | 'group';
+
 export type Title =
   | string
   | (Encodable<TextEncodeEntry> & {
@@ -10,28 +20,99 @@ export type Title =
        * The title text.
        */
       text: string | SignalRef;
+
+      /**
+       * A mark name property to apply to the title text mark.
+       */
       name?: string;
+
       /**
-       * The orientation of the title relative to the chart. One of `"top"` (the default), `"bottom"`, `"left"`, or `"right"`.
+       * A boolean flag indicating if the title element should respond to input events such as mouse hover.
        */
-      orient?: TitleOrient;
-      /**
-       * The anchor position for placing the title. One of `"start"`, `"middle"` (the default), or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
-       */
-      anchor?: TitleAnchor;
-      angle?: number;
-      baseline?: TextBaseline;
-      color?: string;
-      font?: string;
-      fontSize?: number;
-      fontWeight?: number;
-      frame?: 'bounds' | 'group';
-      limit?: number;
       interactive?: boolean;
+
       /**
-       * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
+       * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.
        */
-      offset?: number | NumericValueRef;
       style?: string | string[];
+
+      /**
+       * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
+       *
+       * @TJS-type integer
+       * @minimum 0
+       */
       zindex?: number;
-    });
+    } & TitleBase);
+
+export interface TitleBase<
+  N = NumberValue,
+  S = StringValue,
+  C = ColorValue,
+  FW = FontWeightValue,
+  TB = TextBaselineValue,
+  F = TitleFrame | StringValue,
+  A = AnchorValue
+> {
+  /**
+   * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
+   */
+  anchor?: A;
+
+  /**
+   * Angle in degrees of title text.
+   */
+  angle?: N;
+
+  /**
+   * Vertical text baseline for title text.
+   */
+  baseline?: TB;
+
+  /**
+   * Text color for title text.
+   */
+  color?: C;
+
+  /**
+   * Font name for title text.
+   */
+  font?: S;
+
+  /**
+   * Font size in pixels for title text.
+   *
+   * __Default value:__ `10`.
+   *
+   * @minimum 0
+   */
+  fontSize?: N;
+
+  /**
+   * Font weight for title text.
+   * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
+   */
+  fontWeight?: FW;
+
+  /**
+   * The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height).
+   */
+  frame?: F;
+
+  /**
+   * The maximum allowed length in pixels of legend labels.
+   *
+   * @minimum 0
+   */
+  limit?: N;
+
+  /**
+   * Offset in pixels of the title from the chart body and axes.
+   */
+  offset?: N;
+
+  /**
+   * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
+   */
+  orient?: TitleOrient;
+}

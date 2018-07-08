@@ -23,7 +23,14 @@ import { LabelOverlap } from './axis';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
+  /**
+   * A boolean flag indicating if the guide element should respond to input events such as mouse hover.
+   */
   interactive?: boolean;
+
+  /**
+   * A mark style property to apply to the guide group mark.
+   */
   style?: string | string[];
   enter?: T;
   update?: T;

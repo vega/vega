@@ -1,4 +1,6 @@
 import { SignalRef } from '.';
+import { AnchorValue } from './values';
+import { TitleAnchor } from './title';
 
 export type FieldValue = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 
@@ -44,6 +46,7 @@ export type StringValueRef = ScaledValueRef<string>;
 export type SymbolShapeValueRef = ScaledValueRef<SymbolShape>;
 export type FontWeightValueRef = ScaledValueRef<FontWeight>;
 export type AlignValueRef = ScaledValueRef<Align>;
+export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
 export type ArrayValueRef = ScaledValueRef<any[]>;

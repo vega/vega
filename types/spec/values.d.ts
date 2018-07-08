@@ -12,7 +12,9 @@ import {
   SymbolShapeValueRef,
   TextBaseline,
   TextBaselineValueRef,
+  AnchorValueRef,
 } from './encode';
+import { TitleAnchor } from './title';
 
 export type NumberValue = number | NumericValueRef;
 
@@ -31,3 +33,5 @@ export type SymbolShapeValue = SymbolShape | SymbolShapeValueRef;
 export type BooleanValue = boolean | BooleanValueRef;
 
 export type DashArrayValue = number[] | ArrayValueRef;
+
+export type AnchorValue = TitleAnchor | AnchorValueRef;
