@@ -228,7 +228,7 @@ export interface BaseAxis<
   /**
    * Color of axis domain line.
    *
-   * __Default value:__  `"gray"`.
+   * __Default value:__ `"gray"`.
    */
   domainColor?: C;
 
@@ -240,7 +240,7 @@ export interface BaseAxis<
   /**
    * Stroke width of axis domain line
    *
-   * __Default value:__  `1`
+   * __Default value:__ `1`
    */
   domainWidth?: N;
 
@@ -311,7 +311,7 @@ export interface BaseAxis<
   /**
    * Color of gridlines.
    *
-   * __Default value:__  `"lightGray"`.
+   * __Default value:__ `"lightGray"`.
    */
   gridColor?: C;
 
@@ -341,7 +341,7 @@ export interface BaseAxis<
   /**
    * A boolean flag indicating if labels should be included as part of the axis.
    *
-   * __Default value:__  `true`.
+   * __Default value:__ `true`.
    */
   labels?: boolean;
 
@@ -351,7 +351,7 @@ export interface BaseAxis<
   labelAlign?: A;
 
   /**
-   * Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation.
+   * Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation. Can be `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
    */
   labelBaseline?: TB;
 
