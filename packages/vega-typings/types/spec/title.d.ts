@@ -1,5 +1,5 @@
-import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
-import { TextBaseline } from './encode';
+import {Encodable, NumericValueRef, SignalRef, TextEncodeEntry} from '.';
+import {TextBaseline} from './encode';
 import {
   NumberValue,
   StringValue,
@@ -13,37 +13,37 @@ export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = 'start' | 'middle' | 'end';
 export type TitleFrame = 'bounds' | 'group';
 
-export type Title =
-  | string
-  | (Encodable<TextEncodeEntry> & {
-      /**
-       * The title text.
-       */
-      text: string | SignalRef;
+export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
+  /**
+   * The title text.
+   */
+  text: string | SignalRef;
 
-      /**
-       * A mark name property to apply to the title text mark.
-       */
-      name?: string;
+  /**
+   * A mark name property to apply to the title text mark.
+   */
+  name?: string;
 
-      /**
-       * A boolean flag indicating if the title element should respond to input events such as mouse hover.
-       */
-      interactive?: boolean;
+  /**
+   * A boolean flag indicating if the title element should respond to input events such as mouse hover.
+   */
+  interactive?: boolean;
 
-      /**
-       * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.
-       */
-      style?: string | string[];
+  /**
+   * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.
+   */
+  style?: string | string[];
 
-      /**
-       * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
-       *
-       * @TJS-type integer
-       * @minimum 0
-       */
-      zindex?: number;
-    } & BaseTitle);
+  /**
+   * 	The integer z-index indicating the layering of the title group relative to other axis, mark and legend groups.
+   *
+   * __Default value:__ `0`.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
+}
 
 export interface BaseTitle<
   N = NumberValue,
@@ -53,7 +53,7 @@ export interface BaseTitle<
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
   A = AnchorValue
-> {
+  > {
   /**
    * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
    */
