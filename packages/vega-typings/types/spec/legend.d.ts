@@ -178,6 +178,7 @@ export interface BaseLegend<
    * __Default value:__ `"top"`.
    */
   titleBaseline?: TB;
+
   /**
    * The color of the legend title, can be in hex color code or regular color name.
    */
@@ -342,7 +343,7 @@ export interface BaseLegend<
   labelAlign?: A;
 
   /**
-   * The position of the baseline of legend label, can be top, middle, bottom, or alphabetic.
+   * The position of the baseline of legend label, can be `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
    *
    * __Default value:__ `"middle"`.
    */
