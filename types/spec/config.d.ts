@@ -212,7 +212,7 @@ export interface MarkConfig {
   angle?: number;
 
   /**
-   * The vertical alignment of the text. One of `"top"`, `"bottom"`, `"middle"`.
+   * The vertical alignment of the text. One of `"top"`, `"bottom"`, `"middle"`, `"alphabetic"`.
    *
    * __Default value:__ `"middle"`
    *
