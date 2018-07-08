@@ -43,9 +43,9 @@ export type Title =
        * @minimum 0
        */
       zindex?: number;
-    } & TitleBase);
+    } & BaseTitle);
 
-export interface TitleBase<
+export interface BaseTitle<
   N = NumberValue,
   S = StringValue,
   C = ColorValue,
