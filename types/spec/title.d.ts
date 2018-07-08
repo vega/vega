@@ -107,7 +107,7 @@ export interface BaseTitle<
   limit?: N;
 
   /**
-   * Offset in pixels of the title from the chart body and axes.
+   * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
    */
   offset?: N;
 
