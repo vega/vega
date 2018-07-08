@@ -27,7 +27,7 @@ import {
 } from './values';
 import { SignalRef } from './signal';
 import { LayoutAlign } from './layout';
-import { TitleBase } from './title';
+import { BaseTitle } from './title';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -394,4 +394,4 @@ export interface LegendConfig<
   strokeDash?: number[];
 }
 
-export type TitleConfig = TitleBase;
+export type TitleConfig = BaseTitle;
