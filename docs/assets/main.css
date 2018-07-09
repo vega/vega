@@ -555,6 +555,20 @@ nav > .dropdown:hover a:hover {
   color: #000;
 }
 
+.tag {
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 15px;
+  padding: 0.15em 0.3em;
+}
+
+.tag.version {
+  background-color: #0078a0;
+  color: #ffffff;
+}
+
 /* Media queries */
 @media (max-width:768px) {
   body {
