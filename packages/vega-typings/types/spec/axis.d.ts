@@ -67,7 +67,7 @@ export interface Axis extends BaseAxis {
    *
    * @minimum 0
    */
-  tickCount?: number | TimeInterval;
+  tickCount?: number | TimeInterval | SignalRef;
 
   /**
    * Explicitly set the visible axis tick and label values.
