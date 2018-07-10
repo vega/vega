@@ -1,5 +1,5 @@
-import {Encodable, NumericValueRef, SignalRef, TextEncodeEntry} from '.';
-import {TextBaseline} from './encode';
+import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
+import { TextBaseline } from './encode';
 import {
   NumberValue,
   StringValue,
@@ -53,7 +53,7 @@ export interface BaseTitle<
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
   A = AnchorValue
-  > {
+> {
   /**
    * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
    */
