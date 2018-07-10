@@ -178,6 +178,7 @@ Additional property blocks can target more specific axis types based on the orie
 | bandPosition    | {% include type t="Number" %}   | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain          | {% include type t="Boolean" %}  | Boolean flag indicating if axis domain line should be included by default. |
 | domainColor     | {% include type t="Color" %}    | Color of axis domain line. |
+| domainOpacity   | {% include type t="Number" %}   | Opacity of axis domain line. |
 | domainWidth     | {% include type t="Number" %}   | Stroke width of axis domain line. |
 | grid            | {% include type t="Boolean" %}  | Boolean flag indicating if axis grid lines should be included by default. |
 | gridColor       | {% include type t="Color" %}    | Color of axis grid lines. |
@@ -196,6 +197,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
 | labelFontWeight | {% include type t="String|Number" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
+| labelOpacity    | {% include type t="Number" %}   | Opacity of axis tick labels. |
 | labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelPadding    | {% include type t="Number" %}   | Padding in pixels between axis ticks and tick labels. |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
@@ -204,6 +206,7 @@ Additional property blocks can target more specific axis types based on the orie
 | tickColor       | {% include type t="Color" %}    | Color of axis ticks. |
 | tickExtra       | {% include type t="Boolean" %}  | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`. |
 | tickOffset      | {% include type t="Number" %}   | Position offset in pixels to apply to ticks, labels, and gridlines. |
+| tickOpacity     | {% include type t="Number" %}   | Opacity of axis ticks. |
 | tickRound       | {% include type t="Boolean" %}  | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize        | {% include type t="Number" %}   | Size, or length, in pixels of axis ticks. |
 | tickWidth       | {% include type t="Number" %}   | Width in pixels of axis ticks. |
@@ -215,6 +218,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
 | titleFontWeight | {% include type t="String|Number" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
+| titleOpacity    | {% include type t="Number" %}   | Opacity of axis titles. |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
@@ -257,6 +261,7 @@ Properties defining default settings for legends. These properties are defined u
 | gradientStrokeWidth   | {% include type t="Number" %}   | Stroke width for color ramp gradient borders. |
 | gradientLabelLimit    | {% include type t="Number" %}   | The maximum allowed length in pixels of color ramp gradient labels. |
 | gradientLabelOffset   | {% include type t="Number" %}   | Vertical offset in pixels for color ramp gradient labels. |
+| gradientOpacity       | {% include type t="Number" %}   | Opacity of color ramp gradient. |
 | gridAlign             | {% include type t="String" %}   | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
 | labelAlign            | {% include type t="String" %}   | Horizontal text alignment for legend labels. |
 | labelBaseline         | {% include type t="String" %}   | Vertical text baseline for legend labels. |
@@ -266,6 +271,7 @@ Properties defining default settings for legends. These properties are defined u
 | labelFontWeight       | {% include type t="String|Number" %}   | Font weight of legend labels. |
 | labelLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
+| labelOpacity          | {% include type t="Number" %}   | Opacity of legend labels. |
 | labelOverlap          | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
 | offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. |
 | orient                | {% include type t="String" %}   | Default legend orientation (e.g., `"right"` or `"left"`). |
@@ -279,6 +285,7 @@ Properties defining default settings for legends. These properties are defined u
 | symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
 | symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
+| symbolOpacity | {% include type t="Number" %}   | Opacity of legend symbols. |
 | symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
@@ -290,6 +297,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels for legend titles. |
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
+| titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 
 ### Usage
