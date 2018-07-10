@@ -81,6 +81,21 @@
 
       "marks": [
         {
+          "type": "arc",
+          "encode": {
+            "enter": {
+              "stroke": {"value": "#888"},
+              "strokeWidth": {"value": 1},
+              "startAngle": {"signal": "1.570796"},
+              "endAngle": {"value": 0},
+              "x": {"value": 0.5},
+              "y": {"signal": "height + 0.5"},
+              "innerRadius": {"signal": "height"},
+              "outerRadius": {"signal": "height"}
+            }
+          }
+        },
+        {
           "type": "symbol",
           "style": ["circle"],
           "from": {"data": "random_data"},
@@ -149,7 +164,7 @@
       "name": "concat_1_group",
       "style": "cell",
       "title": {
-        "text": "Pi Estimate",
+        "text": "π Estimate",
         "frame": "group"
       },
 
@@ -241,7 +256,7 @@
         {
           "scale": "pi_scale",
           "orient": "left",
-          "title": "Estimated Pi Value",
+          "title": "Estimated π Value",
           "labelOverlap": true,
           "zindex": 1
         },
