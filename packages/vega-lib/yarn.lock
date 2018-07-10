@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
 "@types/node@*":
-  version "10.5.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.1.tgz#d578446f4abff5c0b49ade9b4e5274f6badaadfc"
+  version "10.5.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.2.tgz#f19f05314d5421fe37e74153254201a7bf00a707"
 
 acorn-jsx@^4.1.1:
   version "4.1.1"
@@ -375,13 +375,17 @@ eslint-scope@^4.0.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
+eslint-utils@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/eslint-utils/-/eslint-utils-1.3.1.tgz#9a851ba89ee7c460346f97cf8939c7298827e512"
+
 eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
 eslint@5:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.0.1.tgz#109b90ab7f7a736f54e0f341c8bb9d09777494c3"
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.1.0.tgz#2ed611f1ce163c0fb99e1e0cda5af8f662dff645"
   dependencies:
     ajv "^6.5.0"
     babel-code-frame "^6.26.0"
@@ -390,6 +394,7 @@ eslint@5:
     debug "^3.1.0"
     doctrine "^2.1.0"
     eslint-scope "^4.0.0"
+    eslint-utils "^1.3.1"
     eslint-visitor-keys "^1.0.0"
     espree "^4.0.0"
     esquery "^1.0.1"
@@ -397,7 +402,7 @@ eslint@5:
     file-entry-cache "^2.0.0"
     functional-red-black-tree "^1.0.1"
     glob "^7.1.2"
-    globals "^11.5.0"
+    globals "^11.7.0"
     ignore "^3.3.3"
     imurmurhash "^0.1.4"
     inquirer "^5.2.0"
@@ -587,7 +592,7 @@ glob@^7.0.3, glob@^7.0.5, glob@^7.1.2, glob@~7.1.2:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-globals@^11.5.0:
+globals@^11.7.0:
   version "11.7.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-11.7.0.tgz#a583faa43055b1aca771914bf68258e2fc125673"
 
@@ -1269,8 +1274,8 @@ type-check@~0.3.2:
     prelude-ls "~1.1.2"
 
 uglify-js@3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.3.tgz#a4fd757b6f34a95f717f7a7a0dccafcaaa60cf7f"
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.4.tgz#92e79532a3aeffd4b6c65755bdba8d5bad98d607"
   dependencies:
     commander "~2.16.0"
     source-map "~0.6.1"
@@ -1300,9 +1305,9 @@ vega-dataflow@^4.0.0, vega-dataflow@^4.0.3:
     vega-loader "^3.0.1"
     vega-util "^1.7.0"
 
-vega-encode@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.1.1.tgz#0e9efc737819acae5487be2c22c2b586af7204e4"
+vega-encode@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.1.2.tgz#4ff176cce96c0cfe78143cc7710c881e27d1970f"
   dependencies:
     d3-array "^1.2.1"
     d3-format "^1.3.0"
@@ -1359,9 +1364,9 @@ vega-loader@^3.0.1:
     topojson-client "^3.0.0"
     vega-util "^1.7.0"
 
-vega-parser@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.5.0.tgz#eeb1e323e1535479cd40587352e08dbbccd24eed"
+vega-parser@^3.5.0, vega-parser@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.6.1.tgz#fbce5531a55ac6394c0b727e2da5d9fb9d4a7989"
   dependencies:
     d3-array "^1.2.1"
     d3-color "^1.2.0"
@@ -1426,8 +1431,8 @@ vega-transforms@^2.1.0:
     vega-util "^1.7.0"
 
 vega-typings@*:
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.17.tgz#7c0074371634761017aeed76df5355c927da3b21"
+  version "0.3.28"
+  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.28.tgz#3bca962eefb337003260e262f0c841046e671919"
   dependencies:
     vega-util "^1.7.0"
 
@@ -1435,9 +1440,9 @@ vega-util@1, vega-util@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.7.0.tgz#0ca0512bb8dcc6541165c34663d115d0712e0cf1"
 
-vega-view-transforms@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.1.tgz#49d3c1407c948d49a9b108ad009ff62c4412cae1"
+vega-view-transforms@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.2.tgz#5c2877bb9e7ebef296f740b60c5e1612d2666dcd"
   dependencies:
     vega-dataflow "^4.0.3"
     vega-scenegraph "^3.2.1"
