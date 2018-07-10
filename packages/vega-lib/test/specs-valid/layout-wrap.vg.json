@@ -121,7 +121,8 @@
       ],
 
       "title": {
-        "text": {"signal": "parent.site"}
+        "text": {"signal": "parent.site"},
+        "frame": "group"
       },
 
       "marks": [
