@@ -41,6 +41,9 @@ export class View {
   width(w: number): this;
   height(): number;
   height(h: number): this;
+
+  origin(): [number, number];
+
   padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): this;
 
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
