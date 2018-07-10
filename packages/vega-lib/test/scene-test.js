@@ -34,7 +34,7 @@ tape('Vega generates scenegraphs for specifications', function(test) {
         view = new vega.View(runtime, {loader: loader, renderer: 'none'});
 
     view.initialize().runAsync().then(function() {
-      var actual = view.scenegraph().toJSON();
+      var actual = view.scenegraph().toJSON(2);
       if (GENERATE_SCENES) {
         // eslint-disable-next-line no-console
         console.log('WRITING TEST SCENE', name, path);

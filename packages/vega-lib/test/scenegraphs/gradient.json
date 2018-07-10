@@ -1,1 +1,35 @@
-{"marktype":"group","name":"root","role":"frame","interactive":true,"clip":false,"items":[{"items":[{"marktype":"rect","role":"mark","interactive":true,"clip":false,"items":[{"width":300,"height":15,"fill":{"x2":1,"y2":0}}],"zindex":0}],"x":0,"y":0,"width":300,"height":15}],"zindex":0}
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "width": 300,
+              "height": 15,
+              "fill": {
+                "x2": 1,
+                "y2": 0
+              }
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 15
+    }
+  ],
+  "zindex": 0
+}
