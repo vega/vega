@@ -104,7 +104,6 @@ export interface EncodeEntry {
   strokeCap?: ProductionRule<StringValueRef>;
   strokeJoin?: ProductionRule<StringValueRef>;
   strokeMiterLimit?: ProductionRule<NumericValueRef>;
-  zindex?: ProductionRule<NumericValueRef>;
   cursor?: ProductionRule<StringValueRef>;
   tooltip?: ProductionRule<StringValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
