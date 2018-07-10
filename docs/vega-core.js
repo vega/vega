@@ -11293,11 +11293,33 @@
     };
   }
 
+  // reset all items to be fully opaque
+  function reset$1(source) {
+    source.forEach(function(item) { item.opacity = 1; });
+    return source;
+  }
+
+  // add all tuples to mod, fork pulse if parameters were modified
+  // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
+  function reflow(pulse, _$$1) {
+    return pulse.reflow(_$$1.modified()).modifies('opacity');
+  }
+
   prototype$P.transform = function(_$$1, pulse) {
     var reduce = methods[_$$1.method] || methods.parity,
-        source = pulse.materialize(pulse.SOURCE).source;
+        source = pulse.materialize(pulse.SOURCE).source,
+        items, test;
 
     if (!source) return;
+
+    if (!_$$1.method) {
+      // early exit if method is falsy
+      if (_$$1.modified('method')) {
+        reset$1(source);
+        pulse = reflow(pulse, _$$1);
+      }
+      return pulse;
+    }
 
     if (_$$1.sort) {
       source = source.slice().sort(_$$1.sort);
@@ -11307,13 +11329,10 @@
       source = source.filter(hasBounds);
     }
 
-    // reset all items to be fully opaque
-    source.forEach(function(item) { item.opacity = 1; });
-
-    var items = source;
+    items = reset$1(source);
+    pulse = reflow(pulse, _$$1);
 
     if (items.length >= 3 && hasOverlap(items)) {
-      pulse = pulse.reflow(_$$1.modified()).modifies('opacity');
       do {
         items = reduce(items);
       } while (items.length >= 3 && hasOverlap(items));
@@ -11324,8 +11343,8 @@
       }
     }
 
-    if (_$$1.boundScale) {
-      var test = boundTest(_$$1.boundScale, _$$1.boundOrient, _$$1.boundTolerance);
+    if (_$$1.boundScale && _$$1.boundTolerance >= 0) {
+      test = boundTest(_$$1.boundScale, _$$1.boundOrient, +_$$1.boundTolerance);
       source.forEach(function(item) {
         if (!test(item)) item.opacity = 0;
       });
@@ -13379,7 +13398,7 @@
     }
 
     else if (type === Gradient$1) {
-      domain = _$$1.values ? scale.domain() : values,
+      domain = scale.domain(),
       fraction = scaleFraction(scale, domain[0], peek(domain));
 
       items = values.map(function(value, index) {
@@ -17037,7 +17056,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "4.0.0";
+  var version = "4.1.0";
 
   var Default = 'default';
 
@@ -19843,8 +19862,11 @@
   }
 
   function flush(range, value, threshold, left, right, center) {
+    if (!threshold && threshold !== 0) return center;
+
     var a = range[0],
         b = peek(range),
+        t = +threshold,
         l, r;
 
     // swap endpoints if range is reversed
@@ -19857,9 +19879,7 @@
     r = Math.abs(b - value);
 
     // adjust if value within threshold distance of endpoint
-    return l < r && l <= threshold ? left
-      : r <= threshold ? right
-      : center;
+    return l < r && l <= t ? left : r <= t ? right : center;
   }
 
   function merge$3() {
@@ -21751,9 +21771,14 @@
     return isObject(_$$1) ? extend({}, _$$1) : {value: _$$1};
   }
 
-  function addEncode(object, name, value) {
+  function addEncode(object, name, value, set) {
     if (value != null) {
-      object[name] = isObject(value) && !isArray(value) ? value : {value: value};
+      if (isObject(value) && !isArray(value)) {
+        object.update[name] = value;
+      } else {
+        object[set || 'enter'][name] = {value: value};
+      }
+      // object[name] = isObject(value) && !isArray(value) ? value : {value: value};
       return 1;
     } else {
       return 0;
@@ -21895,11 +21920,11 @@
   var TextMark = 'text';
 
   function legendGradient(spec, scale, config, userEncode) {
-    var zero = {value: 0},
+    var zero$$1 = {value: 0},
         vertical = isVertical(spec, config.gradientDirection),
         thickness = gradientThickness(spec, config),
         length = gradientLength(spec, config),
-        encode = {}, enter, update, start, stop, width, height;
+        encode, enter, start, stop, width, height;
 
     if (vertical) {
       start = [0, 1];
@@ -21913,56 +21938,57 @@
       height = thickness;
     }
 
-    encode.enter = enter = {
-      opacity: zero,
-      x: zero,
-      y: zero
+    encode = {
+      enter: enter = {
+        opacity: zero$$1,
+        x: zero$$1,
+        y: zero$$1,
+        width: encoder(width),
+        height: encoder(height)
+      },
+      update: extend({}, enter, {
+        opacity: {value: 1},
+        fill: {gradient: scale, start: start, stop: stop}
+      }),
+      exit: {
+        opacity: zero$$1
+      }
     };
-    addEncode(enter, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
-
-    encode.exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {
-      x: zero,
-      y: zero,
-      fill: {gradient: scale, start: start, stop: stop},
-      opacity: {value: 1}
-    };
-
-    enter.width = update.width = encoder(width);
-    enter.height = update.height = encoder(height);
+    addEncode(encode, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
+    addEncode(encode, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
+    addEncode(encode, 'opacity',     lookup$4('gradientOpacity', spec, config), 'update');
 
     return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
-    var zero = {value: 0},
+    var zero$$1 = {value: 0},
         vertical = isVertical(spec, config.gradientDirection),
         thickness = gradientThickness(spec, config),
         length = gradientLength(spec, config),
-        encode = {}, enter, update, u, v, uu, vv, adjust = '';
+        encode, enter, u, v, uu, vv, adjust = '';
 
     vertical
       ? (u = 'y', uu = 'y2', v = 'x', vv = 'width', adjust = '1-')
       : (u = 'x', uu = 'x2', v = 'y', vv = 'height');
 
-    encode.enter = enter = {opacity: zero};
-    addEncode(enter, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
+    enter = {
+      opacity: zero$$1,
+      fill: {scale: scale, field: Value}
+    };
+    enter[u]  = {signal: adjust + 'datum.' + Perc, mult: length};
+    enter[v]  = zero$$1;
+    enter[uu] = {signal: adjust + 'datum.' + Perc2, mult: length};
+    enter[vv] = encoder(thickness);
 
-    encode.exit = {opacity: zero};
-    encode.update = update = {opacity: {value: 1}};
-
-    enter.fill = update.fill = {scale: scale, field: Value};
-
-    enter[u] = update[u] = {signal: adjust + 'datum.' + Perc, mult: length};
-    enter[v] = update[v] = {value: 0};
-
-    enter[uu] = update[uu] = {signal: adjust + 'datum.' + Perc2, mult: length};
-    enter[vv] = update[vv] = encoder(thickness);
+    encode = {
+      enter: enter,
+      update: extend({}, enter, {opacity: {value: 1}}),
+      exit: {opacity: zero$$1}
+    };
+    addEncode(encode, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
+    addEncode(encode, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
+    addEncode(encode, 'opacity',     lookup$4('gradientOpacity', spec, config), 'update');
 
     return guideMark(RectMark, LegendBandRole, null, Value, dataRef, encode, userEncode);
   }
@@ -21979,25 +22005,26 @@
         thickness = encoder(gradientThickness(spec, config)),
         length = gradientLength(spec, config),
         overlap = lookup$4('labelOverlap', spec, config),
-        encode = {}, enter, update, u, v, adjust = '';
+        encode, enter, update, u, v, adjust = '';
 
-    encode.enter = enter = {
-      opacity: zero
+    encode = {
+      enter: enter = {
+        opacity: zero
+      },
+      update: update = {
+        opacity: {value: 1},
+        text: {field: Label}
+      },
+      exit: {
+        opacity: zero
+      }
     };
-    addEncode(enter, 'fill',       lookup$4('labelColor', spec, config));
-    addEncode(enter, 'font',       lookup$4('labelFont', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('labelFontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('labelFontWeight', spec, config));
-    addEncode(enter, 'limit',      value(spec.labelLimit, config.gradientLabelLimit));
-
-    encode.exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {
-      opacity: {value: 1},
-      text: {field: Label}
-    };
+    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
+    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
+    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
+    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
+    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
+    addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
 
     if (vertical) {
       enter.align = {value: 'left'};
@@ -22050,31 +22077,35 @@
         ncols = 'max(1,' + columns + ')',
         enter, update, labelOffset, symbols, labels, nrows, sort;
 
+    yEncode.mult = 0.5;
+
     // -- LEGEND SYMBOLS --
     encode = {
-      enter:  enter = {opacity: zero$1},
-      exit:   {opacity: zero$1},
-      update: update = {opacity: {value: 1}}
+      enter:  enter = {
+        opacity: zero$1,
+        x: {signal: xSignal, mult: 0.5, offset: symbolOffset},
+        y: yEncode
+      },
+      update: update = {
+        opacity: {value: 1},
+        x: enter.x,
+        y: enter.y
+      },
+      exit: {
+        opacity: zero$1
+      }
     };
 
     if (!spec.fill) {
-      addEncode(enter, 'fill',   config.symbolBaseFillColor);
-      addEncode(enter, 'stroke', config.symbolBaseStrokeColor);
+      addEncode(encode, 'fill',   config.symbolBaseFillColor);
+      addEncode(encode, 'stroke', config.symbolBaseStrokeColor);
     }
-    addEncode(enter, 'shape',       lookup$4('symbolType', spec, config));
-    addEncode(enter, 'size',        lookup$4('symbolSize', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('symbolStrokeWidth', spec, config));
-    addEncode(enter, 'fill',        lookup$4('symbolFillColor', spec, config));
-    addEncode(enter, 'stroke',      lookup$4('symbolStrokeColor', spec, config));
-
-    enter.x = update.x = {
-      signal: xSignal,
-      mult:   0.5,
-      offset: symbolOffset
-    };
-
-    yEncode.mult = 0.5;
-    enter.y = update.y = yEncode;
+    addEncode(encode, 'shape',       lookup$4('symbolType', spec, config));
+    addEncode(encode, 'size',        lookup$4('symbolSize', spec, config));
+    addEncode(encode, 'strokeWidth', lookup$4('symbolStrokeWidth', spec, config));
+    addEncode(encode, 'fill',        lookup$4('symbolFillColor', spec, config));
+    addEncode(encode, 'stroke',      lookup$4('symbolStrokeColor', spec, config));
+    addEncode(encode, 'opacity',     lookup$4('symbolOpacity', spec, config), 'update');
 
     LegendScales.forEach(function(scale) {
       if (spec[scale]) {
@@ -22089,32 +22120,34 @@
     if (height) symbols.clip = true;
 
     // -- LEGEND LABELS --
-    encode = {
-      enter:  enter = {opacity: zero$1},
-      exit:   {opacity: zero$1},
-      update: update = {
-        opacity: {value: 1},
-        text: {field: Label}
-      }
-    };
-
-    addEncode(enter, 'align',      lookup$4('labelAlign', spec, config));
-    addEncode(enter, 'baseline',   lookup$4('labelBaseline', spec, config));
-    addEncode(enter, 'fill',       lookup$4('labelColor', spec, config));
-    addEncode(enter, 'font',       lookup$4('labelFont', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('labelFontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('labelFontWeight', spec, config));
-    addEncode(enter, 'limit',      lookup$4('labelLimit', spec, config));
-
     labelOffset = encoder(symbolOffset);
     labelOffset.offset = lookup$4('labelOffset', spec, config);
 
-    enter.x = update.x = {
-      signal: xSignal,
-      offset: labelOffset
+    encode = {
+      enter:  enter = {
+        opacity: zero$1,
+        x: {signal: xSignal, offset: labelOffset},
+        y: yEncode
+      },
+      update: update = {
+        opacity: {value: 1},
+        text: {field: Label},
+        x: enter.x,
+        y: enter.y
+      },
+      exit: {
+        opacity: zero$1
+      }
     };
 
-    enter.y = update.y = yEncode;
+    addEncode(encode, 'align',       lookup$4('labelAlign', spec, config));
+    addEncode(encode, 'baseline',    lookup$4('labelBaseline', spec, config));
+    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
+    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
+    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
+    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
+    addEncode(encode, 'limit',       lookup$4('labelLimit', spec, config));
+    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
 
     labels = guideMark(
       TextMark, LegendLabelRole, GuideLabelStyle,
@@ -22176,31 +22209,32 @@
 
   function legendTitle(spec, config, userEncode, dataRef) {
     var zero = {value: 0},
-        encode = {}, enter;
+        encode, enter;
 
-    encode.enter = enter = {
-      x: {field: {group: 'padding'}},
-      y: {field: {group: 'padding'}},
-      opacity: zero
+    encode = {
+      enter: enter = {
+        opacity: zero,
+        x: {field: {group: 'padding'}},
+        y: {field: {group: 'padding'}}
+      },
+      update: {
+        opacity: {value: 1},
+        text: encoder(spec.title),
+        x: enter.x,
+        y: enter.y
+      },
+      exit: {
+        opacity: zero
+      }
     };
-    addEncode(enter, 'align',      lookup$4('titleAlign', spec, config));
-    addEncode(enter, 'baseline',   lookup$4('titleBaseline', spec, config));
-    addEncode(enter, 'fill',       lookup$4('titleColor', spec, config));
-    addEncode(enter, 'font',       lookup$4('titleFont', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('titleFontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('titleFontWeight', spec, config));
-    addEncode(enter, 'limit',      lookup$4('titleLimit', spec, config));
-
-    encode.exit = {
-      opacity: zero
-    };
-
-    encode.update = {
-      x: {field: {group: 'padding'}},
-      y: {field: {group: 'padding'}},
-      opacity: {value: 1},
-      text: encoder(spec.title)
-    };
+    addEncode(encode, 'align',       lookup$4('titleAlign', spec, config));
+    addEncode(encode, 'baseline',    lookup$4('titleBaseline', spec, config));
+    addEncode(encode, 'fill',        lookup$4('titleColor', spec, config));
+    addEncode(encode, 'font',        lookup$4('titleFont', spec, config));
+    addEncode(encode, 'fontSize',    lookup$4('titleFontSize', spec, config));
+    addEncode(encode, 'fontWeight',  lookup$4('titleFontWeight', spec, config));
+    addEncode(encode, 'limit',       lookup$4('titleLimit', spec, config));
+    addEncode(encode, 'fillOpacity', lookup$4('titleOpacity', spec, config));
 
     return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
   }
@@ -22756,20 +22790,9 @@
       if (nested) { if (layout) ops.push(layout); ops.push(bound); }
     }
 
+    // if requested, add overlap removal transform
     if (overlap) {
-      op = {
-        method: overlap.method === true ? 'parity' : overlap.method,
-        pulse:  boundRef
-      };
-      if (overlap.order) {
-        op.sort = scope.compareRef({field: overlap.order});
-      }
-      if (overlap.bound) {
-        op.boundScale = scope.scaleRef(overlap.bound.scale);
-        op.boundOrient = overlap.bound.orient;
-        op.boundTolerance = overlap.bound.tolerance;
-      }
-      boundRef = ref(scope.add(Overlap$1(op)));
+      boundRef = parseOverlap(overlap, boundRef, scope);
     }
 
     // render / sieve items
@@ -22788,6 +22811,29 @@
         parseTrigger(on, scope, name);
       });
     }
+  }
+
+  function parseOverlap(overlap, source, scope) {
+    var method = overlap.method,
+        bound = overlap.bound, tol;
+
+    var params = {
+      method: isSignal(method) ? scope.signalRef(method.signal) : method,
+      pulse:  source
+    };
+
+    if (overlap.order) {
+      params.sort = scope.compareRef({field: overlap.order});
+    }
+
+    if (bound) {
+      tol = bound.tolerance;
+      params.boundTolerance = isSignal(tol) ? scope.signalRef(tol.signal) : +tol;
+      params.boundScale = scope.scaleRef(bound.scale);
+      params.boundOrient = bound.orient;
+    }
+
+    return ref(scope.add(Overlap$1(params)));
   }
 
   function parseLegend(spec, scope) {
@@ -22816,14 +22862,9 @@
     dataRef = ref(scope.add(Collect$1(null, [datum])));
 
     // encoding properties for legend group
-    legendEncode = extendEncode({
-      enter: legendEnter(spec, config),
-      update: {
-        offset:       encoder(lookup$4('offset', spec, config)),
-        padding:      encoder(lookup$4('padding', spec, config)),
-        titlePadding: encoder(lookup$4('titlePadding', spec, config))
-      }
-    }, legendEncode, Skip);
+    legendEncode = extendEncode(
+      buildLegendEncode(spec, config),legendEncode, Skip
+    );
 
     // encoding properties for legend entry sub-group
     entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
@@ -22907,14 +22948,19 @@
     }, 0);
   }
 
-  function legendEnter(s, c) {
-    var enter = {},
-        count = addEncode(enter, 'fill',         lookup$4('fillColor', s, c))
-              + addEncode(enter, 'stroke',       lookup$4('strokeColor', s, c))
-              + addEncode(enter, 'strokeWidth',  lookup$4('strokeWidth', s, c))
-              + addEncode(enter, 'cornerRadius', lookup$4('cornerRadius', s, c))
-              + addEncode(enter, 'strokeDash',   c.strokeDash);
-    return count ? enter : undefined;
+  function buildLegendEncode(spec, config) {
+    var encode = {enter: {}, update: {}};
+
+    addEncode(encode, 'offset',       lookup$4('offset', spec, config));
+    addEncode(encode, 'padding',      lookup$4('padding', spec, config));
+    addEncode(encode, 'titlePadding', lookup$4('titlePadding', spec, config));
+    addEncode(encode, 'fill',         lookup$4('fillColor', spec, config));
+    addEncode(encode, 'stroke',       lookup$4('strokeColor', spec, config));
+    addEncode(encode, 'strokeWidth',  lookup$4('strokeWidth', spec, config));
+    addEncode(encode, 'cornerRadius', lookup$4('cornerRadius', spec, config));
+    addEncode(encode, 'strokeDash',   config.strokeDash);
+
+    return encode;
   }
 
   function sizeExpression(spec, scope, marks) {
@@ -22988,7 +23034,7 @@
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         horizontal = (orient === Top$1 || orient === Bottom$1),
         extent = {group: (horizontal ? 'width' : 'height')},
-        encode = {}, enter, update, pos, opp;
+        encode, enter, update, pos, opp;
 
     // title positioning along orientation axis
     pos = {field: extent, mult: {signal: multExpr}};
@@ -22998,40 +23044,44 @@
       : horizontal ? {field: {group: 'height'}}
       : {field: {group: 'width'}};
 
-    encode.enter = enter = {opacity: zero$$1};
-    addEncode(enter, 'fill',       lookup$4('color', spec, config));
-    addEncode(enter, 'font',       lookup$4('font', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('fontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('fontWeight', spec, config));
-
-    encode.exit = {opacity: zero$$1};
-
-    encode.update = update = {
-      opacity: {value: 1},
-      text:   encoder(title),
-      anchor: encoder(anchor),
-      orient: encoder(orient),
-      extent: {field: extent},
-      align:  {signal: alignExpr$1}
+    encode = {
+      enter: enter = {
+        opacity: zero$$1
+      },
+      update: update = {
+        opacity: {value: 1},
+        text:   encoder(title),
+        anchor: encoder(anchor),
+        orient: encoder(orient),
+        extent: {field: extent},
+        align:  {signal: alignExpr$1}
+      },
+      exit: {
+        opacity: zero$$1
+      }
     };
 
     if (horizontal) {
       update.x = pos;
       update.y = opp;
-      update.angle = zero$$1;
-      update.baseline = {value: orient === Top$1 ? Bottom$1 : Top$1};
+      enter.angle = zero$$1;
+      enter.baseline = {value: orient === Top$1 ? Bottom$1 : Top$1};
     } else {
       update.x = opp;
       update.y = pos;
-      update.angle = {value: sign * 90};
-      update.baseline = {value: Bottom$1};
+      enter.angle = {value: sign * 90};
+      enter.baseline = {value: Bottom$1};
     }
 
-    addEncode(update, 'offset',   lookup$4('offset', spec, config) || 0);
-    addEncode(update, 'frame',    lookup$4('frame', spec, config));
-    addEncode(update, 'angle',    lookup$4('angle', spec, config));
-    addEncode(update, 'baseline', lookup$4('baseline', spec, config));
-    addEncode(update, 'limit',    lookup$4('limit', spec, config));
+    addEncode(encode, 'angle',      lookup$4('angle', spec, config));
+    addEncode(encode, 'baseline',   lookup$4('baseline', spec, config));
+    addEncode(encode, 'fill',       lookup$4('color', spec, config));
+    addEncode(encode, 'font',       lookup$4('font', spec, config));
+    addEncode(encode, 'fontSize',   lookup$4('fontSize', spec, config));
+    addEncode(encode, 'fontWeight', lookup$4('fontWeight', spec, config));
+    addEncode(encode, 'frame',      lookup$4('frame', spec, config));
+    addEncode(encode, 'limit',      lookup$4('limit', spec, config));
+    addEncode(encode, 'offset',     lookup$4('offset', spec, config) || 0);
 
     return guideMark(TextMark, TitleRole$1, spec.style || GroupTitleStyle,
                      null, dataRef, encode, userEncode);
@@ -23138,21 +23188,22 @@
   function axisDomain(spec, config, userEncode, dataRef) {
     var orient = spec.orient,
         zero = {value: 0},
-        encode = {}, enter, update, u, u2, v;
+        encode, enter, update, u, u2, v;
 
-    encode.enter = enter = {
-      opacity: zero
+    encode = {
+      enter: enter = {
+        opacity: zero
+      },
+      update: update = {
+        opacity: {value: 1}
+      },
+      exit: {
+        opacity: zero
+      }
     };
-    addEncode(enter, 'stroke',      lookup$4('domainColor', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('domainWidth', spec, config));
-
-    encode.exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {
-      opacity: {value: 1}
-    };
+    addEncode(encode, 'stroke',        lookup$4('domainColor', spec, config));
+    addEncode(encode, 'strokeWidth',   lookup$4('domainWidth', spec, config));
+    addEncode(encode, 'strokeOpacity', lookup$4('domainOpacity', spec, config));
 
     if (orient === Top$1 || orient === Bottom$1) {
       u = 'x';
@@ -23180,21 +23231,23 @@
         sign = (orient === Left$1 || orient === Top$1) ? 1 : -1,
         offset = sign * spec.offset || 0,
         zero = {value: 0},
-        encode = {}, enter, exit, update, tickPos, u, v, v2, s;
+        encode, enter, exit, update, tickPos, u, v, v2, s;
 
-    encode.enter = enter = {
-      opacity: zero
+    encode = {
+      enter: enter = {
+        opacity: zero
+      },
+      update: update = {
+        opacity: {value: 1}
+      },
+      exit: exit = {
+        opacity: zero
+      }
     };
-    addEncode(enter, 'stroke',      lookup$4('gridColor', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('gridWidth', spec, config));
-    addEncode(enter, 'strokeDash',  lookup$4('gridDash', spec, config));
-
-    encode.exit = exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {};
-    addEncode(update, 'opacity', lookup$4('gridOpacity', spec, config));
+    addEncode(encode, 'stroke',        lookup$4('gridColor', spec, config));
+    addEncode(encode, 'strokeDash',    lookup$4('gridDash', spec, config));
+    addEncode(encode, 'strokeOpacity', lookup$4('gridOpacity', spec, config));
+    addEncode(encode, 'strokeWidth',   lookup$4('gridWidth', spec, config));
 
     tickPos = {
       scale:  spec.scale,
@@ -23233,21 +23286,22 @@
     var orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         zero = {value: 0},
-        encode = {}, enter, exit, update, tickSize, tickPos;
+        encode, enter, exit, update, tickSize, tickPos;
 
-    encode.enter = enter = {
-      opacity: zero
+    encode = {
+      enter: enter = {
+        opacity: zero
+      },
+      update: update = {
+        opacity: {value: 1}
+      },
+      exit: exit = {
+        opacity: zero
+      }
     };
-    addEncode(enter, 'stroke',      lookup$4('tickColor', spec, config));
-    addEncode(enter, 'strokeWidth', lookup$4('tickWidth', spec, config));
-
-    encode.exit = exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {
-      opacity: {value: 1}
-    };
+    addEncode(encode, 'stroke',        lookup$4('tickColor', spec, config));
+    addEncode(encode, 'strokeOpacity', lookup$4('tickOpacity', spec, config));
+    addEncode(encode, 'strokeWidth',   lookup$4('tickWidth', spec, config));
 
     tickSize = encoder(size);
     tickSize.mult = sign;
@@ -23285,35 +23339,15 @@
   function axisLabels(spec, config, userEncode, dataRef, size) {
     var orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
+        isXAxis = (orient === Top$1 || orient === Bottom$1),
         scale = spec.scale,
-        bound = lookup$4('labelBound', spec, config),
-        flush = lookup$4('labelFlush', spec, config),
-        flushOn = flush != null && flush !== false && (flush = +flush) === flush,
-        flushOffset = +lookup$4('labelFlushOffset', spec, config),
-        overlap = lookup$4('labelOverlap', spec, config),
+        flush = deref(lookup$4('labelFlush', spec, config)),
+        flushOffset = deref(lookup$4('labelFlushOffset', spec, config)),
+        flushOn = flush === 0 || !!flush,
         labelAlign = lookup$4('labelAlign', spec, config),
         labelBaseline = lookup$4('labelBaseline', spec, config),
         zero = {value: 0},
-        encode = {}, enter, exit, update, tickSize, tickPos;
-
-    encode.enter = enter = {
-      opacity: zero
-    };
-    addEncode(enter, 'angle',      lookup$4('labelAngle', spec, config));
-    addEncode(enter, 'fill',       lookup$4('labelColor', spec, config));
-    addEncode(enter, 'font',       lookup$4('labelFont', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('labelFontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('labelFontWeight', spec, config));
-    addEncode(enter, 'limit',      lookup$4('labelLimit', spec, config));
-
-    encode.exit = exit = {
-      opacity: zero
-    };
-
-    encode.update = update = {
-      opacity: {value: 1},
-      text: {field: Label}
-    };
+        encode, enter, tickSize, tickPos, align, baseline, offset, bound, overlap;
 
     tickSize = encoder(size);
     tickSize.mult = sign;
@@ -23327,45 +23361,68 @@
       offset: lookup$4('tickOffset', spec, config)
     };
 
-    if (orient === Top$1 || orient === Bottom$1) {
-      update.y = enter.y = tickSize;
-      update.x = enter.x = exit.x = tickPos;
-      if (labelAlign) {
-        addEncode(update, 'align', labelAlign);
-      } else {
-        addEncode(update, 'align', flushOn
-          ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-          : 'center');
-        if (flushOn && flushOffset) {
-          addEncode(update, 'dx', flushExpr(scale, flush, -flushOffset, flushOffset, 0));
-        }
-      }
-      addEncode(update, 'baseline', labelBaseline || (orient === Top$1 ? 'bottom' : 'top'));
-
+    if (isXAxis) {
+      align = labelAlign || (flushOn
+        ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
+        : 'center');
+      baseline = labelBaseline || (orient === Top$1 ? 'bottom' : 'top');
+      offset = !labelAlign;
     } else {
-      update.x = enter.x = tickSize;
-      update.y = enter.y = exit.y = tickPos;
-      addEncode(update, 'align', labelAlign || (orient === Right$1 ? 'left' : 'right'));
-      if (labelBaseline) {
-        addEncode(update, 'baseline', labelBaseline);
-      } else {
-        addEncode(update, 'baseline', flushOn
-          ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-          : 'middle');
-        if (flushOn && flushOffset) {
-          addEncode(update, 'dy', flushExpr(scale, flush, flushOffset, -flushOffset, 0));
-        }
-      }
+
+      align = labelAlign || (orient === Right$1 ? 'left' : 'right');
+      baseline = labelBaseline || (flushOn
+        ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
+        : 'middle');
+      offset = !labelBaseline;
     }
 
+    offset = offset && flushOn && flushOffset
+      ? flushExpr(scale, flush, '-' + flushOffset, flushOffset, 0)
+      : null;
+
+    encode = {
+      enter: enter = {
+        opacity: zero,
+        x: isXAxis ? tickPos : tickSize,
+        y: isXAxis ? tickSize : tickPos
+      },
+      update: {
+        opacity: {value: 1},
+        text: {field: Label},
+        x: enter.x,
+        y: enter.y
+      },
+      exit: {
+        opacity: zero,
+        x: enter.x,
+        y: enter.y
+      }
+    };
+
+    addEncode(encode, isXAxis ? 'dx' : 'dy', offset);
+    addEncode(encode, 'align',       align);
+    addEncode(encode, 'baseline',    baseline);
+    addEncode(encode, 'angle',       lookup$4('labelAngle', spec, config));
+    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
+    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
+    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
+    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
+    addEncode(encode, 'limit',       lookup$4('labelLimit', spec, config));
+    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
+    bound   = lookup$4('labelBound', spec, config);
+    overlap = lookup$4('labelOverlap', spec, config);
+
     spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
+
+    // if overlap method or bound defined, request label overlap removal
     if (overlap || bound) {
       spec.overlap = {
         method: overlap,
         order:  'datum.index',
-        bound:  bound ? {scale: scale, orient: orient, tolerance: +bound} : null
+        bound:  bound ? {scale: scale, orient: orient, tolerance: bound} : null
       };
     }
+
     return spec;
   }
 
@@ -23373,25 +23430,20 @@
     var orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         horizontal = (orient === Top$1 || orient === Bottom$1),
-        encode = {}, enter, update, titlePos;
+        zero = {value: 0},
+        encode, enter, update, titlePos;
 
-    encode.enter = enter = {
-      opacity: {value: 0}
-    };
-    addEncode(enter, 'align',      lookup$4('titleAlign', spec, config));
-    addEncode(enter, 'fill',       lookup$4('titleColor', spec, config));
-    addEncode(enter, 'font',       lookup$4('titleFont', spec, config));
-    addEncode(enter, 'fontSize',   lookup$4('titleFontSize', spec, config));
-    addEncode(enter, 'fontWeight', lookup$4('titleFontWeight', spec, config));
-    addEncode(enter, 'limit',      lookup$4('titleLimit', spec, config));
-
-    encode.exit = {
-      opacity: {value: 0}
-    };
-
-    encode.update = update = {
-      opacity: {value: 1},
-      text: encoder(spec.title)
+    encode = {
+      enter: enter = {
+        opacity: zero
+      },
+      update: update = {
+        opacity: {value: 1},
+        text: encoder(spec.title)
+      },
+      exit: {
+        opacity: zero
+      }
     };
 
     titlePos = {
@@ -23401,22 +23453,29 @@
 
     if (horizontal) {
       update.x = titlePos;
-      update.angle = {value: 0};
-      update.baseline = {value: orient === Top$1 ? 'bottom' : 'top'};
+      enter.angle = {value: 0};
+      enter.baseline = {value: orient === Top$1 ? 'bottom' : 'top'};
     } else {
       update.y = titlePos;
-      update.angle = {value: sign * 90};
-      update.baseline = {value: 'bottom'};
+      enter.angle = {value: sign * 90};
+      enter.baseline = {value: 'bottom'};
     }
 
-    addEncode(update, 'angle',    lookup$4('titleAngle', spec, config));
-    addEncode(update, 'baseline', lookup$4('titleBaseline', spec, config));
+    addEncode(encode, 'align',       lookup$4('titleAlign', spec, config));
+    addEncode(encode, 'angle',       lookup$4('titleAngle', spec, config));
+    addEncode(encode, 'baseline',    lookup$4('titleBaseline', spec, config));
+    addEncode(encode, 'fill',        lookup$4('titleColor', spec, config));
+    addEncode(encode, 'font',        lookup$4('titleFont', spec, config));
+    addEncode(encode, 'fontSize',    lookup$4('titleFontSize', spec, config));
+    addEncode(encode, 'fontWeight',  lookup$4('titleFontWeight', spec, config));
+    addEncode(encode, 'limit',       lookup$4('titleLimit', spec, config));
+    addEncode(encode, 'fillOpacity', lookup$4('titleOpacity', spec, config));
 
-    !addEncode(update, 'x', lookup$4('titleX', spec, config))
+    !addEncode(encode, 'x', lookup$4('titleX', spec, config), 'update')
       && horizontal && !has('x', userEncode)
       && (encode.enter.auto = {value: true});
 
-    !addEncode(update, 'y', lookup$4('titleY', spec, config))
+    !addEncode(encode, 'y', lookup$4('titleY', spec, config), 'update')
       && !horizontal && !has('y', userEncode)
       && (encode.enter.auto = {value: true});
 
@@ -24170,7 +24229,6 @@
         grid: false,
         gridWidth: 1,
         gridColor: lightGray,
-        gridOpacity: 1,
         labels: true,
         labelAngle: 0,
         labelLimit: 180,
