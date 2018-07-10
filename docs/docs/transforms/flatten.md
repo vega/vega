@@ -4,7 +4,7 @@ title: Flatten Transform
 permalink: /docs/transforms/flatten/index.html
 ---
 
-The **flatten** transform maps array-valued _fields_ to a set of individual data objects, one per array entry. This transform generates a new data stream in which each data object consists of an extracted array value as well as all the original fields of the corresponding input data object.
+The **flatten** transform {% include tag ver="3.1" %} maps array-valued _fields_ to a set of individual data objects, one per array entry. This transform generates a new data stream in which each data object consists of an extracted array value as well as all the original fields of the corresponding input data object.
 
 _Note:_ The `flatten` transform only applies to array-typed data fields. If your data objects instead contain nested sub-objects with fields known at design time, you may wish to use a [fold](../fold) or [project](../project) transform instead.
 

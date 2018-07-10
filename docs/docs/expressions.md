@@ -369,7 +369,7 @@ Returns the milliseconds component for the given _datetime_ value, in UTC time.
 Functions for working with arrays of values.
 
 <a name="extent" href="#extent">#</a>
-<b>extent</b>(<i>array</i>)<br/>
+<b>extent</b>(<i>array</i>) {% include tag ver="4.0" %}<br/>
 Returns a new _[min, max]_ array with the minimum and maximum values of the input array, ignoring `null`, `undefined`, and `NaN` values.
 
 <a name="clamprange" href="#clamprange">#</a>
@@ -471,7 +471,7 @@ Transforms _string_ to upper-case letters.
 Functions for manipulating object instances.
 
 <a name="merge" href="#merge">#</a>
-<b>merge</b>(<i>object1</i>[, <i>object2</i>, ...])<br/>
+<b>merge</b>(<i>object1</i>[, <i>object2</i>, ...]) {% include tag ver="4.0" %}<br/>
 Merges the input objects _object1_, _object2_, etc into a new output object. Inputs are visited in sequential order, such that key values from later arguments can overwrite those from earlier arguments. Example: `merge({a:1, b:2}, {a:3}) -> {a:3, b:2}`.
 
 [Back to Top](#reference)

@@ -3172,7 +3172,7 @@ Diverging color schemes can be used to encode quantitative values with a meaning
 </div>
 </div>
 
-### <a name="cyclical"></a>Cyclical Schemes
+### <a name="cyclical"></a>Cyclical Schemes {% include tag ver="4.0" %}
 
 Cyclical color schemes may be used to highlight periodic patterns in continuous data. However, these schemes are not well suited to accurately convey value differences.
 

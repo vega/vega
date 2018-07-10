@@ -16,7 +16,7 @@ The contour transform generates a new stream of [GeoJSON](https://en.wikipedia.o
 | values              | {% include type t="Number[]" %} |  An array of numeric values representing an width x height grid of values over which to compute contours. If unspecified, this transform will instead compute contours for the kernel density estimate of input data.|
 | x                   | {% include type t="Field" %}    | The pixel x-coordinate field for density estimation.|
 | y                   | {% include type t="Field" %}    | The pixel y-coordinate field for density estimation.|
-| weight              | {% include type t="Field" %}    | The data point weight field for density estimation. If unspecified, all data points are assumed to have a weight of 1.|
+| weight              | {% include type t="Field" %}    | The data point weight field for density estimation. If unspecified, all data points are assumed to have a weight of 1. {% include tag ver="4.0" %}|
 | cellSize            | {% include type t="Number" %}   | Contour density calculation cell size. |
 | bandwidth           | {% include type t="Number" %}   | Kernel density estimation bandwidth.|
 | smooth              | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if the contour polygons should be smoothed using linear interpolation. This parameter is ignored when using kernel density estimation.|

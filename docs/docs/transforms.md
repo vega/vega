@@ -36,14 +36,14 @@ Transforms for processing streams of data objects.
 - [`density`](density) - Generate values drawn from a probability distribution.
 - [`extent`](extent) - Compute minimum and maximum values over a data stream.
 - [`filter`](filter) - Filter a data stream using a predicate expression.
-- [`flatten`](flatten) - Map array-typed fields to data objects, one per array entry.
+- [`flatten`](flatten) - Map array-typed fields to data objects, one per array entry. {% include tag ver="3.1" %}
 - [`fold`](fold) - Collapse selected data fields into _key_ and _value_ properties.
 - [`formula`](formula) - Extend data objects with derived fields using a formula expression.
 - [`identifier`](identifier) - Assign unique key values to data objects.
 - [`impute`](impute) - Perform imputation of missing values.
 - [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
-- [`pivot`](pivot) - Pivot unique values to new aggregate fields.
+- [`pivot`](pivot) - Pivot unique values to new aggregate fields. {% include tag ver="3.2" %}
 - [`project`](project) - Generate derived data objects with a selected set of fields.
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
