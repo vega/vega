@@ -1677,7 +1677,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
@@ -2220,7 +2220,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
@@ -2763,7 +2763,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
@@ -3306,7 +3306,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
@@ -3849,7 +3849,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
@@ -4392,7 +4392,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 34.5,
+                      "x": 100,
                       "y": -4,
                       "align": "center",
                       "baseline": "bottom",
