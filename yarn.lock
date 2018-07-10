@@ -7,8 +7,8 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
 "@types/node@*":
-  version "10.5.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.1.tgz#d578446f4abff5c0b49ade9b4e5274f6badaadfc"
+  version "10.5.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.2.tgz#f19f05314d5421fe37e74153254201a7bf00a707"
 
 abbrev@1:
   version "1.1.1"
@@ -1396,8 +1396,8 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
 uglify-js@3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.3.tgz#a4fd757b6f34a95f717f7a7a0dccafcaaa60cf7f"
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.4.tgz#92e79532a3aeffd4b6c65755bdba8d5bad98d607"
   dependencies:
     commander "~2.16.0"
     source-map "~0.6.1"
@@ -1448,9 +1448,9 @@ vega-datasets@^1.19.0:
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.19.0.tgz#0d853f7c6ea0a623d85d60ad42d895313e26acb8"
 
-vega-encode@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.1.1.tgz#0e9efc737819acae5487be2c22c2b586af7204e4"
+vega-encode@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-3.1.2.tgz#4ff176cce96c0cfe78143cc7710c881e27d1970f"
   dependencies:
     d3-array "^1.2.1"
     d3-format "^1.3.0"
@@ -1497,20 +1497,20 @@ vega-hierarchy@^3.0.2:
     vega-dataflow "^4.0.3"
     vega-util "^1.7.0"
 
-vega-lib@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/vega-lib/-/vega-lib-4.0.0.tgz#17a462ab3ab01e37e733149675f39ceb1a9b323e"
+vega-lib@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/vega-lib/-/vega-lib-4.1.0.tgz#9b730af49b3a167238c3551843ddf183407fd3cf"
   dependencies:
     vega-crossfilter "^3.0.0"
     vega-dataflow "^4.0.3"
-    vega-encode "^3.1.1"
+    vega-encode "^3.1.2"
     vega-event-selector "^2.0.0"
     vega-expression "^2.3.1"
     vega-force "^3.0.0"
     vega-geo "^3.1.0"
     vega-hierarchy "^3.0.2"
     vega-loader "^3.0.1"
-    vega-parser "^3.5.0"
+    vega-parser "^3.6.1"
     vega-projection "^1.2.0"
     vega-runtime "^3.0.3"
     vega-scale "^2.4.0"
@@ -1520,7 +1520,7 @@ vega-lib@4.0.0:
     vega-typings "*"
     vega-util "^1.7.0"
     vega-view "^3.3.2"
-    vega-view-transforms "^2.0.1"
+    vega-view-transforms "^2.0.2"
     vega-voronoi "^3.0.0"
     vega-wordcloud "^3.0.0"
 
@@ -1534,9 +1534,9 @@ vega-loader@^3.0.1:
     topojson-client "^3.0.0"
     vega-util "^1.7.0"
 
-vega-parser@3.5.0, vega-parser@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.5.0.tgz#eeb1e323e1535479cd40587352e08dbbccd24eed"
+vega-parser@3.6.1, vega-parser@^3.5.0, vega-parser@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/vega-parser/-/vega-parser-3.6.1.tgz#fbce5531a55ac6394c0b727e2da5d9fb9d4a7989"
   dependencies:
     d3-array "^1.2.1"
     d3-color "^1.2.0"
@@ -1601,8 +1601,8 @@ vega-transforms@^2.1.0:
     vega-util "^1.7.0"
 
 vega-typings@*:
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.17.tgz#7c0074371634761017aeed76df5355c927da3b21"
+  version "0.3.28"
+  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-0.3.28.tgz#3bca962eefb337003260e262f0c841046e671919"
   dependencies:
     vega-util "^1.7.0"
 
@@ -1610,9 +1610,9 @@ vega-util@1, vega-util@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/vega-util/-/vega-util-1.7.0.tgz#0ca0512bb8dcc6541165c34663d115d0712e0cf1"
 
-vega-view-transforms@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.1.tgz#49d3c1407c948d49a9b108ad009ff62c4412cae1"
+vega-view-transforms@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vega-view-transforms/-/vega-view-transforms-2.0.2.tgz#5c2877bb9e7ebef296f740b60c5e1612d2666dcd"
   dependencies:
     vega-dataflow "^4.0.3"
     vega-scenegraph "^3.2.1"

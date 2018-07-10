@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -61,8 +61,8 @@
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
-    "vega-lib": "4.0.0",
-    "vega-parser": "3.5.0",
+    "vega-lib": "4.1.0",
+    "vega-parser": "3.6.1",
     "vega-typings": "*",
     "yargs": "12"
   },
