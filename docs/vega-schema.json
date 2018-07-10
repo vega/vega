@@ -265,6 +265,16 @@
             }
           ]
         },
+        "titleOpacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "domain": {
           "type": "boolean"
         },
@@ -281,6 +291,16 @@
             }
           ]
         },
+        "domainOpacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "domainWidth": {
           "oneOf": [
             {
@@ -293,9 +313,6 @@
         },
         "ticks": {
           "type": "boolean"
-        },
-        "tickCount": {
-          "$ref": "#/refs/tickCount"
         },
         "tickColor": {
           "oneOf": [
@@ -310,10 +327,17 @@
             }
           ]
         },
-        "tickExtra": {
-          "$ref": "#/refs/numberOrSignal"
-        },
         "tickOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "tickOpacity": {
           "oneOf": [
             {
               "type": "number"
@@ -352,6 +376,12 @@
               "$ref": "#/refs/numberValue"
             }
           ]
+        },
+        "tickCount": {
+          "$ref": "#/refs/tickCount"
+        },
+        "tickExtra": {
+          "$ref": "#/refs/booleanOrSignal"
         },
         "grid": {
           "type": "boolean"
@@ -444,6 +474,9 @@
             },
             {
               "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
             }
           ]
         },
@@ -454,11 +487,14 @@
             },
             {
               "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
             }
           ]
         },
         "labelFlushOffset": {
-          "type": "number"
+          "$ref": "#/refs/numberOrSignal"
         },
         "labelOverlap": {
           "$ref": "#/refs/labelOverlap"
@@ -541,6 +577,16 @@
           ]
         },
         "labelLimit": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "labelOpacity": {
           "oneOf": [
             {
               "type": "number"
@@ -1581,6 +1627,16 @@
             }
           ]
         },
+        "titleOpacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "titlePadding": {
           "oneOf": [
             {
@@ -1594,8 +1650,15 @@
         "gradientLength": {
           "$ref": "#/refs/numberOrSignal"
         },
-        "gradientThickness": {
-          "$ref": "#/refs/numberOrSignal"
+        "gradientOpacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
         },
         "gradientStrokeColor": {
           "oneOf": [
@@ -1613,15 +1676,15 @@
         "gradientStrokeWidth": {
           "oneOf": [
             {
-              "type": "null"
+              "type": "number"
             },
             {
-              "type": "string"
-            },
-            {
-              "$ref": "#/refs/colorValue"
+              "$ref": "#/refs/numberValue"
             }
           ]
+        },
+        "gradientThickness": {
+          "$ref": "#/refs/numberOrSignal"
         },
         "clipHeight": {
           "$ref": "#/refs/numberOrSignal"
@@ -1663,6 +1726,16 @@
           ]
         },
         "symbolOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "symbolOpacity": {
           "oneOf": [
             {
               "type": "number"
@@ -1822,6 +1895,16 @@
           ]
         },
         "labelOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "labelOpacity": {
           "oneOf": [
             {
               "type": "number"
@@ -2833,7 +2916,7 @@
                   "$ref": "#/refs/booleanOrSignal"
                 },
                 "padding": {
-                  "type": "number"
+                  "$ref": "#/refs/numberOrSignal"
                 },
                 "nice": {
                   "oneOf": [
@@ -3116,7 +3199,7 @@
                   "$ref": "#/refs/booleanOrSignal"
                 },
                 "padding": {
-                  "type": "number"
+                  "$ref": "#/refs/numberOrSignal"
                 },
                 "nice": {
                   "oneOf": [
@@ -3223,7 +3306,7 @@
                   "$ref": "#/refs/booleanOrSignal"
                 },
                 "padding": {
-                  "type": "number"
+                  "$ref": "#/refs/numberOrSignal"
                 },
                 "nice": {
                   "oneOf": [
@@ -3333,7 +3416,7 @@
                   "$ref": "#/refs/numberOrSignal"
                 },
                 "padding": {
-                  "type": "number"
+                  "$ref": "#/refs/numberOrSignal"
                 },
                 "nice": {
                   "oneOf": [
@@ -8407,6 +8490,9 @@
             "greedy"
           ],
           "type": "string"
+        },
+        {
+          "$ref": "#/refs/signal"
         }
       ]
     },

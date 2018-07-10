@@ -1,5 +1,5 @@
 schema: '4'
-vega: '4.0.0'
+vega: '4.1.0'
 vega-lite: '2.6.0'
-vega-embed: '3.16.1'
+vega-embed: '3.18.1'
 d3: '5.5.0'
