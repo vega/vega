@@ -32,6 +32,12 @@
       <select id="render">
         <option value="svg" selected>svg</option>
         <option value="canvas">canvas</option>
+      </select> &nbsp;
+      Log Level:
+      <select id="level">
+        <option value="2" selected>warn</option>
+        <option value="3">info</option>
+        <option value="4">debug</option>
       </select> <br/>
     </div>
     <div id="view"></div>
@@ -39,6 +45,7 @@
     <script>
 var container = document.querySelector('#view'),
     renderType = 'svg',
+    logLevel = vega.Warn,
     runtime = null,
     spec = null,
     view = null;
@@ -52,6 +59,12 @@ var render = document.querySelector('#render');
 render.addEventListener('change', function() {
   renderType = render.options[render.selectedIndex].value;
   if (view) view.renderer(renderType).run();
+});
+
+var level = document.querySelector('#level');
+level.addEventListener('change', function() {
+  logLevel = +level.options[level.selectedIndex].value;
+  if (view) view.logLevel(logLevel);
 });
 
 fetch('specs-valid.json')
@@ -94,8 +107,11 @@ function load(name) {
   fetch(url = 'specs-valid/' + name + '.vg.json')
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      console.log('LOADED', url);
-      visualize(spec = data);
+      console.log('LOAD', url);
+      return visualize(spec = data);
+    })
+    .then(function() {
+      console.log('INIT', url);
     })
     .catch(function(err) {
       console.error(err, err.stack);
@@ -105,10 +121,10 @@ function load(name) {
 function visualize(spec) {
   if (view) view.finalize(); // finalize existing view
   view = new vega.View(runtime = vega.parse(spec), {
-    logLevel: vega.Warn,
+    logLevel: logLevel,
     renderer: renderType
   });
-  view.initialize(container).hover().run();
+  return view.initialize(container).hover().runAsync();
 }
     </script>
   </body>
