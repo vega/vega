@@ -9,7 +9,7 @@ const spec: Spec = {
     "interactive": true,
     "encode": {
       "update": {
-        "fontWeight": { "value": "400" },
+        "fontWeight": { "value": 400 },
         "fontSize": { "value": 12 },
         "fontStyle": { "value": "italic" },
         "fill": { "value": "rgba(0, 0, 0, 0.54)" }

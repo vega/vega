@@ -363,7 +363,7 @@ const spec: Spec = {
               "text": {"value": "Arrival Delay (min)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": "500"},
+              "fontWeight": {"value": 500},
               "fill": {"value": "black"}
             }
           }
@@ -487,7 +487,7 @@ const spec: Spec = {
               "text": {"value": "Local Departure Time (hour)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": "500"},
+              "fontWeight": {"value": 500},
               "fill": {"value": "black"}
             }
           }
@@ -611,7 +611,7 @@ const spec: Spec = {
               "text": {"value": "Travel Distance (miles)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": "500"},
+              "fontWeight": {"value": 500},
               "fill": {"value": "black"}
             }
           }
