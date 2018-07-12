@@ -48,6 +48,7 @@ export {
 export {
   scale,
   scheme,
+  schemeDiscretized,
   interpolate,
   interpolateRange,
   timeInterval,
