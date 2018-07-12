@@ -236,13 +236,13 @@
       "type": "rule",
       "encode": {
         "enter": {
-          "y": {"scale": "y", "value": 0},
           "stroke": {"value": "#000"},
           "strokeWidth": {"value": 1}
         },
         "update": {
           "x": {"value": 0},
-          "x2": {"scale": "x", "signal": "currentYear"}
+          "x2": {"scale": "x", "signal": "currentYear"},
+          "y": {"scale": "y", "value": 0}
         }
       }
     },
@@ -251,7 +251,6 @@
       "type": "symbol",
       "encode": {
         "enter": {
-          "y": {"scale": "y", "value": 0, "offset": 1},
           "shape": {"value": "triangle-down"},
           "size": {"value": 400},
           "stroke": {"value": "#000"},
@@ -259,6 +258,7 @@
         },
         "update": {
           "x": {"scale": "x", "signal": "currentYear"},
+          "y": {"scale": "y", "value": 0, "offset": 1},
           "fill": {"signal": "dragging ? 'lemonchiffon' : '#fff'"}
         },
         "hover": {

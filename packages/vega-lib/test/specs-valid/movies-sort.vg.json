@@ -21,7 +21,7 @@
     },
     {
       "name": "height",
-      "update": "cellSize * extent[1]"
+      "update": "cellSize * max(0, extent[1])"
     },
     {
       "name": "sortop",
