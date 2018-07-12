@@ -39,6 +39,11 @@ export interface Axis extends BaseAxis {
   scale: string;
 
   /**
+   * The name of the scale to use for including grid lines. By default grid lines are driven by the same scale as the ticks and labels.
+   */
+  gridScale?: string;
+
+  /**
    * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
    */
   format?: string | SignalRef;
@@ -302,11 +307,6 @@ export interface BaseAxis<
    * A boolean flag indicating if grid lines should be included as part of the axis.
    */
   grid?: boolean;
-
-  /**
-   * The name of the scale to use for including grid lines. By default grid lines are driven by the same scale as the ticks and labels.
-   */
-  gridScale?: string;
 
   /**
    * Color of gridlines.
