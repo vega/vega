@@ -19,7 +19,7 @@
     },
     {
       "name": "barStep",
-      "update": "(width - nullGap) / binDomain.length"
+      "update": "binDomain.length ? (width - nullGap) / binDomain.length : 0"
     }
   ],
 
