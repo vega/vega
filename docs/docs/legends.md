@@ -36,7 +36,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | strokeColor   | {% include type t="Color" %}   | Border stroke color for the full legend. |
 | strokeWidth   | {% include type t="Number" %}  | Border stroke width for the full legend. |
 | gradientLength      | {% include type t="Number" %} | The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient. |
-| gradientOpacity     | {% include type t="Number" %}  | Opacity of the color gradient. |
+| gradientOpacity     | {% include type t="Number" %}  | Opacity of the color gradient. {% include tag ver="4.1" %} |
 | gradientThickness   | {% include type t="Number" %} | The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient. |
 | gradientStrokeColor | {% include type t="Color" %}  | Stroke color of the color gradient border. |
 | gradientStrokeWidth | {% include type t="Number" %} | Stroke width of the color gradient border. |
@@ -48,11 +48,11 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of legend labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of legend labels. |
 | labelOffset   | {% include type t="Number" %}  | Offset in pixels between legend labels their corresponding symbol or gradient. |
-| labelOpacity  | {% include type t="Number" %}  | Opacity of legend labels. |
+| labelOpacity  | {% include type t="Number" %}  | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
 | symbolFillColor | {% include type t="Color" %}  | Fill color for legend symbols. |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
-| symbolOpacity | {% include type t="Number" %}  | Opacity of legend symbols. |
+| symbolOpacity | {% include type t="Number" %}  | Opacity of legend symbols. {% include tag ver="4.1" %} |
 | symbolSize    | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor | {% include type t="Color" %}  | Stroke color for legend symbols. |
 | symbolStrokeWidth | {% include type t="Number" %} | Default legend symbol stroke width. |
@@ -66,7 +66,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | titleFontSize | {% include type t="Number" %}  | Font size in pixels for legend title. |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight for legend title. |
 | titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of the legend title. |
-| titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. |
+| titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups. The default value is `0`.|
