@@ -556,6 +556,7 @@ nav > .dropdown:hover a:hover {
 }
 
 .tag {
+  font-size: 0.8em;
   border-radius: 2px;
   box-sizing: border-box;
   display: inline-block;
