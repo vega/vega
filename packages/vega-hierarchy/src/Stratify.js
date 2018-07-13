@@ -31,7 +31,8 @@ prototype.transform = function(_, pulse) {
     error('Stratify transform requires an upstream data source.');
   }
 
-  var mod = _.modified(),
+  var tree = this.value,
+      mod = _.modified(),
       out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
       run = !this.value
          || mod
@@ -43,12 +44,15 @@ prototype.transform = function(_, pulse) {
   out.source = out.source.slice();
 
   if (run) {
-    this.value = lookup(
-      stratify().id(_.key).parentId(_.parentKey)(out.source),
-      _.key, truthy
-    );
+    if (out.source.length) {
+      tree = lookup(
+        stratify().id(_.key).parentId(_.parentKey)(out.source)
+        , _.key, truthy);
+    } else {
+      tree = lookup(stratify()([{}]), _.key, _.key);
+    }
   }
 
-  out.source.root = this.value;
+  out.source.root = this.value = tree;
   return out;
 };
