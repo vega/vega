@@ -20,9 +20,9 @@ Sequence.Definition = {
   "params": [
     { "name": "start", "type": "number", "required": true },
     { "name": "stop", "type": "number", "required": true },
-    { "name": "step", "type": "number", "default": 1 }
-  ],
-  "output": ["value"]
+    { "name": "step", "type": "number", "default": 1 },
+    { "name": "as", "type": "string", "default": "data" }
+  ]
 };
 
 var prototype = inherits(Sequence, Transform);
@@ -30,10 +30,18 @@ var prototype = inherits(Sequence, Transform);
 prototype.transform = function(_, pulse) {
   if (this.value && !_.modified()) return;
 
-  var out = pulse.materialize().fork(pulse.MOD);
+  var out = pulse.materialize().fork(pulse.MOD),
+      as = _.as || 'data';
 
   out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
-  this.value = range(_.start, _.stop, _.step || 1).map(ingest);
+
+  this.value = range(_.start, _.stop, _.step || 1).map(function(v) {
+    var t = {};
+    t[as] = v;
+    return ingest(t);
+  });
+
   out.add = pulse.add.concat(this.value);
+
   return out;
 };
