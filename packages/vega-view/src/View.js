@@ -100,14 +100,21 @@ var prototype = inherits(View, Dataflow);
 // -- DATAFLOW / RENDERING ----
 
 prototype.run = function(encode) {
+  // evaluate dataflow
   Dataflow.prototype.run.call(this, encode);
-  if (this._redraw || this._resize) {
+
+  if (this._pending) {
+    // resize next cycle if loading data sets
+    this.resize();
+  } else if (this._redraw || this._resize) {
+    // render as needed
     try {
       this.render();
     } catch (e) {
       this.error(e);
     }
   }
+
   return this;
 };
 
@@ -210,8 +217,10 @@ prototype.loader = function(loader) {
 };
 
 prototype.resize = function() {
+  // set flag to perform autosize
   this._autosize = 1;
-  return this;
+  // touch autosize signal to ensure top-level ViewLayout runs
+  return this.touch(lookupSignal(this, 'autosize'));
 };
 
 prototype._resetRenderer = function() {
