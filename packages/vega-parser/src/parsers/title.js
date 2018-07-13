@@ -100,6 +100,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
     enter.baseline = {value: Bottom};
   }
 
+  addEncode(encode, 'align',      lookup('align', spec, config), 'update');
   addEncode(encode, 'angle',      lookup('angle', spec, config));
   addEncode(encode, 'baseline',   lookup('baseline', spec, config));
   addEncode(encode, 'fill',       lookup('color', spec, config));
