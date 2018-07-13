@@ -46,7 +46,7 @@ prototype.transform = function(_, pulse) {
     });
   });
 
-  if (_.extra) {
+  if (_.extra && ticks.length) {
     // add an extra tick pegged to the initial domain value
     // this is used to generate axes with 'binned' domains
     ticks.push(ingest({
