@@ -12,22 +12,43 @@ tape('Dataflow propagates values', function(test) {
 
   test.equal(df.stamp(), 0); // timestamp 0
 
-  test.equal(df.run(), 4); // run 4 ops
+  df.run();
   test.equal(df.stamp(), 1); // timestamp 1
   test.deepEqual(op.map(stamp), [1, 1, 1, 1]);
   test.equal(n2.value, 30.75);
 
-  test.equal(df.update(s1, 5).run(), 3); // run 3 ops
+  df.update(s1, 5).run();
   test.equal(df.stamp(), 2); // timestamp 2
   test.deepEqual(op.map(stamp), [2, 1, 2, 2]);
   test.equal(n2.value, 15.75);
 
-  test.equal(df.update(s2, 1).run(), 2); // run 2 ops
+  df.update(s2, 1).run();
   test.equal(df.stamp(), 3); // timestamp 3
   test.deepEqual(op.map(stamp), [2, 3, 2, 3]);
   test.equal(n2.value, 5.25);
 
   test.end();
+});
+
+tape('Dataflow loads external data', function(test) {
+  var df = new vega.Dataflow(),
+      op = df.add(null);
+
+  df.request(op, null)
+    .then(function(v) {
+      test.equal(v, -1); // load fail due to bad url
+      return df.request(op, 'LICENSE', {type: 'json'});
+    })
+    .then(function(v) {
+      test.equal(v, -2); // parse fail due to improper format
+      return df.request(op, 'package.json');
+    })
+    .then(function(v) {
+      test.equal(v, 0); // successful load and parse
+      test.equal(op.pulse.add.length, 1);
+      test.equal(op.pulse.add[0].name, 'vega-dataflow');
+      test.end();
+    });
 });
 
 tape('Dataflow handles errors', function(test) {

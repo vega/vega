@@ -103,7 +103,7 @@ export function run(encode) {
       .forEach(function(_) { invokeCallback(df, _.callback); });
   }
 
-  return count;
+  return this;
 }
 
 function invokeCallback(df, callback) {
@@ -119,7 +119,10 @@ function invokeCallback(df, callback) {
  * @return {Promise} - A promise that resolves to this dataflow.
  */
 export function runAsync() {
-  return this._pending || Promise.resolve(this.run());
+  // return this._pending || Promise.resolve(this.run());
+  return this._pending
+    || (this.run() && this._pending)
+    || Promise.resolve(this);
 }
 
 /**
