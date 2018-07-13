@@ -79,3 +79,19 @@ tape('Nest tuples', function(test) {
 
   test.end();
 });
+
+tape('Nest empty data', function(test) {
+  // Setup nest aggregation
+  var df = new vega.Dataflow(),
+      collect = df.add(Collect),
+      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
+      out = df.add(Collect, {pulse: nest});
+
+  df.pulse(collect, changeset().insert([])).run();
+  test.equal(out.value.length, 0);
+  var root = out.value.root;
+  test.equal(root.children, undefined);
+  test.deepEqual(root.lookup, {});
+
+  test.end();
+});
