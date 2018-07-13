@@ -17,6 +17,7 @@ export {default as generate} from './src/Generate';
 export {default as impute} from './src/Impute';
 export {default as joinaggregate} from './src/JoinAggregate';
 export {default as key} from './src/Key';
+export {default as load} from './src/Load';
 export {default as lookup} from './src/Lookup';
 export {default as multiextent} from './src/MultiExtent';
 export {default as multivalues} from './src/MultiValues';
