@@ -217,6 +217,5 @@ prototype.run = function(pulse) {
     rv = this.evaluate(pulse);
   }
   this.stamp = pulse.stamp;
-  this.pulse = rv;
-  return rv || pulse;
+  return (this.pulse = rv || pulse);
 };
