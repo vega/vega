@@ -1,13 +1,13 @@
 import { Expr, ExprRef, EventSelector, SignalRef, Stream } from '.';
 
-export type Events =
-  | EventSelector
+export type EventListener =
   | SignalRef
-  | Stream
-  | Stream[]
   | {
       scale: string;
-    };
+    }
+  | Stream;
+
+export type Events = EventSelector | EventListener;
 export type Update =
   | Expr
   | ExprRef
@@ -22,6 +22,6 @@ export type OnEvent = (
   | {
       update: Update;
     }) & {
-  events: Events;
+  events: Events | EventListener[];
   force?: boolean;
 };
