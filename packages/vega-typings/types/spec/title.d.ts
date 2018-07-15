@@ -65,7 +65,7 @@ export interface BaseTitle<
   angle?: N;
 
   /**
-   * Vertical text baseline for title text.
+   * Vertical text baseline for title text. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
    */
   baseline?: TB;
 
