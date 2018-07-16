@@ -73,6 +73,12 @@ prototype.transform = function(_, pulse) {
     domain = scale.domain(),
     fraction = scaleFraction(scale, domain[0], peek(domain));
 
+    // if automatic label generation produces 2 or fewer values,
+    // use the domain end points instead (fixes vega/vega#1364)
+    if (values.length < 3 && !_.values && domain[0] !== peek(domain)) {
+      values = [domain[0], peek(domain)];
+    }
+
     items = values.map(function(value, index) {
       return ingest({
         index: index,
