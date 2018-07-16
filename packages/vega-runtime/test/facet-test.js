@@ -36,8 +36,8 @@ tape('Parser parses faceted dataflow specs', function(test) {
     }}
   ]};
 
-  var len0 = 4; // number of operators in 1st subflow (+1 for Subflow op)
-  var len1 = 2; // number of operators in 2nd subflow (+1 for Subflow op)
+  var len0 = 3; // number of operators in 1st subflow (ignore Subflow op)
+  var len1 = 1; // number of operators in 2nd subflow (ignore Subflow op)
   var nkey = 2; // number of facet keys per level
   var size = 2; // number of tuples per facet in 1st subflow
 
@@ -50,7 +50,11 @@ tape('Parser parses faceted dataflow specs', function(test) {
   test.equal(Object.keys(ops).length, spec.operators.length);
 
   // test that all subflow operators were created and run
-  test.equal(df.run(), spec.operators.length + nkey * (len0 + nkey * len1));
+  df.run();
+  test.equal(
+    count(ctx, df.stamp()),
+    spec.operators.length + nkey * (len0 + nkey * len1)
+  );
 
   // test that subflows contain correct values
   var subflows = ops[1].value,
@@ -67,3 +71,17 @@ tape('Parser parses faceted dataflow specs', function(test) {
 
   test.end();
 });
+
+function count(ctx, stamp) {
+  var sum = 0, ops = ctx.nodes;
+
+  Object.keys(ops).forEach(function(key) {
+    if (ops[key].stamp === stamp) ++sum;
+  });
+
+  (ctx.subcontext || []).forEach(function(sub) {
+    sum += count(sub, stamp);
+  });
+
+  return sum;
+}
