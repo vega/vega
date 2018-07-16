@@ -19,6 +19,7 @@ export var Facet = transform('facet');
 export var Field = transform('field');
 export var Key = transform('key');
 export var LegendEntries = transform('legendentries');
+export var Load = transform('load');
 export var Mark = transform('mark');
 export var MultiExtent = transform('multiextent');
 export var MultiValues = transform('multivalues');
