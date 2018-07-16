@@ -14,6 +14,7 @@ Properties for specifying a title.
 | :------------ | :----------------------------: | :------------- |
 | text          | {% include type t="String" %}  | {% include required %} The title text.|
 | orient        | {% include type t="String" %}  | The orientation of the title relative to the chart. One of `top` (the default), `bottom`, `left`, or `right`.|
+| align         | {% include type t="String" %}  | Horizontal text alignment of the title. If specified, this value overrides automatic alignment based on the _anchor_ value. |
 | anchor        | {% include type t="String" %}  | The anchor position for placing the title. One of `start`, `middle` (the default), or `end`. For example, with an orientation of `top` these anchor positions map to a left-, center-, or right-aligned title.|
 | angle         | {% include type t="Number" %}  | Angle in degrees of title text. |
 | baseline      | {% include type t="String" %}  | Vertical text baseline for title text. |

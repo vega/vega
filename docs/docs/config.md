@@ -323,6 +323,7 @@ Properties defining default settings for titles. These properties are defined un
 
 | Property              | Type                            | Description    |
 | :-------------------- | :-----------------------------: | :------------- |
+| align                 | {% include type t="String" %}   | Horizontal text alignment of the title. If specified, this value overrides automatic alignment based on the _anchor_ value. |
 | anchor                | {% include type t="String" %}   | Title anchor position (`"start"`, `"middle"`, or `"end"`). |
 | angle                 | {% include type t="Number" %}   | Angle in degrees of title text. |
 | baseline              | {% include type t="String" %}   | Vertical text baseline for title text. |
