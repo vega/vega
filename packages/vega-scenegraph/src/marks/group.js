@@ -32,12 +32,11 @@ function bound(bounds, group) {
     }
   }
 
-  if (group.clip || group.width || group.height) {
-    boundStroke(
-      bounds.add(0, 0).add(group.width || 0, group.height || 0),
-      group
-    );
+  if ((group.clip || group.width || group.height) && !group.noBound) {
+    bounds.add(0, 0).add(group.width || 0, group.height || 0);
   }
+
+  boundStroke(bounds, group);
 
   return bounds.translate(group.x || 0, group.y || 0);
 }
