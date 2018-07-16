@@ -38,10 +38,15 @@ tape('Parser parses expressions', function(test) {
   var df  = new vega.Dataflow(),
       ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes,
+      ids = Object.keys(ops),
       z = util.field('z');
 
-  test.equal(Object.keys(ops).length, spec.operators.length);
-  test.equal(df.run(), spec.operators.length);
+  test.equal(ids.length, spec.operators.length);
+
+  df.run();
+  test.equal(ids.reduce(function(sum, id) {
+    return sum + +(ops[id].stamp === df.stamp());
+  }, 0), spec.operators.length);
 
   test.equal(typeof ops[1]._update, 'function');
   test.equal(ops[1].value, 100);
