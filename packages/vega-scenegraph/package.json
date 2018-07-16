@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": {
@@ -40,9 +40,9 @@
   },
   "devDependencies": {
     "canvas": "^1.6.11",
-    "eslint": "4",
+    "eslint": "5",
     "jsdom": "11",
-    "rollup": "0.60.4",
+    "rollup": "0.62.0",
     "tape": "4",
     "tv4": "1",
     "uglify-js": "3"
