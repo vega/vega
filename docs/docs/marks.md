@@ -161,7 +161,12 @@ For more, see the [Value type documentation](../types/#Value), including the spe
 
 ## <a name="production-rule"></a>Production Rules
 
-Visual properties can also be set by evaluating an `if-then-else` style chain of _production rules_. Rules consist of an array of _value reference_ objects, each of which must contain an additional `test` property. A single value reference, without a `test` property, can be specified as the final element within the rule to serve as the `else` condition. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the value reference corresponding to the first predicate that evaluates to `true` within the rule. If none do, the property is set to the final (predicate-less) value reference if one is specified. For example, the following specification sets a mark's fill colour using a production rule:
+Visual properties can also be set by evaluating an "if-then-else" style chain of _production rules_. Rules consist of an array of _value reference_ objects, each of which must contain an additional `test` property. The value of this property should be a predicate [expression](https://vega.github.io/vega/docs/expressions/), that evaluates to `true` or `false`. The visual property is set to the value reference corresponding to the first predicate that evaluates to `true` within the rule.
+
+A single value reference, without a `test` property, can be specified as the final element within the rule to serve as the "else" condition.
+If no `test` properties evaluate to `true`, the property is set to this final (predicate-less) value reference. If no "else" condition is specified, the property value defaults to `null`.
+
+For example, the following specification sets a mark's fill colour using a production rule:
 
 {: .suppress-error}
 ```json
