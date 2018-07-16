@@ -1033,9 +1033,9 @@ vega-scale@^2.4.0:
     d3-time "^1.0.8"
     vega-util "^1.7.0"
 
-vega-scenegraph@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-3.2.1.tgz#a944335de43d8bf7e02b56ef70c3418cd56cc01d"
+vega-scenegraph@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-3.2.2.tgz#6ed5f37f637c7e5eed702621eacc68b1c6ed4cdb"
   dependencies:
     d3-path "^1.0.5"
     d3-shape "^1.2.0"
