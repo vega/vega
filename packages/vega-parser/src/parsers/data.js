@@ -1,7 +1,7 @@
 import parseTransform from './transform';
 import parseTrigger from './trigger';
-import {ref} from '../util';
-import {Collect, Relay, Sieve} from '../transforms';
+import {hasSignal, ref} from '../util';
+import {Collect, Load, Relay, Sieve} from '../transforms';
 import {array} from 'vega-util';
 
 export default function parseData(data, scope) {
@@ -38,10 +38,18 @@ function analyze(data, scope, ops) {
 
   if (data.values) {
     // hard-wired input data set
-    output.push(source = collect({$ingest: data.values, $format: data.format}));
+    output.push(source = collect({
+      $ingest: data.values,
+      $format: data.format
+    }));
   } else if (data.url) {
     // load data from external source
-    output.push(source = collect({$request: data.url, $format: data.format}));
+    // if either url or format has signal, use dynamic loader
+    // otherwise, request load upon dataflow init
+    source = (hasSignal(data.url) || hasSignal(data.format))
+      ? {$load: ref(scope.add(load(scope, data, source)))}
+      : {$request: data.url, $format: data.format};
+    output.push(source = collect(source));
   } else if (data.source) {
     // derives from one or more other data sets
     source = upstream = array(data.source).map(function(d) {
@@ -88,4 +96,11 @@ function collect(values) {
   var s = Collect({}, values);
   s.metadata = {source: true};
   return s;
+}
+
+function load(scope, data) {
+  return Load({
+    url:    scope.property(data.url),
+    format: scope.objectProperty(data.format)
+  });
 }

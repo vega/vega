@@ -74,6 +74,14 @@ export function isSignal(_) {
   return _ && _.signal;
 }
 
+export function hasSignal(_) {
+  if (isSignal(_)) return true;
+  if (isObject(_)) for (var key in _) {
+    if (hasSignal(_[key])) return true;
+  }
+  return false;
+}
+
 export function value(specValue, defaultValue) {
   return specValue != null ? specValue : defaultValue;
 }
