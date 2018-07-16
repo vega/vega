@@ -71,7 +71,7 @@ export interface BaseTitle<
    */
   offset?: N;
 
-  align: A;
+  align?: A;
 
   /**
    * Angle in degrees of title text.
