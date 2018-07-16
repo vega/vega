@@ -1,3 +1,5 @@
+import {stringOrSignal} from './util';
+
 var parseDef = {
   "oneOf": [
     {"enum": ["auto"]},
@@ -126,8 +128,11 @@ export default {
                 },
                 {
                   "properties": {
-                    "url": {"type": "string"},
-                    "format": {"$ref": "#/defs/dataFormat"}
+                    "url": stringOrSignal,
+                    "format": [
+                      {"$ref": "#/defs/dataFormat"},
+                      {"$ref": "#/refs/signal"}
+                    ]
                   },
                   "required": ["url"]
                 }
