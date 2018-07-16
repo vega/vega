@@ -39,6 +39,11 @@ Properties for specifying a data set. At most one of the _source_, _url_, or _va
 | on        | {% include array t="[Trigger](../triggers)" %} | An array of updates to insert, remove, &amp; toggle data values, or clear the data when trigger conditions are met. See the [trigger reference](../triggers) for more.|
 | transform | {% include array t="[Transform](../transforms)" %} | An array of transforms to perform on the input data. The output of the transform pipeline then becomes the value of this data set. See the [transform reference](../transforms) for more. |
 
+### Dynamic Data Loading
+
+{% include tag ver="4.2" %} For Vega version 4.2 and higher, the data _url_ parameter and (when used with URL-loading) the _format_ parameter may include [signal references](../types/#Signal). This feature allows either the source url or one or more formatting parameters to be dynamically changed at runtime, causing the data to be reloaded. For example, a single spec might load a different dataset based on user input, or the data might be polled at a regular interval in conjunction with a `timer` event stream.
+
+If no signals are used (the traditional configuration), external data sources are loaded _immediately_ upon view construction and the first dataflow evaluation is delayed until data loading is complete. For dynamic loading, the dataflow must first be evaluated in order to determine the signal values, and then data can be loaded. As a result of this, downstream transforms and encodings may initially be evaluated with empty datasets: _be sure any signal expressions behave appropriately with empty data, including downstream concerns such as empty scale domains_.
 
 ## <a name="format"></a>Format
 
