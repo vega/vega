@@ -7,6 +7,7 @@ import {
   FontWeightValue,
   ColorValue,
   TextBaselineValue,
+  AlignValue,
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
@@ -50,14 +51,27 @@ export interface BaseTitle<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  A = AlignValue,
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
-  A = AnchorValue
+  AN = AnchorValue
 > {
   /**
    * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
    */
-  anchor?: A;
+  anchor?: AN;
+
+  /**
+   * The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height).
+   */
+  frame?: F;
+
+  /**
+   * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
+   */
+  offset?: N;
+
+  align: A;
 
   /**
    * Angle in degrees of title text.
@@ -95,21 +109,11 @@ export interface BaseTitle<
   fontWeight?: FW;
 
   /**
-   * The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height).
-   */
-  frame?: F;
-
-  /**
    * The maximum allowed length in pixels of legend labels.
    *
    * @minimum 0
    */
   limit?: N;
-
-  /**
-   * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
-   */
-  offset?: N;
 
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
