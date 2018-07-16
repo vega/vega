@@ -975,9 +975,9 @@ uri-js@^4.2.1:
   dependencies:
     punycode "^2.1.0"
 
-vega-dataflow@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.3.tgz#053e697fd7220329be5903c7f400ee657e2d2f6a"
+vega-dataflow@^4.0.3, vega-dataflow@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/vega-dataflow/-/vega-dataflow-4.0.4.tgz#e2f4b4805618d01c0b833a93484d3c244675fba3"
   dependencies:
     vega-loader "^3.0.1"
     vega-util "^1.7.0"
@@ -1010,11 +1010,11 @@ vega-statistics@^1.2.1:
     d3-array "1"
 
 vega-transforms@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.1.0.tgz#314f3effe98db50e76d820cd89fbd8acc1fc50f3"
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/vega-transforms/-/vega-transforms-2.2.0.tgz#5f427632abf6d4226249435fadf0b8d7d74e79bc"
   dependencies:
     d3-array "^1.2.1"
-    vega-dataflow "^4.0.3"
+    vega-dataflow "^4.0.4"
     vega-statistics "^1.2.1"
     vega-util "^1.7.0"
 
