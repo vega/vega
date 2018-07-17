@@ -985,11 +985,16 @@
                 {
                   "properties": {
                     "url": {
-                      "type": "string"
+                      "$ref": "#/refs/stringOrSignal"
                     },
-                    "format": {
-                      "$ref": "#/defs/dataFormat"
-                    }
+                    "format": [
+                      {
+                        "$ref": "#/defs/dataFormat"
+                      },
+                      {
+                        "$ref": "#/refs/signal"
+                      }
+                    ]
                   },
                   "required": [
                     "url"
@@ -3963,6 +3968,29 @@
                 }
               ]
             },
+            "frame": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "group",
+                    "bounds"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/stringValue"
+                }
+              ]
+            },
+            "offset": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
             "style": {
               "$ref": "#/refs/style"
             },
@@ -3974,6 +4002,45 @@
             },
             "interactive": {
               "type": "boolean"
+            },
+            "align": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "left",
+                    "right",
+                    "center"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/alignValue"
+                }
+              ]
+            },
+            "angle": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "baseline": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "top",
+                    "middle",
+                    "bottom",
+                    "alphabetic"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/baselineValue"
+                }
+              ]
             },
             "color": {
               "oneOf": [
@@ -4039,54 +4106,6 @@
                 },
                 {
                   "$ref": "#/refs/fontWeightValue"
-                }
-              ]
-            },
-            "offset": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/refs/numberValue"
-                }
-              ]
-            },
-            "frame": {
-              "oneOf": [
-                {
-                  "enum": [
-                    "group",
-                    "bounds"
-                  ]
-                },
-                {
-                  "$ref": "#/refs/stringValue"
-                }
-              ]
-            },
-            "angle": {
-              "oneOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "$ref": "#/refs/numberValue"
-                }
-              ]
-            },
-            "baseline": {
-              "oneOf": [
-                {
-                  "enum": [
-                    "top",
-                    "middle",
-                    "bottom",
-                    "alphabetic"
-                  ]
-                },
-                {
-                  "$ref": "#/refs/baselineValue"
                 }
               ]
             },
@@ -5914,6 +5933,17 @@
             }
           ],
           "default": 1
+        },
+        "as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "data"
         }
       },
       "additionalProperties": false,
