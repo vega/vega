@@ -2,17 +2,17 @@ import { SignalRef } from '.';
 import { AnchorValue } from './values';
 import { TitleAnchor } from './title';
 
-export type FieldValue = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
+export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 
 export interface DatumFieldRef {
-  datum: FieldValue;
+  datum: Field;
 }
 export interface GroupFieldRef {
-  group: FieldValue;
+  group: Field;
   level?: number;
 }
 export interface ParentFieldRef {
-  parent: FieldValue;
+  parent: Field;
   level?: number;
 }
 export type BaseValueRef<T> =
@@ -21,7 +21,7 @@ export type BaseValueRef<T> =
       value: T | null;
     }
   | {
-      field: FieldValue;
+      field: Field;
     }
   | {
       range: number | boolean;
@@ -29,10 +29,10 @@ export type BaseValueRef<T> =
 export type ScaledValueRef<T> =
   | BaseValueRef<T>
   | (BaseValueRef<T> & {
-      scale: FieldValue;
+      scale: Field;
     })
   | {
-      scale: FieldValue;
+      scale: Field;
       band: boolean | number;
     };
 export type NumericValueRef = (ScaledValueRef<number> | {}) & {
@@ -74,7 +74,7 @@ export interface ColorHCL {
 export type ColorValueRef =
   | ScaledValueRef<string>
   | {
-      gradient: FieldValue;
+      gradient: Field;
     }
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;

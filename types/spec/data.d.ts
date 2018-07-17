@@ -1,8 +1,5 @@
 import { OnTrigger, Transform, SignalRef } from '.';
 
-export interface FieldParam {
-  field: string;
-}
 export type DataType = 'boolean' | 'number' | 'date' | 'string';
 export type Parse =
   | 'auto'
