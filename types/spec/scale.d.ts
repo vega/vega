@@ -33,6 +33,10 @@ export type SortField =
       op: ScaleField;
       order?: SortOrder;
     };
+
+/**
+ * Unioned domains can only be sorted by count aggregate.
+ */
 export type UnionSortField =
   | boolean
   | {
