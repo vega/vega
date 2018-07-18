@@ -46,6 +46,8 @@ export class View {
 
   padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): this;
 
+  resize(): this;
+
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
   toSVG(): Promise<string>;
   toCanvas(): Promise<HTMLCanvasElement>;
