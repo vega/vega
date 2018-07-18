@@ -29,7 +29,7 @@ export var AggregateOps = {
   'sum': measure({
     name: 'sum',
     init: 'this.sum = 0;',
-    add:  'this.sum += v;',
+    add:  'this.sum += +v;',
     rem:  'this.sum -= v;',
     set:  'this.sum'
   }),
