@@ -50,7 +50,7 @@ export interface BaseMark {
   key?: string;
   clip?: Clip;
   sort?: Compare;
-  interactive?: boolean;
+  interactive?: boolean | SignalRef;
   from?: From;
   transform?: Transform[];
   zindex?: number;
