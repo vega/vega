@@ -2,10 +2,9 @@ import {inrange} from './arrays';
 import {Literal} from './ast';
 import {dataVisitor} from './data';
 import {indexPrefix} from './prefixes';
-import {error, field, isArray, isDate, toNumber} from 'vega-util';
+import {array, error, field, isArray, isDate, toNumber} from 'vega-util';
 
-var BIN = 'bin_',
-    TYPE_ENUM = 'E',
+var TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
@@ -31,7 +30,8 @@ function testPoint(datum, entry) {
     if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
 
     if (f.type === TYPE_ENUM) {
-      // Enumerated fields can either specify individual values or an array of values.
+      // Enumerated fields can either specify individual values (single/multi selections)
+      // or an array of values (interval selections).
       if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
         return false;
       }
@@ -112,7 +112,7 @@ export function vlSelectionVisitor(name, args, scope, params) {
   if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
 
   var data = args[0].value,
-      op = args.length >= 3 && args[args.length-1].value,
+      op = args.length >= 2 && args[args.length-1].value,
       field = 'unit',
       indexName = indexPrefix + field;
 
@@ -124,169 +124,91 @@ export function vlSelectionVisitor(name, args, scope, params) {
 }
 
 /**
- * Materializes a point selection as a scale domain.
- * @param {string} name - The name of the dataset representing the selection.
- * @param {string} [encoding] - A particular encoding channel to materialize.
- * @param {string} [field] - A particular field to materialize.
- * @param {string} [op='intersect'] - The set operation for combining selections.
- * One of 'intersect' (default) or 'union'.
- * @returns {array} An array of values to serve as a scale domain.
- */
-export function vlPointDomain(name, encoding, field, op) {
-  var data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-      entry = entries[0],
-      i = 0, n, index, values, continuous, units;
-
-  if (!entry) return undefined;
-
-  for (n = encoding ? entry.encodings.length : entry.fields.length; i<n; ++i) {
-    if ((encoding && entry.encodings[i] === encoding) ||
-        (field && entry.fields[i] === field)) {
-      index = i;
-      continuous = entry[BIN + entry.fields[i]];
-      break;
-    }
-  }
-
-  // multi selections union within the same unit and intersect across units.
-  // if we've got only one unit, enforce union for more efficient materialization.
-  if (unitIdx && unitIdx.size === 1) {
-    op = UNION;
-  }
-
-  if (unitIdx && op === INTERSECT) {
-    units = entries.reduce(function(acc, entry) {
-      var u = acc[entry.unit] || (acc[entry.unit] = []);
-      u.push({unit: entry.unit, value: entry.values[index]});
-      return acc;
-    }, {});
-
-    values = Object.keys(units).map(function(unit) {
-      return {
-        unit: unit,
-        value: continuous
-          ? continuousDomain(units[unit], UNION)
-          : discreteDomain(units[unit], UNION)
-      };
-    });
-  } else {
-    values = entries.map(function(entry) {
-      return {unit: entry.unit, value: entry.values[index]};
-    });
-  }
-
-  return continuous ? continuousDomain(values, op) : discreteDomain(values, op);
-}
-
-/**
- * Materializes an interval selection as a scale domain.
- * @param {string} name - The name of the dataset representing the selection.
- * @param {string} [encoding] - A particular encoding channel to materialize.
- * @param {string} [field] - A particular field to materialize.
+ * Resolves selection for use as a scale domain or reads via the API.
+ * @param {string} name - The name of the dataset representing the selection
  * @param {string} [op='union'] - The set operation for combining selections.
- * One of 'intersect' or 'union' (default).
- * @returns {array} An array of values to serve as a scale domain.
+ *                 One of 'intersect' or 'union' (default).
+ * @returns {object} An object of selected fields and values.
  */
-export function vlIntervalDomain(name, encoding, field, op) {
+export function vlSelectionResolve(name, op) {
   var data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      entry = entries[0],
-      i = 0, n, interval, index, values, discrete;
+    entries = data ? data.values.value : [],
+    resolved = {}, types = {},
+    entry, fields, values, unit, field, res, resUnit, type, union,
+    n = entries.length, i = 0, j, m;
 
-  if (!entry) return undefined;
-
-  for (n = entry.intervals.length; i<n; ++i) {
-    interval = entry.intervals[i];
-    if ((encoding && interval.encoding === encoding) ||
-        (field && interval.field === field)) {
-      if (!interval.extent) return undefined;
-      index = i;
-      discrete = interval.extent.length > 2;
-      break;
-    }
-  }
-
-  values = entries.reduce(function(acc, entry) {
-    var extent = entry.intervals[index].extent,
-        value = discrete
-           ? extent.map(function (d) { return {unit: entry.unit, value: d}; })
-           : {unit: entry.unit, value: extent};
-
-    if (discrete) {
-      acc.push.apply(acc, value);
-    } else {
-      acc.push(value);
-    }
-    return acc;
-  }, []);
-
-
-  return discrete ? discreteDomain(values, op) : continuousDomain(values, op);
-}
-
-function discreteDomain(entries, op) {
-  var units = {}, count = 0,
-      values = {}, domain = [],
-      i = 0, n = entries.length,
-      entry, unit, v, key;
-
-  for (; i<n; ++i) {
+  // First union all entries within the same unit.
+  for (; i < n; ++i) {
     entry = entries[i];
-    unit  = entry.unit;
-    key   = entry.value;
+    unit = entry.unit;
+    fields = entry.fields;
+    values = entry.values;
 
-    if (!units[unit]) units[unit] = ++count;
-    if (!(v = values[key])) {
-      values[key] = v = {value: key, units: {}, count: 0};
+    for (j = 0, m = fields.length; j < m; ++j) {
+      field = fields[j];
+      res = resolved[field.field] || (resolved[field.field] = {});
+      resUnit = res[unit] || (res[unit] = []);
+      types[field.field] = type = field.type.charAt(0);
+      union = ops[type + '_union'];
+      res[unit] = union(resUnit, array(values[j]));
     }
-    if (!v.units[unit]) v.units[unit] = ++v.count;
   }
 
-  for (key in values) {
-    v = values[key];
-    if (op === INTERSECT && v.count !== count) continue;
-    domain.push(v.value);
-  }
+  // Then resolve fields across units as per the op.
+  op = op || UNION;
+  Object.keys(resolved).forEach(function (field) {
+    resolved[field] = Object.keys(resolved[field])
+      .map(function (unit) { return resolved[field][unit]; })
+      .reduce(function (acc, curr) {
+        return acc === undefined ? curr :
+          ops[types[field] + '_' + op](acc, curr);
+      });
+  });
 
-  return domain.length ? domain : undefined;
+  return resolved;
 }
 
-function continuousDomain(entries, op) {
-  var merge = op === INTERSECT ? intersectInterval : unionInterval,
-      i = 0, n = entries.length,
-      extent, domain, lo, hi;
+var ops = {
+  'E_union': function (base, value) {
+    if (!base.length) return value;
 
-  for (; i<n; ++i) {
-    extent = entries[i].value;
-    if (isDate(extent[0])) extent = extent.map(toNumber);
-    lo = extent[0];
-    hi = extent[1];
+    var i = 0, n = value.length;
+    for (; i<n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+    return base;
+  },
+
+  'E_intersect': function (base, value) {
+    return !base.length ? value :
+      base.filter(function (v) { return value.indexOf(v) >= 0; });
+  },
+
+  'R_union': function (base, value) {
+    var lo = toNumber(value[0]), hi = toNumber(value[1]);
     if (lo > hi) {
-      hi = extent[0];
-      lo = extent[1];
+      lo = value[1];
+      hi = value[0];
     }
-    domain = domain ? merge(domain, lo, hi) : [lo, hi];
+
+    if (!base.length) return [lo, hi];
+    if (base[0] > lo) base[0] = lo;
+    if (base[1] < hi) base[1] = hi;
+    return base;
+  },
+
+  'R_intersect': function (base, value) {
+    var lo = toNumber(value[0]), hi = toNumber(value[1]);
+    if (lo > hi) {
+      lo = value[1];
+      hi = value[0];
+    }
+
+    if (!base.length) return [lo, hi];
+    if (hi < base[0] || base[1] < lo) {
+      return [];
+    } else {
+      if (base[0] < lo) base[0] = lo;
+      if (base[1] > hi) base[1] = hi;
+    }
+    return base;
   }
-
-  return domain && domain.length && (+domain[0] !== +domain[1])
-    ? domain
-    : undefined;
-}
-
-function unionInterval(domain, lo, hi) {
-  if (domain[0] > lo) domain[0] = lo;
-  if (domain[1] < hi) domain[1] = hi;
-  return domain;
-}
-
-function intersectInterval(domain, lo, hi) {
-  if (hi < domain[0] || domain[1] < lo) {
-    return [];
-  } else {
-    if (domain[0] < lo) domain[0] = lo;
-    if (domain[1] > hi) domain[1] = hi;
-  }
-  return domain;
 }
