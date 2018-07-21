@@ -232,13 +232,16 @@ export interface IdentifierTransform {
   as: string;
 }
 
+export type ImputeMethod = 'value' | 'median' | 'max' | 'min' | 'mean';
+
 export interface ImputeTransform {
   type: 'impute';
   groupby?: string[];
   field: string;
   key: string;
-  keyvals?: string[];
-  method?: 'value' | 'median' | 'max' | 'min' | 'mean';
+  keyvals?: any[] | SignalRef;
+  method?: ImputeMethod;
+  value?: any;
 }
 
 export interface LookupTransform {
@@ -247,7 +250,7 @@ export interface LookupTransform {
   key: string;
   fields: string[];
   values?: string[];
-  as?: string[];
+  as?: (string | SignalRef)[] | SignalRef;
   default?: any;
 }
 
@@ -262,7 +265,7 @@ export interface StackTransform {
   groupby?: (string | TransformField)[];
   sort?: Compare;
   offset?: StackOffset;
-  as?: Vector2<string>;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
 
