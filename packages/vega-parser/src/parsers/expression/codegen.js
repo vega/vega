@@ -31,7 +31,7 @@ import {data, indata, setdata, dataVisitor, indataVisitor} from './data';
 import {treePath, treeAncestors} from './tree';
 import encode from './encode';
 import modify from './modify';
-import {vlSelectionTest, vlSelectionVisitor, vlPointDomain, vlIntervalDomain} from './selection';
+import {vlSelectionTest, vlSelectionResolve, vlSelectionVisitor} from './selection';
 
 // Expression function context object
 export var functionContext = {
@@ -132,9 +132,7 @@ expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('vlSelectionTest', vlSelectionTest, vlSelectionVisitor);
-expressionFunction('vlSingleDomain', vlPointDomain, dataVisitor);
-expressionFunction('vlMultiDomain', vlPointDomain, vlSelectionVisitor);
-expressionFunction('vlIntervalDomain', vlIntervalDomain, dataVisitor);
+expressionFunction('vlSelectionResolve', vlSelectionResolve, vlSelectionVisitor);
 expressionFunction('treePath', treePath, dataVisitor);
 expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
