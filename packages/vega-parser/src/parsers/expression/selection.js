@@ -2,54 +2,51 @@ import {inrange} from './arrays';
 import {Literal} from './ast';
 import {dataVisitor} from './data';
 import {indexPrefix} from './prefixes';
-import {error, field, isNumber, isString, isDate, toNumber} from 'vega-util';
+import {error, field, isArray, isDate, toNumber} from 'vega-util';
 
 var BIN = 'bin_',
+    TYPE_ENUM = 'E',
+    TYPE_RANGE_INC = 'R',
+    TYPE_RANGE_EXC = 'R-E',
+    TYPE_RANGE_LE = 'R-LE',
+    TYPE_RANGE_RE = 'R-RE',
     INTERSECT = 'intersect',
     UNION = 'union',
     UNIT_INDEX = 'index:unit';
 
+// TODO: revisit date coercion?
 function testPoint(datum, entry) {
   var fields = entry.fields,
       values = entry.values,
-      getter = entry.getter || (entry.getter = []),
       n = fields.length,
-      i = 0, dval;
+      i = 0, dval, f;
 
   for (; i<n; ++i) {
-    getter[i] = getter[i] || field(fields[i]);
-    dval = getter[i](datum);
+    f = fields[i];
+    f.getter = field.getter || field(f.field);
+    dval = f.getter(datum);
+
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
-    if (entry[BIN + fields[i]]) {
-      if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
-      if (!inrange(dval, values[i], true, false)) return false;
-    } else if (dval !== values[i]) {
-      return false;
+    if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+
+    if (f.type === TYPE_ENUM) {
+      // Enumerated fields can either specify individual values or an array of values.
+      if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+        return false;
+      }
+    } else {
+      if (f.type === TYPE_RANGE_INC) {
+        if (!inrange(dval, values[i])) return false;
+      } else if (f.type === TYPE_RANGE_RE) {
+        // Discrete selection of bins test within the range [bin_start, bin_end).
+        if (!inrange(dval, values[i], true, false)) return false;
+      } else if (f.type === TYPE_RANGE_EXC) { // 'R-E'/'R-LE' included for completeness.
+        if (!inrange(dval, values[i], false, false)) return false;
+      } else if (f.type === TYPE_RANGE_LE) {
+        if (!inrange(dval, values[i], false, true)) return false;
+      }
     }
-  }
-
-  return true;
-}
-
-// TODO: revisit date coercion?
-// have selections populate with consistent types upon write?
-
-function testInterval(datum, entry) {
-  var ivals = entry.intervals,
-      n = ivals.length,
-      i = 0,
-      getter, extent, value;
-
-  for (; i<n; ++i) {
-    extent = ivals[i].extent;
-    getter = ivals[i].getter || (ivals[i].getter = field(ivals[i].field));
-    value = getter(datum);
-    if (!extent || extent[0] === extent[1]) return false;
-    if (isDate(value)) value = toNumber(value);
-    if (isDate(extent[0])) extent = ivals[i].extent = extent.map(toNumber);
-    if (isNumber(extent[0]) && !inrange(value, extent)) return false;
-    else if (isString(extent[0]) && extent.indexOf(value) < 0) return false;
   }
 
   return true;
@@ -58,14 +55,18 @@ function testInterval(datum, entry) {
 /**
  * Tests if a tuple is contained within an interactive selection.
  * @param {string} name - The name of the data set representing the selection.
+ *                 Tuples in the dataset are of the form
+ *                 {unit: string, fields: array<fielddef>, values: array<*>}.
+ *                 Fielddef is of the form
+ *                 {field: string, channel: string, type: 'E' | 'R'} where
+ *                 'type' identifies whether tuples in the dataset enumerate
+ *                 values for the field, or specify a continuous range.
  * @param {object} datum - The tuple to test for inclusion.
  * @param {string} op - The set operation for combining selections.
  *   One of 'intersect' or 'union' (default).
- * @param {function(object,object):boolean} test - A boolean-valued test
- *   predicate for determining selection status within a single unit chart.
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
-function vlSelection(name, datum, op, test) {
+export function vlSelectionTest(name, datum, op) {
   var data = this.context.data[name],
       entries = data ? data.values.value : [],
       unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
@@ -85,7 +86,7 @@ function vlSelection(name, datum, op, test) {
       // if we've already matched this unit, skip.
       if (count === -1) continue;
 
-      b = test(datum, entry);
+      b = testPoint(datum, entry);
       miss[unit] = b ? -1 : ++count;
 
       // if we match and there are no other units return true
@@ -93,7 +94,7 @@ function vlSelection(name, datum, op, test) {
       if (b && unitIdx.size === 1) return true;
       if (!b && count === unitIdx.get(unit).count) return false;
     } else {
-      b = test(datum, entry);
+      b = testPoint(datum, entry);
 
       // if we find a miss and we do require intersection return false
       // if we find a match and we don't require intersection return true
@@ -107,24 +108,11 @@ function vlSelection(name, datum, op, test) {
   return n && intersect;
 }
 
-// Assumes point selection tuples are of the form:
-// {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
-export function vlPoint(name, datum, op) {
-  return vlSelection.call(this, name, datum, op, testPoint);
-}
-
-// Assumes interval selection typles are of the form:
-// {unit: string, intervals: array<{encoding: string, field:string, extent:array<number>}>}
-export function vlInterval(name, datum, op) {
-  return vlSelection.call(this, name, datum, op, testInterval);
-}
-
-export function vlMultiVisitor(name, args, scope, params) {
+export function vlSelectionVisitor(name, args, scope, params) {
   if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
 
   var data = args[0].value,
-      // vlMulti, vlMultiDomain have different # of params, but op is always last.
-      op = args.length >= 2 && args[args.length-1].value,
+      op = args.length >= 3 && args[args.length-1].value,
       field = 'unit',
       indexName = indexPrefix + field;
 
