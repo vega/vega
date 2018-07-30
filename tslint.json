@@ -6,6 +6,7 @@
     "max-line-length": false,
     "no-implicit-dependencies": false,
     "semicolon": false,
-    "whitespace": false
+    "whitespace": false,
+    "file-name-casing": false
   }
 }
