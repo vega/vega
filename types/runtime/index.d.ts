@@ -117,7 +117,16 @@ export interface DefineMark<T extends string, I = {}, R extends string = never> 
   group: any;
 }
 
+// Extensibility: https://vega.github.io/vega/docs/api/extensibility/
+
 export function projection(type: string, projection: any): View;
+
+export function scale(type: string, scale?: any): any;
+
+export function scheme(name: string, scheme?: any): any;
+export function schemeDiscretized(name: string, scheme?: any, interpolator?: any): any;
+
+export function expressionFunction(name: string, fn?: any, visitor?: any): void | any;
 
 export * from 'vega-util';
 export * from './renderer';
