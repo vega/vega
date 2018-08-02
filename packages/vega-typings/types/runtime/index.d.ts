@@ -126,7 +126,7 @@ export function scale(type: string, scale?: any): any;
 export function scheme(name: string, scheme?: any): any;
 export function schemeDiscretized(name: string, scheme?: any, interpolator?: any): any;
 
-export function expressionFunction(name: string, fn?: any, visitor?: any): void | any;
+export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
 export * from 'vega-util';
 export * from './renderer';
