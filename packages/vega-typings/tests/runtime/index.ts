@@ -62,16 +62,12 @@ function serverSideApi() {
     .toCanvas()
     .then(canvas => {
       const filename = 'chart.png';
-      if (canvas.msToBlob) {
-        window.navigator.msSaveBlob(canvas.msToBlob(), filename);
-      } else {
-        const url = canvas.toDataURL();
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('target', '_blank');
-        link.setAttribute('download', filename);
-        link.dispatchEvent(new MouseEvent('click'));
-      }
+      const url = canvas.toDataURL();
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('download', filename);
+      link.dispatchEvent(new MouseEvent('click'));
     })
     .catch((err) => {
       console.error(err);
