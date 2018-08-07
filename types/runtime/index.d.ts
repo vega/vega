@@ -83,7 +83,11 @@ export interface LoaderOptions {
   http?: RequestInit;
 }
 export function loader(opt?: LoaderOptions): Loader;
-export function read(data: string, schema: Format, dateParse?: (dateString: string) => Date): object[];
+export function read(
+  data: string,
+  schema: Format,
+  dateParse?: (dateString: string) => Date,
+): object[];
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
