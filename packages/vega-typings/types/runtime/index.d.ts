@@ -1,5 +1,5 @@
 import { Renderer, Renderers } from './renderer';
-import { Spec } from '..';
+import { Format, Spec } from '..';
 
 // TODO
 export type Runtime = any;
@@ -83,6 +83,7 @@ export interface LoaderOptions {
   http?: RequestInit;
 }
 export function loader(opt?: LoaderOptions): Loader;
+export function read(data: string, schema: Format, dateParse?: (dateString: string) => Date): object[];
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
