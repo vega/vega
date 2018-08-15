@@ -165,7 +165,7 @@ export type ContourTransform = {
 
 export interface ExtentTransform {
   type: 'extent';
-  field: string;
+  field: string | TransformField;
   signal: string;
 }
 
