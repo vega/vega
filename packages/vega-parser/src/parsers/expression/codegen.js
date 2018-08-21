@@ -32,6 +32,7 @@ import {treePath, treeAncestors} from './tree';
 import encode from './encode';
 import modify from './modify';
 import {vlSelectionTest, vlSelectionResolve, vlSelectionVisitor} from './selection';
+import {vlPoint, vlPointDomain, vlMultiVisitor, vlInterval, vlIntervalDomain} from './selection.deprecated';
 
 // Expression function context object
 export var functionContext = {
@@ -131,10 +132,20 @@ expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
-expressionFunction('vlSelectionTest', vlSelectionTest, vlSelectionVisitor);
-expressionFunction('vlSelectionResolve', vlSelectionResolve, vlSelectionVisitor);
 expressionFunction('treePath', treePath, dataVisitor);
 expressionFunction('treeAncestors', treeAncestors, dataVisitor);
+
+// Vega-Lite selection functions.
+expressionFunction('vlSelectionTest', vlSelectionTest, vlSelectionVisitor);
+expressionFunction('vlSelectionResolve', vlSelectionResolve, vlSelectionVisitor);
+
+// Deprecated selection functions kept around to avoid a major version bump.
+expressionFunction('vlSingle', vlPoint, dataVisitor);
+expressionFunction('vlSingleDomain', vlPointDomain, dataVisitor);
+expressionFunction('vlMulti', vlPoint, vlMultiVisitor);
+expressionFunction('vlMultiDomain', vlPointDomain, vlMultiVisitor);
+expressionFunction('vlInterval', vlInterval, dataVisitor);
+expressionFunction('vlIntervalDomain', vlIntervalDomain, dataVisitor);
 
 // Build expression function registry
 function buildFunctions(codegen) {
