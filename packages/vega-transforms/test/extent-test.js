@@ -32,3 +32,20 @@ tape('Extent computes extents', function(test) {
 
   test.end();
 });
+
+tape('Extent handles empty and invalid data', function(test) {
+  var x = util.field('x'),
+      df = new vega.Dataflow(),
+      c = df.add(Collect),
+      e = df.add(Extent, {field:x, pulse:c});
+
+  df.pulse(c, changeset().insert([])).run();
+  test.deepEqual(e.value, [undefined, undefined]);
+
+  df.pulse(c, changeset().insert([
+    {x: NaN}, {x: null}, {x: undefined}
+  ])).run();
+  test.deepEqual(e.value, [undefined, undefined]);
+
+  test.end();
+});
