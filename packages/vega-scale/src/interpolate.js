@@ -9,7 +9,7 @@ export function interpolateRange(interpolator, range) {
 
 export function scaleFraction(scale, min, max) {
   var delta = max - min;
-  return !delta ? constant(0)
+  return !delta || !isFinite(delta) ? constant(0)
     : scale.type === 'linear' || scale.type === 'sequential'
       ? function(_) { return (_ - min) / delta; }
       : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
