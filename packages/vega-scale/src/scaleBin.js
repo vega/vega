@@ -90,6 +90,12 @@ export function binOrdinal() {
     }
   };
 
+  // Addresses #1395, refine if/when d3-scale tickFormat is exposed
+  scale.tickFormat = function() {
+    var linear = scaleLinear().domain([domain[0], peek(domain)]);
+    return linear.tickFormat.apply(linear, arguments);
+  };
+
   scale.copy = function() {
     return binOrdinal().domain(scale.domain()).range(scale.range());
   };
