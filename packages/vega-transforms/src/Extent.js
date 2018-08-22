@@ -8,7 +8,7 @@ import {inherits} from 'vega-util';
  * @param {function(object): *} params.field - The field over which to compute extends.
  */
 export default function Extent(params) {
-  Transform.call(this, [+Infinity, -Infinity], params);
+  Transform.call(this, [undefined, undefined], params);
 }
 
 Extent.Definition = {
@@ -26,20 +26,18 @@ prototype.transform = function(_, pulse) {
       field = _.field,
       min = extent[0],
       max = extent[1],
-      flag = pulse.ADD,
       mod;
 
   mod = pulse.changed()
      || pulse.modified(field.fields)
      || _.modified('field');
 
-  if (mod) {
-    flag = pulse.SOURCE;
+  if (mod || min == null) {
     min = +Infinity;
     max = -Infinity;
   }
 
-  pulse.visit(flag, function(t) {
+  pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
     var v = field(t);
     if (v != null) {
       // coerce to number
@@ -50,5 +48,8 @@ prototype.transform = function(_, pulse) {
     }
   });
 
+  if (!isFinite(min) || !isFinite(max)) {
+    min = max = undefined;
+  }
   this.value = [min, max];
 };
