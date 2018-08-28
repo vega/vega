@@ -75,7 +75,7 @@ produces as output the augmented input stream:
 [
   {"key":0, "value":1, "rank":1, "drank":1, "sum":1, "mean":1},
   {"key":1, "value":3, "rank":2, "drank":2, "sum":4, "mean":2},
-  {"key":2, "value":2, "rank":3, "drank":3, "sum":10, "mean":2.5},
+  {"key":2, "value":2, "rank":3, "drank":3, "sum":6, "mean":2},
   {"key":2, "value":4, "rank":3, "drank":3, "sum":10, "mean":2.5},
   {"key":3, "value":3, "rank":5, "drank":4, "sum":13, "mean":2.6}
 ]
