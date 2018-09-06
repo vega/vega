@@ -131,7 +131,6 @@ export interface BaseAxis<
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
-  SY = SymbolShapeValue,
   LO = LabelOverlap | SignalRef,
   DA = DashArrayValue
 > {
