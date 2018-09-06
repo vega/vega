@@ -338,6 +338,8 @@ export interface BaseLegend<
 
   /**
    * Default shape type (such as "circle") for legend symbols.
+   * Can be one of ``"circle"`, `"square"`, `"cross"`, `"diamond"`, `"triangle-up"`, `"triangle-down"`, `"triangle-right"`, or `"triangle-left"`.
+   * In addition to a set of built-in shapes, custom shapes can be defined using SVG path strings.
    *
    * __Default value:__ `"circle"`.
    */
