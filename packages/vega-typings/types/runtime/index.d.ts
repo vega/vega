@@ -81,7 +81,7 @@ export interface Changeset {
 }
 
 export const Warn: number;
-export const changeset: () => Changeset;
+export function changeset(): Changeset;
 export interface LoaderOptions {
   baseURL?: string;
   mode?: 'file' | 'http';
