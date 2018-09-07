@@ -34,9 +34,9 @@ export class View {
   runAsync(): Promise<View>;
   insert(name: string, tuples: any): this;
   remove(name: string, tuples: any): this;
-  change(name: string, changeset: any): this;
+  change(name: string, changeset: Changeset): this;
   changeset(): any;
-  data(name: string): object[];
+  data(name: string): any[];
 
   width(): number;
   width(w: number): this;
@@ -74,8 +74,14 @@ export class View {
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 
+export interface Changeset {
+  insert(tuples: any): this;
+  remove(tuples: any): this;
+  modify(tuple: any, field?: string, value?: any): this;
+}
+
 export const Warn: number;
-export const changeset: any;
+export const changeset: () => Changeset;
 export interface LoaderOptions {
   baseURL?: string;
   mode?: 'file' | 'http';
