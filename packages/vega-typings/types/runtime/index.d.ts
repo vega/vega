@@ -1,6 +1,6 @@
-import { Renderer, Renderers } from './renderer';
-import { DataType } from '../spec';
 import { Format, Spec } from '..';
+import { DataType, EncodeEntryName } from '../spec';
+import { Renderers } from './renderer';
 
 // TODO
 export type Runtime = any;
@@ -28,7 +28,7 @@ export class View {
   renderer(renderer: Renderers): this;
   loader(loader: Loader): this;
 
-  hover(hoverSet?: string, leaveSet?: string): this;
+  hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
   run(): this;
   runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
   runAsync(): Promise<View>;
