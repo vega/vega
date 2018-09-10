@@ -30,7 +30,16 @@ export type SceneLine = SceneItem & {
   y2: number;
 };
 
-export type SceneGroup = SceneRect;
+export interface SceneContext {
+  background?: string;
+}
+
+export type SceneGroup = SceneItem & {
+  context: SceneContext;
+  items: SceneItem[];
+  height: number;
+  width: number;
+};
 
 export type SceneSymbol = SceneItem & {
   fill: string;
