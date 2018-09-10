@@ -20,6 +20,10 @@ type SceneRenderer = (scene: Scene) => void;
 const group: SceneRenderer = (outerScene: Scene) => {
     sceneVisit(outerScene, sceneGroupOrItem => {
         const group = sceneGroupOrItem as SceneGroup;
+        group.context.background;
+        group.items.length;
+        group.height;
+        group.width;
         sceneVisit(group, item => {
             const innerScene = item as Scene;
             rootRenderer(innerScene);
