@@ -28,7 +28,7 @@ export class View {
   renderer(renderer: Renderers): this;
   loader(loader: Loader): this;
 
-  hover(): this;
+  hover(hoverSet?: string, leaveSet?: string): this;
   run(): this;
   runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
   runAsync(): Promise<View>;
