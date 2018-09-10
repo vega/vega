@@ -1,4 +1,5 @@
 import { SignalRef } from '.';
+import { ColorScheme } from './scheme';
 
 export type RangeEnum =
   | 'width'
@@ -15,7 +16,7 @@ export type RangeScheme =
   | RangeRaw
   | SignalRef
   | {
-      scheme: string | SignalRef;
+      scheme: string | SignalRef | ColorScheme;
       count?: number | SignalRef;
       extent?: (number | SignalRef)[] | SignalRef;
     };
