@@ -98,7 +98,13 @@ const sceneRenderers: { [id: string]: SceneRenderer } = {
 };
 
 const rootRenderer: SceneRenderer = (scene: Scene) => {
+    scene.bounds;
+    scene.clip;
+    scene.interactive;
+    scene.items.length;
     const renderer = sceneRenderers[scene.marktype];
+    scene.name;
+    scene.role;
     renderer(scene);
 }
 
