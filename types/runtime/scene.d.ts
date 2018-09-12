@@ -1,5 +1,11 @@
 export interface Scene {
+  bounds: Bounds;
+  clip: boolean;
+  interactive: boolean;
+  items: SceneGroup[];
   marktype: string;
+  name: string;
+  role: string;
 }
 
 export class Bounds {
