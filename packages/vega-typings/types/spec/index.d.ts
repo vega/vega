@@ -40,3 +40,4 @@ export * from './stream';
 export * from './title';
 export * from './transform';
 export * from './util';
+export * from './values';
