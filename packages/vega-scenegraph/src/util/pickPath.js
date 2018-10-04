@@ -1,20 +1,19 @@
 export function pickArea(a, p) {
   var v = a[0].orient === 'horizontal' ? p[1] : p[0],
       z = a[0].orient === 'horizontal' ? 'y' : 'x',
-      lo = 0,
-      hi = a.length;
+      i = a.length,
+      min = +Infinity, hit, d;
 
-  if (hi === 1) return a[0];
-
-  while (lo < hi) {
-    var mid = lo + hi >>> 1;
-    if (a[mid][z] < v) lo = mid + 1;
-    else hi = mid;
+  while (--i >= 0) {
+    if (a[i].defined === false) continue;
+    d = Math.abs(a[i][z] - v);
+    if (d < min) {
+      min = d;
+      hit = a[i];
+    }
   }
-  lo = Math.max(0, lo - 1);
-  hi = Math.min(a.length - 1, hi);
 
-  return (v - a[lo][z]) < (a[hi][z] - v) ? a[lo] : a[hi];
+  return hit;
 }
 
 export function pickLine(a, p) {
