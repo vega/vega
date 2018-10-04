@@ -33,6 +33,7 @@ export * from './on-trigger';
 export * from './padding';
 export * from './projection';
 export * from './scale';
+export * from './scheme';
 export * from './scope';
 export * from './selector';
 export * from './signal';
