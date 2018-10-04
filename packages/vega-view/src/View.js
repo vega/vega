@@ -1,5 +1,5 @@
 import cursor from './cursor';
-import {data, change, insert, remove} from './data';
+import {data, dataref, change, insert, remove} from './data';
 import {initializeEventConfig, events} from './events';
 import hover from './hover';
 import finalize from './finalize';
@@ -282,8 +282,8 @@ prototype.removeResizeListener = function(handler) {
   return this;
 };
 
-function findSignalHandler(signal, handler) {
-  var t = signal._targets || [],
+function findOperatorHandler(op, handler) {
+  var t = op._targets || [],
       h = t.filter(function(op) {
             var u = op._update;
             return u && u.handler === handler;
@@ -291,24 +291,36 @@ function findSignalHandler(signal, handler) {
   return h.length ? h[0] : null;
 }
 
-prototype.addSignalListener = function(name, handler) {
-  var s = lookupSignal(this, name),
-      h = findSignalHandler(s, handler);
-
+function addOperatorListener(view, name, op, handler) {
+  var h = findOperatorHandler(op, handler);
   if (!h) {
-    h = trap(this, function() { handler(name, s.value); });
+    h = trap(this, function() { handler(name, op.value); });
     h.handler = handler;
-    this.on(s, null, h);
+    view.on(op, null, h);
   }
-  return this;
+  return view;
+}
+
+function removeOperatorListener(view, op, handler) {
+  var h = findOperatorHandler(op, handler);
+  if (h) op._targets.remove(h);
+  return view;
+}
+
+prototype.addSignalListener = function(name, handler) {
+  return addOperatorListener(this, name, lookupSignal(this, name), handler);
 };
 
 prototype.removeSignalListener = function(name, handler) {
-  var s = lookupSignal(this, name),
-      h = findSignalHandler(s, handler);
+  return removeOperatorListener(this, lookupSignal(this, name), handler);
+};
 
-  if (h) s._targets.remove(h);
-  return this;
+prototype.addDataListener = function(name, handler) {
+  return addOperatorListener(this, name, dataref(this, name).values, handler);
+};
+
+prototype.removeDataListener = function(name, handler) {
+  return removeOperatorListener(this, dataref(this, name).values, handler);
 };
 
 prototype.preventDefault = function(_) {
