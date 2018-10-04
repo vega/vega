@@ -553,6 +553,52 @@ objects is a *live* array used by the underlying dataflow. Callers that wish
 to modify the returned array should first make a defensive copy,
 for example using `view.data('name').slice()`.
 
+<a name="view_addDataListener" href="#view_addDataListener">#</a>
+view.<b>addDataListener</b>(<i>name</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+
+Registers a listener for changes to a named data set with the given *name*
+and returns this view instance. If the data set does not exist, an error
+will be raised. This method is idempotent: adding the same handler for the
+same data set multiple times has no effect beyond the first call.
+
+When the data set value changes, the *handler* function is invoked with two
+arguments: the *name* of the signal and the new data set *value*. Listeners
+will be invoked when the data set value *changes* during pulse propagation
+(e.g., after [view.run()](#view_run) is called). The value passed to the
+handler is the same as that returned by the [view.data](#view_data) method.
+The returned array of data objects is a *live* array used by the underlying
+dataflow. Listeners that wish to modify the returned array should first make
+a defensive copy, for example using `value.slice()`.
+
+Data listeners are invoked immediately upon data set update, in the midst
+of dataflow evaluation. As a result, other signal values and data transforms
+may have yet to update. If you wish to access the values of other signals or
+data sets and re-run the dataflow, use the [runAfter](#view_runAfter) method
+to schedule a callback that performs the desired actions _after_ dataflow
+evaluation completes. Attempting to call the [run](#view_run) method from
+within a data listener will result in an error, as recursive invocation is
+not allowed.
+
+To remove a listener, use the
+[removeDataListener](#view_removeDataListener) method.
+
+```js
+view.addDataListener('source', function(name, value) {
+  console.log(name, value);
+});
+```
+
+<a name="view_removeDataListener" href="#view_removeDataListener">#</a>
+view.<b>removeDataListener</b>(<i>name</i>, <i>handler</i>)
+[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+
+Removes a data set listener registered with the
+[addDataListener](#view_addDataListener) method and returns this view
+instance. If the data set does not exist, an error will be raised. If the
+data set exists but the provided *handler* is not registered, this method
+has no effect.
+
 <a name="view_change" href="#view_change">#</a>
 view.<b>change</b>(<i>name</i>, <i>changeset</i>)
 [<>](https://github.com/vega/vega-view/blob/master/src/data.js "Source")
