@@ -589,6 +589,9 @@ The *insert* and *remove* methods of the *changeset* accept a single argument.
 The supported inputs are identical to the second arguments accepted by the
 [view.insert](#view_insert) and [view.remove](#view_remove) methods.
 
+Inserted data tuples must be JavaScript objects that have been properly
+parsed ahead of time. Any data source `"format"` directives in a Vega JSON
+specification will **not** be applied to tuples added through the View API.
 Internally, this method takes the provided
 [ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
 and invokes
@@ -609,6 +612,9 @@ _Insert can not be used in combination with
 the [remove](#view_remove) method on the same pulse; to simultaneously add
 and remove data use the [change](#view_change) method._
 
+Inserted data tuples must be JavaScript objects that have been properly
+parsed ahead of time. Any data source `"format"` directives in a Vega JSON
+specification will **not** be applied to tuples added through the View API.
 Internally, this method creates a
 [ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
 and invokes
