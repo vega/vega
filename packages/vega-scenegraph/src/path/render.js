@@ -7,6 +7,9 @@ function scale(current, s) {
   if (c === 'a' || c === 'A') {
     temp[1] = s * current[1];
     temp[2] = s * current[2];
+    temp[3] = current[3];
+    temp[4] = current[4];
+    temp[5] = current[5];
     temp[6] = s * current[6];
     temp[7] = s * current[7];
   } else {
