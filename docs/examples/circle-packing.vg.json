@@ -29,6 +29,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "tree", "field": "depth"},
       "range": {"scheme": "category20"}
     }
   ],

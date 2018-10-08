@@ -37,6 +37,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "people", "field": "group"},
       "range": {"scheme": "category20c"}
     }
   ],

@@ -53,6 +53,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "iris", "field": "organ"},
       "range": "category"
     }
   ],

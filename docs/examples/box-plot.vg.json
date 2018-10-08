@@ -45,11 +45,6 @@
       "range": "width", "round": true,
       "domain": {"data": "iris", "field": "value"},
       "zero": true, "nice": true
-    },
-    {
-      "name": "color",
-      "type": "ordinal",
-      "range": "category"
     }
   ],
 

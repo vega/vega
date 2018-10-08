@@ -58,6 +58,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "table", "field": "id"},
       "range": {"scheme": "category20"}
     }
   ],

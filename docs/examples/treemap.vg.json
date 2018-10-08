@@ -60,6 +60,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "nodes", "field": "name"},
       "range": [
         "#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#e6550d",
         "#fd8d3c", "#fdae6b", "#fdd0a2", "#31a354", "#74c476",
