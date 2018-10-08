@@ -45,7 +45,7 @@ export function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
   var th1 = Math.atan2(y1-yc, x1-xc);
 
   var th_arc = th1-th0;
-  if (th_arc < 0 && sweep === 1){
+  if (th_arc < 0 && sweep === 1) {
     th_arc += 2 * Math.PI;
   } else if (th_arc > 0 && sweep === 0) {
     th_arc -= 2 * Math.PI;
