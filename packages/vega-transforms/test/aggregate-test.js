@@ -303,3 +303,38 @@ tape('Aggregate handles cross-product', function(test) {
 
   test.end();
 });
+
+tape('Aggregate handles empty/invalid data', function(test) {
+  var ops = [
+    'count',
+    'valid',
+    'sum',
+    'mean',
+    'variance',
+    'stdev',
+    'min',
+    'max',
+    'median'
+  ];
+  var res = [1, 0, 0]; // higher indices 'undefined'
+
+  var v = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        fields: ops.map(function() { return v; }),
+        ops: ops,
+        as: ops,
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert([{v: NaN}])).run();
+  var d = out.value[0];
+
+  ops.forEach(function(op, i) {
+    test.equal(d[op], res[i], op);
+  });
+
+  test.end();
+});
