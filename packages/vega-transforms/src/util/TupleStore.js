@@ -92,12 +92,12 @@ prototype.argmax = function(get) {
 
 prototype.min = function(get) {
   var m = this.extent(get)[0];
-  return m != null ? get(m) : +Infinity;
+  return m != null ? get(m) : undefined;
 };
 
 prototype.max = function(get) {
   var m = this.extent(get)[1];
-  return m != null ? get(m) : -Infinity;
+  return m != null ? get(m) : undefined;
 };
 
 prototype.quartile = function(get) {

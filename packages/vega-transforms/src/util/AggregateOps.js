@@ -38,11 +38,11 @@ export var AggregateOps = {
     init: 'this.mean = 0;',
     add:  'var d = v - this.mean; this.mean += d / this.valid;',
     rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
-    set:  'this.mean'
+    set:  'this.valid ? this.mean : undefined'
   }),
   'average': measure({
     name: 'average',
-    set:  'this.mean',
+    set:  'this.valid ? this.mean : undefined',
     req:  ['mean'], idx: 1
   }),
   'variance': measure({
@@ -50,27 +50,27 @@ export var AggregateOps = {
     init: 'this.dev = 0;',
     add:  'this.dev += d * (v - this.mean);',
     rem:  'this.dev -= d * (v - this.mean);',
-    set:  'this.valid > 1 ? this.dev / (this.valid-1) : 0',
+    set:  'this.valid > 1 ? this.dev / (this.valid-1) : undefined',
     req:  ['mean'], idx: 1
   }),
   'variancep': measure({
     name: 'variancep',
-    set:  'this.valid > 1 ? this.dev / this.valid : 0',
+    set:  'this.valid > 1 ? this.dev / this.valid : undefined',
     req:  ['variance'], idx: 2
   }),
   'stdev': measure({
     name: 'stdev',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : 0',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : undefined',
     req:  ['variance'], idx: 2
   }),
   'stdevp': measure({
     name: 'stdevp',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : undefined',
     req:  ['variance'], idx: 2
   }),
   'stderr': measure({
     name: 'stderr',
-    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
+    set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : undefined',
     req:  ['variance'], idx: 2
   }),
   'distinct': measure({
@@ -105,32 +105,32 @@ export var AggregateOps = {
   }),
   'argmin': measure({
     name: 'argmin',
-    init: 'this.argmin = null;',
+    init: 'this.argmin = undefined;',
     add:  'if (v < this.min) this.argmin = t;',
-    rem:  'if (v <= this.min) this.argmin = null;',
+    rem:  'if (v <= this.min) this.argmin = undefined;',
     set:  'this.argmin || cell.data.argmin(this.get)',
     req:  ['min'], str: ['values'], idx: 3
   }),
   'argmax': measure({
     name: 'argmax',
-    init: 'this.argmax = null;',
+    init: 'this.argmax = undefined;',
     add:  'if (v > this.max) this.argmax = t;',
-    rem:  'if (v >= this.max) this.argmax = null;',
+    rem:  'if (v >= this.max) this.argmax = undefined;',
     set:  'this.argmax || cell.data.argmax(this.get)',
     req:  ['max'], str: ['values'], idx: 3
   }),
   'min': measure({
     name: 'min',
-    init: 'this.min = null;',
-    add:  'if (v < this.min || this.min === null) this.min = v;',
+    init: 'this.min = undefined;',
+    add:  'if (v < this.min || this.min === undefined) this.min = v;',
     rem:  'if (v <= this.min) this.min = NaN;',
     set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
     str:  ['values'], idx: 4
   }),
   'max': measure({
     name: 'max',
-    init: 'this.max = null;',
-    add:  'if (v > this.max || this.max === null) this.max = v;',
+    init: 'this.max = undefined;',
+    add:  'if (v > this.max || this.max === undefined) this.max = v;',
     rem:  'if (v >= this.max) this.max = NaN;',
     set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
     str:  ['values'], idx: 4
