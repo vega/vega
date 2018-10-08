@@ -28,6 +28,7 @@ Tree.Definition = {
     { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
     { "name": "size", "type": "number", "array": true, "length": 2 },
     { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
+    { "name": "separation", "type": "boolean", "default": true },
     { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
   ]
 };
@@ -43,6 +44,6 @@ prototype.layout = function(method) {
   else error('Unrecognized Tree layout method: ' + m);
 };
 
-prototype.params = ['size', 'nodeSize', 'separation'];
+prototype.params = ['size', 'nodeSize'];
 
 prototype.fields = Output;

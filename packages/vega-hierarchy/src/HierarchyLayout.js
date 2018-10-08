@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
+import {error, inherits, one} from 'vega-util';
 
 /**
  * Abstract class for tree layout.
@@ -27,6 +27,10 @@ prototype.transform = function(_, pulse) {
   if (_.sort) root.sort(_.sort);
 
   setParams(layout, this.params, _);
+  if (layout.separation) {
+    layout.separation(_.separation !== false ? defaultSeparation : one);
+  }
+
   try {
     this.value = layout(root);
   } catch (err) {
@@ -50,4 +54,8 @@ function setFields(node, fields, as) {
     t[as[i]] = node[fields[i]];
   }
   t[as[n]] = node.children ? node.children.length : 0;
+}
+
+function defaultSeparation(a, b) {
+  return a.parent === b.parent ? 1 : 2;
 }
