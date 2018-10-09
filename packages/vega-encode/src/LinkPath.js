@@ -42,6 +42,7 @@ LinkPath.Definition = {
       "values": ["horizontal", "vertical", "radial"] },
     { "name": "shape", "type": "enum", "default": "line",
       "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
+    { "name": "require", "type": "signal" },
     { "name": "as", "type": "string", "default": "path" }
   ]
 };
