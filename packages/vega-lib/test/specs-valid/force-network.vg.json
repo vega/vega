@@ -71,6 +71,7 @@
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "node-data", "field": "group"},
       "range": {"scheme": "category20c"}
     }
   ],
@@ -111,6 +112,7 @@
           "iterations": 300,
           "restart": {"signal": "restart"},
           "static": {"signal": "static"},
+          "signal": "force",
           "forces": [
             {"force": "center", "x": {"signal": "cx"}, "y": {"signal": "cy"}},
             {"force": "collide", "radius": {"signal": "nodeRadius"}},
@@ -132,7 +134,9 @@
       },
       "transform": [
         {
-          "type": "linkpath", "shape": "line",
+          "type": "linkpath",
+          "require": {"signal": "force"},
+          "shape": "line",
           "sourceX": "datum.source.x", "sourceY": "datum.source.y",
           "targetX": "datum.target.x", "targetY": "datum.target.y"
         }
