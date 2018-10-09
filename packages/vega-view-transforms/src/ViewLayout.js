@@ -351,8 +351,12 @@ function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {
   // aggregate bounds to determine size
   // shave off 1 pixel because it looks better...
   item.items.forEach(function(_) { bounds.union(_.bounds); });
-  w = Math.ceil(bounds.width() + 2 * item.padding - 1);
-  h = Math.ceil(bounds.height() + 2 * item.padding - 1);
+  w = 2 * item.padding - 1;
+  h = 2 * item.padding - 1;
+  if (!bounds.empty()) {
+    w = Math.ceil(bounds.width() + w);
+    h = Math.ceil(bounds.height() + h);
+  }
 
   if (datum.type === Symbols) {
     legendEntryLayout(item.items[0].items[0].items[0].items);
