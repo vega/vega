@@ -75,6 +75,9 @@ function parameterSchema(param) {
     case 'boolean':
       p = {"anyOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]};
       break;
+    case 'signal':
+      p = {"$ref": "#/refs/signal"};
+      break;
   }
 
   if (param.expr) {
