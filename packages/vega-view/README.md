@@ -612,6 +612,9 @@ view.change('data', vega.changeset().insert([...]).remove([...]))
     .run()
 ```
 
+Inserted data tuples must be JavaScript objects that have been properly
+parsed ahead of time. Any data source `"format"` directives in a Vega JSON
+specification will **not** be applied to tuples added through the View API.
 Internally, this method takes the provided
 [ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
 and invokes
@@ -630,6 +633,9 @@ method does not force an immediate update to the view: invoke the
 the [remove](#view_remove) method on the same pulse; to simultaneously add
 and remove data use the [change](#view_change) method.
 
+Inserted data tuples must be JavaScript objects that have been properly
+parsed ahead of time. Any data source `"format"` directives in a Vega JSON
+specification will **not** be applied to tuples added through the View API.
 Internally, this method creates a
 [ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
 and invokes
