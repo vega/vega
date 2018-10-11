@@ -143,7 +143,7 @@
     },
 
     {
-      "name": "xdom", "update": "slice(xext)", "react": false,
+      "name": "xdom", "update": "slice(xext)",
       "on": [
         {
           "events": {"signal": "delta"},
@@ -156,7 +156,7 @@
       ]
     },
     {
-      "name": "ydom", "update": "slice(yext)", "react": false,
+      "name": "ydom", "update": "slice(yext)",
       "on": [
         {
           "events": {"signal": "delta"},
