@@ -135,7 +135,7 @@
       "transform": [
         {
           "type": "linkpath",
-          "require": "force",
+          "require": {"signal": "force"},
           "shape": "line",
           "sourceX": "datum.source.x", "sourceY": "datum.source.y",
           "targetX": "datum.target.x", "targetY": "datum.target.y"
