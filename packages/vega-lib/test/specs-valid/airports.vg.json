@@ -72,8 +72,7 @@
     {
       "name": "airports",
       "url": "data/airports.csv",
-      "format": {"type": "csv","parse": "auto"
-      },
+      "format": {"type": "csv", "parse": "auto"},
       "transform": [
         {
           "type": "lookup",
