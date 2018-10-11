@@ -26,14 +26,15 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-voronoi.zip -- LICENSE README.md build/vega-voronoi.js build/vega-voronoi.min.js"
   },
   "dependencies": {
-    "d3-voronoi": "^1.1.2",
-    "vega-dataflow": "^4.0.0",
+    "d3-voronoi": "^1.1.4",
+    "vega-dataflow": "^4.0.4",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.58.2",
+    "eslint": "5",
+    "rollup": "0.66.6",
     "tape": "4",
-    "uglify-js": "3"
+    "uglify-js": "3",
+    "vega-transforms": "^2.2.0"
   }
 }
