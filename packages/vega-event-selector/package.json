@@ -38,8 +38,8 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-event-selector.zip -- LICENSE README.md build/vega-event-selector.js build/vega-event-selector.min.js"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.58.2",
+    "eslint": "5",
+    "rollup": "0.66.6",
     "tape": "4",
     "uglify-js": "3"
   }
