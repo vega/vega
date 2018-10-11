@@ -25,6 +25,6 @@ export function parseOperatorParameters(spec, ctx) {
       error('Invalid operator id: ' + spec.id);
     }
     params = parseParameters(spec.params, ctx);
-    ctx.dataflow.connect(op, op.parameters(params));
+    ctx.dataflow.connect(op, op.parameters(params, spec.react));
   }
 }
