@@ -19,6 +19,7 @@ Internally, this transform processes a collection of special tree node objects g
 | field               | {% include type t="Field" %}   | The data field corresponding to a numeric value for the node. The sum of values for a node and all its descendants is available on the node object as the `value` property.|
 | sort                | {% include type t="Compare" %} | A comparator for sorting sibling nodes. The inputs to the comparator are tree node objects, not input data objects.|
 | method              | {% include type t="String" %}  | The layout method to use. One of `tidy` (the default) or `cluster`.|
+| separation          | {% include type t="Boolean" %}| {% include tag ver="4.3" %} A flag indicating if node separation logic should be applied. If `true` (the default), cousin nodes will be placed farther apart than sibling nodes. If `false`, nodes will be uniformly separated, as in a standard dendrogram.|
 | size                | {% include type t="Number[]" %}| The size of the layout, provided as a [width, height] array.|
 | nodeSize            | {% include type t="Number[]" %}| The size of each node, provided as a [width, height] array.|
 | as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x", "y", "depth", "children"]`, where `x` and `y` are the layout coordinates, `depth` is the tree depth, and `children` is the count of a node's children in the tree.|
