@@ -12,6 +12,7 @@ Vega can be **extended** at runtime with new [scales](../../scales), [projection
 - [Scales](#scales)
 - [Schemes](#schemes)
 - [Transforms](#transform)
+- [Data Formats](#format)
 - [Expression Functions](#expressions)
 
 
@@ -131,6 +132,7 @@ to use when a specific item count is not provided or undefined. If the
 automatically created using basis spline interpolation in the RGB color
 space for the last (largest) color array in *schemes*.
 
+
 ## <a name="transform"></a>Transforms
 
 <a name="transforms" href="#transforms">#</a>
@@ -146,6 +148,42 @@ the necessary metadata and parameter information. The [vega-transforms](https://
 
 Note that if a transform is added at runtime, any Vega JSON specifications using the new transform will fail JSON schema validation, as the new transform is not included in the default schema definition. To include new transforms within a custom JSON schema, developers can create a custom Vega build, adding new
 transforms to the vega-dataflow `transforms` export during the build process.
+
+
+## <a name="format"></a>Data Formats
+
+<a name="formats" href="#formats">#</a>
+vega.<b>formats</b>(<i>name</i>[, <i>format</i>])
+[<>](https://github.com/vega/vega-loader/blob/master/src/formats/index.js "Source")
+
+Registry function for data format parsers. If invoked with two arguments, adds
+a new *format* parser with the provided *name*. Otherwise, returns an existing
+parser with the given *name*. The method signature of a format parser is:
+
+- <b>format</b>(<i>data</i>, <i>options</i>)
+
+A format parser that accepts two arguments, the input *data* to parse
+(e.g., a block of CSV text) and a set of format-specific *options*.
+The following data formats are registered by default:
+
+- *dsv*: Delimiter-separated values format. Each line of text is a record,
+with each field separated by a delimiter string. Accepts a *delimiter* option
+indicating the delimiter string used to separate field values.
+- *csv*: Comma-separated values format. A *dsv* instance with a comma (`,`)
+delimiter.
+- *tsv*: Tab-separated values format. A *dsv* instance with a tab (`\t`)
+delimiter.
+- *json*: [JavaScript Object Notation (JSON)](https://en.wikipedia.org/wiki/JSON)
+format. Accepts a *property* option, indicating a sub-property of the parsed
+JSON to return; useful if a data array is nested within a larger object.
+- *topojson*: [TopoJSON](https://github.com/topojson/topojson/) format for
+compressed encoding of geographic data. Requires either a *feature* option
+indicating the name of the geographic feature to extract (e.g., extracts
+individual paths for all countries), or a *mesh* option indicating a feature
+name for which a single mesh should be extracted (e.g., all country
+boundaries in a single path). Please see the
+[TopoJSON documentation](https://github.com/topojosn/topojson/wiki) for more.
+
 
 ## <a name="expressions"></a>Expression Functions
 
