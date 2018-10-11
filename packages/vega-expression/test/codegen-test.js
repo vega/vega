@@ -205,6 +205,7 @@ tape('Evaluate expressions with white list', function(test) {
   test.equal(evaluate('slice("123",1)'), '123'.slice(1));
   test.equal(evaluate('slice("123",-1)'), '123'.slice(-1));
   test.equal(evaluate('slice("123",0,1)'), '123'.slice(0,1));
+  test.deepEqual(evaluate('split("1 2 3"," ")'), '1 2 3'.split(' '));
   test.equal(evaluate('substring("123",0,1)'), '123'.substring(0,1));
   test.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
   test.equal(evaluate('parseInt("42")'),parseInt('42'));
