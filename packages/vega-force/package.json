@@ -26,14 +26,15 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-force.zip -- LICENSE README.md build/vega-force.js build/vega-force.min.js"
   },
   "dependencies": {
-    "d3-force": "^1.1.0",
-    "vega-dataflow": "^4.0.0",
+    "d3-force": "^1.1.2",
+    "vega-dataflow": "^4.0.4",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.58.2",
+    "eslint": "5",
+    "rollup": "0.66.6",
     "tape": "4",
-    "uglify-js": "3"
+    "uglify-js": "3",
+    "vega-transforms": "^2.2.0"
   }
 }
