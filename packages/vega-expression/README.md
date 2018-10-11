@@ -39,7 +39,7 @@ from constant names to constant values. The constant values are strings that
 will be injected as-is into generated code. If this option is not specified,
 the [constants](#constants) object is used by default.
 
-- *functions*: A function that is given a code generator instance as input and
+- *functions*: A function that is given an AST visitor instance as input and
 returns an object of allowed functions. The resulting object maps from
 function names to function values. The values may either be strings (which will
 be injected as-is into generated code and subsequently appended with arguments)
