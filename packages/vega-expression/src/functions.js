@@ -88,6 +88,7 @@ export default function(codegen) {
     upper:       fn('toUpperCase', STRING, 0),
     lower:       fn('toLowerCase', STRING, 0),
     substring:   fn('substring', STRING),
+    split:       fn('split', STRING),
     replace:     fn('replace', STRING),
 
     // REGEXP functions
