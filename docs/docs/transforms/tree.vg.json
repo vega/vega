@@ -6,7 +6,8 @@
 
   "signals": [
     { "name": "method", "value": "tidy",
-      "bind": {"input": "select", "options": ["tidy", "cluster"]} }
+      "bind": {"input": "select", "options": ["tidy", "cluster"]} },
+    { "name": "separation", "value": true, "bind": {"input": "checkbox"} }
   ],
 
   "data": [
@@ -28,6 +29,7 @@
         {
           "type": "tree",
           "method": {"signal": "method"},
+          "separation": {"signal": "separation"},
           "size": [{"signal": "width"}, {"signal": "height"}]
         }
       ]
