@@ -27,19 +27,19 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-wordcloud.zip -- LICENSE README.md build/vega-wordcloud.js build/vega-wordcloud.min.js"
   },
   "dependencies": {
-    "vega-canvas": "^1.0.1",
-    "vega-dataflow": "^4.0.0",
-    "vega-scale": "^2.1.1",
-    "vega-statistics": "^1.2.1",
+    "vega-canvas": "^1.1.0",
+    "vega-dataflow": "^4.0.4",
+    "vega-scale": "^2.4.0",
+    "vega-statistics": "^1.2.2",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "canvas": "^1.6.10",
-    "eslint": "4",
-    "rollup": "0.58.2",
+    "canvas": "^1.6.13",
+    "eslint": "5",
+    "rollup": "0.66.6",
     "tape": "4",
     "uglify-js": "3",
-    "vega-transforms": "^2.0.0"
+    "vega-transforms": "^2.2.0"
   },
   "browser": {
     "canvas": false,
