@@ -6289,6 +6289,9 @@
           ],
           "default": "line"
         },
+        "require": {
+          "$ref": "#/refs/signal"
+        },
         "as": {
           "anyOf": [
             {
@@ -7857,6 +7860,17 @@
           ],
           "maxItems": 2,
           "minItems": 2
+        },
+        "separation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": true
         },
         "as": {
           "oneOf": [

@@ -3254,7 +3254,7 @@
     'sum': measure({
       name: 'sum',
       init: 'this.sum = 0;',
-      add:  'this.sum += v;',
+      add:  'this.sum += +v;',
       rem:  'this.sum -= v;',
       set:  'this.sum'
     }),
@@ -3263,11 +3263,11 @@
       init: 'this.mean = 0;',
       add:  'var d = v - this.mean; this.mean += d / this.valid;',
       rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
-      set:  'this.mean'
+      set:  'this.valid ? this.mean : undefined'
     }),
     'average': measure({
       name: 'average',
-      set:  'this.mean',
+      set:  'this.valid ? this.mean : undefined',
       req:  ['mean'], idx: 1
     }),
     'variance': measure({
@@ -3275,27 +3275,27 @@
       init: 'this.dev = 0;',
       add:  'this.dev += d * (v - this.mean);',
       rem:  'this.dev -= d * (v - this.mean);',
-      set:  'this.valid > 1 ? this.dev / (this.valid-1) : 0',
+      set:  'this.valid > 1 ? this.dev / (this.valid-1) : undefined',
       req:  ['mean'], idx: 1
     }),
     'variancep': measure({
       name: 'variancep',
-      set:  'this.valid > 1 ? this.dev / this.valid : 0',
+      set:  'this.valid > 1 ? this.dev / this.valid : undefined',
       req:  ['variance'], idx: 2
     }),
     'stdev': measure({
       name: 'stdev',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : 0',
+      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : undefined',
       req:  ['variance'], idx: 2
     }),
     'stdevp': measure({
       name: 'stdevp',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : 0',
+      set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : undefined',
       req:  ['variance'], idx: 2
     }),
     'stderr': measure({
       name: 'stderr',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : 0',
+      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : undefined',
       req:  ['variance'], idx: 2
     }),
     'distinct': measure({
@@ -3330,32 +3330,32 @@
     }),
     'argmin': measure({
       name: 'argmin',
-      init: 'this.argmin = null;',
+      init: 'this.argmin = undefined;',
       add:  'if (v < this.min) this.argmin = t;',
-      rem:  'if (v <= this.min) this.argmin = null;',
+      rem:  'if (v <= this.min) this.argmin = undefined;',
       set:  'this.argmin || cell.data.argmin(this.get)',
       req:  ['min'], str: ['values'], idx: 3
     }),
     'argmax': measure({
       name: 'argmax',
-      init: 'this.argmax = null;',
+      init: 'this.argmax = undefined;',
       add:  'if (v > this.max) this.argmax = t;',
-      rem:  'if (v >= this.max) this.argmax = null;',
+      rem:  'if (v >= this.max) this.argmax = undefined;',
       set:  'this.argmax || cell.data.argmax(this.get)',
       req:  ['max'], str: ['values'], idx: 3
     }),
     'min': measure({
       name: 'min',
-      init: 'this.min = null;',
-      add:  'if (v < this.min || this.min === null) this.min = v;',
+      init: 'this.min = undefined;',
+      add:  'if (v < this.min || this.min === undefined) this.min = v;',
       rem:  'if (v <= this.min) this.min = NaN;',
       set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
       str:  ['values'], idx: 4
     }),
     'max': measure({
       name: 'max',
-      init: 'this.max = null;',
-      add:  'if (v > this.max || this.max === null) this.max = v;',
+      init: 'this.max = undefined;',
+      add:  'if (v > this.max || this.max === undefined) this.max = v;',
       rem:  'if (v >= this.max) this.max = NaN;',
       set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
       str:  ['values'], idx: 4
@@ -3507,6 +3507,8 @@
   }
 
   function bootstrapCI(array, samples, alpha, f) {
+    if (!array.length) return [undefined, undefined];
+
     var values = numbers(array, f),
         n = values.length,
         m = samples,
@@ -3946,12 +3948,12 @@
 
   prototype$8.min = function(get) {
     var m = this.extent(get)[0];
-    return m != null ? get(m) : +Infinity;
+    return m != null ? get(m) : undefined;
   };
 
   prototype$8.max = function(get) {
     var m = this.extent(get)[1];
-    return m != null ? get(m) : -Infinity;
+    return m != null ? get(m) : undefined;
   };
 
   prototype$8.quartile = function(get) {
@@ -4901,7 +4903,7 @@
    * @param {function(object): *} params.field - The field over which to compute extends.
    */
   function Extent(params) {
-    Transform.call(this, [+Infinity, -Infinity], params);
+    Transform.call(this, [undefined, undefined], params);
   }
 
   Extent.Definition = {
@@ -4919,20 +4921,18 @@
         field$$1 = _$$1.field,
         min = extent[0],
         max = extent[1],
-        flag = pulse.ADD,
         mod;
 
     mod = pulse.changed()
        || pulse.modified(field$$1.fields)
        || _$$1.modified('field');
 
-    if (mod) {
-      flag = pulse.SOURCE;
+    if (mod || min == null) {
       min = +Infinity;
       max = -Infinity;
     }
 
-    pulse.visit(flag, function(t) {
+    pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
       var v = field$$1(t);
       if (v != null) {
         // coerce to number
@@ -4943,6 +4943,9 @@
       }
     });
 
+    if (!isFinite(min) || !isFinite(max)) {
+      min = max = undefined;
+    }
     this.value = [min, max];
   };
 
@@ -7294,7 +7297,7 @@
     var th1 = Math.atan2(y1-yc, x1-xc);
 
     var th_arc = th1-th0;
-    if (th_arc < 0 && sweep === 1){
+    if (th_arc < 0 && sweep === 1) {
       th_arc += 2 * Math.PI;
     } else if (th_arc > 0 && sweep === 0) {
       th_arc -= 2 * Math.PI;
@@ -7360,6 +7363,9 @@
     if (c === 'a' || c === 'A') {
       temp[1] = s * current[1];
       temp[2] = s * current[2];
+      temp[3] = current[3];
+      temp[4] = current[4];
+      temp[5] = current[5];
       temp[6] = s * current[6];
       temp[7] = s * current[7];
     } else {
@@ -8405,20 +8411,19 @@
   function pickArea(a, p) {
     var v = a[0].orient === 'horizontal' ? p[1] : p[0],
         z = a[0].orient === 'horizontal' ? 'y' : 'x',
-        lo = 0,
-        hi = a.length;
+        i = a.length,
+        min = +Infinity, hit, d;
 
-    if (hi === 1) return a[0];
-
-    while (lo < hi) {
-      var mid = lo + hi >>> 1;
-      if (a[mid][z] < v) lo = mid + 1;
-      else hi = mid;
+    while (--i >= 0) {
+      if (a[i].defined === false) continue;
+      d = Math.abs(a[i][z] - v);
+      if (d < min) {
+        min = d;
+        hit = a[i];
+      }
     }
-    lo = Math.max(0, lo - 1);
-    hi = Math.min(a.length - 1, hi);
 
-    return (v - a[lo][z]) < (a[hi][z] - v) ? a[lo] : a[hi];
+    return hit;
   }
 
   function pickLine(a, p) {
@@ -12131,8 +12136,12 @@
     // aggregate bounds to determine size
     // shave off 1 pixel because it looks better...
     item.items.forEach(function(_$$1) { bounds.union(_$$1.bounds); });
-    w = Math.ceil(bounds.width() + 2 * item.padding - 1);
-    h = Math.ceil(bounds.height() + 2 * item.padding - 1);
+    w = 2 * item.padding - 1;
+    h = 2 * item.padding - 1;
+    if (!bounds.empty()) {
+      w = Math.ceil(bounds.width() + w);
+      h = Math.ceil(bounds.height() + h);
+    }
 
     if (datum.type === Symbols) {
       legendEntryLayout(item.items[0].items[0].items[0].items);
@@ -12617,6 +12626,12 @@
       }
     };
 
+    // Addresses #1395, refine if/when d3-scale tickFormat is exposed
+    scale.tickFormat = function() {
+      var linear = $.scaleLinear().domain([domain[0], peek(domain)]);
+      return linear.tickFormat.apply(linear, arguments);
+    };
+
     scale.copy = function() {
       return binOrdinal().domain(scale.domain()).range(scale.range());
     };
@@ -12743,7 +12758,7 @@
 
   function scaleFraction(scale, min, max) {
     var delta = max - min;
-    return !delta ? constant(0)
+    return !delta || !isFinite(delta) ? constant(0)
       : scale.type === 'linear' || scale.type === 'sequential'
         ? function(_$$1) { return (_$$1 - min) / delta; }
         : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
@@ -13560,6 +13575,7 @@
         "values": ["horizontal", "vertical", "radial"] },
       { "name": "shape", "type": "enum", "default": "line",
         "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
+      { "name": "require", "type": "signal" },
       { "name": "as", "type": "string", "default": "path" }
     ]
   };
@@ -15500,6 +15516,10 @@
     if (_$$1.sort) root.sort(_$$1.sort);
 
     setParams(layout, this.params, _$$1);
+    if (layout.separation) {
+      layout.separation(_$$1.separation !== false ? defaultSeparation : one);
+    }
+
     try {
       this.value = layout(root);
     } catch (err) {
@@ -15523,6 +15543,10 @@
       t[as[i]] = node[fields[i]];
     }
     t[as[n]] = node.children ? node.children.length : 0;
+  }
+
+  function defaultSeparation(a, b) {
+    return a.parent === b.parent ? 1 : 2;
   }
 
   var Output = ['x', 'y', 'r', 'depth', 'children'];
@@ -15671,6 +15695,7 @@
       { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
       { "name": "size", "type": "number", "array": true, "length": 2 },
       { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
+      { "name": "separation", "type": "boolean", "default": true },
       { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
     ]
   };
@@ -15686,7 +15711,7 @@
     else error('Unrecognized Tree layout method: ' + m);
   };
 
-  prototype$1e.params = ['size', 'nodeSize', 'separation'];
+  prototype$1e.params = ['size', 'nodeSize'];
 
   prototype$1e.fields = Output$2;
 
@@ -17146,7 +17171,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "4.2.0";
+  var version = "4.3.0";
 
   var Default = 'default';
 
@@ -19605,6 +19630,7 @@
       upper:       fn('toUpperCase', STRING, 0),
       lower:       fn('toLowerCase', STRING, 0),
       substring:   fn('substring', STRING),
+      split:       fn('split', STRING),
       replace:     fn('replace', STRING),
 
       // REGEXP functions
@@ -20058,13 +20084,13 @@
     var gradient = Gradient(p0, p1),
         stops = scale.domain(),
         min = stops[0],
-        max = stops[stops.length-1],
+        max = peek(stops),
         fraction = scaleFraction(scale, min, max);
 
     if (scale.ticks) {
       stops = scale.ticks(+count || 15);
       if (min !== stops[0]) stops.unshift(min);
-      if (max !== stops[stops.length-1]) stops.push(max);
+      if (max !== peek(stops)) stops.push(max);
     }
 
     for (var i=0, n=stops.length; i<n; ++i) {
@@ -20256,12 +20282,221 @@
     return 1;
   }
 
-  var BIN = 'bin_',
+  var TYPE_ENUM = 'E',
+      TYPE_RANGE_INC = 'R',
+      TYPE_RANGE_EXC = 'R-E',
+      TYPE_RANGE_LE = 'R-LE',
+      TYPE_RANGE_RE = 'R-RE',
       INTERSECT = 'intersect',
       UNION = 'union',
       UNIT_INDEX = 'index:unit';
 
+  // TODO: revisit date coercion?
   function testPoint(datum, entry) {
+    var fields = entry.fields,
+        values = entry.values,
+        n = fields.length,
+        i = 0, dval, f;
+
+    for (; i<n; ++i) {
+      f = fields[i];
+      f.getter = field.getter || field(f.field);
+      dval = f.getter(datum);
+
+      if (isDate(dval)) dval = toNumber(dval);
+      if (isDate(values[i])) values[i] = toNumber(values[i]);
+      if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+
+      if (f.type === TYPE_ENUM) {
+        // Enumerated fields can either specify individual values (single/multi selections)
+        // or an array of values (interval selections).
+        if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+          return false;
+        }
+      } else {
+        if (f.type === TYPE_RANGE_INC) {
+          if (!inrange(dval, values[i])) return false;
+        } else if (f.type === TYPE_RANGE_RE) {
+          // Discrete selection of bins test within the range [bin_start, bin_end).
+          if (!inrange(dval, values[i], true, false)) return false;
+        } else if (f.type === TYPE_RANGE_EXC) { // 'R-E'/'R-LE' included for completeness.
+          if (!inrange(dval, values[i], false, false)) return false;
+        } else if (f.type === TYPE_RANGE_LE) {
+          if (!inrange(dval, values[i], false, true)) return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Tests if a tuple is contained within an interactive selection.
+   * @param {string} name - The name of the data set representing the selection.
+   *                 Tuples in the dataset are of the form
+   *                 {unit: string, fields: array<fielddef>, values: array<*>}.
+   *                 Fielddef is of the form
+   *                 {field: string, channel: string, type: 'E' | 'R'} where
+   *                 'type' identifies whether tuples in the dataset enumerate
+   *                 values for the field, or specify a continuous range.
+   * @param {object} datum - The tuple to test for inclusion.
+   * @param {string} op - The set operation for combining selections.
+   *   One of 'intersect' or 'union' (default).
+   * @return {boolean} - True if the datum is in the selection, false otherwise.
+   */
+  function vlSelectionTest(name, datum, op) {
+    var data = this.context.data[name],
+        entries = data ? data.values.value : [],
+        unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
+        intersect = op === INTERSECT,
+        n = entries.length,
+        i = 0,
+        entry, miss, count, unit, b;
+
+    for (; i<n; ++i) {
+      entry = entries[i];
+
+      if (unitIdx && intersect) {
+        // multi selections union within the same unit and intersect across units.
+        miss = miss || {};
+        count = miss[unit=entry.unit] || 0;
+
+        // if we've already matched this unit, skip.
+        if (count === -1) continue;
+
+        b = testPoint(datum, entry);
+        miss[unit] = b ? -1 : ++count;
+
+        // if we match and there are no other units return true
+        // if we've missed against all tuples in this unit return false
+        if (b && unitIdx.size === 1) return true;
+        if (!b && count === unitIdx.get(unit).count) return false;
+      } else {
+        b = testPoint(datum, entry);
+
+        // if we find a miss and we do require intersection return false
+        // if we find a match and we don't require intersection return true
+        if (intersect ^ b) return b;
+      }
+    }
+
+    // if intersecting and we made it here, then we saw no misses
+    // if not intersecting, then we saw no matches
+    // if no active selections, return false
+    return n && intersect;
+  }
+
+  function vlSelectionVisitor(name, args, scope, params) {
+    if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
+
+    var data = args[0].value,
+        op = args.length >= 2 && args[args.length-1].value,
+        field$$1 = 'unit',
+        indexName = indexPrefix + field$$1;
+
+    if (op === INTERSECT && !params.hasOwnProperty(indexName)) {
+      params[indexName] = scope.getData(data).indataRef(scope, field$$1);
+    }
+
+    dataVisitor(name, args, scope, params);
+  }
+
+  /**
+   * Resolves selection for use as a scale domain or reads via the API.
+   * @param {string} name - The name of the dataset representing the selection
+   * @param {string} [op='union'] - The set operation for combining selections.
+   *                 One of 'intersect' or 'union' (default).
+   * @returns {object} An object of selected fields and values.
+   */
+  function vlSelectionResolve(name, op) {
+    var data = this.context.data[name],
+      entries = data ? data.values.value : [],
+      resolved = {}, types = {},
+      entry, fields, values, unit, field$$1, res, resUnit, type, union,
+      n = entries.length, i = 0, j, m;
+
+    // First union all entries within the same unit.
+    for (; i < n; ++i) {
+      entry = entries[i];
+      unit = entry.unit;
+      fields = entry.fields;
+      values = entry.values;
+
+      for (j = 0, m = fields.length; j < m; ++j) {
+        field$$1 = fields[j];
+        res = resolved[field$$1.field] || (resolved[field$$1.field] = {});
+        resUnit = res[unit] || (res[unit] = []);
+        types[field$$1.field] = type = field$$1.type.charAt(0);
+        union = ops[type + '_union'];
+        res[unit] = union(resUnit, array(values[j]));
+      }
+    }
+
+    // Then resolve fields across units as per the op.
+    op = op || UNION;
+    Object.keys(resolved).forEach(function (field$$1) {
+      resolved[field$$1] = Object.keys(resolved[field$$1])
+        .map(function (unit) { return resolved[field$$1][unit]; })
+        .reduce(function (acc, curr) {
+          return acc === undefined ? curr :
+            ops[types[field$$1] + '_' + op](acc, curr);
+        });
+    });
+
+    return resolved;
+  }
+
+  var ops = {
+    'E_union': function (base, value) {
+      if (!base.length) return value;
+
+      var i = 0, n = value.length;
+      for (; i<n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+      return base;
+    },
+
+    'E_intersect': function (base, value) {
+      return !base.length ? value :
+        base.filter(function (v) { return value.indexOf(v) >= 0; });
+    },
+
+    'R_union': function (base, value) {
+      var lo = toNumber(value[0]), hi = toNumber(value[1]);
+      if (lo > hi) {
+        lo = value[1];
+        hi = value[0];
+      }
+
+      if (!base.length) return [lo, hi];
+      if (base[0] > lo) base[0] = lo;
+      if (base[1] < hi) base[1] = hi;
+      return base;
+    },
+
+    'R_intersect': function (base, value) {
+      var lo = toNumber(value[0]), hi = toNumber(value[1]);
+      if (lo > hi) {
+        lo = value[1];
+        hi = value[0];
+      }
+
+      if (!base.length) return [lo, hi];
+      if (hi < base[0] || base[1] < lo) {
+        return [];
+      } else {
+        if (base[0] < lo) base[0] = lo;
+        if (base[1] > hi) base[1] = hi;
+      }
+      return base;
+    }
+  };
+
+  var BIN = 'bin_',
+      INTERSECT$1 = 'intersect',
+      UNION$1 = 'union',
+      UNIT_INDEX$1 = 'index:unit';
+
+  function testPoint$1(datum, entry) {
     var fields = entry.fields,
         values = entry.values,
         getter = entry.getter || (entry.getter = []),
@@ -20320,8 +20555,8 @@
   function vlSelection(name, datum, op, test) {
     var data = this.context.data[name],
         entries = data ? data.values.value : [],
-        unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-        intersect = op === INTERSECT,
+        unitIdx = data ? data[UNIT_INDEX$1] && data[UNIT_INDEX$1].value : undefined,
+        intersect = op === INTERSECT$1,
         n = entries.length,
         i = 0,
         entry, miss, count, unit, b;
@@ -20362,7 +20597,7 @@
   // Assumes point selection tuples are of the form:
   // {unit: string, encodings: array<string>, fields: array<string>, values: array<*>, bins: object}
   function vlPoint(name, datum, op) {
-    return vlSelection.call(this, name, datum, op, testPoint);
+    return vlSelection.call(this, name, datum, op, testPoint$1);
   }
 
   // Assumes interval selection typles are of the form:
@@ -20380,7 +20615,7 @@
         field$$1 = 'unit',
         indexName = indexPrefix + field$$1;
 
-    if (op === INTERSECT && !params.hasOwnProperty(indexName)) {
+    if (op === INTERSECT$1 && !params.hasOwnProperty(indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field$$1);
     }
 
@@ -20399,7 +20634,7 @@
   function vlPointDomain(name, encoding, field$$1, op) {
     var data = this.context.data[name],
         entries = data ? data.values.value : [],
-        unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
+        unitIdx = data ? data[UNIT_INDEX$1] && data[UNIT_INDEX$1].value : undefined,
         entry = entries[0],
         i = 0, n, index, values, continuous, units;
 
@@ -20417,10 +20652,10 @@
     // multi selections union within the same unit and intersect across units.
     // if we've got only one unit, enforce union for more efficient materialization.
     if (unitIdx && unitIdx.size === 1) {
-      op = UNION;
+      op = UNION$1;
     }
 
-    if (unitIdx && op === INTERSECT) {
+    if (unitIdx && op === INTERSECT$1) {
       units = entries.reduce(function(acc, entry) {
         var u = acc[entry.unit] || (acc[entry.unit] = []);
         u.push({unit: entry.unit, value: entry.values[index]});
@@ -20431,8 +20666,8 @@
         return {
           unit: unit,
           value: continuous
-            ? continuousDomain(units[unit], UNION)
-            : discreteDomain(units[unit], UNION)
+            ? continuousDomain(units[unit], UNION$1)
+            : discreteDomain(units[unit], UNION$1)
         };
       });
     } else {
@@ -20510,7 +20745,7 @@
 
     for (key$$1 in values) {
       v = values[key$$1];
-      if (op === INTERSECT && v.count !== count) continue;
+      if (op === INTERSECT$1 && v.count !== count) continue;
       domain.push(v.value);
     }
 
@@ -20518,7 +20753,7 @@
   }
 
   function continuousDomain(entries, op) {
-    var merge$$1 = op === INTERSECT ? intersectInterval : unionInterval,
+    var merge$$1 = op === INTERSECT$1 ? intersectInterval : unionInterval,
         i = 0, n = entries.length,
         extent, domain, lo, hi;
 
@@ -20653,14 +20888,20 @@
   expressionFunction('geoShape', geoShape, scaleVisitor);
   expressionFunction('indata', indata, indataVisitor);
   expressionFunction('data', data$1, dataVisitor);
+  expressionFunction('treePath', treePath, dataVisitor);
+  expressionFunction('treeAncestors', treeAncestors, dataVisitor);
+
+  // Vega-Lite selection functions.
+  expressionFunction('vlSelectionTest', vlSelectionTest, vlSelectionVisitor);
+  expressionFunction('vlSelectionResolve', vlSelectionResolve, vlSelectionVisitor);
+
+  // Deprecated selection functions kept around to avoid a major version bump.
   expressionFunction('vlSingle', vlPoint, dataVisitor);
   expressionFunction('vlSingleDomain', vlPointDomain, dataVisitor);
   expressionFunction('vlMulti', vlPoint, vlMultiVisitor);
   expressionFunction('vlMultiDomain', vlPointDomain, vlMultiVisitor);
   expressionFunction('vlInterval', vlInterval, dataVisitor);
   expressionFunction('vlIntervalDomain', vlIntervalDomain, dataVisitor);
-  expressionFunction('treePath', treePath, dataVisitor);
-  expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
   // Build expression function registry
   function buildFunctions(codegen$$1) {
@@ -24662,7 +24903,7 @@
         error('Invalid operator id: ' + spec.id);
       }
       params = parseParameters$1(spec.params, ctx);
-      ctx.dataflow.connect(op, op.parameters(params));
+      ctx.dataflow.connect(op, op.parameters(params, spec.react));
     }
   }
 
@@ -25417,8 +25658,8 @@
     return this;
   };
 
-  function findSignalHandler(signal, handler) {
-    var t = signal._targets || [],
+  function findOperatorHandler(op, handler) {
+    var t = op._targets || [],
         h = t.filter(function(op) {
               var u = op._update;
               return u && u.handler === handler;
@@ -25426,24 +25667,36 @@
     return h.length ? h[0] : null;
   }
 
-  prototype$1n.addSignalListener = function(name, handler) {
-    var s = lookupSignal(this, name),
-        h = findSignalHandler(s, handler);
-
+  function addOperatorListener(view, name, op, handler) {
+    var h = findOperatorHandler(op, handler);
     if (!h) {
-      h = trap(this, function() { handler(name, s.value); });
+      h = trap(this, function() { handler(name, op.value); });
       h.handler = handler;
-      this.on(s, null, h);
+      view.on(op, null, h);
     }
-    return this;
+    return view;
+  }
+
+  function removeOperatorListener(view, op, handler) {
+    var h = findOperatorHandler(op, handler);
+    if (h) op._targets.remove(h);
+    return view;
+  }
+
+  prototype$1n.addSignalListener = function(name, handler) {
+    return addOperatorListener(this, name, lookupSignal(this, name), handler);
   };
 
   prototype$1n.removeSignalListener = function(name, handler) {
-    var s = lookupSignal(this, name),
-        h = findSignalHandler(s, handler);
+    return removeOperatorListener(this, lookupSignal(this, name), handler);
+  };
 
-    if (h) s._targets.remove(h);
-    return this;
+  prototype$1n.addDataListener = function(name, handler) {
+    return addOperatorListener(this, name, dataref(this, name).values, handler);
+  };
+
+  prototype$1n.removeDataListener = function(name, handler) {
+    return removeOperatorListener(this, dataref(this, name).values, handler);
   };
 
   prototype$1n.preventDefault = function(_$$1) {
