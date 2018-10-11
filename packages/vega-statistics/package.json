@@ -1,6 +1,6 @@
 {
   "name": "vega-statistics",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
     "vega",
@@ -28,11 +28,11 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-statistics.zip -- LICENSE README.md build/vega-statistics.js build/vega-statistics.min.js"
   },
   "dependencies": {
-    "d3-array": "^1.2.1"
+    "d3-array": "^1.2.4"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.58.2",
+    "eslint": "5",
+    "rollup": "0.66.6",
     "tape": "4",
     "uglify-js": "3"
   }
