@@ -12,7 +12,7 @@ export interface PushSignal extends BaseSignal {
   push?: 'outer';
 }
 export interface NewSignal extends BaseSignal {
-  value?: string;
+  value?: any;
   react?: boolean;
   update?: Expr;
   bind?: Binding;
