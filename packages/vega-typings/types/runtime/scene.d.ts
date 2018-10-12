@@ -45,6 +45,7 @@ export type SceneGroup = SceneItem & {
   items: SceneItem[];
   height: number;
   width: number;
+  stroke?: string;
 };
 
 export type SceneSymbol = SceneItem & {
