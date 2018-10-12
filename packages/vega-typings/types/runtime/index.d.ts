@@ -29,7 +29,7 @@ export class View {
   loader(loader: Loader): this;
 
   hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
-  run(): this;
+  run(encode?: string): this;
   runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
   runAsync(): Promise<View>;
   insert(name: string, tuples: any): this;
