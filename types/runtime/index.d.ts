@@ -60,6 +60,8 @@ export class View {
   removeEventListener(type: string, handler: EventListenerHandler): this;
   addSignalListener(name: string, handler: SignalListenerHandler): this;
   removeSignalListener(name: string, handler: SignalListenerHandler): this;
+  addDataListener(name: string, handler: DataListenerHandler): this;
+  removeDataListener(name: string, handler: DataListenerHandler): this;
   addResizeListener(handler: ResizeHandler): this;
   removeResizeListener(handler: ResizeHandler): this;
   tooltip(handler: TooltipHandler): this;
@@ -102,6 +104,7 @@ export function inferTypes(values: any[], fields: string[]): { [field: string]: 
 
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: any) => void;
+export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
 export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
 
