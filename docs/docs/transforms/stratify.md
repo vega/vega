@@ -11,7 +11,7 @@ The **stratify** transform generates a hierarchical (tree) data structure from i
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
 | key                 | {% include type t="Field" %}   | {% include required %} A data field containing a unique key (identifier) for each node.|
-| parentKey           | {% include type t="Field" %}   | {% include required %} A data field containing the key value for each node's parent in the hierarchy.|
+| parentKey           | {% include type t="Field" %}   | {% include required %} A data field containing the key value for each node's parent in the hierarchy. To indicate the root node of the tree, the _parentKey_ value must be one of `null`, `undefined`, or the empty string `''`.|
 
 ## Usage
 
