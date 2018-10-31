@@ -107,7 +107,7 @@ concat-map@0.0.1:
 
 "definitelytyped-header-parser@github:Microsoft/definitelytyped-header-parser#production":
   version "0.0.0"
-  resolved "https://codeload.github.com/Microsoft/definitelytyped-header-parser/tar.gz/c79916047989994b21f3332771c6b97191c03d38"
+  resolved "https://codeload.github.com/Microsoft/definitelytyped-header-parser/tar.gz/6ff181ecd781706f200f8a780b0133a85fd0a69f"
   dependencies:
     "@types/parsimmon" "^1.3.0"
     parsimmon "^1.2.0"
@@ -361,15 +361,15 @@ tsutils@^2.27.2:
   dependencies:
     tslib "^1.8.1"
 
-typescript@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.3.tgz#01b70247a6d3c2467f70c45795ef5ea18ce191d5"
-  integrity sha512-+81MUSyX+BaSo+u2RbozuQk/UWx6hfG0a5gHu4ANEM4sU96XbuIyAB+rWBW1u70c6a5QuZfuYICn3s2UjuHUpA==
+typescript@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.5.tgz#93d8b6864375325a91177372cb370ae0ae3a0703"
+  integrity sha512-muYNWV9j5+3mXoKD6oPONKuGUmYiFX14gfo9lWm9ZXRHOqVDQiB4q1CzFPbF4QLV2E9TZXH6oK55oQ94rn3PpA==
 
 typescript@next:
-  version "3.2.0-dev.20181027"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.0-dev.20181027.tgz#8f30b9c44d255dcbc0e803fa4fd0196ccd8f630a"
-  integrity sha512-mRKqWa8rr7j40xa/7nSkhsa7jSwAoH1PlQInCDQ+G1UVUsMfA7vdSo4Qf/jq2/wd2wqnF3M4TSvQYiYU+52aFA==
+  version "3.2.0-dev.20181031"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.0-dev.20181031.tgz#25042e2584246c9810ea4f08106e248fd84877c6"
+  integrity sha512-MkAdVLdevMLrCQjkbei2yPP2OtgxsVL1i0mgC1k2iGlhGvEoBFhKQvmDU4peOkW8wxvGEq+PmxHV/kOo9+pAJQ==
 
 vega-util@^1.7.0:
   version "1.7.0"
