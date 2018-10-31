@@ -12,9 +12,10 @@ export interface PushSignal extends BaseSignal {
   push?: 'outer';
 }
 export interface NewSignal extends BaseSignal {
-  value?: any;
+  value?: SignalValue;
   react?: boolean;
   update?: Expr;
   bind?: Binding;
 }
 export type Signal = NewSignal | PushSignal;
+export type SignalValue = boolean | Date | number | [number, number] | string | undefined;
