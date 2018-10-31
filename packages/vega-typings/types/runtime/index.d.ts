@@ -1,5 +1,5 @@
 import { Format, Spec } from '..';
-import { DataType, EncodeEntryName } from '../spec';
+import { DataType, EncodeEntryName, SignalValue } from '../spec';
 import { Renderers } from './renderer';
 
 // TODO
@@ -53,8 +53,8 @@ export class View {
   toSVG(): Promise<string>;
   toCanvas(): Promise<HTMLCanvasElement>;
 
-  signal(name: string, value: any): this;
-  signal(name: string): any;
+  signal(name: string, value: SignalValue): this;
+  signal(name: string): SignalValue;
   container(): HTMLElement | null;
   addEventListener(type: string, handler: EventListenerHandler): this;
   removeEventListener(type: string, handler: EventListenerHandler): this;
@@ -103,7 +103,7 @@ export function inferType(values: any[], field?: string): TypeInference;
 export function inferTypes(values: any[], fields: string[]): { [field: string]: TypeInference };
 
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
-export type SignalListenerHandler = (name: string, value: any) => void;
+export type SignalListenerHandler = (name: string, value: SignalValue) => void;
 export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
 export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
