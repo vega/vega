@@ -1,4 +1,4 @@
-import { Expr, ExprRef, EventSelector, SignalRef, Stream } from '.';
+import { Expr, ExprRef, EventSelector, SignalRef, SignalValue, Stream } from '.';
 
 export type EventListener =
   | SignalRef
@@ -13,7 +13,7 @@ export type Update =
   | ExprRef
   | SignalRef
   | {
-      value: any;
+      value: SignalValue;
     };
 export type OnEvent = (
   | {
