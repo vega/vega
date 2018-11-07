@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "0.3.50",
+  "version": "0.3.51",
   "description": "Typings for Vega",
   "types": "types",
   "repository": "git@github.com:vega/vega-typings.git",
