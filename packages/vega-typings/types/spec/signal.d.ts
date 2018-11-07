@@ -18,4 +18,4 @@ export interface NewSignal extends BaseSignal {
   bind?: Binding;
 }
 export type Signal = NewSignal | PushSignal;
-export type SignalValue = boolean | Date | number | [number, number] | string | undefined;
+export type SignalValue = any;
