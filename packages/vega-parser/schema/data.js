@@ -129,10 +129,12 @@ export default {
                 {
                   "properties": {
                     "url": stringOrSignal,
-                    "format": [
-                      {"$ref": "#/defs/dataFormat"},
-                      {"$ref": "#/refs/signal"}
-                    ]
+                    "format": {
+                      "oneOf": [
+                        {"$ref": "#/defs/dataFormat"},
+                        {"$ref": "#/refs/signal"}
+                      ]
+                    }
                   },
                   "required": ["url"]
                 }
