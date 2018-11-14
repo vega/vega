@@ -6,9 +6,9 @@ tape('Parser parses Vega specs with scales', function(test) {
     "width": 500,
     "height": 300,
     "signals": [
-      {"name": "yfield", "init": "y"},
-      {"name": "sortop", "init": "median"},
-      {"name": "order", "init": "ascending"}
+      {"name": "yfield", "value": "y"},
+      {"name": "sortop", "value": "median"},
+      {"name": "order", "value": "ascending"}
     ],
     "data": [
       {

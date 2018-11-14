@@ -4,7 +4,7 @@ var tape = require('tape'),
 tape('Parser parses Vega specs with marks', function(test) {
   var spec = {
     "signals": [
-      { "name": "color", "init": "steelblue" }
+      { "name": "color", "value": "steelblue" }
     ],
     "data": [
       {
