@@ -8,8 +8,8 @@ util.extend(vega.transforms, require('vega-transforms'));
 tape('Parser parses Vega specs with data transforms', function(test) {
   var spec = {
     "signals": [
-      { "name": "ufield", "init": "u" },
-      { "name": "fields", "init": ["u", "v"] }
+      { "name": "ufield", "value": "u" },
+      { "name": "fields", "value": ["u", "v"] }
     ],
     "data": [
       {
