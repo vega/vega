@@ -209,13 +209,13 @@ prototype.compareRef = function(cmp, stable) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
-      return ref(sig[_.signal]);
+      return scope.signalRef(_.signal);
     } else {
       return _;
     }
   }
 
-  var sig = this.signals,
+  var scope = this,
       signal = false,
       fields = array(cmp.field).map(check),
       orders = array(cmp.order).map(check);
