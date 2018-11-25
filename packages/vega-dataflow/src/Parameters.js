@@ -7,7 +7,7 @@ var CACHE = '_:mod:_';
  * Callers *must* use the set method to update values.
  */
 export default function Parameters() {
-  Object.defineProperty(this, CACHE, {writable:true, value: {}});
+  Object.defineProperty(this, CACHE, {writable: true, value: {}});
 }
 
 var prototype = Parameters.prototype;
