@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -27,17 +27,17 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-view.zip -- LICENSE README.md build/vega-view.js build/vega-view.min.js"
   },
   "dependencies": {
-    "d3-array": "^1.2.4",
+    "d3-array": "^2.0.2",
     "d3-timer": "^1.0.9",
-    "vega-dataflow": "^4.0.4",
-    "vega-parser": "^3.8.0",
-    "vega-runtime": "^3.1.1",
+    "vega-dataflow": "^4.1.0",
+    "vega-parser": "^3.9.0",
+    "vega-runtime": "^3.2.0",
     "vega-scenegraph": "^3.2.3",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "5",
-    "rollup": "0.66.6",
+    "rollup": "0.67.4",
     "tape": "4",
     "uglify-js": "3"
   }
