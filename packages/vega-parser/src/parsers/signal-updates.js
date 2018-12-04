@@ -1,11 +1,22 @@
 import parseExpression from './expression';
 import parseUpdate from './update';
+import {error} from 'vega-util';
 
 export default function(signal, scope) {
-  var op = scope.getSignal(signal.name);
+  var op = scope.getSignal(signal.name),
+      expr = signal.update;
 
-  if (signal.update) {
-    var expr = parseExpression(signal.update, scope);
+  if (signal.init) {
+    if (expr) {
+      error('Signals can not include both init and update expressions.');
+    } else {
+      expr = signal.init;
+      op.initonly = true;
+    }
+  }
+
+  if (expr) {
+    expr = parseExpression(expr, scope);
     op.update = expr.$expr;
     op.params = expr.$params;
   }

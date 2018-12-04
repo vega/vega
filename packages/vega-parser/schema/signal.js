@@ -38,7 +38,8 @@ export default {
     "signal": {
       "oneOf": [
         {"$ref": "#/defs/signalPush"},
-        {"$ref": "#/defs/signalNew"}
+        {"$ref": "#/defs/signalNew"},
+        {"$ref": "#/defs/signalInit"}
       ]
     },
     "signalName": {
@@ -58,6 +59,19 @@ export default {
       },
       "additionalProperties": false,
       "required": ["name"]
+    },
+    "signalInit": {
+      "type": "object",
+      "properties": {
+        "name": {"$ref": "#/defs/signalName"},
+        "description": {"type": "string"},
+        "value": {},
+        "init": {"$ref": "#/refs/exprString"},
+        "on": {"$ref": "#/defs/onEvents"},
+        "bind": {"$ref": "#/defs/bind"}
+      },
+      "additionalProperties": false,
+      "required": ["name", "init"]
     },
     "signalPush": {
       "type": "object",
