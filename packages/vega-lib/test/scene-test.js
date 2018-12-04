@@ -1,4 +1,5 @@
 var GENERATE_SCENES = false, // flag to generate test scenes
+    OUTPUT_FAILURES = false, // flag to write scenes upon test failure
     specdir = process.cwd() + '/test/specs-valid/',
     testdir = process.cwd() + '/test/scenegraphs/',
     fs = require('fs'),
@@ -44,6 +45,12 @@ tape('Vega generates scenegraphs for specifications', function(test) {
             actualJSON = JSON.parse(actual),
             expectJSON = JSON.parse(expect),
             isEqual = vega.sceneEqual(actualJSON, expectJSON);
+
+        if (OUTPUT_FAILURES && !isEqual) {
+          fs.writeFileSync(name + '-actual.json', JSON.stringify(actualJSON, 0, 2));
+          fs.writeFileSync(name + '-expect.json', JSON.stringify(expectJSON, 0, 2));
+        }
+
         test.ok(isEqual, 'scene: ' + name);
       }
     }).catch(function(err) {
