@@ -16,7 +16,7 @@ Properties supported by color scheme definitions. These objects can be assigned 
 | :------------ | :---------------------------: | :------------- |
 | scheme        | {% include type t="String" %} | {% include required %} The name of the color scheme to use. See the [scheme reference](#reference) below.|
 | count         | {% include type t="Number" %} | The number of colors to use in the scheme. This can be useful for scale types such as `quantize`, which use the length of the scale range to determine the number of discrete bins for the scale domain. |
-| extent        | {% include type t="Number[]" %} | For sequential and diverging schemes only, determines the extent of the color range to use. For example `[0.2, 1]` will rescale the color scheme such that color values in the range [0, 0.2) are excluded from the scheme. |
+| extent        | {% include type t="Number[]" %} | For sequential and diverging schemes only, determines the extent of the color range to use. For example `[0.2, 1]` will rescale the color scheme such that color values in the range [0, 0.2) are excluded from the scheme.  Starting the extent array with the higher number will reverse the scheme order.  For example, `[1, 0]` is the reverse of `[0, 1]`. |
 
 ## Registering Additional Schemes
 
