@@ -1,8 +1,10 @@
 import {Transform} from 'vega-dataflow';
 import {inherits, one} from 'vega-util';
 
-var Center = 'center',
-    Normalize = 'normalize';
+var Zero = 'zero',
+    Center = 'center',
+    Normalize = 'normalize',
+    DefOutput = ['y0', 'y1'];
 
 /**
  * Stack layout for visualization elements.
@@ -24,15 +26,15 @@ Stack.Definition = {
     { "name": "field", "type": "field" },
     { "name": "groupby", "type": "field", "array": true },
     { "name": "sort", "type": "compare" },
-    { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
+    { "name": "offset", "type": "enum", "default": Zero, "values": [Zero, Center, Normalize] },
+    { "name": "as", "type": "string", "array": true, "length": 2, "default": DefOutput }
   ]
 };
 
 var prototype = inherits(Stack, Transform);
 
 prototype.transform = function(_, pulse) {
-  var as = _.as || ['y0', 'y1'],
+  var as = _.as || DefOutput,
       y0 = as[0],
       y1 = as[1],
       field = _.field || one,
