@@ -195,6 +195,11 @@ d3-array@^1.2.0, d3-array@^1.2.4:
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.4.tgz#635ce4d5eea759f6f605863dbcfc30edc737f71f"
   integrity sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==
 
+d3-array@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.0.2.tgz#c9a8a203b43403c6ced881ee66828edc6e561c61"
+  integrity sha512-dbjbKhMdnTW6ToWsopRs4/+ZPOsqQE1QeeoUEvzIqhdkT29zzAUcUh8HMb92tTITVlbW/G0UBz4ryBqC2RTUIA==
+
 d3-collection@1:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/d3-collection/-/d3-collection-1.0.7.tgz#349bd2aa9977db071091c13144d5e4f16b5b310e"
@@ -905,10 +910,10 @@ rimraf@^2.2.8:
   dependencies:
     glob "^7.0.5"
 
-rollup@0.66.6:
-  version "0.66.6"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.66.6.tgz#ce7d6185beb7acea644ce220c25e71ae03275482"
-  integrity sha512-J7/SWanrcb83vfIHqa8+aVVGzy457GcjA6GVZEnD0x2u4OnOd0Q1pCrEoNe8yLwM6z6LZP02zBT2uW0yh5TqOw==
+rollup@0.67.4:
+  version "0.67.4"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.67.4.tgz#8ed6b0993337f84ec8a0387f824fa6c197e833ec"
+  integrity sha512-AVuP73mkb4BBMUmksQ3Jw0jTrBTU1i7rLiUYjFxLZGb3xiFmtVEg40oByphkZAsiL0bJC3hRAJUQos/e5EBd+w==
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "*"
