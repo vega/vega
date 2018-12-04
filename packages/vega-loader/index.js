@@ -13,5 +13,6 @@ export {
 } from './src/type';
 
 export {
-  default as formats
+  format as format,
+  formats as formats
 } from './src/formats/index';
