@@ -106,9 +106,12 @@ prototype.modified = flag(MODIFIED);
  *   automatically update (react) when parameter values change. In other words,
  *   this flag determines if the operator registers itself as a listener on
  *   any upstream operators included in the parameters.
+ * @param {boolean} [initonly=false] - A flag indicating if this operator
+ *   should calculate an update only upon its initiatal evaluation, then
+ *   deregister dependencies and suppress all future update invocations.
  * @return {Operator[]} - An array of upstream dependencies.
  */
-prototype.parameters = function(params, react) {
+prototype.parameters = function(params, react, initonly) {
   react = react !== false;
   var self = this,
       argval = (self._argval = self._argval || new Parameters()),
@@ -150,6 +153,8 @@ prototype.parameters = function(params, react) {
   }
 
   this.marshall().clear(); // initialize values
+  if (initonly) argops.initonly = true;
+
   return deps;
 };
 
@@ -162,12 +167,21 @@ prototype.marshall = function(stamp) {
   var argval = this._argval || NO_PARAMS,
       argops = this._argops, item, i, n, op, mod;
 
-  if (argops && (n = argops.length)) {
-    for (i=0; i<n; ++i) {
+  if (argops) {
+    for (i=0, n=argops.length; i<n; ++i) {
       item = argops[i];
       op = item.op;
       mod = op.modified() && op.stamp === stamp;
       argval.set(item.name, item.index, op.value, mod);
+    }
+
+    if (argops.initonly) {
+      for (i=0; i<n; ++i) {
+        item = argops[i];
+        item.op.targets().remove(this);
+      }
+      this._argops = null;
+      this._update = null;
     }
   }
   return argval;
@@ -185,9 +199,10 @@ prototype.marshall = function(stamp) {
  *   (including undefined) will let the input pulse pass through.
  */
 prototype.evaluate = function(pulse) {
-  if (this._update) {
+  var update = this._update;
+  if (update) {
     var params = this.marshall(pulse.stamp),
-        v = this._update(params, pulse);
+        v = update.call(this, params, pulse);
 
     params.clear();
     if (v !== this.value) {
