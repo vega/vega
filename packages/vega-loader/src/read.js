@@ -1,5 +1,5 @@
 import {inferTypes, typeParsers} from './type';
-import formats from './formats/index';
+import {formats} from './formats/index';
 import {error} from 'vega-util';
 import {timeParse, utcParse} from 'd3-time-format';
 

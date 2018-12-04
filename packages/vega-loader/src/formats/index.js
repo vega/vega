@@ -2,7 +2,7 @@ import {default as dsv, delimitedFormat} from './dsv';
 import json from './json';
 import topojson from './topojson';
 
-var formats = {
+export var format = {
   dsv: dsv,
   csv: delimitedFormat(','),
   tsv: delimitedFormat('\t'),
@@ -10,11 +10,11 @@ var formats = {
   topojson: topojson
 };
 
-export default function(name, format) {
+export function formats(name, reader) {
   if (arguments.length > 1) {
-    formats[name] = format;
+    format[name] = reader;
     return this;
   } else {
-    return formats.hasOwnProperty(name) ? formats[name] : null;
+    return format.hasOwnProperty(name) ? format[name] : null;
   }
 }
