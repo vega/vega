@@ -1,6 +1,6 @@
 {
   "name": "vega-crossfilter",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Indexed cross-filtering for Vega dataflows.",
   "keywords": [
     "vega",
@@ -26,15 +26,15 @@
     "postpublish": "git push && git push --tags && zip -j build/vega-crossfilter.zip -- LICENSE README.md build/vega-crossfilter.js build/vega-crossfilter.min.js"
   },
   "dependencies": {
-    "d3-array": "^1.2.4",
-    "vega-dataflow": "^4.0.4",
+    "d3-array": "^2.0.2",
+    "vega-dataflow": "^4.1.0",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
     "eslint": "5",
-    "rollup": "0.66.6",
+    "rollup": "0.67.4",
     "tape": "4",
     "uglify-js": "3",
-    "vega-transforms": "^2.2.0"
+    "vega-transforms": "^2.3.1"
   }
 }
