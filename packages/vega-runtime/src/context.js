@@ -110,11 +110,11 @@ Context.prototype = ContextFork.prototype = {
     delete this.unresolved;
     return this;
   },
-  operator: function(spec, update, params) {
-    this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
+  operator: function(spec, update) {
+    this.add(spec, this.dataflow.add(spec.value, update));
   },
-  transform: function(spec, type, params) {
-    this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)], params));
+  transform: function(spec, type) {
+    this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)]));
   },
   stream: function(spec, stream) {
     this.set(spec.id, stream);

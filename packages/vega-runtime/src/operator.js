@@ -19,12 +19,13 @@ export default function(spec, ctx) {
  * Parse and assign operator parameters.
  */
 export function parseOperatorParameters(spec, ctx) {
-  var op, params;
   if (spec.params) {
-    if (!(op = ctx.get(spec.id))) {
-      error('Invalid operator id: ' + spec.id);
-    }
-    params = parseParameters(spec.params, ctx);
-    ctx.dataflow.connect(op, op.parameters(params, spec.react));
+    var op = ctx.get(spec.id);
+    if (!op) error('Invalid operator id: ' + spec.id);
+    ctx.dataflow.connect(op, op.parameters(
+      parseParameters(spec.params, ctx),
+      spec.react,
+      spec.initonly
+    ));
   }
 }
