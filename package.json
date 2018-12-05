@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -55,14 +55,14 @@
     "rollup": "node_modules/vega-lib/bin/rollup && node_modules/vega-lib/bin/schema > build/vega-schema.json",
     "prebuild": "rm -rf build && mkdir build",
     "build": "npm run rollup && node_modules/vega-lib/bin/rollup -e",
-    "postbuild": "uglifyjs build/vega.js -c -m -o build/vega.min.js && uglifyjs build/vega-core.js -c -m -o build/vega-core.min.js",
+    "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
     "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
   },
   "dependencies": {
-    "vega-lib": "4.3.0",
-    "vega-parser": "3.8.0",
+    "vega-lib": "4.4.0",
+    "vega-parser": "3.9.0",
     "vega-typings": "*",
     "yargs": "12"
   },
@@ -71,13 +71,13 @@
     "canvas-prebuilt": "1.6.11"
   },
   "devDependencies": {
-    "rollup": "0.66.6",
+    "rollup": "0.67.4",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "tape": "4",
     "tv4": "1",
-    "uglify-js": "3",
-    "vega-datasets": "^1.19.0"
+    "terser": "3",
+    "vega-datasets": "^1.20.0"
   },
   "browser": {
     "buffer": false,
