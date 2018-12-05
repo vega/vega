@@ -5,7 +5,7 @@ menu: usage
 permalink: /usage/internet-explorer/index.html
 ---
 
-Vega is compatible with Internet Explorer versions 10 and 11, but with some notable caveats and limitations.
+Vega version 4.3.0 and earlier is compatible with Internet Explorer versions 10 and 11, but with some notable caveats and limitations, described below. Later versions of Vega assume [ES6](http://es6-features.org/) support. To use more recent versions of Vega with older browsers, use a JavaScript compiler such as [Babel](https://babeljs.io/) to generate ES5-compliant code.
 
 ## Enabling Internet Explorer Support
 
