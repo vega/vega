@@ -71,12 +71,13 @@
     "canvas-prebuilt": "1.6.11"
   },
   "devDependencies": {
+    "lerna": "^3.5.1",
     "rollup": "0.67.4",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "tape": "4",
-    "tv4": "1",
     "terser": "3",
+    "tv4": "1",
     "vega-datasets": "^1.20.0"
   },
   "browser": {
