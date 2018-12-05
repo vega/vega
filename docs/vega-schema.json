@@ -987,14 +987,16 @@
                     "url": {
                       "$ref": "#/refs/stringOrSignal"
                     },
-                    "format": [
-                      {
-                        "$ref": "#/defs/dataFormat"
-                      },
-                      {
-                        "$ref": "#/refs/signal"
-                      }
-                    ]
+                    "format": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/defs/dataFormat"
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    }
                   },
                   "required": [
                     "url"
@@ -3603,6 +3605,9 @@
         },
         {
           "$ref": "#/defs/signalNew"
+        },
+        {
+          "$ref": "#/defs/signalInit"
         }
       ]
     },
@@ -3644,6 +3649,32 @@
       "additionalProperties": false,
       "required": [
         "name"
+      ]
+    },
+    "signalInit": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/defs/signalName"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": {},
+        "init": {
+          "$ref": "#/refs/exprString"
+        },
+        "on": {
+          "$ref": "#/defs/onEvents"
+        },
+        "bind": {
+          "$ref": "#/defs/bind"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "init"
       ]
     },
     "signalPush": {

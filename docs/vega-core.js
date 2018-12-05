@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('d3-time-format'), require('d3-array'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-scale-chromatic'), require('d3-time'), require('d3-format'), require('d3-geo'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color'), require('d3-timer')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'd3-time-format', 'd3-array', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-scale-chromatic', 'd3-time', 'd3-format', 'd3-geo', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color', 'd3-timer'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('d3-path'), require('d3-shape'), require('d3-scale-chromatic'), require('d3-time'), require('d3-scale'), require('d3-interpolate'), require('d3-force'), require('d3-collection'), require('d3-hierarchy'), require('d3-voronoi'), require('d3-color'), require('d3-array'), require('d3-geo'), require('d3-format'), require('d3-time-format'), require('d3-timer')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'd3-path', 'd3-shape', 'd3-scale-chromatic', 'd3-time', 'd3-scale', 'd3-interpolate', 'd3-force', 'd3-collection', 'd3-hierarchy', 'd3-voronoi', 'd3-color', 'd3-array', 'd3-geo', 'd3-format', 'd3-time-format', 'd3-timer'], factory) :
   (factory((global.vega = {}),global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3,global.d3));
-}(this, (function (exports,d3Dsv,d3TimeFormat,d3Array,d3Shape,d3Path,$,$$1,_,d3Time,d3Format,d3Geo,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color,d3Timer) { 'use strict';
+}(this, (function (exports,d3Dsv,d3Path,d3Shape,_,d3Time,$,$$1,d3Force,d3Collection,d3Hierarchy,d3Voronoi,d3Color,d3Array,d3Geo,d3Format,d3TimeFormat,d3Timer) { 'use strict';
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -842,7 +842,7 @@
    * Callers *must* use the set method to update values.
    */
   function Parameters() {
-    Object.defineProperty(this, CACHE, {writable:true, value: {}});
+    Object.defineProperty(this, CACHE, {writable: true, value: {}});
   }
 
   var prototype = Parameters.prototype;
@@ -1016,9 +1016,12 @@
    *   automatically update (react) when parameter values change. In other words,
    *   this flag determines if the operator registers itself as a listener on
    *   any upstream operators included in the parameters.
+   * @param {boolean} [initonly=false] - A flag indicating if this operator
+   *   should calculate an update only upon its initiatal evaluation, then
+   *   deregister dependencies and suppress all future update invocations.
    * @return {Operator[]} - An array of upstream dependencies.
    */
-  prototype$1.parameters = function(params, react) {
+  prototype$1.parameters = function(params, react, initonly) {
     react = react !== false;
     var self = this,
         argval = (self._argval = self._argval || new Parameters()),
@@ -1060,6 +1063,8 @@
     }
 
     this.marshall().clear(); // initialize values
+    if (initonly) argops.initonly = true;
+
     return deps;
   };
 
@@ -1072,12 +1077,21 @@
     var argval = this._argval || NO_PARAMS,
         argops = this._argops, item, i, n, op, mod;
 
-    if (argops && (n = argops.length)) {
-      for (i=0; i<n; ++i) {
+    if (argops) {
+      for (i=0, n=argops.length; i<n; ++i) {
         item = argops[i];
         op = item.op;
         mod = op.modified() && op.stamp === stamp;
         argval.set(item.name, item.index, op.value, mod);
+      }
+
+      if (argops.initonly) {
+        for (i=0; i<n; ++i) {
+          item = argops[i];
+          item.op.targets().remove(this);
+        }
+        this._argops = null;
+        this._update = null;
       }
     }
     return argval;
@@ -1095,9 +1109,10 @@
    *   (including undefined) will let the input pulse pass through.
    */
   prototype$1.evaluate = function(pulse) {
-    if (this._update) {
+    var update = this._update;
+    if (update) {
       var params = this.marshall(pulse.stamp),
-          v = this._update(params, pulse);
+          v = update.call(this, params, pulse);
 
       params.clear();
       if (v !== this.value) {
@@ -1851,7 +1866,7 @@
     return object && object.features || [object];
   }
 
-  var formats = {
+  var format = {
     dsv: dsv,
     csv: delimitedFormat(','),
     tsv: delimitedFormat('\t'),
@@ -1859,19 +1874,19 @@
     topojson: topojson
   };
 
-  function formats$1(name, format) {
+  function formats(name, reader) {
     if (arguments.length > 1) {
-      formats[name] = format;
+      format[name] = reader;
       return this;
     } else {
-      return formats.hasOwnProperty(name) ? formats[name] : null;
+      return format.hasOwnProperty(name) ? format[name] : null;
     }
   }
 
   function read(data, schema, dateParse) {
     schema = schema || {};
 
-    var reader = formats$1(schema.type || 'json');
+    var reader = formats(schema.type || 'json');
     if (!reader) error('Unknown data format type: ' + schema.type);
 
     data = reader(data, schema);
@@ -1935,8 +1950,8 @@
    *   loaded data. This object is passed to the vega-loader read method.
    * @returns {Dataflow}
    */
-  function ingest$1(target, data, format) {
-    return this.pulse(target, this.changeset().insert(read(data, format)));
+  function ingest$1(target, data, format$$1) {
+    return this.pulse(target, this.changeset().insert(read(data, format$$1)));
   }
 
   function loadPending(df) {
@@ -1981,7 +1996,7 @@
    * @return {Promise} A Promise that resolves upon completion of the request.
    *   Resolves to a status code: 0 success, -1 load fail, -2 parse fail.
    */
-  function request$1(target, url, format) {
+  function request$1(target, url, format$$1) {
     var df = this,
         status = 0,
         pending = df._pending || loadPending(df);
@@ -1992,7 +2007,7 @@
       .load(url, {context:'dataflow'})
       .then(
         function(data) {
-          return read(data, format);
+          return read(data, format$$1);
         },
         function(error$$1) {
           status = -1;
@@ -14011,8 +14026,10 @@
     return pulse;
   };
 
-  var Center = 'center',
-      Normalize = 'normalize';
+  var Zero = 'zero',
+      Center = 'center',
+      Normalize = 'normalize',
+      DefOutput = ['y0', 'y1'];
 
   /**
    * Stack layout for visualization elements.
@@ -14034,15 +14051,15 @@
       { "name": "field", "type": "field" },
       { "name": "groupby", "type": "field", "array": true },
       { "name": "sort", "type": "compare" },
-      { "name": "offset", "type": "enum", "default": "zero", "values": ["zero", "center", "normalize"] },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["y0", "y1"] }
+      { "name": "offset", "type": "enum", "default": Zero, "values": [Zero, Center, Normalize] },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": DefOutput }
     ]
   };
 
   var prototype$10 = inherits(Stack, Transform);
 
   prototype$10.transform = function(_$$1, pulse) {
-    var as = _$$1.as || ['y0', 'y1'],
+    var as = _$$1.as || DefOutput,
         y0 = as[0],
         y1 = as[1],
         field$$1 = _$$1.field || one,
@@ -17171,7 +17188,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "4.3.0";
+  var version = "4.4.0";
 
   var Default = 'default';
 
@@ -17962,7 +17979,7 @@
   }
 
   var OUTER = 'outer',
-      OUTER_INVALID = ['value', 'update', 'react', 'bind'];
+      OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
 
   function outerError(prefix, name) {
     error(prefix + ' for "outer" push: ' + $$2(name));
@@ -19778,7 +19795,7 @@
     return e[1];
   }
 
-  function format(_$$1, specifier) {
+  function format$1(_$$1, specifier) {
     return formatter('format', d3Format.format, specifier)(_$$1);
   }
 
@@ -20813,7 +20830,7 @@
     hcl: d3Color.hcl,
     hsl: d3Color.hsl,
     sequence: d3Array.range,
-    format: format,
+    format: format$1,
     utcFormat: utcFormat,
     utcParse: utcParse,
     timeFormat: timeFormat,
@@ -21429,10 +21446,20 @@
   }
 
   function parseSignalUpdates(signal, scope) {
-    var op = scope.getSignal(signal.name);
+    var op = scope.getSignal(signal.name),
+        expr = signal.update;
 
-    if (signal.update) {
-      var expr = expression(signal.update, scope);
+    if (signal.init) {
+      if (expr) {
+        error('Signals can not include both init and update expressions.');
+      } else {
+        expr = signal.init;
+        op.initonly = true;
+      }
+    }
+
+    if (expr) {
+      expr = expression(expr, scope);
       op.update = expr.$expr;
       op.params = expr.$params;
     }
@@ -24230,13 +24257,13 @@
     function check(_$$1) {
       if (isSignal(_$$1)) {
         signal = true;
-        return ref(sig[_$$1.signal]);
+        return scope.signalRef(_$$1.signal);
       } else {
         return _$$1;
       }
     }
 
-    var sig = this.signals,
+    var scope = this,
         signal = false,
         fields = array(cmp.field).map(check),
         orders = array(cmp.order).map(check);
@@ -24897,13 +24924,14 @@
    * Parse and assign operator parameters.
    */
   function parseOperatorParameters(spec, ctx) {
-    var op, params;
     if (spec.params) {
-      if (!(op = ctx.get(spec.id))) {
-        error('Invalid operator id: ' + spec.id);
-      }
-      params = parseParameters$1(spec.params, ctx);
-      ctx.dataflow.connect(op, op.parameters(params, spec.react));
+      var op = ctx.get(spec.id);
+      if (!op) error('Invalid operator id: ' + spec.id);
+      ctx.dataflow.connect(op, op.parameters(
+        parseParameters$1(spec.params, ctx),
+        spec.react,
+        spec.initonly
+      ));
     }
   }
 
@@ -25183,11 +25211,11 @@
       delete this.unresolved;
       return this;
     },
-    operator: function(spec, update, params) {
-      this.add(spec, this.dataflow.add(spec.value, update, params, spec.react));
+    operator: function(spec, update) {
+      this.add(spec, this.dataflow.add(spec.value, update));
     },
-    transform: function(spec, type, params) {
-      this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)], params));
+    transform: function(spec, type) {
+      this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)]));
     },
     stream: function(spec, stream) {
       this.set(spec.id, stream);
@@ -25737,8 +25765,8 @@
   // -- Transforms -----
   extend(transforms, tx, vtx, encode, geo, force, tree, voronoi, wordcloud, xf);
 
-  exports.timeFormatLocale = d3TimeFormat.timeFormatDefaultLocale;
   exports.formatLocale = d3Format.formatDefaultLocale;
+  exports.timeFormatLocale = d3TimeFormat.timeFormatDefaultLocale;
   exports.version = version;
   exports.Dataflow = Dataflow;
   exports.EventStream = EventStream;
@@ -25834,7 +25862,8 @@
   exports.inferType = inferType;
   exports.inferTypes = inferTypes;
   exports.typeParsers = typeParsers;
-  exports.formats = formats$1;
+  exports.format = format;
+  exports.formats = formats;
   exports.Bounds = Bounds;
   exports.Gradient = Gradient;
   exports.GroupItem = GroupItem;
