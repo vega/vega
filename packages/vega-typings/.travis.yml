@@ -12,6 +12,6 @@ deploy:
   on:
     tags: true
     repo: vega/vega-typings
-    node: '10'
+    node: '11'
   api_key:
     secure: CnPmiXMj2STFD8m5nub1r9nNj7eE9r+FG/nzM2j9ewQ2Z50wf4KxDoXBe1gEFHW1oSsZ+8SeQnsXnUdfzhL0dVUG6GS01UclkfCgkbYi6Jo99CdwudWAi9j9hEr/UfmhBtIgKIDev3HIDhuT3bCNlLEjXVKK3MiGg6N9velZKWl8YuM4CjcP+y2sETU8VpkLbu3TUZ2LL3UGr3weNI3mUn/qW4XQyJwovCfJxTBlQz+MViytYP7AGG/+xmWhPgVYbqUS6cj1o0pZe678nmNcg+DGkGJDtLM3tJ1ktB7vVOOI2Veoyrc9G0rKIFX50pl1SbvCypTJDj54QsjhDacMeh0SbQugaKvleVznaY05mHNCoI3a6aBzmwwOLoJUiiVk5L+eKOT338nnkKs2BHpNLHH2cfI3JPLY0jZl+lrLL4O3i2t+tweZgWPF2lfd7GW7+f389uXGAhU6h+Wy66n+j66yaETeTrFNMMUToddMcFpBZgfjloQNDwa8VlOT4oVUcRewgvhRhKhwgvKSdxZISpaIOoeo9AuTafq1PUZK6tJR5EZq1JtzcHYOYPVBaLbufhtPe4R0ySGIr1jvtZOPW2oah1a9qwh9LDvJEefXGtg2A9cP5460514dFMwXP/Q1A/OXIDDViZIsvT58be2ZcSdzowm7HBg2tvfimH6gfvQ=
