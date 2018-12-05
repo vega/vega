@@ -36,6 +36,13 @@ Arvind Satyanarayan, Kanit Wongsuphasawat, Jeffrey Heer.
 
 ## Tools &amp; Models Enabled by Vega
 
+<a class="citation" href="http://idl.cs.washington.edu/papers/draco">
+<strong>Formalizing Visualization Design Knowledge as Constraints: Actionable and Extensible Models in Draco</strong>.
+Dominik Moritz, Chenglong Wang, Gregory Nelson, Halden Lin, Adam M. Smith, Bill Howe, Jeffrey Heer.
+<em>IEEE Trans. Visualization & Comp. Graphics (Proc. InfoVis)</em>, 2019.
+<em><strong>Best Paper Award</strong></em>
+</a>
+
 <a class="citation" href="http://idl.cs.washington.edu/papers/voyager2">
 <strong>Voyager 2: Augmenting Visual Analysis with Partial View Specifications</strong>.
 Kanit Wongsuphasawat, Zening Qu, Dominik Moritz, Riley Chang, Felix Ouk, Anushka Anand, Jock Mackinlay, Bill Howe, Jeffrey Heer.
