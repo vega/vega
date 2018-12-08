@@ -12,53 +12,20 @@
     "d3"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "UW Interactive Data Lab",
-    "url": "http://idl.cs.washington.edu"
-  },
-  "contributors": [
-    {
-      "name": "Jeffrey Heer",
-      "url": "http://idl.cs.washington.edu"
-    },
-    {
-      "name": "Arvind Satyanarayan",
-      "url": "http://arvindsatya.com"
-    },
-    {
-      "name": "Ryan Russell",
-      "url": "https://github.com/RussellSprouts"
-    },
-    {
-      "name": "Emily Gu",
-      "url": "https://github.com/emilygu"
-    },
-    {
-      "name": "Dominik Moritz",
-      "url": "https://www.domoritz.de"
-    },
-    {
-      "name": "Yuri Astrakhan",
-      "url": "https://github.com/nyurik"
-    }
-  ],
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "main": "build/vega.js",
   "module": "index",
-  "jsnext:main": "index",
   "unpkg": "build/vega.min.js",
   "jsdelivr": "build/vega.min.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-lib.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
     "rollup": "bin/rollup && bin/schema > build/vega-schema.json",
     "prebuild": "rm -rf build && mkdir build",
-    "build": "npm run rollup && bin/rollup -e",
+    "build": "yarn rollup && bin/rollup -e",
     "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
-    "pretest": "npm run prebuild && npm run rollup",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js test",
-    "prepublishOnly": "npm run test && npm run build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
@@ -84,15 +51,6 @@
     "vega-view-transforms": "^2.0.3",
     "vega-voronoi": "^3.0.0",
     "vega-wordcloud": "^3.0.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "tape": "4",
-    "tv4": "1",
-    "terser": "3"
   },
   "browser": {
     "buffer": false,

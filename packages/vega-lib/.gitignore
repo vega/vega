@@ -1,9 +1,0 @@
-*.sublime-workspace
-.sass-cache
-.jekyll-metadata
-.DS_Store
-build/
-docs/_site
-docs/Gemfile.lock
-node_modules
-npm-debug.log

@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-var vega = require('../'),
-    schema = require(process.cwd() + '/node_modules/vega-parser/build/vega-schema'),
-    defs = Object.keys(vega.transforms)
-            .map(vega.definition)
-            .filter(function(d) { return d; });
+const vega = require('../'),
+      defs = Object.keys(vega.transforms).map(vega.definition).filter(d => d),
+      dir = require('path').dirname(require.resolve('vega-parser')),
+      schema = require(dir + '/vega-schema');
 
 process.stdout.write(JSON.stringify(schema(defs), 0, 2));

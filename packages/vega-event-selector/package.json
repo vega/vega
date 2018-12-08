@@ -8,39 +8,16 @@
     "selector"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "UW Interactive Data Lab",
-    "url": "http://idl.cs.washington.edu"
-  },
-  "contributors": [
-    {
-      "name": "Jeffrey Heer",
-      "url": "http://idl.cs.washington.edu"
-    },
-    {
-      "name": "Arvind Satyanarayan",
-      "url": "http://arvindsatya.com"
-    }
-  ],
+  "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "main": "build/vega-event-selector.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-event-selector.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
+    "build": "yarn test && terser build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
     "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
     "pretest": "rm -rf build && mkdir build && npm run rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-event-selector.zip -- LICENSE README.md build/vega-event-selector.js build/vega-event-selector.min.js"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.66.6",
-    "tape": "4",
-    "uglify-js": "3"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   }
 }

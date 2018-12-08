@@ -9,25 +9,18 @@
     "reactive"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-parser.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-parser.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-parser.js -c -m -o build/vega-parser.min.js",
+    "build": "yarn test && terser build/vega-parser.js -c -m -o build/vega-parser.min.js",
     "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,d3-format:d3,d3-geo:d3,d3-time-format:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-statistics:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "schema": "rollup -f umd -g vega-util:vega -n vega.schema -o build/vega-schema.js -- schema/index.js",
-    "pretest": "rm -rf build && mkdir build && npm run rollup && npm run schema",
+    "pretest": "rm -rf build && mkdir build && yarn rollup && yarn schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-parser.zip -- LICENSE README.md build/vega-schema.js build/vega-parser.js build/vega-parser.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2",
@@ -42,12 +35,5 @@
     "vega-scenegraph": "^3.2.3",
     "vega-statistics": "^1.2.3",
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3",
-    "vega-transforms": "^2.3.1"
   }
 }

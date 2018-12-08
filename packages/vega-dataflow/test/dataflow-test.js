@@ -37,7 +37,7 @@ tape('Dataflow loads external data', function(test) {
   df.request(op, null)
     .then(function(v) {
       test.equal(v, -1); // load fail due to bad url
-      return df.request(op, 'LICENSE', {type: 'json'});
+      return df.request(op, 'README.md', {type: 'json'});
     })
     .then(function(v) {
       test.equal(v, -2); // parse fail due to improper format

@@ -9,23 +9,16 @@
     "legends"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-encode.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-encode.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-encode.js -c -m -o build/vega-encode.min.js",
+    "build": "yarn test && terser build/vega-encode.js -c -m -o build/vega-encode.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-format:d3,d3-interpolate:d3,vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-encode.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-encode.zip -- LICENSE README.md build/vega-encode.js build/vega-encode.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2",
@@ -34,12 +27,5 @@
     "vega-dataflow": "^4.1.0",
     "vega-scale": "^2.5.0",
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3",
-    "vega-transforms": "^2.3.1"
   }
 }

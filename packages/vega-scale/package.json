@@ -9,23 +9,16 @@
     "palette"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-scale.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-scale.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-scale.js -c -m -o build/vega-scale.min.js",
+    "build": "yarn test && terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,d3-scale-chromatic:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-scale.zip -- LICENSE README.md build/vega-scale.js build/vega-scale.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2",
@@ -34,11 +27,5 @@
     "d3-scale-chromatic": "^1.3.3",
     "d3-time": "^1.0.10",
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3"
   }
 }

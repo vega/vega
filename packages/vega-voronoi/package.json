@@ -7,34 +7,23 @@
     "voronoi"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-voronoi.js",
-  "jsnext:main": "index",
   "module": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-voronoi.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
+    "build": "yarn test && terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-voronoi:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-voronoi.zip -- LICENSE README.md build/vega-voronoi.js build/vega-voronoi.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-voronoi": "^1.1.4",
-    "vega-dataflow": "^4.0.4",
+    "vega-dataflow": "^4.1.0",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.66.6",
-    "tape": "4",
-    "uglify-js": "3",
-    "vega-transforms": "^2.2.0"
+    "vega-transforms": "*"
   }
 }
