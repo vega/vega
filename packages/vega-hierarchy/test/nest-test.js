@@ -1,7 +1,6 @@
 var tape = require('tape'),
     field = require('vega-util').field,
     vega = require('vega-dataflow'),
-    changeset = vega.changeset,
     Collect = require('vega-transforms').collect,
     Nest = require('../').nest;
 
@@ -21,7 +20,7 @@ tape('Nest tuples', function(test) {
       out = df.add(Collect, {pulse: nest});
 
   // -- test adds
-  df.pulse(collect, changeset().insert([dataA, dataB])).run();
+  df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
 
   var expected = [dataA, dataB];
   expected.root = {
@@ -53,7 +52,7 @@ tape('Nest tuples', function(test) {
 
 
   // -- test data removals
-  df.pulse(collect, changeset().remove([dataA])).run();
+  df.pulse(collect, vega.changeset().remove([dataA])).run();
 
   expected = [dataB];
   expected.root = {
@@ -87,7 +86,7 @@ tape('Nest empty data', function(test) {
       nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
       out = df.add(Collect, {pulse: nest});
 
-  df.pulse(collect, changeset().insert([])).run();
+  df.pulse(collect, vega.changeset().insert([])).run();
   test.equal(out.value.length, 0);
   var root = out.value.root;
   test.equal(root.children, undefined);
