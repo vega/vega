@@ -8,42 +8,19 @@
     "parser",
     "codegen"
   ],
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
-  "contributors": [
-    {
-      "name": "Ryan Russell",
-      "url": "https://github.com/RussellSprouts"
-    },
-    {
-      "name": "Arvind Satyanarayan",
-      "url": "http://arvindsatya.com"
-    }
-  ],
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
   "main": "build/vega-expression.js",
   "module": "index.js",
-  "jsnext:main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/vega/vega-expression.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-expression.js -c -m -o build/vega-expression.min.js",
+    "build": "yarn test && terser build/vega-expression.js -c -m -o build/vega-expression.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-expression.zip -- LICENSE README.md build/vega-expression.js build/vega-expression.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.66.6",
-    "tape": "4",
-    "uglify-js": "3"
   }
 }

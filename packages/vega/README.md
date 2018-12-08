@@ -10,16 +10,6 @@ For documentation, tutorials, and examples, see the [Vega website](https://vega.
 
 Are you using Vega in a web application built with a bundler such as [Webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/)? If so, and you _do not need server-side rendering support_, you might prefer using [vega-lib](https://github.com/vega/vega-lib) to include Vega in your app. The vega-lib package also houses our general test suite.
 
-## Build Instructions
-
-For a basic setup allowing you to build Vega and run examples:
-
-- Clone `https://github.com/vega/vega`.
-- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install. We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
-- Once installation is complete, use `yarn build` within the _vega_ or _vega-lib_ package to build output files. Use `yarn test` to run test cases for all packages. Use `yarn serve` to launch a local webserver and visit the `"test"` folder to browse test specifications.
-
-This repository includes the website and documentation in the `docs` folder. To launch it, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. Now, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
-
 ## Contributions, Development, and Support
 
 Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).

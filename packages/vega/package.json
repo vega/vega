@@ -1,0 +1,47 @@
+{
+  "name": "vega",
+  "version": "4.4.0",
+  "description": "The Vega visualization grammar.",
+  "keywords": [
+    "vega",
+    "visualization",
+    "interaction",
+    "dataflow",
+    "grammar",
+    "data",
+    "d3"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
+  "main": "build/vega.js",
+  "module": "index",
+  "unpkg": "build/vega.min.js",
+  "jsdelivr": "build/vega.min.js",
+  "bin": {
+    "vg2png": "./bin/vg2png",
+    "vg2svg": "./bin/vg2svg"
+  },
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "../vega-lib/bin/rollup && ../vega-lib/bin/schema > build/vega-schema.json",
+    "prebuild": "rm -rf build && mkdir build",
+    "build": "yarn rollup && ../vega-lib/bin/rollup -e",
+    "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh"
+  },
+  "dependencies": {
+    "vega-lib": "4.4.0",
+    "vega-parser": "3.9.0",
+    "vega-typings": "*",
+    "yargs": "12"
+  },
+  "optionalDependencies": {
+    "canvas": "^1.6.13",
+    "canvas-prebuilt": "1.6.11"
+  },
+  "browser": {
+    "buffer": false,
+    "fs": false
+  }
+}

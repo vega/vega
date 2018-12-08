@@ -7,32 +7,17 @@
     "utilities"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-util.js",
   "module": "index",
-  "jsnext:main": "index",
   "types": "index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-util.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-util.js -c -m -o build/vega-util.min.js",
+    "build": "yarn test && terser build/vega-util.js -c -m -o build/vega-util.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-util.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test && tsc",
     "tsc": "tsc",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-util.zip -- LICENSE README.md build/vega-util.js build/vega-util.min.js"
-  },
-  "devDependencies": {
-    "@types/node": "9",
-    "eslint": "2",
-    "rollup": "0.58.2",
-    "tape": "4",
-    "typescript": "2",
-    "uglify-js": "3"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   }
 }

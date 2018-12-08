@@ -10,32 +10,19 @@
     "data"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-dataflow.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-dataflow.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-dataflow.js -c -m -o build/vega-dataflow.min.js",
+    "build": "yarn test && terser build/vega-dataflow.js -c -m -o build/vega-dataflow.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g vega-loader:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-dataflow.zip -- LICENSE README.md build/vega-dataflow.js build/vega-dataflow.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "vega-loader": "^3.1.0",
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3"
   }
 }

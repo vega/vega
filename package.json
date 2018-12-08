@@ -1,87 +1,32 @@
 {
-  "name": "vega",
-  "version": "4.4.0",
-  "description": "The Vega visualization grammar.",
-  "keywords": [
-    "vega",
-    "visualization",
-    "interaction",
-    "dataflow",
-    "grammar",
-    "data",
-    "d3"
-  ],
+  "private": true,
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "UW Interactive Data Lab",
-    "url": "http://idl.cs.washington.edu"
-  },
-  "contributors": [
-    {
-      "name": "Jeffrey Heer",
-      "url": "http://idl.cs.washington.edu"
-    },
-    {
-      "name": "Arvind Satyanarayan",
-      "url": "http://arvindsatya.com"
-    },
-    {
-      "name": "Ryan Russell",
-      "url": "https://github.com/RussellSprouts"
-    },
-    {
-      "name": "Emily Gu",
-      "url": "https://github.com/emilygu"
-    },
-    {
-      "name": "Dominik Moritz",
-      "url": "https://www.domoritz.de"
-    }
-  ],
-  "main": "build/vega.js",
-  "module": "index",
-  "jsnext:main": "index",
-  "unpkg": "build/vega.min.js",
-  "jsdelivr": "build/vega.min.js",
-  "bin": {
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega.git"
-  },
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
+  "repository": "vega/vega",
   "scripts": {
-    "rollup": "node_modules/vega-lib/bin/rollup && node_modules/vega-lib/bin/schema > build/vega-schema.json",
-    "prebuild": "rm -rf build && mkdir build",
-    "build": "npm run rollup && node_modules/vega-lib/bin/rollup -e",
-    "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega.zip -- LICENSE README.md build/vega-schema.json build/vega.js build/vega.min.js build/vega-core.js build/vega-core.min.js && bin/deploy-schema.sh",
-    "data": "rsync -r node_modules/vega-datasets/data/* docs/data"
-  },
-  "dependencies": {
-    "vega-lib": "4.4.0",
-    "vega-parser": "3.9.0",
-    "vega-typings": "*",
-    "yargs": "12"
-  },
-  "optionalDependencies": {
-    "canvas": "^1.6.13",
-    "canvas-prebuilt": "1.6.11"
+    "clean": "lerna clean && ls -db ./packages/*/LICENSE | xargs -n 1 rm -f && rm -f yarn.lock",
+    "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
+    "license": "ls -db ./packages/*/ | xargs -n 1 cp LICENSE",
+    "prepublishOnly": "yarn license",
+    "serve": "http-server packages/vega-lib/ -c-1 -p8080 -o",
+    "test": "lerna run test"
   },
   "devDependencies": {
+    "@types/node": "9",
+    "canvas": "^1.6.13",
+    "eslint": "5",
+    "http-server": "^0.11.1",
+    "jsdom": "11",
     "lerna": "^3.5.1",
     "rollup": "0.67.4",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "tape": "4",
-    "terser": "3",
     "tv4": "1",
-    "vega-datasets": "^1.20.0"
+    "terser": "3",
+    "typescript": "2"
   },
-  "browser": {
-    "buffer": false,
-    "fs": false
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

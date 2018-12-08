@@ -9,31 +9,18 @@
     "distribution"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-statistics.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-statistics.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
+    "build": "yarn test && terser build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3 -f umd -n vega -o build/vega-statistics.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-statistics.zip -- LICENSE README.md build/vega-statistics.js build/vega-statistics.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3"
   }
 }

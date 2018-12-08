@@ -8,23 +8,16 @@
     "layout"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-view.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-view.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-view.js -c -m -o build/vega-view.min.js",
+    "build": "yarn test && terser build/vega-view.js -c -m -o build/vega-view.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-timer:d3,vega-dataflow:vega,vega-parser:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-view.zip -- LICENSE README.md build/vega-view.js build/vega-view.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2",
@@ -34,11 +27,5 @@
     "vega-runtime": "^3.2.0",
     "vega-scenegraph": "^3.2.3",
     "vega-util": "^1.7.0"
-  },
-  "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3"
   }
 }

@@ -7,23 +7,16 @@
     "crossfilter"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-crossfilter.js",
   "module": "index",
-  "jsnext:main": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-crossfilter.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-crossfilter.js -c -m -o build/vega-crossfilter.min.js",
+    "build": "yarn test && terser build/vega-crossfilter.js -c -m -o build/vega-crossfilter.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-crossfilter.js -- index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-crossfilter.zip -- LICENSE README.md build/vega-crossfilter.js build/vega-crossfilter.min.js"
+    "prepublishOnly": "yarn build",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.0.2",
@@ -31,10 +24,6 @@
     "vega-util": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "5",
-    "rollup": "0.67.4",
-    "tape": "4",
-    "uglify-js": "3",
-    "vega-transforms": "^2.3.1"
+    "vega-transforms": "*"
   }
 }
