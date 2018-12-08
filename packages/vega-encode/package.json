@@ -25,7 +25,10 @@
     "d3-format": "^1.3.2",
     "d3-interpolate": "^1.3.2",
     "vega-dataflow": "^4.1.0",
-    "vega-scale": "^2.5.0",
+    "vega-scale": "^2.5.1",
     "vega-util": "^1.7.0"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
   }
 }
