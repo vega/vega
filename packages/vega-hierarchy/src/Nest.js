@@ -1,7 +1,6 @@
 import lookup from './lookup';
 import {ingest, isTuple, Transform, tupleid} from 'vega-dataflow';
 import {array, error, inherits} from 'vega-util';
-import {nest} from 'd3-collection';
 import {hierarchy} from 'd3-hierarchy';
 
  /**
@@ -78,3 +77,52 @@ prototype.transform = function(_, pulse) {
   out.source.root = tree;
   return out;
 };
+
+function nest() {
+  var keys = [],
+      nest;
+
+  function apply(array, depth) {
+    if (depth >= keys.length) {
+      return array;
+    }
+
+    var i = -1,
+        n = array.length,
+        key = keys[depth++],
+        keyValue,
+        value,
+        valuesByKey = {},
+        values,
+        result = {};
+
+    while (++i < n) {
+      keyValue = key(value = array[i]) + '';
+      if (values = valuesByKey[keyValue]) {
+        values.push(value);
+      } else {
+        valuesByKey[keyValue] = [value];
+      }
+    }
+
+    for (keyValue in valuesByKey) {
+      result[keyValue] = apply(valuesByKey[keyValue], depth);
+    }
+
+    return result;
+  }
+
+  function entries(map, depth) {
+    if (++depth > keys.length) return map;
+    var array = [], k;
+    for (k in map) {
+      array.push({key: k, values: entries(map[k], depth)});
+    }
+    return array;
+  }
+
+  return nest = {
+    entries: function(array) { return entries(apply(array, 0), 0); },
+    key: function(d) { keys.push(d); return nest; }
+  };
+}
