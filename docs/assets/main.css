@@ -248,6 +248,7 @@ nav a:hover {
 nav > .dropdown {
   flex: 0 0 auto;
   margin: 0 20px 0px -20px;
+  cursor: pointer;
 }
 
 .vega-title {
@@ -268,7 +269,6 @@ nav > .dropdown {
 }
 
 .primary-links {
-  float: left;
   text-align: left;
   display: inline-block;
   flex: 1 0 auto;
@@ -527,7 +527,6 @@ ul.column-set, .column-set ul {
 nav .dropdown-content {
   position: absolute;
   display: none;
-  z-index: 1;
 }
 
 nav .dropdown-content a {
@@ -538,17 +537,16 @@ nav .dropdown-content a {
   padding-right: 20px;
 }
 
-nav > .dropdown:hover {
-  box-shadow: 0px 51px 20px 5px rgba(0,0,0,0.2);
-}
-
 nav > .dropdown:hover .dropdown-content {
   display: block;
+  box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.2);
 }
 
 nav > .dropdown:hover a {
   background-color: #e2e2e2;
   color: #666;
+  position: relative;
+  z-index: 10;
 }
 
 nav > .dropdown:hover a:hover {
