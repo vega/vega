@@ -148,7 +148,7 @@ export interface CountPatternTransform {
 export type ContourTransform = {
   type: 'contour';
   signal?: string;
-  size: Vector2<number | SignalRef> | SignalRef;
+  size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<SignalRef | number> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
   values?: (number | SignalRef)[] | SignalRef;
   x?: string | TransformField;
   y?: string | TransformField;
