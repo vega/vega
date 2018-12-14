@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "@types/node": "9",
-    "canvas": "^1.6.13",
+    "canvas": "^2.2.0",
     "eslint": "5",
     "http-server": "^0.11.1",
-    "jsdom": "11",
+    "jsdom": "13",
     "lerna": "^3.5.1",
     "rollup": "0.67.4",
     "rollup-plugin-json": "^3.1.0",

@@ -37,8 +37,7 @@
     "yargs": "12"
   },
   "optionalDependencies": {
-    "canvas": "^1.6.13",
-    "canvas-prebuilt": "1.6.11"
+    "canvas": "^2.2.0"
   },
   "browser": {
     "buffer": false,

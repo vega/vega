@@ -20,8 +20,7 @@
     "postpublish": "git push && git push --tags"
   },
   "devDependencies": {
-    "canvas": "^1.6.10",
-    "canvas-prebuilt": "^1.6.5-prerelease.1"
+    "canvas": "^2.2.0"
   },
   "browser": {
     "./build/vega-canvas.node.js": "./build/vega-canvas.js",
