@@ -8,29 +8,18 @@
     "image"
   ],
   "license": "BSD-3-Clause",
-  "author": {
-    "name": "Jeffrey Heer",
-    "url": "http://idl.cs.washington.edu"
-  },
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-canvas.node.js",
-  "jsnext:main": "index",
   "module": "index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vega/vega-canvas.git"
-  },
+  "repository": "vega/vega",
   "scripts": {
-    "build": "npm run test && uglifyjs build/vega-canvas.js -c -m -o build/vega-canvas.min.js",
+    "build": "npm run test && terser build/vega-canvas.js -c -m -o build/vega-canvas.min.js",
     "pretest": "rm -rf build && mkdir build && rollup -f umd -n vega -o build/vega-canvas.node.js -- index.js && rollup -f umd -n vega -o build/vega-canvas.js -- index.browser.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublishOnly": "npm run build",
-    "postpublish": "git push && git push --tags && zip -j build/vega-canvas.zip -- LICENSE README.md build/vega-canvas.node.js build/vega-canvas.js build/vega-canvas.min.js"
+    "postpublish": "git push && git push --tags"
   },
   "devDependencies": {
-    "eslint": "4",
-    "rollup": "0.58.2",
-    "tape": "4",
-    "uglify-js": "3",
     "canvas": "^1.6.10",
     "canvas-prebuilt": "^1.6.5-prerelease.1"
   },
