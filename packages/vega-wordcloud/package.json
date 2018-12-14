@@ -30,7 +30,6 @@
     "vega-transforms": "*"
   },
   "browser": {
-    "canvas": false,
-    "canvas-prebuilt": false
+    "canvas": false
   }
 }

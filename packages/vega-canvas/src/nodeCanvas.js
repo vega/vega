@@ -1,21 +1,18 @@
 var NodeCanvas;
 
-['canvas', 'canvas-prebuilt'].some(function(libName) {
-  try {
-    NodeCanvas = require(libName);
-    if (typeof NodeCanvas !== 'function') {
-      NodeCanvas = null;
-    }
-  } catch (error) {
+try {
+  NodeCanvas = require('canvas');
+  if (!(NodeCanvas && NodeCanvas.createCanvas)) {
     NodeCanvas = null;
   }
-  return NodeCanvas;
-});
+} catch (error) {
+  // do nothing
+}
 
 export function nodeCanvas(w, h) {
   if (NodeCanvas) {
     try {
-      return new NodeCanvas(w, h);
+      return new NodeCanvas.Canvas(w, h);
     } catch (e) {
       // do nothing, return null on error
     }
