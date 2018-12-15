@@ -79,7 +79,7 @@ function draw(context, scene, bounds) {
     if (!(str = textValue(item))) return; // get text string
 
     opacity = item.opacity == null ? 1 : item.opacity;
-    if (opacity === 0) return;
+    if (opacity === 0 || item.fontSize <= 0) return;
 
     context.font = font(item);
     context.textAlign = item.align || 'left';

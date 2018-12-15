@@ -25,8 +25,8 @@ function estimate(text) {
 
 // measure text width if canvas is available
 function measureWidth(item) {
-  context.font = font(item);
-  return measure(textValue(item));
+  return fontSize(item) <= 0 ? 0
+    : (context.font = font(item), measure(textValue(item)));
 }
 
 function measure(text) {
