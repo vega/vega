@@ -1,19 +1,5 @@
-# Vega: A Visualization Grammar
+# vega
 
-<a href="https://vega.github.io/vega/examples">
-<img src="https://vega.github.io/vega/assets/banner.png" alt="Vega Examples" width="900"></img>
-</a>
+Build the Vega library and JSON schema.
 
-**Vega** is a *visualization grammar*, a declarative format for creating, saving, and sharing interactive visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG.
-
-For documentation, tutorials, and examples, see the [Vega website](https://vega.github.io/vega). For a description of changes between Vega 2 and later versions, please refer to the [Vega Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
-
-Are you using Vega in a web application built with a bundler such as [Webpack](https://webpack.js.org/) or [Browserify](http://browserify.org/)? If so, and you _do not need server-side rendering support_, you might prefer using [vega-lib](https://github.com/vega/vega-lib) to include Vega in your app. The vega-lib package also houses our general test suite.
-
-## Contributions, Development, and Support
-
-Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
-
-Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack)!
-
-Read about future plans in [our roadmap](https://docs.google.com/document/d/1fscSxSJtfkd1m027r1ONCc7O8RdZp1oGABwca2pgV_E/edit#).
+This module builds the output Vega library files and JSON schema. Run `yarn build` to build both browser and node.js files. Run `yarn test` to run the top-level test suite.
