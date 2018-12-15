@@ -4,16 +4,21 @@ function devicePixelRatio() {
 
 var pixelRatio = devicePixelRatio();
 
-export default function(canvas, width, height, origin, scaleFactor) {
+export default function(canvas, width, height, origin, scaleFactor, opt) {
   var inDOM = typeof HTMLElement !== 'undefined'
     && canvas instanceof HTMLElement
     && canvas.parentNode != null;
 
   var context = canvas.getContext('2d'),
-      ratio = inDOM ? pixelRatio : scaleFactor;
+      ratio = inDOM ? pixelRatio : scaleFactor,
+      key;
 
   canvas.width = width * ratio;
   canvas.height = height * ratio;
+
+  for (key in opt) {
+    context[key] = opt[key];
+  }
 
   if (inDOM && ratio !== 1) {
     canvas.style.width = width + 'px';

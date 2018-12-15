@@ -19,9 +19,6 @@
     "prepublishOnly": "npm run build",
     "postpublish": "git push && git push --tags"
   },
-  "devDependencies": {
-    "canvas": "^2.2.0"
-  },
   "browser": {
     "./build/vega-canvas.node.js": "./build/vega-canvas.js",
     "./index.js": "./index.browser.js"
