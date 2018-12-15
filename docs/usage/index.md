@@ -130,51 +130,53 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 
 ## <a name="cli"></a>Command Line Utilities
 
-Vega includes two node.js-based command line utilities &ndash; `vg2png` and `vg2svg` &ndash; for rendering static visualization images. These commands render to PNG or SVG images, respectively.
+The `vega-cli` package includes two node.js-based command line utilities &ndash; `vg2pdf`, `vg2png`, and `vg2svg` &ndash; for rendering static visualization images. These commands render to PDF, PNG, or SVG files, respectively.
 
-- **vg2png**: `vg2png [-b basedir] [-s scalefactor] vega_json_file [output_png_file]`
-- **vg2svg**: `vg2svg [-b basedir] [-h] vega_json_file [output_svg_file]`
+- **vg2pdf**: `vg2pdf [-b basedir] [-s scalefactor] [-seed randomSeed] vega_json_file [output_png_file]`
+- **vg2png**: `vg2png [-b basedir] [-s scalefactor] [-seed randomSeed] vega_json_file [output_png_file]`
+- **vg2svg**: `vg2svg [-b basedir] [-s scalefactor] [-h] [-seed randomSeed] vega_json_file [output_svg_file]`
 
 If no output file is given, the resulting PNG or SVG data will be written to standard output, and so can be piped into other applications. The programs also accept the following (optional) parameters:
 
 * __-b__, __--base__ - [String] A base directory to use for data and image loading. For web retrieval, use `-b http://host/data/`. For files, use `-b file:///dir/data/` (absolute path) or `-b data/` (relative path).
-* __-s__, __--scale__ - [Number] [Default:1] For png output, a resolution scale factor.  For example, `-s 2` results in a doubling of the output resolution.
+* __-s__, __--scale__ - [Number] [Default:1] For PNG output, a resolution scale factor.  For example, `-s 2` results in a doubling of the output resolution. For PDF or SVG, scales the output coordinate space.
+* __-seed__, - [Number] Seed for random number generation. Allows for consistent output over random values.
 * __-h__, __--header__ - [Flag] Includes XML header and DOCTYPE in SVG output (vg2svg only).
 
-Within the Vega project directories, you can use `./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, the commands are accessible either locally (`./node_modules/bin/vg2png`) or globally (`vg2png`) depending on how you install the Vega package. The `vg2png` utility requires that the optional [node-canvas](https://github.com/Automattic/node-canvas) dependency is installed. See below for more [information about Vega and node-canvas](#node-canvas).
+To install the command line utilities, you must install the `vega-cli` npm package. For example, `yarn global add vega-cli` or `npm install -g vega-cli` will install the utilities for global use. If you install the package locally, the commands are accessible via your node_modules folder (`./node_modules/bin/vg2png`). Note that the `vg2png` utility depends on the [node-canvas](https://github.com/Automattic/node-canvas) package. See below for more [information about Vega and node-canvas](#node-canvas).
 
 ### Examples
 
-In the top-level Vega directory, you can run the following from the command line. Be sure you have run `npm install` in the top-level Vega directory to insure all dependencies are available.
+In the vega package, you can run the following from the command line if vega-cli is installed.
 
 Render the bar chart example to a PNG file:
 
 ```
-bin/vg2png spec/bar.vg.json bar.png
+vg2png test/specs-valid/bar.vg.json bar.png
 ```
 
 Render the bar chart example to an SVG file, including XML headers:
 
 ```
-bin/vg2svg -h spec/bar.vg.json bar.svg
+vg2svg -h test/specs-valid/bar.vg.json bar.svg
 ```
 
 Render the choropleth example to a PNG file. A base directory is specified for loading data files:
 
 ```
-bin/vg2png -b web/data/ spec/choropleth.vg.json > choropleth.svg
+vg2png -b test test/specs-valid/choropleth.vg.json > choropleth.png
 ```
 
-Render the arc example to SVG and pipe through svg2pdf (requires [svg2pdf](http://brewformulas.org/svg2pdf)):
+Render the arc example to a PDF file:
 
 ```
-bin/vg2svg spec/arc.vg.json | svg2pdf > arc.pdf
+vg2pdf test/specs-valid/arc.vg.json > arc.pdf
 ```
 
 Render the bar chart example to a PNG file at double resolution:
 
 ```
-bin/vg2png -s 2 spec/bar.vg.json bar.png
+vg2png -s 2 test/specs-valid/bar.vg.json bar.png
 ```
 
 [Back to reference](#reference)
@@ -182,13 +184,17 @@ bin/vg2png -s 2 spec/bar.vg.json bar.png
 
 ## <a name="node"></a>Server-Side Deployment using Node.js
 
-To include Vega in a node project, first install it from the command line using npm (`npm install vega`) or by including `"vega"` among the installed dependencies in your package.json file. In your node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
+To use Vega as a component within a larger project, first install it either directly (`yarn add vega` or `npm install vega`) or by including `"vega"` among the dependencies in your package.json file. In node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
 
-<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas project](https://github.com/Automattic/node-canvas) &ndash; an optional dependency of Vega &ndash; must be installed. However, be aware that some system configurations may initially run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/wiki/_pages) if installation fails.
+<a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas package](https://github.com/Automattic/node-canvas) must be installed. The Vega library does not require node-canvas by default, so you must include it as an explicit dependency in your own project if you wish to use it.
+
+However, be aware that some system configurations may run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/) if you experience installation issues.
 
 ### Example
 
 ```js
+var vega = require('vega');
+
 // create a new view instance for a given Vega JSON spec
 var view = new vega.View(vega.parse(spec))
   .renderer('none')
