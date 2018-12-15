@@ -1,8 +1,8 @@
 import loaderFactory from './src/loader';
 
 export var loader = loaderFactory(
-  require('node-fetch'),
-  require('fs')
+  typeof fetch !== 'undefined' && fetch, // use built-in fetch API
+  null // no file system access
 );
 
 export {
