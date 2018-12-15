@@ -1,4 +1,4 @@
-import {extend, isFunction, stringValue} from 'vega-util';
+import {extend, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
@@ -8,18 +8,26 @@ var protocol_re = /^([A-Za-z]+:)?\/\//;
 var fileProtocol = 'file://';
 
 /**
- * Creates a new loader instance that provides methods for requesting files
- * from either the network or disk, and for sanitizing request URIs.
- * @param {object} [options] - Optional default loading options to use.
- * @return {object} - A new loader instance.
+ * Factory for a loader constructor that provides methods for requesting
+ * files from either the network or disk, and for sanitizing request URIs.
+ * @param {function} fetch - The Fetch API for HTTP network requests.
+ *   If null or undefined, HTTP loading will be disabled.
+ * @param {object} fs - The file system interface for file loading.
+ *   If null or undefined, local file loading will be disabled.
+ * @return {function} A loader constructor with the following signature:
+ *   param {object} [options] - Optional default loading options to use.
+ *   return {object} - A new loader instance.
  */
-export default function(options) {
-  return {
-    options: options || {},
-    sanitize: sanitize,
-    load: load,
-    file: file,
-    http: http
+export default function(fetch, fs) {
+  return function(options) {
+    return {
+      options: options || {},
+      sanitize: sanitize,
+      load: load,
+      fileAccess: !!fs,
+      file: fileLoader(fs),
+      http: httpLoader(fetch)
+    };
   };
 }
 
@@ -56,6 +64,7 @@ function load(uri, options) {
  */
 function sanitize(uri, options) {
   options = extend({}, this.options, options);
+  var fileAccess = this.fileAccess;
 
   return new Promise(function(accept, reject) {
     var result = {href: null},
@@ -71,21 +80,21 @@ function sanitize(uri, options) {
     // if relative url (no protocol/host), prepend baseURL
     if ((base = options.baseURL) && !hasProtocol) {
       // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-      if (!startsWith(uri, '/') && base[base.length-1] !== '/') {
+      if (!uri.startsWith('/') && base[base.length-1] !== '/') {
         uri = '/' + uri;
       }
       uri = base + uri;
     }
 
     // should we load from file system?
-    loadFile = (isFile = startsWith(uri, fileProtocol))
+    loadFile = (isFile = uri.startsWith(fileProtocol))
       || options.mode === 'file'
-      || options.mode !== 'http' && !hasProtocol && fs();
+      || options.mode !== 'http' && !hasProtocol && fileAccess;
 
     if (isFile) {
       // strip file protocol
       uri = uri.slice(fileProtocol.length);
-    } else if (startsWith(uri, '//')) {
+    } else if (uri.startsWith('//')) {
       if (options.defaultProtocol === 'file') {
         // if is file, strip protocol and set loadFile flag
         uri = uri.slice(2);
@@ -113,45 +122,56 @@ function sanitize(uri, options) {
 }
 
 /**
- * HTTP request loader.
- * @param {string} url - The url to request.
- * @param {object} options - An options hash.
- * @return {Promise} - A promise that resolves to the file contents.
+ * File system loader factory.
+ * @param {object} fs - The file system interface.
+ * @return {function} - A file loader with the following signature:
+ *   param {string} filename - The file system path to load.
+ *   param {string} filename - The file system path to load.
+ *   return {Promise} A promise that resolves to the file contents.
  */
-function http(url, options) {
-  return request(url, extend({}, this.options.http, options))
-    .then(function(response) {
-      if (!response.ok) throw response.status + '' + response.statusText;
-      return response.text();
-    });
+function fileLoader(fs) {
+  return fs
+    ? function(filename) {
+        return new Promise(function(accept, reject) {
+          fs.readFile(filename, function(error, data) {
+            if (error) reject(error);
+            else accept(data);
+          });
+        });
+      }
+    : fileReject;
 }
 
 /**
- * File system loader.
- * @param {string} filename - The file system path to load.
- * @return {Promise} - A promise that resolves to the file contents.
+ * Default file system loader that simply rejects.
  */
-function file(filename) {
-  return new Promise(function(accept, reject) {
-    var f = fs();
-    f ? f.readFile(filename, function(error, data) {
-          if (error) reject(error);
-          else accept(data);
-        })
-      : reject('No file system access for ' + filename);
-  });
+function fileReject() {
+  return Promise.reject('No file system access.');
 }
 
-function request(url, init) {
-  var f = typeof fetch === 'function' ? fetch : require('node-fetch');
-  return f ? f(url, init) : Promise.reject('No fetch method available.');
+/**
+ * HTTP request handler factory.
+ * @param {function} fetch - The Fetch API method.
+ * @return {function} - An http loader with the following signature:
+ *   param {string} url - The url to request.
+ *   param {object} options - An options hash.
+ *   return {Promise} - A promise that resolves to the file contents.
+ */
+function httpLoader(fetch) {
+  return fetch
+    ? function(url, options) {
+        return fetch(url, extend({}, this.options.http, options))
+          .then(function(response) {
+            if (!response.ok) throw response.status + '' + response.statusText;
+            return response.text();
+          });
+      }
+    : httpReject;
 }
 
-function fs() {
-  var fs = typeof require === 'function' && require('fs');
-  return fs && isFunction(fs.readFile) ? fs : null;
-}
-
-function startsWith(string, query) {
-  return string == null ? false : string.lastIndexOf(query, 0) === 0;
+/**
+ * Default http request handler that simply rejects.
+ */
+function httpReject() {
+  return Promise.reject('No HTTP fetch method available.');
 }
