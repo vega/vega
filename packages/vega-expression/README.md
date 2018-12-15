@@ -1,98 +1,52 @@
 # vega-expression
 
-[Vega](http://github.com/vega/vega) expression parser and code generator.
+[Vega](https://github.com/vega/vega) expression parser and code generator.
 
-Parses a [limited subset](https://vega.github.io/vega/docs/expressions/) of
-JavaScript expressions into an abstract syntax tree, and provides code
-generation utilities for generating `eval`'able output code. The parser
-recognizes basic JavaScript expressions, but does not allow assignment
-operators, `new` expressions, or control flow statements (`for`, `while`,
-`switch`, etc). The configurable code generator further limits the set of
-allowable function invocations and variable names. The goal is to provide
-simple, expressive and security-conscious expression evaluation.
+Parses a [limited subset](https://vega.github.io/vega/docs/expressions/) of JavaScript expressions into an abstract syntax tree, and provides code generation utilities for generating `eval`'able output code. The parser recognizes basic JavaScript expressions, but does not allow assignment operators, `new` expressions, or control flow statements (`for`, `while`, `switch`, etc). The configurable code generator further limits the set of allowable function invocations and variable names. The goal is to provide simple, expressive, and security-conscious expression evaluation.
 
 ## API Reference
 
 <a name="parse" href="#parse">#</a>
 <b>parse</b>(<i>expression</i>)
-[<>](https://github.com/vega/vega-expression/blob/master/src/parser.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/parser.js "Source")
 
-Parse the JavaScript *expression* string and return the resulting abstract
-syntax tree in the [ESTree format](https://github.com/estree/estree). The
-parser is a stripped-down version of the [Esprima](http://esprima.org/) parser.
+Parse the JavaScript *expression* string and return the resulting abstract syntax tree in the [ESTree format](https://github.com/estree/estree). The parser is a stripped-down version of the [Esprima](http://esprima.org/) parser.
 
 <a name="codegen" href="#codegen">#</a>
 <b>codegen</b>(<i>options</i>)
-[<>](https://github.com/vega/vega-expression/blob/master/src/codegen.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/codegen.js "Source")
 
-Create a new output code generator configured according to the provided
-options. The resulting generator function accepts a parsed AST as input and
-returns `eval`'able JavaScript code as output. The output is an object hash
-with the properties `code` (the generated code as a string), `fields` (a hash
-of all properties referenced within the _fieldvar_ scope), and `globals` (a
-hash of all properties referenced outside a provided whitelist).
+Create a new output code generator configured according to the provided options. The resulting generator function accepts a parsed AST as input and returns `eval`'able JavaScript code as output. The output is an object hash with the properties `code` (the generated code as a string), `fields` (a hash of all properties referenced within the _fieldvar_ scope), and `globals` (a hash of all properties referenced outside a provided whitelist).
 
 The supported _options_ include:
 
-- *constants*: A hash of allowed top-level constant values. This object maps
-from constant names to constant values. The constant values are strings that
-will be injected as-is into generated code. If this option is not specified,
-the [constants](#constants) object is used by default.
+- *constants*: A hash of allowed top-level constant values. This object maps from constant names to constant values. The constant values are strings that will be injected as-is into generated code. If this option is not specified, the [constants](#constants) object is used by default.
 
-- *functions*: A function that is given an AST visitor instance as input and
-returns an object of allowed functions. The resulting object maps from
-function names to function values. The values may either be strings (which will
-be injected as-is into generated code and subsequently appended with arguments)
-or functions (which take an array of argument AST nodes as input and return
-generated code to inject). If this option is not specified, the
-[functions](#functions) method is used by default.
+- *functions*: A function that is given an AST visitor instance as input and returns an object of allowed functions. The resulting object maps from
+function names to function values. The values may either be strings (which will be injected as-is into generated code and subsequently appended with arguments) or functions (which take an array of argument AST nodes as input and return generated code to inject). If this option is not specified, the [functions](#functions) method is used by default.
 
-- *blacklist*: An array of variable names that may **not** be referenced within
-the expression scope. These may correspond to disallowed global variables.
+- *blacklist*: An array of variable names that may **not** be referenced within the expression scope. These may correspond to disallowed global variables.
 
-- *whitelist*: An array of variable names that may be referenced within the
-expression scope. These typically correspond to function parameter names for
-the expression. Variable names not included in the white list will be collected
-as global variables (see *globalvar* below).
+- *whitelist*: An array of variable names that may be referenced within the expression scope. These typically correspond to function parameter names for the expression. Variable names not included in the white list will be collected as global variables (see *globalvar* below).
 
-- *fieldvar*: The name of the primary data input argument within the
-generated expression function. For example, in the function
-`function(d) { return d.x * d.y; }`, the variable `d` serves as the field
-variable, and `x` and `y` are it's accessed properties. All properties
-accessed under the scope of _fieldvar_ will be tracked by the code generator
-and returned as part of the output. This is necessary to perform dependency
-tracking of referenced data fields.
+- *fieldvar*: The name of the primary data input argument within the generated expression function. For example, in the function `function(d) { return d.x * d.y; }`, the variable `d` serves as the field variable, and `x` and `y` are it's accessed properties. All properties accessed under the scope of _fieldvar_ will be tracked by the code generator and returned as part of the output. This is necessary to perform dependency tracking of referenced data fields.
 
-- *globalvar*: (Required) The name of the variable upon which to lookup global
-variables. This variable name will be included in the generated code as the
-scope for any global variable references. Alternatively, this property can be
-a function that maps from variable names in the source input to generated code
-to write to the output.
+- *globalvar*: (Required) The name of the variable upon which to lookup global variables. This variable name will be included in the generated code as the scope for any global variable references. Alternatively, this property can be a function that maps from variable names in the source input to generated code to write to the output.
 
 <a name="constants" href="#constants">#</a>
 <b>constants</b>(<i>codegen</i>)
-[<>](https://github.com/vega/vega-expression/blob/master/src/constants.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/constants.js "Source")
 
-An object defining default constant values for the Vega expression language.
-The object maps from constant identifiers to JavaScript code to defining the
-constant value (for example, `'PI'` maps to `'Math.PI`').
+An object defining default constant values for the Vega expression language. The object maps from constant identifiers to JavaScript code to defining the constant value (for example, `'PI'` maps to `'Math.PI`').
 
 <a name="functions" href="#functions">#</a>
 <b>functions</b>(<i>codegen</i>)
-[<>](https://github.com/vega/vega-expression/blob/master/src/functions.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/functions.js "Source")
 
-Given a *codegen* instance (generated by the [codegen](#codegen) method) as
-input, returns an object defining all valid function names for use within an
-expression. The resulting object maps from function names to function values.
-The values may either be strings (which will be injected as-is into generated
-code and subsequently appended with arguments) or functions (which take an
-array of argument AST nodes as input and return generated code to inject).
+Given a *codegen* instance (generated by the [codegen](#codegen) method) as input, returns an object defining all valid function names for use within an expression. The resulting object maps from function names to function values. The values may either be strings (which will be injected as-is into generated code and subsequently appended with arguments) or functions (which take an array of argument AST nodes as input and return generated code to inject).
 
 <a name="ASTNode" href="#ASTNode">#</a>
 <b>ASTNode</b>(<i>type</i>)
-[<>](https://github.com/vega/vega-expression/blob/master/src/ast.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/ast.js "Source")
 
-Constructor for a node in an expression abstract syntax tree (AST). Accepts
-a *type* string as input, which then become the `type` property of the
-resulting node. AST nodes also support a `visit` method which takes a
-visitor function as input in order to traverse the AST for static analysis.
+Constructor for a node in an expression abstract syntax tree (AST). Accepts a *type* string as input, which then become the `type` property of the resulting node. AST nodes also support a `visit` method which takes a visitor function as input in order to traverse the AST for static analysis.

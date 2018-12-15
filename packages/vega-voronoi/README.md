@@ -2,6 +2,6 @@
 
 Voronoi diagram transform for Vega dataflows.
 
-This module provides the following Vega data transform:
+This package provides the following Vega data transform:
 
-- [**Voronoi**](https://vega.github.io/vega/docs/transforms/voronoi/) [&lt;&gt;](https://github.com/vega/vega-voronoi/blob/master/src/Voronoi.js "Source")
+- [**Voronoi**](https://vega.github.io/vega/docs/transforms/voronoi/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-voronoi/src/Voronoi.js "Source")
