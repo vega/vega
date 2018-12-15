@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+// Render a Vega specification to PDF, using node canvas
+
+const helpText =
+  'Render a Vega specification to PDF.\n\n' +
+  'Usage: vg2pdf [vega_json_file] [output_pdf_file]\n' +
+  '  If no arguments are provided, reads from stdin.\n' +
+  '  If output_pdf_file is not provided, writes to stdout.\n\n' +
+  'To load data, you may need to set a base directory:\n' +
+  '  For web retrieval, use `-b http://host/data/`. \n' +
+  '  For files, use `-b file:///dir/data/` (absolute) or `-b data/` (relative).';
+
+// import required libraries
+const vega = require('vega'),
+      path = require('path'),
+      fs = require('fs'),
+      lcg = require('../src/lcg'),
+      read = require('../src/read');
+
+// arguments
+const args = require('yargs')
+  .usage(helpText)
+  .demand(0)
+  .string('b')
+    .alias('b', 'base')
+    .describe('b', 'Base directory for data loading.')
+  .number('s')
+    .alias('s', 'scale')
+    .default('s', 1)
+    .describe('s', 'Output resolution scale factor.')
+  .number('seed')
+    .describe('seed', 'Seed for random number generation.')
+  .help()
+  .version()
+  .argv;
+
+// set baseURL if provided on command line
+const base = args.b ? args.b + path.sep : null;
+
+// Plug-in a deterministic random number generator for testing.
+if (typeof args.seed !== 'undefined') {
+  if (isNaN(args.seed)) throw 'Illegal seed value: must be a valid number.';
+  vega.setRandom(lcg(args.seed));
+}
+
+// output file
+const outputFile = args._[1] || null;
+
+// read input from file or stdin
+read(args._[0] || null)
+  .then(text => { render(JSON.parse(text)); })
+  .catch(err => { console.error(err); });
+
+function render(spec) {
+  new vega.View(vega.parse(spec), {
+      loader: vega.loader({baseURL: base}),
+      logLevel: vega.Warn,
+      renderer: 'none'
+    })
+    .initialize()
+    .finalize()
+    .toCanvas(args.s, {
+      type: 'pdf',
+      context: {textDrawingMode: 'glyph'}
+    })
+    .then(canvas => { writePDF(canvas, outputFile); })
+    .catch(err => { console.error(err); });
+}
+
+function writePDF(canvas, file) {
+  const out = file ? fs.createWriteStream(file) : process.stdout,
+        stream = canvas.createPDFStream();
+  stream.on('data', chunk => { out.write(chunk); });
+}
