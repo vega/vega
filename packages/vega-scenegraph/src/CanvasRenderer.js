@@ -18,8 +18,10 @@ var prototype = inherits(CanvasRenderer, Renderer),
     base = Renderer.prototype,
     tempBounds = new Bounds();
 
-prototype.initialize = function(el, width, height, origin, scaleFactor) {
-  this._canvas = canvas(1, 1); // instantiate a small canvas
+prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
+  this._options = options;
+  this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
+
   if (el) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
@@ -30,7 +32,8 @@ prototype.initialize = function(el, width, height, origin, scaleFactor) {
 
 prototype.resize = function(width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
-  resize(this._canvas, this._width, this._height, this._origin, this._scale);
+  resize(this._canvas, this._width, this._height,
+    this._origin, this._scale, this._options && this._options.context);
   this._redraw = true;
   return this;
 };

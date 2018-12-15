@@ -9,10 +9,10 @@ try {
   // do nothing
 }
 
-export function nodeCanvas(w, h) {
+export function nodeCanvas(w, h, type) {
   if (NodeCanvas) {
     try {
-      return new NodeCanvas.Canvas(w, h);
+      return new NodeCanvas.Canvas(w, h, type);
     } catch (e) {
       // do nothing, return null on error
     }
