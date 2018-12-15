@@ -2,6 +2,6 @@
 
 Force simulation transform for Vega dataflows.
 
-This module provides the following Vega data transform:
+This package provides the following Vega data transform:
 
-- [**Force**](https://vega.github.io/vega/docs/transforms/force/) [&lt;&gt;](https://github.com/vega/vega-force/blob/master/src/Force.js "Source")
+- [**Force**](https://vega.github.io/vega/docs/transforms/force/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-force/src/Force.js "Source")
