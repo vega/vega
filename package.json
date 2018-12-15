@@ -8,7 +8,7 @@
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "license": "ls -db ./packages/*/ | xargs -n 1 cp LICENSE",
     "prepublishOnly": "yarn license",
-    "serve": "http-server packages/vega-lib/ -c-1 -p8080 -o",
+    "serve": "http-server packages/vega/ -c-1 -p8080 -o",
     "test": "lerna run test"
   },
   "devDependencies": {
