@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 var rollup = require('rollup'),
     nodeResolve = require('rollup-plugin-node-resolve'),
     externals = process.argv[2] === '-e',
@@ -20,7 +18,7 @@ rollup.rollup({
   input: 'index.js',
   external: modules,
   plugins: [
-    nodeResolve({module: true, jsnext: true})
+    nodeResolve({module: true})
   ]
 }).then(function(bundle) {
   return bundle.write({
