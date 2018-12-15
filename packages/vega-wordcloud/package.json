@@ -28,8 +28,5 @@
   },
   "devDependencies": {
     "vega-transforms": "*"
-  },
-  "browser": {
-    "canvas": false
   }
 }
