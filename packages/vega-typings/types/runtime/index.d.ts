@@ -1,5 +1,4 @@
-import { Format, Spec } from '..';
-import { DataType, EncodeEntryName, SignalValue } from '../spec';
+import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
 import { Renderers } from './renderer';
 
 // TODO
@@ -148,6 +147,5 @@ export function schemeDiscretized(name: string, scheme?: any, interpolator?: any
 
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
-export * from 'vega-util';
 export * from './renderer';
 export * from './scene';
