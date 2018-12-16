@@ -20,12 +20,12 @@ A **View** instantiates a Vega dataflow graph and provides a component for visua
 
 Methods for constructing and deconstructing views. In addition to the methods
 described below, View instances also inherit all (non-overridden) methods of the
-[Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js)
+[Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js)
 parent class.
 
 <a name="view" href="#view">#</a>
 vega.<b>View</b>(<i>runtime</i>[, <i>options</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Constructor that creates a new View instance for the provided
 [Vega dataflow *runtime* specification](https://github.com/vega/vega-runtime).
@@ -57,7 +57,7 @@ var view = new vega.View(runtime)
 
 <a name="view_finalize" href="#view_finalize">#</a>
 view.<b>finalize</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/finalize.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/finalize.js "Source")
 
 Prepares the view to be removed. To prevent unwanted behaviors and memory
 leaks, this method unregisters any timers and removes any event listeners
@@ -75,7 +75,7 @@ invocation of the [run](#view_run) method.
 
 <a name="view_initialize" href="#view_initialize">#</a>
 view.<b>initialize</b>([<i>container</i>, <i>bindContainer</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/initialize.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/initialize.js "Source")
 
 Initializes internal rendering and event handling, then returns this view
 instance. If the DOM element *container* is provided, visualization
@@ -89,7 +89,7 @@ same container element as the visualization will be used.
 
 <a name="view_loader" href="#view_loader">#</a>
 view.<b>loader</b>([<i>loader</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Get or set the [loader](https://github.com/vega/vega-loader#loader) instance
 to use for data files and images. If the loader is updated _after_
@@ -101,12 +101,12 @@ will update the loader only _after_ initial data requests have been made.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
-[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js "Source")
 
 Sets the current log level and returns this view instance. This method controls
 which types of log messages are printed to the JavaScript console, and is
 inherited from the
-[Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js)
+[Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js)
 parent class. The valid *level* values are `vega.None` (the default),
 `vega.Warn`, `vega.Info`, `vega.Debug`. See the
 [logger](https://github.com/vega/vega-util/#logger) method in
@@ -114,21 +114,21 @@ parent class. The valid *level* values are `vega.None` (the default),
 
 <a name="view_renderer" href="#view_renderer">#</a>
 view.<b>renderer</b>(<i>type</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and
 returns this view instance. While typically invoked immediately upon view
 creation, this method can be called at any time to change the renderer.
 
 Additional renderer types may be used if registered via the
-[renderModule](https://github.com/vega/vega-scenegraph/blob/master/src/modules.js)
+[renderModule](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/modules.js)
 method exported by [vega-scenegraph](https://github.com/vega/vega-scenegraph);
 for an example see the
 [vega-webgl-renderer](https://github.com/vega/vega-webgl-renderer).
 
 <a name="view_tooltip" href="#view_tooltip">#</a>
 view.<b>tooltip</b>(<i>tooltipHandler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Get or set the tooltip handler function, which is invoked to handle display
 of tooltips (for example, when users hover the mouse cursor over an item).
@@ -143,7 +143,7 @@ function(handler, event, item, value) {
 
 The *tooltipHandler* function arguments are:
 
-- *handler* - The scenegraph input [Handler](https://github.com/vega/vega-scenegraph/blob/master/src/Handler.js) instance
+- *handler* - The scenegraph input [Handler](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/Handler.js) instance
 that invoked the *tooltipHandler* function.
 - *event* - The [event](https://developer.mozilla.org/en-US/docs/Web/Events)
 that caused an update to the tooltip display.
@@ -165,7 +165,7 @@ key-value pair is displayed on its own line of text
 
 <a name="view_hover" href="#view_hover">#</a>
 view.<b>hover</b>([<i>hoverSet</i>, <i>updateSet</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/hover.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/hover.js "Source")
 
 Enables hover event processing and returns this view instance. The optional
 arguments specify which named encoding sets to invoke upon mouseover and
@@ -179,7 +179,7 @@ and mouseout events.
 
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Gets or sets the view background color. If no arguments are provided, returns
 the current background color. If *color* is specified, this method sets the
@@ -188,7 +188,7 @@ an immediate update to the view: invoke the [run](#view_run) method when ready.
 
 <a name="view_width" href="#view_width">#</a>
 view.<b>width</b>([<i>width</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Gets or sets the view width, in pixels. If no arguments are provided, returns
 the current width value. If *width* is specified, this method sets the width
@@ -198,7 +198,7 @@ equivalent to `view.signal('width'[, width])`.
 
 <a name="view_height" href="#view_height">#</a>
 view.<b>height</b>([<i>height</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Gets or sets the view height, in pixels. If no arguments are provided, returns
 the current height value. If *height* is specified, this method sets the
@@ -208,7 +208,7 @@ is equivalent to `view.signal('height'[, height])`.
 
 <a name="view_padding" href="#view_padding">#</a>
 view.<b>padding</b>([<i>padding</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Gets or sets the view padding, in pixels. Padding objects take the form
 `{left: 5, top: 5, right: 5, bottom: 5}`. If no arguments are provided, returns
@@ -219,7 +219,7 @@ is equivalent to `view.signal('padding'[, padding])`.
 
 <a name="view_resize" href="#view_resize">#</a>
 view.<b>resize</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Sets a flag indicating that layout autosize calculations should be re-run
 on the next pulse propagation cycle. If an autosize method of `"pad"` or
@@ -235,7 +235,7 @@ Methods for invoking dataflow evaluation and view rendering.
 
 <a name="view_run" href="#view_run">#</a>
 view.<b>run</b>([<i>encode</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Evaluates the underlying dataflow graph and returns this view instance. The
 optional *encode* argument is a String value indicating the name of a
@@ -247,12 +247,12 @@ loading completes. Any scenegraph elements modified during dataflow evaluation
 will automatically be re-rendered in the view.
 
 Internally, this method invokes the `run` method of the
-[Dataflow](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/Dataflow.js)
+[Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js)
 parent class, and then additionally performs rendering.
 
 <a name="view_runAfter" href="#view_runAfter">#</a>
 view.<b>runAfter</b>(<i>callback</i>)
-[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/run.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/run.js "Source")
 
 Schedules a *callback* function to be invoked after the current dataflow
 evaluation completes. The callback function will be invoked with this view
@@ -261,7 +261,7 @@ currently occurring, the callback function is invoked immediately.
 
 <a name="view_runAsync" href="#view_runAsync">#</a>
 view.<b>runAsync</b>()
-[<>](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/run.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/run.js "Source")
 
 Runs the dataflow and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves when the
 propagation cycle completes. The standard [`run`](#view_run) method may exit early
@@ -271,7 +271,7 @@ when dataflow evaluation completes.
 
 <a name="view_render" href="#view_render">#</a>
 view.<b>render</b>([<i>update</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Renders the scenegraph and returns this view instance. If no arguments are
 provided, the entire scenegraph is redrawn. If provided, the *update* argument
@@ -284,7 +284,7 @@ During normal execution, this method is automatically invoked by the
 
 <a name="view_dirty" href="#view_dirty">#</a>
 view.<b>dirty</b>(<i>item</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Reports a "dirty" scenegraph item to be re-drawn the next time dataflow
 evaluation completes. This method is typically invoked by dataflow operators
@@ -292,20 +292,20 @@ directly to populate a dirty list for incremental rendering.
 
 <a name="view_container" href="#view_container">#</a>
 view.<b>container</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Returns the DOM container element for this view, if it exists.
 
 <a name="view_scenegraph" href="#view_scenegraph">#</a>
 view.<b>scenegraph</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Returns the [Vega scenegraph](https://github.com/vega/vega-scenegraph)
 instance for this view.
 
 <a name="view_origin" href="#view_origin">#</a>
 view.<b>origin</b>()
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Returns the [x, y] origin coordinates for the current view. The origin
 coordinates indicate the translation of the view's primary coordinate
@@ -321,7 +321,7 @@ Methods for accessing and updating dataflow *signal* values.
 
 <a name="view_signal" href="#view_signal">#</a>
 view.<b>signal</b>(<i>name</i>[, <i>value</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Gets or sets a dataflow *signal*. If only the *name* argument is provided,
 returns the requested signal value. If *value* is also specified, updates the
@@ -331,7 +331,7 @@ invoke the [run](#view_run) method when ready.
 
 <a name="view_getState" href="#view_getState">#</a>
 view.<b>getState</b>([<i>options</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/state.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/state.js "Source")
 
 Gets the state of signals and data sets in this view's backing dataflow
 graph. If no arguments are specified, returns an object containing both
@@ -355,7 +355,7 @@ should recurse into mark sub-contexts.
 
 <a name="view_setState" href="#view_setState">#</a>
 view.<b>setState</b>(<i>state</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/state.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/state.js "Source")
 
 Sets the *state* of signals and/or datasets in this view's backing dataflow
 graph. The *state* argument should be an object generated by the
@@ -365,7 +365,7 @@ view instance.
 
 <a name="view_addSignalListener" href="#view_addSignalListener">#</a>
 view.<b>addSignalListener</b>(<i>name</i>, <i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Registers a listener for changes to the signal with the given *name* and
 returns this view instance. If the signal does not exist, an error will be
@@ -398,7 +398,7 @@ view.width(500).run(); // listener logs 'WIDTH: 500'
 
 <a name="view_removeSignalListener" href="#view_removeSignalListener">#</a>
 view.<b>removeSignalListener</b>(<i>name</i>, <i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Removes a signal listener registered with the
 [addSignalListener](#view_addSignalListener) method and returns this view
@@ -416,10 +416,10 @@ handling tooltips. See also the [hover](#view_hover) method.
 
 <a name="view_events" href="#view_events">#</a>
 view.<b>events</b>(<i>source</i>, <i>type</i>[, <i>filter</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/events.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/events.js "Source")
 
 Returns a new
-[EventStream](https://github.com/vega/vega-dataflow/blob/master/src/EventStream.js)
+[EventStream](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/EventStream.js)
 for a specified *source*, event *type*, and optional *filter* function. The
 *source* should be one of `"view"` (to specify the current view), `"window"`
 (to specify the browser window object), or a valid CSS selector string
@@ -435,7 +435,7 @@ in a browser environment, otherwise invoking this method may have no effect.
 
 <a name="view_addEventListener" href="#view_addEventListener">#</a>
 view.<b>addEventListener</b>(<i>type</i>, <i>handler</i>[, <i>options</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Registers an event listener for input events and returns this view instance.
 The event *type* should be a string indicating a legal DOM event type
@@ -463,7 +463,7 @@ view.addEventListener('click', function(event, item) {
 
 <a name="view_removeEventListener" href="#view_removeEventListener">#</a>
 view.<b>removeEventListener</b>(<i>type</i>, <i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Removes an event listener registered with the
 [addEventListener](#view_addEventListener) method and returns this view
@@ -471,7 +471,7 @@ instance.
 
 <a name="view_addResizeListener" href="#view_addResizeListener">#</a>
 view.<b>addResizeListener</b>(<i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Registers a listener for changes to the view size and returns this view
 instance. This method is idempotent: adding the same handler multiple times
@@ -488,7 +488,7 @@ view.addResizeListener(function(width, height) {
 
 <a name="view_removeResizeListener" href="#view_removeResizeListener">#</a>
 view.<b>removeResizeListener</b>(<i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Removes a listener registered with the
 [addResizeListener](#view_addResizeListener) method and returns this view
@@ -504,7 +504,7 @@ either client-side or server-side.
 
 <a name="view_toCanvas" href="#view_toCanvas">#</a>
 view.<b>toCanvas</b>([<i>scaleFactor</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/render-to-canvas.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/render-to-canvas.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to a canvas instance containing a rendered bitmap image of the
@@ -517,7 +517,7 @@ element. If invoked server-side in node.js, the Promise resolves to a
 
 <a name="view_toSVG" href="#view_toSVG">#</a>
 view.<b>toSVG</b>([<i>scaleFactor</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/render-to-svg.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/render-to-svg.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to an SVG string, providing a vector graphics image of the view.
@@ -526,7 +526,7 @@ multiply the view width and height when determining the output image size.
 
 <a name="view_toImageURL" href="#view_toImageURL">#</a>
 view.<b>toImageURL</b>(<i>type</i>[, <i>scaleFactor</i>])
-[<>](https://github.com/vega/vega-view/blob/master/src/render-to-image-url.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/render-to-image-url.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 that resolves to an image URL for a snapshot of the current view. The *type*
@@ -555,7 +555,7 @@ Methods for accessing *scales* or *data* sets, and performing streaming updates.
 
 <a name="view_scale" href="#view_scale">#</a>
 view.<b>scale</b>(<i>name</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/scale.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/scale.js "Source")
 
 Returns the [scale](https://github.com/vega/vega-scale) or
 [projection](https://github.com/vega/vega-projection) instance
@@ -565,7 +565,7 @@ the returned instance!
 
 <a name="view_data" href="#view_data">#</a>
 view.<b>data</b>(<i>name</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/data.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
 Returns the data set with the given *name*. The returned array of data
 objects is a *live* array used by the underlying dataflow. Callers that wish
@@ -574,7 +574,7 @@ for example using `view.data('name').slice()`.
 
 <a name="view_addDataListener" href="#view_addDataListener">#</a>
 view.<b>addDataListener</b>(<i>name</i>, <i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Registers a listener for changes to a named data set with the given *name*
 and returns this view instance. If the data set does not exist, an error
@@ -610,7 +610,7 @@ view.addDataListener('source', function(name, value) {
 
 <a name="view_removeDataListener" href="#view_removeDataListener">#</a>
 view.<b>removeDataListener</b>(<i>name</i>, <i>handler</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/View.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Removes a data set listener registered with the
 [addDataListener](#view_addDataListener) method and returns this view
@@ -620,7 +620,7 @@ has no effect.
 
 <a name="view_change" href="#view_change">#</a>
 view.<b>change</b>(<i>name</i>, <i>changeset</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/data.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
 Updates the data set with the given *name* with the changes specified by
 the provided *changeset* instance. This method does not force an immediate
@@ -639,14 +639,14 @@ Inserted data tuples must be JavaScript objects that have been properly
 parsed ahead of time. Any data source `"format"` directives in a Vega JSON
 specification will **not** be applied to tuples added through the View API.
 Internally, this method takes the provided
-[ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
+[ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js)
 and invokes
-[Dataflow.pulse](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/update.js).
+[Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js).
 See [vega-dataflow](https://github.com/vega/vega-dataflow) for more.
 
 <a name="view_insert" href="#view_insert">#</a>
 view.<b>insert</b>(<i>name</i>, <i>tuples</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/data.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
 Inserts an array of new data *tuples* into the data set with the given *name*,
 then returns this view instance. The input *tuples* array should contain one
@@ -662,14 +662,14 @@ Inserted data tuples must be JavaScript objects that have been properly
 parsed ahead of time. Any data source `"format"` directives in a Vega JSON
 specification will **not** be applied to tuples added through the View API.
 Internally, this method creates a
-[ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
+[ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js)
 and invokes
-[Dataflow.pulse](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/update.js).
+[Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js).
 See [vega-dataflow](https://github.com/vega/vega-dataflow) for more.
 
 <a name="view_remove" href="#view_remove">#</a>
 view.<b>remove</b>(<i>name</i>, <i>tuples</i>)
-[<>](https://github.com/vega/vega-view/blob/master/src/data.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
 Removes data *tuples* from the data set with the given *name*,
 then returns this view instance. The *tuples* argument can either be an
@@ -688,7 +688,7 @@ view.remove('table', function(d) { return d.count < 5; }).run();
 ```
 
 Internally, this method creates a
-[ChangeSet](https://github.com/vega/vega-dataflow/blob/master/src/ChangeSet.js)
+[ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js)
 and invokes
-[Dataflow.pulse](https://github.com/vega/vega-dataflow/blob/master/src/dataflow/update.js).
+[Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js).
 See [vega-dataflow](https://github.com/vega/vega-dataflow) for more.

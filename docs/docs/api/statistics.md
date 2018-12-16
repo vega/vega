@@ -17,7 +17,7 @@ Vega includes **statistics** functions for to model probability distributions an
 
 <a name="random" href="#random">#</a>
 vega.<b>random</b>()
-[<>](https://github.com/vega/vega-statistics/blob/master/src/random.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/random.js "Source")
 
 Returns a uniform pseudo-random number in the domain [0, 1). By default this
 is simply a call to JavaScript's built-in `Math.random` function. All Vega
@@ -25,7 +25,7 @@ routines that require random numbers should use this function.
 
 <a name="setRandom" href="#setRandom">#</a>
 vega.<b>setRandom</b>(<i>randfunc</i>)
-[<>](https://github.com/vega/vega-statistics/blob/master/src/random.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/random.js "Source")
 
 Sets the random number generator to the provided function _randfunc_.
 Subsequent calls to <a href="#random">random</a> will invoke the new
@@ -54,7 +54,7 @@ for the given input *probability*.
 
 <a name="randomNormal" href="#randomNormal">#</a>
 vega.<b>randomNormal</b>([<i>mean</i>, <i>stdev</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/normal.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
 
 Creates a distribution object representing a [normal (Gaussian) probability
 distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified
@@ -66,7 +66,7 @@ the `mean` and `stdev` getter/setter methods.
 
 <a name="randomUniform" href="#randomUniform">#</a>
 vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Creates a distribution object representing a [continuous uniform probability
 distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous))
@@ -79,7 +79,7 @@ the `min` and `max` getter/setter methods.
 
 <a name="randomInteger" href="#randomInteger">#</a>
 vega.<b>randomInteger</b>([<i>min</i>,] <i>max</i>)
-[<>](https://github.com/vega/vega-statistics/blob/master/src/integer.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/integer.js "Source")
 
 Creates a distribution object representing a [discrete uniform probability
 distribution](https://en.wikipedia.org/wiki/Discrete_uniform_distribution) over
@@ -91,7 +91,7 @@ the `min` and `max` getter/setter methods.
 
 <a name="randomMixture" href="#randomMixture">#</a>
 vega.<b>randomMixture</b>(<i>distributions</i>[, <i>weights</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/mixture.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/mixture.js "Source")
 
 Creates a distribution object representing a (weighted) mixture of probability
 distributions. The *distributions* argument should be an array of distribution
@@ -106,7 +106,7 @@ modified using the `distributions` and `weights` getter/setter methods.
 
 <a name="randomKDE" href="#randomKDE">#</a>
 vega.<b>randomKDE</b>(<i>values</i>[, <i>bandwidth</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/kde.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/kde.js "Source")
 
 Creates a distribution object representing a
 [kernel density estimate](https://en.wikipedia.org/wiki/Kernel_density_estimation)
@@ -128,7 +128,7 @@ and quartile boundaries.
 
 <a name="bin" href="#bin">#</a>
 vega.<b>bin</b>(<i>options</i>)
-[<>](https://github.com/vega/vega-statistics/blob/master/src/bin.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/bin.js "Source")
 
 Determine a quantitative binning scheme, for example to create a histogram.
 Based on the options provided given, this method will search over a space of
@@ -155,7 +155,7 @@ vega.bin({extent:[5, 10], maxbins:5}); // {start:5, stop:10, step:1}
 
 <a name="bootstrapCI" href="#bootstrapCI">#</a>
 vega.<b>bootstrapCI</b>(<i>array</i>, <i>samples</i>, <i>alpha</i>[, <i>accessor</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/bootstrapCI.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/bootstrapCI.js "Source")
 
 Calculates a [bootstrapped](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))
 [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval) for an
@@ -168,7 +168,7 @@ NaN values.
 
 <a name="quartiles" href="#quartiles">#</a>
 vega.<b>quartiles</b>(<i>array</i>[, <i>accessor</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/quartiles.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/quartiles.js "Source")
 
 Given an *array* of numeric values, returns an array of
 [quartile](https://en.wikipedia.org/wiki/Quartile) boundaries.

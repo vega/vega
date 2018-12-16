@@ -20,7 +20,7 @@ Vega can be **extended** at runtime with new [scales](../../scales), [projection
 
 <a name="projection" href="#projection">#</a>
 vega.<b>projection</b>(<i>type</i>[, <i>projection</i>])
-[<>](https://github.com/vega/vega-geo/blob/master/src/projections.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-geo/src/projections.js "Source")
 
 Registry function for adding and accessing cartographic projections. The *type* argument is a String indicating the name of the projection type. If the *projection* argument is not specified, this method returns the matching projection constructor in the registry, or `null` if not found. If the *projection* argument is provided, it must be a projection constructor function to add to the registry under the given *type* name.
 
@@ -46,7 +46,7 @@ var runtime = vega.parse({
 
 <a name="scale" href="#scale">#</a>
 vega.<b>scale</b>(<i>type</i>[, <i>scale</i>])
-[<>](https://github.com/vega/vega-scale/blob/master/src/scales.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/scales.js "Source")
 
 Registry function for adding and accessing scale constructor functions.
 The *type* argument is a String indicating the name of the scale type.
@@ -95,7 +95,7 @@ scale1.type; // 'sequential'
 
 <a name="scheme" href="#scheme">#</a>
 vega.<b>scheme</b>(<i>name</i>[, <i>scheme</i>])
-[<>](https://github.com/vega/vega-scale/blob/master/src/schemes.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/schemes.js "Source")
 
 Registry function for adding and accessing color schemes.
 The *name* argument is a String indicating the name of the color scheme.
@@ -115,7 +115,7 @@ functions (e.g., applicable to `'sequential'` scales.)
 
 <a name="schemeDiscretized" href="#schemeDiscretized">#</a>
 vega.<b>schemeDiscretized</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
-[<>](https://github.com/vega/vega-scale/blob/master/src/schemes.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/schemes.js "Source")
 
 Registry function for adding and accessing discretized color schemes,
 consisting of an array of color schemes for specific value counts.
@@ -137,7 +137,7 @@ space for the last (largest) color array in *schemes*.
 
 <a name="transforms" href="#transforms">#</a>
 vega.<b>transforms</b>
-[<>](https://github.com/vega/vega-dataflow/blob/master/src/register.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/register.js "Source")
 
 An object that maps transform names to transform constructors. To add a new
 transform to Vega, assign the transform to this object under the desired name.
@@ -154,7 +154,7 @@ transforms to the vega-dataflow `transforms` export during the build process.
 
 <a name="formats" href="#formats">#</a>
 vega.<b>formats</b>(<i>name</i>[, <i>format</i>])
-[<>](https://github.com/vega/vega-loader/blob/master/src/formats/index.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-loader/src/formats/index.js "Source")
 
 Registry function for data format parsers. If invoked with two arguments, adds
 a new *format* parser with the provided *name*. Otherwise, returns an existing
@@ -189,7 +189,7 @@ boundaries in a single path). Please see the
 
 <a name="expressionFunction" href="#expressionFunction">#</a>
 vega.<b>expressionFunction</b>(<i>name</i>[, <i>fn</i>, <i>visitor</i>])
-[<>](https://github.com/vega/vega-parser/blob/master/src/parsers/expression/codegen.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-parser/src/parsers/expression/codegen.js "Source")
 
 Registry function for adding and accessing expression functions.
 The *name* argument is a String indicating the name of the function, as used within the [Vega expression language](../../expressions).
