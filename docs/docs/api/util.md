@@ -23,7 +23,7 @@ Functions and function generators for accessing and comparing values.
 
 <a name="accessor" href="#accessor">#</a>
 vega.<b>accessor</b>(<i>function</i>[, <i>fields</i>, <i>name</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessor.js "Source")
 
 Annotates a *function* instance with a string array of dependent data *fields*
 and a string *name*, and returns the input *function*. Assumes the input
@@ -41,21 +41,21 @@ directly. Instead, use the [accessorFields](#accessorFields) and
 
 <a name="accessorFields" href="#accessorFields">#</a>
 vega.<b>accessorFields</b>(<i>accessor</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessor.js "Source")
 
 Returns the array of dependent field names for a given *accessor* function.
 Returns null if no field names have been set.
 
 <a name="accessorName" href="#accessorName">#</a>
 vega.<b>accessorName</b>(<i>accessor</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/accessor.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessor.js "Source")
 
 Returns the name string for a given *accessor* function.
 Returns null if no name has been set.
 
 <a name="compare" href="#compare">#</a>
 vega.<b>compare</b>(<i>fields</i>[, <i>orders</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/compare.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/compare.js "Source")
 
 Generates a comparator function for sorting data values, based on the given
 set of *fields* and optional sort *orders*. The *fields* argument must be
@@ -71,14 +71,14 @@ the *fields* array, or includes values other than  `'ascending'` or
 
 <a name="constant" href="#constant">#</a>
 vega.<b>constant</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/constant.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/constant.js "Source")
 
 Given an input *value*, returns a function that simply returns that value.
 If the input *value* is itself a function, that function is returned directly.
 
 <a name="debounce" href="#debounce">#</a>
 vega.<b>debounce</b>(<i>delay</i>, <i>func</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/debounce.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/debounce.js "Source")
 
 Generates a "debounced" function that delays invoking *func* until after
 *delay* milliseconds have elapsed since the last time the debounced function
@@ -87,7 +87,7 @@ to *func* and does not preserve the *this* context.
 
 <a name="field" href="#field">#</a>
 vega.<b>field</b>(<i>field</i>[, <i>name</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/field.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/field.js "Source")
 
 Generates an accessor function for retrieving the specified *field* value.
 The input *field* string may include nested properties (e.g., `foo.bar.baz`).
@@ -110,20 +110,20 @@ vega.accessorFields(pathField); // ['foo.bar']
 
 <a name="id" href="#id">#</a>
 vega.<b>id</b>(<i>object</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that returns the value of the `id` property of an
 input *object*.
 
 <a name="identity" href="#identity">#</a>
 vega.<b>identity</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that simply returns its *value* argument.
 
 <a name="key" href="#key">#</a>
 vega.<b>key</b>(<i>fields</i>[, <i>flat</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/key.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/key.js "Source")
 
 Generates an accessor function that returns a key string (suitable for
 using as an object property name) for a set of object *fields*. The
@@ -145,25 +145,25 @@ vega.accessorFields(keyf); // ['foo', 'bar']
 
 <a name="one" href="#one">#</a>
 vega.<b>one</b>()
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that simply returns the value one (`1`).
 
 <a name="zero" href="#zero">#</a>
 vega.<b>zero</b>()
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that simply returns the value zero (`0`).
 
 <a name="truthy" href="#truthy">#</a>
 vega.<b>truthy</b>()
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that simply returns the boolean `true` value.
 
 <a name="falsy" href="#falsy">#</a>
 vega.<b>falsy</b>()
-[<>](https://github.com/vega/vega-util/blob/master/src/accessors.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/accessors.js "Source")
 
 An accessor function that simply returns the boolean `false` value.
 
@@ -174,31 +174,31 @@ Functions for checking the type of JavaScript values.
 
 <a name="isArray" href="#isArray">#</a>
 vega.<b>isArray</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/isArray.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isArray.js "Source")
 
 Returns `true` if the input *value* is an Array instance, `false` otherwise.
 
 <a name="isFunction" href="#isFunction">#</a>
 vega.<b>isFunction</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/isFunction.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isFunction.js "Source")
 
 Returns `true` if the input *value* is a Function instance, `false` otherwise.
 
 <a name="isNumber" href="#isNumber">#</a>
 vega.<b>isNumber</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/isNumber.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isNumber.js "Source")
 
 Returns `true` if the input *value* is a Number instance, `false` otherwise.
 
 <a name="isObject" href="#isObject">#</a>
 vega.<b>isObject</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/isObject.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isObject.js "Source")
 
 Returns `true` if the input *value* is an Object instance, `false` otherwise.
 
 <a name="isString" href="#isString">#</a>
 vega.<b>isString</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/isString.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isString.js "Source")
 
 Returns `true` if the input *value* is a String instance, `false` otherwise.
 
@@ -209,7 +209,7 @@ Functions for coercing values to a desired type.
 
 <a name="toBoolean" href="#toBoolean">#</a>
 vega.<b>toBoolean</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/toBoolean.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/toBoolean.js "Source")
 
 Coerces the input _value_ to a boolean. The strings `"true"` and `"1"` map to
 `true`; the strings `"false"` and `"0"` map to `false`. Null values and empty
@@ -217,7 +217,7 @@ strings are mapped to `null`.
 
 <a name="toDate" href="#toDate">#</a>
 vega.<b>toDate</b>(<i>value</i>[, <i>parser</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/toDate.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/toDate.js "Source")
 
 Coerces the input _value_ to a Date timestamp. Null values and empty strings
 are mapped to `null`. Date objects are passed through unchanged. If an
@@ -228,14 +228,14 @@ implementations across browsers!
 
 <a name="toNumber" href="#toNumber">#</a>
 vega.<b>toNumber</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/toNumber.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/toNumber.js "Source")
 
 Coerces the input _value_ to a number. Null values and empty strings are mapped
 to `null`.
 
 <a name="toString" href="#toString">#</a>
 vega.<b>toString</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/toString.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/toString.js "Source")
 
 Coerces the input _value_ to a string. Null values and empty strings are mapped
 to `null`.
@@ -247,14 +247,14 @@ Functions for manipulating JavaScript Object values.
 
 <a name="extend" href="#extend">#</a>
 vega.<b>extend</b>(<i>target</i>[, <i>source1</i>, <i>source2</i>, …])
-[<>](https://github.com/vega/vega-util/blob/master/src/extend.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/extend.js "Source")
 
 Extends a *target* object by copying (in order) all enumerable properties of
 the input *source* objects.
 
 <a name="inherits" href="#inherits">#</a>
 vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/inherits.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inherits.js "Source")
 
 A convenience method for setting up object-oriented inheritance. Assigns the
 `prototype` property of the input *child* function, such that the *child*
@@ -263,7 +263,7 @@ inheritance. Returns the new child prototype object.
 
 <a name="fastmap" href="#fastmap">#</a>
 vega.<b>fastmap</b>([<i>object</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/fastmap.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/fastmap.js "Source")
 
 Provides a key/value map data structure, keyed by string. Supports a subset
 of the [ES6 Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
@@ -303,7 +303,7 @@ Functions for manipulating JavaScript Array values.
 
 <a name="array" href="#array">#</a>
 vega.<b>array</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/array.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/array.js "Source")
 
 Ensures that the input *value* is an Array instance. If so, the *value* is
 simply returned. If not, the *value* is wrapped within a new single-element
@@ -311,7 +311,7 @@ an array, returning `[value]`.
 
 <a name="extentIndex" href="#extentIndex">#</a>
 vega.<b>extentIndex</b>(<i>array</i>[, <i>accessor</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/extentIndex.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/extentIndex.js "Source")
 
 Returns the array indices for the minimum and maximum values in the input
 *array* (as a `[minIndex, maxIndex]` array), according to natural ordering.
@@ -329,7 +329,7 @@ vega.extentIndex([
 
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/peek.js "Source")
 
 Merge two sorted arrays into a single sorted array. The input *compare*
 function is a comparator for sorting elements and should correspond to the
@@ -339,7 +339,7 @@ is not specified, a new array is generated and returned.
 
 <a name="peek" href="#peek">#</a>
 vega.<b>peek</b>(<i>array</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/peek.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/peek.js "Source")
 
 Returns the last element in the input *array*. Similar to the built-in
 `Array.pop` method, except that it does not remove the last element. This
@@ -347,7 +347,7 @@ method is a convenient shorthand for `array[array.length - 1]`.
 
 <a name="panLinear" href="#panLinear">#</a>
 vega.<b>panLinear</b>(<i>domain</i>, <i>delta</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that translates the domain by a _delta_ using a linear
@@ -358,7 +358,7 @@ and ending value of the translated (panned) domain.
 
 <a name="panLog" href="#panLog">#</a>
 vega.<b>panLog</b>(<i>domain</i>, <i>delta</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that translates the domain by a _delta_ using a logarithmic
@@ -369,7 +369,7 @@ and ending value of the translated (panned) domain.
 
 <a name="panPow" href="#panPow">#</a>
 vega.<b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that translates the domain by a _delta_ using a power
@@ -381,7 +381,7 @@ translated (panned) domain.
 
 <a name="toSet" href="#toSet">#</a>
 vega.<b>toSet</b>(<i>array</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/toSet.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/toSet.js "Source")
 
 Given an input *array* of values, returns a new Object instance whose
 property keys are the values in *array*, each assigned a property value
@@ -394,7 +394,7 @@ vega.toSet([1, 2, 3]); // {'1':1, '2':1, '3':1}
 
 <a name="visitArray" href="#visitArray">#</a>
 vega.<b>visitArray</b>(<i>array</i>, [<i>filter</i>,] <i>visitor</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/visitArray.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/visitArray.js "Source")
 
 Vists the values in an input *array*, invoking the *visitor* function
 for each array value that passes an optional *filter*. If specified,
@@ -417,7 +417,7 @@ vega.visitArray([0, -1, 2],
 
 <a name="zoomLinear" href="#zoomLinear">#</a>
 vega.<b>zoomLinear</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that scales (zooms) the domain by a _scale_ factor using
@@ -428,7 +428,7 @@ scaled (zoomed) domain.
 
 <a name="zoomLog" href="#zoomLog">#</a>
 vega.<b>zoomLog</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that scales (zooms) the domain by a _scale_ factor using
@@ -439,7 +439,7 @@ scaled (zoomed) domain.
 
 <a name="zoomPow" href="#zoomPow">#</a>
 vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a
 new domain array that scales (zooms) the domain by a _scale_ factor using
@@ -455,7 +455,7 @@ Functions for generating and manipulating JavaScript String values.
 
 <a name="pad" href="#pad">#</a>
 vega.<b>pad</b>(<i>string</i>, <i>length</i>[, <i>character</i>, <i>align</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/pad.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/pad.js "Source")
 
 Pads a *string* value with repeated instances of a *character* up to a
 specified *length*. If *character* is not specified, a space (`' '`) is used.
@@ -469,7 +469,7 @@ vega.pad('15', 5, '0', 'left'); // '00015'
 
 <a name="repeat" href="#repeat">#</a>
 vega.<b>repeat</b>(<i>string</i>, <i>count</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/repeat.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/repeat.js "Source")
 
 Given an input *string*, returns a new string that repeats the input
 *count* times.
@@ -480,7 +480,7 @@ vega.repeat('0', 5); // '00000'
 
 <a name="splitAccessPath" href="#splitAccessPath">#</a>
 vega.<b>splitAccessPath</b>(<i>path</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/splitAccessPath.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/splitAccessPath.js "Source")
 
 Splits an input string representing an access *path* for JavaScript object
 properties into an array of constituent path elements.
@@ -494,7 +494,7 @@ vega.splitAccessPath('foo[0].bar'); // ['foo', '0', 'bar']
 
 <a name="stringValue" href="#stringValue">#</a>
 vega.<b>stringValue</b>(<i>value</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/stringValue.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/stringValue.js "Source")
 
 Returns an output representation of an input value that is both JSON
 and JavaScript compliant. For Object and String values, `JSON.stringify` is
@@ -505,7 +505,7 @@ constructor).
 
 <a name="truncate" href="#truncate">#</a>
 vega.<b>truncate</b>(<i>string</i>, <i>length</i>[, <i>align</i>, <i>ellipsis</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/truncate.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/truncate.js "Source")
 
 Truncates an input *string* to a target *length*. The optional *align* argument
 indicates what part of the string should be truncated: `'left'` (the beginning),
@@ -519,7 +519,7 @@ indicate truncated content; by default the ellipsis character (`…`, same as
 
 <a name="logger" href="#logger">#</a>
 vega.<b>logger</b>([<i>level</i>])
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Generates a new logger instance for selectively writing log messages to
 the JavaScript console. The optional *level* argument indicates the initial
@@ -544,28 +544,28 @@ if the current log level is [Debug](#debug) or higher.
 
 <a name="None" href="#None">#</a>
 vega.<b>None</b>
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Constant value indicating a log level of 'None'. If set as the log level of
 a [logger](#logger) instance, all log messages will be suppressed.
 
 <a name="Error" href="#Error">#</a>
 vega.<b>Error</b>
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Constant value indicating a log level of 'Error'. If set as the log level of
 a [logger](#logger) instance, only error messages will be presented.
 
 <a name="Warn" href="#Warn">#</a>
 vega.<b>Warn</b>
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Constant value indicating a log level of 'Warn'. If set as the log level of
 a [logger](#logger) instance, both error and warning messages will be presented.
 
 <a name="Info" href="#Info">#</a>
 vega.<b>Info</b>
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Constant value indicating a log level of 'Info'. If set as the log level of
 a [logger](#logger) instance, error, warning and info messages will be
@@ -573,7 +573,7 @@ presented.
 
 <a name="Debug" href="#Debug">#</a>
 vega.<b>Debug</b>
-[<>](https://github.com/vega/vega-util/blob/master/src/logger.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Constant value indicating a log level of 'Debug'. If set as the log level of
 a [logger](#logger) instance, all log messages (error, warning, info and
@@ -584,7 +584,7 @@ debug) will be presented.
 
 <a name="error" href="#error">#</a>
 vega.<b>error</b>(<i>message</i>)
-[<>](https://github.com/vega/vega-util/blob/master/src/error.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/error.js "Source")
 
 Throws a new error with the provided error *message*. This is a convenience
 method adding a layer of indirection for error handling, for example

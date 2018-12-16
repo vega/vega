@@ -10,7 +10,7 @@ The Vega **parser** accepts a Vega JSON specification as input and generates a r
 
 <a name="parse" href="#parse">#</a>
 vega.<b>parse</b>(<i>specification</i>[, <i>config</i>])
-[<>](https://github.com/vega/vega-parser/blob/master/src/parse.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-parser/src/parse.js "Source")
 
 Parses a [Vega JSON _specification_](../../specification) as input and produces a reactive dataflow graph description for a visualization. The output description uses the JSON format of the [vega-runtime](https://github.com/vega/vega-runtime) module. To create a visualization, use the runtime dataflow description as the input to a Vega [View](../view) instance.
 
