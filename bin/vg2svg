@@ -34,18 +34,24 @@ const args = require('yargs')
   .boolean('h')
     .alias('h', 'header')
     .describe('h', 'Include XML header and SVG doctype.')
+  .string('c')
+    .alias('c', 'config')
+    .describe('c', 'Provide a config object to use for rendering. Can be a JSON file containing the config object or a .js file, which has to export the config object.')
   .help()
   .version()
   .argv;
 
 // set baseURL if provided on command line
-const base = args.b ? args.b + path.sep : null;
+const base = args.b ? args.b + path.sep : (args._[0] ? path.dirname(args._[0]) + path.sep : null);
 
 // Plug-in a deterministic random number generator for testing.
 if (typeof args.seed !== 'undefined') {
   if (isNaN(args.seed)) throw 'Illegal seed value: must be a valid number.';
   vega.setRandom(lcg(args.seed));
 }
+
+// set the config object
+const config = (typeof args.config !== 'undefined') ? require(args.config) : null;
 
 // SVG header string
 const header = args.h ? svgHeader : '';
@@ -59,7 +65,7 @@ read(args._[0] || null)
   .catch(err => { console.error(err); });
 
 function render(spec) {
-  new vega.View(vega.parse(spec), {
+  new vega.View(vega.parse(spec, config), {
       loader: vega.loader({baseURL: base}),
       logLevel: vega.Warn,
       renderer: 'none'
