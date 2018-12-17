@@ -4,6 +4,7 @@
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "repository": "vega/vega",
   "scripts": {
+    "build": "lerna run build",
     "clean": "lerna clean && ls -db ./packages/*/LICENSE | xargs -n 1 rm -f && rm -f yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "license": "ls -db ./packages/*/ | xargs -n 1 cp LICENSE",
