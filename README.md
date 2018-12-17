@@ -14,9 +14,10 @@ For a basic setup allowing you to build Vega and run examples:
 
 - Clone `https://github.com/vega/vega`.
 - Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install. We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
-- Once installation is complete, run `yarn build` within the _vega_ package to build output files. Run `yarn test` to run test cases for all packages. Run `yarn serve` to launch a local web server and visit the `"test"` folder to browse test specifications.
+- Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
+- After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
 
-This repository includes the website and documentation in the `docs` folder. To launch it, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. Now, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
 
 ## Contributions, Development, and Support
 
