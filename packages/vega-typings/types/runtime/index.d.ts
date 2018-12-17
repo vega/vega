@@ -147,5 +147,6 @@ export function schemeDiscretized(name: string, scheme?: any, interpolator?: any
 
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
+export * from 'vega-util';
 export * from './renderer';
 export * from './scene';
