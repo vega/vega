@@ -20,10 +20,8 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
+    "canvas": "^2.2.0",
     "vega": "4.4.0",
     "yargs": "12"
-  },
-  "optionalDependencies": {
-    "canvas": "^2.2.0"
   }
 }

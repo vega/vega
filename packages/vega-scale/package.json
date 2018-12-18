@@ -14,10 +14,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,d3-scale-chromatic:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,d3-scale-chromatic:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

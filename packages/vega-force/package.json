@@ -12,15 +12,18 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-force.js -c -m -o build/vega-force.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-force.js -- index.js",
+    "rollup": "rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-force.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-force.js -c -m -o build/vega-force.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-force": "^1.1.2",
-    "vega-dataflow": "^4.0.4",
+    "d3-force": "^2.0.0",
+    "vega-dataflow": "^4.1.0",
     "vega-util": "^1.7.0"
   },
   "devDependencies": {

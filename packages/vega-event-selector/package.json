@@ -13,11 +13,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
     "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
-    "pretest": "rm -rf build && mkdir build && npm run rollup",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   }
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 function duplicate(_) {
   return JSON.parse(JSON.stringify(_));
 }

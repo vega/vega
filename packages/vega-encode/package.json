@@ -14,10 +14,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-encode.js -c -m -o build/vega-encode.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-array:d3,d3-format:d3,d3-interpolate:d3,vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-encode.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-format:d3,d3-interpolate:d3,vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-encode.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-encode.js -c -m -o build/vega-encode.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

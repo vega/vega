@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "name": "vega-schema",
+  "version": "4.4.0",
+  "description": "Generate the Vega JSON schema.",
+  "keywords": [
+    "vega",
+    "json",
+    "schema"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-schema.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -f cjs -o build/vega-schema.js -- index.js",
+    "prebuild": "rm -rf build && mkdir build",
+    "build": "yarn rollup && node schema > build/vega-schema.json",
+    "test": "yarn build && eslint index.js src"
+  },
+  "devDependencies": {
+    "vega-crossfilter": "*",
+    "vega-encode": "*",
+    "vega-force": "*",
+    "vega-geo": "*",
+    "vega-hierarchy": "*",
+    "vega-transforms": "*",
+    "vega-view-transforms": "*",
+    "vega-voronoi": "*",
+    "vega-wordcloud": "*"
+  }
+}

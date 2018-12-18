@@ -1,27 +1,20 @@
-#!/usr/bin/env node
+const rollup = require('rollup'),
+      json = require('rollup-plugin-json'),
+      nodeResolve = require('rollup-plugin-node-resolve'),
+      externals = process.argv[2] === '-e',
+      output = externals ? 'vega-core.js' : 'vega.js';
 
-var rollup = require('rollup'),
-    json = require('rollup-plugin-json'),
-    nodeResolve = require('rollup-plugin-node-resolve'),
-    externals = process.argv[2] === '-e',
-    output = externals ? 'vega-core.js' : 'vega.js';
-
-var modules = [].concat(!externals ? [] : [
-  'd3',
+const external = [].concat(!externals ? [] : [
   'd3-array',
-  'd3-collection',
   'd3-color',
-  'd3-dispatch',
+  'd3-contour',
   'd3-dsv',
   'd3-force',
   'd3-format',
   'd3-geo',
-  'd3-geo-projection',
   'd3-hierarchy',
   'd3-interpolate',
   'd3-path',
-  'd3-quadtree',
-  'd3-queue',
   'd3-scale',
   'd3-scale-chromatic',
   'd3-shape',
@@ -29,18 +22,17 @@ var modules = [].concat(!externals ? [] : [
   'd3-time-format',
   'd3-timer',
   'd3-voronoi',
-  'topojson'
+  'topojson-client'
 ]);
 
-var module_globals = modules.reduce(
-  function(map, _) { return map[_] = 'd3', map; },
-  {}
-);
-module_globals.topojson = 'topojson';
+const globals = external.reduce(function(map, _) {
+  map[_] = _.split('-')[0]; // map package name to prefix
+  return map;
+}, {});
 
 rollup.rollup({
   input: 'index.js',
-  external: modules,
+  external: external,
   plugins: [
     nodeResolve({module: true, browser: true}),
     json()
@@ -56,7 +48,7 @@ rollup.rollup({
     file: 'build/' + output,
     format: 'umd',
     name: 'vega',
-    globals: module_globals
+    globals: globals
   });
 }).then(function() {
   console.warn('↳ build/' + output);

@@ -1,8 +1,6 @@
-#!/usr/bin/env node
-
 var rollup = require('rollup'),
     json = require('rollup-plugin-json'),
-    dependencies = require('../package.json').dependencies,
+    dependencies = require('./package.json').dependencies,
     output = 'vega-node.js';
 
 rollup.rollup({
