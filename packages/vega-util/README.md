@@ -237,7 +237,7 @@ map.empty; // -> 1 (number of empty entries)
 map.clean(); // invoke garbage collection, clears empty entries
 ```
 
-By using basic JavaScript objects to hash values and avoiding calls to the built-in JavaScript `delete` operator, fastmaps provide better performance than ES6 maps and [d3-collection](https://github.com/d3/d3-collection#maps). However, this speed comes at the cost of some object bloat, requiring periodic garbage collection in the case of many deletions. The fastmap object provides a *clean* method for requesting garbage collection of empty map entries. The *test* method is a getter/setter for providing an optional boolean-valued function that indicates additional objects (not just empty entries from deleted keys) that should be removed during garbage collection.
+By using basic JavaScript objects to hash values and avoiding calls to the built-in JavaScript `delete` operator, fastmaps provide good performance. However, this speed comes at the cost of some object bloat, requiring periodic garbage collection in the case of many deletions. The fastmap object provides a *clean* method for requesting garbage collection of empty map entries. The *test* method is a getter/setter for providing an optional boolean-valued function that indicates additional objects (not just empty entries from deleted keys) that should be removed during garbage collection.
 
 ### Arrays
 

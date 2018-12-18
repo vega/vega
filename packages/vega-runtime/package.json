@@ -14,10 +14,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
+    "rollup": "rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

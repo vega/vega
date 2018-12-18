@@ -8,10 +8,14 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js && bin/schema > build/vega-scenegraph-schema.json",
+    "rollup": "rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js",
+    "schema": "node schema > build/vega-scenegraph-schema.json",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup && yarn schema",
+    "postbuild": "terser build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
+    "pretest": "yarn prebuild && yarn rollup && yarn schema",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

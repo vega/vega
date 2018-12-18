@@ -12,10 +12,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-voronoi:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
+    "rollup": "rollup -g d3-voronoi:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

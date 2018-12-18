@@ -1,5 +1,3 @@
-import {isArray} from 'vega-util';
-
 export var fontWeightEnum = [
   null, "normal", "bold", "lighter", "bolder",
   "100", "200", "300", "400", "500", "600", "700", "800", "900",
@@ -13,7 +11,7 @@ export var baselineEnum = ["top", "middle", "bottom", "alphabetic"];
 export var areaOrientEnum = ["horizontal", "vertical"];
 
 export function valueSchema(type, nullable) {
-  type = isArray(type) ? {"enum": type} : {"type": type};
+  type = Array.isArray(type) ? {"enum": type} : {"type": type};
 
   var modType = type.type === "number" ? "number" : "string",
       valueType = nullable ? {"oneOf": [type, {"type": "null"}]} : type;

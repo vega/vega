@@ -16,12 +16,13 @@
   "jsdelivr": "build/vega-projections.min.js",
   "repository": "vega/vega",
   "scripts": {
+    "rollup": "node rollup.js",
+    "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup && node rollup.js -e",
     "postbuild": "terser build/vega-projections.js -c -m -o build/vega-projections.min.js && terser build/vega-projections-core.js -c -m -o build/vega-projections-core.min.js",
-    "rollup": "rm -rf build && mkdir build && node rollup.js",
-    "pretest": "yarn rollup",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "eslint index.js",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

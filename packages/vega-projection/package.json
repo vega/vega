@@ -13,10 +13,13 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "build": "yarn test && terser build/vega-projection.js -c -m -o build/vega-projection.min.js",
-    "pretest": "rm -rf build && mkdir build && rollup -g d3-geo:d3 -f umd -n vega -o build/vega-projection.js -- index.js",
+    "rollup": "rollup -g d3-geo:d3 -f umd -n vega -o build/vega-projection.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-projection.js -c -m -o build/vega-projection.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {

@@ -19,14 +19,14 @@
   "jsdelivr": "build/vega.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "bin/rollup-node && bin/schema > build/vega-schema.json",
-    "prebuild": "rm -rf build && mkdir build",
-    "build": "yarn rollup && bin/rollup && bin/rollup -e",
+    "rollup": "node rollup-node && node schema-copy",
+    "prebuild": "rimraf build && mkdirp build",
+    "build": "yarn rollup && node rollup && node rollup -e",
     "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
     "pretest": "yarn prebuild && yarn rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js test",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags && bin/deploy-schema.sh"
+    "postpublish": "git push && git push --tags && ./deploy-schema.sh"
   },
   "dependencies": {
     "vega-crossfilter": "^3.0.1",
@@ -51,5 +51,8 @@
     "vega-view-transforms": "^2.0.3",
     "vega-voronoi": "^3.0.0",
     "vega-wordcloud": "^3.0.0"
+  },
+  "devDependencies": {
+    "vega-schema": "*"
   }
 }

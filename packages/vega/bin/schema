@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-
-const vega = require('../'),
-      defs = Object.keys(vega.transforms).map(vega.definition).filter(d => d),
-      dir = require('path').dirname(require.resolve('vega-parser')),
-      schema = require(dir + '/vega-schema');
-
-process.stdout.write(JSON.stringify(schema(defs), 0, 2));
