@@ -17,7 +17,7 @@ export function field(field: string, name?: string): AccessorFn;
 
 export function id(_: object): symbol;
 
-export function identity<V>(v: V): () => V;
+export function identity<V>(v: V): V;
 
 export function key(fields: string[], flat?: boolean): (_: object) => string;
 
