@@ -127,8 +127,56 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 
 [Back to reference](#reference)
 
-
 ## <a name="cli"></a>Command Line Utilities
+
+Vega includes two node.js-based command line utilities &ndash; `vg2png` and `vg2svg` &ndash; for rendering static visualization images. These commands render to PNG or SVG images, respectively.
+
+- **vg2png**: `vg2png [-b basedir] [-s scalefactor] vega_json_file [output_png_file]`
+- **vg2svg**: `vg2svg [-b basedir] [-h] vega_json_file [output_svg_file]`
+
+If no output file is given, the resulting PNG or SVG data will be written to standard output, and so can be piped into other applications. The programs also accept the following (optional) parameters:
+
+* __-b__, __--base__ - [String] A base directory to use for data and image loading. For web retrieval, use `-b http://host/data/`. For files, use `-b file:///dir/data/` (absolute path) or `-b data/` (relative path).
+* __-s__, __--scale__ - [Number] [Default:1] For png output, a resolution scale factor.  For example, `-s 2` results in a doubling of the output resolution.
+* __-h__, __--header__ - [Flag] Includes XML header and DOCTYPE in SVG output (vg2svg only).
+
+Within the Vega project directories, you can use `./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, the commands are accessible either locally (`./node_modules/bin/vg2png`) or globally (`vg2png`) depending on how you install the Vega package. The `vg2png` utility requires that the optional [node-canvas](https://github.com/Automattic/node-canvas) dependency is installed. See below for more [information about Vega and node-canvas](#node-canvas).
+
+### Examples
+
+In the top-level Vega directory, you can run the following from the command line. Be sure you have run `npm install` in the top-level Vega directory to insure all dependencies are available.
+
+Render the bar chart example to a PNG file:
+
+```
+bin/vg2png spec/bar.vg.json bar.png
+```
+
+Render the bar chart example to an SVG file, including XML headers:
+
+```
+bin/vg2svg -h spec/bar.vg.json bar.svg
+```
+
+Render the choropleth example to a PNG file. A base directory is specified for loading data files:
+
+```
+bin/vg2png -b web/data/ spec/choropleth.vg.json > choropleth.svg
+```
+
+Render the arc example to SVG and pipe through svg2pdf (requires [svg2pdf](http://brewformulas.org/svg2pdf)):
+
+```
+bin/vg2svg spec/arc.vg.json | svg2pdf > arc.pdf
+```
+
+Render the bar chart example to a PNG file at double resolution:
+
+```
+bin/vg2png -s 2 spec/bar.vg.json bar.png
+```
+
+<!-- UPDATED DOCUMENTATION FOR NEXT RELEASE
 
 The `vega-cli` package includes two node.js-based command line utilities &ndash; `vg2pdf`, `vg2png`, and `vg2svg` &ndash; for rendering static visualization images. These commands render to PDF, PNG, or SVG files, respectively.
 
@@ -178,6 +226,7 @@ Render the bar chart example to a PNG file at double resolution:
 ```
 vg2png -s 2 test/specs-valid/bar.vg.json bar.png
 ```
+-->
 
 [Back to reference](#reference)
 
@@ -188,7 +237,7 @@ To use Vega as a component within a larger project, first install it either dire
 
 <a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas package](https://github.com/Automattic/node-canvas) must be installed. The Vega library does not require node-canvas by default, so you must include it as an explicit dependency in your own project if you wish to use it.
 
-However, be aware that some system configurations may run into errors while installing and compiling node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/) if you experience installation issues.
+However, be aware that some system configurations may run into errors while installing node-canvas. Please consult the [node-canvas documentation](https://github.com/Automattic/node-canvas/) if you experience installation issues.
 
 ### Example
 
