@@ -3,6 +3,7 @@
 [Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) and [Image](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image)  object instantiation utilities. Creates an [HTML5 Canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API), using either the web browser DOM or a [node-canvas](https://github.com/Automattic/node-canvas) library.
 
 This package attempts three forms of canvas creation, in this order:
+
 - If in a browser environment, use DOM methods to create a new canvas.
 - If the [node-canvas](https://github.com/Automattic/node-canvas) library is present, use that.
 - Otherwise, return `null`.
