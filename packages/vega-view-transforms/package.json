@@ -25,6 +25,6 @@
   "dependencies": {
     "vega-dataflow": "^4.1.0",
     "vega-scenegraph": "^3.2.3",
-    "vega-util": "^1.7.0"
+    "vega-util": "^1.7.1"
   }
 }

@@ -29,7 +29,7 @@
   "dependencies": {
     "d3-hierarchy": "^1.1.8",
     "vega-dataflow": "^4.1.0",
-    "vega-util": "^1.7.0"
+    "vega-util": "^1.7.1"
   },
   "devDependencies": {
     "vega-transforms": "*"
