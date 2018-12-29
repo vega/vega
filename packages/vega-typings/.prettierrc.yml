@@ -1,7 +1,0 @@
-arrowParens: avoid
-bracketSpacing: true
-printWidth: 100
-semi: true
-tabWidth: 2
-trailingComma: all
-singleQuote: true
