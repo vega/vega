@@ -13,6 +13,7 @@
   "license": "BSD-3-Clause",
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
+    "build-tests": "./build-tests.sh",
     "test": "dtslint ."
   },
   "dependencies": {

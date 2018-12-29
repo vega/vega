@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -66,8 +67,8 @@ const spec: Spec = {
       "url": "data/seattle-temps.csv",
       "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
       "transform": [
-        {"type": "formula", "as": "hour", "expr": "hours(datum.date)"},
-        { "type": "formula", "as": "date",
+        { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
+        { "type": "formula", "as": "day",
           "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"}
       ]
     }
@@ -77,7 +78,7 @@ const spec: Spec = {
     {
       "name": "x",
       "type": "time",
-      "domain": {"data": "temperature", "field": "date"},
+      "domain": {"data": "temperature", "field": "day"},
       "range": "width"
     },
     {
@@ -95,7 +96,7 @@ const spec: Spec = {
       "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},
-      "zero": false, "nice": false
+      "zero": false, "nice": true
     }
   ],
 
@@ -106,7 +107,7 @@ const spec: Spec = {
       "encode": {
         "labels": {
           "update": {
-            "text": {"signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 am' : (datum.value - 12) + ':00 pm'"}
+            "text": {"signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 AM' : (datum.value - 12) + ':00 PM'"}
           }
         }
       }
@@ -114,7 +115,23 @@ const spec: Spec = {
   ],
 
   "legends": [
-    {"fill": "color", "type": "gradient", "title": "Avg. Temp (°F)"}
+    {
+      "fill": "color",
+      "type": "gradient",
+      "orient": "none",
+      "direction": "vertical",
+      "gradientLength": {"signal": "height"},
+      "title": "Avg. Temp (°F)",
+      "format": "0.1f",
+      "encode": {
+        "legend": {
+          "update": {
+            "x": {"signal": "width", "offset": 20},
+            "y": {"value": -16}
+          }
+        }
+      }
+    }
   ],
 
   "marks": [
@@ -123,10 +140,11 @@ const spec: Spec = {
       "from": {"data": "temperature"},
       "encode": {
         "enter": {
-          "x": {"scale": "x", "field": "date"},
-          "width": {"value": 5},
+          "x": {"scale": "x", "field": "day"},
           "y": {"scale": "y", "field": "hour"},
-          "height": {"scale": "y", "band": 1}
+          "width": {"value": 5},
+          "height": {"scale": "y", "band": 1},
+          "tooltip": {"signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temp + '°'"}
         },
         "update": {
           "fill": {"scale": "color", "field": "temp"}
@@ -134,4 +152,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};

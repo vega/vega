@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 800,
   "height": 500,
   "padding": 0,
@@ -20,19 +21,20 @@ const spec: Spec = {
       "bind": {"input": "checkbox"} },
     {
       "description": "State variable for active node fix status.",
-      "name": "fix", "value": 0,
+      "name": "fix", "value": false,
       "on": [
         {
           "events": "symbol:mouseout[!event.buttons], window:mouseup",
-          "update": "0"
+          "update": "false"
         },
         {
           "events": "symbol:mouseover",
-          "update": "fix || 1"
+          "update": "fix || true"
         },
         {
           "events": "[symbol:mousedown, window:mouseup] > window:mousemove!",
-          "update": "2", "force": true
+          "update": "xy()",
+          "force": true
         }
       ]
     },
@@ -42,7 +44,7 @@ const spec: Spec = {
       "on": [
         {
           "events": "symbol:mouseover",
-          "update": "fix === 1 ? item() : node"
+          "update": "fix === true ? item() : node"
         }
       ]
     },
@@ -50,7 +52,7 @@ const spec: Spec = {
       "description": "Flag to restart Force simulation upon data changes.",
       "name": "restart", "value": false,
       "on": [
-        {"events": {"signal": "fix"}, "update": "fix > 1"}
+        {"events": {"signal": "fix"}, "update": "fix && fix.length"}
       ]
     }
   ],
@@ -72,6 +74,7 @@ const spec: Spec = {
     {
       "name": "color",
       "type": "ordinal",
+      "domain": {"data": "node-data", "field": "group"},
       "range": {"scheme": "category20c"}
     }
   ],
@@ -87,7 +90,7 @@ const spec: Spec = {
         {
           "trigger": "fix",
           "modify": "node",
-          "values": "fix === 1 ? {fx:node.x, fy:node.y} : {fx:x(), fy:y()}"
+          "values": "fix === true ? {fx: node.x, fy: node.y} : {fx: fix[0], fy: fix[1]}"
         },
         {
           "trigger": "!fix",
@@ -112,6 +115,7 @@ const spec: Spec = {
           "iterations": 300,
           "restart": {"signal": "restart"},
           "static": {"signal": "static"},
+          "signal": "force",
           "forces": [
             {"force": "center", "x": {"signal": "cx"}, "y": {"signal": "cy"}},
             {"force": "collide", "radius": {"signal": "nodeRadius"}},
@@ -133,11 +137,13 @@ const spec: Spec = {
       },
       "transform": [
         {
-          "type": "linkpath", "shape": "line",
+          "type": "linkpath",
+          "require": {"signal": "force"},
+          "shape": "line",
           "sourceX": "datum.source.x", "sourceY": "datum.source.y",
           "targetX": "datum.target.x", "targetY": "datum.target.y"
         }
       ]
     }
   ]
-}
+};

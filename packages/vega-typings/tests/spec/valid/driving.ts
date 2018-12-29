@@ -1,10 +1,21 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 800,
   "height": 500,
   "padding": 5,
+
+  "config": {
+    "axis": {
+      "domain": false,
+      "grid": true,
+      "labelFontSize": 12,
+      "labelFontWeight": "bold",
+      "tickSize": 0
+    }
+  },
 
   "data": [
     {
@@ -62,45 +73,13 @@ const spec: Spec = {
     {
       "orient": "top",
       "scale": "x",
-      "tickCount": 5,
-      "tickSize": 0,
-      "grid": true,
-      "domain": false,
-      "encode": {
-        "domain": {
-          "enter": { "stroke": {"value": "transparent"} }
-        },
-        "labels": {
-          "enter": {
-            "align": {"value": "left"},
-            "baseline": {"value": "top"},
-            "fontSize": {"value": 12},
-            "fontWeight": {"value": "bold"}
-          }
-        }
-      }
+      "tickCount": 5
     },
     {
       "orient": "left",
       "scale": "y",
       "tickCount": 5,
-      "tickSize": 0,
-      "grid": true,
-      "domain": false,
-      "format": "$0.2f",
-      "encode": {
-        "domain": {
-          "enter": {"stroke": {"value": "transparent"}}
-        },
-        "labels": {
-          "enter": {
-            "align": {"value": "left"},
-            "baseline": {"value": "bottom"},
-            "fontSize": {"value": 12},
-            "fontWeight": {"value": "bold"}
-          }
-        }
-      }
+      "format": "$0.2f"
     }
   ],
 
@@ -149,4 +128,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};
