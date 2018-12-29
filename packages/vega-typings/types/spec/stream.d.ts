@@ -16,6 +16,7 @@ export type EventType =
   | 'mouseover'
   | 'mouseup'
   | 'mousewheel'
+  | 'timer'
   | 'touchend'
   | 'touchmove'
   | 'touchstart'
