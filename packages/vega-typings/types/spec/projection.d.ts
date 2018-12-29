@@ -13,6 +13,7 @@ export type ProjectionType =
   | 'conicEquidistant'
   | 'equirectangular'
   | 'gnomonic'
+  | 'identity'
   | 'mercator'
   | 'orthographic'
   | 'stereographic'
