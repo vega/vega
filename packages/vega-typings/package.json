@@ -12,7 +12,8 @@
   ],
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "dtslint": "^0.4.2"
+    "dtslint": "^0.4.2",
+    "prettier": "^1.15.3"
   },
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
