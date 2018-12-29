@@ -1,14 +1,27 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "padding": 5,
+
+  "config": {
+    "title": {
+      "frame": "group",
+      "limit": {"signal": "item.extent"}
+    }
+  },
 
   "signals": [
     {
       "name": "titleText",
       "value": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
       "bind": {"input": "text"}
+    },
+    {
+      "name": "titleAnchor",
+      "value": "middle",
+      "bind": {"input": "select", "options": ["start", "middle", "end"]}
     },
     {
       "name": "titleOffset",
@@ -40,10 +53,6 @@ const spec: Spec = {
         {"u": 17, "v": 68}, {"u": 18, "v": 16},
         {"u": 19, "v": 49}, {"u": 20, "v": 15}
       ]
-    },
-    {
-      "name": "orients",
-      "values": ["top", "left", "bottom", "right"]
     }
   ],
 
@@ -91,6 +100,7 @@ const spec: Spec = {
 
       "title": {
         "text": {"signal": "titleText"},
+        "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "orient": "top"
       },
@@ -138,6 +148,7 @@ const spec: Spec = {
 
       "title": {
         "text": {"signal": "titleText"},
+        "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "orient": "left"
       },
@@ -185,6 +196,7 @@ const spec: Spec = {
 
       "title": {
         "text": {"signal": "titleText"},
+        "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "orient": "right"
       },
@@ -232,6 +244,7 @@ const spec: Spec = {
 
       "title": {
         "text": {"signal": "titleText"},
+        "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "orient": "bottom"
       },
@@ -258,4 +271,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

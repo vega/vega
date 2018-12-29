@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "padding": 5,
 
   "config": {
@@ -63,4 +64,4 @@ const spec: Spec = {
     {"orient": "none", "fill": "diverging", "title": "Diverging", "encode": {"legend": {"update": {"x": {"value":180}, "y": {"value": 0}}}}},
     {"orient": "none", "fill": "heatmap", "title": "Heatmap", "encode": {"legend": {"update": {"x": {"value":240}, "y": {"value": 0}}}}}
   ]
-}
+};

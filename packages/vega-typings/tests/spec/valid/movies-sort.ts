@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 15,
   "padding": 5,
   "autosize": "pad",
@@ -23,7 +24,7 @@ const spec: Spec = {
     },
     {
       "name": "height",
-      "update": "cellSize * extent[1]"
+      "update": "cellSize * max(0, extent[1])"
     },
     {
       "name": "sortop",
@@ -49,7 +50,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["Title"],
-          "ops": ["distinct" as "distinct"],
+          "ops": ["distinct"],
           "signal": "aggregate"
         },
         {
@@ -120,17 +121,8 @@ const spec: Spec = {
             "fill": {"value": "firebrick"},
             "cursor": {"value": "pointer"}
           }
-        },
-        "title": {
-          "update": {
-            "x": {"value": -5},
-            "y": {"value": -2},
-            "align": {"value": "right"},
-            "baseline": {"value": "bottom"},
-            "angle": {"value": 0}
-          }
-        },
+        }
       }
     }
   ]
-}
+};

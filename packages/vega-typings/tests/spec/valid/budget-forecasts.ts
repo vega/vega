@@ -1,9 +1,8 @@
-import { Spec, AggregateOp } from 'vega';
+import { Spec } from 'vega';
 
-const ops: AggregateOp[] = ["min", "argmin"];
-
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 700,
   "height": 400,
   "padding": 5,
@@ -23,7 +22,7 @@ const spec: Spec = {
       "value": false,
       "on": [
         {"events": "@handle:mousedown", "update": "true"},
-        {"events": "mouseup", "update": "false"}
+        {"events": "window:mouseup", "update": "false"}
       ]
     },
     {
@@ -95,7 +94,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["value", "value"],
-          ops,
+          "ops": ["min", "argmin"],
           "as": ["min", "argmin"]
         },
         { "type": "formula", "as": "tooltipYear", "expr": "datum.argmin.budgetYear" }
@@ -240,13 +239,13 @@ const spec: Spec = {
       "type": "rule",
       "encode": {
         "enter": {
-          "y": {"scale": "y", "value": 0},
           "stroke": {"value": "#000"},
           "strokeWidth": {"value": 1}
         },
         "update": {
           "x": {"value": 0},
-          "x2": {"scale": "x", "signal": "currentYear"}
+          "x2": {"scale": "x", "signal": "currentYear"},
+          "y": {"scale": "y", "value": 0}
         }
       }
     },
@@ -255,7 +254,6 @@ const spec: Spec = {
       "type": "symbol",
       "encode": {
         "enter": {
-          "y": {"scale": "y", "value": 0, "offset": 1},
           "shape": {"value": "triangle-down"},
           "size": {"value": 400},
           "stroke": {"value": "#000"},
@@ -263,6 +261,7 @@ const spec: Spec = {
         },
         "update": {
           "x": {"scale": "x", "signal": "currentYear"},
+          "y": {"scale": "y", "value": 0, "offset": 1},
           "fill": {"signal": "dragging ? 'lemonchiffon' : '#fff'"}
         },
         "hover": {
@@ -333,4 +332,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

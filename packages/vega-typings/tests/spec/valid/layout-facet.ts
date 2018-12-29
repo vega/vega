@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 300,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
@@ -46,7 +47,7 @@ const spec: Spec = {
           "type": "aggregate",
           "groupby": ["a", "b"],
           "fields": ["c"],
-          "ops": ["average" as "average"],
+          "ops": ["average"],
           "as": ["c"]
         }
       ]
@@ -243,4 +244,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

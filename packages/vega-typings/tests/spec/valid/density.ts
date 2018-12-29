@@ -1,9 +1,8 @@
-import { Spec, AggregateOp } from 'vega';
+import { Spec } from 'vega';
 
-const ops: AggregateOp[] = ["mean", "stdev"];
-
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 500,
   "height": 100,
   "padding": 5,
@@ -14,7 +13,9 @@ const spec: Spec = {
     { "name": "steps", "value": 100,
       "bind": {"input": "range", "min": 10, "max": 500, "step": 1} },
     { "name": "method", "value": "pdf",
-      "bind": {"input": "radio", "options": ["pdf", "cdf"]} }
+      "bind": {"input": "radio", "options": ["pdf", "cdf"]} },
+    { "name": "summary",
+      "update": "data('summary')[0] || {mean: 0, stdev: 0}" }
   ],
 
   "data": [
@@ -29,7 +30,7 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "fields": ["u", "u"],
-          ops,
+          "ops": ["mean", "stdev"],
           "as": ["mean", "stdev"]
         }
       ]
@@ -61,8 +62,8 @@ const spec: Spec = {
           "method": {"signal": "method"},
           "distribution": {
             "function": "normal",
-            "mean": {"signal": "data('summary')[0].mean"},
-            "stdev": {"signal": "data('summary')[0].stdev"}
+            "mean": {"signal": "summary.mean"},
+            "stdev": {"signal": "summary.stdev"}
           }
         }
       ]
@@ -144,4 +145,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};
