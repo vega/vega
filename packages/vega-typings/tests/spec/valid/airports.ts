@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 900,
   "height": 560,
   "padding": {"top": 25, "left": 0, "right": 0, "bottom": 0},
@@ -67,15 +68,14 @@ const spec: Spec = {
         {
           "type": "aggregate",
           "groupby": ["origin"],
-          "fields": ["count"], "ops": ["sum" as "sum"], "as": ["flights"]
+          "fields": ["count"], "ops": ["sum"], "as": ["flights"]
         }
       ]
     },
     {
       "name": "airports",
       "url": "data/airports.csv",
-      "format": {"type": "csv","parse": "auto"
-      },
+      "format": {"type": "csv", "parse": "auto"},
       "transform": [
         {
           "type": "lookup",
@@ -225,4 +225,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};

@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 500,
   "padding": 5,
 
@@ -363,7 +364,7 @@ const spec: Spec = {
               "text": {"value": "Arrival Delay (min)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": 500},
+              "fontWeight": {"value": "500"},
               "fill": {"value": "black"}
             }
           }
@@ -487,7 +488,7 @@ const spec: Spec = {
               "text": {"value": "Local Departure Time (hour)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": 500},
+              "fontWeight": {"value": "500"},
               "fill": {"value": "black"}
             }
           }
@@ -611,7 +612,7 @@ const spec: Spec = {
               "text": {"value": "Travel Distance (miles)"},
               "baseline": {"value": "bottom"},
               "fontSize": {"value": 14},
-              "fontWeight": {"value": 500},
+              "fontWeight": {"value": "500"},
               "fill": {"value": "black"}
             }
           }
@@ -619,4 +620,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

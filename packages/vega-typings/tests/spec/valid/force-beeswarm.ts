@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 800,
   "height": 100,
   "padding": {"left": 5, "right": 5, "top": 0, "bottom": 20},
@@ -84,4 +85,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

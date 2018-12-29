@@ -1,13 +1,15 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 770,
   "height": 770,
   "padding": 2,
 
   "signals": [
     { "name": "cellSize", "value": 10 },
+    { "name": "count", "update": "length(data('nodes'))" },
     { "name": "width", "update": "span(range('position'))" },
     { "name": "height", "update": "width" },
     {
@@ -18,17 +20,19 @@ const spec: Spec = {
       ]
     },
     {
-      "name": "dest", "value": {},
+      "name": "dest", "value": -1,
       "on": [
         {
-          "events": "[text:mousedown, window:mouseup] > text:mouseover",
-          "update": "src.name != null ? datum : dest"
+          "events": "[@columns:mousedown, window:mouseup] > window:mousemove",
+          "update": "src.name && datum !== src ? (0.5 + count * clamp(x(), 0, width) / width) : dest"
         },
-        {"events": "text:mouseout", "update": "{}"}
+        {
+          "events": "[@rows:mousedown, window:mouseup] > window:mousemove",
+          "update": "src.name && datum !== src ? (0.5 + count * clamp(y(), 0, height) / height) : dest"
+        },
+        {"events": "window:mouseup", "update": "-1"}
       ]
-    },
-    {"name": "destOrder", "update": "dest.order"},
-    {"name": "dragging",  "update": "src.name && dest.name"}
+    }
   ],
 
   "data": [
@@ -37,15 +41,17 @@ const spec: Spec = {
       "url": "data/miserables.json",
       "format": {"type": "json", "property": "nodes"},
       "transform": [
-        { "type": "collect", "sort": {"field": "group"} },
-        { "type": "window", "ops": ["rank"], "as": ["order"] },
         {
           "type": "formula", "as": "order",
-          "expr": "dragging && datum === dest ? src.order : datum.order"
+          "expr": "datum.group"
         },
         {
-          "type": "formula", "as": "order",
-          "expr": "dragging && datum === src ? destOrder : datum.order"
+          "type": "formula", "as": "score",
+          "expr": "dest >= 0 && datum === src ? dest : datum.order"
+        },
+        {
+          "type": "window", "sort": {"field": "score"},
+          "ops": ["row_number"], "as": ["order"]
         }
       ]
     },
@@ -59,9 +65,8 @@ const spec: Spec = {
           "fields": ["source", "target"], "as": ["sourceNode", "targetNode"]
         },
         {
-          "type": "formula",
-          "as": "group",
-          "expr": "datum.sourceNode.group === datum.targetNode.group ? datum.sourceNode.group : -1"
+          "type": "formula", "as": "group",
+          "expr": "datum.sourceNode.group === datum.targetNode.group ? datum.sourceNode.group : count"
         }
       ]
     },
@@ -85,13 +90,13 @@ const spec: Spec = {
       "name": "color",
       "type": "ordinal",
       "range": "category",
-      "domain": {"data": "nodes", "field": "group"}
-    },
-    {
-      "name": "labels",
-      "type": "ordinal",
-      "domain": {"data": "nodes", "field": "order"},
-      "range": {"data": "nodes", "field": "name"}
+      "domain": {
+        "fields": [
+          {"data": "nodes", "field": "group"},
+          {"signal": "count"}
+        ],
+        "sort": true
+      }
     }
   ],
 
@@ -131,8 +136,8 @@ const spec: Spec = {
       "encode": {
         "update": {
           "x": {"scale": "position", "field": "targetNode.order"},
-          "width": {"scale": "position", "band": 1, "offset": -1},
           "y": {"scale": "position", "field": "sourceNode.order"},
+          "width": {"scale": "position", "band": 1, "offset": -1},
           "height": {"scale": "position", "band": 1, "offset": -1},
           "fill": {"scale": "color", "field": "group"}
         }
@@ -140,12 +145,12 @@ const spec: Spec = {
     },
     {
       "type": "text",
+      "name": "columns",
       "from": {"data": "nodes"},
       "encode": {
         "update": {
-          "x": {"scale": "position", "field": "order"},
+          "x": {"scale": "position", "field": "order", "band": 0.5},
           "y": {"offset": -2},
-          "dy": {"scale": "position", "band": 0.5},
           "text": {"field": "name"},
           "fontSize": {"value": 10},
           "angle": {"value": -90},
@@ -160,12 +165,12 @@ const spec: Spec = {
     },
     {
       "type": "text",
+      "name": "rows",
       "from": {"data": "nodes"},
       "encode": {
         "update": {
           "x": {"offset": -2},
-          "y": {"scale": "position", "field": "order"},
-          "dy": {"scale": "position", "band": 0.5},
+          "y": {"scale": "position", "field": "order", "band": 0.5},
           "text": {"field": "name"},
           "fontSize": {"value": 10},
           "align": {"value": "right"},
@@ -178,4 +183,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};

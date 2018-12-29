@@ -1,11 +1,17 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 700,
   "height": 400,
   "padding": 10,
-  "autosize": "pad",
+  "autosize": {"type": "fit", "contains": "padding"},
+
+  "title": {
+    "text": "Unemployment",
+    "anchor": "start"
+  },
 
   "signals": [
     {
@@ -80,18 +86,11 @@ const spec: Spec = {
   "legends": [
     {
       "fill": "color",
-      "orient": "right",
-      "title": "Unemployment",
-      "format": "0.1%",
-      "encode": {
-        "symbols": {
-          "update": {
-            "shape": {"value": "square"},
-            "stroke": {"value": "#ccc"},
-            "strokeWidth": {"value": 0.2}
-          }
-        }
-      }
+      "type": "gradient",
+      "orient": "left",
+      "direction": "vertical",
+      "gradientLength": {"signal": "height"},
+      "format": "0.1%"
     }
   ],
 
@@ -108,4 +107,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};
