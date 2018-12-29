@@ -1,0 +1,17 @@
+{
+  "overrides": [
+    {
+      "files": "*",
+      "options": {
+        "printWidth": 100,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "arrowParens": "avoid",
+        "trailingComma": "all",
+        "proseWrap": "never",
+        "semi": true,
+        "tabWidth": 2
+      }
+    }
+  ]
+}
