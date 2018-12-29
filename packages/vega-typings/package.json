@@ -7,7 +7,7 @@
   "author": "Dominik Moritz <domoritz@gmail.com>",
   "license": "BSD-3",
   "devDependencies": {
-    "dtslint": "^0.4.1",
+    "dtslint": "^0.4.2",
     "prettier": "^1.15.3",
     "typescript": "^3.2.2"
   },
@@ -16,6 +16,6 @@
     "test": "dtslint ."
   },
   "dependencies": {
-    "vega-util": "^1.7.0"
+    "vega-util": "^1.7.1"
   }
 }
