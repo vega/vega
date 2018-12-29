@@ -1,13 +1,15 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "padding": 5,
 
   "config": {
     "legend": {
       "offset": 5,
-      "gradientWidth": 300
+      "gradientDirection": "horizontal",
+      "gradientLength": 300
     }
   },
 
@@ -154,4 +156,4 @@ const spec: Spec = {
     {"orient": "right", "type": "gradient", "fill": "lin6", "title": "Linear HSL-Long"},
     {"orient": "right", "type": "gradient", "fill": "lin7", "title": "Linear HCL-Long"}
   ]
-}
+};

@@ -1,7 +1,8 @@
 import { Spec } from 'vega';
 
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 960,
   "height": 500,
   "autosize": "none",
@@ -44,16 +45,7 @@ const spec: Spec = {
       "fill": "color",
       "orient": "bottom-right",
       "title": "Unemployment",
-      "format": "0.1%",
-      "encode": {
-        "symbols": {
-          "update": {
-            "shape": {"value": "square"},
-            "stroke": {"value": "#ccc"},
-            "strokeWidth": {"value": 0.2}
-          }
-        }
-      }
+      "format": "0.1%"
     }
   ],
 
@@ -71,4 +63,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};

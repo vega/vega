@@ -1,9 +1,8 @@
-import { Spec, AggregateOp } from 'vega';
+import { Spec } from 'vega';
 
-const ops: AggregateOp[] = ["sum", "argmax"];
-
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -51,7 +50,7 @@ const spec: Spec = {
           "type": "aggregate",
           "groupby": ["job", "sex"],
           "fields": ["perc", "perc"],
-          ops,
+          "ops": ["sum", "argmax"],
           "as": ["sum", "argmax"]
         }
       ]
@@ -175,4 +174,4 @@ const spec: Spec = {
       }
     }
   ]
-}
+};

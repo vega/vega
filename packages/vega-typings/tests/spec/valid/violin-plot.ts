@@ -1,9 +1,8 @@
-import { Spec, Transform, AggregateOp } from 'vega';
+import { Spec } from 'vega';
 
-const ops: AggregateOp[] = ["q1", "median", "q3"]
-
+// https://vega.github.io/editor/#/examples/vega/bar-chart
 const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "height": 500,
   "padding": 5,
 
@@ -115,7 +114,7 @@ const spec: Spec = {
             {
               "type": "aggregate",
               "fields": ["value", "value", "value"],
-              ops,
+              "ops": ["q1", "median", "q3"],
               "as": ["q1", "median", "q3"]
             }
           ]
@@ -180,4 +179,4 @@ const spec: Spec = {
       ]
     }
   ]
-}
+};
