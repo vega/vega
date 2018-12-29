@@ -23,12 +23,12 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.0.2",
+    "d3-array": "^2.0.3",
     "d3-timer": "^1.0.9",
     "vega-dataflow": "^4.1.0",
     "vega-parser": "^3.9.0",
     "vega-runtime": "^3.2.0",
     "vega-scenegraph": "^3.2.3",
-    "vega-util": "^1.7.0"
+    "vega-util": "^1.7.1"
   }
 }
