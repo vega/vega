@@ -10,6 +10,7 @@ All Vega packages, by category:
   - [vega-runtime](/packages/vega-runtime): Parse a dataflow graph description produced by vega-parser and instantiate a running dataflow.
   - [vega-scenegraph](/packages/vega-scenegraph): Rendering and event handling for Canvas and SVG.
   - [vega-view](/packages/vega-view): View component for creating and updating Vega visualizations.
+  - [vega-typings](/packages/vega-typings): Typescript type declarations for Vega.
 
 - Dataflow Transforms
   - [vega-crossfilter](/packages/vega-crossfilter): Dataflow transforms for indexed cross-filtering support.
