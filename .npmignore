@@ -1,7 +1,0 @@
-*.sublime-*
-_site
-.sass-cache
-.jekyll-metadata
-build/*.zip
-docs/
-test/
