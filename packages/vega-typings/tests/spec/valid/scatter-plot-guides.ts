@@ -1,7 +1,7 @@
 import { Spec } from 'vega';
 
 // https://vega.github.io/editor/#/examples/vega/bar-chart
-const spec: Spec = {
+export const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v4.json",
   "description": "Scatter plot with interactive legend and x-axis.",
   "width": 200,

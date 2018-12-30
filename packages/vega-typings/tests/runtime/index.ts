@@ -1,12 +1,10 @@
 import * as vega from 'vega'
 
-import { histogram } from '../spec/examples'
+import { spec as histogram } from '../spec/valid/histogram'
 
 // Runtime examples from https://vega.github.io/vega/usage/
 
 function clientSideApi() {
-  let view;
-
   // fr-FR locale example from d3-format
   vega.formatLocale({
     'decimal': ',',
@@ -35,7 +33,7 @@ function clientSideApi() {
     });
 
   function render(spec: vega.Spec) {
-    view = new vega.View(vega.parse(spec))
+    const _view = new vega.View(vega.parse(spec))
       .renderer('canvas') // set renderer (canvas or svg)
       .initialize('#view') // initialize view within parent DOM container
       .hover() // enable hover encode set processing
