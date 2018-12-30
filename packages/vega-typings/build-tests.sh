@@ -15,7 +15,7 @@ do
 
   printf "import { Spec } from 'vega';\n\n" > "$output"
   printf "// https://vega.github.io/editor/#/examples/vega/bar-chart\n" >> "$output"
-  printf "const spec: Spec = " >> "$output"
+  printf "export const spec: Spec = " >> "$output"
   cat $file | perl -pe 'chomp if eof' >> "$output"
   printf ";\n" >> "$output"
 done
