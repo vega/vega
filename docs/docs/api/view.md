@@ -177,6 +177,11 @@ not automatically handle hover events. Instead, the underlying dataflow
 definition will have to explicitly set up event streams for handling mouseover
 and mouseout events.
 
+*This method should be invoked only once, upon view initialization.* Calling
+this method multiple times will add redundant event listeners to the view. In
+other words, this method is **not**
+[idempotent](https://en.wikipedia.org/wiki/Idempotence).
+
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
