@@ -18,8 +18,9 @@ _Note:_ The `flatten` transform only applies to array-typed data fields. If your
 
 ## Usage
 
-### Simple
-This example flattens the foo array-valued field. Note that all fields except `foo` are repeated in every result datum.
+### Single-Field Flattening
+
+This example flattens the array-valued field named `foo`. Note that all fields except `foo` are repeated in every output datum.
 
 ```json
 {"type": "flatten", "fields": ["foo"]}
@@ -46,13 +47,13 @@ Result:
 ]
 ```
 
-### Multi-field flattening
+### Multi-Field Flattening
 
 ```json
 {"type": "flatten", "fields": ["foo", "bar"]}
 ```
 
-This example flattens the foo and bar array-valued fields. Given the input data
+This example simultaneously flattens the array-valued fields `foo` and `bar`. Given the input data
 
 ```json
 [
