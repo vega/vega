@@ -8,7 +8,7 @@ Parse Vega specifications to runtime dataflow descriptions.
 vega.<b>parse</b>(<i>specification</i>[, <i>config</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-parser/src/parse.js "Source")
 
-Parses a Vega JSON *specification* as input and produces a reactive dataflow graph description for a visualization. The output description uses the format of the [vega-runtime](https://github.com/vega/vega/packages/vega-runtime) module. To create a visualization, use the runtime dataflow description as the input to a Vega [View](https://github.com/vega/vega/packages/vega-view) instance.
+Parses a Vega JSON *specification* as input and produces a reactive dataflow graph description for a visualization. The output description uses the format of the [vega-runtime](https://github.com/vega/vega/tree/master/packages/vega-runtime) module. To create a visualization, use the runtime dataflow description as the input to a Vega [View](https://github.com/vega/vega/tree/master/packages/vega-view) instance.
 
 The optional *config* object provides visual encoding defaults for marks, scales, axes and legends. Different configuration settings can be used to change choices of layout, color, type faces, font sizes and more to realize different chart themes. For more, see the configuration documentation below or view the source code defining Vega's [default configuration](https://github.com/vega/vega/blob/master/packages/vega-parser/src/config.js).
 
