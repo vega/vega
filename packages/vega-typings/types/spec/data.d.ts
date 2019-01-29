@@ -30,20 +30,25 @@ export type FormatTopoJSON = {
       mesh?: 'string';
     });
 export type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON | { parse: Parse };
-export type Data = (
-  | {
-      source: string;
-    }
-  | {
-      values: Datum[];
-    }
-  | {
-      url: string | SignalRef;
-    }
-  | {}) & {
+
+export interface BaseData {
   name: string;
   on?: OnTrigger[];
   format?: Format | SignalRef;
   transform?: Transform[];
-};
+}
+
+export type SourceData = {
+  source: string;
+} & BaseData;
+
+export type ValuesData = {
+  values: Datum[];
+} & BaseData;
+
+export type UrlData = {
+  url: string | SignalRef;
+} & BaseData;
+
+export type Data = SourceData | ValuesData | UrlData | BaseData;
 export type Datum = any;
