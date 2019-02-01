@@ -78,8 +78,7 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
   <script>
     vegaEmbed(
       '#view',
-      'https://vega.github.io/vega/examples/bar-chart.vg.json',
-      { { defaultStyle: true } }
+      'https://vega.github.io/vega/examples/bar-chart.vg.json'
     );
   </script>
 </body>
