@@ -10,6 +10,14 @@ function log(sign) {
   return function(x) { return Math.log(sign * x); };
 }
 
+function symlog(c) {
+  return function(x) { return Math.sign(x) * Math.log1p(Math.abs(x / c)); };
+}
+
+function symexp(c) {
+  return function(x) { return Math.sign(x) * Math.expm1(Math.abs(x)) * c; };
+}
+
 function pow(exponent) {
   return function(x) {
     return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
@@ -40,6 +48,10 @@ export function panPow(domain, delta, exponent) {
   return pan(domain, delta, pow(exponent), pow(1/exponent));
 }
 
+export function panSymlog(domain, delta, constant) {
+  return pan(domain, delta, symlog(constant), symexp(constant));
+}
+
 function zoom(domain, anchor, scale, lift, ground) {
   var d0 = lift(domain[0]),
       d1 = lift(peek(domain)),
@@ -62,4 +74,8 @@ export function zoomLog(domain, anchor, scale) {
 
 export function zoomPow(domain, anchor, scale, exponent) {
   return zoom(domain, anchor, scale, pow(exponent), pow(1/exponent));
+}
+
+export function zoomSymlog(domain, anchor, scale, constant) {
+  return zoom(domain, anchor, scale, symlog(constant), symexp(constant));
 }

@@ -26,9 +26,11 @@ export {
   panLinear,
   panLog,
   panPow,
+  panSymlog,
   zoomLinear,
   zoomLog,
-  zoomPow
+  zoomPow,
+  zoomSymlog
 } from './src/transform';
 
 export {default as array} from './src/array';

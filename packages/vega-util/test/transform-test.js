@@ -27,6 +27,13 @@ tape('panPow pans a domain along a power scale', function(test) {
   test.end();
 });
 
+tape('panSymlog pans a domain along a symlog scale', function(test) {
+  var domain = [0, 1];
+  test.ok(equal(vega.panSymlog(domain, -1, 1), [1, 3]));
+  test.ok(equal(vega.panSymlog(domain, +1, 1), [-1, 0]));
+  test.end();
+});
+
 tape('zoomLinear zooms a domain linearly', function(test) {
   var domain = [0, 1];
   test.ok(equal(vega.zoomLinear(domain, null, 2.0), [-0.5, 1.5]));
@@ -49,5 +56,13 @@ tape('zoomPow zooms a domain along a power scale', function(test) {
   test.ok(equal(vega.zoomPow([4, 25], null, 1/3, 0.5), [9, 16]));
   test.ok(equal(vega.zoomPow([4, 16], 9, 2.0, 0.5), [1, 25]));
   test.ok(equal(vega.zoomPow([4, 25], 12.25, 1/3, 0.5), [9, 16]));
+  test.end();
+});
+
+tape('zoomSymlog zooms a domain along a symlog scale', function(test) {
+  test.ok(equal(vega.zoomSymlog([-1, 1], null, 2.0, 1), [-3, 3]));
+  test.ok(equal(vega.zoomSymlog([-3, 3], null, 0.5, 1), [-1, 1]));
+  test.ok(equal(vega.zoomSymlog([ 0, 1], null, 3.0, 1), [-1, 3]));
+  test.ok(equal(vega.zoomSymlog([-1, 3], null, 1/3, 1), [ 0, 1]));
   test.end();
 });
