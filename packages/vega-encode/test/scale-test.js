@@ -1,6 +1,7 @@
 var tape = require('tape'),
     util = require('vega-util'),
     vega = require('vega-dataflow'),
+    vs = require('vega-scale'),
     encode = require('../');
 
 function scale(params) {
@@ -225,6 +226,59 @@ tape('Scale warns for zero in log domain', function(test) {
   test.throws(logScale([1, 0, 2]));
   test.doesNotThrow(logScale([1, 2]));
   test.doesNotThrow(logScale([-2, -1]));
+
+  test.end();
+});
+
+tape('Scale infers scale key from type, domain, and range', function(test) {
+  function key(params) {
+    const df = new vega.Dataflow(),
+          s = df.add(encode.scale, params);
+    df.run();
+    return s.value.type;
+  }
+
+  // numeric domain scales should adapt
+  [vs.Linear, vs.Log, vs.Pow, vs.Sqrt, vs.Symlog].forEach(function(t) {
+    test.equal(key({type: t, domain:[0,1], range:[0,1]}), t);
+    test.equal(key({type: t, domain:[0,1], range:[true,false]}), t);
+
+    // direct color range specification
+    test.equal(key({type: t, domain:[0,1], range:['blue','red']}), `${vs.Sequential}-${t}`);
+    test.equal(key({type: t, domain:[0,1,2], range:['blue','red']}), `${vs.Diverging}-${t}`);
+    test.equal(key({type: t, domain:[0,1,2,3], range:['blue','red']}), t);
+
+    // color scheme range specification
+    test.equal(key({type: t, domain:[0,1], scheme:'blues'}), `${vs.Sequential}-${t}`);
+    test.equal(key({type: t, domain:[0,1,2], scheme:'blues'}), `${vs.Diverging}-${t}`);
+    test.equal(key({type: t, domain:[0,1,2,3], scheme:'blues'}), t);
+  });
+
+  // temporal domain scales should not adapt
+  [vs.Time, vs.UTC].forEach(function(t) {
+    const t0 = new Date(2010, 0, 1),
+          t1 = new Date(2011, 0, 1),
+          t2 = new Date(2012, 0, 1),
+          t3 = new Date(2013, 0, 1);
+
+    test.equal(key({type: t, domain:[t0,t1], range:[0,1]}), t);
+    test.equal(key({type: t, domain:[t0,t1], range:[true,false]}), t);
+
+    // direct color range specification
+    test.equal(key({type: t, domain:[t0,t1], range:['blue','red']}), t);
+    test.equal(key({type: t, domain:[t0,t1,t2], range:['blue','red']}), t);
+    test.equal(key({type: t, domain:[t0,t1,t2,t3], range:['blue','red']}), t);
+
+    // color scheme range specification
+    test.equal(key({type: t, domain:[t0,t1], scheme:'blues'}), t);
+    test.equal(key({type: t, domain:[t0,t1,t2], scheme:'blues'}), t);
+    test.equal(key({type: t, domain:[t0,t1,t2,t3], scheme:'blues'}), t);
+  });
+
+  // sequential should work for backwards compatibility
+  const t = vs.Sequential;
+  test.equal(key({type: t, domain:[0,1], range:['blue','red']}), `${t}-${vs.Linear}`);
+  test.equal(key({type: t, domain:[0,1], scheme:'blues'}), `${t}-${vs.Linear}`);
 
   test.end();
 });

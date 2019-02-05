@@ -3,7 +3,8 @@ import {codegen, constants, functions} from 'vega-expression';
 import {random} from 'vega-statistics';
 import {
   isArray, isBoolean, isDate, isNumber, isObject, isRegExp, isString,
-  panLinear, panLog, panPow, zoomLinear, zoomLog, zoomPow,
+  panLinear, panLog, panPow, panSymlog,
+  zoomLinear, zoomLog, zoomPow, zoomSymlog,
   toBoolean, toDate, toNumber, toString,
   pad, peek, stringValue, truncate
 } from 'vega-util';
@@ -89,9 +90,11 @@ export var functionContext = {
   panLinear: panLinear,
   panLog: panLog,
   panPow: panPow,
+  panSymlog: panSymlog,
   zoomLinear: zoomLinear,
   zoomLog: zoomLog,
   zoomPow: zoomPow,
+  zoomSymlog: zoomSymlog,
   encode: encode,
   modify: modify
 };

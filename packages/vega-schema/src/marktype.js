@@ -1,8 +1,7 @@
+import { stringType } from './util';
+
 export default {
-  "refs": {
-    "marktype": {
-      "title": "Mark Type definition",
-      "type": "string"
-    }
+  refs: {
+    marktype: stringType
   }
 };

@@ -1,43 +1,15 @@
 import {ref, keyFieldRef} from '../util';
 import {Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values} from '../transforms';
-import {error, extend, isArray, isObject, isString, stringValue, toSet} from 'vega-util';
+
+import {isValidScaleType, isDiscrete, isQuantile} from 'vega-scale';
+import {error, extend, isArray, isObject, isString, stringValue} from 'vega-util';
 
 var FIELD_REF_ID = 0;
-
-var types = [
-  'identity',
-  'ordinal', 'band', 'point',
-  'bin-linear', 'bin-ordinal',
-  'quantize', 'quantile', 'threshold',
-  'linear', 'pow', 'sqrt', 'log', 'sequential',
-  'time', 'utc'
-];
-
-var allTypes = toSet(types),
-    discreteTypes = toSet(types.slice(4, 9)),
-    continuousTypes = toSet(types.slice(9)),
-    ordinalTypes = toSet(types.slice(1, 6));
-
-export function isOrdinal(type) {
-  return ordinalTypes.hasOwnProperty(type);
-}
-
-export function isDiscretizing(type) {
-  return discreteTypes.hasOwnProperty(type);
-}
-
-export function isContinuous(type) {
-  return continuousTypes.hasOwnProperty(type);
-}
-
-export function isQuantile(type) {
-  return type === 'quantile';
-}
 
 export function initScale(spec, scope) {
   var type = spec.type || 'linear';
 
-  if (!allTypes.hasOwnProperty(type)) {
+  if (!isValidScaleType(type)) {
     error('Unrecognized scale type: ' + stringValue(type));
   }
 
@@ -113,7 +85,7 @@ function singularDomain(domain, spec, scope) {
   var data = scope.getData(domain.data);
   if (!data) dataLookupError(domain.data);
 
-  return isOrdinal(spec.type)
+  return isDiscrete(spec.type)
       ? data.valuesRef(scope, domain.field, parseSort(domain.sort, false))
       : isQuantile(spec.type) ? data.domainRef(scope, domain.field)
       : data.extentRef(scope, domain.field);
@@ -129,7 +101,7 @@ function multipleDomain(domain, spec, scope) {
         return dom;
       }, []);
 
-  return (isOrdinal(spec.type) ? ordinalMultipleDomain
+  return (isDiscrete(spec.type) ? ordinalMultipleDomain
     : isQuantile(spec.type) ? quantileMultipleDomain
     : numericMultipleDomain)(domain, scope, fields);
 }
@@ -253,21 +225,23 @@ function parseScaleRange(spec, scope, params) {
     } else if (range === 'width') {
       range = [0, {signal: 'width'}]
     } else if (range === 'height') {
-      range = isOrdinal(spec.type)
+      range = isDiscrete(spec.type)
         ? [0, {signal: 'height'}]
         : [{signal: 'height'}, 0]
     } else {
       error('Unrecognized scale range value: ' + stringValue(range));
     }
   } else if (range.scheme) {
-    params.scheme = parseLiteral(range.scheme, scope);
+    params.scheme = isArray(range.scheme)
+      ? parseArray(range.scheme, scope)
+      : parseLiteral(range.scheme, scope);
     if (range.extent) params.schemeExtent = parseArray(range.extent, scope);
     if (range.count) params.schemeCount = parseLiteral(range.count, scope);
     return;
   } else if (range.step) {
     params.rangeStep = parseLiteral(range.step, scope);
     return;
-  } else if (isOrdinal(spec.type) && !isArray(range)) {
+  } else if (isDiscrete(spec.type) && !isArray(range)) {
     return parseScaleDomain(range, spec, scope);
   } else if (!isArray(range)) {
     error('Unsupported range type: ' + stringValue(range));

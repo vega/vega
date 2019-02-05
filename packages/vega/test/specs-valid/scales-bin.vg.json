@@ -7,8 +7,12 @@
 
   "signals": [
     {
-      "name": "binDomain",
+      "name": "binValues",
       "update": "sequence(bins.start, bins.stop + bins.step, bins.step)"
+    },
+    {
+      "name": "binDomain",
+      "update": "[bins.start, bins.stop]"
     },
     {
       "name": "maxbins", "value": 10,
@@ -59,23 +63,25 @@
     },
     {
       "name": "xscale",
-      "type": "bin-linear",
+      "type": "linear",
       "range": "width",
       "round": true,
-      "domain": {"signal": "binDomain"}
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "binValues"}
     },
     {
       "name": "size",
-      "type": "bin-linear",
+      "type": "linear",
       "range": [10, 100],
       "round": true,
-      "domain": {"signal": "binDomain"}
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "binValues"}
     },
     {
       "name": "color",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "domain": {"signal": "binDomain"}
+      "domain": {"signal": "binValues"}
     }
   ],
 

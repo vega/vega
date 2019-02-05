@@ -1,66 +1,39 @@
+import {
+  array, allOf, def, oneOf, object, ref,
+  booleanType, numberType, stringType
+} from './util';
+
+// MOVE?
+const exprStringRef = ref('exprString');
+
+const streamRef = def('stream');
+
+const streamParams = object({
+  between: array(streamRef, {minItems: 2, maxItems: 2}),
+  marktype: stringType,
+  markname: stringType,
+  filter: oneOf(exprStringRef, array(exprStringRef, {minItems: 1})),
+  throttle: numberType,
+  debounce: numberType,
+  consume: booleanType
+}, undefined);
+
+const streamEvents = object({
+  _type_: stringType,
+  source: stringType
+}, undefined);
+
+const stream = allOf(
+  streamParams,
+  oneOf(
+    streamEvents,
+    object({_stream_: streamRef}, undefined),
+    object({_merge_: array(streamRef, {minItems: 1})}, undefined)
+  )
+);
+
 export default {
-  "defs": {
-    "streamParams": {
-      "properties": {
-        "between": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "items": {"$ref": "#/defs/stream"}
-        },
-        "marktype": {"type": "string"},
-        "markname": {"type": "string"},
-        "filter": {
-          "oneOf": [
-            {"$ref": "#/refs/exprString"},
-            {
-              "type": "array",
-              "minItems": 1,
-              "items": {"$ref": "#/refs/exprString"},
-            }
-          ]
-        },
-        "throttle": {"type": "number"},
-        "debounce": {"type": "number"},
-        "consume": {"type": "boolean"}
-      }
-    },
-    "streamEvents": {
-      "properties": {
-        "source": {"type": "string"},
-        "type": {"type": "string"}
-      },
-      "required": ["type"]
-    },
-    "stream": {
-      "title": "Input event stream definition",
-      "type": "object",
-      "allOf": [
-        {"$ref": "#/defs/streamParams"},
-        {
-          "oneOf": [
-            {"$ref": "#/defs/streamEvents"},
-            {
-              "type": "object",
-              "properties": {
-                "stream": {"$ref": "#/defs/stream"}
-              },
-              "required": ["stream"]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "merge": {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {"$ref": "#/defs/stream"}
-                }
-              },
-              "required": ["merge"]
-            }
-          ]
-        }
-      ]
-    }
+  defs: {
+    stream
   }
 };

@@ -1,38 +1,43 @@
+import {
+  array, enums, object, anyOf, oneOf, def, ref,
+  booleanType, numberType, nullType, stringType, signalRef
+} from './util';
+
+const compareRef = ref('compare');
+const scaleFieldRef = ref('scaleField');
+const paramFieldRef = ref('paramField');
+const exprStringRef = ref('exprString');
+const exprRef = ref('expr');
+
+function req(key) {
+  return '_' + key + '_';
+}
+
 function transformSchema(name, def) {
   function parameters(list) {
     list.forEach(function(param) {
       if (param.type === 'param') {
-        var schema = {
-          "oneOf": param.params.map(subParameterSchema)
+        const schema = {
+          oneOf: param.params.map(subParameterSchema)
         };
-        props[param.name] = param.array
-          ? {"type": "array", "items": schema}
-          : schema;
+        props[param.name] = param.array ? array(schema) : schema;
       } else if (param.params) {
         parameters(param.params)
       } else {
-        props[param.name] = parameterSchema(param);
-        if (param.required) required.push(param.name);
+        const key = param.required ? req(param.name) : param.name;
+        props[key] = parameterSchema(param);
       }
-    })
+    });
   }
 
-  var props = {
-        "type": {"enum": [name]},
-        "signal": {"type": "string"}
-      },
-      required = ["type"];
+  const props = {
+    _type_: enums([name]),
+    signal: stringType
+  };
 
   parameters(def.params || []);
 
-  var schema = {
-    "type": "object",
-    "properties": props,
-    "additionalProperties": false,
-    "required": required
-  };
-
-  return schema;
+  return object(props);
 }
 
 function parameterSchema(param) {
@@ -41,67 +46,49 @@ function parameterSchema(param) {
   switch (param.type) {
     case 'projection':
     case 'data':
-      p = {"type": "string"};
+      p = stringType;
       break;
     case 'field':
-      p = {
-        "oneOf": [
-          {"$ref": "#/refs/scaleField"},
-          {"$ref": "#/refs/paramField"},
-          {"$ref": "#/refs/expr"}
-        ]
-      };
+      p = oneOf(scaleFieldRef, paramFieldRef, exprRef);
       break;
     case 'compare':
-      p = {"$ref": "#/refs/compare"};
+      p = compareRef;
       break;
     case 'enum':
-      p = {
-        "anyOf": [
-          {"enum": param.values},
-          {"$ref": "#/refs/signal"}
-        ]
-      };
+      p = anyOf(enums(param.values), signalRef);
       break;
     case 'expr':
-      p = {"$ref": "#/refs/exprString"};
+      p = exprStringRef;
       break;
     case 'string':
-      p = {"anyOf": [{"type": "string"}, {"$ref": "#/refs/signal"}]};
+      p = anyOf(stringType, signalRef);
       break;
     case 'number':
-      p = {"anyOf": [{"type": "number"}, {"$ref": "#/refs/signal"}]};
+      p = anyOf(numberType, signalRef);
       break;
     case 'boolean':
-      p = {"anyOf": [{"type": "boolean"}, {"$ref": "#/refs/signal"}]};
+      p = anyOf(booleanType, signalRef);
       break;
     case 'signal':
-      p = {"$ref": "#/refs/signal"};
+      p = signalRef;
       break;
   }
 
   if (param.expr) {
-    (p.anyOf || p.oneOf || (p = {"oneOf": [p]}).oneOf)
-      .push({"$ref": "#/refs/expr"}, {"$ref": "#/refs/paramField"});
+    (p.anyOf || p.oneOf || (p = oneOf(p)).oneOf).push(exprRef, paramFieldRef);
   }
 
   if (param.null) {
-    (p.anyOf || p.oneOf || (p = {"oneOf": [p]}).oneOf)
-      .push({"type": "null"});
+    (p.anyOf || p.oneOf || (p = oneOf(p)).oneOf).push(nullType);
   }
 
   if (param.array) {
-    p = {
-      "oneOf": [
-        {"type": "array", "items": p},
-        {"$ref": "#/refs/signal"}
-      ]
-    };
+    p = oneOf(array(p), signalRef);
     if (param.length != null) {
       p.minItems = p.maxItems = param.length;
     }
-    if (param.array === "nullable") {
-      p.oneOf.push({"type": "null"});
+    if (param.array === 'nullable') {
+      p.oneOf.push(nullType);
     }
   }
 
@@ -114,48 +101,39 @@ function parameterSchema(param) {
 
 function subParameterSchema(sub) {
   var props = {},
-      required = [],
       key = sub.key;
 
   for (var name in key) {
-    props[name] = {"enum": [key[name]]};
-    required.push(name);
+    props[req(name)] = enums([key[name]]);
   }
 
   sub.params.forEach(function(param) {
-    props[param.name] = parameterSchema(param);
-    if (param.required) required.push(param.name);
+    const key = param.required ? req(param.name) : param.name;
+    props[key] = parameterSchema(param);
   });
 
-  var schema = {
-    "type": "object",
-    "properties": props,
-    "additionalProperties": false,
-    "required": required
-  };
-
-  return schema;
+  return object(props);
 }
 
 export default function(definitions) {
   var transforms = [],
       marks = [],
       defs = {
-        transform: {"oneOf": transforms},
-        transformMark: {"oneOf": marks}
+        transform: {oneOf: transforms},
+        transformMark: {oneOf: marks}
       };
 
   for (var i=0, n=definitions.length; i<n; ++i) {
-    var def = definitions[i],
-        name = def.type.toLowerCase(),
+    var d = definitions[i],
+        name = d.type.toLowerCase(),
         key = name + 'Transform',
-        ref = {"$ref": "#/defs/" + key},
-        md = def.metadata;
+        ref = def(key),
+        md = d.metadata;
 
-    defs[key] = transformSchema(name, def);
+    defs[key] = transformSchema(name, d);
     if (!(md.generates || md.changes)) marks.push(ref);
     transforms.push(ref);
   }
 
-  return {"defs": defs};
+  return {defs};
 }

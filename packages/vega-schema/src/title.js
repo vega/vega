@@ -1,62 +1,45 @@
 import {
   numberValue, stringValue, stringOrSignal, anchorValue,
-  alignValue, baselineValue, colorValue, fontWeightValue
+  alignValue, baselineValue, colorValue, fontWeightValue,
+  def, enums, object, oneOf, pattern, ref,
+  booleanType, numberType, stringType
 } from './util';
 
+const titleOrientEnum = ['none', 'left', 'right', 'top', 'bottom'];
+const titleFrameEnum = ['group', 'bounds'];
+
+const encodeEntryRef = def('encodeEntry');
+
+const titleEncode = pattern({
+  '^(?!interactive|name|style).+$': encodeEntryRef,
+});
+
+const title = oneOf(
+  stringType,
+  object({
+    name: stringType,
+    orient: enums(titleOrientEnum, {default: 'top'}),
+    anchor: anchorValue,
+    frame: oneOf(enums(titleFrameEnum), ref('stringValue')),
+    offset: numberValue,
+    style: ref('style'),
+    text: stringOrSignal,
+    zindex: numberType,
+    interactive: booleanType,
+    align: alignValue,
+    angle: numberValue,
+    baseline: baselineValue,
+    color: colorValue,
+    font: stringValue,
+    fontSize: numberValue,
+    fontWeight: fontWeightValue,
+    limit: numberValue,
+    encode: titleEncode
+  })
+)
+
 export default {
-  "defs": {
-    "titleEncode": {
-      "type": "object",
-      "patternProperties": {
-        "^(?!interactive|name|style).+$": {"$ref": "#/defs/encodeEntry"},
-      },
-      "additionalProperties": false
-    },
-    "title": {
-      "oneOf": [
-        {"type": "string"},
-        {
-          "type": "object",
-          "properties": {
-            "name": {"type": "string"},
-            "orient": {
-              "enum": [
-                "none",
-                "left",
-                "right",
-                "top",
-                "bottom"
-              ],
-              "default": "top"
-            },
-            "anchor": anchorValue,
-            "frame": {
-              "oneOf": [
-                {"enum": ["group", "bounds"]},
-                {"$ref": "#/refs/stringValue"}
-              ]
-            },
-            "offset": numberValue,
-            "style": {"$ref": "#/refs/style"},
-            "text": stringOrSignal,
-            "zindex": {"type": "number"},
-            "interactive": {"type": "boolean"},
-
-            "align": alignValue,
-            "angle": numberValue,
-            "baseline": baselineValue,
-            "color": colorValue,
-            "font": stringValue,
-            "fontSize": numberValue,
-            "fontWeight": fontWeightValue,
-            "limit": numberValue,
-
-            "encode": {"$ref": "#/defs/titleEncode"}
-          },
-          "required": ["text"],
-          "additionalProperties": false
-        }
-      ]
-    }
+  defs: {
+    title
   }
 };

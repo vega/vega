@@ -1,17 +1,21 @@
 import {Symbols, Discrete} from './legend-types';
-import {Quantile, Quantize, Threshold, BinLinear, BinOrdinal} from './scale-types';
 import {tickValues} from './ticks';
+
+import {Quantile, Quantize, Threshold, BinOrdinal} from 'vega-scale';
 import {peek} from 'vega-util';
 
-var symbols = {};
-symbols[Quantile] = quantileSymbols;
-symbols[Quantize] = quantizeSymbols;
-symbols[Threshold] = thresholdSymbols;
-symbols[BinLinear] = symbols[BinOrdinal] = binSymbols;
+const symbols = {
+  [Quantile]:   quantileSymbols,
+  [Quantize]:   quantizeSymbols,
+  [Threshold]:  thresholdSymbols,
+  [BinOrdinal]: binSymbols
+};
 
 export function labelValues(scale, count) {
   var values = symbols[scale.type];
-  return values ? values(scale) : tickValues(scale, count);
+  return values ? values(scale)
+    : scale.bins ? binValues(scale.bins.slice())
+    : tickValues(scale, count);
 }
 
 function quantizeSymbols(scale) {
@@ -44,14 +48,20 @@ function thresholdSymbols(scale) {
 }
 
 function binSymbols(scale) {
-  var values = scale.domain();
-  values.max = values.pop();
+  return binValues(scale.domain());
+}
 
-  return values;
+function binValues(bins) {
+  bins.max = bins.pop();
+  return bins;
+}
+
+function isDiscreteRange(scale) {
+  return symbols[scale.type] || scale.bins;
 }
 
 export function labelFormat(scale, format, type) {
-  return type === Symbols && symbols[scale.type] ? formatRange(format)
+  return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
     : type === Discrete ? formatDiscrete(format)
     : formatPoint(format);
 }

@@ -1,8 +1,9 @@
+import { stringType } from './util';
+
+const selector = stringType;
+
 export default {
-  "refs": {
-    "selector": {
-      "title": "Event Selector String",
-      "type": "string"
-    }
+  refs: {
+    selector
   }
 };

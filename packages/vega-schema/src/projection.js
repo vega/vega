@@ -1,82 +1,31 @@
-function orSignal(obj) {
-  return {
-    "oneOf": [
-      {"$ref": "#/refs/signal"},
-      obj
-    ]
-  };
-}
+import {
+  array, object, oneOf, orSignal,
+  arrayType, objectType, stringType, numberOrSignal, stringOrSignal
+} from './util';
+
+const array2 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 2}));
+const array3 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 3}));
+const extent = orSignal(array(array2, {minItems: 2, maxItems: 2}));
+
+const projection = object({
+  _name_: stringType,
+  "type": stringOrSignal,
+  "clipAngle": numberOrSignal,
+  "clipExtent": extent,
+  "scale": numberOrSignal,
+  "translate": array2,
+  "center": array2,
+  "rotate": array3,
+  "parallels": array2,
+  "precision": numberOrSignal,
+  "pointRadius": numberOrSignal,
+  "fit": oneOf(objectType, arrayType),
+  "extent": extent,
+  "size": array2
+}, true);
 
 export default {
-  "defs": {
-    "projection": {
-      "type": "object",
-      "properties": {
-        "name": {"type": "string"},
-        "type": {"$ref": "#/refs/stringOrSignal"},
-        "clipAngle": {"$ref": "#/refs/numberOrSignal"},
-        "clipExtent": orSignal({
-          "type": "array",
-          "items": orSignal({
-            "type": "array",
-            "items": {"$ref": "#/refs/numberOrSignal"},
-            "minItems": 2,
-            "maxItems": 2
-          })
-        }),
-        "scale": {"$ref": "#/refs/numberOrSignal"},
-        "translate": orSignal({
-          "type": "array",
-          "items": {"$ref": "#/refs/numberOrSignal"},
-          "minItems": 2,
-          "maxItems": 2
-        }),
-        "center": orSignal({
-          "type": "array",
-          "items": {"$ref": "#/refs/numberOrSignal"},
-          "minItems": 2,
-          "maxItems": 2
-        }),
-        "rotate": orSignal({
-          "type": "array",
-          "items": {"$ref": "#/refs/numberOrSignal"},
-          "minItems": 2,
-          "maxItems": 3
-        }),
-        "parallels": orSignal({
-          "type": "array",
-          "items": {"$ref": "#/refs/numberOrSignal"},
-          "minItems": 2,
-          "maxItems": 2
-        }),
-        "precision": {"$ref": "#/refs/numberOrSignal"},
-        "pointRadius": {"$ref": "#/refs/numberOrSignal"},
-        "fit": {
-          "oneOf": [
-            {"type": "object"},
-            {"type": "array"}
-          ]
-        },
-        "extent": orSignal({
-          "type": "array",
-          "items": orSignal({
-            "type": "array",
-            "items": {"$ref": "#/refs/numberOrSignal"},
-            "minItems": 2,
-            "maxItems": 2
-          }),
-          "minItems": 2,
-          "maxItems": 2
-        }),
-        "size": orSignal({
-          "type": "array",
-          "items": {"$ref": "#/refs/numberOrSignal"},
-          "minItems": 2,
-          "maxItems": 2
-        })
-      },
-      "additionalProperties": true,
-      "required": ["name"]
-    }
+  defs: {
+    projection
   }
 };

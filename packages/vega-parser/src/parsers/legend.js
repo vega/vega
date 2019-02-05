@@ -11,11 +11,12 @@ import guideGroup from './guides/guide-group';
 import {getEncoding, getStyle, gradientLength, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
-import {isContinuous, isDiscretizing} from './scale';
 import {LegendRole, LegendEntryRole} from './marks/roles';
 import {addEncode, extendEncode} from './encode/encode-util';
 import {ref, deref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
+
+import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {

@@ -1,5 +1,8 @@
+import getScale from './scales';
 import {constant, peek} from 'vega-util';
 import * as $ from 'd3-interpolate';
+
+const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
 
 export function interpolateRange(interpolator, range) {
   var start = range[0],
@@ -7,17 +10,25 @@ export function interpolateRange(interpolator, range) {
   return function(i) { return interpolator(start + i * span); };
 }
 
-export function scaleFraction(scale, min, max) {
-  var delta = max - min;
-  return !delta || !isFinite(delta) ? constant(0)
-    : scale.type === 'linear' || scale.type === 'sequential'
-      ? function(_) { return (_ - min) / delta; }
-      : scale.copy().domain([min, max]).range([0, 1]).interpolate(lerp);
+export function scaleCopy(scale) {
+  const t = scale.type,
+        s = scale.copy();
+  s.type = t;
+  return s;
 }
 
-function lerp(a, b) {
-  var span = b - a;
-  return function(i) { return a + i * span; }
+export function scaleFraction(scale, min, max) {
+  var delta = max - min, i, t, s;
+
+  if (!delta || !isFinite(delta)) {
+    return constant(0.5);
+  } else {
+    i = (t = scale.type).indexOf('-');
+    t = i < 0 ? t : t.slice(i + 1);
+    s = getScale(t)().domain([min, max]).range([0, 1]);
+    scaleProps.forEach(m => scale[m] ? s[m](scale[m]()) : 0);
+    return s;
+  }
 }
 
 export function interpolate(type, gamma) {
