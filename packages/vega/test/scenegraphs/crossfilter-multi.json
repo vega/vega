@@ -664,7 +664,7 @@
                       "text": "Arrival Delay (min)",
                       "font": "sans-serif",
                       "fontSize": 14,
-                      "fontWeight": "500"
+                      "fontWeight": 500
                     }
                   ],
                   "zindex": 0
@@ -1249,7 +1249,7 @@
                       "text": "Local Departure Time (hour)",
                       "font": "sans-serif",
                       "fontSize": 14,
-                      "fontWeight": "500"
+                      "fontWeight": 500
                     }
                   ],
                   "zindex": 0
@@ -1852,7 +1852,7 @@
                       "text": "Travel Distance (miles)",
                       "font": "sans-serif",
                       "fontSize": 14,
-                      "fontWeight": "500"
+                      "fontWeight": 500
                     }
                   ],
                   "zindex": 0

@@ -1,21 +1,17 @@
+import { object, oneOf, numberType } from './util';
+
+const padding = oneOf(
+  numberType,
+  object({
+    top: numberType,
+    bottom: numberType,
+    left: numberType,
+    right: numberType
+  })
+);
+
 export default {
-  "defs": {
-    "padding": {
-      "oneOf": [
-        {
-          "type": "number"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "top": {"type": "number"},
-            "bottom": {"type": "number"},
-            "left": {"type": "number"},
-            "right": {"type": "number"}
-          },
-          "additionalProperties": false
-        }
-      ]
-    }
+  defs: {
+    padding
   }
 };

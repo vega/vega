@@ -1,88 +1,70 @@
+import {
+  def, enums, not, object, oneOf, orSignal, ref, type,
+  anyType, arrayType, booleanType, numberType, stringType
+} from './util';
+
+// ???
+const exprStringRef = ref('exprString');
+const onEventsRef = def('onEvents');
+const bindRef = def('bind');
+
+const ReservedNameEnum = ['parent', 'datum', 'event', 'item'];
+
+const signal = object({_signal_: stringType}, undefined);
+const arrayOrSignal = orSignal(arrayType);
+const booleanOrSignal = orSignal(booleanType);
+const numberOrSignal = orSignal(numberType);
+const stringOrSignal = orSignal(stringType);
+
+const signalNameRef = def('signalName');
+const signalName = type(
+  'string',
+  not(enums(ReservedNameEnum))
+);
+
+const signalNew = object({
+  _name_: signalNameRef,
+  description: stringType,
+  value: anyType,
+  react: type('boolean', {default: true}),
+  update: exprStringRef,
+  on: onEventsRef,
+  bind: bindRef
+});
+
+const signalInit = object({
+  _name_: signalNameRef,
+  description: stringType,
+  value: anyType,
+  _init_: exprStringRef,
+  on: onEventsRef,
+  bind: bindRef
+});
+
+const signalPush = object({
+  _name_: signalNameRef,
+  description: stringType,
+  _push_: enums(['outer']),
+  on: onEventsRef
+});
+
+const signalDef = oneOf(
+  signalPush,
+  signalNew,
+  signalInit
+);
+
 export default {
-  "refs": {
-    "signal": {
-      "title": "SignalRef",
-      "type": "object",
-      "properties": {
-        "signal": {"type": "string"}
-      },
-      "required": ["signal"]
-    },
-    "arrayOrSignal": {
-      "oneOf": [
-        {"type": "array"},
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "booleanOrSignal": {
-      "oneOf": [
-        {"type": "boolean"},
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "numberOrSignal": {
-      "oneOf": [
-        {"type": "number"},
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "stringOrSignal": {
-      "oneOf": [
-        {"type": "string"},
-        {"$ref": "#/refs/signal"}
-      ]
-    }
+  refs: {
+    signal,
+    arrayOrSignal,
+    booleanOrSignal,
+    numberOrSignal,
+    stringOrSignal
   },
 
-  "defs": {
-    "signal": {
-      "oneOf": [
-        {"$ref": "#/defs/signalPush"},
-        {"$ref": "#/defs/signalNew"},
-        {"$ref": "#/defs/signalInit"}
-      ]
-    },
-    "signalName": {
-      "type": "string",
-      "not": {"enum": ["parent", "datum", "event", "item"]}
-    },
-    "signalNew": {
-      "type": "object",
-      "properties": {
-        "name": {"$ref": "#/defs/signalName"},
-        "description": {"type": "string"},
-        "value": {},
-        "react": {"type": "boolean", "default": true},
-        "update": {"$ref": "#/refs/exprString"},
-        "on": {"$ref": "#/defs/onEvents"},
-        "bind": {"$ref": "#/defs/bind"}
-      },
-      "additionalProperties": false,
-      "required": ["name"]
-    },
-    "signalInit": {
-      "type": "object",
-      "properties": {
-        "name": {"$ref": "#/defs/signalName"},
-        "description": {"type": "string"},
-        "value": {},
-        "init": {"$ref": "#/refs/exprString"},
-        "on": {"$ref": "#/defs/onEvents"},
-        "bind": {"$ref": "#/defs/bind"}
-      },
-      "additionalProperties": false,
-      "required": ["name", "init"]
-    },
-    "signalPush": {
-      "type": "object",
-      "properties": {
-        "name": {"$ref": "#/defs/signalName"},
-        "push": {"enum": ["outer"]},
-        "description": {"type": "string"},
-        "on": {"$ref": "#/defs/onEvents"}
-      },
-      "additionalProperties": false,
-      "required": ["name", "push"]
-    }
+  defs: {
+    signalName,
+    signal: signalDef
   }
 };

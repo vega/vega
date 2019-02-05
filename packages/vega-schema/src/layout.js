@@ -1,104 +1,60 @@
-export var layoutAlignEnum = ["all", "each", "none"];
+import {
+  enums, object, oneOf, orSignal,
+  booleanType, nullType, numberType, signalRef,
+  booleanOrSignal, numberOrSignal
+} from './util';
 
-export var layoutAlign = {
-  "oneOf": [
-    {"enum": layoutAlignEnum},
-    {"$ref": "#/refs/signal"}
-  ]
-};
+const layoutAlignEnum = ['all', 'each', 'none'];
 
-var band = {
-  "oneOf": [
-    {"$ref": "#/refs/numberOrSignal"},
-    {"type": "null"},
-    {
-      "type": "object",
-      "properties": {
-        "row": {"$ref": "#/refs/numberOrSignal"},
-        "column": {"$ref": "#/refs/numberOrSignal"}
-      },
-      "additionalProperties": false
-    }
-  ]
-};
+const layoutBoundsEnum = ['full', 'flush'];
+
+export const layoutAlign = oneOf(
+  enums(layoutAlignEnum),
+  signalRef
+);
+
+const band = oneOf(
+  numberOrSignal,
+  nullType,
+  object({row: numberOrSignal, column: numberOrSignal})
+);
+
+const layout = orSignal(object({
+  align: oneOf(
+    layoutAlign,
+    object({row: layoutAlign, column: layoutAlign})
+  ),
+  bounds: orSignal(enums(layoutBoundsEnum)),
+  center: oneOf(
+    booleanType,
+    signalRef,
+    object({row: booleanOrSignal, column: booleanOrSignal})
+  ),
+  columns: numberOrSignal,
+  padding: oneOf(
+    numberType,
+    signalRef,
+    object({row: numberOrSignal, column: numberOrSignal})
+  ),
+  offset: oneOf(
+    numberType,
+    signalRef,
+    object({
+      rowHeader: numberOrSignal,
+      rowFooter: numberOrSignal,
+      rowTitle: numberOrSignal,
+      columnHeader: numberOrSignal,
+      columnFooter: numberOrSignal,
+      columnTitle: numberOrSignal
+    })
+  ),
+  headerBand: band,
+  footerBand: band,
+  titleBand: band
+}));
 
 export default {
-  "defs": {
-    "layout": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "align": {
-              "oneOf": [
-                layoutAlign,
-                {
-                  "type": "object",
-                  "properties": {
-                    "row": layoutAlign,
-                    "column": layoutAlign
-                  },
-                  "additionalProperties": false
-                }
-              ]
-            },
-            "bounds": {
-              "oneOf": [
-                {"enum": ["full", "flush"]},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "center": {
-              "oneOf": [
-                {"$ref": "#/refs/booleanOrSignal"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "row": {"$ref": "#/refs/booleanOrSignal"},
-                    "column": {"$ref": "#/refs/booleanOrSignal"}
-                  },
-                  "additionalProperties": false
-                }
-              ]
-            },
-            "columns": {"$ref": "#/refs/numberOrSignal"},
-            "padding": {
-              "oneOf": [
-                {"$ref": "#/refs/numberOrSignal"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "row": {"$ref": "#/refs/numberOrSignal"},
-                    "column": {"$ref": "#/refs/numberOrSignal"}
-                  },
-                  "additionalProperties": false
-                }
-              ]
-            },
-            "offset": {
-              "oneOf": [
-                {"$ref": "#/refs/numberOrSignal"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "rowHeader": {"$ref": "#/refs/numberOrSignal"},
-                    "rowFooter": {"$ref": "#/refs/numberOrSignal"},
-                    "rowTitle": {"$ref": "#/refs/numberOrSignal"},
-                    "columnHeader": {"$ref": "#/refs/numberOrSignal"},
-                    "columnFooter": {"$ref": "#/refs/numberOrSignal"},
-                    "columnTitle": {"$ref": "#/refs/numberOrSignal"}
-                  },
-                  "additionalProperties": false
-                }
-              ]
-            },
-            "headerBand": band,
-            "footerBand": band,
-            "titleBand": band
-          }
-        },
-        {"$ref": "#/refs/signal"}
-      ]
-    }
+  defs: {
+    layout
   }
 };

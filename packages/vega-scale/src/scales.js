@@ -1,14 +1,22 @@
-import invertRange from './invertRange';
-import invertRangeExtent from './invertRangeExtent';
+import invertRange from './scales/invertRange';
+import invertRangeExtent from './scales/invertRangeExtent';
+
+import {
+  Identity,
+  Linear, Log, Pow, Sqrt, Symlog,
+  Time, UTC, Sequential, Diverging,
+  Quantile, Quantize, Threshold,
+  BinOrdinal, Ordinal, Band, Point
+} from './scales/types';
+
 import {
   band as scaleBand,
   point as scalePoint
-} from './scaleBand';
+} from './scales/scaleBand';
+
 import {
-  binLinear as scaleBinLinear,
-  binOrdinal as scaleBinOrdinal
-} from './scaleBin';
-import scaleSequential from './scaleSequential';
+  scaleBinOrdinal
+} from './scales/scaleBinOrdinal';
 
 import * as $ from 'd3-scale';
 
@@ -40,25 +48,43 @@ export default function scale(type, scale) {
 }
 
 var scales = {
-  // base scale types
-  identity:      $.scaleIdentity,
-  linear:        $.scaleLinear,
-  log:           $.scaleLog,
-  ordinal:       $.scaleOrdinal,
-  pow:           $.scalePow,
-  sqrt:          $.scaleSqrt,
-  quantile:      $.scaleQuantile,
-  quantize:      $.scaleQuantize,
-  threshold:     $.scaleThreshold,
-  time:          $.scaleTime,
-  utc:           $.scaleUtc,
+  // identity scale
+  [Identity]:      $.scaleIdentity,
 
-  // extended scale types
-  band:          scaleBand,
-  point:         scalePoint,
-  sequential:    scaleSequential,
-  'bin-linear':  scaleBinLinear,
-  'bin-ordinal': scaleBinOrdinal
+  // continuous scales
+  [Linear]:        $.scaleLinear,
+  [Log]:           $.scaleLog,
+  [Pow]:           $.scalePow,
+  [Sqrt]:          $.scaleSqrt,
+  [Symlog]:        $.scaleSymlog,
+  [Time]:          $.scaleTime,
+  [UTC]:           $.scaleUtc,
+
+  // sequential scales
+  [Sequential]:             $.scaleSequential, // backwards compat
+  [Sequential+'-'+Linear]:  $.scaleSequential,
+  [Sequential+'-'+Log]:     $.scaleSequentialLog,
+  [Sequential+'-'+Pow]:     $.scaleSequentialPow,
+  [Sequential+'-'+Sqrt]:    $.scaleSequentialSqrt,
+  [Sequential+'-'+Symlog]:  $.scaleSequentialSymlog,
+
+  // diverging scales
+  [Diverging+'-'+Linear]:   $.scaleDiverging,
+  [Diverging+'-'+Log]:      $.scaleDivergingLog,
+  [Diverging+'-'+Pow]:      $.scaleDivergingPow,
+  [Diverging+'-'+Sqrt]:     $.scaleDivergingSqrt,
+  [Diverging+'-'+Symlog]:   $.scaleDivergingSymlog,
+
+  // discretizing scales
+  [Quantile]:      $.scaleQuantile,
+  [Quantize]:      $.scaleQuantize,
+  [Threshold]:     $.scaleThreshold,
+
+  // discrete scales
+  [BinOrdinal]:    scaleBinOrdinal,
+  [Ordinal]:       $.scaleOrdinal,
+  [Band]:          scaleBand,
+  [Point]:         scalePoint
 };
 
 for (var key in scales) {

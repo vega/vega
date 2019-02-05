@@ -121,9 +121,8 @@ prototype.transform = function(_, pulse) {
     source = source.slice().sort(_.sort);
   }
 
-  if (_.method === 'greedy') {
-    source = source.filter(hasBounds);
-  }
+  // skip labels with no content
+  source = source.filter(hasBounds);
 
   items = reset(source);
   pulse = reflow(pulse, _);

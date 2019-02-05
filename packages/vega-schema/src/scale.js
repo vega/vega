@@ -1,416 +1,243 @@
-export var timeIntervals = [
-  "millisecond",
-  "second",
-  "minute",
-  "hour",
-  "day",
-  "week",
-  "month",
-  "year"
+import {
+  array, enums, object, oneOf, orSignal, ref,
+  arrayType, nullType, booleanType, numberType, stringType, signalRef,
+  stringOrSignal, numberOrSignal, booleanOrSignal, booleanOrNumberOrSignal
+} from './util';
+
+import {
+  Linear, Log, Pow, Sqrt, Symlog, Time, UTC, Sequential,
+  Quantile, Quantize, Threshold, Identity,
+  Ordinal, Point, Band, BinOrdinal
+} from 'vega-scale';
+
+export const timeIntervals = [
+  'millisecond',
+  'second',
+  'minute',
+  'hour',
+  'day',
+  'week',
+  'month',
+  'year'
 ];
 
-var rangeDef = [
-  {
-    "enum": [
-      "width",
-      "height",
-      "symbol",
-      "category",
-      "ordinal",
-      "ramp",
-      "diverging",
-      "heatmap"
-    ]
-  },
-  {
-    "type": "array",
-    "items": {
-      "oneOf": [
-        {"type": "null"},
-        {"type": "boolean"},
-        {"type": "string"},
-        {"type": "number"},
-        {"$ref": "#/refs/signal"}
-      ]
-    }
-  },
-  {"$ref": "#/refs/signal"}
+export const rangeConstantEnum = [
+  'width',
+  'height',
+  'symbol',
+  'category',
+  'ordinal',
+  'ramp',
+  'diverging',
+  'heatmap'
 ];
 
-var schemeRangeDef = rangeDef.concat([
-  {
-    "type": "object",
-    "properties": {
-      "scheme": {"$ref": "#/refs/stringOrSignal"},
-      "count": {"$ref": "#/refs/numberOrSignal"},
-      "extent": {
-        "oneOf": [
-          {
-            "type": "array",
-            "items": {"$ref": "#/refs/numberOrSignal"},
-            "numItems": 2
-          },
-          {"$ref": "#/refs/signal"}
-        ]
-      }
-    },
-    "required": ["scheme"],
-    "additionalProperties": false
-  }
-]);
+export const sortOrderEnum = [
+  'ascending',
+  'descending'
+];
 
-var bandRangeDef = rangeDef.concat([
-  {
-    "type": "object",
-    "properties": {
-      "step": {"$ref": "#/refs/numberOrSignal"}
-    },
-    "required": ["step"],
-    "additionalProperties": false
-  }
-]);
+const rangeConstant = enums(rangeConstantEnum);
+
+const arrayAllTypes = array(
+  oneOf(nullType, booleanType, stringType, numberType, signalRef)
+);
+
+const scheme = object({
+  _scheme_: oneOf(
+    stringType,
+    array(oneOf(stringType, signalRef)), signalRef),
+  count: numberOrSignal,
+  extent: oneOf(array(numberOrSignal, {numItems: 2}), signalRef)
+});
+
+const schemeRange = oneOf(
+  rangeConstant,
+  arrayAllTypes,
+  scheme,
+  signalRef
+);
+
+const rangeStep = object({
+  _step_: numberOrSignal
+});
+
+const bandRange = oneOf(
+  rangeConstant,
+  arrayAllTypes,
+  rangeStep,
+  signalRef
+);
+
+const scaleBins = orSignal(array(numberOrSignal));
+const scaleBinsRef = ref('scaleBins');
+
+const scaleInterpolate = oneOf(
+  stringType,
+  signalRef,
+  object({
+    _type_: stringOrSignal,
+    gamma: numberOrSignal
+  })
+);
+const scaleInterpolateRef = ref('scaleInterpolate');
+
+const sortOrder = orSignal(enums(sortOrderEnum));
+const sortOrderRef = ref('sortOrder');
+
+const sortDomain = oneOf(
+  booleanType,
+  object({
+    field: stringOrSignal,
+    op: stringOrSignal,
+    order: sortOrderRef
+  })
+);
+
+const sortMultiDomain = oneOf(
+  booleanType,
+  object({op: enums(['count']), order: sortOrderRef})
+);
+
+const scaleData = oneOf(
+  object({
+    _data_: stringType,
+    _field_: stringOrSignal,
+    sort: sortDomain
+  }),
+  object({
+    _data_: stringType,
+    _fields_: array(stringOrSignal, {minItems: 1}),
+    sort: sortMultiDomain
+  }),
+  object({
+    _fields_: array(
+      oneOf(
+        object({_data_: stringType, _field_: stringOrSignal}),
+        array(oneOf(stringType, numberType, booleanType)),
+        signalRef
+      ),
+      {minItems: 1}
+    ),
+    sort: sortMultiDomain
+  })
+);
+const scaleDataRef = ref('scaleData');
+
+const scaleDomainProps = {
+  _name_: stringType,
+  domain: oneOf(arrayAllTypes, scaleDataRef, signalRef),
+  domainMin: numberOrSignal,
+  domainMax: numberOrSignal,
+  domainMid: numberOrSignal,
+  domainRaw: oneOf(nullType, arrayType, signalRef),
+  reverse: booleanOrSignal,
+  round: booleanOrSignal
+};
+
+const scaleBandProps = {
+  range: bandRange,
+  padding: numberOrSignal,
+  paddingOuter: numberOrSignal,
+  align: numberOrSignal,
+  ...scaleDomainProps
+};
+
+const scaleContinuousProps = {
+  range: schemeRange,
+  bins: scaleBinsRef,
+  interpolate: scaleInterpolateRef,
+  clamp: booleanOrSignal,
+  padding: numberOrSignal,
+  ...scaleDomainProps
+};
+
+const scaleNumericProps = {
+  nice: booleanOrNumberOrSignal,
+  zero: booleanOrSignal,
+  ...scaleContinuousProps
+};
+
+const scaleTemporalNice = oneOf(
+  booleanType,
+  enums(timeIntervals),
+  object({
+    _interval_: orSignal(enums(timeIntervals)),
+    step: numberOrSignal
+  })
+);
+
+const scale = oneOf(
+  object({
+    _type_: enums([Identity]),
+    nice: booleanOrSignal,
+    ...scaleDomainProps
+  }),
+  object({
+    _type_: enums([Ordinal]),
+    range: oneOf(rangeConstant, arrayAllTypes, scheme, scaleData, signalRef),
+    interpolate: scaleInterpolateRef,
+    domainImplicit: booleanOrSignal,
+    ...scaleDomainProps
+  }),
+  object({
+    _type_: enums([Band]),
+    paddingInner: numberOrSignal,
+    ...scaleBandProps
+  }),
+  object({
+    _type_: enums([Point]),
+    ...scaleBandProps
+  }),
+  object({
+    _type_: enums([Quantize, Threshold]),
+    range: schemeRange,
+    interpolate: scaleInterpolateRef,
+    nice: booleanOrNumberOrSignal,
+    zero: booleanOrSignal,
+    ...scaleDomainProps
+  }),
+  object({
+    _type_: enums([Quantile, BinOrdinal]),
+    range: schemeRange,
+    interpolate: scaleInterpolateRef,
+    ...scaleDomainProps
+  }),
+  object({
+    _type_: enums([Time, UTC]),
+    nice: scaleTemporalNice,
+    ...scaleContinuousProps
+  }),
+  object({
+    type: enums([Linear, Sqrt, Sequential]),
+    ...scaleNumericProps
+  }),
+  object({
+    _type_: enums([Log]),
+    base: numberOrSignal,
+    ...scaleNumericProps
+  }),
+  object({
+    _type_: enums([Pow]),
+    exponent: numberOrSignal,
+    ...scaleNumericProps
+  }),
+  object({
+    _type_: enums([Symlog]),
+    constant: numberOrSignal,
+    ...scaleNumericProps
+  })
+);
 
 export default {
-  "refs": {
-    "sortOrder": {
-      "oneOf": [
-        {"enum": ["ascending", "descending"]},
-        {"$ref": "#/refs/signal"}
-      ]
-    },
-    "scaleField": {"$ref": "#/refs/stringOrSignal"},
-    "scaleInterpolate": {
-      "oneOf": [
-        {"type": "string"},
-        {"$ref": "#/refs/signal"},
-        {
-          "type": "object",
-          "properties": {
-            "type": {"$ref": "#/refs/stringOrSignal"},
-            "gamma": {"$ref": "#/refs/numberOrSignal"}
-          },
-          "required": ["type"]
-        }
-      ]
-    },
-    "scaleData": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {"type": "string"},
-            "field": {"$ref": "#/refs/scaleField"},
-            "sort": {
-              "oneOf": [
-                {"type": "boolean"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "field": {"$ref": "#/refs/scaleField"},
-                    "op": {"$ref": "#/refs/scaleField"},
-                    "order": {"$ref": "#/refs/sortOrder"}
-                  },
-                  "additionalProperties": false,
-                }
-              ]
-            }
-          },
-          "required": ["data", "field"],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "data": {"type": "string"},
-            "fields": {
-              "type": "array",
-              "items": {"$ref": "#/refs/scaleField"},
-              "minItems": 1
-            },
-            "sort": {
-              "oneOf": [
-                {"type": "boolean"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "op": {"enum": ["count"]},
-                    "order": {"$ref": "#/refs/sortOrder"}
-                  },
-                  "additionalProperties": false,
-                }
-              ]
-            }
-          },
-          "required": ["data", "fields"],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "fields": {
-              "type": "array",
-              "items": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "data": {"type": "string"},
-                      "field": {"$ref": "#/refs/scaleField"},
-                    },
-                    "required": ["data", "field"],
-                    "additionalProperties": false
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "oneOf": [
-                        {"type": "string"},
-                        {"type": "number"},
-                        {"type": "boolean"}
-                      ]
-                    }
-                  },
-                  {"$ref": "#/refs/signal"}
-                ]
-              },
-              "minItems": 1
-            },
-            "sort": {
-              "oneOf": [
-                {"type": "boolean"},
-                {
-                  "type": "object",
-                  "properties": {
-                    "op": {"enum": ["count"]},
-                    "order": {"$ref": "#/refs/sortOrder"}
-                  },
-                  "additionalProperties": false,
-                }
-              ]
-            }
-          },
-          "required": ["fields"],
-          "additionalProperties": false
-        }
-      ]
-    }
+  refs: {
+    scaleField: stringOrSignal,
+    sortOrder,
+    scaleBins,
+    scaleInterpolate,
+    scaleData
   },
-
-  "defs": {
-    "scale": {
-      "title": "Scale mapping",
-      "type": "object",
-
-      "allOf": [
-        {
-          "properties": {
-            "name": {"type": "string"},
-            "type": {"type": "string", "default": "linear"},
-            "domain": {
-              "oneOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "oneOf": [
-                      {"type": "null"},
-                      {"type": "string"},
-                      {"type": "number"},
-                      {"type": "boolean"},
-                      {"$ref": "#/refs/signal"}
-                    ]
-                  }
-                },
-                {"$ref": "#/refs/scaleData"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "domainMin": {"$ref": "#/refs/numberOrSignal"},
-            "domainMax": {"$ref": "#/refs/numberOrSignal"},
-            "domainMid": {"$ref": "#/refs/numberOrSignal"},
-            "domainRaw": {
-              "oneOf": [
-                {"type": "null"},
-                {"type": "array"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "reverse": {"$ref": "#/refs/booleanOrSignal"},
-            "round": {"$ref": "#/refs/booleanOrSignal"}
-          },
-          "required": ["name"]
-        },
-        {
-          "oneOf": [
-            {
-              "properties": {
-                "type": {"enum": ["ordinal"]},
-                "range": {
-                  "oneOf": schemeRangeDef.concat({"$ref": "#/refs/scaleData"})
-                },
-                "domainImplicit": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["band"]},
-                "range": {"oneOf": bandRangeDef},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "paddingInner": {"$ref": "#/refs/numberOrSignal"},
-                "paddingOuter": {"$ref": "#/refs/numberOrSignal"},
-                "align": {"$ref": "#/refs/numberOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["point"]},
-                "range": {"oneOf": bandRangeDef},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "paddingOuter": {"$ref": "#/refs/numberOrSignal"},
-                "align": {"$ref": "#/refs/numberOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["sequential"]},
-                "range": {"oneOf": schemeRangeDef},
-                "clamp": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type", "range"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["time", "utc"]},
-                "range": {"oneOf": schemeRangeDef},
-                "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"type": "string", "enum": timeIntervals},
-                    {
-                      "type": "object",
-                      "properties": {
-                        "interval": {
-                          "oneOf": [
-                            {"type": "string", "enum": timeIntervals},
-                            {"$ref": "#/refs/signal"}
-                          ]
-                        },
-                        "step": {"$ref": "#/refs/numberOrSignal"}
-                      },
-                      "required": ["interval"]
-                    },
-                    {"$ref": "#/refs/signal"}
-                  ]
-                }
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["identity"]},
-                "nice": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "description": "Discretizing scales",
-              "properties": {
-                "type": {"enum": ["quantile", "quantize", "threshold", "bin-ordinal"]},
-                "range": {"oneOf": schemeRangeDef},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "zero": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "description": "Default numeric scale",
-              "not": {
-                "properties": {
-                  "type": {
-                    "enum": [
-                      "ordinal", "band", "point",
-                      "quantile", "quantize", "threshold",
-                      "sequential", "pow", "log", "time", "utc",
-                      "identity", "bin-ordinal", "bin-linear"
-                    ]
-                  }
-                },
-                "required": ["type"]
-              },
-              "properties": {
-                "range": {"oneOf": schemeRangeDef},
-                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
-                "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "zero": {"$ref": "#/refs/booleanOrSignal"}
-              }
-            },
-            {
-              "properties": {
-                "type": {"enum": ["log"]},
-                "range": {"oneOf": schemeRangeDef},
-                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
-                "base": {"$ref": "#/refs/numberOrSignal"},
-                "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "zero": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["pow"]},
-                "range": {"oneOf": schemeRangeDef},
-                "interpolate": {"$ref": "#/refs/scaleInterpolate"},
-                "clamp": {"$ref": "#/refs/booleanOrSignal"},
-                "exponent": {"$ref": "#/refs/numberOrSignal"},
-                "padding": {"$ref": "#/refs/numberOrSignal"},
-                "nice": {
-                  "oneOf": [
-                    {"type": "boolean"},
-                    {"type": "number"},
-                    {"$ref": "#/refs/signal"}
-                  ]
-                },
-                "zero": {"$ref": "#/refs/booleanOrSignal"}
-              },
-              "required": ["type"]
-            },
-            {
-              "properties": {
-                "type": {"enum": ["bin-linear"]},
-                "range": {"oneOf": schemeRangeDef},
-                "interpolate": {"$ref": "#/refs/scaleInterpolate"}
-              },
-              "required": ["type"]
-            }
-          ]
-        }
-      ]
-    }
+  defs: {
+    scale
   }
 };

@@ -1,182 +1,107 @@
+import {
+  allOf, array, def, enums, not, object, oneOf, ref,
+  booleanType, stringType, booleanOrSignal, stringOrSignal
+} from './util';
+
+/// ?
+const sortOrderRef = ref('sortOrder');
+const marktypeRef = ref('marktype');
+
+const compareRef = ref('compare');
+const compare = oneOf(
+  object({
+    field: stringOrSignal,
+    order: sortOrderRef
+  }),
+  object({
+    field: array(stringOrSignal),
+    order: array(sortOrderRef)
+  })
+);
+
+const facetRef = ref('facet');
+const facet = object({
+  data: stringType,
+  _facet_: oneOf(
+    object({
+      _name_: stringType,
+      _data_: stringType,
+      _field_: stringType
+    }),
+    object({
+      _name_: stringType,
+      _data_: stringType,
+      // TODO revisit for signal support
+      _groupby_: oneOf(stringType, array(stringType)),
+      aggregate: object({
+        cross: booleanType,
+        fields: array(stringType),
+        ops: array(stringType),
+        as: array(stringType)
+      })
+    })
+  )
+});
+
+const fromRef = ref('from');
+const from = object({
+  data: stringType
+});
+
+const markclipRef = ref('markclip');
+const markclip = oneOf(
+  booleanOrSignal,
+  object({_path_: stringOrSignal}),
+  object({_sphere_: stringOrSignal})
+);
+
+const styleRef = ref('style');
+const style = oneOf(stringType, array(stringType));
+
+const markRef = def('mark');
+const mark = object({
+  _type_: marktypeRef,
+  role: stringType,
+  name: stringType,
+  style: styleRef,
+  key: stringType,
+  clip: markclipRef,
+  sort: compareRef,
+  interactive: booleanOrSignal,
+  encode: def('encode'),
+  transform: array(def('transformMark')),
+  on: def('onMarkTrigger')
+}, undefined);
+
+const markGroup = allOf(
+  object({
+    _type_: enums(['group']),
+    from: oneOf(fromRef, facetRef)
+  }, undefined),
+  markRef,
+  def('scope')
+);
+
+const markVisual = allOf(
+  object({
+    type: not(enums(['group'])),
+    from: fromRef
+  }, undefined),
+  markRef
+);
+
 export default {
-  "refs": {
-    "compare": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "field": {
-              "oneOf": [
-                {"type": "string"},
-                {"$ref": "#/refs/signal"}
-              ]
-            },
-            "order": {"$ref": "#/refs/sortOrder"}
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "field": {
-              "type": "array",
-              "items": {
-                "anyOf": [
-                  {"type": "string"},
-                  {"$ref": "#/refs/signal"}
-                ]
-              }
-            },
-            "order": {
-              "type": "array",
-              "items": {"$ref": "#/refs/sortOrder"}
-            }
-          }
-        }
-      ]
-    },
-    "from": {
-      "type": "object",
-      "properties": {
-        "data": {"type": "string"},
-      },
-      "additionalProperties": false
-    },
-    "facet": {
-      "type": "object",
-      "properties": {
-        "data": {"type": "string"},
-        "facet": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "name": {"type": "string"},
-                "data": {"type": "string"},
-                "field": {"type": "string"}
-              },
-              "additionalProperties": false,
-              "required": ["name", "data", "field"]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "name": {"type": "string"},
-                "data": {"type": "string"},
-                // TODO revisit for signal support
-                "groupby": {
-                  "oneOf": [
-                    {"type": "string"},
-                    {"type": "array", "items": {"type": "string"}}
-                  ]
-                },
-                "aggregate": {
-                  "type": "object",
-                  "properties": {
-                    "cross": {"type": "boolean"},
-                    "fields": {"type": "array", "items": {"type": "string"}},
-                    "ops": {"type": "array", "items": {"type": "string"}},
-                    "as": {"type": "array", "items": {"type": "string"}}
-                  }
-                }
-              },
-              "additionalProperties": false,
-              "required": ["name", "data", "groupby"]
-            },
-          ]
-        }
-      },
-      "additionalProperties": false,
-      "required": ["facet"]
-    },
-    "markclip": {
-      "oneOf": [
-        {"$ref": "#/refs/booleanOrSignal"},
-        {
-          "type": "object",
-          "properties": {
-            "path": {"$ref": "#/refs/stringOrSignal"}
-          },
-          "required": ["path"],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "sphere": {"$ref": "#/refs/stringOrSignal"}
-          },
-          "required": ["sphere"],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "style": {
-      "oneOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      ]
-    }
+  refs: {
+    compare,
+    from,
+    facet,
+    markclip,
+    style
   },
 
-  "defs": {
-    "mark": {
-      "type": "object",
-      "properties": {
-        "type": {"$ref": "#/refs/marktype"},
-        "role": {"type": "string"},
-        "name": {"type": "string"},
-        "style": {"$ref": "#/refs/style"},
-        "key": {"type": "string"},
-        "clip": {"$ref": "#/refs/markclip"},
-        "sort": {"$ref": "#/refs/compare"},
-        "interactive": {"$ref": "#/refs/booleanOrSignal"},
-        "encode": {"$ref": "#/defs/encode"},
-        "transform": {
-          "type": "array",
-          "items": {"$ref": "#/defs/transformMark"}
-        },
-        "on": {"$ref": "#/defs/onMarkTrigger"}
-      },
-      "required": ["type"]
-    },
-    "markGroup": {
-      "allOf": [
-        {
-          "properties": { "type": {"enum": ["group"]} },
-          "required": ["type"]
-        },
-        {"$ref": "#/defs/mark"},
-        {"$ref": "#/defs/scope"},
-        {
-          "type": "object",
-          "properties": {
-            "from": {
-              "oneOf": [
-                {"$ref": "#/refs/from"},
-                {"$ref": "#/refs/facet"}
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "markVisual": {
-      "allOf": [
-        {"not": {"properties": { "type": {"enum": ["group"]} }}},
-        {"$ref": "#/defs/mark"},
-        {
-          "type": "object",
-          "properties": {
-            "from": {"$ref": "#/refs/from"}
-          }
-        }
-      ]
-    }
+  defs: {
+    mark,
+    markGroup,
+    markVisual
   }
 };

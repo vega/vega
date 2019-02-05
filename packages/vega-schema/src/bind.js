@@ -1,61 +1,52 @@
+import {
+  enums, not, object, oneOf, ref,
+  arrayType, numberType, stringType
+} from './util';
+
+const Checkbox = 'checkbox',
+      Radio = 'radio',
+      Select = 'select',
+      Range = 'range';
+
+const element = stringType;
+const elementRef = ref('element');
+
+const bind = oneOf(
+  object({
+    _input_: enums([Checkbox]),
+    element: elementRef,
+    debounce: numberType,
+    name: stringType
+  }),
+  object({
+    _input_: enums([Radio, Select]),
+    element: elementRef,
+    _options_: arrayType,
+    debounce: numberType,
+    name: stringType
+  }),
+  object({
+    _input_: enums([Range]),
+    element: elementRef,
+    min: numberType,
+    max: numberType,
+    step: numberType,
+    debounce: numberType,
+    name: stringType
+  }),
+  object({
+    _input_: not(enums([Checkbox, Radio, Range, Select])),
+    element: elementRef,
+    debounce: numberType,
+    name: stringType
+  }, true)
+)
+
 export default {
-  "refs": {
-    "element": {
-      "type": "string"
-    }
+  refs: {
+    element
   },
-  "defs": {
-    "bind": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "input": {"enum": ["checkbox"]},
-            "element": {"$ref": "#/refs/element"},
-            "debounce": {"type": "number"},
-            "name": {"type": "string"}
-          },
-          "required": ["input"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "input": {"enum": ["radio", "select"]},
-            "element": {"$ref": "#/refs/element"},
-            "options": {"type": "array"},
-            "debounce": {"type": "number"},
-            "name": {"type": "string"}
-          },
-          "additionalProperties": false,
-          "required": ["input", "options"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "input": {"enum": ["range"]},
-            "element": {"$ref": "#/refs/element"},
-            "min": {"type": "number"},
-            "max": {"type": "number"},
-            "step": {"type": "number"},
-            "debounce": {"type": "number"},
-            "name": {"type": "string"}
-          },
-          "additionalProperties": false,
-          "required": ["input"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "input": {
-              "not": {"enum": ["checkbox", "radio", "range", "select"]}
-            },
-            "element": {"$ref": "#/refs/element"},
-            "debounce": {"type": "number"},
-            "name": {"type": "string"}
-          },
-          "additionalProperties": true
-        },
-      ]
-    }
+  defs: {
+    bind
   }
 };

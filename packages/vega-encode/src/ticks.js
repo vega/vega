@@ -1,5 +1,4 @@
-import {Log} from './scale-types';
-import {timeInterval, utcInterval} from 'vega-scale';
+import {isLogarithmic, timeInterval} from 'vega-scale';
 import {error, isObject, isString, peek} from 'vega-util';
 import {
   format as numberFormat,
@@ -21,9 +20,8 @@ export function tickCount(scale, count) {
   }
 
   if (isString(count)) {
-    count = scale.type === 'time' ? timeInterval(count)
-      : scale.type === 'utc' ? utcInterval(count)
-      : error('Only time and utc scales accept interval strings.');
+    count = timeInterval(count, scale.type)
+          || error('Only time and utc scales accept interval strings.');
     if (step) count = count.every(step);
   }
 
@@ -76,7 +74,24 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.ticks ? scale.ticks(count) : scale.domain();
+  return scale.bins ? binValues(scale.bins, count)
+    : scale.ticks ? scale.ticks(count)
+    : scale.domain();
+}
+
+/**
+ * Generate tick values for an array of bin values.
+ * @param {Array<*>} bins - An array of bin boundaries.
+ * @param {Number} [count] - The approximate number of desired ticks.
+ * @return {Array<*>} - The generated tick values.
+ */
+function binValues(bins, count) {
+  var n = bins.length,
+      stride = ~~(n / (count || n));
+
+  return stride < 2
+    ? bins.slice()
+    : bins.filter(function(x, i) { return !(i % stride); });
 }
 
 /**
@@ -98,9 +113,12 @@ export function tickFormat(scale, count, specifier) {
     : specifier ? numberFormat(specifier)
     : String;
 
-  return (scale.type === Log)
-    ? filter(format, variablePrecision(specifier))
-    : format;
+  if (isLogarithmic(scale.type)) {
+    var logfmt = variablePrecision(specifier);
+    format = scale.bins ? logfmt : filter(format, logfmt);
+  }
+
+  return format;
 }
 
 function filter(sourceFormat, targetFormat) {

@@ -1,3 +1,5 @@
+import {def, type, numberType, objectType, stringType} from './util';
+
 import autosize from './autosize';
 import axis from './axis';
 import background from './background';
@@ -34,24 +36,24 @@ function addModule(schema, module) {
 
 export default function(definitions) {
   var schema = {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "Vega Visualization Specification Language",
-    "defs": {},
-    "refs": {},
-    "type": "object",
-    "allOf": [
-      {"$ref": "#/defs/scope"},
+    $schema: 'http://json-schema.org/draft-04/schema#',
+    title: 'Vega Visualization Specification Language',
+    defs: {},
+    refs: {},
+    type: 'object',
+    allOf: [
+      def('scope'),
       {
-        "properties": {
-          "$schema": {"type": "string", "format": "uri"},
-          "usermeta": {"type": "object"},
-          "config": {"type": "object"},
-          "description": {"type": "string"},
-          "width": {"type": "number"},
-          "height": {"type": "number"},
-          "padding": {"$ref": "#/defs/padding"},
-          "autosize": {"$ref": "#/defs/autosize"},
-          "background": {"$ref": "#/defs/background"}
+        properties: {
+          $schema: type('string', {format: 'uri'}),
+          usermeta: objectType,
+          config: objectType,
+          description: stringType,
+          width: numberType,
+          height: numberType,
+          padding: def('padding'),
+          autosize: def('autosize'),
+          background: def('background')
         }
       }
     ]

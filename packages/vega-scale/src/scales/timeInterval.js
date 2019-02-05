@@ -1,3 +1,5 @@
+import {UTC} from './types';
+
 import {
   timeMillisecond, utcMillisecond,
   timeSecond, utcSecond,
@@ -31,10 +33,7 @@ var utc = {
   year:        utcYear
 }
 
-export function timeInterval(name) {
-  return time.hasOwnProperty(name) && time[name];
-}
-
-export function utcInterval(name) {
-  return utc.hasOwnProperty(name) && utc[name];
+export function timeInterval(unit, type) {
+  const t = (type === UTC ? utc : time);
+  return t.hasOwnProperty(unit) && t[unit];
 }

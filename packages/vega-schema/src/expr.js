@@ -1,17 +1,15 @@
+import { object, stringType } from "./util";
+
+const expr = object({
+  _expr_: stringType,
+  as: stringType
+}, undefined);
+
+const exprString = stringType;
+
 export default {
-  "refs": {
-    "expr": {
-      "title": "ExpressionRef",
-      "type": "object",
-      "properties": {
-        "expr": {"type": "string"},
-        "as": {"type": "string"}
-      },
-      "required": ["expr"]
-    },
-    "exprString": {
-      "title": "Expression String",
-      "type": "string"
-    }
+  refs: {
+    expr,
+    exprString
   }
 };

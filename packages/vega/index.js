@@ -51,8 +51,7 @@ export {
   schemeDiscretized,
   interpolate,
   interpolateRange,
-  timeInterval,
-  utcInterval
+  timeInterval
 } from 'vega-scale';
 
 export {
