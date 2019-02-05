@@ -59,7 +59,7 @@ If an object, the value should have the format `{"type": "pad", "resize": true}`
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
 | type          | {% include type t="String" %} | {% include required %} The sizing format type. One of `"pad"` (default), `"fit"`, `"fit-x"`, `"fit-y"`, or `"none"`. See the [autosize types](#autosize-types) documentation for descriptions of each.|
-| resize        | {% include type t="Boolean" %}| A boolean flag indicating if autosize layout should be re-calculated on every view update. The default (`false`) causes layout to be performed once upon initialization and then kept stable. To externally force a resize, use the [View.resize](../../api/view/#view_resize) API method.|
+| resize        | {% include type t="Boolean" %}| A boolean flag indicating if autosize layout should be re-calculated on every view update. The default (`false`) causes layout to be performed once upon initialization and then kept stable. To externally force a resize, use the [View.resize](../docs/api/view/#view_resize) API method.|
 | contains      | {% include type t="String" %}| Determines how size calculation should be performed, one of `content` (default) or `padding`. The default setting (`content`) interprets the _width_ and _height_ settings as the data rectangle (plotting) dimensions, to which _padding_ is then added. In contrast, the `padding` setting includes the _padding_ within the view size calculations, such that the _width_ and _height_ settings indicate the **total** intended size of the view.|
 
 
