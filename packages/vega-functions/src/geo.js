@@ -1,15 +1,15 @@
+import {getScale} from './scale';
 import {
   geoArea as area,
   geoBounds as bounds,
   geoCentroid as centroid
 } from 'd3-geo';
-import {getScale} from './scale';
 
 function geoMethod(methodName, globalMethod) {
   return function(projection, geojson, group) {
     if (projection) {
       // projection defined, use it
-      var p = getScale(projection, (group || this).context);
+      const p = getScale(projection, (group || this).context);
       return p && p.path[methodName](geojson);
     } else {
       // projection undefined, use global method
@@ -18,6 +18,6 @@ function geoMethod(methodName, globalMethod) {
   };
 }
 
-export var geoArea = geoMethod('area', area);
-export var geoBounds = geoMethod('bounds', bounds);
-export var geoCentroid = geoMethod('centroid', centroid);
+export const geoArea = geoMethod('area', area);
+export const geoBounds = geoMethod('bounds', bounds);
+export const geoCentroid = geoMethod('centroid', centroid);

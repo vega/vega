@@ -1,22 +1,26 @@
 import {getScale} from './scale';
+import {scaleFraction, scale as get} from 'vega-scale';
 import {Gradient} from 'vega-scenegraph';
-import {scaleFraction, scaleCopy} from 'vega-scale';
-import {peek} from 'vega-util';
+import {identity, peek} from 'vega-util';
 
 export default function(scale, p0, p1, count, group) {
   scale = getScale(scale, (group || this).context);
 
-  var gradient = Gradient(p0, p1),
-      stops = scale.domain(),
-      min = stops[0],
-      max = peek(stops);
+  const gradient = Gradient(p0, p1);
 
-  if (max === min) {
+  let stops = scale.domain(),
+      min = stops[0],
+      max = peek(stops),
+      fraction = identity
+
+  if (!(max - min)) {
     // expand scale if domain has zero span, fix #1479
-    var offset = (min / 2) || 1;
-    stops[0] = (min -= offset);
-    stops[stops.length - 1] = (max += offset);
-    scale = scaleCopy(scale).domain(stops);
+    scale = (scale.interpolator
+      ? get('sequential')().interpolator(scale.interpolator())
+      : get('linear')().interpolate(scale.interpolate()).range(scale.range())
+    ).domain([min=0, max=1]);
+  } else {
+    fraction = scaleFraction(scale, min, max);
   }
 
   if (scale.ticks) {
@@ -25,7 +29,6 @@ export default function(scale, p0, p1, count, group) {
     if (max !== peek(stops)) stops.push(max);
   }
 
-  var fraction = scaleFraction(scale, min, max);
   stops.forEach(_ => gradient.stop(fraction(_), scale(_)));
 
   return gradient;

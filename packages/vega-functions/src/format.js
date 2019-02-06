@@ -1,4 +1,7 @@
-import {format as d3_format} from 'd3-format';
+import {
+  format as d3_format
+} from 'd3-format';
+
 import {
   timeFormat as d3_timeFormat,
   timeParse as d3_timeParse,
@@ -6,10 +9,10 @@ import {
   utcParse as d3_utcParse
 } from 'd3-time-format';
 
-var formatCache = {};
+const formatCache = {};
 
 function formatter(type, method, specifier) {
-  var k = type + ':' + specifier,
+  let k = type + ':' + specifier,
       e = formatCache[k];
   if (!e || e[0] !== method) {
     formatCache[k] = (e = [method, method(specifier)]);

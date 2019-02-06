@@ -5,9 +5,11 @@ All Vega packages, by category:
 - Core Modules
   - [vega](/packages/vega): Top-level package for building Vega bundles and the JSON schema. Includes a high-level test suite. Third party applications most likely want to import this package.
   - [vega-dataflow](/packages/vega-dataflow): Core classes for Vega's reactive dataflow engine.
+  - [vega-functions](/packages/vega-functions): Functions and code generation support for the Vega expression language.
   - [vega-parser](/packages/vega-parser): Parse Vega JSON specifications into dataflow graph descriptions. Includes guide generation logic for axes, legends, and titles, as well as extended expression functions.
   - [vega-schema](/packages/vega-schema): Generates the Vega JSON schema definition.
   - [vega-runtime](/packages/vega-runtime): Parse a dataflow graph description produced by vega-parser and instantiate a running dataflow.
+  - [vega-selections](/packages/vega-selections): Expression language functions for supporting Vega-Lite selections.
   - [vega-scenegraph](/packages/vega-scenegraph): Rendering and event handling for Canvas and SVG.
   - [vega-view](/packages/vega-view): View component for creating and updating Vega visualizations.
   - [vega-typings](/packages/vega-typings): Typescript type declarations for Vega.

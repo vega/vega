@@ -65,7 +65,14 @@ export function fastmap(_?: object): FastMap;
 export function array<T extends any[]>(v: T): T;
 export function array<T>(v: T): T[];
 
+export function clampRange(range: number[], min: number, max: number): number[];
+
+export function extent(array: number[], accessor?: AccessorFn): number[];
 export function extentIndex(array: number[], accessor?: AccessorFn): number[];
+
+export function flush<T extends any>(range: number[], value: number, threshold: number, left: T, right: T, center: T): T;
+
+export function inrange(value: number, range: number[], left: boolean, right: boolean): boolean;
 
 export function merge(compare: (a: any, b: any) => number,
   array1: any[], array2: any[]): any[];
@@ -75,8 +82,11 @@ export function merge(compare: (a: any, b: any) => number,
 export function panLinear(domain: number[], delta: number): number[];
 export function panLog(domain: number[], delta: number): number[];
 export function panPow(domain: number[], delta: number, exponent: number): number[];
+export function panSymlog(domain: number[], delta: number, constant: number): number[];
 
 export function peek(array: any[]): any;
+
+export function span(array: number[]): number;
 
 export function toSet<T>(array: T[]): { [T: string]: true }
 
@@ -92,6 +102,17 @@ export function zoomLog(domain: number[],
 
 export function zoomPow(domain: number[],
   anchor: number | null, scale: number, exponent: number): number[];
+
+export function zoomSymlog(domain: number[],
+  anchor: number | null, scale: number, constant: number): number[];
+
+// Dates
+
+export function quarter(date: number): number;
+export function quarter(date: Date): number;
+
+export function utcquarter(date: number): number;
+export function utcquarter(date: Date): number;
 
 // Strings
 

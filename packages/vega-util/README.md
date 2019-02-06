@@ -9,6 +9,7 @@ JavaScript utilities for Vega. Provides a set of helper methods used throughout 
 - [Type Coercion](#type-coercion)
 - [Objects](#objects)
 - [Arrays](#arrays)
+- [Dates](#dates)
 - [Logging](#logging)
 - [Errors](#errors)
 
@@ -249,6 +250,18 @@ vega.<b>array</b>(<i>value</i>)
 
 Ensures that the input *value* is an Array instance. If so, the *value* is simply returned. If not, the *value* is wrapped within a new single-element an array, returning `[value]`.
 
+<a name="clampRange" href="#clampRange">#</a>
+vega.<b>clampRange</b>(<i>range</i>, <i>min</i>, <i>max</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/clampRange.js "Source")
+
+Span-preserving range clamp. If the span of the input *range* is less than (*max* - *min*) and an endpoint exceeds either the *min* or *max* value, the range is translated such that the span is preserved and one endpoint touches the boundary of the min/max range. If the span exceeds (*max* - *min*), returns the range `[min, max]`.
+
+<a name="extent" href="#extent">#</a>
+vega.<b>extent</b>(<i>array</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/extent.js "Source")
+
+Returns an array with the minimum and maximum values in the input *array*, in the form `[min, max]`. Ignores null, undefined, and NaN values. The optional *accessor* argument provides a function that is first applied to each array value prior to comparison.
+
 <a name="extentIndex" href="#extentIndex">#</a>
 vega.<b>extentIndex</b>(<i>array</i>[, <i>accessor</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/extentIndex.js "Source")
@@ -263,6 +276,18 @@ vega.extentIndex([
   {a: 1, b:3}
 ], vega.field('b')); // [1, 2]
 ```
+
+<a name="flush" href="#flush">#</a>
+vega.<b>flush</b>(<i>range</i>, <i>value</i>, <i>threshold</i>, <i>left</i>, <i>right</i>, <i>center</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inrange.js "Source")
+
+Selects among potential return values if the provided *value* is flush with the input numeric *range*. Returns *left* if *value is within the *threshold* distance of the minimum element of the *range*. Returns *right* if *value is within the *threshold* distance of the maximum element of the *range*. Otherwise, returns *center*.
+
+<a name="inrange" href="#inrange">#</a>
+vega.<b>inrange</b>(<i>value</i>, <i>range</i>[, <i>left</i>, <i>right</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inrange.js "Source")
+
+Returns `true` if the input *value* lies within the span of the given *range* array. The *left* and *right* boolean flags control the use of inclusive (true) or exclusive (false) comparisons; if unspecified, inclusive tests are used.
 
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
@@ -293,6 +318,12 @@ vega.<b>peek</b>(<i>array</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/peek.js "Source")
 
 Returns the last element in the input *array*. Similar to the built-in `Array.pop` method, except that it does not remove the last element. This method is a convenient shorthand for `array[array.length - 1]`.
+
+<a name="span" href="#span">#</a>
+vega.<b>span</b>(<i>array</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/span.js "Source")
+
+Returns the numerical span of the input *array*: the difference between the last and first values.
 
 <a name="toSet" href="#toSet">#</a>
 vega.<b>toSet</b>(<i>array</i>)
@@ -334,6 +365,23 @@ vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
 [<>](https://github.com/vega/vega-util/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a power scale transform parameterized by the provided _exponent_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
+
+### Dates
+
+Functions for manipulating JavaScript Date values.
+
+<a name="quarter" href="#quarter">#</a>
+vega.<b>quarter</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/quarter.js "Source")
+
+Returns the quarter of the year (an integer between 1 and 4) for an input *date* object or timestamp for the local timezone.
+
+<a name="utcquarter" href="#utcquarter">#</a>
+vega.<b>utcquarter</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/quarter.js "Source")
+
+Returns the quarter of the year (an integer between 1 and 4) for an input *date* object or timestamp for Coordinated Universal Time (UTC).
+
 
 ### Strings
 

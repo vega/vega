@@ -1,6 +1,6 @@
 import expression from './expression';
 import field from './field';
-import {scalePrefix} from '../expression/prefixes';
+import {ScalePrefix} from 'vega-functions';
 import {isString, stringValue} from 'vega-util';
 
 export default function(enc, value, scope, params, fields) {
@@ -51,7 +51,7 @@ export function getScale(name, scope, params, fields) {
 
   if (isString(name)) {
     // direct scale lookup; add scale as parameter
-    scaleName = scalePrefix + name;
+    scaleName = ScalePrefix + name;
     if (!params.hasOwnProperty(scaleName)) {
       params[scaleName] = scope.scaleRef(name);
     }
@@ -59,9 +59,9 @@ export function getScale(name, scope, params, fields) {
   } else {
     // indirect scale lookup; add all scales as parameters
     for (scaleName in scope.scales) {
-      params[scalePrefix + scaleName] = scope.scaleRef(scaleName);
+      params[ScalePrefix + scaleName] = scope.scaleRef(scaleName);
     }
-    scaleName = stringValue(scalePrefix) + '+'
+    scaleName = stringValue(ScalePrefix) + '+'
       + (name.signal
         ? '(' + expression(name.signal, scope, params, fields) + ')'
         : field(name, scope, params, fields));

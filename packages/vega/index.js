@@ -63,10 +63,13 @@ export {
 } from 'vega-view';
 
 export {
-  parse,
   expressionFunction,
   formatLocale,
   timeFormatLocale
+} from 'vega-functions';
+
+export {
+  parse
 } from 'vega-parser';
 
 export {
