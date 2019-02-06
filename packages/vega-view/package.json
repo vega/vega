@@ -13,7 +13,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-timer:d3,vega-dataflow:vega,vega-parser:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-timer:d3,vega-dataflow:vega,vega-functions:vega,vega-runtime:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega -o build/vega-view.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-view.js -c -m -o build/vega-view.min.js",
@@ -26,7 +26,7 @@
     "d3-array": "^2.0.3",
     "d3-timer": "^1.0.9",
     "vega-dataflow": "^4.1.0",
-    "vega-parser": "^3.9.0",
+    "vega-functions": "^1.0.0",
     "vega-runtime": "^3.2.0",
     "vega-scenegraph": "^3.2.3",
     "vega-util": "^1.7.1"

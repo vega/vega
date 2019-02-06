@@ -1,5 +1,5 @@
 export default function(item) {
-  var group = this.context.group,
+  let group = this.context.group,
       value = false;
 
   if (group) while (item) {

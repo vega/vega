@@ -1,8 +1,6 @@
-import {codeGenerator, codegenParams} from './expression/codegen';
-import {parse} from 'vega-expression';
+import {CallExpression, parse} from 'vega-expression';
+import {codeGenerator, codegenParams, SignalPrefix} from 'vega-functions';
 import {error, isString, stringValue} from 'vega-util';
-
-export var signalPrefix = '$';
 
 export default function(expr, scope, preamble) {
   var params = {}, ast, gen;
@@ -17,7 +15,7 @@ export default function(expr, scope, preamble) {
 
   // analyze ast function calls for dependencies
   ast.visit(function visitor(node) {
-    if (node.type !== 'CallExpression') return;
+    if (node.type !== CallExpression) return;
     var name = node.callee.name,
         visit = codegenParams.visitors[name];
     if (visit) visit(name, node.arguments, scope, params);
@@ -28,7 +26,7 @@ export default function(expr, scope, preamble) {
 
   // collect signal dependencies
   gen.globals.forEach(function(name) {
-    var signalName = signalPrefix + name;
+    var signalName = SignalPrefix + name;
     if (!params.hasOwnProperty(signalName) && scope.getSignal(name)) {
       params[signalName] = scope.signalRef(name);
     }

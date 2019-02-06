@@ -1,3 +1,17 @@
+export var RawCode = 'RawCode';
+export var Literal = 'Literal';
+export var Property = 'Property';
+export var Identifier = 'Identifier';
+
+export var ArrayExpression = 'ArrayExpression';
+export var BinaryExpression = 'BinaryExpression';
+export var CallExpression = 'CallExpression';
+export var ConditionalExpression = 'ConditionalExpression';
+export var LogicalExpression = 'LogicalExpression';
+export var MemberExpression = 'MemberExpression';
+export var ObjectExpression = 'ObjectExpression';
+export var UnaryExpression = 'UnaryExpression';
+
 export default function ASTNode(type) {
   this.type = type;
 }
@@ -14,28 +28,28 @@ ASTNode.prototype.visit = function(visitor) {
 
 function children(node) {
   switch (node.type) {
-    case 'ArrayExpression':
+    case ArrayExpression:
       return node.elements;
-    case 'BinaryExpression':
-    case 'LogicalExpression':
+    case BinaryExpression:
+    case LogicalExpression:
       return [node.left, node.right];
-    case 'CallExpression':
+    case CallExpression:
       var args = node.arguments.slice();
       args.unshift(node.callee);
       return args;
-    case 'ConditionalExpression':
+    case ConditionalExpression:
       return [node.test, node.consequent, node.alternate];
-    case 'MemberExpression':
+    case MemberExpression:
       return [node.object, node.property];
-    case 'ObjectExpression':
+    case ObjectExpression:
       return node.properties;
-    case 'Property':
+    case Property:
       return [node.key, node.value];
-    case 'UnaryExpression':
+    case UnaryExpression:
       return [node.argument];
-    case 'Identifier':
-    case 'Literal':
-    case 'RawCode':
+    case Identifier:
+    case Literal:
+    case RawCode:
     default:
       return [];
   }

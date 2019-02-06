@@ -1,7 +1,7 @@
 export default function(item, name, retval) {
   if (item) {
-    var df = this.context.dataflow,
-        target = item.mark.source;
+    const df = this.context.dataflow,
+          target = item.mark.source;
     df.pulse(target, df.changeset().encode(item, name));
   }
   return retval !== undefined ? retval : item;

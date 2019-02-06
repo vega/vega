@@ -14,7 +14,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,d3-format:d3,d3-geo:d3,d3-time-format:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-statistics:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-functions:vega,vega-scale:vega,vega-selections:vega,vega-scenegraph:vega,vega-statistics:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-parser.js -c -m -o build/vega-parser.min.js",
@@ -24,17 +24,11 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.0.3",
-    "d3-color": "^1.2.3",
-    "d3-format": "^1.3.2",
-    "d3-geo": "^1.11.3",
-    "d3-time-format": "^2.1.3",
     "vega-dataflow": "^4.1.0",
     "vega-event-selector": "^2.0.0",
     "vega-expression": "^2.4.0",
+    "vega-functions": "^1.0.0",
     "vega-scale": "^2.5.1",
-    "vega-scenegraph": "^3.2.3",
-    "vega-statistics": "^1.2.3",
     "vega-util": "^1.7.1"
   }
 }

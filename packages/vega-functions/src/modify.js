@@ -8,7 +8,7 @@ function equal(a, b) {
 }
 
 function equalArray(a, b) {
-  for (var i=0, n=a.length; i<n; ++i) {
+  for (let i=0, n=a.length; i<n; ++i) {
     if (!equal(a[i], b[i])) return false;
   }
   return true;
@@ -16,7 +16,7 @@ function equalArray(a, b) {
 
 function removePredicate(props) {
   return function(_) {
-    for (var key in props) {
+    for (let key in props) {
       if (!equal(_[key], props[key])) return false;
     }
     return true;
@@ -24,7 +24,7 @@ function removePredicate(props) {
 }
 
 export default function(name, insert, remove, toggle, modify, values) {
-  var df = this.context.dataflow,
+  let df = this.context.dataflow,
       data = this.context.data[name],
       input = data.input,
       changes = data.changes,

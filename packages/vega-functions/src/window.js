@@ -1,4 +1,4 @@
-var _window = (typeof window !== 'undefined' && window) || null;
+const _window = (typeof window !== 'undefined' && window) || null;
 
 export function screen() {
   return _window ? _window.screen : {};
@@ -11,8 +11,8 @@ export function windowSize() {
 }
 
 export function containerSize() {
-  var view = this.context.dataflow,
-      el = view.container && view.container();
+  const view = this.context.dataflow,
+        el = view.container && view.container();
   return el
     ? [el.clientWidth, el.clientHeight]
     : [undefined, undefined];

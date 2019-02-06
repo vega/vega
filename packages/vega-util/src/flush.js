@@ -1,4 +1,4 @@
-import {peek} from 'vega-util';
+import peek from './peek';
 
 export default function(range, value, threshold, left, right, center) {
   if (!threshold && threshold !== 0) return center;
@@ -17,6 +17,6 @@ export default function(range, value, threshold, left, right, center) {
   l = Math.abs(value - a);
   r = Math.abs(b - value);
 
-  // adjust if value within threshold distance of endpoint
+  // adjust if value is within threshold distance of endpoint
   return l < r && l <= t ? left : r <= t ? right : center;
 }
