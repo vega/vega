@@ -54,6 +54,12 @@ export const spec: Spec = {
       "type": "ordinal",
       "range": "heatmap",
       "domain": {"signal": "domain"}
+    },
+    {
+      "name": "custom",
+      "type": "ordinal",
+      "range": {"scheme": ["royalblue", "lightgray", "goldenrod"]},
+      "domain": {"signal": "domain"}
     }
   ],
 
@@ -62,6 +68,7 @@ export const spec: Spec = {
     {"orient": "none", "fill": "ordinal", "title": "Ordinal", "encode": {"legend": {"update": {"x": {"value":60}, "y": {"value": 0}}}}},
     {"orient": "none", "fill": "ramp", "title": "Ramp", "encode": {"legend": {"update": {"x": {"value":120}, "y": {"value": 0}}}}},
     {"orient": "none", "fill": "diverging", "title": "Diverging", "encode": {"legend": {"update": {"x": {"value":180}, "y": {"value": 0}}}}},
-    {"orient": "none", "fill": "heatmap", "title": "Heatmap", "encode": {"legend": {"update": {"x": {"value":240}, "y": {"value": 0}}}}}
+    {"orient": "none", "fill": "heatmap", "title": "Heatmap", "encode": {"legend": {"update": {"x": {"value":240}, "y": {"value": 0}}}}},
+    {"orient": "none", "fill": "custom", "title": "Custom", "encode": {"legend": {"update": {"x": {"value":300}, "y": {"value": 0}}}}}
   ]
 };
