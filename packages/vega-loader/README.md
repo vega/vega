@@ -21,7 +21,8 @@ The *options* object can include the following entries:
 be useful for applications that load multiple data sets from the same domain.
 - *mode*: A string explicitly indicating the loading mode. One of `'file'` (server-side only) or `'http'`. If set to `'file'` mode, later *uri* parameters may safely omit a `'file://'` prefix.
 - *defaultProtocol*: The default protocol to use for protocol-relative *uri* values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
-- *target*: The browser target attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
+- *target*: The browser `target` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
+- *rel*: The browser `rel` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *http*: HTTP request parameters passed to underlying calls to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API); see [RequestInit](https://fetch.spec.whatwg.org/#requestinit) for allowed properties.
 
 <a name="load" href="#load">#</a>
