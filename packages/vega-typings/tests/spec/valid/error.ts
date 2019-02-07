@@ -25,8 +25,7 @@ export const spec: Spec = {
       "name": "y",
       "type": "band",
       "range": "height",
-      "domain": {"data": "aggregate", "field": "label"},
-      "zero": true
+      "domain": {"data": "aggregate", "field": "label"}
     },
     {
       "name": "x",
