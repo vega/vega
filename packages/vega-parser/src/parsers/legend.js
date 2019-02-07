@@ -46,7 +46,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(spec, config),legendEncode, Skip
+    buildLegendEncode(spec, config), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -139,29 +139,28 @@ function buildLegendEncode(spec, config) {
   addEncode(encode, 'titlePadding', lookup('titlePadding', spec, config));
   addEncode(encode, 'fill',         lookup('fillColor', spec, config));
   addEncode(encode, 'stroke',       lookup('strokeColor', spec, config));
-  addEncode(encode, 'strokeWidth',  lookup('strokeWidth', spec, config));
   addEncode(encode, 'cornerRadius', lookup('cornerRadius', spec, config));
+  addEncode(encode, 'strokeWidth',  config.strokeWidth);
   addEncode(encode, 'strokeDash',   config.strokeDash);
 
   return encode;
 }
 
 function sizeExpression(spec, scope, marks) {
-  var fontSize, size, strokeWidth, expr;
+  var size = deref(getChannel('size', spec, marks)),
+      strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
+      fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
-  strokeWidth = getEncoding('strokeWidth', marks[0].encode);
+  return parseExpression(
+    `max(ceil(sqrt(${size}) + ${strokeWidth}), ${fontSize})`,
+    scope
+  );
+}
 
-  size = spec.size ? 'scale("' + spec.size + '",datum)'
-    : getEncoding('size', marks[0].encode, scope);
-
-  fontSize = getFontSize(marks[1].encode, scope, GuideLabelStyle);
-
-  expr = 'max('
-    + 'ceil(sqrt(' + deref(size) + ')+' + deref(strokeWidth) + '),'
-    + deref(fontSize)
-    + ')';
-
-  return parseExpression(expr, scope);
+function getChannel(name, spec, marks) {
+  return spec[name]
+    ? 'scale("' + spec[name] + '",datum)'
+    : getEncoding(name, marks[0].encode);
 }
 
 function getFontSize(encode, scope, style) {

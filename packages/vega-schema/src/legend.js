@@ -42,12 +42,13 @@ const legendOrientEnum = [
 ];
 
 const legendProps = object({
-  size:       stringType,
-  shape:      stringType,
-  fill:       stringType,
-  stroke:     stringType,
-  opacity:    stringType,
-  strokeDash: stringType,
+  size:        stringType,
+  shape:       stringType,
+  fill:        stringType,
+  stroke:      stringType,
+  opacity:     stringType,
+  strokeDash:  stringType,
+  strokeWidth: stringType,
   type: enums(legendTypeEnum),
   direction: enums(legendDirectionEnum),
   orient: enums(legendOrientEnum, {default: 'right'}),
@@ -64,7 +65,6 @@ const legendProps = object({
   offset: numberValue,
   padding: numberValue,
   strokeColor: colorValue,
-  strokeWidth: numberValue,
 
   // LEGEND TITLE CONFIG
   titleAlign: alignValue,
