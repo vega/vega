@@ -25,7 +25,8 @@ export default function(spec, config, userEncode, dataRef, size) {
       labelAlign = lookup('labelAlign', spec, config),
       labelBaseline = lookup('labelBaseline', spec, config),
       zero = {value: 0},
-      encode, enter, tickSize, tickPos, align, baseline, offset, bound, overlap;
+      encode, enter, tickSize, tickPos, align, baseline, offset,
+      bound, overlap, separation;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -89,15 +90,17 @@ export default function(spec, config, userEncode, dataRef, size) {
   addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
   bound   = lookup('labelBound', spec, config);
   overlap = lookup('labelOverlap', spec, config);
+  separation = lookup('labelSeparation', spec, config);
 
   spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 
   // if overlap method or bound defined, request label overlap removal
   if (overlap || bound) {
     spec.overlap = {
+      separation: separation,
       method: overlap,
-      order:  'datum.index',
-      bound:  bound ? {scale: scale, orient: orient, tolerance: bound} : null
+      order: 'datum.index',
+      bound: bound ? {scale: scale, orient: orient, tolerance: bound} : null
     };
   }
 

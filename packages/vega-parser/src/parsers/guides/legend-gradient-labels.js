@@ -18,6 +18,7 @@ export default function(spec, config, userEncode, dataRef) {
       thickness = encoder(gradientThickness(spec, config)),
       length = gradientLength(spec, config),
       overlap = lookup('labelOverlap', spec, config),
+      separation = lookup('labelSeparation', spec, config),
       encode, enter, update, u, v, adjust = '';
 
   encode = {
@@ -55,6 +56,12 @@ export default function(spec, config, userEncode, dataRef) {
   thickness.offset = value(spec.labelOffset, config.gradientLabelOffset) || 0;
 
   spec = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
-  if (overlap) spec.overlap = {method: overlap, order:  'datum.' + Index};
+  if (overlap) {
+    spec.overlap = {
+      separation: separation,
+      method: overlap,
+      order: 'datum.' + Index
+    };
+  }
   return spec;
 }

@@ -105,6 +105,7 @@ const axis = object({
   labelLimit: numberValue,
   labelOpacity: numberValue,
   labelPadding: numberValue,
+  labelSeparation: numberOrSignal,
 
   // CUSTOMIZED ENCODERS
   encode: object({

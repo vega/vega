@@ -38,10 +38,10 @@ var methods = {
       return i % 2 ? (item.opacity = 0) : 1;
     });
   },
-  greedy: function(items) {
+  greedy: function(items, sep) {
     var a;
     return items.filter(function(b, i) {
-      if (!i || !intersect(a.bounds, b.bounds)) {
+      if (!i || !intersect(a.bounds, b.bounds, sep)) {
         a = b;
         return 1;
       } else {
@@ -52,19 +52,19 @@ var methods = {
 };
 
 // compute bounding box intersection
-// allow 1 pixel of overlap tolerance
-function intersect(a, b) {
-  return !(
-    a.x2 - 1 < b.x1 ||
-    a.x1 + 1 > b.x2 ||
-    a.y2 - 1 < b.y1 ||
-    a.y1 + 1 > b.y2
+// including padding pixels of separation
+function intersect(a, b, sep) {
+  return sep > Math.max(
+    b.x1 - a.x2,
+    a.x1 - b.x2,
+    b.y1 - a.y2,
+    a.y1 - b.y2
   );
 }
 
-function hasOverlap(items) {
+function hasOverlap(items, pad) {
   for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
-    if (intersect(a, b = items[i].bounds)) return true;
+    if (intersect(a, b = items[i].bounds, pad)) return true;
   }
 }
 
@@ -104,6 +104,7 @@ function reflow(pulse, _) {
 prototype.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
       source = pulse.materialize(pulse.SOURCE).source,
+      sep = _.separation || 0,
       items, test;
 
   if (!source) return;
@@ -127,10 +128,10 @@ prototype.transform = function(_, pulse) {
   items = reset(source);
   pulse = reflow(pulse, _);
 
-  if (items.length >= 3 && hasOverlap(items)) {
+  if (items.length >= 3 && hasOverlap(items, sep)) {
     do {
-      items = reduce(items);
-    } while (items.length >= 3 && hasOverlap(items));
+      items = reduce(items, sep);
+    } while (items.length >= 3 && hasOverlap(items, sep));
 
     if (items.length < 3 && !peek(source).opacity) {
       if (items.length > 1) peek(items).opacity = 0;

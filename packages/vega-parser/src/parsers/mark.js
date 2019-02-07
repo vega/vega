@@ -137,9 +137,11 @@ export default function(spec, scope) {
 
 function parseOverlap(overlap, source, scope) {
   var method = overlap.method,
-      bound = overlap.bound, tol;
+      bound = overlap.bound,
+      sep = overlap.separation, tol;
 
   var params = {
+    separation: isSignal(sep) ? scope.signalRef(sep.signal) : sep,
     method: isSignal(method) ? scope.signalRef(method.signal) : method,
     pulse:  source
   };

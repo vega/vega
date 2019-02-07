@@ -111,6 +111,7 @@ const legendProps = object({
   labelOffset: numberValue,
   labelOpacity: numberValue,
   labelOverlap: labelOverlapRef,
+  labelSeparation: numberOrSignal,
 
   // CUSTOMIZED ENCODERS
   encode: object({
