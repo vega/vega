@@ -452,7 +452,7 @@ Returns a new string with some or all matches of _pattern_ replaced by a _replac
 Returns a section of _string_ between the _start_ and _end_ indices. If the _end_ argument is negative, it is treated as an offset from the end of the string (_length(string) + end_).
 
 <a name="string_split" href="#string_split">#</a>
-<b>split</b>(<i>string</i>, <i>separator</i>[, <i>limit</i>])<br/>
+<b>split</b>(<i>string</i>, <i>separator</i>[, <i>limit</i>]) {% include tag ver="4.3" %}<br/>
 Returns an array of tokens created by splitting the input _string_ according to a provided _separator_ pattern. The result can optionally be constrained to return at most _limit_ tokens.
 
 <a name="substring" href="#substring">#</a>
