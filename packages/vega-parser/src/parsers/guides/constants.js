@@ -33,6 +33,7 @@ export var LegendScales = [
   'shape',
   'fill',
   'stroke',
+  'strokeWidth',
   'strokeDash',
   'opacity'
 ];
