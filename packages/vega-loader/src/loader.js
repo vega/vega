@@ -116,6 +116,11 @@ function sanitize(uri, options) {
       result.target = options.target + '';
     }
 
+    // set default result rel, if specified (#1542)
+    if (options.rel) {
+      result.rel = options.rel + '';
+    }
+
     // return
     accept(result);
   });
