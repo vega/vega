@@ -7,14 +7,18 @@
       "offset": 5,
       "gradientDirection": "horizontal",
       "gradientLength": 300,
-      "labelOverlap": {"signal": "labelOverlap"}
+      "labelOverlap": {"signal": "labelOverlap"},
+      "labelSeparation": {"signal": "labelSeparation"}
     }
   },
 
   "signals": [
-    {"name": "labelOverlap", "value": true, "bind": {"input": "checkbox"}},
-    {"name": "seqScheme", "value": "purples"},
-    {"name": "linearRange", "value": ["purple", "orange"]}
+    { "name": "labelOverlap", "value": true,
+      "bind": {"input": "checkbox"} },
+    { "name": "labelSeparation", "value": 0,
+      "bind": {"input": "range", "min": -10, "max": 20, "step": 1} },
+    { "name": "seqScheme", "value": "purples" },
+    { "name": "linearRange", "value": ["purple", "orange"] }
   ],
 
   "data": [

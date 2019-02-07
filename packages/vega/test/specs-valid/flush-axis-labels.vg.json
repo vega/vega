@@ -14,6 +14,10 @@
       "bind": {"input": "select", "options": [true, false, "parity", "greedy"]}
     },
     {
+      "name": "labelSeparation", "value": 0,
+      "bind": {"input": "range", "min": -10, "max": 30, "step": 1}
+    },
+    {
       "name": "labelBound", "value": -1,
       "bind": {"input": "range", "min": -1, "max": 30, "step": 1}
     },
@@ -63,6 +67,7 @@
       "format": "s",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -71,6 +76,7 @@
       "scale": "backwardx",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -80,6 +86,7 @@
       "format": "s",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -88,6 +95,7 @@
       "scale": "backwardy",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     }
