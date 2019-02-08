@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Dataflow propagates values', function(test) {
+tape('Dataflow propagates values (run)', function(test) {
   var df = new vega.Dataflow(),
       s1 = df.add(10),
       s2 = df.add(3),
@@ -11,6 +11,10 @@ tape('Dataflow propagates values', function(test) {
       stamp = function(_) { return _.stamp; };
 
   test.equal(df.stamp(), 0); // timestamp 0
+
+  // these tests ensure that dataflow evaluation completes synchronously
+  // (i.e., subsequent code lines have access to calculated output)
+  // if run is invoked with no pending datasets or async operators
 
   df.run();
   test.equal(df.stamp(), 1); // timestamp 1
@@ -28,26 +32,38 @@ tape('Dataflow propagates values', function(test) {
   test.equal(n2.value, 5.25);
 
   test.end();
+});
 
-  // df.runAsync()
-  //   .then(function() {
-  //     test.equal(df.stamp(), 1); // timestamp 1
-  //     test.deepEqual(op.map(stamp), [1, 1, 1, 1]);
-  //     test.equal(n2.value, 30.75);
-  //     return df.update(s1, 5).runAsync();
-  //   })
-  //   .then(function() {
-  //     test.equal(df.stamp(), 2); // timestamp 2
-  //     test.deepEqual(op.map(stamp), [2, 1, 2, 2]);
-  //     test.equal(n2.value, 15.75);
-  //     return df.update(s2, 1).runAsync();
-  //   })
-  //   .then(function() {
-  //     test.equal(df.stamp(), 3); // timestamp 3
-  //     test.deepEqual(op.map(stamp), [2, 3, 2, 3]);
-  //     test.equal(n2.value, 5.25);
-  //     test.end();
-  //   });
+tape('Dataflow propagates values (runAsync)', function(test) {
+  var df = new vega.Dataflow(),
+      s1 = df.add(10),
+      s2 = df.add(3),
+      n1 = df.add(function(_) { return _.s1 + 0.25; }, {s1:s1}),
+      n2 = df.add(function(_) { return _.n1 * _.s2; }, {n1:n1, s2:s2}),
+      op = [s1, s2, n1, n2],
+      stamp = function(_) { return _.stamp; };
+
+  test.equal(df.stamp(), 0); // timestamp 0
+
+  df.runAsync()
+    .then(function() {
+      test.equal(df.stamp(), 1); // timestamp 1
+      test.deepEqual(op.map(stamp), [1, 1, 1, 1]);
+      test.equal(n2.value, 30.75);
+      return df.update(s1, 5).runAsync();
+    })
+    .then(function() {
+      test.equal(df.stamp(), 2); // timestamp 2
+      test.deepEqual(op.map(stamp), [2, 1, 2, 2]);
+      test.equal(n2.value, 15.75);
+      return df.update(s2, 1).runAsync();
+    })
+    .then(function() {
+      test.equal(df.stamp(), 3); // timestamp 3
+      test.deepEqual(op.map(stamp), [2, 3, 2, 3]);
+      test.equal(n2.value, 5.25);
+      test.end();
+    });
 });
 
 tape('Dataflow loads external data', function(test) {

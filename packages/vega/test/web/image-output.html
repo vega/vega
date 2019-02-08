@@ -57,17 +57,18 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var view = new vega.View(runtimeSpec)
+new vega.View(runtimeSpec)
   .initialize(document.querySelector('#view'))
   .hover()
-  .run();
-
-// generate png and svg snapshots, assign to image elements
-['png', 'svg'].forEach(function(type) {
-  view.toImageURL(type)
-    .then(function(url) { document.querySelector('#'+type).src = url; })
-    .catch(function(err) { console.error(err); });
-});
+  .runAsync()
+  .then(function(view) {
+    // generate png and svg snapshots, assign to image elements
+    ['png', 'svg'].forEach(function(type) {
+      view.toImageURL(type)
+        .then(function(url) { document.querySelector('#'+type).src = url; })
+        .catch(function(err) { console.error(err); });
+    });
+  });
     </script>
   </body>
   </html>
