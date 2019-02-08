@@ -26,10 +26,6 @@ export default function parseData(data, scope) {
  * Analyze a data pipeline, add needed operators.
  */
 function analyze(data, scope, ops) {
-  // POSSIBLE TODOs:
-  // - error checking for treesource on tree operators (BUT what if tree is upstream?)
-  // - this is local analysis, perhaps some tasks better for global analysis...
-
   var output = [],
       source = null,
       modify = false,
@@ -38,18 +34,30 @@ function analyze(data, scope, ops) {
 
   if (data.values) {
     // hard-wired input data set
-    output.push(source = collect({
-      $ingest: data.values,
-      $format: data.format
-    }));
+    if (hasSignal(data.values) || hasSignal(data.format)) {
+      // if either values or format has signal, use dynamic loader
+      output.push(load(scope, data));
+      output.push(source = collect());
+    } else {
+      // otherwise, ingest upon dataflow init
+      output.push(source = collect({
+        $ingest: data.values,
+        $format: data.format
+      }));
+    }
   } else if (data.url) {
     // load data from external source
-    // if either url or format has signal, use dynamic loader
-    // otherwise, request load upon dataflow init
-    source = (hasSignal(data.url) || hasSignal(data.format))
-      ? {$load: ref(scope.add(load(scope, data, source)))}
-      : {$request: data.url, $format: data.format};
-    output.push(source = collect(source));
+    if (hasSignal(data.url) || hasSignal(data.format)) {
+      // if either url or format has signal, use dynamic loader
+      output.push(load(scope, data));
+      output.push(source = collect());
+    } else {
+      // otherwise, request load upon dataflow init
+      output.push(source = collect({
+        $request: data.url,
+        $format: data.format
+      }));
+    }
   } else if (data.source) {
     // derives from one or more other data sets
     source = upstream = array(data.source).map(function(d) {
@@ -100,7 +108,8 @@ function collect(values) {
 
 function load(scope, data) {
   return Load({
-    url:    scope.property(data.url),
+    url:    data.url ? scope.property(data.url) : undefined,
+    values: data.values ? scope.property(data.values) : undefined,
     format: scope.objectProperty(data.format)
   });
 }

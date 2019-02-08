@@ -34,8 +34,13 @@ prototype.run = function(pulse) {
   }
   rv = rv || pulse;
 
-  if (rv !== pulse.StopPropagation) this.pulse = rv;
   this.stamp = pulse.stamp;
+
+  if (rv.then) {
+    rv = rv.then(_ => this.pulse =_);
+  } else if (rv !== pulse.StopPropagation) {
+    this.pulse = rv;
+  }
 
   return rv;
 };

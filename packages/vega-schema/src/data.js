@@ -1,6 +1,6 @@
 import {
-  array, def, required, orSignal, anyOf, allOf, enums, oneOf, object, type,
-  booleanType, stringType, stringOrSignal
+  array, def, orSignal, anyOf, enums, oneOf, object, type,
+  anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
 } from './util';
 
 const parseDef = oneOf(
@@ -8,7 +8,8 @@ const parseDef = oneOf(
   object(null, oneOf(
     enums(['boolean', 'number', 'date', 'string']),
     type('string', {pattern: '^(date|utc):.*$'})
-  ))
+  )),
+  signalRef
 );
 
 const paramField = object({
@@ -18,30 +19,34 @@ const paramField = object({
 
 const dataFormat = anyOf(
   object({
+    type: stringOrSignal,
+    parse: parseDef
+  }, undefined),
+  object({
     type: enums(['json']),
     parse: parseDef,
-    property: stringType,
-    copy: booleanType
+    property: stringOrSignal,
+    copy: booleanOrSignal
   }),
   object({
-    type: enums(['csv', 'tsv']),
+    _type_: enums(['csv', 'tsv']),
     parse: parseDef
   }),
   object({
-    type: enums(['dsv']),
-    delimiter: stringType,
+    _type_: enums(['dsv']),
+    _delimiter_: stringType,
     parse: parseDef
   }),
   oneOf(
     object({
-      type: enums(['topojson']),
-      feature: stringType,
-      property: stringType
+      _type_: enums(['topojson']),
+      _feature_: stringOrSignal,
+      property: stringOrSignal
     }),
     object({
-      type: enums(['topojson']),
-      mesh: stringType,
-      property: stringType
+      _type_: enums(['topojson']),
+      _mesh_: stringOrSignal,
+      property: stringOrSignal
     })
   )
 );
@@ -49,24 +54,28 @@ const dataFormat = anyOf(
 const transformRef = def('transform');
 const onTriggerRef = def('onTrigger');
 
-const data = allOf(
+const dataProps = {
+  _name_: stringType,
+  transform: array(transformRef),
+  on: onTriggerRef
+};
+
+const data = oneOf(
+  object(dataProps),
   object({
-    _name_: stringType,
-    transform: array(transformRef),
-    on: onTriggerRef
-  }, undefined),
-  anyOf(
-    required('name'),
-    oneOf(
-      object({
-        _source_: oneOf(stringType, array(stringType, {minItems: 1}))
-      }, undefined),
-      object({
-        _url_: stringOrSignal,
-        format: orSignal(dataFormat)
-      }, undefined)
-    )
-  )
+    _source_: oneOf(stringType, array(stringType, {minItems: 1})),
+    ...dataProps
+  }),
+  object({
+    _url_: stringOrSignal,
+    format: orSignal(dataFormat),
+    ...dataProps
+  }),
+  object({
+    _values_: orSignal(anyType),
+    format: orSignal(dataFormat),
+    ...dataProps
+  })
 );
 
 export default {

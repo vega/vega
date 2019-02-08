@@ -1,6 +1,8 @@
 import {read} from 'vega-loader';
 import {truthy} from 'vega-util';
 
+export const parse = read;
+
 /**
  * Ingests new data into the dataflow. First parses the data using the
  * vega-loader read method, then pulses a changeset to the target operator.
@@ -13,76 +15,65 @@ import {truthy} from 'vega-util';
  * @returns {Dataflow}
  */
 export function ingest(target, data, format) {
-  return this.pulse(target, this.changeset().insert(read(data, format)));
-}
-
-function loadPending(df) {
-  var accept, reject,
-      pending = new Promise(function(a, r) {
-        accept = function() { a(df); };
-        reject = r;
-      });
-
-  pending.requests = 0;
-
-  pending.done = function() {
-    if (--pending.requests === 0) {
-      df.runAfter(function() {
-        df._pending = null;
-        try {
-          df.run();
-          if (df._pending) {
-            df._pending.then(accept);
-          } else {
-            accept();
-          }
-        } catch (err) {
-          reject(err);
-        }
-      });
-    }
-  };
-
-  return (df._pending = pending);
+  return this.pulse(target, this.changeset().insert(parse(data, format)));
 }
 
 /**
- * Request data from an external source, parse it, and pulse a changeset
- * to the specified target operator.
- * @param {Operator} target - The Operator to target with the loaded data,
- *   typically a Collect transform instance.
+ * Request data from an external source, parse it, and return a Promise.
  * @param {string} url - The URL from which to load the data. This string
  *   is passed to the vega-loader load method.
  * @param {object} [format] - The data format description for parsing
  *   loaded data. This object is passed to the vega-loader read method.
  * @return {Promise} A Promise that resolves upon completion of the request.
- *   Resolves to a status code: 0 success, -1 load fail, -2 parse fail.
+ *   The resolved object contains the following properties:
+ *   - data: an array of parsed data (or null upon error)
+ *   - status: a code for success (0), load fail (-1), or parse fail (-2)
  */
-export function request(target, url, format) {
-  var df = this,
-      status = 0,
-      pending = df._pending || loadPending(df);
+export async function request(url, format) {
+  const df = this;
+  let status = 0, data;
+
+  try {
+    data = await df.loader().load(url, {context: 'dataflow'});
+    try {
+      data = parse(data, format);
+    } catch (err) {
+      status = -2;
+      df.warn('Data ingestion failed', url, err);
+    }
+  } catch (err) {
+    status = -1;
+    df.warn('Loading failed', url, err);
+  }
+
+  return {data, status};
+}
+
+export async function preload(target, url, format) {
+  const df = this,
+        pending = df._pending || loadPending(df);
 
   pending.requests += 1;
 
-  return df.loader()
-    .load(url, {context:'dataflow'})
-    .then(
-      function(data) {
-        return read(data, format);
-      },
-      function(error) {
-        status = -1;
-        df.error('Loading failed', url, error);
-      })
-    .catch(
-      function(error) {
-        status = -2;
-        df.error('Data ingestion failed', url, error);
-      })
-    .then(function(data) {
-      df.pulse(target, df.changeset().remove(truthy).insert(data || []));
-      pending.done();
-      return status;
-    });
+  const res = await df.request(url, format);
+  df.pulse(target, df.changeset().remove(truthy).insert(res.data || []));
+
+  pending.done();
+  return res;
+}
+
+function loadPending(df) {
+  var pending = new Promise(function(a) { accept = a; }),
+      accept;
+
+  pending.requests = 0;
+
+  pending.done = function() {
+    if (--pending.requests === 0) {
+      df._pending = null;
+      accept(df);
+    }
+  };
+
+  return (df._pending = pending);
 }

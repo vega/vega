@@ -63,10 +63,8 @@ Context.prototype = ContextFork.prototype = {
     if (isCollect(spec.type) && (data = spec.value)) {
       if (data.$ingest) {
         df.ingest(op, data.$ingest, data.$format);
-      } else if (data.$load) {
-        ctx.get(data.$load.$ref).target = op;
       } else if (data.$request) {
-        df.request(op, data.$request, data.$format);
+        df.preload(op, data.$request, data.$format);
       } else {
         df.pulse(op, df.changeset().insert(data));
       }

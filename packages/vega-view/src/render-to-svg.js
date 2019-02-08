@@ -6,7 +6,7 @@ import {RenderType} from 'vega-scenegraph';
  * This method is asynchronous, returning a Promise instance.
  * @return {Promise} - A promise that resolves to an SVG string.
  */
-export default function(scaleFactor) {
-  return renderHeadless(this, RenderType.SVG, scaleFactor)
-    .then(function(renderer) { return renderer.svg(); });
+export default async function(scaleFactor) {
+  const r = await renderHeadless(this, RenderType.SVG, scaleFactor);
+  return r.svg();
 }

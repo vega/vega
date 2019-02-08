@@ -1,7 +1,7 @@
 import add from './add';
 import connect from './connect';
 import events from './events';
-import {ingest, request} from './load';
+import {ingest, parse, preload, request} from './load';
 import on from './on';
 import {rank, rerank} from './rank';
 import {run, runAsync, runAfter, enqueue, getPulse} from './run';
@@ -91,6 +91,8 @@ prototype.changeset = changeset;
 
 // DATA LOADING
 prototype.ingest = ingest;
+prototype.parse  = parse;
+prototype.preload = preload;
 prototype.request = request;
 
 // EVENT HANDLING

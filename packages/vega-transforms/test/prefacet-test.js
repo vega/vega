@@ -102,9 +102,9 @@ tape('PreFacet raises error if tuple sets are modified', function(test) {
   df.pulse(source, changeset().insert(data)).run();
 
   // -- test mod contents
-  test.throws(function() {
-    df.pulse(source, changeset().modify(data[0], 'tuples', [])).run();
-  });
-
-  test.end();
+  df.pulse(source, changeset().modify(data[0], 'tuples', []))
+    .runAsync()
+    .then(() => test.ok(false, 'should not reach'))
+    .catch(() => test.ok(true, 'should reach'))
+    .then(() => test.end());
 });
