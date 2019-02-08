@@ -99,34 +99,26 @@ var prototype = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype.run = function(encode) {
+prototype.runAsync = async function(encode) {
   // evaluate dataflow
-  Dataflow.prototype.run.call(this, encode);
+  await Dataflow.prototype.runAsync.call(this, encode);
 
-  if (this._pending) {
-    // resize next cycle if loading data sets
-    this.resize();
-  } else if (this._redraw || this._resize) {
-    // render as needed
+  // render as needed
+  if (this._redraw || this._resize) {
     try {
-      this.render();
+      if (this._renderer) {
+        if (this._resize) {
+          this._resize = 0;
+          resizeRenderer(this);
+        }
+        await this._renderer.renderAsync(this._scenegraph.root);
+      }
+      this._redraw = false;
     } catch (e) {
       this.error(e);
     }
   }
 
-  return this;
-};
-
-prototype.render = function() {
-  if (this._renderer) {
-    if (this._resize) {
-      this._resize = 0;
-      resizeRenderer(this);
-    }
-    this._renderer.render(this._scenegraph.root);
-  }
-  this._redraw = false;
   return this;
 };
 

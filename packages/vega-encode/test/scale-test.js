@@ -6,10 +6,11 @@ var tape = require('tape'),
 
 function scale(params) {
   var df = new vega.Dataflow(),
-      s = df.add(encode.scale, params);
-  df.error = util.error; // throw on error
+      s = df.add(encode.scale, params),
+      e = false;
+  df.error = (_ => e = _);
   df.run();
-  return s.value;
+  return e ? util.error(e) : s.value;
 }
 
 tape('Scale respects domain configuration', function(test) {
@@ -153,8 +154,7 @@ tape('Scale respects range configuration', function(test) {
   test.equal(s.bandwidth(), 20);
 
   s = test.throws(function() {
-    var p = util.extend({}, params, {type: 'linear'});
-    scale(p);
+    scale(util.extend({}, params, {type: 'linear'}));
   });
 
   test.end();
@@ -213,10 +213,11 @@ tape('Scale respects range color schemes', function(test) {
 tape('Scale warns for zero in log domain', function(test) {
   function logScale(domain) {
     return function() {
-      var df = new vega.Dataflow();
+      var df = new vega.Dataflow(), e;
+      df.warn = (_ => e = _);
       df.add(encode.scale, {type: 'log', domain: domain});
-      df.error = df.warn = util.error; // throw on warning
       df.run();
+      if (e) util.error(e);
     };
   }
 

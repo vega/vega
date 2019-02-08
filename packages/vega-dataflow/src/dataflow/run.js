@@ -4,40 +4,41 @@ import UniqueList from '../util/UniqueList';
 import {id, isArray, Info, Debug} from 'vega-util';
 
 /**
- * Runs the dataflow. This method will increment the current timestamp
- * and process all updated, pulsed and touched operators. When run for
- * the first time, all registered operators will be processed. If there
- * are pending data loading operations, this method will return immediately
- * without evaluating the dataflow. Instead, the dataflow will be
- * asynchronously invoked when data loading completes. To track when dataflow
- * evaluation completes, use the {@link runAsync} method instead.
+ * Runs the dataflow and returns a Promise that resolves when the propagation
+ * cycle completes. This method will increment the current timestamp and
+ * process all updated, pulsed and touched operators. When run for the first
+ * time, all registered operators will be processed.
  * @param {string} [encode] - The name of an encoding set to invoke during
  *   propagation. This value is added to generated Pulse instances;
  *   operators can then respond to (or ignore) this setting as appropriate.
  *   This parameter can be used in conjunction with the Encode transform in
- *   the vega-encode module.
+ *   the vega-encode package.
+ * @return {Promise} - A promise that resolves to this dataflow.
  */
-export function run(encode) {
+export async function runAsync(encode) {
   var df = this,
       count = 0,
       level = df.logLevel(),
       op, next, dt, error;
 
-  if (df._pending) {
-    df.info('Awaiting requests, delaying dataflow run.');
-    return 0;
-  }
-
+  // if the pulse value is set, this is a re-entrant call
   if (df._pulse) {
-    df.error('Dataflow invoked recursively. Use the runAfter method to queue invocation.');
-    return 0;
+    df.error('Dataflow already running. Use runAsync().then to chain invocations.');
+    return df;
   }
 
+  // wait for pending datasets to load
+  if (df._pending) {
+    await df._pending;
+  }
+
+  // exit early if there are no updates
   if (!df._touched.length) {
     df.info('Dataflow invoked, but nothing to do.');
-    return 0;
+    return df;
   }
 
+  // set the current pulse, increment timestamp clock
   df._pulse = new Pulse(df, ++df._clock, encode);
 
   if (level >= Info) {
@@ -45,15 +46,16 @@ export function run(encode) {
     df.debug('-- START PROPAGATION (' + df._clock + ') -----');
   }
 
-  // initialize queue, reset touched operators
+  // initialize priority queue, reset touched operators
   df._touched.forEach(function(op) { df._enqueue(op, true); });
   df._touched = UniqueList(id);
 
   try {
     while (df._heap.size() > 0) {
+      // dequeue operator with highest priority
       op = df._heap.pop();
 
-      // re-queue if rank changes
+      // re-queue if rank changed
       if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
 
       // otherwise, evaluate the operator
@@ -63,10 +65,15 @@ export function run(encode) {
         df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
       }
 
-      // propagate the pulse
+      // wait if operator returned a promise
+      if (next.then) {
+        next = await next;
+      }
+
+      // propagate evaluation, enqueue dependent operators
       if (next !== StopPropagation) {
         df._pulse = next;
-        if (op._targets) op._targets.forEach(function(op) { df._enqueue(op); });
+        if (op._targets) op._targets.forEach(op => df._enqueue(op));
       }
 
       // increment visit counter
@@ -99,11 +106,11 @@ export function run(encode) {
     var postrun = df._postrun;
     df._postrun = [];
     postrun
-      .sort(function(a, b) { return b.priority - a.priority; })
-      .forEach(function(_) { invokeCallback(df, _.callback); });
+      .sort((a, b) => b.priority - a.priority)
+      .forEach(_ => invokeCallback(df, _.callback));
   }
 
-  return this;
+  return df;
 }
 
 function invokeCallback(df, callback) {
@@ -111,18 +118,21 @@ function invokeCallback(df, callback) {
 }
 
 /**
- * Runs the dataflow and returns a Promise that resolves when the
- * propagation cycle completes. The standard run method may exit early
- * if there are pending data loading operations. In contrast, this
- * method returns a Promise to allow callers to receive notification
- * when dataflow evaluation completes.
- * @return {Promise} - A promise that resolves to this dataflow.
+ * Requests dataflow evaluation and the immediately returns this dataflow
+ * instance. If there are pending data loading or other asynchronous
+ * operations, the dataflow will evaluate asynchronously after this method
+ * has been invoked. To track when dataflow evaluation completes, use the
+ * {@link runAsync} method instead.
+ * @param {string} [encode] - The name of an encoding set to invoke during
+ *   propagation. This value is added to generated Pulse instances;
+ *   operators can then respond to (or ignore) this setting as appropriate.
+ *   This parameter can be used in conjunction with the Encode transform in
+ *   the vega-encode module.
+ * @return {Dataflow} - This dataflow instance.
  */
-export function runAsync() {
-  // return this._pending || Promise.resolve(this.run());
-  return this._pending
-    || (this.run() && this._pending)
-    || Promise.resolve(this);
+export function run(encode) {
+  this.runAsync(encode);
+  return this;
 }
 
 /**

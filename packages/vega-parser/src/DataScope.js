@@ -23,6 +23,10 @@ DataScope.fromEntries = function(scope, entries) {
       output = entries[n-2],
       aggr = null;
 
+  if (input && input.type === 'load') {
+    input = entries[1];
+  }
+
   // add operator entries to this scope, wire up pulse chain
   scope.add(entries[0]);
   for (; i<n; ++i) {
