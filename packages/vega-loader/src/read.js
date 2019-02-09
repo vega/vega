@@ -6,7 +6,7 @@ import {timeParse, utcParse} from 'd3-time-format';
 export default function(data, schema, dateParse) {
   schema = schema || {};
 
-  var reader = formats(schema.type || 'json');
+  const reader = formats(schema.type || 'json');
   if (!reader) error('Unknown data format type: ' + schema.type);
 
   data = reader(data, schema);

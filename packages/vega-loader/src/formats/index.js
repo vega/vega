@@ -2,7 +2,7 @@ import {default as dsv, delimitedFormat} from './dsv';
 import json from './json';
 import topojson from './topojson';
 
-export var format = {
+export const format = {
   dsv: dsv,
   csv: delimitedFormat(','),
   tsv: delimitedFormat('\t'),
@@ -17,4 +17,9 @@ export function formats(name, reader) {
   } else {
     return format.hasOwnProperty(name) ? format[name] : null;
   }
+}
+
+export function responseType(type) {
+  const f = formats(type);
+  return f && f.responseType || 'text';
 }

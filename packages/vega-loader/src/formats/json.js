@@ -5,12 +5,14 @@ function isBuffer(_) {
     ? Buffer.isBuffer(_) : false;
 }
 
-export default function(data, format) {
-  var prop = (format && format.property) ? field(format.property) : identity;
+export default function json(data, format) {
+  const prop = (format && format.property) ? field(format.property) : identity;
   return isObject(data) && !isBuffer(data)
     ? parseJSON(prop(data))
     : prop(JSON.parse(data));
 }
+
+json.responseType = 'json';
 
 function parseJSON(data, format) {
   return (format && format.copy)
