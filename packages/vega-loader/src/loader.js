@@ -1,4 +1,4 @@
-import {extend, stringValue} from 'vega-util';
+import {extend, error, isFunction, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
@@ -41,15 +41,13 @@ export default function(fetch, fs) {
  *   override any existing default options.
  * @return {Promise} - A promise that resolves to the loaded content.
  */
-function load(uri, options) {
-  var loader = this;
-  return loader.sanitize(uri, options)
-    .then(function(opt) {
-      var url = opt.href;
-      return opt.localFile
-        ? loader.file(url)
-        : loader.http(url, options);
-    });
+async function load(uri, options) {
+  const opt = await this.sanitize(uri, options),
+        url = opt.href;
+
+  return opt.localFile
+    ? this.file(url)
+    : this.http(url, options);
 }
 
 /**
@@ -62,68 +60,66 @@ function load(uri, options) {
  *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
  *  provided by the 'href' property of the returned object.
  */
-function sanitize(uri, options) {
+async function sanitize(uri, options) {
   options = extend({}, this.options, options);
-  var fileAccess = this.fileAccess;
 
-  return new Promise(function(accept, reject) {
-    var result = {href: null},
-        isFile, hasProtocol, loadFile, base;
+  const fileAccess = this.fileAccess,
+        result = {href: null};
 
-    if (uri == null || typeof uri !== 'string') {
-      reject('Sanitize failure, invalid URI: ' + stringValue(uri));
-      return;
+  let isFile, hasProtocol, loadFile, base;
+
+  if (uri == null || typeof uri !== 'string') {
+    error('Sanitize failure, invalid URI: ' + stringValue(uri));
+  }
+
+  hasProtocol = protocol_re.test(uri);
+
+  // if relative url (no protocol/host), prepend baseURL
+  if ((base = options.baseURL) && !hasProtocol) {
+    // Ensure that there is a slash between the baseURL (e.g. hostname) and url
+    if (!uri.startsWith('/') && base[base.length-1] !== '/') {
+      uri = '/' + uri;
     }
+    uri = base + uri;
+  }
 
-    hasProtocol = protocol_re.test(uri);
+  // should we load from file system?
+  loadFile = (isFile = uri.startsWith(fileProtocol))
+    || options.mode === 'file'
+    || options.mode !== 'http' && !hasProtocol && fileAccess;
 
-    // if relative url (no protocol/host), prepend baseURL
-    if ((base = options.baseURL) && !hasProtocol) {
-      // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-      if (!uri.startsWith('/') && base[base.length-1] !== '/') {
-        uri = '/' + uri;
-      }
-      uri = base + uri;
+  if (isFile) {
+    // strip file protocol
+    uri = uri.slice(fileProtocol.length);
+  } else if (uri.startsWith('//')) {
+    if (options.defaultProtocol === 'file') {
+      // if is file, strip protocol and set loadFile flag
+      uri = uri.slice(2);
+      loadFile = true;
+    } else {
+      // if relative protocol (starts with '//'), prepend default protocol
+      uri = (options.defaultProtocol || 'http') + ':' + uri;
     }
+  }
 
-    // should we load from file system?
-    loadFile = (isFile = uri.startsWith(fileProtocol))
-      || options.mode === 'file'
-      || options.mode !== 'http' && !hasProtocol && fileAccess;
+  // set non-enumerable mode flag to indicate local file load
+  Object.defineProperty(result, 'localFile', {value: !!loadFile});
 
-    if (isFile) {
-      // strip file protocol
-      uri = uri.slice(fileProtocol.length);
-    } else if (uri.startsWith('//')) {
-      if (options.defaultProtocol === 'file') {
-        // if is file, strip protocol and set loadFile flag
-        uri = uri.slice(2);
-        loadFile = true;
-      } else {
-        // if relative protocol (starts with '//'), prepend default protocol
-        uri = (options.defaultProtocol || 'http') + ':' + uri;
-      }
-    }
+  // set uri
+  result.href = uri;
 
-    // set non-enumerable mode flag to indicate local file load
-    Object.defineProperty(result, 'localFile', {value: !!loadFile});
+  // set default result target, if specified
+  if (options.target) {
+    result.target = options.target + '';
+  }
 
-    // set uri
-    result.href = uri;
+  // set default result rel, if specified (#1542)
+  if (options.rel) {
+    result.rel = options.rel + '';
+  }
 
-    // set default result target, if specified
-    if (options.target) {
-      result.target = options.target + '';
-    }
-
-    // set default result rel, if specified (#1542)
-    if (options.rel) {
-      result.rel = options.rel + '';
-    }
-
-    // return
-    accept(result);
-  });
+  // return
+  return result;
 }
 
 /**
@@ -150,8 +146,8 @@ function fileLoader(fs) {
 /**
  * Default file system loader that simply rejects.
  */
-function fileReject() {
-  return Promise.reject('No file system access.');
+async function fileReject() {
+  error('No file system access.');
 }
 
 /**
@@ -164,12 +160,15 @@ function fileReject() {
  */
 function httpLoader(fetch) {
   return fetch
-    ? function(url, options) {
-        return fetch(url, extend({}, this.options.http, options))
-          .then(function(response) {
-            if (!response.ok) throw response.status + '' + response.statusText;
-            return response.text();
-          });
+    ? async function(url, options) {
+        const opt = extend({}, this.options.http, options),
+              type = options && options.response,
+              response = await fetch(url, opt);
+
+        return !response.ok
+          ? error(response.status + '' + response.statusText)
+          : isFunction(response[type]) ? response[type]()
+          : response.text();
       }
     : httpReject;
 }
@@ -177,6 +176,6 @@ function httpLoader(fetch) {
 /**
  * Default http request handler that simply rejects.
  */
-function httpReject() {
-  return Promise.reject('No HTTP fetch method available.');
+async function httpReject() {
+  error('No HTTP fetch method available.');
 }

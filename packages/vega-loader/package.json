@@ -22,7 +22,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f cjs -n vega -o build/vega-loader.node.js -- index.js && rollup -f umd -g d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.js -- index.browser.js",
+    "rollup": "rollup -f cjs -g d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.node.js -- index.js && rollup -f umd -g d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.js -- index.browser.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-loader.js -c -m -o build/vega-loader.min.js",
@@ -32,7 +32,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-dsv": "^1.0.10",
+    "d3-dsv": "^1.1.1",
     "d3-time-format": "^2.1.3",
     "node-fetch": "^2.3.0",
     "topojson-client": "^3.0.0",

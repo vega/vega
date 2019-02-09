@@ -16,6 +16,7 @@ export {
 } from './src/type';
 
 export {
-  format as format,
-  formats as formats
+  format,
+  formats,
+  responseType
 } from './src/formats/index';

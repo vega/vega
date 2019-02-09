@@ -1,4 +1,4 @@
-import {read} from 'vega-loader';
+import {read, responseType} from 'vega-loader';
 import {truthy} from 'vega-util';
 
 export const parse = read;
@@ -34,7 +34,10 @@ export async function request(url, format) {
   let status = 0, data;
 
   try {
-    data = await df.loader().load(url, {context: 'dataflow'});
+    data = await df.loader().load(url, {
+      context: 'dataflow',
+      response: responseType(format && format.type)
+    });
     try {
       data = parse(data, format);
     } catch (err) {

@@ -2,7 +2,7 @@ import json from './json';
 import {feature, mesh} from 'topojson-client';
 import {error} from 'vega-util';
 
-export default function(data, format) {
+export default function topojson(data, format) {
   var method, object, property;
   data = json(data, format);
 
@@ -16,3 +16,5 @@ export default function(data, format) {
 
   return object && object.features || [object];
 }
+
+topojson.responseType = 'json';
