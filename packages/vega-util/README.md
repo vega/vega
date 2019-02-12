@@ -362,7 +362,7 @@ Given an input numeric _domain_ (sorted in increasing order), returns a new doma
 
 <a name="zoomPow" href="#zoomPow">#</a>
 vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
-[<>](https://github.com/vega/vega-util/blob/master/packages/vega-util/src/transform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a power scale transform parameterized by the provided _exponent_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
 
