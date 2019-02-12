@@ -19,7 +19,6 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 {: .suppress-error}
 ```json
 {
-  "$schema": "https://vega.github.io/schema/vega/v4.json",
   "width": 500,
   "height": 200,
   "config": {

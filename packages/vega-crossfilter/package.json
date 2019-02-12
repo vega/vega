@@ -1,6 +1,6 @@
 {
   "name": "vega-crossfilter",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Indexed cross-filtering for Vega dataflows.",
   "keywords": [
     "vega",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "d3-array": "^2.0.3",
-    "vega-dataflow": "^4.1.0",
-    "vega-util": "^1.7.1"
+    "vega-dataflow": "^5.0.0",
+    "vega-util": "^1.8.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

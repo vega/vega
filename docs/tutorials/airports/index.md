@@ -69,7 +69,7 @@ Now let's get started building our visualization! We begin with a basic scaffold
 
 ```json
 {
-  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 900,
   "height": 560,
   "padding": {"top": 0, "left": 0, "right": 0, "bottom": 0},
