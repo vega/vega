@@ -141,6 +141,9 @@ const encodeEntry = object({
   // Group-mark properties
   clip: booleanValueRef,
 
+  // Symbol- and text-mark properties
+  angle: numberValueRef,
+
   // Symbol-mark properties
   size: numberValueRef,
   shape: stringValueRef,
@@ -173,7 +176,6 @@ const encodeEntry = object({
   dy: numberValueRef,
   radius:numberValueRef,
   theta: numberValueRef,
-  angle: numberValueRef,
   font: stringValueRef,
   fontSize: numberValueRef,
   fontWeight: ref('fontWeightValue'),
