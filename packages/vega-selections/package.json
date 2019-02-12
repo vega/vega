@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -23,7 +23,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-expression": "^2.4.0",
-    "vega-util": "^1.7.1"
+    "vega-expression": "^2.5.0",
+    "vega-util": "^1.8.0"
   }
 }
