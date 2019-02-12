@@ -13,7 +13,7 @@
     "test": "lerna run test"
   },
   "devDependencies": {
-    "@types/node": "^10.12.21",
+    "@types/node": "^11.9.0",
     "canvas": "^2.3.1",
     "dtslint": "^0.4.2",
     "eslint": "^5.13.0",
