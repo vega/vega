@@ -1,6 +1,6 @@
 import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
-import translate from '../util/svg/translate';
+import {translate} from '../util/svg/transform';
 
 function getImage(item, renderer) {
   var image = item.image;

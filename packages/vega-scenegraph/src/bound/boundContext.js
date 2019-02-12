@@ -1,7 +1,7 @@
+import {HalfPi, Tau} from '../util/constants';
+
 var bounds,
-    tau = Math.PI * 2,
-    halfPi = tau / 4,
-    circleThreshold = tau - 1e-8;
+    circleThreshold = Tau - 1e-8;
 
 export default function context(_) {
   bounds = _;
@@ -61,8 +61,8 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
   update(ea);
 
   if (ea !== sa) {
-    sa = sa % tau; if (sa < 0) sa += tau;
-    ea = ea % tau; if (ea < 0) ea += tau;
+    sa = sa % Tau; if (sa < 0) sa += Tau;
+    ea = ea % Tau; if (ea < 0) ea += Tau;
 
     if (ea < sa) {
       ccw = !ccw; // flip direction
@@ -70,12 +70,12 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     }
 
     if (ccw) {
-      ea -= tau;
-      s = sa - (sa % halfPi);
-      for (i=0; i<4 && s>ea; ++i, s-=halfPi) update(s);
+      ea -= Tau;
+      s = sa - (sa % HalfPi);
+      for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
     } else {
-      s = sa - (sa % halfPi) + halfPi;
-      for (i=0; i<4 && s<ea; ++i, s=s+halfPi) update(s);
+      s = sa - (sa % HalfPi) + HalfPi;
+      for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
     }
   }
 
