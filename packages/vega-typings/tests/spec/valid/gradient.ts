@@ -10,7 +10,7 @@ export const spec: Spec = {
   "scales": [
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": "viridis"},
       "domain": [0, 100]
     }

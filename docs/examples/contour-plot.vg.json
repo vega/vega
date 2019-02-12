@@ -63,7 +63,7 @@
     },
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "zero": true,
       "domain": {"data": "contours", "field": "value"},
       "range": "heatmap"

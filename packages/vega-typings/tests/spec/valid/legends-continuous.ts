@@ -30,45 +30,45 @@ export const spec: Spec = {
   "scales": [
     {
       "name": "seq0",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "seqScheme"}},
       "domain": {"data": "table", "field": "u"}
     },
     {
       "name": "seq1",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "seqScheme"}, "extent": [0, 1]},
       "domain": {"data": "table", "field": "u"}
     },
     {
       "name": "seq2",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "seqScheme"}, "extent": [0.2, 1]},
       "domain": {"data": "table", "field": "u"}
     },
     {
       "name": "seq3",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "seqScheme"}, "extent": [0.2, 1]},
       "reverse": true,
       "domain": {"data": "table", "field": "u"}
     },
     {
       "name": "seq4",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "seqScheme"}, "extent": [1, 0.2]},
       "domain": {"data": "table", "field": "u"}
     },
     {
       "name": "seq5",
-      "type": "sequential",
+      "type": "linear",
       "range": "diverging",
       "domain": {"data": "table", "field": "u"},
       "domainMid": 0
     },
     {
       "name": "seq6",
-      "type": "sequential",
+      "type": "linear",
       "range": ["purple", "orange", "gold"],
       "domain": {"data": "table", "field": "u"},
       "domainMid": 2

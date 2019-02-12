@@ -100,7 +100,7 @@ export const spec: Spec = {
   "scales": [
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": "magma"},
       "domain": {"data": "tree", "field": "depth"},
       "zero": true
