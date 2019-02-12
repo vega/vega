@@ -57,7 +57,7 @@
     },
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "nice": true,
       "domain": {"data": "obesity", "field": "rate"},
       "range": "ramp"

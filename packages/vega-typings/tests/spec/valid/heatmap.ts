@@ -92,7 +92,7 @@ export const spec: Spec = {
     },
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},
