@@ -4,7 +4,7 @@ import pathParse from '../path/parse';
 import pathRender from '../path/render';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
-import translateItem from '../util/svg/translateItem';
+import {translateItem} from '../util/svg/transform';
 
 function attr(emit, item) {
   emit('transform', translateItem(item));

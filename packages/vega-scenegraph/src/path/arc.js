@@ -1,3 +1,5 @@
+import {DegToRad, HalfPi, Tau} from '../util/constants';
+
 export var segmentCache = {};
 export var bezierCache = {};
 
@@ -10,7 +12,7 @@ export function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
     return segmentCache[key];
   }
 
-  var th = rotateX * (Math.PI/180);
+  var th = rotateX * DegToRad;
   var sin_th = Math.sin(th);
   var cos_th = Math.cos(th);
   rx = Math.abs(rx);
@@ -46,12 +48,12 @@ export function segments(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
 
   var th_arc = th1-th0;
   if (th_arc < 0 && sweep === 1) {
-    th_arc += 2 * Math.PI;
+    th_arc += Tau;
   } else if (th_arc > 0 && sweep === 0) {
-    th_arc -= 2 * Math.PI;
+    th_arc -= Tau;
   }
 
-  var segs = Math.ceil(Math.abs(th_arc / (Math.PI * 0.5 + 0.001)));
+  var segs = Math.ceil(Math.abs(th_arc / (HalfPi + 0.001)));
   var result = [];
   for (var i=0; i<segs; ++i) {
     var th2 = th0 + i * th_arc / segs;

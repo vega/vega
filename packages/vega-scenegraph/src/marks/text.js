@@ -1,10 +1,11 @@
 import Bounds from '../Bounds';
+import {DegToRad, HalfPi} from '../util/constants';
 import {font, offset, textMetrics, textValue} from '../util/text';
 import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
-import translate from '../util/svg/translate';
+import {translate, rotate} from '../util/svg/transform';
 
 var textAlign = {
   'left':   'start',
@@ -23,7 +24,7 @@ function attr(emit, item) {
       r = item.radius || 0, t;
 
   if (r) {
-    t = (item.theta || 0) - Math.PI/2;
+    t = (item.theta || 0) - HalfPi;
     x += r * Math.cos(t);
     y += r * Math.sin(t);
   }
@@ -31,7 +32,7 @@ function attr(emit, item) {
   emit('text-anchor', textAlign[item.align] || 'start');
 
   if (a) {
-    t = translate(x, y) + ' rotate('+a+')';
+    t = translate(x, y) + ' ' + rotate(a);
     if (dx || dy) t += ' ' + translate(dx, dy);
   } else {
     t = translate(x + dx, y + dy);
@@ -50,7 +51,7 @@ function bound(bounds, item, noRotate) {
       w, t;
 
   if (r) {
-    t = (item.theta || 0) - Math.PI/2;
+    t = (item.theta || 0) - HalfPi;
     x += r * Math.cos(t);
     y += r * Math.sin(t);
   }
@@ -67,7 +68,7 @@ function bound(bounds, item, noRotate) {
 
   bounds.set(dx+=x, dy+=y, dx+w, dy+h);
   if (item.angle && !noRotate) {
-    bounds.rotate(item.angle*Math.PI/180, x, y);
+    bounds.rotate(item.angle * DegToRad, x, y);
   }
   return bounds.expand(noRotate || !w ? 0 : 1);
 }
@@ -87,7 +88,7 @@ function draw(context, scene, bounds) {
     x = item.x || 0;
     y = item.y || 0;
     if ((r = item.radius)) {
-      t = (item.theta || 0) - Math.PI/2;
+      t = (item.theta || 0) - HalfPi;
       x += r * Math.cos(t);
       y += r * Math.sin(t);
     }
@@ -95,7 +96,7 @@ function draw(context, scene, bounds) {
     if (item.angle) {
       context.save();
       context.translate(x, y);
-      context.rotate(item.angle * Math.PI/180);
+      context.rotate(item.angle * DegToRad);
       x = y = 0; // reset x, y
     }
     x += (item.dx || 0);
@@ -117,7 +118,7 @@ function hit(context, item, x, y, gx, gy) {
 
   // project point into space of unrotated bounds
   var b = bound(tempBounds, item, true),
-      a = -item.angle * Math.PI / 180,
+      a = -item.angle * DegToRad,
       cos = Math.cos(a),
       sin = Math.sin(a),
       ix = item.x,

@@ -5,7 +5,7 @@ import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
 import {hitPath} from '../util/canvas/pick';
 import clip from '../util/svg/clip';
-import translateItem from '../util/svg/translateItem';
+import {translateItem} from '../util/svg/transform';
 
 var StrokeOffset = 0.5;
 

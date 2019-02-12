@@ -2,12 +2,12 @@ import boundStroke from '../bound/boundStroke';
 import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
-import translateItem from '../util/svg/translateItem';
+import {translateItem} from '../util/svg/transform';
 
 function attr(emit, item) {
   emit('transform', translateItem(item));
-  emit('x2', item.x2 != null ? item.x2 - (item.x||0) : 0);
-  emit('y2', item.y2 != null ? item.y2 - (item.y||0) : 0);
+  emit('x2', item.x2 != null ? item.x2 - (item.x || 0) : 0);
+  emit('y2', item.y2 != null ? item.y2 - (item.y || 0) : 0);
 }
 
 function bound(bounds, item) {
