@@ -1,0 +1,74 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 800,
+  "height": 600,
+  "padding": 5,
+  "background": "#111",
+
+  "signals": [
+    {
+      "name": "shape", "value": "wedge",
+      "bind": {"input": "select", "options": ["wedge", "arrow"]}
+    },
+    {
+      "name": "maxSize", "value": 7000,
+      "bind": {"input": "range", "min": 1000, "max": 20000, "step": 100}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "vectors",
+      "url": "data/windvectors.csv",
+      "format": {"type": "csv", "parse": "auto"}
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "paddingInner": 0,
+      "domain": {"data": "vectors", "field": "longitude", "sort": true}
+    },
+    {
+      "name": "yscale",
+      "type": "band",
+      "range": "height",
+      "paddingInner": 0,
+      "reverse": true,
+      "domain": {"data": "vectors", "field": "latitude", "sort": true}
+    },
+    {
+      "name": "size",
+      "domain": {"data": "vectors", "field": "dir"},
+      "zero": true,
+      "range": [0, {"signal": "maxSize"}]
+    },
+    {
+      "name": "color",
+      "domain": [0, 360],
+      "range": {"scheme": "rainbow"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "vectors"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "longitude"},
+          "y": {"scale": "yscale", "field": "latitude"},
+          "fill": {"scale": "color", "field": "dir"},
+          "angle": {"field": "dir", "offset": 180}
+        },
+        "update": {
+          "shape": {"signal": "shape"},
+          "size": {"scale": "size", "field": "speed"}
+        }
+      }
+    }
+  ]
+}
