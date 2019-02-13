@@ -8,7 +8,7 @@ import {
   numberType, stringType
 } from './util';
 
-// ???
+// types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
 const styleRef = ref('style');
 const labelOverlapRef = ref('labelOverlap');
