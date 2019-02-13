@@ -318,10 +318,15 @@ Removes a listener registered with the [addResizeListener](#view_addResizeListen
 Methods for exporting static visualization images. These methods can be invoked either client-side or server-side.
 
 <a name="view_toCanvas" href="#view_toCanvas">#</a>
-view.<b>toCanvas</b>([<i>scaleFactor</i>])
+view.<b>toCanvas</b>([<i>scaleFactor</i>, <i>options</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/render-to-canvas.js "Source")
 
 Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves to a canvas instance containing a rendered bitmap image of the view. The optional *scaleFactor* argument (default 1) is a number by which to multiply the view width and height when determining the output image size. If invoked in a browser, the returned Promise resolves to an [HTML5 canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) element. If invoked server-side in node.js, the Promise resolves to a [node-canvas Canvas](https://github.com/Automattic/node-canvas) instance.
+
+The optional *options* object provides additional parameters for the canvas:
+
+- *type*: Type string passed to the node-canvas Canvas constructor (for example, to specify PDF output). This property will be ignored if used in a browser.
+- *context*: An object of key-value pairs to assign to the Canvas 2D context object. Useful for setting context parameters, particularly for node-canvas.
 
 <a name="view_toSVG" href="#view_toSVG">#</a>
 view.<b>toSVG</b>([<i>scaleFactor</i>])
