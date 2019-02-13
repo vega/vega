@@ -22,6 +22,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | size          | {% include type t="String" %}  | The name of a scale that maps to a size (area) value.|
 | stroke        | {% include type t="String" %}  | The name of a scale that maps to a stroke color.|
 | strokeDash    | {% include type t="String" %}  | The name of a scale that maps to a stroke dash value.|
+| strokeWidth   | {% include type t="String" %}  | {% include tag ver="5.0" %} The name of a scale that maps to a stroke width value.|
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `entries`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
 | format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
 | gridAlign     | {% include type t="String" %}  | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
@@ -34,7 +35,6 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes.|
 | padding       | {% include type t="Number|Value" %} | The padding between the border and content of the legend group.|
 | strokeColor   | {% include type t="Color" %}   | Border stroke color for the full legend. |
-| strokeWidth   | {% include type t="Number" %}  | Border stroke width for the full legend. |
 | gradientLength      | {% include type t="Number" %} | The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient. |
 | gradientOpacity     | {% include type t="Number" %}  | Opacity of the color gradient. {% include tag ver="4.1" %} |
 | gradientThickness   | {% include type t="Number" %} | The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient. |
