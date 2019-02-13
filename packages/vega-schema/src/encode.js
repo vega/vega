@@ -74,6 +74,7 @@ const numberModifiers = object({
   extra: booleanType
 }, undefined);
 
+// defined below
 const arrayValueRef = ref('arrayValue');
 const booleanValueRef = ref('booleanValue');
 const colorValueRef = ref('colorValue');

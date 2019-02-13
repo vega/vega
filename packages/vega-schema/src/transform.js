@@ -3,6 +3,7 @@ import {
   booleanType, numberType, nullType, stringType, signalRef
 } from './util';
 
+// types defined elsewhere
 const compareRef = ref('compare');
 const scaleFieldRef = ref('scaleField');
 const paramFieldRef = ref('paramField');

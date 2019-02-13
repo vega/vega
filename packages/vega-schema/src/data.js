@@ -3,6 +3,10 @@ import {
   anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
 } from './util';
 
+// types defined elsewhere
+const transformRef = def('transform');
+const onTriggerRef = def('onTrigger');
+
 const parseDef = oneOf(
   enums(['auto']),
   object(null, oneOf(
@@ -50,9 +54,6 @@ const dataFormat = anyOf(
     })
   )
 );
-
-const transformRef = def('transform');
-const onTriggerRef = def('onTrigger');
 
 const dataProps = {
   _name_: stringType,

@@ -3,7 +3,7 @@ import {
   booleanType, numberType, stringType
 } from './util';
 
-// MOVE?
+// types defined elsewhere
 const exprStringRef = ref('exprString');
 
 const streamRef = def('stream');

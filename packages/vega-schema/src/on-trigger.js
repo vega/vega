@@ -1,6 +1,6 @@
 import { array, object, oneOf, ref, booleanType } from './util';
 
-// ???
+// types defined elsewhere
 const exprStringRef = ref('exprString');
 
 const onTrigger = array(object({

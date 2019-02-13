@@ -69,9 +69,10 @@ const bandRange = oneOf(
   signalRef
 );
 
-const scaleBins = orSignal(array(numberOrSignal));
 const scaleBinsRef = ref('scaleBins');
+const scaleBins = orSignal(array(numberOrSignal));
 
+const scaleInterpolateRef = ref('scaleInterpolate');
 const scaleInterpolate = oneOf(
   stringType,
   signalRef,
@@ -80,10 +81,9 @@ const scaleInterpolate = oneOf(
     gamma: numberOrSignal
   })
 );
-const scaleInterpolateRef = ref('scaleInterpolate');
 
-const sortOrder = orSignal(enums(sortOrderEnum));
 const sortOrderRef = ref('sortOrder');
+const sortOrder = orSignal(enums(sortOrderEnum));
 
 const sortDomain = oneOf(
   booleanType,
@@ -99,6 +99,7 @@ const sortMultiDomain = oneOf(
   object({op: enums(['count']), order: sortOrderRef})
 );
 
+const scaleDataRef = ref('scaleData');
 const scaleData = oneOf(
   object({
     _data_: stringType,
@@ -122,7 +123,6 @@ const scaleData = oneOf(
     sort: sortMultiDomain
   })
 );
-const scaleDataRef = ref('scaleData');
 
 const scaleDomainProps = {
   _name_: stringType,
