@@ -7,12 +7,15 @@
   "signals": [
     { "name": "shape", "value": "circle",
       "bind": {"input": "select", "options": [
-        "circle", "square", "cross", "diamond",
+        "arrow", "circle", "square", "cross", "diamond", "triangle",
         "triangle-up", "triangle-down", "triangle-right", "triangle-left",
+        "wedge",
         "M-1,-1H1V1H-1Z",
         "M0,.5L.6,.8L.5,.1L1,-.3L.3,-.4L0,-1L-.3,-.4L-1,-.3L-.5,.1L-.6,.8L0,.5Z"
       ]
     } },
+    { "name": "angle", "value": 0,
+      "bind": {"input": "range", "min": -360, "max": 360, "step": 1} },
     { "name": "size", "value": 2000,
       "bind": {"input": "range", "min": 0, "max": 10000, "step": 100} },
     { "name": "x", "value": 100,
@@ -36,6 +39,7 @@
         "update": {
           "x": {"signal": "x"},
           "y": {"signal": "y"},
+          "angle": {"signal": "angle"},
           "size": {"signal": "size"},
           "shape": {"signal": "shape"},
           "opacity": {"value": 1},
