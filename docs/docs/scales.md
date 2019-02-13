@@ -29,7 +29,8 @@ Properties shared across scale types.
 | domainMin     | {% include type t="Number" %}  | Sets the minimum value in the scale domain, overriding the _domain_ property. The _domainMin_ property is only intended for use with scales having continuous domains.|
 | domainMid     | {% include type t="Number" %}  | Inserts a single mid-point value into a two-element domain. The mid-point value must lie between the domain minimum and maximum values. This property can be useful for setting a midpoint for [diverging color scales](../schemes/#diverging). The _domainMid_ property is only intended for use with scales supporting continuous, piecewise domains.|
 | domainRaw     | {% include type t="Array" %}   | An array of raw values that, if non-null, directly overrides the _domain_ property. This is useful for supporting interactions such as panning or zooming a scale. The scale may be initially determined using a data-driven _domain_, then modified in response to user input by setting the _rawDomain_ value.|
-| range         | [Range](#range)                | The range of the scale, representing the set of visual values. For numeric values, the range can take the form of a two-element array with minimum and maximum values. For ordinal or quantized data, the range may be an array of desired output values, which are mapped to elements in the specified domain. See the [scale range reference](#range) for more.|
+| interpolate   | {% include type t="String|Object" %}  | The interpolation method for range values. By default, continuous scales use a general interpolator for numbers, dates, strings and colors (in RGB space) is used. For color ranges, this property allows interpolation in alternative color spaces. Legal values include `rgb`, `hsl`, `hsl-long`, `lab`, `hcl`, `hcl-long`, `cubehelix` and `cubehelix-long` ('-long' variants use longer paths in polar coordinate spaces). If object-valued, this property accepts an object with a string-valued _type_ property and an optional numeric _gamma_ property applicable to rgb and cubehelix interpolators. For more, see the [d3-interpolate documentation](https://github.com/d3/d3-interpolate).|
+| range         | [Range](#range)                | The range of the scale, representing the set of visual values. For numeric values, the range typically takes the form of a two-element array with minimum and maximum values. For ordinal or quantized data, the range may be an array of desired output values, which are mapped to elements in the specified domain. See the [scale range reference](#range) for more.|
 | reverse       | {% include type t="Boolean" %} | If true, reverses the order of the scale range.|
 | round         | {% include type t="Boolean" %} | If true, rounds numeric output values to integers. Helpful for snapping to the pixel grid.|
 
@@ -38,9 +39,10 @@ Properties shared across scale types.
 
 - [**Quantitative Scales**](#quantitative)
   - [`linear`](#linear)
+  - [`log`](#log)
   - [`pow`](#pow)
   - [`sqrt`](#sqrt)
-  - [`log`](#log)
+  - [`symlog`](#symlog)
   - [`time`](#time)
   - [`utc`](#utc)
   - [`sequential`](#sequential)
@@ -52,20 +54,19 @@ Properties shared across scale types.
   - [`quantile`](#quantile)
   - [`quantize`](#quantize)
   - [`threshold`](#threshold)
-  - [`bin-linear`](#bin-linear)
   - [`bin-ordinal`](#bin-ordinal)
 {: .column-set}
 
-In addition, Vega can be extended at runtime with additional scales using the [`vega.scale`](https://github.com/vega/vega-scale/#scale) method.
-
 ## <a name="quantitative"></a>Quantitative Scales
 
-A quantitative scale maps a continuous domain (numbers or dates) to a continuous output range (pixel locations, sizes, colors). The available quantitative scale _type_ values are [`linear`](#linear), [`pow`](#pow), [`sqrt`](#sqrt), [`log`](#log), [`time`](#time) and [`utc`](#utc). All quantitative scales except for `time` and `utc` use a default _domain_ of [0, 1] and default unit _range_ [0, 1].
+A quantitative scale maps a continuous domain (numbers or dates) to a continuous output range (pixel locations, sizes, colors). The available quantitative scale _type_ values are [`linear`](#linear), [`log`](#log), [`pow`](#pow), [`sqrt`](#sqrt), [`symlog`](#symlog), [`time`](#time) and [`utc`](#utc). All quantitative scales except for `time` and `utc` use a default _domain_ of [0, 1] and default unit _range_ [0, 1].
+
+All quantitative scales support color-valued ranges, defined either as an array of color strings or as a [scheme](../scheme) specification. If the domain includes two color values, a sequential color scale is used. If the domain includes three color values, a diverging color scale is used. For larger domain sizes, the domain and range should have the same number of values, over which piecewise interpolation will be applied.
 
 | Property      | Type                                  | Description    |
 | :------------ | :-----------------------------------: | :------------- |
+| bins          | {% include type t="Number[]" %}       | {% include tag ver="5.0" %} An optional array of bin boundaries over the scale domain (such as those computed by Vega's [bin transform](../transforms/bin)). If provided, axes and legends will use the bin boundaries to inform the choice of tick marks and text labels.|
 | clamp         | {% include type t="Boolean" %}        | A boolean indicating if output values should be clamped to the _range_ (default `false`). If clamping is disabled and the scale is passed a value outside the _domain_, the scale may return a value outside the _range_ through extrapolation. If clamping is enabled, the output value of the scale is always within the scale's range.|
-| interpolate   | {% include type t="String|Object" %}  | The interpolation method for range values. By default, a general interpolator for numbers, dates, strings and colors (in RGB space) is used. For color ranges, this property allows interpolation in alternative color spaces. Legal values include `rgb`, `hsl`, `hsl-long`, `lab`, `hcl`, `hcl-long`, `cubehelix` and `cubehelix-long` ('-long' variants use longer paths in polar coordinate spaces). If object-valued, this property accepts an object with a string-valued _type_ property and an optional numeric _gamma_ property applicable to rgb and cubehelix interpolators. For more, see the [d3-interpolate documentation](https://github.com/d3/d3-interpolate).|
 | padding       | {% include type t="Number" %}         | Expands the scale domain to accommodate the specified number of pixels on each of the scale range. The scale range must represent pixels for this parameter to function as intended. Padding adjustment is performed _prior_ to all other adjustments, including the effects of the _zero_, _nice_, _domainMin_, and _domainMax_ properties.|
 | nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values. This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
 | zero          | {% include type t="Boolean" %}        | Boolean flag indicating if the scale domain should include zero. The default value is `true` for `linear`, `sqrt` and `pow`, and `false` otherwise.|
@@ -73,6 +74,16 @@ A quantitative scale maps a continuous domain (numbers or dates) to a continuous
 ### <a name="linear"></a>Linear Scales
 
 Linear scales (`linear`) are [quantitative scales](#quantitative) scales that preserve proportional differences. Each range value _y_ can be expressed as a linear function of the domain value _x_: _y = mx + b_.
+
+### <a name="log"></a>Logarithmic Scales
+
+Log scales (`log`) are [quantitative scales](#quantitative) scales in which a logarithmic transform is applied to the input domain value before the output range value is computed. Log scales are particularly useful for plotting data that varies over multiple orders of magnitude. The mapping to the range value _y_ can be expressed as a logarithmic function of the domain value _x_: _y = m log(x) + b_.
+
+As log(0) = -∞, a log scale domain must be strictly-positive or strictly-negative; the domain must not include or cross zero. A log scale with a positive domain has a well-defined behavior for positive values, and a log scale with a negative domain has a well-defined behavior for negative values. (For a negative domain, input and output values are implicitly multiplied by -1.) The behavior of the scale is undefined if you run a negative value through a log scale with a positive domain or vice versa.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| base          | {% include type t="Number" %}  | The base of the logarithm (default `10`).|
 
 ### <a name="pow"></a>Power Scales
 
@@ -86,15 +97,13 @@ Power scales (`pow`) are [quantitative scales](#quantitative) scales that apply 
 
 Square root (`sqrt`) scales are a convenient shorthand for [power scales](#pow) with an exponent of `0.5`, indicating a square root transform.
 
-### <a name="log"></a>Logarithmic Scales
+### <a name="symlog"></a>Symmetric Log Scales {% include tag ver="5.0" %}
 
-Log scales (`log`) are [quantitative scales](#quantitative) scales in which a logarithmic transform is applied to the input domain value before the output range value is computed. Log scales are particularly useful for plotting data that varies over multiple orders of magnitude. The mapping to the range value _y_ can be expressed as a logarithmic function of the domain value _x_: _y = m log(x) + b_.
-
-As log(0) = -∞, a log scale domain must be strictly-positive or strictly-negative; the domain must not include or cross zero. A log scale with a positive domain has a well-defined behavior for positive values, and a log scale with a negative domain has a well-defined behavior for negative values. (For a negative domain, input and output values are implicitly multiplied by -1.) The behavior of the scale is undefined if you run a negative value through a log scale with a positive domain or vice versa.
+Symmetric log scales (`symlog`) are [quantitative scales](#quantitative) scales that provide scaling similar to log scales, but supports non-positive numbers. Symlog scales are particularly useful for plotting data that varies over multiple orders of magnitude but includes negative- or zero-valued data. For more, see ["A bi-symmetric log transformation for wide-range data"](https://www.researchgate.net/profile/John_Webber4/publication/233967063_A_bi-symmetric_log_transformation_for_wide-range_data/links/0fcfd50d791c85082e000000.pdf) by Webber for more.
 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
-| base          | {% include type t="Number" %}  | The base of the logarithm (default `10`).|
+| constant      | {% include type t="Number" %}  | A constant determining the slope of the symlog function around zero (default `1`).|
 
 ### <a name="time"></a>Time and <a name="utc"></a>UTC Scales
 
@@ -104,11 +113,9 @@ Time scales (`time` and `utc`) are [quantitative scales](#quantitative) with a t
 | :------------ | :------------------------------------------: | :------------- |
 | nice          | {% include type t="String|Object|Number|Boolean" %} | If specified, modifies the scale domain to use a more human-friendly value range. For `time` and `utc` scale types, the nice value can additionally be a string indicating the desired time interval. Legal values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, `time` and `utc` scales can accept an object-valued interval specifier of the form `{"interval": "month", "step": 3}`, which includes a desired number of interval steps. Here, the domain would snap to quarter (Jan, Apr, Jul, Oct) boundaries.|
 
-### <a name="sequential"></a>Sequential Scales
+### <a name="sequential"></a>Sequential Scales (Deprecated)
 
-Sequential scales (`sequential`) are similar to [linear scales](#linear), but use a fixed interpolator to determine the output range. The major use case for sequential scales is continuous quantitative color scales. Sequential scales default to a _domain_ of [0, 1].
-
-Akin to quantitative scales, sequential scales support piecewise _domain_ settings with more than two entries. In such cases, the output range is subdivided into equal-sized segments for each piecewise segment of the domain. For example, the domain [1, 4, 10] would lead to the interpolants `1 -> 0`, `4 -> 0.5`, and `10 -> 1`. Piecewise domains are useful for parameterizing [diverging color encodings](../schemes/#diverging), where a middle domain value corresponds to the mid-point of the color range.
+Sequential scales (`sequential`) are similar to [linear scales](#linear), but use a fixed interpolator to determine the output range. As of Vega 5.0, sequential scales are **deprecated**: *specifications should now use a `linear` (or `log`, etc.) scale with a color-valued range, rather than  a `sequential` scale*.
 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
@@ -116,7 +123,7 @@ Akin to quantitative scales, sequential scales support piecewise _domain_ settin
 | domainMax     | {% include type t="Number" %}  | Sets the maximum value in the scale domain, overriding the _domain_ property.|
 | domainMin     | {% include type t="Number" %}  | Sets the minimum value in the scale domain, overriding the _domain_ property.|
 | domainMid     | {% include type t="Number" %}  | Inserts a single mid-point value into a two-element domain. The mid-point value must lie between the domain minimum and maximum values. This property can be useful for setting a midpoint for [diverging color scales](../schemes/#diverging).|
-| range         | [Scheme](../schemes){% include or %}{% include type t="Color[]" %} | {% include required %} The _range_ value should either be a [color scheme](../schemes) object or an array of color strings. If an array of colors is provided, the array will be used to create a continuous interpolator via [basis spline interpolation in the RGB color space](https://github.com/d3/d3-interpolate#interpolateRgbBasis).|
+| range         | [Scheme](../schemes){% include or %}{% include type t="Color[]" %} | {% include required %} The _range_ value should either be a [color scheme](../schemes) object or an array of color strings. If an array of colors is provided, the array will be used to create a continuous interpolator via linear interpolation in the RGB color space.|
 
 [Back to scale type reference](#types)
 
@@ -186,7 +193,7 @@ Discretizing scales break up a continuous domain into discrete segments, and the
 
 ### <a name="quantile"></a>Quantile Scales
 
-Quantile scales (`quantile`) map a sample of input domain values to a discrete range based on computed [quantile](https://en.wikipedia.org/wiki/Quantile) boundaries. The domain is considered continuous and thus the scale will accept any reasonable input value; however, the domain is specified as a discrete set of sample values. The number of values in (_i.e._, the cardinality of) the output range determines the number of quantiles that will be computed from the domain. To compute the quantiles, the domain is sorted, and treated as a population of discrete values. The resulting quantile boundaries segment the domain into groups with roughly equals numbers of sample points per group.
+Quantile scales (`quantile`) map a sample of input domain values to a discrete range based on computed [quantile](https://en.wikipedia.org/wiki/Quantile) boundaries. The domain is considered continuous and thus the scale will accept any reasonable input value; however, the domain is specified as a discrete set of sample values. The number of values in (_i.e._, the cardinality of) the output range determines the number of quantiles that will be computed from the domain. To compute the quantiles, the domain is sorted, and treated as a population of discrete values. The resulting quantile boundaries segment the domain into groups with roughly equal numbers of sample points per group.
 
 Quantile scales are particularly useful for creating color or size encodings with a fixed number of output values. Using a discrete set of encoding levels (typically between 5-9 colors or sizes) sometimes supports more accurate perceptual comparison than a continuous range. For related functionality see [quantize scales](#quantize), which partition the domain into uniform domain extents, rather than groups with equal element counts. Quantile scales have the benefit of evenly distributing data points to encoded values. In contrast, quantize scales uniformly segment the input domain and provide no guarantee on how data points will be distributed among the output visual values.
 
@@ -246,34 +253,6 @@ the scale will map domain values to color strings as follows:
 0.5  => "white"
 1.0  => "blue"
 1000 => "blue"
-```
-
-### <a name="bin-linear"></a>Bin-Linear Scales
-
-Binned linear scales (`bin-linear`) are a special type of [linear scale](#linear) for use with data that has been subdivided into bins (for example, using Vega's [bin transform](../transforms/bin)). The _domain_ values for a binned linear scale must be the set of all bin boundaries, from the minimum bin start to maximum bin end. Input domain values are discretized to the appropriate bin, and then run through a standard linear scale mapping. The main benefit of using `bin-linear` scales is that they provide "bin-aware" routines for sampling values and generating labels for inclusion in [legends](../legends). They are particularly useful for creating binned size encodings.
-
-The trickiest part of using binned linear scales is retrieving the correct set of bin boundaries for the _domain_ property. Here is one way to do this in conjunction with a [bin transform](../transforms/bin):
-
-```json
-{
-  "data": [
-    {
-      "name": "input",
-      "transform": [
-        { "type": "extent", "field": "value", "signal": "extent" },
-        { "type": "bin", "extent": {"signal": "extent"}, "signal": "bins" }
-      ]
-    }
-  ],
-  "scales": [
-    {
-      "name": "size",
-      "type": "bin-linear",
-      "domain": {"signal": "sequence(bins.start, bins.stop + bins.step, bins.step)"},
-      "range": [1, 1000]
-    }
-  ]
-}
 ```
 
 ### <a name="bin-ordinal"></a>Bin-Ordinal Scales
