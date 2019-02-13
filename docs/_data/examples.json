@@ -46,14 +46,15 @@
         {"name": "projections"},
         {"name": "zoomable-world-map"},
         {"name": "distortion-comparison"},
-        {"name": "volcano-contours"}
+        {"name": "volcano-contours"},
+        {"name": "wind-vectors"}
     ],
     "Tree Diagrams": [
         {"name": "tree-layout"},
         {"name": "radial-tree-layout"},
-        {"name": "treemap", "title": "Treemap"},
-        {"name": "circle-packing", "title": "Circle-Packing"},
-        {"name": "sunburst", "title": "Sunburst"}
+        {"name": "treemap"},
+        {"name": "circle-packing"},
+        {"name": "sunburst"}
     ],
     "Network Diagrams": [
         {"name": "edge-bundling"},
