@@ -3,7 +3,7 @@ import {
   booleanType, stringType, booleanOrSignal, stringOrSignal
 } from './util';
 
-/// ?
+// types defined elsewhere
 const sortOrderRef = ref('sortOrder');
 const marktypeRef = ref('marktype');
 

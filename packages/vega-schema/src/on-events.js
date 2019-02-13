@@ -3,13 +3,12 @@ import {
   anyType, booleanType, stringType, signalRef
 } from './util';
 
-// ???
+// types defined elsewhere
 const exprStringRef = ref('exprString');
 const exprRef = ref('expr');
 const selectorRef = ref('selector');
 const streamRef = def('stream');
 const listenerRef = def('listener');
-
 
 const listener = oneOf(
   signalRef,
