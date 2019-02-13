@@ -668,6 +668,10 @@ Given a log scale _domain_ array with numeric or datetime values, returns a new 
 <b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)<br/>
 Given a power scale _domain_ array with numeric or datetime values and the given _exponent_, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.
 
+<a name="panSymlog" href="#panSymlog">#</a>
+<b>panSymlog</b>(<i>domain</i>, <i>delta</i>, <i>constant</i>)<br/>
+Given a symmetric log scale _domain_ array with numeric or datetime values parameterized by the given _constant_, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.
+
 <a name="zoomLinear" href="#zoomLinear">#</a>
 <b>zoomLinear</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>)<br/>
 Given a linear scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
@@ -679,6 +683,10 @@ Given a log scale _domain_ array with numeric or datetime values, returns a new 
 <a name="zoomPow" href="#zoomPow">#</a>
 <b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>, <i>exponent</i>)<br/>
 Given a power scale _domain_ array with numeric or datetime values and the given _exponent_, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
+
+<a name="zoomSymlog" href="#zoomSymlog">#</a>
+<b>zoomSymlog</b>(<i>domain</i>, <i>anchor</i>, <i>scaleFactor</i>, <i>constant</i>)<br/>
+Given a symmetric log scale _domain_ array with numeric or datetime values parameterized by the given _constant_, returns a new two-element domain array that is the result of zooming the domain by a _scaleFactor_, centered at the provided fractional _anchor_. The _anchor_ value represents the zoom position in terms of fractional units of the scale range; for example, `0.5` indicates a zoom centered on the mid-point of the scale range.
 
 [Back to Top](#reference)
 
