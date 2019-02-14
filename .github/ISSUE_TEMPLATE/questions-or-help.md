@@ -1,13 +1,15 @@
 ---
 name: Questions or Help
-about: For general questions, please use our Slack channel or mailing list.
+about: Do NOT post usage questions here. Please use Slack or our mailing list instead.
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-Need help or want to share examples?
+The GitHub issue tracker is for development work such as bug reports, feature requests, and design discussions. It is NOT the place for asking usage questions or seeking debugging help.
+
+If you are looking for help or have a general usage question, you can:
 
 - Join the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js)
 - Join the [Vega Slack organization](http://bit.ly/vega-slack)
