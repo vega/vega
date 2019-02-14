@@ -3,6 +3,7 @@
   "width": 800,
   "height": 600,
   "padding": 5,
+  "autosize": {"type": "none", "contains": "padding"},
   "background": "#111",
 
   "signals": [
@@ -27,16 +28,16 @@
   "scales": [
     {
       "name": "xscale",
-      "type": "band",
+      "type": "point",
       "range": "width",
-      "paddingInner": 0,
+      "paddingOuter": 0.5,
       "domain": {"data": "vectors", "field": "longitude", "sort": true}
     },
     {
       "name": "yscale",
-      "type": "band",
+      "type": "point",
       "range": "height",
-      "paddingInner": 0,
+      "paddingOuter": 0.5,
       "reverse": true,
       "domain": {"data": "vectors", "field": "latitude", "sort": true}
     },
