@@ -2,11 +2,13 @@ import error from './error';
 
 export default function(p: string) {
   var path: string[] = [],
-      q = null,
-      b = 0,
-      n = p.length,
-      s = '',
-      i: number, j: number, c: string;
+    q = null,
+    b = 0,
+    n = p.length,
+    s = '',
+    i: number,
+    j: number,
+    c: string;
 
   p = p + '';
 
@@ -16,7 +18,7 @@ export default function(p: string) {
     i = j + 1;
   }
 
-  for (i=j=0; j<n; ++j) {
+  for (i = j = 0; j < n; ++j) {
     c = p[j];
     if (c === '\\') {
       s += p.substring(i, j);

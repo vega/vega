@@ -4,11 +4,11 @@ import stringValue from './stringValue';
 
 export default function<R>(field: string, name?: string): AccessorFn<R> {
   var path = splitAccessPath(field),
-      code = 'return _[' + path.map(stringValue).join('][') + '];';
+    code = 'return _[' + path.map(stringValue).join('][') + '];';
 
   return accessor(
     Function('_', code) as () => R,
-    [(field = path.length===1 ? path[0] : field)],
-    name || field
+    [(field = path.length === 1 ? path[0] : field)],
+    name || field,
   );
 }

@@ -18,7 +18,10 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-util.js -c -m -o build/vega-util.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint test",
+    "prettierbase": "prettier 'src/**/*.ts'",
+    "format": "npm run prettierbase -- --write",
+    "lint": "npm run prettierbase -- --check && eslint test",
+    "test": "tape 'test/**/*-test.js' && npm run lint",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   }

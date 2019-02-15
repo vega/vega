@@ -1,3 +1,4 @@
-*.sublime-*
+.*
 build/*.zip
 test/
+tsconfig.json

@@ -2,8 +2,12 @@ import { AccessorFn } from './accessor';
 
 export default function(array: number[], f?: AccessorFn) {
   var i = -1,
-      n = array.length,
-      a, b, c, u, v;
+    n = array.length,
+    a,
+    b,
+    c,
+    u,
+    v;
 
   if (f == null) {
     while (++i < n) {

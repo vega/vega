@@ -7,8 +7,8 @@
  */
 export default function(range: number[], min: number, max: number) {
   var lo = range[0],
-      hi = range[1],
-      span;
+    hi = range[1],
+    span;
 
   if (hi < lo) {
     span = hi;
@@ -17,10 +17,7 @@ export default function(range: number[], min: number, max: number) {
   }
   span = hi - lo;
 
-  return span >= (max - min)
+  return span >= max - min
     ? [min, max]
-    : [
-        (lo = Math.min(Math.max(lo, min), max - span)),
-        lo + span
-      ];
+    : [(lo = Math.min(Math.max(lo, min), max - span)), lo + span];
 }

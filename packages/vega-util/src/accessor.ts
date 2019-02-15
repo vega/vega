@@ -1,6 +1,5 @@
-
 type Fn<R> = (...args: any[]) => R;
-export type AccessorFn<R=any> = Fn<R> & {fname?: string, fields: string[]};
+export type AccessorFn<R = any> = Fn<R> & { fname?: string; fields: string[] };
 
 export default function<R>(fn: Fn<R>, fields: string[], name?: string): AccessorFn<R> {
   const f = fn as AccessorFn<R>;

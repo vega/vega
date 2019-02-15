@@ -9,5 +9,5 @@
     "inlineSources": true,
     "declaration": true
   },
-  "files": ["index.ts"]
+  "files": ["src/index.ts"]
 }

@@ -1,29 +1,32 @@
-function merge(compare: (a: any, b: any) => number,
-  array1: any[], array2: any[]): any[];
-function merge(compare: (a: any, b: any) => number,
-  array1: any[], array2: any[], output?: any[]): void;
+function merge(compare: (a: any, b: any) => number, array1: any[], array2: any[]): any[];
+function merge(
+  compare: (a: any, b: any) => number,
+  array1: any[],
+  array2: any[],
+  output?: any[],
+): void;
 
-function merge (compare: any, array0: any[], array1: any[], output?: any) {
+function merge(compare: any, array0: any[], array1: any[], output?: any) {
   var n0 = array0.length,
-      n1 = array1.length;
+    n1 = array1.length;
 
   if (!n1) return array0;
   if (!n0) return array1;
 
   var merged = output || new (array0 as any).constructor(n0 + n1),
-      i0 = 0, i1 = 0, i = 0;
+    i0 = 0,
+    i1 = 0,
+    i = 0;
 
-  for (; i0<n0 && i1<n1; ++i) {
-    merged[i] = compare(array0[i0], array1[i1]) > 0
-       ? array1[i1++]
-       : array0[i0++];
+  for (; i0 < n0 && i1 < n1; ++i) {
+    merged[i] = compare(array0[i0], array1[i1]) > 0 ? array1[i1++] : array0[i0++];
   }
 
-  for (; i0<n0; ++i0, ++i) {
+  for (; i0 < n0; ++i0, ++i) {
     merged[i] = array0[i0];
   }
 
-  for (; i1<n1; ++i1, ++i) {
+  for (; i1 < n1; ++i1, ++i) {
     merged[i] = array1[i1];
   }
 

@@ -5,7 +5,11 @@ import { AccessorFn } from './accessor';
  * form [min, max]. Ignores null, undefined, and NaN values.
  */
 export default function(array: number[], f?: AccessorFn) {
-  var i = 0, n, v, min, max;
+  var i = 0,
+    n,
+    v,
+    min,
+    max;
 
   if (array && (n = array.length)) {
     if (f == null) {
@@ -14,7 +18,7 @@ export default function(array: number[], f?: AccessorFn) {
       min = max = v;
 
       // visit all other values
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         v = array[i];
         // skip null/undefined; NaN will fail all comparisons
         if (v != null) {
@@ -28,7 +32,7 @@ export default function(array: number[], f?: AccessorFn) {
       min = max = v;
 
       // visit all other values
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         v = f(array[i]);
         // skip null/undefined; NaN will fail all comparisons
         if (v != null) {

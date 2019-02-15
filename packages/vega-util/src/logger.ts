@@ -5,10 +5,10 @@ function log(method: 'log' | 'error' | 'warn', level: Level, input: IArguments):
 
 export type Level = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
 
-export var None  = 0;
+export var None = 0;
 export var Error = 1;
-export var Warn  = 2;
-export var Info  = 3;
+export var Warn = 2;
+export var Info = 3;
 export var Debug = 4;
 
 export interface LoggerInterface {
@@ -44,6 +44,6 @@ export default function(_: number) {
     debug: function(this: LoggerInterface) {
       if (level >= Debug) log('log', 'DEBUG', arguments);
       return this;
-    }
+    },
   } as LoggerInterface;
-};
+}

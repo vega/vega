@@ -1,16 +1,26 @@
 import peek from './peek';
 
-export default function<T>(range: number[], value: number, threshold: number, left: T, right: T, center: T) {
+export default function<T>(
+  range: number[],
+  value: number,
+  threshold: number,
+  left: T,
+  right: T,
+  center: T,
+) {
   if (!threshold && threshold !== 0) return center;
 
   var a = range[0],
-      b = peek(range),
-      t = +threshold,
-      l, r;
+    b = peek(range),
+    t = +threshold,
+    l,
+    r;
 
   // swap endpoints if range is reversed
   if (b < a) {
-    l = a; a = b; b = l;
+    l = a;
+    a = b;
+    b = l;
   }
 
   // compare value to endpoints

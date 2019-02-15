@@ -1,30 +1,44 @@
-import {SortOrder} from '../../vega-typings';
+import { SortOrder } from '../../vega-typings/types/spec';
 import accessor, { accessorFields, AccessorFn } from './accessor';
 import array from './array';
 import isFunction from './isFunction';
 import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
-export default function(fields: string | string[] | AccessorFn | AccessorFn[], orders?: SortOrder | SortOrder[]) {
+export default function(
+  fields: string | string[] | AccessorFn | AccessorFn[],
+  orders?: SortOrder | SortOrder[],
+) {
   var idx: number[] = [],
-      fieldsAny = fields as any,  // fixme
-      cmp = (fieldsAny = array(fieldsAny)).map(function(f: any, i: number) {
-        if (f == null) {
-          return null;
-        } else {
-          idx.push(i);
-          return isFunction(f) ? f
-            : splitAccessPath(f).map(stringValue).join('][');
-        }
-      }),
-      n = idx.length - 1,
-      ord = array(orders),
-      code = 'var u,v;return ',
-      i, j, f, u, v, d, t, lt, gt;
+    fieldsAny = fields as any, // fixme
+    cmp = (fieldsAny = array(fieldsAny)).map(function(f: any, i: number) {
+      if (f == null) {
+        return null;
+      } else {
+        idx.push(i);
+        return isFunction(f)
+          ? f
+          : splitAccessPath(f)
+              .map(stringValue)
+              .join('][');
+      }
+    }),
+    n = idx.length - 1,
+    ord = array(orders),
+    code = 'var u,v;return ',
+    i,
+    j,
+    f,
+    u,
+    v,
+    d,
+    t,
+    lt,
+    gt;
 
   if (n < 0) return null;
 
-  for (j=0; j<=n; ++j) {
+  for (j = 0; j <= n; ++j) {
     i = idx[j];
     f = cmp[i];
 
@@ -32,10 +46,10 @@ export default function(fields: string | string[] | AccessorFn | AccessorFn[], o
       d = 'f' + i;
       u = '(u=this.' + d + '(a))';
       v = '(v=this.' + d + '(b))';
-      (t = t || {} as any)[d] = f;
+      (t = t || ({} as any))[d] = f;
     } else {
-      u = '(u=a['+f+'])';
-      v = '(v=b['+f+'])';
+      u = '(u=a[' + f + '])';
+      v = '(v=b[' + f + '])';
     }
 
     d = '((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))';
@@ -48,19 +62,32 @@ export default function(fields: string | string[] | AccessorFn | AccessorFn[], o
       lt = 1;
     }
 
-    code += '(' + u+'<'+v+'||u==null)&&v!=null?' + lt
-      + ':(u>v||v==null)&&u!=null?' + gt
-      + ':'+d+'!==u&&v===v?' + lt
-      + ':v!==v&&u===u?' + gt
-      + (i < n ? ':' : ':0');
+    code +=
+      '(' +
+      u +
+      '<' +
+      v +
+      '||u==null)&&v!=null?' +
+      lt +
+      ':(u>v||v==null)&&u!=null?' +
+      gt +
+      ':' +
+      d +
+      '!==u&&v===v?' +
+      lt +
+      ':v!==v&&u===u?' +
+      gt +
+      (i < n ? ':' : ':0');
   }
 
   f = Function('a', 'b', code + ';');
   if (t) f = f.bind(t);
 
-  fieldsAny = fieldsAny.reduce(function(map: {[key: string]: number}, field: any) {
+  fieldsAny = fieldsAny.reduce(function(map: { [key: string]: number }, field: any) {
     if (isFunction(field)) {
-      (accessorFields(field) || []).forEach(function(_) { map[_] = 1; });
+      (accessorFields(field) || []).forEach(function(_) {
+        map[_] = 1;
+      });
     } else if (field != null) {
       map[field + ''] = 1;
     }
