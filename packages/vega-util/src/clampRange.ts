@@ -5,7 +5,7 @@
  * endpoint touches the boundary of the min/max range.
  * If the span exceeds (max - min), the range [min, max] is returned.
  */
-export default function(range, min, max) {
+export default function(range: number[], min: number, max: number) {
   var lo = range[0],
       hi = range[1],
       span;

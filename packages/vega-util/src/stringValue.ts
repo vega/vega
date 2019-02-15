@@ -2,7 +2,7 @@ import isArray from './isArray';
 import isObject from './isObject';
 import isString from './isString';
 
-export default function $(x) {
+export default function $(x: any): string {
   return isArray(x) ? '[' + x.map($) + ']'
     : isObject(x) || isString(x) ?
       // Output valid JSON and JS source strings.

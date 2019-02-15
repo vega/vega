@@ -1,8 +1,10 @@
+import { AccessorFn } from './accessor';
+
 /**
  * Return an array with minimum and maximum values, in the
  * form [min, max]. Ignores null, undefined, and NaN values.
  */
-export default function(array, f) {
+export default function(array: number[], f?: AccessorFn) {
   var i = 0, n, v, min, max;
 
   if (array && (n = array.length)) {

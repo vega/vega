@@ -1,7 +1,6 @@
-export default function(_) {
-  for (var x, k, i=1, len=arguments.length; i<len; ++i) {
-    x = arguments[i];
-    for (k in x) { _[k] = x[k]; }
+export default function<T>(target: T, ...source: Partial<T>[]): T {
+  for (const x of source) {
+    for (const k in x) { (target as any)[k] = x[k]; }
   }
-  return _;
+  return target;
 }

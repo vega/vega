@@ -1,12 +1,14 @@
-import {default as accessor, accessorFields} from './accessor';
+import {SortOrder} from '../../vega-typings';
+import accessor, { accessorFields, AccessorFn } from './accessor';
 import array from './array';
 import isFunction from './isFunction';
 import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
-export default function(fields, orders) {
-  var idx = [],
-      cmp = (fields = array(fields)).map(function(f, i) {
+export default function(fields: string | string[] | AccessorFn | AccessorFn[], orders?: SortOrder | SortOrder[]) {
+  var idx: number[] = [],
+      fieldsAny = fields as any,  // fixme
+      cmp = (fieldsAny = array(fieldsAny)).map(function(f: any, i: number) {
         if (f == null) {
           return null;
         } else {
@@ -30,7 +32,7 @@ export default function(fields, orders) {
       d = 'f' + i;
       u = '(u=this.' + d + '(a))';
       v = '(v=this.' + d + '(b))';
-      (t = t || {})[d] = f;
+      (t = t || {} as any)[d] = f;
     } else {
       u = '(u=a['+f+'])';
       v = '(v=b['+f+'])';
@@ -56,7 +58,7 @@ export default function(fields, orders) {
   f = Function('a', 'b', code + ';');
   if (t) f = f.bind(t);
 
-  fields = fields.reduce(function(map, field) {
+  fieldsAny = fieldsAny.reduce(function(map: {[key: string]: number}, field: any) {
     if (isFunction(field)) {
       (accessorFields(field) || []).forEach(function(_) { map[_] = 1; });
     } else if (field != null) {
@@ -65,5 +67,5 @@ export default function(fields, orders) {
     return map;
   }, {});
 
-  return accessor(f, Object.keys(fields));
+  return accessor(f, Object.keys(fieldsAny));
 }

@@ -1,4 +1,6 @@
-export default function(array, f) {
+import { AccessorFn } from './accessor';
+
+export default function(array: number[], f?: AccessorFn) {
   var i = -1,
       n = array.length,
       a, b, c, u, v;
@@ -15,11 +17,11 @@ export default function(array, f) {
     while (++i < n) {
       b = array[i];
       if (b != null) {
-        if (a > b) {
+        if (a !== undefined && a > b) {
           a = b;
           u = i;
         }
-        if (c < b) {
+        if (c !== undefined && c < b) {
           c = b;
           v = i;
         }

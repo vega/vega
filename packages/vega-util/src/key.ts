@@ -1,9 +1,9 @@
-import accessor from './accessor';
+import accessor, {AccessorFn} from './accessor';
 import array from './array';
 import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
-export default function(fields, flat) {
+export default function(fields: string[], flat?: boolean): AccessorFn<string> {
   if (fields) {
     fields = flat
       ? array(fields).map(function(f) { return f.replace(/\\(.)/g, '$1'); })
@@ -18,7 +18,7 @@ export default function(fields, flat) {
               ? stringValue(f)
               : splitAccessPath(f).map(stringValue).join('][')
             ) + ']';
-        }).join('+\'|\'+') + ';');
+        }).join('+\'|\'+') + ';') as () => string;
 
   return accessor(fn, fields, 'key');
 }

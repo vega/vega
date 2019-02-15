@@ -1,4 +1,4 @@
-export default function(str, length, align, ellipsis) {
+export default function(str: string, length: number, align?: 'left' | 'center' | 'right', ellipsis?: string) {
   var e = ellipsis != null ? ellipsis : '\u2026',
       s = str + '',
       n = s.length,

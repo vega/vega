@@ -1,11 +1,22 @@
 var NULL = {};
 
-export default function(input) {
-  var obj = {},
-      map,
-      test;
+export default function(input: any) {
+  var obj: {[key: string]: any} = {},
+      map: {
+        size: number;
+        empty: number;
+        object: any;
+        has: (_: string) => boolean;
+        get: (_: string) => any;
+        set: (_: string, v: any) => void;
+        delete: (_: string) => void;
+        test: (_: string) => any;
+        clear: () => void;
+        clean: () => void;
+      },
+      test: string | any;
 
-  function has(key) {
+  function has(key: string) {
     return obj.hasOwnProperty(key) && obj[key] !== NULL;
   }
 
@@ -14,10 +25,10 @@ export default function(input) {
     empty: 0,
     object: obj,
     has: has,
-    get: function(key) {
+    get: function(key: string) {
       return has(key) ? obj[key] : undefined;
     },
-    set: function(key, value) {
+    set: function(key: string, value: any) {
       if (!has(key)) {
         ++map.size;
         if (obj[key] === NULL) --map.empty;
@@ -25,7 +36,7 @@ export default function(input) {
       obj[key] = value;
       return this;
     },
-    delete: function(key) {
+    delete: function(key: string) {
       if (has(key)) {
         --map.size;
         ++map.empty;
@@ -37,7 +48,7 @@ export default function(input) {
       map.size = map.empty = 0;
       map.object = obj = {};
     },
-    test: function(_) {
+    test: function(_: string) {
       if (arguments.length) {
         test = _;
         return map;
@@ -46,7 +57,7 @@ export default function(input) {
       }
     },
     clean: function() {
-      var next = {},
+      var next: any = {},
           size = 0,
           key, value;
       for (key in obj) {

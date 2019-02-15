@@ -18,7 +18,7 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-util.js -c -m -o build/vega-util.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js' && eslint test",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   }

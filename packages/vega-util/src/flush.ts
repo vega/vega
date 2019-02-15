@@ -1,6 +1,6 @@
 import peek from './peek';
 
-export default function(range, value, threshold, left, right, center) {
+export default function<T>(range: number[], value: number, threshold: number, left: T, right: T, center: T) {
   if (!threshold && threshold !== 0) return center;
 
   var a = range[0],

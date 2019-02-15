@@ -1,6 +1,6 @@
 import repeat from './repeat';
 
-export default function(str, length, padchar, align) {
+export default function(str: string, length: number, padchar?: string, align?: 'left' | 'center' | 'right') {
   var c = padchar || ' ',
       s = str + '',
       n = length - s.length;

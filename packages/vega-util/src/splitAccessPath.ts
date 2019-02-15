@@ -1,12 +1,12 @@
 import error from './error';
 
-export default function(p) {
-  var path = [],
+export default function(p: string) {
+  var path: string[] = [],
       q = null,
       b = 0,
       n = p.length,
       s = '',
-      i, j, c;
+      i: number, j: number, c: string;
 
   p = p + '';
 
