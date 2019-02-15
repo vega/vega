@@ -1,6 +1,6 @@
 function log(method: 'log' | 'error' | 'warn', level: Level, input: IArguments): void {
   var args = [level].concat([].slice.call(input)) as any;
-  console[method].apply(console, args); // eslint-disable-line no-console
+  console[method].apply(console, args);
 }
 
 export type Level = 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
