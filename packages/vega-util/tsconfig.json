@@ -1,14 +1,13 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "noEmit": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "files": [
-        "index.d.ts",
-    ]
+  "compilerOptions": {
+    "outDir": "./build/",
+    "target": "es6",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true
+  },
+  "files": ["index.ts"]
 }
