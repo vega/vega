@@ -77,18 +77,27 @@ prototype.translate = function(dx, dy) {
 };
 
 prototype.rotate = function(angle, x, y) {
-  var cos = Math.cos(angle),
+  const p = this.rotatedPoints(angle, x, y);
+  return this.clear()
+    .add(p[0], p[1])
+    .add(p[2], p[3])
+    .add(p[4], p[5])
+    .add(p[6], p[7]);
+};
+
+prototype.rotatedPoints = function(angle, x, y) {
+  var {x1, y1, x2, y2} = this,
+      cos = Math.cos(angle),
       sin = Math.sin(angle),
       cx = x - x*cos + y*sin,
-      cy = y - x*sin - y*cos,
-      x1 = this.x1, x2 = this.x2,
-      y1 = this.y1, y2 = this.y2;
+      cy = y - x*sin - y*cos;
 
-  return this.clear()
-    .add(cos*x1 - sin*y1 + cx,  sin*x1 + cos*y1 + cy)
-    .add(cos*x1 - sin*y2 + cx,  sin*x1 + cos*y2 + cy)
-    .add(cos*x2 - sin*y1 + cx,  sin*x2 + cos*y1 + cy)
-    .add(cos*x2 - sin*y2 + cx,  sin*x2 + cos*y2 + cy);
+  return [
+    cos*x1 - sin*y1 + cx, sin*x1 + cos*y1 + cy,
+    cos*x1 - sin*y2 + cx, sin*x1 + cos*y2 + cy,
+    cos*x2 - sin*y1 + cx, sin*x2 + cos*y1 + cy,
+    cos*x2 - sin*y2 + cx, sin*x2 + cos*y2 + cy
+  ];
 };
 
 prototype.union = function(b) {
@@ -96,14 +105,6 @@ prototype.union = function(b) {
   if (b.y1 < this.y1) this.y1 = b.y1;
   if (b.x2 > this.x2) this.x2 = b.x2;
   if (b.y2 > this.y2) this.y2 = b.y2;
-  return this;
-};
-
-prototype.intersect = function(b) {
-  if (b.x1 > this.x1) this.x1 = b.x1;
-  if (b.y1 > this.y1) this.y1 = b.y1;
-  if (b.x2 < this.x2) this.x2 = b.x2;
-  if (b.y2 < this.y2) this.y2 = b.y2;
   return this;
 };
 
