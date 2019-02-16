@@ -95,7 +95,7 @@ export const spec: Spec = {
       "scales": [
         {
           "name": "color",
-          "type": "sequential",
+          "type": "linear",
           "domain": {"data": "contours", "field": "value"},
           "range": "ramp"
         }

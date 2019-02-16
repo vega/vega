@@ -374,6 +374,11 @@ export interface BaseAxis<
   labelFlushOffset?: NS;
 
   /**
+   * TODO: add docs.
+   */
+  labelSeparation?: NS;
+
+  /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
    */
   labelOverlap?: LO;
