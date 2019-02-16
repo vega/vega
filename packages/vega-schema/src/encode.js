@@ -15,6 +15,8 @@ export const alignEnum = ['left', 'right', 'center'];
 export const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 export const anchorEnum = ['start', 'middle', 'end'];
 export const areaOrientEnum = ['horizontal', 'vertical'];
+export const strokeCapEnum = ['butt', 'round', 'square'];
+export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
 export function valueSchema(type, nullable) {
   type = Array.isArray(type) ? {enum: type} : {type: type};
@@ -75,6 +77,7 @@ const numberModifiers = object({
 }, undefined);
 
 // defined below
+const anyValueRef = ref('anyValue');
 const arrayValueRef = ref('arrayValue');
 const booleanValueRef = ref('booleanValue');
 const colorValueRef = ref('colorValue');
@@ -133,11 +136,16 @@ const encodeEntry = object({
   fill: colorValueRef,
   fillOpacity: numberValueRef,
   stroke: colorValueRef,
-  strokeWidth: numberValueRef,
   strokeOpacity: numberValueRef,
+  strokeWidth: numberValueRef,
+  strokeCap: ref('strokeCapValue'),
   strokeDash: arrayValueRef,
   strokeDashOffset: numberValueRef,
+  strokeJoin: ref('strokeJoinValue'),
+  strokeMiterLimit: numberValueRef,
   cursor: stringValueRef,
+  tooltip: anyValueRef,
+  zindex: numberValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,
@@ -193,7 +201,7 @@ export default {
     scale,
     stringModifiers,
     numberModifiers,
-    value: valueSchema({}, 'value'),
+    anyValue: valueSchema(undefined),
     numberValue: valueSchema('number'),
     stringValue: valueSchema('string'),
     booleanValue: valueSchema('boolean'),
@@ -204,6 +212,8 @@ export default {
     alignValue: valueSchema(alignEnum),
     baselineValue: valueSchema(baselineEnum),
     orientValue: valueSchema(areaOrientEnum),
+    strokeCapValue: valueSchema(strokeCapEnum),
+    strokeJoinValue: valueSchema(strokeJoinEnum),
     colorRGB,
     colorHSL,
     colorLAB,
