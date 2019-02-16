@@ -11,7 +11,7 @@
     "prepublishOnly": "yarn license",
     "serve": "http-server packages/vega/ -c-1 -p8080 -o",
     "test": "lerna run test",
-    "postinstall": "npm run data"
+    "postinstall": "yarn data"
   },
   "devDependencies": {
     "@types/node": "^11.9.0",
