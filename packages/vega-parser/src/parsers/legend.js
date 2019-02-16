@@ -54,10 +54,11 @@ export default function(spec, scope) {
 
   // data source for legend values
   entryRef = ref(scope.add(LegendEntries(params = {
-    type:   type,
-    scale:  scope.scaleRef(scale),
-    count:  scope.objectProperty(spec.tickCount),
-    values: scope.objectProperty(spec.values),
+    type:    type,
+    scale:   scope.scaleRef(scale),
+    count:   scope.objectProperty(spec.tickCount),
+    values:  scope.objectProperty(spec.values),
+    minstep: scope.property(spec.tickMinStep),
     formatSpecifier: scope.property(spec.format)
   })));
 
