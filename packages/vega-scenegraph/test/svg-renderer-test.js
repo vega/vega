@@ -73,34 +73,34 @@ function replaceFont(str, font) {
     tok.slice(2, -1).concat([tok[1], tok[0]]).join(' ') + ';';
 }
 
-tape('SVGRenderer should support argument free constructor', function(test) {
+tape('SVGRenderer should support argument free constructor', function(t) {
   var r = new Renderer();
-  test.equal(r.svg(), null);
-  test.end();
+  t.equal(r.svg(), null);
+  t.end();
 });
 
-tape('SVGRenderer should behave when dom element is not provided', function(test) {
+tape('SVGRenderer should behave when dom element is not provided', function(t) {
   var r = new Renderer().initialize(null, 100, 100, null);
-  test.equal(r._svg, null);
-  test.equal(r._root, null);
-  test.equal(r.svg(), null);
-  test.equal(r.background('blue').background(), 'blue');
+  t.equal(r._svg, null);
+  t.equal(r._root, null);
+  t.equal(r.svg(), null);
+  t.equal(r.background('blue').background(), 'blue');
 
   r.resize(200, 300);
-  test.equal(r._width, 200);
-  test.equal(r._height, 300);
-  test.end();
+  t.equal(r._width, 200);
+  t.equal(r._height, 300);
+  t.end();
 });
 
-tape('SVGRenderer should render scenegraph to svg', function(test) {
+tape('SVGRenderer should render scenegraph to svg', function(t) {
   var scene = loadScene('scenegraph-rect.json');
   var svg = render(scene, 400, 200);
   var file = load('svg/scenegraph-rect.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support clipping and gradients', function(test) {
+tape('SVGRenderer should support clipping and gradients', function(t) {
   var r = new Renderer()
     .initialize(doc.body, 102, 102);
 
@@ -108,10 +108,10 @@ tape('SVGRenderer should support clipping and gradients', function(test) {
   var scene = loadScene('scenegraph-defs.json');
   var svg = compensate(r.render(scene).svg());
   var file = load('svg/scenegraph-defs.svg');
-  test.equal(svg, file);
+  t.equal(svg, file);
 
   svg = compensate(r.render(scene).svg());
-  test.equal(svg, file);
+  t.equal(svg, file);
 
   vega.resetSVGClipId();
   scene = loadScene('scenegraph-defs.json');
@@ -119,19 +119,19 @@ tape('SVGRenderer should support clipping and gradients', function(test) {
   scene.items[0].fill = 'red';
   svg = compensate(r.render(scene).svg());
   file = load('svg/scenegraph-defs2.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support axes, legends and sub-groups', function(test) {
+tape('SVGRenderer should support axes, legends and sub-groups', function(t) {
   var scene = loadScene('scenegraph-barley.json');
   var svg = render(scene, 360, 740);
   var file = load('svg/scenegraph-barley.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support full redraw', function(test) {
+tape('SVGRenderer should support full redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -149,18 +149,18 @@ tape('SVGRenderer should support full redraw', function(test) {
 
   var svg = compensate(r.svg());
   var file = load('svg/scenegraph-full-redraw.svg');
-  test.equal(svg, file);
+  t.equal(svg, file);
 
   mark.pop();
   r.render(scene);
 
   svg = compensate(r.svg());
   file = load('svg/scenegraph-single-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support enter-item redraw', function(test) {
+tape('SVGRenderer should support enter-item redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -182,11 +182,11 @@ tape('SVGRenderer should support enter-item redraw', function(test) {
 
   var svg = compensate(r.render(scene, [rect1, rect2]).svg());
   var file = load('svg/scenegraph-enter-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support exit-item redraw', function(test) {
+tape('SVGRenderer should support exit-item redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -204,11 +204,11 @@ tape('SVGRenderer should support exit-item redraw', function(test) {
 
   var svg = compensate(r.svg());
   var file = load('svg/scenegraph-exit-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support single-item redraw', function(test) {
+tape('SVGRenderer should support single-item redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -225,11 +225,11 @@ tape('SVGRenderer should support single-item redraw', function(test) {
 
   var svg = compensate(r.svg());
   var file = load('svg/scenegraph-single-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support multi-item redraw', function(test) {
+tape('SVGRenderer should support multi-item redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
@@ -245,11 +245,11 @@ tape('SVGRenderer should support multi-item redraw', function(test) {
 
   var svg = compensate(r.render(scene, [line1, line2, line3]).svg());
   var file = load('svg/scenegraph-line-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should support enter-group redraw', function(test) {
+tape('SVGRenderer should support enter-group redraw', function(t) {
   vega.resetSVGClipId();
 
   var scene = loadScene('scenegraph-barley.json');
@@ -265,11 +265,11 @@ tape('SVGRenderer should support enter-group redraw', function(test) {
 
   var svg = compensate(r.render(scene, [group]).svg());
   var file = load('svg/scenegraph-enter-group-redraw.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should handle empty item sets', function(test) {
+tape('SVGRenderer should handle empty item sets', function(t) {
   var types = [
     'arc',
     'area',
@@ -288,110 +288,110 @@ tape('SVGRenderer should handle empty item sets', function(test) {
     scene = {marktype:types[i], items:[]};
     file = 'svg/marks-empty-' + types[i] + '.svg';
     svg = render(scene, 500, 500);
-    test.equal(svg, load(file));
+    t.equal(svg, load(file));
   }
-  test.end();
+  t.end();
 });
 
-tape('SVGRenderer should render arc mark', function(test) {
+tape('SVGRenderer should render arc mark', function(t) {
   var svg = render(marks.arc, 500, 500);
   var file = load('svg/marks-arc.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render horizontal area mark', function(test) {
+tape('SVGRenderer should render horizontal area mark', function(t) {
   var svg = render(marks['area-h'], 500, 500);
   var file = load('svg/marks-area-h.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render vertical area mark', function(test) {
+tape('SVGRenderer should render vertical area mark', function(t) {
   var svg = render(marks['area-v'], 500, 500);
   var file = load('svg/marks-area-v.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render area mark with breaks', function(test) {
+tape('SVGRenderer should render area mark with breaks', function(t) {
   var svg = render(marks['area-breaks'], 500, 500);
   var file = load('svg/marks-area-breaks.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render trail mark', function(test) {
+tape('SVGRenderer should render trail mark', function(t) {
   var svg = render(marks['trail'], 500, 500);
   var file = load('svg/marks-area-trail.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render group mark', function(test) {
+tape('SVGRenderer should render group mark', function(t) {
   var svg = render(marks.group, 500, 500);
   var file = load('svg/marks-group.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render image mark', function(test) {
+tape('SVGRenderer should render image mark', function(t) {
   renderAsync(marks.image, 500, 500, function(svg) {
     var file = load('svg/marks-image.svg');
-    test.equal(svg, file);
-    test.end();
+    t.equal(svg, file);
+    t.end();
   });
 });
 
-tape('SVGRenderer should render line mark', function(test) {
+tape('SVGRenderer should render line mark', function(t) {
   var svg = render(marks['line-1'], 500, 500);
   var file = load('svg/marks-line-1.svg');
-  test.equal(svg, file);
+  t.equal(svg, file);
 
   svg = render(marks['line-2'], 500, 500);
   file = load('svg/marks-line-2.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render line mark with breaks', function(test) {
+tape('SVGRenderer should render line mark with breaks', function(t) {
   var svg = render(marks['line-breaks'], 500, 500);
   var file = load('svg/marks-line-breaks.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render path mark', function(test) {
+tape('SVGRenderer should render path mark', function(t) {
   var svg = render(marks.path, 500, 500);
   var file = load('svg/marks-path.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render rect mark', function(test) {
+tape('SVGRenderer should render rect mark', function(t) {
   var svg = render(marks.rect, 500, 500);
   var file = load('svg/marks-rect.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render rule mark', function(test) {
+tape('SVGRenderer should render rule mark', function(t) {
   var svg = render(marks.rule, 500, 500);
   var file = load('svg/marks-rule.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render symbol mark', function(test) {
+tape('SVGRenderer should render symbol mark', function(t) {
   var svg = render(marks.symbol, 500, 500);
   var file = load('svg/marks-symbol.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });
 
-tape('SVGRenderer should render text mark', function(test) {
+tape('SVGRenderer should render text mark', function(t) {
   var svg = render(marks.text, 500, 500);
   var file = load('svg/marks-text.svg');
-  test.equal(svg, file);
-  test.end();
+  t.equal(svg, file);
+  t.end();
 });

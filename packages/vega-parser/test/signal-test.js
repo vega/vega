@@ -6,31 +6,31 @@ function parseSignal(spec, scope) {
   vega.signalUpdates(spec, scope);
 }
 
-tape('Parser parses static signals', function(test) {
+tape('Parser parses static signals', function(t) {
   var scope = new vega.Scope();
 
   vega.signal({name: 'a', value: 'foo'}, scope);
   vega.signal({name: 'b', value: 'bar', react: true}, scope);
   vega.signal({name: 'c', value: 'baz', react: false}, scope);
 
-  test.equal(scope.operators.length, 3);
-  test.equal(Object.keys(scope.signals).length, 3);
-  test.equal(scope.signals.a.value, 'foo');
-  test.equal(scope.signals.b.value, 'bar');
-  test.equal(scope.signals.c.value, 'baz');
-  test.equal(scope.signals.a.react, undefined);
-  test.equal(scope.signals.b.react, undefined);
-  test.equal(scope.signals.c.react, false);
+  t.equal(scope.operators.length, 3);
+  t.equal(Object.keys(scope.signals).length, 3);
+  t.equal(scope.signals.a.value, 'foo');
+  t.equal(scope.signals.b.value, 'bar');
+  t.equal(scope.signals.c.value, 'baz');
+  t.equal(scope.signals.a.react, undefined);
+  t.equal(scope.signals.b.react, undefined);
+  t.equal(scope.signals.c.react, false);
 
-  test.end();
+  t.end();
 });
 
-tape('Parser parses updating signals', function(test) {
+tape('Parser parses updating signals', function(t) {
   // update: {expr: 'expr'} | {value: null} | {signal: 'name'},
-  test.end();
+  t.end();
 });
 
-tape('Parser parses signals with event-driven updates', function(test) {
+tape('Parser parses signals with event-driven updates', function(t) {
   var scope = new vega.Scope(),
       update, a, b, c, d;
 
@@ -78,42 +78,42 @@ tape('Parser parses signals with event-driven updates', function(test) {
     ]
   }, scope);
 
-  test.equal(Object.keys(scope.signals).length, 4);
-  test.equal(a = scope.signals.a.id, 0);
-  test.equal(b = scope.signals.b.id, 1);
-  test.equal(c = scope.signals.c.id, 3);
-  test.equal(d = scope.signals.d.id, 6);
-  test.equal(scope.signals.a.value, 1);
-  test.equal(scope.signals.b.value, 2);
-  test.equal(scope.signals.c.value, 3);
-  test.equal(scope.signals.d.value, 4);
+  t.equal(Object.keys(scope.signals).length, 4);
+  t.equal(a = scope.signals.a.id, 0);
+  t.equal(b = scope.signals.b.id, 1);
+  t.equal(c = scope.signals.c.id, 3);
+  t.equal(d = scope.signals.d.id, 6);
+  t.equal(scope.signals.a.value, 1);
+  t.equal(scope.signals.b.value, 2);
+  t.equal(scope.signals.c.value, 3);
+  t.equal(scope.signals.d.value, 4);
 
-  test.equal(scope.updates.length, 4);
+  t.equal(scope.updates.length, 4);
 
   update = scope.updates[0];
-  test.equal(update.source, 2);
-  test.equal(update.target, b);
-  test.equal(update.update, 4);
-  test.equal(update.options.force, true);
+  t.equal(update.source, 2);
+  t.equal(update.target, b);
+  t.equal(update.update, 4);
+  t.equal(update.options.force, true);
 
   update = scope.updates[1];
-  test.equal(update.source && update.source.$ref, a);
-  test.equal(update.target, c);
-  test.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
-  test.equal(update.options, undefined);
+  t.equal(update.source && update.source.$ref, a);
+  t.equal(update.target, c);
+  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.options, undefined);
 
   update = scope.updates[2];
-  test.equal(update.source, 5);
-  test.equal(update.target, c);
-  test.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
-  test.equal(update.options, undefined);
+  t.equal(update.source, 5);
+  t.equal(update.target, c);
+  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.options, undefined);
 
   update = scope.updates[3];
-  test.equal(update.source, 2);
-  test.equal(update.target, d);
-  test.equal(update.update.$expr, '_.value');
-  test.equal(update.update.$params.value.$ref, c);
-  test.equal(update.options, undefined);
+  t.equal(update.source, 2);
+  t.equal(update.target, d);
+  t.equal(update.update.$expr, '_.value');
+  t.equal(update.update.$params.value.$ref, c);
+  t.equal(update.options, undefined);
 
-  test.end();
+  t.end();
 });

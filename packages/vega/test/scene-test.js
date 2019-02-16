@@ -26,7 +26,7 @@ vega.setRandom(lcg(123456789));
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
 
-tape('Vega generates scenegraphs for specifications', function(test) {
+tape('Vega generates scenegraphs for specifications', function(t) {
   var count = specs.length;
   specs.forEach(function(name) {
     var path = testdir + name + '.json',
@@ -51,15 +51,15 @@ tape('Vega generates scenegraphs for specifications', function(test) {
           fs.writeFileSync(name + '-expect.json', JSON.stringify(expectJSON, 0, 2));
         }
 
-        test.ok(isEqual, 'scene: ' + name);
+        t.ok(isEqual, 'scene: ' + name);
       }
     }).catch(function(err) {
       // eslint-disable-next-line no-console
       console.error('ERROR', err);
-      test.fail(name);
+      t.fail(name);
     }).then(function() {
       view.finalize();
-      if (--count === 0) test.end();
+      if (--count === 0) t.end();
     });
   });
 });
