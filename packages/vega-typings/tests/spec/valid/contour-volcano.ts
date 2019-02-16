@@ -36,7 +36,7 @@ export const spec: Spec = {
   "scales": [
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "domain": [90, 190],
       "range": "heatmap"
     }

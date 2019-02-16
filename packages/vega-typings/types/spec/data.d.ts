@@ -9,7 +9,7 @@ export type Parse =
 export interface FormatJSON {
   type: 'json';
   parse?: Parse;
-  property?: string;
+  property?: string | SignalRef;
   copy?: boolean;
 }
 export interface FormatSV {
