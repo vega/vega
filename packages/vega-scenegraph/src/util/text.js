@@ -54,10 +54,12 @@ export function truncate(item) {
       text = item.text + '',
       width;
 
-  if (context) {
+  if (textMetrics.width === measureWidth) {
+    // we are using canvas
     context.font = font(item);
     width = measure;
   } else {
+    // we are relying on estimates
     currFontHeight = fontSize(item);
     width = estimate;
   }
