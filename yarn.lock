@@ -5760,6 +5760,11 @@ vega-dataflow@^4.1.0:
     vega-loader "^3.1.0"
     vega-util "^1.7.0"
 
+vega-datasets@^1.22.0:
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.22.0.tgz#a839f51ec5abb70ab0687e6dbf0ecd231558c605"
+  integrity sha512-eeChIzCIBqn1bQY0nEzX0N7DkUEMhjF92qnjmfRfi0EkWG1sG9nGQbYKDGGOQcpVOXSFM8rEhTBTZfRvlL5KJg==
+
 vega-loader@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/vega-loader/-/vega-loader-3.1.0.tgz#21caa0e78e158a676eafd0e7cb5bae4c18996c5a"
