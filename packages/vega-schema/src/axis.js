@@ -81,6 +81,7 @@ const axis = object({
   tickWidth: numberValue,
   tickCount: tickCountRef,
   tickExtra: booleanOrSignal,
+  tickMinStep: numberOrSignal,
 
   // GRID CONFIG
   grid: booleanType,
