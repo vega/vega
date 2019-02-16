@@ -56,6 +56,7 @@ const legendProps = object({
   format: stringOrSignal,
   title: stringOrSignal,
   tickCount: tickCountRef,
+  tickMinStep: numberOrSignal,
   values: arrayOrSignal,
   zindex: numberType,
 
