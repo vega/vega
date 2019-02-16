@@ -18,7 +18,7 @@ var geojson = {
   ]
 };
 
-tape('Parser parses Vega specs with projection', function(test) {
+tape('Parser parses Vega specs with projection', function(t) {
   var spec = {
     "projections": [
         {
@@ -32,9 +32,9 @@ tape('Parser parses Vega specs with projection', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.operators.length, 13);
-  test.equal(dfs.operators[8].type, 'projection');
-  test.equal(dfs.operators[8].params.fit, geojson);
+  t.equal(dfs.operators.length, 13);
+  t.equal(dfs.operators[8].type, 'projection');
+  t.equal(dfs.operators[8].params.fit, geojson);
 
-  test.end();
+  t.end();
 });

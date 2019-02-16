@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Aggregate = tx.aggregate;
 
-tape('Aggregate aggregates tuples', function(test) {
+tape('Aggregate aggregates tuples', function(t) {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -27,62 +27,62 @@ tape('Aggregate aggregates tuples', function(test) {
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  test.equal(d.length, 2);
-  test.equal(d[0].k, 'a');
-  test.equal(d[0].count_v, 2);
-  test.equal(d[0].sum_v, 3);
-  test.equal(d[0].min_v, 1);
-  test.equal(d[0].max_v, 2);
-  test.equal(d[1].k, 'b');
-  test.equal(d[1].count_v, 2);
-  test.equal(d[1].sum_v, 7);
-  test.equal(d[1].min_v, 3);
-  test.equal(d[1].max_v, 4);
+  t.equal(d.length, 2);
+  t.equal(d[0].k, 'a');
+  t.equal(d[0].count_v, 2);
+  t.equal(d[0].sum_v, 3);
+  t.equal(d[0].min_v, 1);
+  t.equal(d[0].max_v, 2);
+  t.equal(d[1].k, 'b');
+  t.equal(d[1].count_v, 2);
+  t.equal(d[1].sum_v, 7);
+  t.equal(d[1].min_v, 3);
+  t.equal(d[1].max_v, 4);
 
   // -- test rems
   df.pulse(col, changeset().remove(data.slice(0, 2))).run();
   d = out.value;
-  test.equal(d.length, 2);
-  test.equal(d[0].k, 'a');
-  test.equal(d[0].count_v, 1);
-  test.equal(d[0].sum_v, 2);
-  test.equal(d[0].min_v, 2);
-  test.equal(d[0].max_v, 2);
-  test.equal(d[1].k, 'b');
-  test.equal(d[1].count_v, 1);
-  test.equal(d[1].sum_v, 4);
-  test.equal(d[1].min_v, 4);
-  test.equal(d[1].max_v, 4);
+  t.equal(d.length, 2);
+  t.equal(d[0].k, 'a');
+  t.equal(d[0].count_v, 1);
+  t.equal(d[0].sum_v, 2);
+  t.equal(d[0].min_v, 2);
+  t.equal(d[0].max_v, 2);
+  t.equal(d[1].k, 'b');
+  t.equal(d[1].count_v, 1);
+  t.equal(d[1].sum_v, 4);
+  t.equal(d[1].min_v, 4);
+  t.equal(d[1].max_v, 4);
 
   // -- test mods, no groupby change
   df.pulse(col, changeset().modify(data[2], 'v', 3)).run();
   d = out.value;
-  test.equal(d.length, 2);
-  test.equal(d[0].k, 'a');
-  test.equal(d[0].count_v, 1);
-  test.equal(d[0].sum_v, 3);
-  test.equal(d[0].min_v, 3);
-  test.equal(d[0].max_v, 3);
-  test.equal(d[1].k, 'b');
-  test.equal(d[1].count_v, 1);
-  test.equal(d[1].sum_v, 4);
-  test.equal(d[1].min_v, 4);
-  test.equal(d[1].max_v, 4);
+  t.equal(d.length, 2);
+  t.equal(d[0].k, 'a');
+  t.equal(d[0].count_v, 1);
+  t.equal(d[0].sum_v, 3);
+  t.equal(d[0].min_v, 3);
+  t.equal(d[0].max_v, 3);
+  t.equal(d[1].k, 'b');
+  t.equal(d[1].count_v, 1);
+  t.equal(d[1].sum_v, 4);
+  t.equal(d[1].min_v, 4);
+  t.equal(d[1].max_v, 4);
 
   // -- test mods, groupby change
   df.pulse(col, changeset().modify(data[2], 'k', 'b')).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(d[0].k, 'b');
-  test.equal(d[0].count_v, 2);
-  test.equal(d[0].sum_v, 7);
-  test.equal(d[0].min_v, 3);
-  test.equal(d[0].max_v, 4);
+  t.equal(d.length, 1);
+  t.equal(d[0].k, 'b');
+  t.equal(d[0].count_v, 2);
+  t.equal(d[0].sum_v, 7);
+  t.equal(d[0].min_v, 3);
+  t.equal(d[0].max_v, 4);
 
-  test.end();
+  t.end();
 });
 
-tape('Aggregate handles count aggregates', function(test) {
+tape('Aggregate handles count aggregates', function(t) {
   var data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
@@ -105,11 +105,11 @@ tape('Aggregate handles count aggregates', function(test) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(Object.keys(d[0]).length, 3); // outputs
-  test.equal(d[0].count, 3);
-  test.equal(d[0].count_foo, 3);
-  test.equal(d[0].count_bar, 3);
+  t.equal(d.length, 1);
+  t.equal(Object.keys(d[0]).length, 3); // outputs
+  t.equal(d[0].count, 3);
+  t.equal(d[0].count_foo, 3);
+  t.equal(d[0].count_bar, 3);
 
   // multiple counts plus other measures
   df = new vega.Dataflow();
@@ -123,18 +123,18 @@ tape('Aggregate handles count aggregates', function(test) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(Object.keys(d[0]).length, 4); // outputs
-  test.equal(d[0].count, 3);
-  test.equal(d[0].sum_foo, 6);
-  test.equal(d[0].sum_bar, 9);
-  test.equal(d[0].count_bar, 3);
+  t.equal(d.length, 1);
+  t.equal(Object.keys(d[0]).length, 4); // outputs
+  t.equal(d[0].count, 3);
+  t.equal(d[0].sum_foo, 6);
+  t.equal(d[0].sum_bar, 9);
+  t.equal(d[0].count_bar, 3);
 
-  test.end();
+  t.end();
 });
 
 
-tape('Aggregate properly handles empty aggregation cells', function(test) {
+tape('Aggregate properly handles empty aggregation cells', function(t) {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -154,28 +154,28 @@ tape('Aggregate properly handles empty aggregation cells', function(test) {
 
   // -- add data
   df.pulse(col, changeset().insert(data)).run();
-  test.equal(out.value.length, 2);
+  t.equal(out.value.length, 2);
 
   // -- remove category 'b'
   df.pulse(col, changeset()
     .remove(function(d) { return d.k === 'b'; })).run();
-  test.equal(out.value.length, 1);
+  t.equal(out.value.length, 1);
 
   // -- modify tuple
   df.pulse(col, changeset().modify(data[0], 'v', 2)).run();
 
   var d = out.value;
-  test.equal(d.length, 1);
-  test.equal(d[0].k, 'a');
-  test.equal(d[0].count_v, 2);
-  test.equal(d[0].sum_v, 4);
-  test.equal(d[0].min_v, 2);
-  test.equal(d[0].max_v, 2);
+  t.equal(d.length, 1);
+  t.equal(d[0].k, 'a');
+  t.equal(d[0].count_v, 2);
+  t.equal(d[0].sum_v, 4);
+  t.equal(d[0].min_v, 2);
+  t.equal(d[0].max_v, 2);
 
-  test.end();
+  t.end();
 });
 
-tape('Aggregate handles distinct aggregates', function(test) {
+tape('Aggregate handles distinct aggregates', function(t) {
   var data = [
     {foo:null},
     {foo:null},
@@ -202,23 +202,23 @@ tape('Aggregate handles distinct aggregates', function(test) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(d[0].distinct_foo, 4);
+  t.equal(d.length, 1);
+  t.equal(d[0].distinct_foo, 4);
 
   df.pulse(col, changeset().remove(data[0])).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(d[0].distinct_foo, 4);
+  t.equal(d.length, 1);
+  t.equal(d[0].distinct_foo, 4);
 
   df.pulse(col, changeset().remove(data[1])).run();
   d = out.value;
-  test.equal(d.length, 1);
-  test.equal(d[0].distinct_foo, 3);
+  t.equal(d.length, 1);
+  t.equal(d[0].distinct_foo, 3);
 
-  test.end();
+  t.end();
 });
 
-tape('Aggregate handles cross-product', function(test) {
+tape('Aggregate handles cross-product', function(t) {
   var data = [
     {a: 0, b: 2},
     {a: 1, b: 3}
@@ -241,70 +241,70 @@ tape('Aggregate handles cross-product', function(test) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  test.equal(d.length, 4);
-  test.equal(d[0].a, 0);
-  test.equal(d[0].b, 2);
-  test.equal(d[0].count, 1);
-  test.equal(d[1].a, 0);
-  test.equal(d[1].b, 3);
-  test.equal(d[1].count, 0);
-  test.equal(d[2].a, 1);
-  test.equal(d[2].b, 2);
-  test.equal(d[2].count, 0);
-  test.equal(d[3].a, 1);
-  test.equal(d[3].b, 3);
-  test.equal(d[3].count, 1);
+  t.equal(d.length, 4);
+  t.equal(d[0].a, 0);
+  t.equal(d[0].b, 2);
+  t.equal(d[0].count, 1);
+  t.equal(d[1].a, 0);
+  t.equal(d[1].b, 3);
+  t.equal(d[1].count, 0);
+  t.equal(d[2].a, 1);
+  t.equal(d[2].b, 2);
+  t.equal(d[2].count, 0);
+  t.equal(d[3].a, 1);
+  t.equal(d[3].b, 3);
+  t.equal(d[3].count, 1);
 
   // -- test mod
   df.pulse(col, changeset().modify(data[0], 'b', 4)).run();
   d = out.value;
-  test.equal(d.length, 6);
-  test.equal(d[0].a, 0);
-  test.equal(d[0].b, 2);
-  test.equal(d[0].count, 0);
-  test.equal(d[1].a, 0);
-  test.equal(d[1].b, 3);
-  test.equal(d[1].count, 0);
-  test.equal(d[2].a, 0);
-  test.equal(d[2].b, 4);
-  test.equal(d[2].count, 1);
-  test.equal(d[3].a, 1);
-  test.equal(d[3].b, 2);
-  test.equal(d[3].count, 0);
-  test.equal(d[4].a, 1);
-  test.equal(d[4].b, 3);
-  test.equal(d[4].count, 1);
-  test.equal(d[5].a, 1);
-  test.equal(d[5].b, 4);
-  test.equal(d[5].count, 0);
+  t.equal(d.length, 6);
+  t.equal(d[0].a, 0);
+  t.equal(d[0].b, 2);
+  t.equal(d[0].count, 0);
+  t.equal(d[1].a, 0);
+  t.equal(d[1].b, 3);
+  t.equal(d[1].count, 0);
+  t.equal(d[2].a, 0);
+  t.equal(d[2].b, 4);
+  t.equal(d[2].count, 1);
+  t.equal(d[3].a, 1);
+  t.equal(d[3].b, 2);
+  t.equal(d[3].count, 0);
+  t.equal(d[4].a, 1);
+  t.equal(d[4].b, 3);
+  t.equal(d[4].count, 1);
+  t.equal(d[5].a, 1);
+  t.equal(d[5].b, 4);
+  t.equal(d[5].count, 0);
 
   // -- test rem
   df.pulse(col, changeset().remove(data)).run();
   d = out.value;
-  test.equal(d.length, 6);
-  test.equal(d[0].a, 0);
-  test.equal(d[0].b, 2);
-  test.equal(d[0].count, 0);
-  test.equal(d[1].a, 0);
-  test.equal(d[1].b, 3);
-  test.equal(d[1].count, 0);
-  test.equal(d[2].a, 0);
-  test.equal(d[2].b, 4);
-  test.equal(d[2].count, 0);
-  test.equal(d[3].a, 1);
-  test.equal(d[3].b, 2);
-  test.equal(d[3].count, 0);
-  test.equal(d[4].a, 1);
-  test.equal(d[4].b, 3);
-  test.equal(d[4].count, 0);
-  test.equal(d[5].a, 1);
-  test.equal(d[5].b, 4);
-  test.equal(d[5].count, 0);
+  t.equal(d.length, 6);
+  t.equal(d[0].a, 0);
+  t.equal(d[0].b, 2);
+  t.equal(d[0].count, 0);
+  t.equal(d[1].a, 0);
+  t.equal(d[1].b, 3);
+  t.equal(d[1].count, 0);
+  t.equal(d[2].a, 0);
+  t.equal(d[2].b, 4);
+  t.equal(d[2].count, 0);
+  t.equal(d[3].a, 1);
+  t.equal(d[3].b, 2);
+  t.equal(d[3].count, 0);
+  t.equal(d[4].a, 1);
+  t.equal(d[4].b, 3);
+  t.equal(d[4].count, 0);
+  t.equal(d[5].a, 1);
+  t.equal(d[5].b, 4);
+  t.equal(d[5].count, 0);
 
-  test.end();
+  t.end();
 });
 
-tape('Aggregate handles empty/invalid data', function(test) {
+tape('Aggregate handles empty/invalid data', function(t) {
   var ops = [
     'count',
     'valid',
@@ -333,8 +333,8 @@ tape('Aggregate handles empty/invalid data', function(test) {
   var d = out.value[0];
 
   ops.forEach(function(op, i) {
-    test.equal(d[op], res[i], op);
+    t.equal(d[op], res[i], op);
   });
 
-  test.end();
+  t.end();
 });

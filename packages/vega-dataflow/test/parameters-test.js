@@ -1,48 +1,48 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Parameters handles parameter values', function(test) {
+tape('Parameters handles parameter values', function(t) {
   var p = new vega.Parameters;
 
   // test initial state
-  test.equal(p.modified('foo'), false);
-  test.equal(p.modified('bar', 1), false);
-  test.equal(p.modified(['foo', 'bar']), false);
+  t.equal(p.modified('foo'), false);
+  t.equal(p.modified('bar', 1), false);
+  t.equal(p.modified(['foo', 'bar']), false);
 
   // test scalar parameter
-  test.equal(p.set('foo', -1, 3), p);
-  test.equal(p.modified('foo'), true);
-  test.equal(p.modified('foo', -1), true);
-  test.equal(p.modified('foo', null), true);
-  test.equal(p.modified('foo', undefined), true);
-  test.equal(p.modified('foo', 0), false);
-  test.equal(p.modified('foo', 1), false);
-  test.equal(p.foo, 3);
+  t.equal(p.set('foo', -1, 3), p);
+  t.equal(p.modified('foo'), true);
+  t.equal(p.modified('foo', -1), true);
+  t.equal(p.modified('foo', null), true);
+  t.equal(p.modified('foo', undefined), true);
+  t.equal(p.modified('foo', 0), false);
+  t.equal(p.modified('foo', 1), false);
+  t.equal(p.foo, 3);
 
   // test array parameter
   var bar = ['a', 'b', 'c'];
-  test.equal(p.set('bar', -1, bar), p);
-  test.equal(p.modified('bar'), true);
-  test.equal(p.modified('bar', 0), true);
-  test.equal(p.modified('bar', 1), true);
-  test.equal(p.modified('bar', 2), true);
-  test.equal(p.modified('bar', 3), false);
+  t.equal(p.set('bar', -1, bar), p);
+  t.equal(p.modified('bar'), true);
+  t.equal(p.modified('bar', 0), true);
+  t.equal(p.modified('bar', 1), true);
+  t.equal(p.modified('bar', 2), true);
+  t.equal(p.modified('bar', 3), false);
 
   // test clear
-  test.equal(p.clear(), p);
-  test.equal(p.modified('foo'), false);
-  test.equal(p.modified('bar'), false);
-  test.equal(p.modified('bar', 0), false);
-  test.equal(p.modified('bar', 1), false);
-  test.equal(p.modified('bar', 2), false);
+  t.equal(p.clear(), p);
+  t.equal(p.modified('foo'), false);
+  t.equal(p.modified('bar'), false);
+  t.equal(p.modified('bar', 0), false);
+  t.equal(p.modified('bar', 1), false);
+  t.equal(p.modified('bar', 2), false);
 
   // test array index parameter
-  test.equal(p.set('bar', 1, 'd'), p);
-  test.equal(p.modified('foo'), false);
-  test.equal(p.modified('bar'), true);
-  test.equal(p.modified('bar', 0), false);
-  test.equal(p.modified('bar', 1), true);
-  test.equal(p.modified('bar', 2), false);
+  t.equal(p.set('bar', 1, 'd'), p);
+  t.equal(p.modified('foo'), false);
+  t.equal(p.modified('bar'), true);
+  t.equal(p.modified('bar', 0), false);
+  t.equal(p.modified('bar', 1), true);
+  t.equal(p.modified('bar', 2), false);
 
-  test.end();
+  t.end();
 });

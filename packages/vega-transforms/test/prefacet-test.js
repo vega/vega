@@ -7,7 +7,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     PreFacet = tx.prefacet;
 
-tape('PreFacet partitions pre-faceted tuple sets', function(test) {
+tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   var data = [
     {"id": "a", "tuples": [{x:1},{x:2}]},
     {"id": "b", "tuples": [{x:3},{x:4}]},
@@ -33,54 +33,54 @@ tape('PreFacet partitions pre-faceted tuple sets', function(test) {
 
   // -- test add
   df.pulse(source, changeset().insert(data)).run();
-  test.equal(facet.targets().active, 3); // 3 subflows updated
-  test.equal(subs.length, 3); // 3 subflows added
-  test.equal(subs[0].key, tupleid(data[0]));
-  test.equal(subs[1].key, tupleid(data[1]));
-  test.equal(subs[2].key, tupleid(data[2]));
-  test.deepEqual(values(0), [1, 2]);
-  test.deepEqual(values(1), [3, 4]);
-  test.deepEqual(values(2), [5, 6]);
-  test.ok(tupleid(subs[0].data.value[0]));
-  test.ok(tupleid(subs[0].data.value[1]));
-  test.ok(tupleid(subs[1].data.value[0]));
-  test.ok(tupleid(subs[1].data.value[1]));
-  test.ok(tupleid(subs[2].data.value[0]));
-  test.ok(tupleid(subs[2].data.value[1]));
+  t.equal(facet.targets().active, 3); // 3 subflows updated
+  t.equal(subs.length, 3); // 3 subflows added
+  t.equal(subs[0].key, tupleid(data[0]));
+  t.equal(subs[1].key, tupleid(data[1]));
+  t.equal(subs[2].key, tupleid(data[2]));
+  t.deepEqual(values(0), [1, 2]);
+  t.deepEqual(values(1), [3, 4]);
+  t.deepEqual(values(2), [5, 6]);
+  t.ok(tupleid(subs[0].data.value[0]));
+  t.ok(tupleid(subs[0].data.value[1]));
+  t.ok(tupleid(subs[1].data.value[0]));
+  t.ok(tupleid(subs[1].data.value[1]));
+  t.ok(tupleid(subs[2].data.value[0]));
+  t.ok(tupleid(subs[2].data.value[1]));
 
   // -- test rem
   df.pulse(source, changeset().remove(data[0])).run();
-  test.equal(facet.targets().active, 1); // 1 subflow updated
-  test.equal(subs.length, 3); // no new subflows added
-  test.deepEqual(values(0), []);
-  test.deepEqual(values(1), [3, 4]);
-  test.deepEqual(values(2), [5, 6]);
+  t.equal(facet.targets().active, 1); // 1 subflow updated
+  t.equal(subs.length, 3); // no new subflows added
+  t.deepEqual(values(0), []);
+  t.deepEqual(values(1), [3, 4]);
+  t.deepEqual(values(2), [5, 6]);
 
   // -- test add - repopulate subflow
   df.pulse(source, changeset().insert(data[0])).run();
-  test.equal(facet.targets().active, 1); // 1 subflow updated
-  test.equal(subs.length, 3); // no new subflows added
-  test.deepEqual(values(0), [1, 2]);
-  test.deepEqual(values(1), [3, 4]);
-  test.deepEqual(values(2), [5, 6]);
+  t.equal(facet.targets().active, 1); // 1 subflow updated
+  t.equal(subs.length, 3); // no new subflows added
+  t.deepEqual(values(0), [1, 2]);
+  t.deepEqual(values(1), [3, 4]);
+  t.deepEqual(values(2), [5, 6]);
 
   // -- test add - new subflow
   df.pulse(source, changeset()
     .insert({"key": "d", "tuples": [{x:7},{x:8}]}))
     .run();
-  test.equal(facet.targets().active, 1); // 1 subflow updated
-  test.equal(subs.length, 4); // 1 subflow added
-  test.deepEqual(values(0), [1, 2]);
-  test.deepEqual(values(1), [3, 4]);
-  test.deepEqual(values(2), [5, 6]);
-  test.deepEqual(values(3), [7, 8]);
-  test.ok(tupleid(subs[3].data.value[0]));
-  test.ok(tupleid(subs[3].data.value[1]));
+  t.equal(facet.targets().active, 1); // 1 subflow updated
+  t.equal(subs.length, 4); // 1 subflow added
+  t.deepEqual(values(0), [1, 2]);
+  t.deepEqual(values(1), [3, 4]);
+  t.deepEqual(values(2), [5, 6]);
+  t.deepEqual(values(3), [7, 8]);
+  t.ok(tupleid(subs[3].data.value[0]));
+  t.ok(tupleid(subs[3].data.value[1]));
 
-  test.end();
+  t.end();
 });
 
-tape('PreFacet raises error if tuple sets are modified', function(test) {
+tape('PreFacet raises error if tuple sets are modified', function(t) {
   var data = [
     {"id": "a", "tuples": [{x:1},{x:2}]},
     {"id": "b", "tuples": [{x:3},{x:4}]},
@@ -104,7 +104,7 @@ tape('PreFacet raises error if tuple sets are modified', function(test) {
   // -- test mod contents
   df.pulse(source, changeset().modify(data[0], 'tuples', []))
     .runAsync()
-    .then(() => test.ok(false, 'should not reach'))
-    .catch(() => test.ok(true, 'should reach'))
-    .then(() => test.end());
+    .then(() => t.ok(false, 'should not reach'))
+    .catch(() => t.ok(true, 'should reach'))
+    .then(() => t.end());
 });

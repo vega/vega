@@ -1,17 +1,17 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('scheme registers a single color scheme', function(test) {
+tape('scheme registers a single color scheme', function(t) {
   var name = 'rgb',
       colors = ['#f00', '#0f0', '#00f'];
 
-  test.equal(vega.scheme(name), undefined);
+  t.equal(vega.scheme(name), undefined);
   vega.scheme(name, colors);
-  test.deepEqual(vega.scheme(name), colors);
-  test.end();
+  t.deepEqual(vega.scheme(name), colors);
+  t.end();
 });
 
-tape('schemeDiscretized registers discretized color schemes', function(test) {
+tape('schemeDiscretized registers discretized color schemes', function(t) {
   var name = 'rgbd',
       colors = [
         ['#f00'],
@@ -19,9 +19,9 @@ tape('schemeDiscretized registers discretized color schemes', function(test) {
         ['#f00', '#0f0', '#00f']
       ];
 
-  test.equal(vega.schemeDiscretized(name), undefined);
+  t.equal(vega.schemeDiscretized(name), undefined);
   vega.schemeDiscretized(name, colors);
-  test.deepEqual(vega.schemeDiscretized(name), colors);
-  test.equal(typeof vega.scheme(name), 'function');
-  test.end();
+  t.deepEqual(vega.schemeDiscretized(name), colors);
+  t.equal(typeof vega.scheme(name), 'function');
+  t.end();
 });

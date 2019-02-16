@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Pivot = tx.pivot;
 
-tape('Pivot pivots values', function(test) {
+tape('Pivot pivots values', function(t) {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -28,50 +28,50 @@ tape('Pivot pivots values', function(test) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 3);
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 1);
-  test.equal(d[0].v, 2);
-  test.equal(d[1].a, 'B');
-  test.equal(d[1].u, 3);
-  test.equal(d[1].v, 4);
-  test.equal(d[2].a, 'C');
-  test.equal(d[2].u, 5);
-  test.equal(d[2].v, 6);
+  t.equal(d.length, 3);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 1);
+  t.equal(d[0].v, 2);
+  t.equal(d[1].a, 'B');
+  t.equal(d[1].u, 3);
+  t.equal(d[1].v, 4);
+  t.equal(d[2].a, 'C');
+  t.equal(d[2].u, 5);
+  t.equal(d[2].v, 6);
 
   // -- process mods
   df.pulse(c0, changeset().modify(data[1], 'c', 9)).run();
   d = out.value;
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 1);
-  test.equal(d[0].v, 9);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 1);
+  t.equal(d[0].v, 9);
 
   // -- process block rems
   df.pulse(c0, changeset().remove(data.slice(4))).run();
   d = out.value;
-  test.equal(d.length, 2);
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 1);
-  test.equal(d[0].v, 9);
-  test.equal(d[1].a, 'B');
-  test.equal(d[1].u, 3);
-  test.equal(d[1].v, 4);
+  t.equal(d.length, 2);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 1);
+  t.equal(d[0].v, 9);
+  t.equal(d[1].a, 'B');
+  t.equal(d[1].u, 3);
+  t.equal(d[1].v, 4);
 
   // -- process partial rems
   df.pulse(c0, changeset().remove([data[0], data[3]])).run();
   d = out.value;
-  test.equal(d.length, 2);
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 0);
-  test.equal(d[0].v, 9);
-  test.equal(d[1].a, 'B');
-  test.equal(d[1].u, 3);
-  test.equal(d[1].v, 0);
+  t.equal(d.length, 2);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 0);
+  t.equal(d[0].v, 9);
+  t.equal(d[1].a, 'B');
+  t.equal(d[1].u, 3);
+  t.equal(d[1].v, 0);
 
-  test.end();
+  t.end();
 });
 
-tape('Pivot pivots values within limit', function(test) {
+tape('Pivot pivots values within limit', function(t) {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -93,22 +93,22 @@ tape('Pivot pivots values within limit', function(test) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 2);
-  test.equal(Object.keys(d[0]).length, 3);
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 1);
-  test.equal(d[0].v, 2);
-  test.equal(d[0].w, undefined);
-  test.equal(Object.keys(d[1]).length, 3);
-  test.equal(d[1].a, 'B');
-  test.equal(d[1].u, 4);
-  test.equal(d[1].v, 5);
-  test.equal(d[1].w, undefined);
+  t.equal(d.length, 2);
+  t.equal(Object.keys(d[0]).length, 3);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 1);
+  t.equal(d[0].v, 2);
+  t.equal(d[0].w, undefined);
+  t.equal(Object.keys(d[1]).length, 3);
+  t.equal(d[1].a, 'B');
+  t.equal(d[1].u, 4);
+  t.equal(d[1].v, 5);
+  t.equal(d[1].w, undefined);
 
-  test.end();
+  t.end();
 });
 
-tape('Pivot handles count aggregate', function(test) {
+tape('Pivot handles count aggregate', function(t) {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:null},
@@ -128,16 +128,16 @@ tape('Pivot handles count aggregate', function(test) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  test.equal(d.length, 3);
-  test.equal(d[0].a, 'A');
-  test.equal(d[0].u, 1);
-  test.equal(d[0].v, 1);
-  test.equal(d[1].a, 'B');
-  test.equal(d[1].u, 0);
-  test.equal(d[1].v, 1);
-  test.equal(d[2].a, 'C');
-  test.equal(d[2].u, 1);
-  test.equal(d[2].v, 0);
+  t.equal(d.length, 3);
+  t.equal(d[0].a, 'A');
+  t.equal(d[0].u, 1);
+  t.equal(d[0].v, 1);
+  t.equal(d[1].a, 'B');
+  t.equal(d[1].u, 0);
+  t.equal(d[1].v, 1);
+  t.equal(d[2].a, 'C');
+  t.equal(d[2].u, 1);
+  t.equal(d[2].v, 0);
 
-  test.end();
+  t.end();
 });

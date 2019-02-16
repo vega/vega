@@ -3,7 +3,7 @@ var tape = require('tape'),
     runtime = require('../'),
     events = require('./events');
 
-tape('Parser parses event streams', function(test) {
+tape('Parser parses event streams', function(t) {
 
   var spec = {
     streams: [
@@ -29,29 +29,29 @@ tape('Parser parses event streams', function(test) {
     streams[id].apply(function() { counts[i] += 1; });
   });
 
-  test.deepEqual(counts, [0,0,0,0,0,0,0]);
+  t.deepEqual(counts, [0,0,0,0,0,0,0]);
 
   df.fire('window', 'mousemove', {});
-  test.deepEqual(counts, [1,0,0,0,0,0,0]);
+  t.deepEqual(counts, [1,0,0,0,0,0,0]);
 
   df.fire('window', 'mousedown', {});
-  test.deepEqual(counts, [1,1,0,1,0,0,0]);
+  t.deepEqual(counts, [1,1,0,1,0,0,0]);
 
   df.fire('window', 'mouseup', {});
-  test.deepEqual(counts, [1,1,1,2,0,0,0]);
+  t.deepEqual(counts, [1,1,1,2,0,0,0]);
 
   df.fire('window', 'mousedown', {});
   df.fire('window', 'mousemove', {});
   df.fire('window', 'mousemove', {});
   df.fire('window', 'mouseup', {});
-  test.deepEqual(counts, [3,2,2,4,2,1,0]);
+  t.deepEqual(counts, [3,2,2,4,2,1,0]);
 
   df.fire('window', 'mousedown', {});
   df.fire('window', 'mousemove', {buttons: 1});
   df.fire('window', 'mouseup', {});
 
   setTimeout(function() {
-    test.deepEqual(counts, [4,3,3,6,3,1,1]);
-    test.end();
+    t.deepEqual(counts, [4,3,3,6,3,1,1]);
+    t.end();
   }, 105);
 });

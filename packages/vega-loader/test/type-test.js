@@ -29,90 +29,90 @@ var types = {
   e: 'number'
 };
 
-tape('inferType should infer booleans', function(test) {
-  test.equal(inferType(['true', 'false', NaN, null]), 'boolean');
-  test.equal(inferType([true, false, null]), 'boolean');
-  test.end();
+tape('inferType should infer booleans', function(t) {
+  t.equal(inferType(['true', 'false', NaN, null]), 'boolean');
+  t.equal(inferType([true, false, null]), 'boolean');
+  t.end();
 });
 
-tape('inferType should infer integers', function(test) {
-  test.equal(inferType(['0', '1', null, '3', NaN, undefined, '-5']), 'integer');
-  test.equal(inferType([1, 2, 3]), 'integer');
-  test.end();
+tape('inferType should infer integers', function(t) {
+  t.equal(inferType(['0', '1', null, '3', NaN, undefined, '-5']), 'integer');
+  t.equal(inferType([1, 2, 3]), 'integer');
+  t.end();
 });
 
-tape('inferType should infer numbers', function(test) {
-  test.equal(inferType(['0', '1', null, '3.1415', NaN, 'Infinity', '1e-5']), 'number');
-  test.equal(inferType([1, 2.2, 3]), 'number');
-  test.end();
+tape('inferType should infer numbers', function(t) {
+  t.equal(inferType(['0', '1', null, '3.1415', NaN, 'Infinity', '1e-5']), 'number');
+  t.equal(inferType([1, 2.2, 3]), 'number');
+  t.end();
 });
 
-tape('inferType should infer dates', function(test) {
-  test.equal(inferType(['1/1/2001', null, NaN, 'Jan 5, 2001']), 'date');
-  test.equal(inferType([new Date('1/1/2001'), null, new Date('Jan 5, 2001')]), 'date');
-  test.end();
+tape('inferType should infer dates', function(t) {
+  t.equal(inferType(['1/1/2001', null, NaN, 'Jan 5, 2001']), 'date');
+  t.equal(inferType([new Date('1/1/2001'), null, new Date('Jan 5, 2001')]), 'date');
+  t.end();
 });
 
-tape('inferType should infer strings when all else fails', function(test) {
-  test.equal(inferType(['hello', '', '1', 'true', null]), 'string');
-  test.end();
+tape('inferType should infer strings when all else fails', function(t) {
+  t.equal(inferType(['hello', '', '1', 'true', null]), 'string');
+  t.end();
 });
 
-tape('inferType should handle fields', function(test) {
+tape('inferType should handle fields', function(t) {
   var data = [
     {a:'1', b:'true'},
     {a:'2', b:'false'},
     {a:'3', b:null}
   ];
-  test.equal(inferType(data, 'a'), 'integer');
-  test.equal(inferType(data, 'b'), 'boolean');
-  test.end();
+  t.equal(inferType(data, 'a'), 'integer');
+  t.equal(inferType(data, 'b'), 'boolean');
+  t.end();
 });
 
-tape('inferTypes should infer types for all fields', function(test) {
-  test.deepEqual(inferTypes(data, fields), types);
-  test.deepEqual(inferTypes(strings, fields), types);
-  test.end();
+tape('inferTypes should infer types for all fields', function(t) {
+  t.deepEqual(inferTypes(data, fields), types);
+  t.deepEqual(inferTypes(strings, fields), types);
+  t.end();
 });
 
-tape('type parsers should parse booleans', function(test) {
-  test.equal(typeParsers.boolean('true'), true);
-  test.equal(typeParsers.boolean('false'), false);
-  test.equal(typeParsers.boolean(null), null);
-  test.end();
+tape('type parsers should parse booleans', function(t) {
+  t.equal(typeParsers.boolean('true'), true);
+  t.equal(typeParsers.boolean('false'), false);
+  t.equal(typeParsers.boolean(null), null);
+  t.end();
 });
 
-tape('type parsers should parse numbers', function(test) {
-  test.equal(typeParsers.number('1'), 1);
-  test.equal(typeParsers.number('3.14'), 3.14);
-  test.equal(typeParsers.number('1e2'), 100);
-  test.equal(typeParsers.number(null), null);
-  test.end();
+tape('type parsers should parse numbers', function(t) {
+  t.equal(typeParsers.number('1'), 1);
+  t.equal(typeParsers.number('3.14'), 3.14);
+  t.equal(typeParsers.number('1e2'), 100);
+  t.equal(typeParsers.number(null), null);
+  t.end();
 });
 
-tape('type parsers should parse date', function(test) {
-  test.equal(+typeParsers.date('1/1/2000'), +(new Date(2000, 0, 1)));
-  test.equal(typeParsers.date(null), null);
-  test.end();
+tape('type parsers should parse date', function(t) {
+  t.equal(+typeParsers.date('1/1/2000'), +(new Date(2000, 0, 1)));
+  t.equal(typeParsers.date(null), null);
+  t.end();
 });
 
-tape('type parsers should parse date with format', function(test) {
-  test.equal(
+tape('type parsers should parse date with format', function(t) {
+  t.equal(
     +typeParsers.date('18.07.1990', d3.timeParse('%d.%m.%Y')),
     +(new Date(1990, 6, 18))
   );
-  test.equal(
+  t.equal(
     +typeParsers.date('07.18.1990', d3.timeParse('%m.%d.%Y')),
     +(new Date(1990, 6, 18))
   );
-  test.equal(typeParsers.date(null, '%d.%m.%Y'), null);
-  test.end();
+  t.equal(typeParsers.date(null, '%d.%m.%Y'), null);
+  t.end();
 });
 
-tape('type parsers should parse strings', function(test) {
-  test.equal(typeParsers.string('a'), 'a');
-  test.equal(typeParsers.string('bb'), 'bb');
-  test.equal(typeParsers.string(''), null);
-  test.equal(typeParsers.string(null), null);
-  test.end();
+tape('type parsers should parse strings', function(t) {
+  t.equal(typeParsers.string('a'), 'a');
+  t.equal(typeParsers.string('bb'), 'bb');
+  t.equal(typeParsers.string(''), null);
+  t.equal(typeParsers.string(null), null);
+  t.end();
 });
