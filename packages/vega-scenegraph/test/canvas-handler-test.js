@@ -48,7 +48,7 @@ function event(name, x, y) {
   return evt;
 }
 
-tape('CanvasHandler should add/remove event callbacks', function(test) {
+tape('CanvasHandler should add/remove event callbacks', function(t) {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -63,48 +63,48 @@ tape('CanvasHandler should add/remove event callbacks', function(test) {
   handler.on(btype, f);
   handler.on(ctype, f);
 
-  test.equal(Object.keys(h).length, 2);
-  test.equal(array(h[atype]).length, 2);
-  test.equal(array(h[ctype]).length, 1);
+  t.equal(Object.keys(h).length, 2);
+  t.equal(array(h[atype]).length, 2);
+  t.equal(array(h[ctype]).length, 1);
 
-  test.equal(object(h[atype][0]).type, atype);
-  test.equal(object(h[atype][1]).type, btype);
-  test.equal(object(h[ctype][0]).type, ctype);
+  t.equal(object(h[atype][0]).type, atype);
+  t.equal(object(h[atype][1]).type, btype);
+  t.equal(object(h[ctype][0]).type, ctype);
 
-  test.equal(object(h[atype][0]).handler, f);
-  test.equal(object(h[atype][1]).handler, f);
-  test.equal(object(h[ctype][0]).handler, f);
+  t.equal(object(h[atype][0]).handler, f);
+  t.equal(object(h[atype][1]).handler, f);
+  t.equal(object(h[ctype][0]).handler, f);
 
   // remove event callback by type
   handler.off(atype);
 
-  test.equal(Object.keys(h).length, 2);
-  test.equal(array(h[atype]).length, 1);
-  test.equal(array(h[ctype]).length, 1);
+  t.equal(Object.keys(h).length, 2);
+  t.equal(array(h[atype]).length, 1);
+  t.equal(array(h[ctype]).length, 1);
 
-  test.equal(object(h[atype][0]).type, btype);
-  test.equal(object(h[ctype][0]).type, ctype);
+  t.equal(object(h[atype][0]).type, btype);
+  t.equal(object(h[ctype][0]).type, ctype);
 
-  test.equal(object(h[atype][0]).handler, f);
-  test.equal(object(h[ctype][0]).handler, f);
+  t.equal(object(h[atype][0]).handler, f);
+  t.equal(object(h[ctype][0]).handler, f);
 
   // remove all event callbacks
   handler.off(btype, f);
   handler.off(ctype, f);
 
-  test.equal(array(h[atype]).length, 0);
-  test.equal(array(h[ctype]).length, 0);
+  t.equal(array(h[atype]).length, 0);
+  t.equal(array(h[ctype]).length, 0);
 
-  test.end();
+  t.end();
 });
 
-tape('CanvasHandler should handle input events', function(test) {
+tape('CanvasHandler should handle input events', function(t) {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
-  test.equal(handler.scene(), scene);
+  t.equal(handler.scene(), scene);
 
   var canvas = handler.canvas();
   var count = 0;
@@ -113,7 +113,7 @@ tape('CanvasHandler should handle input events', function(test) {
   handler.events.forEach(function(name) {
     handler.on(name, increment);
   });
-  test.equal(handler.handlers().length, handler.events.length);
+  t.equal(handler.handlers().length, handler.events.length);
 
   handler.events.forEach(function(name) {
     canvas.dispatchEvent(event(name));
@@ -134,57 +134,57 @@ tape('CanvasHandler should handle input events', function(test) {
 
   // 12 events above + 8 triggered:
   //   2*(mouseover, mouseout) + 2*(dragenter, dragleave)
-  test.equal(count, handler.events.length + 20);
+  t.equal(count, handler.events.length + 20);
 
   handler.off('mousemove', {});
-  test.equal(handler.handlers().length, handler.events.length);
+  t.equal(handler.handlers().length, handler.events.length);
 
   handler.off('nonevent');
-  test.equal(handler.handlers().length, handler.events.length);
+  t.equal(handler.handlers().length, handler.events.length);
 
   handler.events.forEach(function(name) {
     handler.off(name, increment);
   });
-  test.equal(handler.handlers().length, 0);
-  test.end();
+  t.equal(handler.handlers().length, 0);
+  t.end();
 });
 
-tape('CanvasHandler should pick elements in scenegraph', function(test) {
+tape('CanvasHandler should pick elements in scenegraph', function(t) {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler().initialize(render(scene, 400, 200));
-  test.ok(handler.pick(scene, 20, 180, 20, 180));
-  test.notOk(handler.pick(scene, 0, 0, 0, 0));
-  test.notOk(handler.pick(scene, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(scene, 20, 180, 20, 180));
+  t.notOk(handler.pick(scene, 0, 0, 0, 0));
+  t.notOk(handler.pick(scene, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick arc mark', function(test) {
+tape('CanvasHandler should pick arc mark', function(t) {
   var mark = marks.arc;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 260, 300, 260, 300));
-  test.notOk(handler.pick(mark, 248, 250, 248, 250));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 260, 300, 260, 300));
+  t.notOk(handler.pick(mark, 248, 250, 248, 250));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick area mark', function(test) {
+tape('CanvasHandler should pick area mark', function(t) {
   var mark = marks['area-h'];
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 100, 150, 100, 150));
-  test.notOk(handler.pick(mark, 100, 50, 100, 50));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.ok(handler.pick(mark, 100, 150, 100, 150));
+  t.notOk(handler.pick(mark, 100, 50, 100, 50));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   mark = marks['area-v'];
   handler = new Handler().initialize(render(mark, 500, 500));
   handler.context().pixelRatio = 0.99; // for test coverage
-  test.ok(handler.pick(mark, 100, 100, 100, 100));
-  test.notOk(handler.pick(mark, 50, 50, 50, 50));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.ok(handler.pick(mark, 100, 100, 100, 100));
+  t.notOk(handler.pick(mark, 50, 50, 50, 50));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
-  test.end();
+  t.end();
 });
 
-tape('CanvasHandler should pick group mark', function(test) {
+tape('CanvasHandler should pick group mark', function(t) {
   var mark = {
     "marktype": "group",
     "name": "class-name",
@@ -193,99 +193,99 @@ tape('CanvasHandler should pick group mark', function(test) {
     ]
   };
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 50, 50, 50, 50));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 50, 50, 50, 50));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick image mark', function(test) {
+tape('CanvasHandler should pick image mark', function(t) {
   var mark = marks.image;
   renderAsync(mark, 500, 500, function(el) {
     var handler = new Handler().initialize(el);
-    test.ok(handler.pick(mark, 250, 150, 250, 150));
-    test.notOk(handler.pick(mark, 100, 305, 100, 305));
-    test.notOk(handler.pick(mark, 800, 800, 800, 800));
-    test.end();
+    t.ok(handler.pick(mark, 250, 150, 250, 150));
+    t.notOk(handler.pick(mark, 100, 305, 100, 305));
+    t.notOk(handler.pick(mark, 800, 800, 800, 800));
+    t.end();
   });
 });
 
-tape('CanvasHandler should pick line mark', function(test) {
+tape('CanvasHandler should pick line mark', function(t) {
   var mark = marks['line-2'];
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.notOk(handler.pick(mark, 100, 144, 100, 144));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.notOk(handler.pick(mark, 100, 144, 100, 144));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
-  test.ok(handler.pick(mark, 0, 144, 0, 144));
+  t.ok(handler.pick(mark, 0, 144, 0, 144));
 
   mark = marks['line-1'];
   handler = new Handler().initialize(render(mark, 500, 500));
-  test.notOk(handler.pick(mark, 100, 144, 100, 144));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.notOk(handler.pick(mark, 100, 144, 100, 144));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   // fake isPointInStroke until node canvas supports it
   g = handler.context();
   g.isPointInStroke = function() { return true; };
-  test.ok(handler.pick(mark, 0, 144, 0, 144));
+  t.ok(handler.pick(mark, 0, 144, 0, 144));
 
-  test.end();
+  t.end();
 });
 
-tape('CanvasHandler should pick path mark', function(test) {
+tape('CanvasHandler should pick path mark', function(t) {
   var mark = marks.path;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 150, 150, 150, 150));
-  test.notOk(handler.pick(mark, 200, 300, 300, 300));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 150, 150, 150, 150));
+  t.notOk(handler.pick(mark, 200, 300, 300, 300));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick rect mark', function(test) {
+tape('CanvasHandler should pick rect mark', function(t) {
   var mark = marks.rect;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 50, 50, 50, 50));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 50, 50, 50, 50));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick rule mark', function(test) {
+tape('CanvasHandler should pick rule mark', function(t) {
   var mark = marks.rule;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.notOk(handler.pick(mark, 100, 198, 100, 198));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.notOk(handler.pick(mark, 100, 198, 100, 198));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
-  test.ok(handler.pick(mark, 5, 0, 5, 0));
+  t.ok(handler.pick(mark, 5, 0, 5, 0));
 
-  test.end();
+  t.end();
 });
 
-tape('CanvasHandler should pick symbol mark', function(test) {
+tape('CanvasHandler should pick symbol mark', function(t) {
   var mark = marks.symbol;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 50, 90, 50, 90));
-  test.notOk(handler.pick(mark, 155, 22, 155, 22));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 50, 90, 50, 90));
+  t.notOk(handler.pick(mark, 155, 22, 155, 22));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should pick text mark', function(test) {
+tape('CanvasHandler should pick text mark', function(t) {
   var mark = marks.text;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  test.ok(handler.pick(mark, 3, 45, 3, 45));
-  test.ok(handler.pick(mark, 140, 160, 140, 160));
-  test.notOk(handler.pick(mark, 50, 120, 50, 120));
-  test.notOk(handler.pick(mark, 800, 800, 800, 800));
-  test.end();
+  t.ok(handler.pick(mark, 3, 45, 3, 45));
+  t.ok(handler.pick(mark, 140, 160, 140, 160));
+  t.notOk(handler.pick(mark, 50, 120, 50, 120));
+  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  t.end();
 });
 
-tape('CanvasHandler should not pick empty marks', function(test) {
+tape('CanvasHandler should not pick empty marks', function(t) {
   var scene = {marktype:'', items:[]};
   var types = [
     'arc',
@@ -304,8 +304,8 @@ tape('CanvasHandler should not pick empty marks', function(test) {
   for (i=0; i<types.length; ++i) {
     scene.marktype = types[i];
     handler = new Handler().initialize(render(scene, 500, 500));
-    test.equal(handler.pick(scene, 0, 0, 0, 0), null);
+    t.equal(handler.pick(scene, 0, 0, 0, 0), null);
   }
 
-  test.end();
+  t.end();
 });

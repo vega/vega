@@ -5,7 +5,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     changeset = vega.changeset;
 
-tape('Voronoi generates voronoi cell paths', function(test) {
+tape('Voronoi generates voronoi cell paths', function(t) {
   var data = [
     {x: 10, y: 10},
     {x: 20, y: 10}
@@ -24,7 +24,7 @@ tape('Voronoi generates voronoi cell paths', function(test) {
 
   df.pulse(c0, changeset().insert(data)).run();
   var out = vo.pulse.add;
-  test.equal(out[0].path, 'M15,20L15,0L0,0L0,20Z');
-  test.equal(out[1].path, 'M15,0L15,20L30,20L30,0Z');
-  test.end();
+  t.equal(out[0].path, 'M15,20L15,0L0,0L0,20Z');
+  t.equal(out[1].path, 'M15,0L15,20L30,20L30,0Z');
+  t.end();
 });

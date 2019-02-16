@@ -3,7 +3,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Force = require('../').force;
 
-tape('Force places points', function(test) {
+tape('Force places points', function(t) {
   var data = [
     {label: 'a'},
     {label: 'b'},
@@ -25,12 +25,12 @@ tape('Force places points', function(test) {
   });
 
   df.pulse(c0, vega.changeset().insert(data)).run();
-  test.equal(c0.value.length, data.length);
+  t.equal(c0.value.length, data.length);
 
   for (var i=0, n=data.length; i<n; ++i) {
-    test.ok(data[i].x != null && !isNaN(data[i].x));
-    test.ok(data[i].y != null && !isNaN(data[i].y));
+    t.ok(data[i].x != null && !isNaN(data[i].x));
+    t.ok(data[i].y != null && !isNaN(data[i].y));
   }
 
-  test.end();
+  t.end();
 });

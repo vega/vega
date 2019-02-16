@@ -5,7 +5,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Stratify = require('../').stratify;
 
-tape('Stratify tuples', function(test) {
+tape('Stratify tuples', function(t) {
   var data = [
     {id: 'a'},
     {id: 'b', pid: 'a'},
@@ -25,18 +25,18 @@ tape('Stratify tuples', function(test) {
 
   // build tree
   df.pulse(collect, changeset().insert(data)).run();
-  test.deepEqual(out.value.slice(), data);
+  t.deepEqual(out.value.slice(), data);
   var root = out.value.root;
-  test.equal(root.data, data[0]);
-  test.equal(root.children[0].data, data[1]);
-  test.equal(root.children[1].data, data[2]);
-  test.equal(root.children[1].children[0].data, data[3]);
-  test.equal(Object.keys(root.lookup).length, data.length);
+  t.equal(root.data, data[0]);
+  t.equal(root.children[0].data, data[1]);
+  t.equal(root.children[1].data, data[2]);
+  t.equal(root.children[1].children[0].data, data[3]);
+  t.equal(Object.keys(root.lookup).length, data.length);
 
-  test.end();
+  t.end();
 });
 
-tape('Stratify empty data', function(test) {
+tape('Stratify empty data', function(t) {
   // Setup tree stratification
   var df = new vega.Dataflow(),
       collect = df.add(Collect),
@@ -48,10 +48,10 @@ tape('Stratify empty data', function(test) {
       out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, changeset().insert([])).run();
-  test.equal(out.value.length, 0);
+  t.equal(out.value.length, 0);
   var root = out.value.root;
-  test.equal(root.children, undefined);
-  test.deepEqual(root.lookup, {});
+  t.equal(root.children, undefined);
+  t.deepEqual(root.lookup, {});
 
-  test.end();
+  t.end();
 });

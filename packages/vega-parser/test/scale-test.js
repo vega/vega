@@ -1,7 +1,7 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-tape('Parser parses Vega specs with scales', function(test) {
+tape('Parser parses Vega specs with scales', function(t) {
   var spec = {
     "width": 500,
     "height": 300,
@@ -54,8 +54,8 @@ tape('Parser parses Vega specs with scales', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.operators.length, 26);
-  test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
+  t.equal(dfs.operators.length, 26);
+  t.deepEqual(dfs.operators.map(function(o) { return o.type; }),
     ['operator', 'operator', 'operator', 'operator', 'operator',
      'operator', 'operator', 'operator',
      'collect', 'encode', 'sieve',
@@ -64,10 +64,10 @@ tape('Parser parses Vega specs with scales', function(test) {
      'field', 'aggregate', 'collect', 'compare', 'values',
      'extent', 'viewlayout', 'bound', 'render', 'sieve']);
 
-  test.end();
+  t.end();
 });
 
-tape('Parser parses Vega specs with multi-domain scales', function(test) {
+tape('Parser parses Vega specs with multi-domain scales', function(t) {
   var spec = {
     "data": [
       {
@@ -128,8 +128,8 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
 
   var dfs = parse(spec);
 
-  test.equal(dfs.operators.length, 32);
-  test.deepEqual(dfs.operators.map(function(o) { return o.type; }),
+  t.equal(dfs.operators.length, 32);
+  t.deepEqual(dfs.operators.map(function(o) { return o.type; }),
     ['operator', 'operator', 'operator', 'operator', 'operator',
      'collect', 'encode', 'sieve',
      'scale', 'scale', 'scale', 'scale',
@@ -139,6 +139,6 @@ tape('Parser parses Vega specs with multi-domain scales', function(test) {
      'extent', 'extent', 'multiextent', 'multiextent',
      'viewlayout', 'bound', 'render', 'sieve']);
 
-  test.end();
+  t.end();
 });
 

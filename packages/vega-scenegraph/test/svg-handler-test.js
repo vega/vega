@@ -57,7 +57,7 @@ function event(name, x, y) {
   return evt;
 }
 
-tape('SVGHandler should add/remove event callbacks', function(test) {
+tape('SVGHandler should add/remove event callbacks', function(t) {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -72,48 +72,48 @@ tape('SVGHandler should add/remove event callbacks', function(test) {
   handler.on(btype, f);
   handler.on(ctype, f);
 
-  test.equal(Object.keys(h).length, 2);
-  test.equal(array(h[atype]).length, 2);
-  test.equal(array(h[ctype]).length, 1);
+  t.equal(Object.keys(h).length, 2);
+  t.equal(array(h[atype]).length, 2);
+  t.equal(array(h[ctype]).length, 1);
 
-  test.equal(object(h[atype][0]).type, atype);
-  test.equal(object(h[atype][1]).type, btype);
-  test.equal(object(h[ctype][0]).type, ctype);
+  t.equal(object(h[atype][0]).type, atype);
+  t.equal(object(h[atype][1]).type, btype);
+  t.equal(object(h[ctype][0]).type, ctype);
 
-  test.equal(object(h[atype][0]).handler, f);
-  test.equal(object(h[atype][1]).handler, f);
-  test.equal(object(h[ctype][0]).handler, f);
+  t.equal(object(h[atype][0]).handler, f);
+  t.equal(object(h[atype][1]).handler, f);
+  t.equal(object(h[ctype][0]).handler, f);
 
   // remove event callback by type
   handler.off(atype);
 
-  test.equal(Object.keys(h).length, 2);
-  test.equal(array(h[atype]).length, 1);
-  test.equal(array(h[ctype]).length, 1);
+  t.equal(Object.keys(h).length, 2);
+  t.equal(array(h[atype]).length, 1);
+  t.equal(array(h[ctype]).length, 1);
 
-  test.equal(object(h[atype][0]).type, btype);
-  test.equal(object(h[ctype][0]).type, ctype);
+  t.equal(object(h[atype][0]).type, btype);
+  t.equal(object(h[ctype][0]).type, ctype);
 
-  test.equal(object(h[atype][0]).handler, f);
-  test.equal(object(h[ctype][0]).handler, f);
+  t.equal(object(h[atype][0]).handler, f);
+  t.equal(object(h[ctype][0]).handler, f);
 
   // remove all event callbacks
   handler.off(btype, f);
   handler.off(ctype, f);
 
-  test.equal(array(h[atype]).length, 0);
-  test.equal(array(h[ctype]).length, 0);
+  t.equal(array(h[atype]).length, 0);
+  t.equal(array(h[ctype]).length, 0);
 
-  test.end();
+  t.end();
 });
 
-tape('SVGHandler should handle input events', function(test) {
+tape('SVGHandler should handle input events', function(t) {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
-  test.equal(handler.scene(), scene);
+  t.equal(handler.scene(), scene);
 
   var svg = handler.canvas();
   var count = 0;
@@ -122,7 +122,7 @@ tape('SVGHandler should handle input events', function(test) {
   events.forEach(function(name) {
     handler.on(name, increment);
   });
-  test.equal(handler.handlers().length, events.length);
+  t.equal(handler.handlers().length, events.length);
 
   events.forEach(function(name) {
     svg.dispatchEvent(event(name));
@@ -141,18 +141,18 @@ tape('SVGHandler should handle input events', function(test) {
   svg.dispatchEvent(event('dragleave', 1, 1));
 
   // 11 events above + no sub-events from JSDOM
-  test.equal(count, events.length + 11);
+  t.equal(count, events.length + 11);
 
   handler.off('mousemove', {});
-  test.equal(handler.handlers().length, events.length);
+  t.equal(handler.handlers().length, events.length);
 
   handler.off('nonevent');
-  test.equal(handler.handlers().length, events.length);
+  t.equal(handler.handlers().length, events.length);
 
   events.forEach(function(name) {
     handler.off(name, increment);
   });
 
-  test.equal(handler.handlers().length, 0);
-  test.end();
+  t.equal(handler.handlers().length, 0);
+  t.end();
 });

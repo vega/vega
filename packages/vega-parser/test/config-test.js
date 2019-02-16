@@ -1,16 +1,16 @@
 var tape = require('tape'),
     config = require('../').config;
 
-tape('Config generates defaults', function(test) {
+tape('Config generates defaults', function(t) {
   var c = config();
 
-  test.equal(c.autosize, 'pad');
-  test.equal(c.style.point.shape, 'circle');
+  t.equal(c.autosize, 'pad');
+  t.equal(c.style.point.shape, 'circle');
 
-  test.end();
+  t.end();
 });
 
-tape('Config overrides with extended defaults', function(test) {
+tape('Config overrides with extended defaults', function(t) {
   var as = {type: 'pad', resize: 'true'};
 
   var c = config([
@@ -21,9 +21,9 @@ tape('Config overrides with extended defaults', function(test) {
     {axis: {gridDash: [2, 2]}},
   ]);
 
-  test.deepEqual(c.autosize, as);
-  test.equal(c.style.point.shape, 'square');
-  test.deepEqual(c.axis.gridDash, [2, 2]);
+  t.deepEqual(c.autosize, as);
+  t.equal(c.style.point.shape, 'square');
+  t.deepEqual(c.axis.gridDash, [2, 2]);
 
-  test.end();
+  t.end();
 });

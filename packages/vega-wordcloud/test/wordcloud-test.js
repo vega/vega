@@ -4,7 +4,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Wordcloud = require('../').wordcloud;
 
-tape('Wordcloud generates wordcloud layout', function(test) {
+tape('Wordcloud generates wordcloud layout', function(t) {
   var data = [
     {text: 'foo', size: 49, index: 0},
     {text: 'bar', size: 36, index: 1},
@@ -30,18 +30,18 @@ tape('Wordcloud generates wordcloud layout', function(test) {
   rot.set(function(t) { return angles[t.index]; });
 
   df.pulse(c0, vega.changeset().insert(data)).run();
-  test.equal(c0.value.length, data.length);
-  test.equal(wc.stamp, df.stamp());
+  t.equal(c0.value.length, data.length);
+  t.equal(wc.stamp, df.stamp());
 
   for (var i=0, n=data.length; i<n; ++i) {
-    test.ok(data[i].x != null && !isNaN(data[i].x));
-    test.ok(data[i].y != null && !isNaN(data[i].y));
-    test.equal(data[i].font, 'sans-serif');
-    test.equal(data[i].fontSize, Math.sqrt(data[i].size));
-    test.equal(data[i].fontStyle, 'normal');
-    test.equal(data[i].fontWeight, 'normal');
-    test.equal(data[i].angle, angles[i]);
+    t.ok(data[i].x != null && !isNaN(data[i].x));
+    t.ok(data[i].y != null && !isNaN(data[i].y));
+    t.equal(data[i].font, 'sans-serif');
+    t.equal(data[i].fontSize, Math.sqrt(data[i].size));
+    t.equal(data[i].fontStyle, 'normal');
+    t.equal(data[i].fontWeight, 'normal');
+    t.equal(data[i].angle, angles[i]);
   }
 
-  test.end();
+  t.end();
 });
