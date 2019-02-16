@@ -1,9 +1,11 @@
 // Functions
 
-type AccessorFn = (_: object) => any;
-export function accessor(fn: AccessorFn, fields?: string[], name?: string): AccessorFn;
-export function accessorFields(fn: Function): string[];
-export function accessorName(fn: Function): string;
+type Fn<R> = (...args: any[]) => R;
+export type AccessorFn<R = any> = Fn<R> & { fname?: string; fields: string[] };
+
+export function accessor<R>(fn: Fn<R>, fields?: string[], name?: string): AccessorFn<R>;
+export function accessorFields(fn: AccessorFn): string[];
+export function accessorName(fn: AccessorFn): string;
 
 export type Order = 'ascending' | 'descending';
 
@@ -46,8 +48,8 @@ export function toString(a: any): string;
 
 // Objects
 
-export function extend(target: object, ...source: object[]): object;
-export function inherits(child: object, parent: object): object;
+export function extend<T>(target: T, ...source: Partial<T>[]): T;
+export function inherits(child: ObjectConstructor, parent: ObjectConstructor): object;
 
 export interface FastMap {
   size: number;
