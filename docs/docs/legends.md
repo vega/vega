@@ -50,7 +50,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | labelOffset   | {% include type t="Number" %}  | Offset in pixels between legend labels their corresponding symbol or gradient. |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
-|labelSeparation| {% include type t="Number" %}  | {% include tag ver="5.0" %} The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.|
+|labelSeparation| {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | symbolFillColor | {% include type t="Color" %}  | Fill color for legend symbols. |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
 | symbolOpacity | {% include type t="Number" %}  | Opacity of legend symbols. {% include tag ver="4.1" %} |
@@ -59,6 +59,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | symbolStrokeWidth | {% include type t="Number" %} | Default legend symbol stroke width. |
 | symbolType    | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
 | tickCount     | {% include type t="Number|String|Object" %}  | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
+| tickMinStep   | {% include type t="Number" %}  | The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value. {% include tag ver="5.0" %} |
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment for legend title. |
 | titleBaseline | {% include type t="String" %}  | Vertical text baseline for legend title. |
