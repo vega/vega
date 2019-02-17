@@ -1,8 +1,13 @@
 const rollup = require('rollup'),
       json = require('rollup-plugin-json'),
       nodeResolve = require('rollup-plugin-node-resolve'),
-      externals = process.argv[2] === '-e',
-      output = externals ? 'vega-core.js' : 'vega.js';
+      externals = hasArgument('-e'),
+      esmod = hasArgument('-m'),
+      output = `vega${externals ? '-core' : ''}.${esmod ? 'mjs' : 'js'}`;
+
+function hasArgument(_) {
+  return process.argv.slice(2).some(a => a === _);
+}
 
 const external = [].concat(!externals ? [] : [
   'd3-array',
@@ -25,10 +30,19 @@ const external = [].concat(!externals ? [] : [
   'topojson-client'
 ]);
 
-const globals = external.reduce(function(map, _) {
-  map[_] = _.split('-')[0]; // map package name to prefix
-  return map;
-}, {});
+const options = {
+  file: 'build/' + output,
+  format: 'es'
+};
+
+if (!esmod) Object.assign(options, {
+  format: 'umd',
+  name: 'vega',
+  globals: external.reduce(function(map, _) {
+    map[_] = _.split('-')[0]; // map package name to prefix
+    return map;
+  }, {})
+});
 
 rollup.rollup({
   input: 'index.js',
@@ -44,12 +58,7 @@ rollup.rollup({
     }
   }
 }).then(function(bundle) {
-  return bundle.write({
-    file: 'build/' + output,
-    format: 'umd',
-    name: 'vega',
-    globals: globals
-  });
+  return bundle.write(options);
 }).then(function() {
   console.warn('↳ build/' + output);
 }).catch(abort);
