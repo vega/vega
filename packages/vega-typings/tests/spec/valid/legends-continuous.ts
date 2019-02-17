@@ -116,27 +116,6 @@ export const spec: Spec = {
       "range": {"scheme": {"signal": "seqScheme"}, "extent": [1, 0.2]},
       "domain": {"data": "table", "field": "u"}
     },
-    {
-      "name": "seq5",
-      "type": "linear",
-      "range": "diverging",
-      "domain": {"data": "table", "field": "u"},
-      "domainMid": 0
-    },
-    {
-      "name": "seq6",
-      "type": "linear",
-      "range": ["purple", "orange", "gold"],
-      "domain": {"data": "table", "field": "u"},
-      "domainMid": 2
-    },
-    {
-      "name": "seq7",
-      "type": "linear",
-      "range": ["purple", "orange", "gold"],
-      "domain": {"data": "table", "field": "u"},
-      "domainMid": 2
-    },
 
     {
       "name": "lin0",
