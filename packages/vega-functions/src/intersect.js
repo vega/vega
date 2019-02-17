@@ -4,8 +4,9 @@ import {array} from 'vega-util';
 export default function(b, opt, group) {
   if (!b) return [];
 
-  const scene = group || this.context.dataflow.scenegraph().root;
-  const box = new Bounds().set(b[0], b[1], b[2], b[3]);
+  const [u, v] = b,
+        box = new Bounds().set(u[0], u[1], v[0], v[1]),
+        scene = group || this.context.dataflow.scenegraph().root;
 
   return intersect(scene, box, filter(opt));
 }
