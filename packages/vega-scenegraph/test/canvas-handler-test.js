@@ -280,7 +280,8 @@ tape('CanvasHandler should pick text mark', function(t) {
   var handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 3, 45, 3, 45));
   t.ok(handler.pick(mark, 140, 160, 140, 160));
-  t.notOk(handler.pick(mark, 50, 120, 50, 120));
+  t.ok(handler.pick(mark, 49, 120, 49, 120));
+  t.notOk(handler.pick(mark, 52, 120, 52, 120));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
   t.end();
 });

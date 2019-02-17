@@ -1,6 +1,7 @@
 import Bounds from '../Bounds';
 import {DegToRad, HalfPi} from '../util/constants';
 import {font, offset, textMetrics, textValue} from '../util/text';
+import {intersectBoxLine} from '../util/intersect';
 import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
@@ -15,12 +16,9 @@ var textAlign = {
 
 var tempBounds = new Bounds();
 
-function attr(emit, item) {
-  var dx = item.dx || 0,
-      dy = (item.dy || 0) + offset(item),
-      x = item.x || 0,
+function anchorPoint(item) {
+  var x = item.x || 0,
       y = item.y || 0,
-      a = item.angle || 0,
       r = item.radius || 0, t;
 
   if (r) {
@@ -28,6 +26,19 @@ function attr(emit, item) {
     x += r * Math.cos(t);
     y += r * Math.sin(t);
   }
+
+  tempBounds.x1 = x;
+  tempBounds.y1 = y;
+  return tempBounds;
+}
+
+function attr(emit, item) {
+  var dx = item.dx || 0,
+      dy = (item.dy || 0) + offset(item),
+      p = anchorPoint(item),
+      x = p.x1,
+      y = p.y1,
+      a = item.angle || 0, t;
 
   emit('text-anchor', textAlign[item.align] || 'start');
 
@@ -40,21 +51,15 @@ function attr(emit, item) {
   emit('transform', t);
 }
 
-function bound(bounds, item, noRotate) {
+function bound(bounds, item, mode) {
   var h = textMetrics.height(item),
       a = item.align,
-      r = item.radius || 0,
-      x = item.x || 0,
-      y = item.y || 0,
+      p = anchorPoint(item),
+      x = p.x1,
+      y = p.y1,
       dx = item.dx || 0,
       dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
-      w, t;
-
-  if (r) {
-    t = (item.theta || 0) - HalfPi;
-    x += r * Math.cos(t);
-    y += r * Math.sin(t);
-  }
+      w;
 
   // horizontal alignment
   w = textMetrics.width(item);
@@ -67,15 +72,17 @@ function bound(bounds, item, noRotate) {
   }
 
   bounds.set(dx+=x, dy+=y, dx+w, dy+h);
-  if (item.angle && !noRotate) {
+  if (item.angle && !mode) {
     bounds.rotate(item.angle * DegToRad, x, y);
+  } else if (mode === 2) {
+    return bounds.rotatedPoints(item.angle * DegToRad, x, y);
   }
-  return bounds.expand(noRotate || !w ? 0 : 1);
+  return bounds.expand(mode || !w ? 0 : 1);
 }
 
 function draw(context, scene, bounds) {
   visit(scene, function(item) {
-    var opacity, x, y, r, t, str;
+    var opacity, p, x, y, str;
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     if (!(str = textValue(item))) return; // get text string
 
@@ -85,13 +92,9 @@ function draw(context, scene, bounds) {
     context.font = font(item);
     context.textAlign = item.align || 'left';
 
-    x = item.x || 0;
-    y = item.y || 0;
-    if ((r = item.radius)) {
-      t = (item.theta || 0) - HalfPi;
-      x += r * Math.cos(t);
-      y += r * Math.sin(t);
-    }
+    p = anchorPoint(item);
+    x = p.x1,
+    y = p.y1;
 
     if (item.angle) {
       context.save();
@@ -117,16 +120,25 @@ function hit(context, item, x, y, gx, gy) {
   if (!item.angle) return true; // bounds sufficient if no rotation
 
   // project point into space of unrotated bounds
-  var b = bound(tempBounds, item, true),
+  var p = anchorPoint(item),
+      ax = p.x1,
+      ay = p.y1,
+      b = bound(tempBounds, item, 1),
       a = -item.angle * DegToRad,
       cos = Math.cos(a),
       sin = Math.sin(a),
-      ix = item.x,
-      iy = item.y,
-      px = cos*gx - sin*gy + (ix - ix*cos + iy*sin),
-      py = sin*gx + cos*gy + (iy - ix*sin - iy*cos);
+      px = cos * gx - sin * gy + (ax - cos * ax + sin * ay),
+      py = sin * gx + cos * gy + (ay - sin * ax - cos * ay);
 
   return b.contains(px, py);
+}
+
+function intersectText(item, box) {
+  var p = bound(tempBounds, item, 2);
+  return intersectBoxLine(box, p[0], p[1], p[2], p[3])
+      || intersectBoxLine(box, p[0], p[1], p[4], p[5])
+      || intersectBoxLine(box, p[4], p[5], p[6], p[7])
+      || intersectBoxLine(box, p[2], p[3], p[6], p[7]);
 }
 
 export default {
@@ -136,5 +148,6 @@ export default {
   attr:   attr,
   bound:  bound,
   draw:   draw,
-  pick:   pick(hit)
+  pick:   pick(hit),
+  isect:  intersectText
 };

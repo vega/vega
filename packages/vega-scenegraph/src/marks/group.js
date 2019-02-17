@@ -1,5 +1,6 @@
 import {rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
+import {intersectRect} from '../util/intersect';
 import {visit, pickVisit} from '../util/visit';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
@@ -155,6 +156,7 @@ export default {
   bound:      bound,
   draw:       draw,
   pick:       pick,
+  isect:      intersectRect,
   background: background,
   foreground: foreground
 };

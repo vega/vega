@@ -10,7 +10,8 @@
     "license": "lerna exec -- cp ../../LICENSE .",
     "prepublishOnly": "yarn license",
     "serve": "http-server packages/vega/ -c-1 -p8080 -o",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "postinstall": "yarn data"
   },
   "devDependencies": {
     "@types/node": "^11.9.0",
@@ -28,7 +29,8 @@
     "tape": "^4.10.0",
     "terser": "^3.16.1",
     "tv4": "^1.3.0",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3",
+    "vega-datasets": "^1.22.0"
   },
   "workspaces": [
     "packages/*"

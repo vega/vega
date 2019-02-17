@@ -2,6 +2,7 @@ import boundStroke from '../bound/boundStroke';
 import context from '../bound/boundContext';
 import pathParse from '../path/parse';
 import pathRender from '../path/render';
+import {intersectPath} from '../util/intersect';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
 import {translateItem} from '../util/svg/transform';
@@ -35,5 +36,6 @@ export default {
   attr:   attr,
   bound:  bound,
   draw:   drawAll(path),
-  pick:   pickPath(path)
+  pick:   pickPath(path),
+  isect:  intersectPath(path)
 };
