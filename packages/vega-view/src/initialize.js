@@ -26,7 +26,7 @@ export default function(el, elBind) {
 
   // initialize signal bindings
   if (el) {
-    elBind = elBind ? lookup(view, elBind)
+    elBind = elBind ? (view._elBind = lookup(view, elBind))
       : el.appendChild(element('div', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
