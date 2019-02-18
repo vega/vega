@@ -9,7 +9,7 @@ var uri = 'data/flare.json';
 var url = base + uri;
 var rel = '//' + host + dir + uri;
 var file = './test/' + uri;
-var fake = 'http://globalhost/invalid.dne';
+var fake = 'https://vega.github.io/vega/dne.html';
 var text = require('fs').readFileSync(file, 'utf8');
 
 function sanityTest(t, uri, options, result) {
