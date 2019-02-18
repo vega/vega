@@ -66,7 +66,7 @@ Initializes internal rendering and event handling, then returns this view instan
 view.<b>loader</b>([<i>loader</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Get or set the [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images. If the loader is updated _after_ [initialize](#view_initialize) has been invoked, the visualization will be reinitialized. If a Vega View loads data from an external URL, the load request is made _immediately_ upon view construction. To ensure a custom loader is used, _provide the loader as a constructor option!_ Invoking this method will update the loader only _after_ initial data requests have been made.
+Get or set the [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images. If the loader is updated _after_ [initialize](#view_initialize) has been invoked, the visualization will be reinitialized. If a Vega View loads data from an external URL, the load request is made _immediately_ upon view construction. To ensure a custom loader is used, _provide the loader as a constructor option!_ Invoking this method will update the loader only _after_ initial data requests have been made. This method will reset the renderer; invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
@@ -79,7 +79,7 @@ Sets the current log level and returns this view instance. This method controls 
 view.<b>renderer</b>(<i>type</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and returns this view instance. While typically invoked immediately upon view creation, this method can be called at any time to change the renderer.
+Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and returns this view instance. While typically invoked immediately upon view creation, this method can be called at any time to change the renderer. Invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn.
 
 Additional renderer types may be used if registered via the [renderModule](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/modules.js) method exported by [vega-scenegraph](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/); for an example see the [vega-webgl-renderer](https://github.com/vega/vega-webgl-renderer).
 
@@ -87,7 +87,7 @@ Additional renderer types may be used if registered via the [renderModule](https
 view.<b>tooltip</b>(<i>tooltipHandler</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Get or set the tooltip handler function, which is invoked to handle display of tooltips (for example, when users hover the mouse cursor over an item). The *tooltipHandler* argument should be a function that respects the following method signature:
+Get or set the tooltip handler function, which is invoked to handle display of tooltips (for example, when users hover the mouse cursor over an item). This method will reset the renderer; invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn. The *tooltipHandler* argument should be a function that respects the following method signature:
 
 ```js
 function(handler, event, item, value) {
