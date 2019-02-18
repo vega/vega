@@ -122,7 +122,7 @@ Vega visualizations will be added to a parent DOM element. This element must be 
 
 ### <a name="ie"></a>Supporting Internet Explorer or Older Browsers
 
-Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaScript runtimes. This includes all major modern browsers, including Firefox, Chrome, Safari, and Edge, and server-side using Node.js. To run Vega in older browsers, such as Internet Explorer 10 or 11, you can use a JavaScript compiler such as [Babel](https://babeljs.io/) to generate ES5-compliant code.
+Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaScript runtimes. This includes all major modern browsers, including Firefox, Chrome, Safari, and Edge, and server-side using Node.js. Prior to version 4.4, Vega supported Internet Explorer 10 or 11 in conjunction with a set of polyfills; for more details, see the [supporting Internet Explorer](internet-explorer) documentation. Subsequent Vega versions do *not* directly support IE. To use the latest versions of Vega with IE, you can use a JavaScript compiler such as [Babel](https://babeljs.io/) to generate ES5-compliant code.
 
 [Back to reference](#reference)
 

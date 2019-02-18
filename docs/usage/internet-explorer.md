@@ -9,9 +9,9 @@ Vega version 4.3.0 and earlier is compatible with Internet Explorer versions 10 
 
 ## Enabling Internet Explorer Support
 
-Vega is compatible with Internet Explorer versions 10 and 11, but with caveats: Internet Explorer does not natively support [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol), [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), or the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). Vega uses Symbols to add unique identifiers to data objects, uses Promises for asynchronous tasks such as data and image loading, and uses Fetch to load external files.
+Internet Explorer does not natively support [Symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol), [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), or the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). Vega uses Symbols to add unique identifiers to data objects, uses Promises for asynchronous tasks such as data and image loading, and uses Fetch to load external files.
 
-For Vega to work correctly, deployments intended to support Internet Explorer should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol, Promise, and Fetch support. For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) and the [github/fetch](https://github.com/github/fetch) libraries. Web pages should first import any polyfill scripts, then import Vega:
+For Vega 4.3 and earlier to work with Internet Explorer, deployments should include [polyfills](https://en.wikipedia.org/wiki/Polyfill) that add Symbol, Promise, and Fetch support. For example, one can use the [es6-promise](https://github.com/stefanpenner/es6-promise) and the [github/fetch](https://github.com/github/fetch) libraries. Web pages should first import any polyfill scripts, then import Vega:
 
 ```html
 <head>
@@ -22,7 +22,7 @@ For Vega to work correctly, deployments intended to support Internet Explorer sh
 </head>
 ```
 
-Note that a polyfill is necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Symbol, Promise, and Fetch support.
+Note that polyfills are necessary only for Internet Explorer support. Recent versions of other browsers &ndash; including Edge (Internet Explorer's successor), Chrome, Safari, Firefox and Opera &ndash; all have native Symbol, Promise, and Fetch support.
 
 ## Limitations
 
