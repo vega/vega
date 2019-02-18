@@ -36,7 +36,7 @@ prototype.transform = function(_, pulse) {
       items = this.value,
       type  = _.type || Symbols,
       scale = _.scale,
-      count = _.count == null ? 5 : tickCount(scale, _.count),
+      count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
       format = _.format || tickFormat(scale, count, _.formatSpecifier),
       values = _.values || labelValues(scale, count, type),
       domain, fraction, size, offset;

@@ -3,7 +3,7 @@ var tape = require('tape'),
     vega = require('vega-dataflow'),
     Expr = require('../').expression;
 
-tape('Expression wraps expression functions', function(test) {
+tape('Expression wraps expression functions', function(t) {
   var df = new vega.Dataflow(),
       f = util.accessor(
             function(d, _) { return d.value + _.offset; },
@@ -13,16 +13,16 @@ tape('Expression wraps expression functions', function(test) {
       e = df.add(Expr, {expr: f, offset: o});
 
   df.run();
-  test.equal(typeof e.value, 'function');
-  test.equal(util.accessorName(e.value), 'shift');
-  test.deepEqual(util.accessorFields(e.value), ['value']);
-  test.equal(e.value({value: 2}), 4);
+  t.equal(typeof e.value, 'function');
+  t.equal(util.accessorName(e.value), 'shift');
+  t.deepEqual(util.accessorFields(e.value), ['value']);
+  t.equal(e.value({value: 2}), 4);
 
   df.update(o, 5).run();
-  test.equal(typeof e.value, 'function');
-  test.equal(util.accessorName(e.value), 'shift');
-  test.deepEqual(util.accessorFields(e.value), ['value']);
-  test.equal(e.value({value: 2}), 7);
+  t.equal(typeof e.value, 'function');
+  t.equal(util.accessorName(e.value), 'shift');
+  t.deepEqual(util.accessorFields(e.value), ['value']);
+  t.equal(e.value({value: 2}), 7);
 
-  test.end();
+  t.end();
 });

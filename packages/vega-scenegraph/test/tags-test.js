@@ -3,26 +3,26 @@ var tape = require('tape'),
     openTag = vega.openTag,
     closeTag = vega.closeTag;
 
-tape('should open tag', function(test) {
-  test.equal(openTag('g'), '<g>');
-  test.end();
+tape('should open tag', function(t) {
+  t.equal(openTag('g'), '<g>');
+  t.end();
 });
 
-tape('open tag should accept attributes', function(test) {
-  test.equal(openTag('g', {
+tape('open tag should accept attributes', function(t) {
+  t.equal(openTag('g', {
     foo: '1',
     bar: null,
     baz: 'a'
   }), '<g foo="1" baz="a">');
-  test.end();
+  t.end();
 });
 
-tape('open tag should accept raw extensions', function(test) {
-  test.equal(openTag('g', null, 'foo="1"'), '<g foo="1">');
-  test.end();
+tape('open tag should accept raw extensions', function(t) {
+  t.equal(openTag('g', null, 'foo="1"'), '<g foo="1">');
+  t.end();
 });
 
-tape('should close tag', function(test) {
-  test.equal(closeTag('g'), '</g>');
-  test.end();
+tape('should close tag', function(t) {
+  t.equal(closeTag('g'), '</g>');
+  t.end();
 });

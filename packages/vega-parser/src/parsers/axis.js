@@ -47,10 +47,11 @@ export default function(spec, scope) {
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({
-    scale:  scope.scaleRef(spec.scale),
-    extra:  scope.property(lookup('tickExtra', spec, config)),
-    count:  scope.objectProperty(spec.tickCount),
-    values: scope.objectProperty(spec.values),
+    scale:   scope.scaleRef(spec.scale),
+    extra:   scope.property(lookup('tickExtra', spec, config)),
+    count:   scope.objectProperty(spec.tickCount),
+    values:  scope.objectProperty(spec.values),
+    minstep: scope.property(spec.tickMinStep),
     formatSpecifier: scope.property(spec.format)
   })));
 

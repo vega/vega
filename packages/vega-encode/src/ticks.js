@@ -1,5 +1,5 @@
 import {isLogarithmic, timeInterval} from 'vega-scale';
-import {error, isObject, isString, peek} from 'vega-util';
+import {error, isNumber, isObject, isString, peek, span} from 'vega-util';
 import {
   format as numberFormat,
   formatSpecifier
@@ -9,10 +9,15 @@ import {
  * Determine the tick count or interval function.
  * @param {Scale} scale - The scale for which to generate tick values.
  * @param {*} count - The desired tick count or interval specifier.
+ * @param {number} minStep - The desired minimum step between tick values.
  * @return {*} - The tick count or interval function.
  */
-export function tickCount(scale, count) {
+export function tickCount(scale, count, minStep) {
   var step;
+
+  if (isNumber(count) && minStep != null) {
+    count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+  }
 
   if (isObject(count)) {
     step = count.step;

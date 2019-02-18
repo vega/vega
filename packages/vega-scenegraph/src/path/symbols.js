@@ -51,9 +51,9 @@ var builtins = {
   'arrow': {
     draw: function(context, size) {
       var r = Math.sqrt(size) / 2,
-          s = r / 3,
-          v = s / 2,
-          t = 2 * s;
+          s = r / 7,
+          t = r / 2.5,
+          v = r / 8;
       context.moveTo(-s, r);
       context.lineTo(s, r);
       context.lineTo(s, -v);
@@ -69,7 +69,7 @@ var builtins = {
       var r = Math.sqrt(size) / 2,
           h = HalfSqrt3 * r,
           o = (h - r * Tan30),
-          b = r / 2;
+          b = r / 4;
       context.moveTo(0, -h - o);
       context.lineTo(-b, h - o);
       context.lineTo(b, h - o);

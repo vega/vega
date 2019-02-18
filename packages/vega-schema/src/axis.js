@@ -8,6 +8,9 @@ import {
   booleanType, numberType, stringType, signalRef
 } from './util';
 
+// types defined elsewhere
+const guideEncodeRef = def('guideEncode');
+
 const overlapEnum = ['parity', 'greedy'];
 
 const labelOverlap = oneOf(
@@ -34,8 +37,6 @@ const axisOrientEnum = [
   'left',
   'right'
 ];
-
-const guideEncodeRef = def('guideEncode');
 
 const axis = object({
   _orient_: enums(axisOrientEnum),
@@ -80,6 +81,7 @@ const axis = object({
   tickWidth: numberValue,
   tickCount: tickCountRef,
   tickExtra: booleanOrSignal,
+  tickMinStep: numberOrSignal,
 
   // GRID CONFIG
   grid: booleanType,

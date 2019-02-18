@@ -1,80 +1,80 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('toBoolean parses booleans', function(test) {
-  test.equal(vega.toBoolean(null), null);
-  test.equal(vega.toBoolean(undefined), null);
-  test.equal(vega.toBoolean(''), null);
-  test.equal(vega.toBoolean('false'), false);
-  test.equal(vega.toBoolean('true'), true);
-  test.equal(vega.toBoolean('foo'), true);
-  test.equal(vega.toBoolean('1'), true);
-  test.equal(vega.toBoolean('0'), false);
-  test.equal(vega.toBoolean(0), false);
-  test.equal(vega.toBoolean(1), true);
-  test.equal(vega.toBoolean(false), false);
-  test.equal(vega.toBoolean(true), true);
-  test.end();
+tape('toBoolean parses booleans', function(t) {
+  t.equal(vega.toBoolean(null), null);
+  t.equal(vega.toBoolean(undefined), null);
+  t.equal(vega.toBoolean(''), null);
+  t.equal(vega.toBoolean('false'), false);
+  t.equal(vega.toBoolean('true'), true);
+  t.equal(vega.toBoolean('foo'), true);
+  t.equal(vega.toBoolean('1'), true);
+  t.equal(vega.toBoolean('0'), false);
+  t.equal(vega.toBoolean(0), false);
+  t.equal(vega.toBoolean(1), true);
+  t.equal(vega.toBoolean(false), false);
+  t.equal(vega.toBoolean(true), true);
+  t.end();
 });
 
-tape('toDate parses dates', function(test) {
+tape('toDate parses dates', function(t) {
   var now = Date.now(),
       d = new Date(now);
 
-  test.equal(vega.toDate(null), null);
-  test.equal(vega.toDate(undefined), null);
-  test.equal(vega.toDate(''), null);
-  test.equal(vega.toDate('1/1/2000'), Date.parse('1/1/2000'));
-  test.ok(isNaN(vega.toDate('foo')));
-  test.equal(vega.toDate(0), 0);
-  test.equal(vega.toDate(1), 1);
-  test.equal(vega.toDate(now), now);
-  test.equal(vega.toDate(d), d);
-  test.ok(isNaN(vega.toDate(true)));
-  test.ok(isNaN(vega.toDate(false)));
-  test.end();
+  t.equal(vega.toDate(null), null);
+  t.equal(vega.toDate(undefined), null);
+  t.equal(vega.toDate(''), null);
+  t.equal(vega.toDate('1/1/2000'), Date.parse('1/1/2000'));
+  t.ok(isNaN(vega.toDate('foo')));
+  t.equal(vega.toDate(0), 0);
+  t.equal(vega.toDate(1), 1);
+  t.equal(vega.toDate(now), now);
+  t.equal(vega.toDate(d), d);
+  t.ok(isNaN(vega.toDate(true)));
+  t.ok(isNaN(vega.toDate(false)));
+  t.end();
 });
 
-tape('toDate parses dates with custom parser', function(test) {
+tape('toDate parses dates with custom parser', function(t) {
   function parser(_) {
     return _ === 'epoch' ? 0 : NaN;
   }
 
-  test.equal(vega.toDate(null, parser), null);
-  test.equal(vega.toDate(undefined, parser), null);
-  test.equal(vega.toDate('', parser), null);
-  test.ok(isNaN(vega.toDate('1/1/2000', parser)));
-  test.ok(isNaN(vega.toDate('foo', parser)));
-  test.ok(isNaN(vega.toDate(Date.now(), parser)));
-  test.ok(isNaN(vega.toDate(new Date(), parser)));
-  test.equal(vega.toDate('epoch', parser), 0);
-  test.end();
+  t.equal(vega.toDate(null, parser), null);
+  t.equal(vega.toDate(undefined, parser), null);
+  t.equal(vega.toDate('', parser), null);
+  t.ok(isNaN(vega.toDate('1/1/2000', parser)));
+  t.ok(isNaN(vega.toDate('foo', parser)));
+  t.ok(isNaN(vega.toDate(Date.now(), parser)));
+  t.ok(isNaN(vega.toDate(new Date(), parser)));
+  t.equal(vega.toDate('epoch', parser), 0);
+  t.end();
 });
 
-tape('toNumber parses numbers', function(test) {
-  test.equal(vega.toNumber(null), null);
-  test.equal(vega.toNumber(undefined), null);
-  test.equal(vega.toNumber(''), null);
-  test.equal(vega.toNumber('0'), 0);
-  test.equal(vega.toNumber('1'), 1);
-  test.equal(vega.toNumber('1e5'), 1e5);
-  test.ok(isNaN(vega.toNumber('foo')));
-  test.equal(vega.toNumber(0), 0);
-  test.equal(vega.toNumber(1), 1);
-  test.equal(vega.toNumber(1e5), 1e5);
-  test.equal(vega.toNumber(true), 1);
-  test.equal(vega.toNumber(false), 0);
-  test.end();
+tape('toNumber parses numbers', function(t) {
+  t.equal(vega.toNumber(null), null);
+  t.equal(vega.toNumber(undefined), null);
+  t.equal(vega.toNumber(''), null);
+  t.equal(vega.toNumber('0'), 0);
+  t.equal(vega.toNumber('1'), 1);
+  t.equal(vega.toNumber('1e5'), 1e5);
+  t.ok(isNaN(vega.toNumber('foo')));
+  t.equal(vega.toNumber(0), 0);
+  t.equal(vega.toNumber(1), 1);
+  t.equal(vega.toNumber(1e5), 1e5);
+  t.equal(vega.toNumber(true), 1);
+  t.equal(vega.toNumber(false), 0);
+  t.end();
 });
 
-tape('toString parses strings', function(test) {
-  test.equal(vega.toString(null), null);
-  test.equal(vega.toString(undefined), null);
-  test.equal(vega.toString(''), null);
-  test.equal(vega.toString('a'), 'a');
-  test.equal(vega.toString(0), '0');
-  test.equal(vega.toString(1), '1');
-  test.equal(vega.toString(true), 'true');
-  test.equal(vega.toString(false), 'false');
-  test.end();
+tape('toString parses strings', function(t) {
+  t.equal(vega.toString(null), null);
+  t.equal(vega.toString(undefined), null);
+  t.equal(vega.toString(''), null);
+  t.equal(vega.toString('a'), 'a');
+  t.equal(vega.toString(0), '0');
+  t.equal(vega.toString(1), '1');
+  t.equal(vega.toString(true), 'true');
+  t.equal(vega.toString(false), 'false');
+  t.end();
 });

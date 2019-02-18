@@ -95,6 +95,10 @@ import {
 } from './inscope';
 
 import {
+  default as intersect
+} from './intersect';
+
+import {
   warn,
   info,
   debug
@@ -190,6 +194,7 @@ export const functionContext = {
   debug,
   extent,
   inScope,
+  intersect,
   clampRange,
   pinchDistance,
   pinchAngle,

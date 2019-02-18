@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 900,
   "height": 520,
   "autosize": "none",
@@ -57,7 +57,7 @@
     },
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "nice": true,
       "domain": {"data": "obesity", "field": "rate"},
       "range": "ramp"

@@ -12,130 +12,130 @@ var file = './test/' + uri;
 var fake = 'http://globalhost/invalid.dne';
 var text = require('fs').readFileSync(file, 'utf8');
 
-function sanityTest(test, uri, options, result) {
+function sanityTest(t, uri, options, result) {
   if (result != null) {
     return loader.sanitize(uri, options)
-      .then(function(opt) { test.equal(opt.href, result); })
-      .catch(function(e) { test.fail(e); });
+      .then(function(opt) { t.equal(opt.href, result); })
+      .catch(function(e) { t.fail(e); });
   } else {
     return loader.sanitize(uri, options)
-      .then(function() { test.fail(); })
-      .catch(function() { test.pass('fails appropriately'); });
+      .then(function() { t.fail(); })
+      .catch(function() { t.pass('fails appropriately'); });
   }
 }
 
-tape('loader should sanitize url', function(test) {
+tape('loader should sanitize url', function(t) {
   Promise.all([
-      sanityTest(test, 'a.txt', {mode: 'file'}, 'a.txt'),
-      sanityTest(test, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
-      sanityTest(test, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
-      sanityTest(test, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
-      sanityTest(test, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
-      sanityTest(test, undefined, {}, null),
-      sanityTest(test, null, {}, null)
+      sanityTest(t, 'a.txt', {mode: 'file'}, 'a.txt'),
+      sanityTest(t, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
+      sanityTest(t, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
+      sanityTest(t, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
+      sanityTest(t, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
+      sanityTest(t, undefined, {}, null),
+      sanityTest(t, null, {}, null)
     ])
-    .then(function() { test.end(); })
-    .catch(function() { test.end(); });
+    .then(function() { t.end(); })
+    .catch(function() { t.end(); });
 });
 
-tape('loader should resolve error for missing url', function(test) {
+tape('loader should resolve error for missing url', function(t) {
   loader.load(undefined)
-    .then(function() { test.fail(); test.end(); })
-    .catch(function() { test.pass('fails appropriately'); test.end(); });
+    .then(function() { t.fail(); t.end(); })
+    .catch(function() { t.pass('fails appropriately'); t.end(); });
 });
 
-tape('loader should resolve error for empty url string', function(test) {
+tape('loader should resolve error for empty url string', function(t) {
   loader.load('')
-    .then(function() { test.fail(); test.end(); })
-    .catch(function() { test.pass('fails appropriately'); test.end(); });
+    .then(function() { t.fail(); t.end(); })
+    .catch(function() { t.pass('fails appropriately'); t.end(); });
 });
 
-tape('loader should load from file path', function(test) {
+tape('loader should load from file path', function(t) {
   loader.load(file, {file: true})
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should infer file load in node', function(test) {
+tape('loader should infer file load in node', function(t) {
   loader.load(file)
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should load from file url', function(test) {
+tape('loader should load from file url', function(t) {
   loader.load('file://' + file)
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should load from http url', function(test) {
+tape('loader should load from http url', function(t) {
   loader.load(url)
     .then(function(data) {
-      test.equal(data, text);
-      test.end();
+      t.equal(data, text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should load from http with headers', function(test) {
+tape('loader should load from http with headers', function(t) {
   loader.load(url, {headers: {'User-Agent': 'vega'}})
     .then(function(data) {
-      test.equal(data, text);
-      test.end();
+      t.equal(data, text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should resolve error with invalid url', function(test) {
+tape('loader should resolve error with invalid url', function(t) {
   loader.load(url + '.invalid')
-    .then(function() { test.fail(); test.end(); })
-    .catch(function() { test.pass('fails appropriately'); test.end(); });
+    .then(function() { t.fail(); t.end(); })
+    .catch(function() { t.pass('fails appropriately'); t.end(); });
 });
 
-tape('loader should load from http base url + uri', function(test) {
+tape('loader should load from http base url + uri', function(t) {
   loader.load(uri, {mode: 'http', baseURL: base})
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should load from relative protocol http url', function(test) {
+tape('loader should load from relative protocol http url', function(t) {
   loader.load(rel)
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should load from relative protocol file url', function(test) {
+tape('loader should load from relative protocol file url', function(t) {
   loader.load('//'+file, {defaultProtocol: 'file'})
     .then(function(data) {
-      test.equal(data+'', text);
-      test.end();
+      t.equal(data+'', text);
+      t.end();
     })
-    .catch(function(e) { test.fail(e); test.end(); });
+    .catch(function(e) { t.fail(e); t.end(); });
 });
 
-tape('loader should resolve error for invalid protocol', function(test) {
+tape('loader should resolve error for invalid protocol', function(t) {
   loader.load('htsp://globalhost/invalid.dne')
-    .then(function() { test.fail(); test.end(); })
-    .catch(function() { test.pass('fails appropriately'); test.end(); });
+    .then(function() { t.fail(); t.end(); })
+    .catch(function() { t.pass('fails appropriately'); t.end(); });
 });
 
-tape('loader should resolve error on failed request', function(test) {
+tape('loader should resolve error on failed request', function(t) {
   loader.load(fake)
-    .then(function() { test.fail(); test.end(); })
-    .catch(function() { test.pass('fails appropriately'); test.end(); });
+    .then(function() { t.fail(); t.end(); })
+    .catch(function() { t.pass('fails appropriately'); t.end(); });
 });

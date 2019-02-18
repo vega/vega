@@ -8,7 +8,7 @@ import {
   numberType, stringType
 } from './util';
 
-// ???
+// types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
 const styleRef = ref('style');
 const labelOverlapRef = ref('labelOverlap');
@@ -56,6 +56,7 @@ const legendProps = object({
   format: stringOrSignal,
   title: stringOrSignal,
   tickCount: tickCountRef,
+  tickMinStep: numberOrSignal,
   values: arrayOrSignal,
   zindex: numberType,
 

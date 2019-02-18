@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -88,7 +88,7 @@
     },
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": {"signal": "palette"}},
       "domain": {"data": "temperature", "field": "temp"},
       "reverse": {"signal": "reverse"},

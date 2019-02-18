@@ -4,7 +4,7 @@ var tape = require('tape'),
     transforms = util.extend({}, require('vega-transforms'), require('vega-encode')),
     runtime = require('../');
 
-tape('Parser parses dataflow specs', function(test) {
+tape('Parser parses dataflow specs', function(t) {
   var values = [
     {"x": 1,  "y": 28},
     {"x": 2,  "y": 43},
@@ -29,36 +29,36 @@ tape('Parser parses dataflow specs', function(test) {
       ops = ctx.nodes,
       ids = Object.keys(ops);
 
-  test.equal(Object.keys(ctx.fn).length, 2);
-  test.equal(ids.length, spec.operators.length);
+  t.equal(Object.keys(ctx.fn).length, 2);
+  t.equal(ids.length, spec.operators.length);
 
   df.run();
 
-  test.equal(ids.reduce(function(sum, id) {
+  t.equal(ids.reduce(function(sum, id) {
     return sum + +(ops[id].stamp === df.stamp());
   }, 0), spec.operators.length);
 
-  test.equal(ops[0].value, 500);
+  t.equal(ops[0].value, 500);
 
-  test.equal(ops[1].value, 300);
+  t.equal(ops[1].value, 300);
 
-  test.equal(ops[2].value.length, values.length);
+  t.equal(ops[2].value.length, values.length);
 
-  test.equal(Object.keys(ops[3].value).length, 4);
+  t.equal(Object.keys(ops[3].value).length, 4);
 
-  test.deepEqual(ops[4].value.length, 4);
+  t.deepEqual(ops[4].value.length, 4);
 
-  test.deepEqual(ops[5].value, [1, 2, 3, 4]);
+  t.deepEqual(ops[5].value, [1, 2, 3, 4]);
 
   var sx = ops[6].value;
-  test.deepEqual(sx.domain(), [1, 2, 3, 4]);
-  test.deepEqual(sx.range(), [0, 500]);
+  t.deepEqual(sx.domain(), [1, 2, 3, 4]);
+  t.deepEqual(sx.range(), [0, 500]);
 
-  test.deepEqual(ops[7].value, [19, 81]);
+  t.deepEqual(ops[7].value, [19, 81]);
 
   var sy = ops[8].value;
-  test.deepEqual(sy.domain(), [19, 81]);
-  test.deepEqual(sy.range(), [300, 0]);
+  t.deepEqual(sy.domain(), [19, 81]);
+  t.deepEqual(sy.range(), [300, 0]);
 
-  test.end();
+  t.end();
 });

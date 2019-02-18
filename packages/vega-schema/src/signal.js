@@ -3,7 +3,7 @@ import {
   anyType, arrayType, booleanType, numberType, stringType
 } from './util';
 
-// ???
+// types defined elsewhere
 const exprStringRef = ref('exprString');
 const onEventsRef = def('onEvents');
 const bindRef = def('bind');

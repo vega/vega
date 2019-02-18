@@ -49,91 +49,91 @@ function toDelimitedText(data, delimiter) {
 
 var json = JSON.stringify(data);
 
-tape('JSON reader should read json data', function(test) {
-  test.deepEqual(read(json), data);
-  test.deepEqual(read(json, {type:'json'}), data);
-  test.end();
+tape('JSON reader should read json data', function(t) {
+  t.deepEqual(read(json), data);
+  t.deepEqual(read(json, {type:'json'}), data);
+  t.end();
 });
 
-tape('JSON reader should parse json fields', function(test) {
-  test.deepEqual(read(data, {type:'json', parse: types}), parsed);
-  test.deepEqual(read(json, {type:'json', parse: types}), parsed);
-  test.end();
+tape('JSON reader should parse json fields', function(t) {
+  t.deepEqual(read(data, {type:'json', parse: types}), parsed);
+  t.deepEqual(read(json, {type:'json', parse: types}), parsed);
+  t.end();
 });
 
-tape('JSON reader should auto-parse json fields', function(test) {
-  test.deepEqual(read(data, {type:'json', parse:'auto'}), parsed);
-  test.deepEqual(read(json, {type:'json', parse:'auto'}), parsed);
-  test.end();
+tape('JSON reader should auto-parse json fields', function(t) {
+  t.deepEqual(read(data, {type:'json', parse:'auto'}), parsed);
+  t.deepEqual(read(json, {type:'json', parse:'auto'}), parsed);
+  t.end();
 });
 
-tape('JSON reader should read json from property', function(test) {
+tape('JSON reader should read json from property', function(t) {
   var json = JSON.stringify({foo: data});
-  test.deepEqual(read(json, {type:'json', property:'foo'}), data);
-  test.end();
+  t.deepEqual(read(json, {type:'json', property:'foo'}), data);
+  t.end();
 });
 
-tape('JSON reader should parse date with format %d.%m.%Y', function(test) {
+tape('JSON reader should parse date with format %d.%m.%Y', function(t) {
   var expected = function() { return [{foo: new Date(1990, 6, 18)}]; },
       input = function() { return [{foo: '18.07.1990'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'date:%d.%m.%Y'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "date:'%d.%m.%Y'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'date:"%d.%m.%Y"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should parse date with format %m.%d.%Y', function(test) {
+tape('JSON reader should parse date with format %m.%d.%Y', function(t) {
   var expected = function() { return [{foo: new Date(1990, 6, 18)}]; },
       input = function() { return [{foo: '07.18.1990'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'date:%m.%d.%Y'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "date:'%m.%d.%Y'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'date:"%m.%d.%Y"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should parse time with format %H:%M', function(test) {
+tape('JSON reader should parse time with format %H:%M', function(t) {
   var expected = function() { return [{foo: new Date(1900, 0, 1, 13, 15)}]; },
       input = function() { return [{foo: '13:15'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'date:%H:%M'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "date:'%H:%M'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'date:"%H:%M"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should parse date with custom parse function', function(test) {
+tape('JSON reader should parse date with custom parse function', function(t) {
   var expected = [{foo: new Date(2000, 1, 1)}],
       input = [{foo: '18.07.1990'}],
       types = {foo: 'date:custom'};
@@ -142,145 +142,145 @@ tape('JSON reader should parse date with custom parse function', function(test) 
     return function() { return new Date(2000, 1, 1); }
   }
 
-  test.deepEqual(read(input, {type:'json', parse: types}, dateParse), expected);
-  test.end();
+  t.deepEqual(read(input, {type:'json', parse: types}, dateParse), expected);
+  t.end();
 });
 
-tape('JSON reader should parse UTC date with format %d.%m.%Y', function(test) {
+tape('JSON reader should parse UTC date with format %d.%m.%Y', function(t) {
   var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
       input = function() { return [{foo: '18.07.1990'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'utc:%d.%m.%Y'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "utc:'%d.%m.%Y'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'utc:"%d.%m.%Y"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should parse UTC date with format %m.%d.%Y', function(test) {
+tape('JSON reader should parse UTC date with format %m.%d.%Y', function(t) {
   var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
       input = function() { return [{foo: '07.18.1990'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'utc:%m.%d.%Y'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "utc:'%m.%d.%Y'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'utc:"%m.%d.%Y"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should parse UTC time with format %H:%M', function(test) {
+tape('JSON reader should parse UTC time with format %H:%M', function(t) {
   var expected = function() { return [{foo: new Date(Date.UTC(1900, 0, 1, 13, 15))}]; },
       input = function() { return [{foo: '13:15'}]; },
       types;
 
   // unquoted pattern
   types = {foo: 'utc:%H:%M'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // single quoted pattern
   types = {foo: "utc:'%H:%M'"};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
   // double quoted pattern
   types = {foo: 'utc:"%H:%M"'};
-  test.deepEqual(read(input(), {type:'json', parse: types}), expected());
+  t.deepEqual(read(input(), {type:'json', parse: types}), expected());
 
-  test.end();
+  t.end();
 });
 
-tape('JSON reader should throw error if format is unrecognized', function(test) {
+tape('JSON reader should throw error if format is unrecognized', function(t) {
   var input = [{foo: '18.07.1990'}],
       types = {foo: 'notAFormat'};
-  test.throws(function() { read(input, {type:'json', parse: types}); });
-  test.end();
+  t.throws(function() { read(input, {type:'json', parse: types}); });
+  t.end();
 });
 
 // CSV
 
 var csv = toDelimitedText(data, ',');
 
-tape('CSV reader should read csv data', function(test) {
-  test.deepEqual(read(csv, {type:'csv'}), strings);
-  test.deepEqual(read('', {type:'csv'}), []);
-  test.end();
+tape('CSV reader should read csv data', function(t) {
+  t.deepEqual(read(csv, {type:'csv'}), strings);
+  t.deepEqual(read('', {type:'csv'}), []);
+  t.end();
 });
 
-tape('CSV reader should parse csv fields', function(test) {
-  test.deepEqual(read(csv, {type:'csv', parse:types}), parsed);
-  test.end();
+tape('CSV reader should parse csv fields', function(t) {
+  t.deepEqual(read(csv, {type:'csv', parse:types}), parsed);
+  t.end();
 });
 
-tape('CSV reader should auto-parse csv fields', function(test) {
-  test.deepEqual(read(csv, {type:'csv', parse:'auto'}), parsed);
-  test.end();
+tape('CSV reader should auto-parse csv fields', function(t) {
+  t.deepEqual(read(csv, {type:'csv', parse:'auto'}), parsed);
+  t.end();
 });
 
 // TSV
 
 var tsv = toDelimitedText(data, '\t');
 
-tape('TSV reader should read tsv data', function(test) {
-  test.deepEqual(read(tsv, {type:'tsv'}), strings);
-  test.deepEqual(read('', {type:'tsv'}), []);
-  test.end();
+tape('TSV reader should read tsv data', function(t) {
+  t.deepEqual(read(tsv, {type:'tsv'}), strings);
+  t.deepEqual(read('', {type:'tsv'}), []);
+  t.end();
 });
 
-tape('TSV reader should parse tsv fields', function(test) {
-  test.deepEqual(read(tsv, {type:'tsv', parse:types}), parsed);
-  test.end();
+tape('TSV reader should parse tsv fields', function(t) {
+  t.deepEqual(read(tsv, {type:'tsv', parse:types}), parsed);
+  t.end();
 });
 
-tape('TSV reader should auto-parse tsv fields', function(test) {
-  test.deepEqual(read(tsv, {type:'tsv', parse:'auto'}), parsed);
-  test.end();
+tape('TSV reader should auto-parse tsv fields', function(t) {
+  t.deepEqual(read(tsv, {type:'tsv', parse:'auto'}), parsed);
+  t.end();
 });
 
 // // DSV
 
 var psv = toDelimitedText(data, '|');
 
-tape('DSV reader should read dsv data', function(test) {
-  test.deepEqual(read(psv, {type:'dsv', delimiter:'|'}), strings);
-  test.deepEqual(read('', {type:'dsv', delimiter:'|'}), []);
-  test.end();
+tape('DSV reader should read dsv data', function(t) {
+  t.deepEqual(read(psv, {type:'dsv', delimiter:'|'}), strings);
+  t.deepEqual(read('', {type:'dsv', delimiter:'|'}), []);
+  t.end();
 });
 
-tape('DSV reader should accept header parameter', function(test) {
+tape('DSV reader should accept header parameter', function(t) {
   var body = psv.slice(psv.indexOf('\n')+1);
-  test.deepEqual(read(body, {
+  t.deepEqual(read(body, {
     type: 'dsv',
     delimiter: '|',
     header: fields
   }), strings);
-  test.end();
+  t.end();
 });
 
-tape('DSV reader should parse dsv fields', function(test) {
-  test.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:types}), parsed);
-  test.end();
+tape('DSV reader should parse dsv fields', function(t) {
+  t.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:types}), parsed);
+  t.end();
 });
 
-tape('DSV reader should auto-parse dsv fields', function(test) {
-  test.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:'auto'}), parsed);
-  test.end();
+tape('DSV reader should auto-parse dsv fields', function(t) {
+  t.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:'auto'}), parsed);
+  t.end();
 });
 
 // TopoJSON
@@ -288,28 +288,28 @@ tape('DSV reader should auto-parse dsv fields', function(test) {
 var worldText = require('fs').readFileSync('./test/data/world-110m.json', 'utf8');
 var world = JSON.parse(worldText);
 
-tape('TopoJSON reader should read TopoJSON mesh', function(test) {
+tape('TopoJSON reader should read TopoJSON mesh', function(t) {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries'});
   var tj = topojson.mesh(world, world.objects['countries']);
-  test.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
-  test.end();
+  t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
+  t.end();
 });
 
-tape('TopoJSON reader should read TopoJSON feature', function(test) {
+tape('TopoJSON reader should read TopoJSON feature', function(t) {
   var feature = read(worldText, {type:'topojson', feature: 'countries'});
   var tj = topojson.feature(world, world.objects['countries']).features;
-  test.equal(JSON.stringify(tj), JSON.stringify(feature));
-  test.end();
+  t.equal(JSON.stringify(tj), JSON.stringify(feature));
+  t.end();
 });
 
-tape('TopoJSON reader should throw error if TopoJSON is invalid', function(test) {
+tape('TopoJSON reader should throw error if TopoJSON is invalid', function(t) {
   var data = {objects: {}};
-  test.throws(function() { read(data, {type:'topojson', feature: 'countries'}); });
-  test.throws(function() { read(data, {type:'topojson', mesh: 'countries'}); });
-  test.end();
+  t.throws(function() { read(data, {type:'topojson', feature: 'countries'}); });
+  t.throws(function() { read(data, {type:'topojson', mesh: 'countries'}); });
+  t.end();
 });
 
-tape('TopoJSON reader should throw error if TopoJSON parameters are missing', function(test) {
-  test.throws(function() { read(worldText, {type:'topojson'}); });
-  test.end();
+tape('TopoJSON reader should throw error if TopoJSON parameters are missing', function(t) {
+  t.throws(function() { read(worldText, {type:'topojson'}); });
+  t.end();
 });

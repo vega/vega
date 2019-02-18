@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 720,
   "height": 720,
   "padding": 5,
@@ -98,7 +98,7 @@
   "scales": [
     {
       "name": "color",
-      "type": "sequential",
+      "type": "linear",
       "range": {"scheme": "magma"},
       "domain": {"data": "tree", "field": "depth"},
       "zero": true

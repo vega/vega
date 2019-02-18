@@ -42,6 +42,7 @@ export default function View(spec, options) {
   view.logLevel(options.logLevel || 0);
 
   view._el = null;
+  view._elBind = null;
   view._renderType = options.renderer || RenderType.Canvas;
   view._scenegraph = new Scenegraph();
   var root = view._scenegraph.root;
@@ -218,7 +219,7 @@ prototype.resize = function() {
 prototype._resetRenderer = function() {
   if (this._renderer) {
     this._renderer = null;
-    this.initialize(this._el);
+    this.initialize(this._el, this._elBind);
   }
 };
 

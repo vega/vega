@@ -1,4 +1,5 @@
 import boundStroke from '../bound/boundStroke';
+import {intersectRule} from '../util/intersect';
 import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
@@ -58,5 +59,6 @@ export default {
   attr:   attr,
   bound:  bound,
   draw:   draw,
-  pick:   pick(hit)
+  pick:   pick(hit),
+  isect:  intersectRule
 };

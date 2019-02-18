@@ -1,9 +1,8 @@
 import {pickVisit} from '../visit';
-
-var trueFunc = function() { return true; };
+import {truthy} from 'vega-util';
 
 export function pick(test) {
-  if (!test) test = trueFunc;
+  test = test || truthy;
 
   return function(context, scene, x, y, gx, gy) {
     x *= context.pixelRatio;

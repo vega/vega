@@ -3,7 +3,7 @@ var tape = require('tape'),
     runtime = require('../'),
     events = require('./events');
 
-tape('Parser parses event-driven operator updates', function(test) {
+tape('Parser parses event-driven operator updates', function(t) {
 
   var spec = {
     operators: [
@@ -35,25 +35,25 @@ tape('Parser parses event-driven operator updates', function(test) {
       ops = ctx.nodes;
 
   df.update(ops[0], 2).run();
-  test.equal(ops[0].value, 2);
-  test.equal(ops[1].value, 0);
-  test.equal(ops[2].value, 1);
+  t.equal(ops[0].value, 2);
+  t.equal(ops[1].value, 0);
+  t.equal(ops[2].value, 1);
 
   df.fire('window', 'mousedown', {});
-  test.equal(ops[0].value, 2);
-  test.equal(ops[1].value, 0);
-  test.equal(ops[2].value, 2);
+  t.equal(ops[0].value, 2);
+  t.equal(ops[1].value, 0);
+  t.equal(ops[2].value, 2);
 
   df.fire('window', 'mousemove', {buttons: 1});
-  test.equal(ops[0].value, -1);
-  test.equal(ops[1].value, 5);
-  test.equal(ops[2].value, 2);
+  t.equal(ops[0].value, -1);
+  t.equal(ops[1].value, 5);
+  t.equal(ops[2].value, 2);
 
   df.fire('window', 'mouseup', {});
   df.fire('window', 'mousemove', {buttons: 1});
-  test.equal(ops[0].value, -1);
-  test.equal(ops[1].value, 5);
-  test.equal(ops[2].value, 2);
+  t.equal(ops[0].value, -1);
+  t.equal(ops[1].value, 5);
+  t.equal(ops[2].value, 2);
 
-  test.end();
+  t.end();
 });
