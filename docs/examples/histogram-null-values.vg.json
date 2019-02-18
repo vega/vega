@@ -83,10 +83,11 @@
     },
     {
       "name": "xscale",
-      "type": "bin-linear",
+      "type": "linear",
       "range": [{"signal": "barStep + nullGap"}, {"signal": "width"}],
       "round": true,
-      "domain": {"signal": "binDomain"}
+      "domain": {"data": "counts", "fields": ["bin0", "bin1"]},
+      "bins": {"signal": "binDomain"}
     },
     {
       "name": "xscale-null",
@@ -98,7 +99,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickCount": 10},
+    {"orient": "bottom", "scale": "xscale", "tickMinStep": 1},
     {"orient": "bottom", "scale": "xscale-null"},
     {"orient": "left", "scale": "yscale", "tickCount": 5, "offset": 5}
   ],
