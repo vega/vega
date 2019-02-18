@@ -40,6 +40,8 @@ function prevent(view, type) {
     : view.preventDefault();
 }
 
+var viewRun = null;
+
 /**
  * Create a new event stream from an event source.
  * @param {object} source - The event source to monitor.
@@ -50,7 +52,10 @@ function prevent(view, type) {
 export function events(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
-      send = function(e, item) {
+      send = async function(e, item) {
+        // wait until all previous handlers complete
+        while (viewRun) await viewRun;
+
         if (source === VIEW && prevent(view, type)) {
           e.preventDefault();
         }
@@ -59,7 +64,8 @@ export function events(source, type, filter) {
         } catch (error) {
           view.error(error);
         } finally {
-          view.run();
+          // run dataflow, clear viewRun promise when done
+          (viewRun = view.runAsync()).then(() => viewRun = null);
         }
       },
       sources;
