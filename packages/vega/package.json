@@ -26,7 +26,7 @@
     "pretest": "yarn prebuild && yarn rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js test",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags && ./deploy-schema.sh"
+    "postpublish": "git push && git push --tags && ./schema-deploy.sh"
   },
   "dependencies": {
     "vega-crossfilter": "^4.0.0",
