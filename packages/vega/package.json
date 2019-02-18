@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "5.0.0-rc1",
+  "version": "5.0.0",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
