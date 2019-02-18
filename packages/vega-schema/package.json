@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "vega-schema",
   "version": "5.0.0",
   "description": "Generate the Vega JSON schema.",
@@ -17,7 +16,9 @@
     "rollup": "rollup -g vega-scale:vega -f cjs -o build/vega-schema.js -- index.js",
     "prebuild": "rm -rf build && mkdir build",
     "build": "yarn rollup && node schema > build/vega-schema.json",
-    "test": "yarn build && eslint index.js src"
+    "test": "yarn build && eslint index.js src",
+    "prepublishOnly": "yarn test",
+    "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "vega-scale": "^3.0.0"
