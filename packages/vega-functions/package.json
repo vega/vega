@@ -28,7 +28,7 @@
     "d3-format": "^1.3.2",
     "d3-geo": "^1.11.3",
     "d3-time-format": "^2.1.3",
-    "vega-dataflow": "^4.1.0",
+    "vega-dataflow": "^5.0.0",
     "vega-expression": "^2.5.0",
     "vega-scale": "^3.0.0",
     "vega-scenegraph": "^4.0.0",
