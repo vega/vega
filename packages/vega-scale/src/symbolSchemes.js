@@ -1,3 +1,7 @@
+/**
+ * These colors were designed by Maureen Stone for Tableau.
+ */
+
 export var blue = [
   "#b9ddf1",
   "#a6d0ea",

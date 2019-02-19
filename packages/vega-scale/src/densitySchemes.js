@@ -1,3 +1,7 @@
+/**
+ * These colors were designed by Maureen Stone for Tableau.
+ */
+
 export var density_light_orange = [
   "#f2e7da",
   "#f7d5ba",
