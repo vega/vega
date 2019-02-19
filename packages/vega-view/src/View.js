@@ -123,6 +123,20 @@ prototype.runAsync = async function(encode) {
   return this;
 };
 
+prototype.runQueue = async function(f) {
+  // await previously queued functions
+  while (this._running) await this._running;
+
+  // invoke function, trapping errors
+  if (f) try { f(); } catch (err) { this.error(err); }
+
+  // run dataflow, manage running promise
+  (this._running = this.runAsync())
+    .then(() => this._running = null);
+
+  return this;
+};
+
 prototype.dirty = function(item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);

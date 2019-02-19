@@ -33,8 +33,10 @@ export default function(view, el, binding) {
       set: null,
       update: function(value) {
         if (value !== view.signal(param.signal)) {
-          bind.source = true;
-          view.signal(param.signal, value).run();
+          view.runQueue(function() {
+            bind.source = true;
+            view.signal(param.signal, value);
+          });
         }
       }
     };
