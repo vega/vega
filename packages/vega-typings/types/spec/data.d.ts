@@ -1,4 +1,4 @@
-import { OnTrigger, Transform, SignalRef } from '.';
+import { OnTrigger, Transforms, SignalRef } from '.';
 
 export type DataType = 'boolean' | 'number' | 'date' | 'string';
 export type Parse =
@@ -35,7 +35,7 @@ export interface BaseData {
   name: string;
   on?: OnTrigger[];
   format?: Format | SignalRef;
-  transform?: Transform[];
+  transform?: Transforms[];
 }
 
 export type SourceData = {

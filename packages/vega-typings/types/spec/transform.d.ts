@@ -1,6 +1,6 @@
 import { SignalRef, Compare, Vector2, ExprRef, FontWeight, FontStyle, Vector7 } from '.';
 
-export type Transform =
+export type Transforms =
   | AggregateTransform
   | BinTransform
   | CollectTransform
