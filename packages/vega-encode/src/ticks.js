@@ -43,8 +43,9 @@ export function tickCount(scale, count, minStep) {
  */
 export function validTicks(scale, ticks, count) {
   var range = scale.range(),
-      lo = range[0],
-      hi = peek(range);
+      lo = Math.floor(range[0]),
+      hi = Math.ceil(peek(range));
+
   if (lo > hi) {
     range = hi;
     hi = lo;
@@ -53,7 +54,7 @@ export function validTicks(scale, ticks, count) {
 
   ticks = ticks.filter(function(v) {
     v = scale(v);
-    return !(v < lo || v > hi)
+    return lo <= v && v <= hi;
   });
 
   if (count > 0 && ticks.length > 1) {
@@ -79,7 +80,7 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? binValues(scale.bins, count)
+  return scale.bins ? validTicks(scale, binValues(scale.bins, count))
     : scale.ticks ? scale.ticks(count)
     : scale.domain();
 }
