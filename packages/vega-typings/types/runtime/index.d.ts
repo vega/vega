@@ -163,6 +163,8 @@ export function schemeDiscretized(name: string, scheme?: any, interpolator?: any
 
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
+export const transforms: {[name: string]: Transform};
+
 export * from 'vega-util';
 export * from './renderer';
 export * from './scene';
