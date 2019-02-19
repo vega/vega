@@ -107,6 +107,22 @@ export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
 export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
 
+export interface Operator {
+  targets: any;
+  set: any;
+  skip: any;
+  modified: any;
+  parameters: any
+  marshall: any
+  evaluate: any
+  run: any
+}
+
+export interface Transform extends Operator {
+  run: any;
+  evaluate: any;
+}
+
 export interface Item<T = any> {
   /**
    * The underlying data element to which this item corresponds.

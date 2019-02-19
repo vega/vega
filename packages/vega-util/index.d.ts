@@ -49,7 +49,10 @@ export function toString(a: any): string;
 // Objects
 
 export function extend<T>(target: T, ...source: Partial<T>[]): T;
-export function inherits(child: ObjectConstructor, parent: ObjectConstructor): object;
+export function inherits<C extends object, P extends object>(
+  child: C,
+  parent: P
+): C & P;
 
 export interface FastMap {
   size: number;
