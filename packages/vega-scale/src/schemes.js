@@ -1,21 +1,19 @@
 import {
   category20, category20b, category20c,
   tableau10, tableau20,
-  blueOrange
-} from './palettes';
-import { density_light_orange, density_light_grayred, density_light_blueteal,
+  blueOrange,
+  density_light_orange, density_light_grayred, density_light_blueteal,
   density_light_grayteal, density_light_multicolor, density_dark_blue,
   density_dark_red, density_dark_green, density_dark_gold,
-  density_dark_multicolor
-} from './densitySchemes';
-import {blue, orange, green, red, purple, brown, gray, gray_warm, teal,
+  density_dark_multicolor,
+  blue, orange, green, red, purple, brown, gray, gray_warm, teal,
   blue_teal, orange_gold, green_gold, red_gold, orange_blue_diverging,
   red_green_diverging, green_blue_diverging, red_blue_diverging, red_black,
   gold_purple_diverging, red_green_gold_diverging, sunrise_sunset_diverging,
   orange_blue_white_diverging, red_green_white_diverging,
   green_blue_white_diverging, red_blue_white_diverging,
   red_black_white_diverging
-} from './symbolSchemes';
+} from './palettes';
 import * as _ from 'd3-scale-chromatic';
 import {interpolateRgbBasis} from 'd3-interpolate';
 import {peek} from 'vega-util';
