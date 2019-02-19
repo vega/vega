@@ -3,6 +3,19 @@ import {
   tableau10, tableau20,
   blueOrange
 } from './palettes';
+import { density_light_orange, density_light_grayred, density_light_blueteal,
+  density_light_grayteal, density_light_multicolor, density_dark_blue,
+  density_dark_red, density_dark_green, density_dark_gold,
+  density_dark_multicolor
+} from './densitySchemes';
+import {blue, orange, green, red, purple, brown, gray, gray_warm, teal,
+  blue_teal, orange_gold, green_gold, red_gold, orange_blue_diverging,
+  red_green_diverging, green_blue_diverging, red_blue_diverging, red_black,
+  gold_purple_diverging, red_green_gold_diverging, sunrise_sunset_diverging,
+  orange_blue_white_diverging, red_green_white_diverging,
+  green_blue_white_diverging, red_blue_white_diverging,
+  red_black_white_diverging
+} from './symbolSchemes';
 import * as _ from 'd3-scale-chromatic';
 import {interpolateRgbBasis} from 'd3-interpolate';
 import {peek} from 'vega-util';
@@ -35,6 +48,48 @@ var schemes = {
   magma:       _.interpolateMagma,
   inferno:     _.interpolateInferno,
   plasma:      _.interpolatePlasma,
+
+  // Tableau density map schemes
+  density_light_orange:     density_light_orange,
+  density_light_grayred:    density_light_grayred,
+  density_light_blueteal:   density_light_blueteal,
+  density_light_grayteal:   density_light_grayteal,
+  density_light_multicolor: density_light_multicolor,
+  density_dark_blue:        density_dark_blue,
+  density_dark_red:         density_dark_red,
+  density_dark_green:       density_dark_green,
+  density_dark_gold:        density_dark_gold,
+  density_dark_multicolor:  density_dark_multicolor,
+
+  // Tableau symbol schemes
+  tableau_blue:         blue,
+  tableau_orange:       orange,
+  tableau_green:        green,
+  tableau_red:          red,
+  tableau_purple:       purple,
+  tableau_brown:        brown,
+  tableau_gray:         gray,
+  tableau_gray_warm:    gray_warm,
+  tableau_teal:         teal,
+  tableau_blue_teal:    blue_teal,
+  tableau_orange_gold:  orange_gold,
+  tableau_green_gold:   green_gold,
+  tableau_red_gold:     red_gold,
+  tableau_red_black:    red_black,
+
+  // Tableau diverging symbol schemes
+  tableau_orange_blue:        orange_blue_diverging,
+  tableau_red_green:          red_green_diverging,
+  tableau_green_blue:         green_blue_diverging,
+  tableau_red_blue:           red_blue_diverging,
+  tableau_gold_purple:        gold_purple_diverging,
+  tableau_red_green_gold:     red_green_gold_diverging,
+  tableau_sunrise_sunset:     sunrise_sunset_diverging,
+  tableau_orange_blue_white:  orange_blue_white_diverging,
+  tableau_red_green_white:    red_green_white_diverging,
+  tableau_green_blue_white:   green_blue_white_diverging,
+  tableau_red_blue_white:     red_blue_white_diverging,
+  tableau_red_black_white:    red_black_white_diverging,
 
   // cyclic interpolators
   rainbow:     _.interpolateRainbow,
