@@ -50,16 +50,16 @@ var schemes = {
   plasma:      _.interpolatePlasma,
 
   // Tableau density map schemes
-  density_light_orange:     density_light_orange,
-  density_light_grayred:    density_light_grayred,
-  density_light_blueteal:   density_light_blueteal,
-  density_light_grayteal:   density_light_grayteal,
-  density_light_multicolor: density_light_multicolor,
-  density_dark_blue:        density_dark_blue,
-  density_dark_red:         density_dark_red,
-  density_dark_green:       density_dark_green,
-  density_dark_gold:        density_dark_gold,
-  density_dark_multicolor:  density_dark_multicolor,
+  tableau_density_light_orange:     density_light_orange,
+  tableau_density_light_grayred:    density_light_grayred,
+  tableau_density_light_blueteal:   density_light_blueteal,
+  tableau_density_light_grayteal:   density_light_grayteal,
+  tableau_density_light_multicolor: density_light_multicolor,
+  tableau_density_dark_blue:        density_dark_blue,
+  tableau_density_dark_red:         density_dark_red,
+  tableau_density_dark_green:       density_dark_green,
+  tableau_density_dark_gold:        density_dark_gold,
+  tableau_density_dark_multicolor:  density_dark_multicolor,
 
   // Tableau symbol schemes
   tableau_blue:         blue,
