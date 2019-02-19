@@ -22,7 +22,7 @@ export type Transforms =
   | GraticuleTransform
   | IdentifierTransform
   | ImputeTransform
-  | _TODO_<'joinaggregate'>
+  | JoinAggregateTransform
   | _TODO_<'linkpath'>
   | LookupTransform
   | _TODO_<'nest'>
@@ -244,6 +244,14 @@ export interface ImputeTransform {
   value?: any;
 }
 
+export interface JoinAggregateTransform {
+  type: 'joinaggregate';
+  groupby?: (string | TransformField)[] | SignalRef;
+  ops?: (AggregateOp | SignalRef)[];
+  fields?: (string | TransformField | null)[] | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
+}
+
 export interface LookupTransform {
   type: 'lookup';
   from: string;
@@ -269,15 +277,29 @@ export interface StackTransform {
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
 
+export type WindowOnlyOp =
+  | 'row_number'
+  | 'rank'
+  | 'dense_rank'
+  | 'percent_rank'
+  | 'cume_dist'
+  | 'ntile'
+  | 'lag'
+  | 'lead'
+  | 'first_value'
+  | 'last_value'
+  | 'nth_value';
+
 export interface WindowTransform {
   type: 'window';
   sort?: Compare;
   groupby?: (string | TransformField)[] | SignalRef;
-  ops?: (string | SignalRef)[];
+  ops?: (AggregateOp | WindowOnlyOp | SignalRef)[];
+  params?: (number | SignalRef | null)[] | SignalRef;
   fields?: (string | TransformField | null)[] | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
   frame?: Vector2<number | SignalRef | null> | SignalRef;
-  ignorePeers?: boolean;
+  ignorePeers?: boolean | SignalRef;
 }
 
 export interface WordcloudTransform {
