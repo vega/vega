@@ -20,6 +20,8 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-loader.node.js",
   "module": "index",
+  "unpkg": "build/vega-loader.min.js",
+  "jsdelivr": "build/vega-loader.min.js",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -f cjs -g d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.node.js -- index.js && rollup -f umd -g d3-dsv:d3,d3-time-format:d3,vega-util:vega,topojson-client:topojson -n vega -o build/vega-loader.js -- index.browser.js",
