@@ -12,7 +12,7 @@ import {
 const encodeEntryRef = def('encodeEntry');
 const styleRef = ref('style');
 const labelOverlapRef = ref('labelOverlap');
-const tickCountRef = ref('tickCountRef');
+const tickCountRef = ref('tickCount');
 
 const guideEncodeRef = def('guideEncode');
 const guideEncode = pattern(
