@@ -88,7 +88,8 @@ range(1);   // 8
 ```
 
 <a name="timeInterval" href="#timeInterval">#</a>
-vega.<b>timeInterval</b>(<i>unit</i>)
+vega.<b>timeInterval</b>(<i>unit</i>[, <i>type</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/timeInterval.js "Source")
 
-Given a string _unit_, return a corresponding [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`.
+Given a string _unit_, return a corresponding [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. The optional _type_ indicates the type of time zone to use, either `"time"` (default, for local time) or `"utc"` (for [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
+
