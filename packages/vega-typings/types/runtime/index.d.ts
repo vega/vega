@@ -112,10 +112,10 @@ export interface Operator {
   set: any;
   skip: any;
   modified: any;
-  parameters: any
-  marshall: any
-  evaluate: any
-  run: any
+  parameters: any;
+  marshall: any;
+  evaluate: any;
+  run: any;
 }
 
 export interface Transform extends Operator {
@@ -163,7 +163,7 @@ export function schemeDiscretized(name: string, scheme?: any, interpolator?: any
 
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
-export const transforms: {[name: string]: Transform};
+export const transforms: { [name: string]: Transform };
 
 export * from 'vega-util';
 export * from './renderer';

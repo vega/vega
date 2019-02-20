@@ -6,20 +6,18 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { FontWeight, SymbolShape, TextBaseline, ColorValueRef } from './encode';
-import { TimeInterval } from './scale';
+import { LabelOverlap } from './axis';
+import { TickCount } from './axis.d';
+import { LayoutAlign } from './layout';
 import {
+  AlignValue,
+  ColorValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  AlignValue,
-  FontWeightValue,
-  TextBaselineValue,
   SymbolShapeValue,
-  ColorValue,
-  BooleanValue,
+  TextBaselineValue,
 } from './values';
-import { LayoutAlign } from './layout';
-import { LabelOverlap } from './axis';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -57,6 +55,7 @@ export interface Legend extends BaseLegend {
   fill?: string;
   stroke?: string;
   strokeDash?: string;
+  strokeWidth?: string;
   opacity?: string;
 
   /**
@@ -84,7 +83,12 @@ export interface Legend extends BaseLegend {
   /**
    * The desired number of tick values for quantitative legends.
    */
-  tickCount?: number | TimeInterval;
+  tickCount?: TickCount;
+
+  /**
+   * The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value.
+   */
+  tickMinStep?: number | SignalRef;
 
   /**
    * Explicitly set the visible legend values.
@@ -165,11 +169,6 @@ export interface BaseLegend<
    * Border stroke color for the full legend.
    */
   strokeColor?: C;
-
-  /**
-   * Border stroke width for the full legend.
-   */
-  strokeWidth?: N;
 
   // ---------- Title ----------
   /**
@@ -413,4 +412,9 @@ export interface BaseLegend<
    * __Default value:__ `true`.
    */
   labelOverlap?: LO;
+
+  /**
+   * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
+   */
+  labelSeparation?: NS;
 }

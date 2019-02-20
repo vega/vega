@@ -185,10 +185,15 @@ export type SymbolShape =
   | 'triangle-down'
   | 'triangle-right'
   | 'triangle-left'
+  | 'arrow'
+  | 'triangle'
+  | 'wedge'
+  | 'stroke'
   | string;
 export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
   shape?: ProductionRule<ScaledValueRef<SymbolShape>>;
+  angle?: ProductionRule<NumericValueRef>;
 }
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';

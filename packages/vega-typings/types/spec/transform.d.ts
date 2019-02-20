@@ -104,7 +104,7 @@ export interface BaseBin {
    * An array of allowable step sizes to choose from.
    * @minItems 1
    */
-  steps?: (number | SignalRef)[];
+  steps?: (number | SignalRef)[] | SignalRef;
   /**
    * A minimum allowable step size (particularly useful for integer values).
    */

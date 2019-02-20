@@ -392,6 +392,11 @@ export interface LegendConfig<
    * Border stroke dash pattern for the full legend.
    */
   strokeDash?: number[];
+
+  /**
+   * Border stroke width for the full legend.
+   */
+  strokeWidth?: N;
 }
 
 export type TitleConfig = BaseTitle;
