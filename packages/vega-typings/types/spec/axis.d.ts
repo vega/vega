@@ -25,6 +25,8 @@ export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
 export type LabelOverlap = boolean | 'parity' | 'greedy';
 
+export type TickCount = number | TimeInterval | SignalRef;
+
 export interface Axis extends BaseAxis {
   /**
    * The orientation of the axis. One of `"top"`, `"bottom"`, `"left"` or `"right"`. The orientation can be used to further specialize the axis type (e.g., a y axis oriented for the right edge of the chart).
@@ -72,7 +74,12 @@ export interface Axis extends BaseAxis {
    *
    * @minimum 0
    */
-  tickCount?: number | TimeInterval | SignalRef;
+  tickCount?: TickCount;
+
+  /**
+   * The minimum desired step between axis ticks, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value.
+   */
+  tickMinStep?: number | SignalRef;
 
   /**
    * Explicitly set the visible axis tick and label values.
@@ -374,14 +381,14 @@ export interface BaseAxis<
   labelFlushOffset?: NS;
 
   /**
-   * TODO: add docs.
-   */
-  labelSeparation?: NS;
-
-  /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
    */
   labelOverlap?: LO;
+
+  /**
+   * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
+   */
+  labelSeparation?: NS;
 
   /**
    * The rotation angle of the axis labels.

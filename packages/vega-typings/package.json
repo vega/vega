@@ -15,7 +15,7 @@
     "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "build-tests": "./build-tests.sh",
     "pretest": "npm run build-tests",
-    "test": "dtslint ."
+    "test": "yarn format && dtslint ."
   },
   "dependencies": {
     "vega-util": "^1.8.0"
