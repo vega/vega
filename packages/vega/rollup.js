@@ -1,9 +1,9 @@
 const rollup = require('rollup'),
       json = require('rollup-plugin-json'),
       nodeResolve = require('rollup-plugin-node-resolve'),
-      externals = hasArgument('-e'),
-      esmod = hasArgument('-m'),
-      output = `vega${externals ? '-core' : ''}.${esmod ? 'mjs' : 'js'}`;
+      esmodule = hasArgument('-m'),
+      externals = esmodule || hasArgument('-e'),
+      output = `vega${esmodule ? '-module' : externals ? '-core' : ''}.js`;
 
 function hasArgument(_) {
   return process.argv.slice(2).some(a => a === _);
@@ -35,7 +35,7 @@ const options = {
   format: 'es'
 };
 
-if (!esmod) Object.assign(options, {
+if (!esmodule) Object.assign(options, {
   format: 'umd',
   name: 'vega',
   globals: external.reduce(function(map, _) {
