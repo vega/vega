@@ -98,28 +98,29 @@ export interface BaseScale {
   reverse?: boolean | SignalRef;
   round?: boolean | SignalRef;
 }
-interface ContinuousScale extends BaseScale {
+export interface ContinuousScale extends BaseScale {
   range?: RangeScheme;
-  bins: (number | SignalRef)[] | SignalRef;
+  bins?: (number | SignalRef)[] | SignalRef;
   interpolate?: ScaleInterpolate;
   clamp?: boolean | SignalRef;
   padding?: number | SignalRef;
 }
-interface NumericScale extends ContinuousScale {
+export interface NumericScale extends ContinuousScale {
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
-export interface OrdinalScale extends BaseScale {
-  type: 'ordinal';
-  range?: RangeScheme | ScaleData;
-  interpolate?: ScaleInterpolate;
-  domainImplicit: boolean | SignalRef;
-}
-interface BaseBandScale extends BaseScale {
+export interface BaseBandScale extends BaseScale {
   range?: RangeBand;
   padding?: number | SignalRef;
   paddingOuter?: number | SignalRef;
   align?: number | SignalRef;
+}
+// concrete scales
+export interface OrdinalScale extends BaseScale {
+  type: 'ordinal';
+  range?: RangeScheme | ScaleData;
+  interpolate?: ScaleInterpolate;
+  domainImplicit?: boolean | SignalRef;
 }
 export interface BandScale extends BaseBandScale {
   type: 'band';
@@ -150,12 +151,6 @@ export interface IdentityScale extends BaseScale {
   type: 'identity';
   nice?: boolean | SignalRef;
 }
-export interface DiscretizingScale extends BaseScale {
-  type: DiscreteScaleType;
-  range?: RangeScheme;
-  nice?: boolean | TimeInterval | SignalRef;
-  zero?: boolean | SignalRef;
-}
 export interface LinearScale extends NumericScale {
   type?: 'linear'; // optional because it's the default
 }
@@ -177,13 +172,6 @@ export interface PowScale extends NumericScale {
 export interface SqrtScale extends NumericScale {
   type: 'sqrt';
 }
-export interface QuantileScale extends BaseScale {
-  type?: 'quantile';
-  range?: RangeScheme;
-  interpolate?: ScaleInterpolate;
-  nice?: boolean | number | SignalRef;
-  zero?: boolean | SignalRef;
-}
 export interface QuantizeScale extends BaseScale {
   type?: 'quantize';
   range?: RangeScheme;
@@ -198,6 +186,11 @@ export interface ThresholdScale extends BaseScale {
   nice?: boolean | number | SignalRef;
   zero?: boolean | SignalRef;
 }
+export interface QuantileScale extends BaseScale {
+  type?: 'quantile';
+  range?: RangeScheme;
+  interpolate?: ScaleInterpolate;
+}
 export interface BinOrdinalScale extends BaseScale {
   type: 'bin-ordinal';
   range?: RangeScheme | ScaleData;
@@ -210,7 +203,6 @@ export type Scale =
   | SequentialScale
   | TimeScale
   | IdentityScale
-  | DiscretizingScale
   | LinearScale
   | LogScale
   | SymLogScale
