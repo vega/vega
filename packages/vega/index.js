@@ -49,8 +49,10 @@ export {
   scale,
   scheme,
   interpolate,
+  interpolateColors,
   interpolateRange,
-  timeInterval
+  timeInterval,
+  quantizeInterpolator
 } from 'vega-scale';
 
 export {
