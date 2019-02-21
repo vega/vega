@@ -16,10 +16,11 @@ apply(discrete, colors);
 apply(continuous, _ => interpolateColors(colors(_)));
 
 export function scheme(name, scheme) {
+  name = name && name.toLowerCase();
   if (arguments.length > 1) {
-    schemes[name.toLowerCase()] = scheme;
+    schemes[name] = scheme;
     return this;
   } else {
-    return schemes[name && name.toLowerCase()];
+    return schemes[name];
   }
 }
