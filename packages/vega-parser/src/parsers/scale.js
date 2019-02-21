@@ -39,8 +39,12 @@ export function parseScale(spec, scope) {
 
   for (key in spec) {
     if (params.hasOwnProperty(key) || key === 'name') continue;
-    params[key] = parseLiteral(spec[key], scope);
+    params[key] = parseProperty(key, spec[key], scope);
   }
+}
+
+function parseProperty(name, v, scope) {
+  return (name === 'bins' ? parseArray : parseLiteral)(v, scope);
 }
 
 function parseLiteral(v, scope) {
