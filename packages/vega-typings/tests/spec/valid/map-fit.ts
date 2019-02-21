@@ -79,7 +79,7 @@ export const spec: Spec = {
       "name": "color",
       "type": "quantize",
       "domain": [0, 0.15],
-      "range": {"scheme": "blues-9"}
+      "range": {"scheme": "blues", "count": 9}
     }
   ],
 

@@ -10,6 +10,17 @@ export function interpolateRange(interpolator, range) {
   return function(i) { return interpolator(start + i * span); };
 }
 
+export function interpolateColors(colors, type, gamma) {
+  return $.piecewise(interpolate(type || 'rgb', gamma), colors);
+}
+
+export function quantizeInterpolator(interpolator, count) {
+  var samples = new Array(count),
+      n = count + 1;
+  for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
+  return samples;
+}
+
 export function scaleCopy(scale) {
   const t = scale.type,
         s = scale.copy();

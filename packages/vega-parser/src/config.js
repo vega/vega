@@ -203,15 +203,13 @@ function defaults() {
         scheme: 'tableau10'
       },
       ordinal: {
-        scheme: 'blues',
-        extent: [0.2, 1]
+        scheme: 'blues'
       },
       heatmap: {
         scheme: 'viridis'
       },
       ramp: {
-        scheme: 'blues',
-        extent: [0.2, 1]
+        scheme: 'blues'
       },
       diverging: {
         scheme: 'blueorange'

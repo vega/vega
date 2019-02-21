@@ -13,17 +13,18 @@ import {
   isInterpolating,
   isLogarithmic,
   bandSpace,
+  interpolateColors,
   interpolateRange,
   interpolate as getInterpolate,
   scale as getScale,
   scheme as getScheme,
-  scaleImplicit
+  scaleImplicit,
+  quantizeInterpolator
 } from 'vega-scale';
 
 import {range as sequence} from 'd3-array';
 
 import {
-  piecewise,
   interpolate,
   interpolateRound
 } from 'd3-interpolate';
@@ -258,7 +259,9 @@ function configureRange(scale, _, count) {
 
   // given a range array for an interpolating scale, convert to interpolator
   else if (range && isInterpolating(scale.type)) {
-    return scale.interpolator(interpolateColors(_, flip(range, _.reverse)));
+    return scale.interpolator(
+      interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
+    );
   }
 
   // configure rounding / interpolation
@@ -287,10 +290,10 @@ function configureRangeStep(type, _, count) {
 
 function configureScheme(type, _, count) {
   var extent = _.schemeExtent,
-      name, scheme, discrete;
+      name, scheme;
 
   if (isArray(_.scheme)) {
-    scheme = interpolateColors(_, _.scheme);
+    scheme = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
   } else {
     name = _.scheme.toLowerCase();
     scheme = getScheme(name);
@@ -305,16 +308,8 @@ function configureScheme(type, _, count) {
 
   // adjust and/or quantize scheme as appropriate
   return isInterpolating(type) ? adjustScheme(scheme, extent, _.reverse)
-    : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
-    : isFunction(scheme) ? quantize(adjustScheme(scheme, extent), count)
+    : isFunction(scheme) ? quantizeInterpolator(adjustScheme(scheme, extent), count)
     : type === Ordinal ? scheme : scheme.slice(0, count);
-}
-
-function interpolateColors(_, colors) {
-  return piecewise(
-    getInterpolate(_.interpolate || 'rgb', _.interpolateGamma),
-    colors
-  );
 }
 
 function adjustScheme(scheme, extent, reverse) {
@@ -327,9 +322,3 @@ function flip(array, reverse) {
   return reverse ? array.slice().reverse() : array;
 }
 
-function quantize(interpolator, count) {
-  var samples = new Array(count),
-      n = count + 1;
-  for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
-  return samples;
-}

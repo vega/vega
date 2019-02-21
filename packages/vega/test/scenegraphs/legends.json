@@ -276,7 +276,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#440154",
+                                      "stroke": "rgb(68, 1, 84)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -325,7 +325,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#414487",
+                                      "stroke": "rgb(65, 68, 135)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -374,7 +374,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#2a788e",
+                                      "stroke": "rgb(42, 120, 142)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -423,7 +423,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#22a884",
+                                      "stroke": "rgb(34, 168, 132)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -472,7 +472,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#7ad151",
+                                      "stroke": "rgb(122, 209, 81)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -521,7 +521,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#fde725",
+                                      "stroke": "rgb(253, 231, 37)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
