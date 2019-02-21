@@ -1,7 +1,11 @@
 var tape = require('tape'),
     d3 = require('d3-array'),
+    lcg = require('./lcg'),
     stats = require('../'),
     gaussian = stats.randomNormal();
+
+// seeded RNG for deterministic tests
+stats.setRandom(lcg(123456789));
 
 function closeTo(t, a, b, delta) {
   t.equal(Math.abs(a-b) < delta, true);
