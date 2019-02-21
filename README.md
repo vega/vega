@@ -1,7 +1,5 @@
 # Vega: A Visualization Grammar
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/vega/vega.svg)](https://greenkeeper.io/)
-
 <a href="https://vega.github.io/vega/examples">
 <img src="https://vega.github.io/vega/assets/banner.png" alt="Vega Examples" width="900"></img>
 </a>
