@@ -14,7 +14,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,d3-scale-chromatic:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
@@ -27,7 +27,6 @@
     "d3-array": "^2.0.3",
     "d3-interpolate": "^1.3.2",
     "d3-scale": "^2.2.2",
-    "d3-scale-chromatic": "^1.3.3",
     "d3-time": "^1.0.11",
     "vega-util": "^1.8.0"
   }

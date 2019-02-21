@@ -32,8 +32,17 @@ export {
   isDiscretizing
 } from './src/scales/types';
 
+export {
+  interpolate,
+  interpolateColors,
+  interpolateRange,
+  scaleCopy,
+  scaleFraction,
+  quantizeInterpolator
+} from './src/interpolate';
+
 export {default as scale} from './src/scales';
-export {interpolate, interpolateRange, scaleCopy, scaleFraction} from './src/interpolate';
-export {scheme, schemeDiscretized} from './src/schemes';
+
+export {scheme} from './src/schemes';
 
 export {scaleImplicit} from 'd3-scale';
