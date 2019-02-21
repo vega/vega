@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
-import {voronoi} from 'd3-voronoi';
+import {Delaunay} from 'd3-delaunay';
 
 export default function Voronoi(params) {
   Transform.call(this, null, params);
@@ -27,20 +27,18 @@ var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
 prototype.transform = function(_, pulse) {
   var as = _.as || 'path',
       data = pulse.source,
-      diagram, polygons, i, n;
+      delaunay, extent, voronoi, polygon, i, n;
 
   // configure and construct voronoi diagram
-  diagram = voronoi().x(_.x).y(_.y);
-  if (_.size) diagram.size(_.size);
-  else diagram.extent(_.extent || defaultExtent);
-
-  this.value = (diagram = diagram(data));
+  delaunay = Delaunay.from(data, _.x, _.y);
+  extent = _.size ? [0, 0 , _.size[0], _.size[1]] : _.extent || defaultExtent;
+  this.value = (voronoi = delaunay.voronoi(extent))
 
   // map polygons to paths
-  polygons = diagram.polygons();
   for (i=0, n=data.length; i<n; ++i) {
-    data[i][as] = polygons[i]
-      ? 'M' + polygons[i].join('L') + 'Z'
+    polygon = voronoi.cellPolygon(i);
+    data[i][as] = polygon
+      ? 'M' + polygon.join('L') + 'Z'
       : null;
   }
 

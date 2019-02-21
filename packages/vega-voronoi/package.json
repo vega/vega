@@ -12,7 +12,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-voronoi:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
+    "rollup": "rollup -g d3-delaunay:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
@@ -22,7 +22,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-voronoi": "^1.1.4",
+    "d3-delaunay": "^4.1.5",
     "vega-dataflow": "^5.1.1",
     "vega-util": "^1.8.0"
   },
