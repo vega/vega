@@ -46,6 +46,15 @@ export type UnionSortField =
     };
 export type ScaleField = string | SignalRef;
 
+export type ScaleBins =
+  | (number | SignalRef)[]
+  | SignalRef
+  | {
+      step: number | SignalRef;
+      start?: number | SignalRef;
+      stop?: number | SignalRef;
+    };
+
 export type ScaleInterpolate =
   | 'rgb'
   | 'lab'
@@ -100,7 +109,7 @@ export interface BaseScale {
 }
 export interface ContinuousScale extends BaseScale {
   range?: RangeScheme;
-  bins?: (number | SignalRef)[] | SignalRef;
+  bins?: ScaleBins;
   interpolate?: ScaleInterpolate;
   clamp?: boolean | SignalRef;
   padding?: number | SignalRef;
@@ -193,6 +202,7 @@ export interface QuantileScale extends BaseScale {
 }
 export interface BinOrdinalScale extends BaseScale {
   type: 'bin-ordinal';
+  bins?: ScaleBins;
   range?: RangeScheme | ScaleData;
   interpolate?: ScaleInterpolate;
 }

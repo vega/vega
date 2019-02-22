@@ -14,19 +14,15 @@ export const spec: Spec = {
       "bind": {"input": "select", "options": [5, 10, 20]}
     },
     {
-      "name": "binValues",
-      "update": "sequence(bins.start, bins.stop + bins.step, bins.step)"
-    },
-    {
-      "name": "binDomain",
-      "update": "[bins.start, bins.stop]"
+      "name": "binCount",
+      "update": "(bins.stop - bins.start) / bins.step"
     },
     {
       "name": "nullGap", "value": 10
     },
     {
       "name": "barStep",
-      "update": "binValues.length ? (width - nullGap) / binValues.length : 0"
+      "update": "(width - nullGap) / (1 + binCount)"
     }
   ],
 
@@ -93,8 +89,8 @@ export const spec: Spec = {
       "type": "linear",
       "range": [{"signal": "barStep + nullGap"}, {"signal": "width"}],
       "round": true,
-      "domain": {"signal": "binDomain"},
-      "bins": {"signal": "binValues"}
+      "domain": {"signal": "[bins.start, bins.stop]"},
+      "bins": {"signal": "bins"}
     },
     {
       "name": "xscale-null",
