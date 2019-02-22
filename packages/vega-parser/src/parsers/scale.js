@@ -34,17 +34,17 @@ export function parseScale(spec, scope) {
   }
 
   if (spec.nice != null) {
-    parseScaleNice(spec.nice, params);
+    params.nice = parseScaleNice(spec.nice);
+  }
+
+  if (spec.bins != null) {
+    params.bins = parseScaleBins(spec.bins, scope);
   }
 
   for (key in spec) {
     if (params.hasOwnProperty(key) || key === 'name') continue;
-    params[key] = parseProperty(key, spec[key], scope);
+    params[key] = parseLiteral(spec[key], scope);
   }
-}
-
-function parseProperty(name, v, scope) {
-  return (name === 'bins' ? parseArray : parseLiteral)(v, scope);
 }
 
 function parseLiteral(v, scope) {
@@ -194,10 +194,18 @@ function numericMultipleDomain(domain, scope, fields) {
   return ref(scope.add(MultiExtent({extents: extents})));
 }
 
+// -- SCALE BINS -----
+
+function parseScaleBins(v, scope) {
+  return v.signal || isArray(v)
+    ? parseArray(v, scope)
+    : scope.objectProperty(v);
+}
+
 // -- SCALE NICE -----
 
-function parseScaleNice(nice, params) {
-  params.nice = isObject(nice)
+function parseScaleNice(nice) {
+  return isObject(nice)
     ? {
         interval: parseLiteral(nice.interval),
         step: parseLiteral(nice.step)

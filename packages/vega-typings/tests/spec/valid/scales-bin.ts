@@ -80,7 +80,11 @@ export const spec: Spec = {
       "name": "color",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "bins": {"signal": "bins"}
+      "bins": {
+        "start": {"signal": "bins.start"},
+        "stop": {"signal": "bins.stop"},
+        "step": {"signal": "bins.step"}
+      }
     }
   ],
 
