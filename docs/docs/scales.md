@@ -65,7 +65,7 @@ All quantitative scales support color-valued ranges, defined either as an array 
 
 | Property      | Type                                  | Description    |
 | :------------ | :-----------------------------------: | :------------- |
-| bins          | {% include type t="Number[]" %}       | {% include tag ver="5.0" %} An optional array of bin boundaries over the scale domain (such as those computed by Vega's [bin transform](../transforms/bin)). If provided, axes and legends will use the bin boundaries to inform the choice of tick marks and text labels.|
+| bins          | [Bins](#bins)                         | {% include tag ver="5.0" %} Bin boundaries over the scale domain, such as those computed by Vega's [`bin` transform](../transforms/bin). If provided, axes and legends will use the bin boundaries to inform the choice of axis tick marks and legend labels. This property can be either an explicit array of bin boundary values or a specification object, see the [scale bins reference](#bins) for more.|
 | clamp         | {% include type t="Boolean" %}        | A boolean indicating if output values should be clamped to the _range_ (default `false`). If clamping is disabled and the scale is passed a value outside the _domain_, the scale may return a value outside the _range_ through extrapolation. If clamping is enabled, the output value of the scale is always within the scale's range.|
 | padding       | {% include type t="Number" %}         | Expands the scale domain to accommodate the specified number of pixels on each of the scale range. The scale range must represent pixels for this parameter to function as intended. Padding adjustment is performed _prior_ to all other adjustments, including the effects of the _zero_, _nice_, _domainMin_, and _domainMax_ properties.|
 | nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values. This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
@@ -257,9 +257,15 @@ the scale will map domain values to color strings as follows:
 
 ### <a name="bin-ordinal"></a>Bin-Ordinal Scales
 
-Binned ordinal scales (`bin-ordinal`) are a special type of [ordinal scale](#ordinal) for use with data that has been subdivided into bins (for example, using Vega's [bin transform](../transforms/bin)). The _domain_ values for a binned ordinal scale must be the set of all bin boundaries, from the minimum bin start to maximum bin end. Input domain values are discretized to the appropriate bin, which is then treated as a standard ordinal scale input. The main benefit of using `bin-ordinal` scales is that they provide "bin-aware" routines for sampling values and generating labels for inclusion in [legends](../legends). They are particularly useful for creating binned color encodings.
+Binned ordinal scales (`bin-ordinal`) are a special type of [ordinal scale](#ordinal) for use with data that has been subdivided into bins (for example, using Vega's [`bin` transform](../transforms/bin)). The main benefit of using `bin-ordinal` scales is that they provide "bin-aware" routines for sampling values and generating labels for inclusion in [legends](../legends). They are particularly useful for creating binned color encodings.
 
-The trickiest part of using binned ordinal scales is retrieving the correct set of bin boundaries for the _domain_ property. Here is one way to do this in conjunction with a [bin transform](../transforms/bin):
+The _domain_ values for a binned ordinal scale must be the set of all bin boundaries, from the minimum bin start to maximum bin end. Input domain values are discretized to the appropriate bin, which is then treated as a standard ordinal scale input. However, as the _domain_ property only accepts an array of values, the `bin-ordinal` scale provides a _bins_ property that also accepts a bin specification and can be used instead of an explicit _domain_ property.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| bins          | [Bins](#bins)                  | {% include tag ver="5.0" %} Bin boundaries over the scale domain, such as those computed by Vega's [`bin` transform](../transforms/bin). This property can be either an explicit array of bin boundary values or a specification object, see the [scale bins reference](#bins) for more. If the _domain_ property is not defined, *bins* will be used to determine the scale domain.|
+
+Here is an example of a `bin-ordinal` scale defined in conjunction with a [`bin` transform](../transforms/bin):
 
 ```json
 {
@@ -276,7 +282,7 @@ The trickiest part of using binned ordinal scales is retrieving the correct set 
     {
       "name": "color",
       "type": "bin-ordinal",
-      "domain": {"signal": "sequence(bins.start, bins.stop + bins.step, bins.step)"},
+      "bins": {"signal": "bins"},
       "range": {"scheme": "greens"}
     }
   ]
@@ -284,6 +290,21 @@ The trickiest part of using binned ordinal scales is retrieving the correct set 
 ```
 
 [Back to scale type reference](#types)
+
+
+## <a name="bins"></a>Scale Bins
+
+Bin boundaries can be provided to scales as either an explicit array of bin boundaries or as a bin specification object. The legal values are:
+
+- A [signal reference](../types/#Signal) that resolves to either an array or bin specification object.
+- An [array](../types/#Array) literal of bin boundary values. For example, `[0, 5, 10, 15, 20]`. The array must include both starting and ending boundaries. The previous example uses five values to indicate a total of four bin intervals: [0-5), [5-10), [10-15), [15-20]. Array literals may include signal references as elements.
+- A bin specification object that indicates the bin _step_ size, and optionally the _start_ and _stop_ boundaries. The output value of a [`bin` transform](../transforms/bin) is a valid bin specification object.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| start         | {% include type t="Number" %}  | The starting (lowest-valued) bin boundary. If not defined, the lowest value of the scale domain will be used.|
+| stop          | {% include type t="Number" %}  | The stopping (highest-valued) bin boundary. If not defined, the highest value of the scale domain will be used.|
+| step          | {% include type t="Number" %}  | {% include required %} The step size defining the bin interval width.|
 
 
 ## <a name="domain"></a>Scale Domains
