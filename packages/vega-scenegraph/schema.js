@@ -70,7 +70,7 @@ function css_color_names() {
 var COLOR_NAMES = 'aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen';
 
 var BASE = {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Vega scenegraph",
   "description": "Vega scenegraph model.",
   "oneOf": [ { "$ref": "#/refs/mark" } ],
@@ -166,9 +166,14 @@ var ITEM_BASE = {
     "strokeOpacity": { "type": "number", "default": 1 },
     "strokeWidth": { "type": "number", "default": 1 },
     "strokeCap": { "enum": [ "butt", "cap", "round" ], "default": "butt" },
+    "strokeJoin": { "enum": [ "miter", "round", "bevel" ], "default": "miter" },
+    "strokeMiterLimit": { "type": "number" },
     "strokeDash": { "type": "array", "items": { "type": "number" } },
     "strokeDashOffset": { "type": "number", "default": 0 },
-    "zindex": { "type": "number" }
+    "zindex": { "type": "number" },
+    "cursor": { "type": "string" },
+    "href": { "type": "string", "format": "uri-reference" },
+    "tooltip": {}
   }
 };
 
@@ -231,7 +236,8 @@ var MARKS = {
   },
   "image": {
     "properties": {
-      "url": { "type": "string", "format": "uri" },
+      "url": { "type": "string", "format": "uri-reference" },
+      "aspect": { "type": "boolean", "default": true },
       "align": {
         "enum": [ "left", "center", "right" ],
         "default": "left"
@@ -269,6 +275,7 @@ var MARKS = {
   },
   "symbol": {
     "properties": {
+      "angle": { "type": "number", "default": 0 },
       "size": { "type": "number", "default": 100 },
       "shape": { "type": "string" }
     }
