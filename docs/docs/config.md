@@ -194,6 +194,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFlushOffset| {% include type t="Number" %} | Offset in pixels for flush-adjusted labels (default `0`). |
 | labelFont       | {% include type t="String" %}   | Font name for axis tick labels. |
 | labelFontSize   | {% include type t="Number" %}   | Font size of axis tick labels. |
+| labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
 | labelOpacity    | {% include type t="Number" %}   | Opacity of axis tick labels. {% include tag ver="4.1" %} |
@@ -216,6 +217,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
+| titleFontStyle  | {% include type t="String" %} | Font style of axis titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
 | titleOpacity    | {% include type t="Number" %}   | Opacity of axis titles. {% include tag ver="4.1" %} |
@@ -263,11 +265,12 @@ Properties defining default settings for legends. These properties are defined u
 | gradientLabelOffset   | {% include type t="Number" %}   | Vertical offset in pixels for color ramp gradient labels. |
 | gradientOpacity       | {% include type t="Number" %}   | Opacity of color ramp gradient. {% include tag ver="4.1" %} |
 | gridAlign             | {% include type t="String" %}   | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
-| labelAlign            | {% include type t="String" %}   | Horizontal text alignment for legend labels. |
-| labelBaseline         | {% include type t="String" %}   | Vertical text baseline for legend labels. |
-| labelColor            | {% include type t="Color" %}    | Text color for legend labels. |
-| labelFont             | {% include type t="String" %}   | Font name for legend labels. |
-| labelFontSize         | {% include type t="Number" %}   | Font size in pixels for legend labels. |
+| labelAlign            | {% include type t="String" %}   | Horizontal text alignment of legend labels. |
+| labelBaseline         | {% include type t="String" %}   | Vertical text baseline of legend labels. |
+| labelColor            | {% include type t="Color" %}    | Text color of legend labels. |
+| labelFont             | {% include type t="String" %}   | Font name of legend labels. |
+| labelFontSize         | {% include type t="Number" %}   | Font size in pixels of legend labels. |
+| labelFontStyle        | {% include type t="String" %}   | Font style of legend labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight       | {% include type t="String|Number" %}   | Font weight of legend labels. |
 | labelLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
@@ -291,11 +294,12 @@ Properties defining default settings for legends. These properties are defined u
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 | symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
-| titleAlign            | {% include type t="String" %}   | Horizontal text alignment for legend titles. |
-| titleBaseline         | {% include type t="String" %}   | Vertical text baseline for legend titles. |
-| titleColor            | {% include type t="Color" %}    | Text color for legend titles. |
-| titleFont             | {% include type t="String" %}   | Font name for legend titles. |
-| titleFontSize         | {% include type t="Number" %}   | Font size in pixels for legend titles. |
+| titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. |
+| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. |
+| titleColor            | {% include type t="Color" %}    | Text color of legend titles. |
+| titleFont             | {% include type t="String" %}   | Font name of legend titles. |
+| titleFontSize         | {% include type t="Number" %}   | Font size in pixels of legend titles. |
+| titleFontStyle        | {% include type t="String" %}   | Font style of legend titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
@@ -326,11 +330,12 @@ Properties defining default settings for titles. These properties are defined un
 | :-------------------- | :-----------------------------: | :------------- |
 | align                 | {% include type t="String" %}   | Horizontal text alignment of the title. If specified, this value overrides automatic alignment based on the _anchor_ value. |
 | anchor                | {% include type t="String" %}   | Title anchor position (`"start"`, `"middle"`, or `"end"`). |
-| angle                 | {% include type t="Number" %}   | Angle in degrees of title text. |
-| baseline              | {% include type t="String" %}   | Vertical text baseline for title text. |
-| color                 | {% include type t="Color" %}    | Text color for title text. |
-| font                  | {% include type t="String" %}   | Font name for title text. |
-| fontSize              | {% include type t="Number" %}   | Font size in pixels for title text. |
+| angle                 | {% include type t="Number" %}   | Angle in degrees of the title text. |
+| baseline              | {% include type t="String" %}   | Vertical text baseline of the title. |
+| color                 | {% include type t="Color" %}    | Text color of the title text. |
+| font                  | {% include type t="String" %}   | Font name of the title text. |
+| fontSize              | {% include type t="Number" %}   | Font size in pixels of the title text. |
+| fontStyle             | {% include type t="String" %}   | Font style of the title text (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | fontWeight            | {% include type t="String|Number" %}   | Font weight for title text. |
 | frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
 | limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |

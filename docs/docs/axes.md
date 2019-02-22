@@ -37,6 +37,7 @@ Properties for specifying a coordinate axis.
 | labelFlushOffset | {% include type t="Number" %} | Indicates the number of pixels by which to offset flush-adjusted labels (default `0`). For example, a value of `2` will push flush-adjusted labels 2 pixels outward from the center of the axis. Offsets can help the labels better visually group with corresponding axis ticks.|
 | labelFont     | {% include type t="String" %}  | Font name for axis tick labels. |
 | labelFontSize | {% include type t="Number" %}  | Font size of axis tick labels. |
+| labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of axis tick labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of axis tick labels. |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of axis tick labels. {% include tag ver="4.1" %} |
@@ -58,12 +59,13 @@ Properties for specifying a coordinate axis.
 | tickSize      | {% include type t="Number" %}  | The length in pixels of axis ticks.|
 | tickWidth     | {% include type t="Number" %}  | Width in pixels of axis ticks. |
 | title         | {% include type t="String" %}  | A title for the axis (none by default).|
-| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of axis title. |
-| titleAngle    | {% include type t="Number" %}  | Angle in degrees of axis title. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline for axis title. |
-| titleColor    | {% include type t="Color" %}   | Text color of axis title. |
-| titleFont     | {% include type t="String" %}  | Font name for axis title. |
-| titleFontSize | {% include type t="Number" %}  | Font size of axis title. |
+| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. |
+| titleAngle    | {% include type t="Number" %}  | Angle in degrees of the axis title. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the axis title. |
+| titleColor    | {% include type t="Color" %}   | Text color of the axis title. |
+| titleFont     | {% include type t="String" %}  | Font name of the axis title. |
+| titleFontSize | {% include type t="Number" %}  | Font size of the axis title. |
+| titleFontStyle  | {% include type t="String" %} | Font style of the axis title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of axis title. |
 | titleLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of the axis title. |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of axis title. {% include tag ver="4.1" %} |
