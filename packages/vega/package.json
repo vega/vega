@@ -19,9 +19,9 @@
   "jsdelivr": "build/vega.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "node rollup-node && node schema-copy",
+    "rollup": "node rollup-node && node rollup && node schema-copy",
     "prebuild": "rimraf build && mkdirp build",
-    "build": "yarn rollup && node rollup && node rollup -e && node rollup -e -m",
+    "build": "yarn rollup && node rollup -e && node rollup -m",
     "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
     "pretest": "yarn prebuild && yarn rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js test",
