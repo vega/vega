@@ -1,13 +1,13 @@
-import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
-import { TextBaseline } from './encode';
+import { Encodable, SignalRef, TextEncodeEntry } from '.';
 import {
+  AlignValue,
+  AnchorValue,
+  ColorValue,
+  FontStyleValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  AnchorValue,
-  FontWeightValue,
-  ColorValue,
   TextBaselineValue,
-  AlignValue,
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
@@ -51,6 +51,7 @@ export interface BaseTitle<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
@@ -105,7 +106,7 @@ export interface BaseTitle<
   /**
    * Font style for title text.
    */
-  fontStyle?: S;
+  fontStyle?: FS;
 
   /**
    * Font weight for title text.

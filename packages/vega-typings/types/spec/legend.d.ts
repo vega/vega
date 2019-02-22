@@ -6,12 +6,12 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { LabelOverlap } from './axis';
-import { TickCount } from './axis.d';
+import { LabelOverlap, TickCount } from './axis';
 import { LayoutAlign } from './layout';
 import {
   AlignValue,
   ColorValue,
+  FontStyleValue,
   FontWeightValue,
   NumberValue,
   StringValue,
@@ -127,6 +127,7 @@ export interface BaseLegend<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
@@ -203,7 +204,7 @@ export interface BaseLegend<
   /**
    * The font style of the legend title.
    */
-  titleFontStyle?: S;
+  titleFontStyle?: FS;
 
   /**
    * The font weight of the legend title.
@@ -384,7 +385,7 @@ export interface BaseLegend<
   /**
    * The font style of legend label.
    */
-  labelFontStyle?: S;
+  labelFontStyle?: FS;
 
   /**
    * The font weight of legend label.

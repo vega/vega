@@ -10,24 +10,22 @@ import {
   RangeScheme,
   SymbolShape,
   TextBaseline,
-  TitleAnchor,
-  TitleOrient,
 } from '.';
 import { BaseAxis, LabelOverlap } from './axis';
+import { LayoutAlign } from './layout';
 import { BaseLegend } from './legend';
+import { SignalRef } from './signal';
+import { BaseTitle } from './title';
 import {
+  AlignValue,
+  ColorValue,
+  FontStyleValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  ColorValue,
-  FontWeightValue,
-  AlignValue,
-  TextBaselineValue,
   SymbolShapeValue,
-  BooleanValue,
+  TextBaselineValue,
 } from './values';
-import { SignalRef } from './signal';
-import { LayoutAlign } from './layout';
-import { BaseTitle } from './title';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -342,12 +340,13 @@ export interface LegendConfig<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue
-> extends BaseLegend<N, NS, S, C, FW, A, TB, LA, LO, SY> {
+> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *

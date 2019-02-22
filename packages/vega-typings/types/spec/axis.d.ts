@@ -1,25 +1,23 @@
 import {
   GroupEncodeEntry,
   GuideEncodeEntry,
-  TimeInterval,
-  NumericValueRef,
   RuleEncodeEntry,
   SignalRef,
   TextEncodeEntry,
+  TimeInterval,
 } from '.';
-import { FontWeight, Align, TextBaseline, ArrayValueRef } from './encode';
+import { LayoutAlign } from './layout';
 import {
+  AlignValue,
+  BooleanValue,
+  ColorValue,
+  DashArrayValue,
+  FontStyleValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  ColorValue,
-  FontWeightValue,
-  AlignValue,
   TextBaselineValue,
-  SymbolShapeValue,
-  BooleanValue,
-  DashArrayValue,
 } from './values';
-import { LayoutAlign } from './layout';
 
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
@@ -135,6 +133,7 @@ export interface BaseAxis<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
@@ -213,7 +212,7 @@ export interface BaseAxis<
   /**
    * Font style of the title.
    */
-  titleFontStyle?: S;
+  titleFontStyle?: FS;
 
   /**
    * Font weight of the title.
@@ -425,7 +424,7 @@ export interface BaseAxis<
   /**
    * Font style of the title.
    */
-  labelFontStyle?: S;
+  labelFontStyle?: FS;
 
   /**
    * Font weight of axis tick labels.

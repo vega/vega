@@ -45,6 +45,7 @@ export type NumericValueRef = (ScaledValueRef<number> | {}) & {
 export type StringValueRef = ScaledValueRef<string>;
 export type SymbolShapeValueRef = ScaledValueRef<SymbolShape>;
 export type FontWeightValueRef = ScaledValueRef<FontWeight>;
+export type FontStyleValueRef = ScaledValueRef<FontStyle>;
 export type AlignValueRef = ScaledValueRef<Align>;
 export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
@@ -211,7 +212,9 @@ export type FontWeight =
   | 700
   | 800
   | 900;
-export type FontStyle = 'normal' | 'italic';
+
+// see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
+export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
   text?: ProductionRule<StringValueRef>;
   angle?: ProductionRule<NumericValueRef>;
