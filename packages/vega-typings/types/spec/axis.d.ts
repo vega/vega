@@ -211,6 +211,11 @@ export interface BaseAxis<
   titleFontSize?: N;
 
   /**
+   * Font style of the title.
+   */
+  titleFontStyle?: S;
+
+  /**
    * Font weight of the title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
@@ -416,6 +421,11 @@ export interface BaseAxis<
    * @minimum 0
    */
   labelFontSize?: N;
+
+  /**
+   * Font style of the title.
+   */
+  labelFontStyle?: S;
 
   /**
    * Font weight of axis tick labels.

@@ -35,6 +35,7 @@ const title = oneOf(
     color: colorValue,
     font: stringValue,
     fontSize: numberValue,
+    fontStyle: stringValue,
     fontWeight: fontWeightValue,
     limit: numberValue,
     encode: titleEncode
