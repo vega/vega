@@ -45,6 +45,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | labelColor    | {% include type t="Color" %}   | Text color for legend labels. |
 | labelFont     | {% include type t="String" %}  | Font name for legend labels. |
 | labelFontSize | {% include type t="Number" %}  | Font size in pixels for legend labels. |
+| labelFontStyle  | {% include type t="String" %} | Font style of legend labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of legend labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of legend labels. |
 | labelOffset   | {% include type t="Number" %}  | Offset in pixels between legend labels their corresponding symbol or gradient. |
@@ -63,10 +64,11 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment for legend title. |
 | titleBaseline | {% include type t="String" %}  | Vertical text baseline for legend title. |
-| titleColor    | {% include type t="Color" %}   | Text color for legend title. |
-| titleFont     | {% include type t="String" %}  | Font name for legend title. |
-| titleFontSize | {% include type t="Number" %}  | Font size in pixels for legend title. |
-| titleFontWeight | {% include type t="String|Number" %} | Font weight for legend title. |
+| titleColor    | {% include type t="Color" %}   | Text color of the legend title. |
+| titleFont     | {% include type t="String" %}  | Font name of the legend title. |
+| titleFontSize | {% include type t="Number" %}  | Font size in pixels of the legend title. |
+| titleFontStyle  | {% include type t="String" %} | Font style of the legend title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
+| titleFontWeight | {% include type t="String|Number" %} | Font weight of the legend title. |
 | titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of the legend title. |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
