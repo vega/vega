@@ -20,6 +20,8 @@ import {
   scaleImplicit
 } from 'vega-scale';
 
+import {range as sequence} from 'd3-array';
+
 import {
   piecewise,
   interpolate,
@@ -76,13 +78,9 @@ prototype.transform = function(_, pulse) {
       : df.warn('Unsupported scale property: ' + key);
   }
 
-  configureRange(scale, _, configureDomain(scale, _, df));
-
-  if (_.bins) {
-    scale.bins = _.bins;
-  } else if (scale.bins) {
-    delete scale.bins;
-  }
+  configureRange(scale, _,
+    configureBins(scale, _, configureDomain(scale, _, df))
+  );
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
@@ -203,6 +201,44 @@ function domainCheck(type, domain, df) {
     }
   }
   return domain;
+}
+
+function configureBins(scale, _, count) {
+  let bins = _.bins;
+
+  if (bins && !isArray(bins)) {
+    // generate bin boundary array
+    const domain = (bins.start == null || bins.stop == null) && scale.domain(),
+          start = bins.start == null ? domain[0] : bins.start,
+          stop = bins.stop == null ? peek(domain) : bins.stop,
+          step = bins.step;
+
+    if (!step) error('Scale bins parameter missing step property.');
+    bins = sequence(start, stop + step, step);
+  }
+
+  if (bins) {
+    // assign bin boundaries to scale instance
+    scale.bins = bins;
+  } else if (scale.bins) {
+    // no current bins, remove bins if previously set
+    delete scale.bins;
+  }
+
+  // special handling for bin-ordinal scales
+  if (scale.type === BinOrdinal) {
+    if (!bins) {
+      // the domain specifies the bins
+      scale.bins = scale.domain();
+    } else if (!_.domain) {
+      // the bins specify the domain
+      scale.domain(bins);
+      count = bins.length;
+    }
+  }
+
+  // return domain cardinality
+  return count;
 }
 
 function configureRange(scale, _, count) {

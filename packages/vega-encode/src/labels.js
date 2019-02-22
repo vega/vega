@@ -1,20 +1,18 @@
 import {Symbols, Discrete} from './legend-types';
 import {tickValues} from './ticks';
 
-import {Quantile, Quantize, Threshold, BinOrdinal} from 'vega-scale';
+import {Quantile, Quantize, Threshold} from 'vega-scale';
 import {peek} from 'vega-util';
 
 const symbols = {
   [Quantile]:   quantileSymbols,
   [Quantize]:   quantizeSymbols,
-  [Threshold]:  thresholdSymbols,
-  [BinOrdinal]: binSymbols
+  [Threshold]:  thresholdSymbols
 };
 
 export function labelValues(scale, count) {
-  var values = symbols[scale.type];
-  return values ? values(scale)
-    : scale.bins ? binValues(scale.bins.slice())
+  return scale.bins ? binValues(scale.bins.slice())
+    : symbols[scale.type] ? symbols[scale.type](scale)
     : tickValues(scale, count);
 }
 
@@ -45,10 +43,6 @@ function thresholdSymbols(scale) {
   values.max = +Infinity;
 
   return values;
-}
-
-function binSymbols(scale) {
-  return binValues(scale.domain());
 }
 
 function binValues(bins) {
