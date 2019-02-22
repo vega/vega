@@ -1,9 +1,12 @@
 import {
   Align,
   AlignValueRef,
+  AnchorValueRef,
   ArrayValueRef,
   BooleanValueRef,
   ColorValueRef,
+  FontStyle,
+  FontStyleValueRef,
   FontWeight,
   FontWeightValueRef,
   NumericValueRef,
@@ -12,13 +15,13 @@ import {
   SymbolShapeValueRef,
   TextBaseline,
   TextBaselineValueRef,
-  AnchorValueRef,
 } from './encode';
 import { TitleAnchor } from './title';
 
 export type NumberValue = number | NumericValueRef;
 
 export type FontWeightValue = FontWeight | FontWeightValueRef;
+export type FontStyleValue = FontStyle | FontStyleValueRef;
 
 export type StringValue = string | StringValueRef;
 
