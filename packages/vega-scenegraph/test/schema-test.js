@@ -1,16 +1,29 @@
 var fs = require('fs'),
-    tv4 = require('tv4'),
+    ajv = require('ajv'),
     tape = require('tape');
 
 var schemaFile = './build/vega-scenegraph-schema.json';
 var schema = JSON.parse(fs.readFileSync(schemaFile));
 var res = './test/resources/';
 
+var validator = new ajv({
+    allErrors: true,
+    verbose: true,
+    extendRefs: 'fail'
+  })
+  .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
+
+var validate = validator.compile(schema);
+
+tape('schema should be valid', function(t) {
+  t.ok(validator.validateSchema(schema));
+  t.end();
+});
+
 tape('schema should validate correct marks', function(t) {
   var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
   for (var name in marks) {
-    var v = tv4.validate(marks[name], schema);
-    t.ok(v, name);
+    t.ok(validate(marks[name]), name);
   }
   t.end();
 });
@@ -24,7 +37,7 @@ tape('schema should invalidate incorrect marks', function(t) {
       case 'text': scene.marktype = 'arc'; break;
       default: scene.marktype = 'text';
     }
-    t.notOk(tv4.validate(scene, schema));
+    t.notOk(validate(scene));
   }
   t.end();
 });
@@ -37,8 +50,7 @@ tape('schema should validate scenegraph files', function(t) {
   ];
   files.forEach(function(f) {
     var scene = JSON.parse(fs.readFileSync(res + f));
-    var v = tv4.validate(scene, schema);
-    t.ok(v);
+    t.ok(validate(scene));
   });
   t.end();
 });
@@ -52,7 +64,7 @@ tape('schema should invalidate degenerate scenegraphs', function(t) {
   ];
 
   list.forEach(function(scene) {
-    t.notOk(tv4.validate(scene, schema));
+    t.notOk(validate(scene));
   });
 
   t.end();
@@ -73,7 +85,7 @@ tape('schema should validate svg paths', function(t) {
   ];
 
   bad.forEach(function(scene) {
-    t.notOk(tv4.validate(scene, schema), scene.items[0].path);
+    t.notOk(validate(scene), scene.items[0].path);
   });
 
   var good = [
@@ -90,7 +102,7 @@ tape('schema should validate svg paths', function(t) {
   ];
 
   good.forEach(function(scene) {
-    t.ok(tv4.validate(scene, schema));
+    t.ok(validate(scene));
   });
 
   t.end();
@@ -105,7 +117,7 @@ tape('schema should validate colors', function(t) {
   ];
 
   bad.forEach(function(scene) {
-    t.notOk(tv4.validate(scene, schema));
+    t.notOk(validate(scene));
   });
 
   var good = [
@@ -119,7 +131,7 @@ tape('schema should validate colors', function(t) {
   ];
 
   good.forEach(function(scene) {
-    t.ok(tv4.validate(scene, schema));
+    t.ok(validate(scene));
   });
 
   t.end();
