@@ -206,7 +206,7 @@ function defaults() {
         scheme: 'blues'
       },
       heatmap: {
-        scheme: 'viridis'
+        scheme: 'greenblue'
       },
       ramp: {
         scheme: 'blues'
