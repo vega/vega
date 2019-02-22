@@ -103,6 +103,11 @@ export interface BaseTitle<
   fontSize?: N;
 
   /**
+   * Font style for title text.
+   */
+  fontStyle?: S;
+
+  /**
    * Font weight for title text.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */

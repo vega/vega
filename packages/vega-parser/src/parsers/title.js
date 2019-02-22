@@ -106,6 +106,7 @@ function buildTitle(spec, config, userEncode, dataRef) {
   addEncode(encode, 'fill',       lookup('color', spec, config));
   addEncode(encode, 'font',       lookup('font', spec, config));
   addEncode(encode, 'fontSize',   lookup('fontSize', spec, config));
+  addEncode(encode, 'fontStyle',  lookup('fontStyle', spec, config));
   addEncode(encode, 'fontWeight', lookup('fontWeight', spec, config));
   addEncode(encode, 'frame',      lookup('frame', spec, config));
   addEncode(encode, 'limit',      lookup('limit', spec, config));

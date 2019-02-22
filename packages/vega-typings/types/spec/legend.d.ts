@@ -201,6 +201,11 @@ export interface BaseLegend<
   titleFontSize?: N;
 
   /**
+   * The font style of the legend title.
+   */
+  titleFontStyle?: S;
+
+  /**
    * The font weight of the legend title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
@@ -375,6 +380,11 @@ export interface BaseLegend<
    * @minimum 0
    */
   labelFontSize?: N;
+
+  /**
+   * The font style of legend label.
+   */
+  labelFontStyle?: S;
 
   /**
    * The font weight of legend label.

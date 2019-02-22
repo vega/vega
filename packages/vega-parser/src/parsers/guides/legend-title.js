@@ -30,6 +30,7 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(encode, 'fill',        lookup('titleColor', spec, config));
   addEncode(encode, 'font',        lookup('titleFont', spec, config));
   addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
+  addEncode(encode, 'fontStyle',   lookup('titleFontStyle', spec, config));
   addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
   addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
   addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));

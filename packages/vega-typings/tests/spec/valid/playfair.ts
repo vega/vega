@@ -72,20 +72,10 @@ export const spec: Spec = {
       "tickCount": 5,
       "offset": 5,
       "tickSize": 0,
-      "encode": {
-        "grid": {
-          "enter": {
-            "stroke": {"value": "#fff"},
-            "strokeWidth": {"value": 1},
-            "strokeOpacity": {"value": 0.25}
-          }
-        },
-        "labels": {
-          "enter": {
-            "fontStyle": {"value": "italic"}
-          }
-        }
-      }
+      "gridColor": "#fff",
+      "gridWidth": 1,
+      "gridOpacity": 0.25,
+      "labelFontStyle": "italic"
     }
   ],
 

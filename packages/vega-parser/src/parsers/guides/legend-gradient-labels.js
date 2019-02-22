@@ -36,6 +36,7 @@ export default function(spec, config, userEncode, dataRef) {
   addEncode(encode, 'fill',        lookup('labelColor', spec, config));
   addEncode(encode, 'font',        lookup('labelFont', spec, config));
   addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
+  addEncode(encode, 'fontStyle',   lookup('labelFontStyle', spec, config));
   addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
   addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
   addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
