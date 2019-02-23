@@ -28,7 +28,7 @@
     "vega-event-selector": "^2.0.0",
     "vega-expression": "^2.5.0",
     "vega-functions": "^5.0.0",
-    "vega-scale": "^3.0.0",
+    "vega-scale": "^4.0.0",
     "vega-util": "^1.8.0"
   }
 }
