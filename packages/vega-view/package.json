@@ -25,7 +25,7 @@
   "dependencies": {
     "d3-array": "^2.0.3",
     "d3-timer": "^1.0.9",
-    "vega-dataflow": "^5.1.0",
+    "vega-dataflow": "^5.1.1",
     "vega-functions": "^5.0.1",
     "vega-runtime": "^5.0.1",
     "vega-scenegraph": "^4.0.0",
