@@ -11,15 +11,15 @@
       "bind": {"input": "select", "options": [5, 10, 20]}
     },
     {
-      "name": "binDomain",
-      "update": "sequence(bins.start, bins.stop + bins.step, bins.step)"
+      "name": "binCount",
+      "update": "(bins.stop - bins.start) / bins.step"
     },
     {
       "name": "nullGap", "value": 10
     },
     {
       "name": "barStep",
-      "update": "(width - nullGap) / binDomain.length"
+      "update": "(width - nullGap) / (1 + binCount)"
     }
   ],
 
@@ -86,8 +86,8 @@
       "type": "linear",
       "range": [{"signal": "barStep + nullGap"}, {"signal": "width"}],
       "round": true,
-      "domain": {"data": "counts", "fields": ["bin0", "bin1"]},
-      "bins": {"signal": "binDomain"}
+      "domain": {"signal": "[bins.start, bins.stop]"},
+      "bins": {"signal": "bins"}
     },
     {
       "name": "xscale-null",

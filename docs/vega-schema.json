@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Vega Visualization Specification Language",
   "defs": {
     "autosize": {
@@ -219,6 +219,16 @@
             },
             {
               "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "titleFontStyle": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
             }
           ]
         },
@@ -577,6 +587,16 @@
             },
             {
               "$ref": "#/refs/fontWeightValue"
+            }
+          ]
+        },
+        "labelFontStyle": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
             }
           ]
         },
@@ -1839,7 +1859,7 @@
               "$ref": "#/refs/stringOrSignal"
             },
             "tickCount": {
-              "$ref": "#/refs/tickCountRef"
+              "$ref": "#/refs/tickCount"
             },
             "tickMinStep": {
               "$ref": "#/refs/numberOrSignal"
@@ -1965,6 +1985,16 @@
                 },
                 {
                   "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "titleFontStyle": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/refs/stringValue"
                 }
               ]
             },
@@ -2232,6 +2262,16 @@
                 },
                 {
                   "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "labelFontStyle": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/refs/stringValue"
                 }
               ]
             },
@@ -3712,9 +3752,182 @@
           "properties": {
             "type": {
               "enum": [
-                "quantile",
+                "quantile"
+              ]
+            },
+            "range": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "width",
+                    "height",
+                    "symbol",
+                    "category",
+                    "ordinal",
+                    "ramp",
+                    "diverging",
+                    "heatmap"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "$ref": "#/refs/signal"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "scheme": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "$ref": "#/refs/signal"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    },
+                    "count": {
+                      "$ref": "#/refs/numberOrSignal"
+                    },
+                    "extent": {
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/refs/numberOrSignal"
+                          },
+                          "numItems": 2
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "scheme"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "interpolate": {
+              "$ref": "#/refs/scaleInterpolate"
+            },
+            "name": {
+              "type": "string"
+            },
+            "domain": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "$ref": "#/refs/signal"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "$ref": "#/refs/scaleData"
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "domainMin": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "domainMax": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "domainMid": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "domainRaw": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "array"
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "reverse": {
+              "$ref": "#/refs/booleanOrSignal"
+            },
+            "round": {
+              "$ref": "#/refs/booleanOrSignal"
+            }
+          },
+          "required": [
+            "type",
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
                 "bin-ordinal"
               ]
+            },
+            "bins": {
+              "$ref": "#/refs/scaleBins"
             },
             "range": {
               "oneOf": [
@@ -5292,6 +5505,16 @@
                 },
                 {
                   "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "fontStyle": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/refs/stringValue"
                 }
               ]
             },
@@ -12610,6 +12833,24 @@
           "items": {
             "$ref": "#/refs/numberOrSignal"
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "step": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "start": {
+              "$ref": "#/refs/numberOrSignal"
+            },
+            "stop": {
+              "$ref": "#/refs/numberOrSignal"
+            }
+          },
+          "required": [
+            "step"
+          ],
+          "additionalProperties": false
         },
         {
           "$ref": "#/refs/signal"
