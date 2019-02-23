@@ -206,13 +206,14 @@ function defaults() {
         scheme: 'blues'
       },
       heatmap: {
-        scheme: 'viridis'
+        scheme: 'yellowgreenblue'
       },
       ramp: {
         scheme: 'blues'
       },
       diverging: {
-        scheme: 'blueorange'
+        scheme: 'blueorange',
+        extent: [1, 0]
       },
       symbol: [
         'circle',
