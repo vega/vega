@@ -3046,7 +3046,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(32, 96, 155)",
+                                      "fill": "rgb(174, 89, 10)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3093,7 +3093,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(46, 118, 177)",
+                                      "fill": "rgb(195, 104, 13)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3140,7 +3140,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(67, 138, 189)",
+                                      "fill": "rgb(212, 123, 28)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3187,7 +3187,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(89, 158, 201)",
+                                      "fill": "rgb(229, 143, 44)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3234,7 +3234,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(117, 177, 211)",
+                                      "fill": "rgb(239, 164, 73)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3281,7 +3281,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(148, 196, 222)",
+                                      "fill": "rgb(248, 185, 106)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3328,7 +3328,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(175, 211, 230)",
+                                      "fill": "rgb(251, 202, 139)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3375,7 +3375,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(200, 224, 236)",
+                                      "fill": "rgb(252, 218, 173)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3422,7 +3422,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(219, 232, 238)",
+                                      "fill": "rgb(249, 229, 200)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3469,7 +3469,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(234, 237, 236)",
+                                      "fill": "rgb(244, 236, 223)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3516,7 +3516,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(244, 236, 223)",
+                                      "fill": "rgb(234, 237, 236)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3563,7 +3563,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(249, 229, 200)",
+                                      "fill": "rgb(219, 232, 238)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3610,7 +3610,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(252, 218, 173)",
+                                      "fill": "rgb(200, 224, 236)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3657,7 +3657,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(251, 202, 139)",
+                                      "fill": "rgb(175, 211, 230)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3704,7 +3704,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(248, 185, 106)",
+                                      "fill": "rgb(148, 196, 222)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3751,7 +3751,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(239, 164, 73)",
+                                      "fill": "rgb(117, 177, 211)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3798,7 +3798,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(229, 143, 44)",
+                                      "fill": "rgb(89, 158, 201)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3845,7 +3845,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(212, 123, 28)",
+                                      "fill": "rgb(67, 138, 189)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3892,7 +3892,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(195, 104, 13)",
+                                      "fill": "rgb(46, 118, 177)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -3939,7 +3939,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(174, 89, 10)",
+                                      "fill": "rgb(32, 96, 155)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4048,7 +4048,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(71, 19, 102)",
+                                      "fill": "rgb(229, 245, 185)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4095,7 +4095,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(72, 35, 116)",
+                                      "fill": "rgb(220, 241, 180)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4142,7 +4142,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(70, 50, 127)",
+                                      "fill": "rgb(206, 236, 180)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4189,7 +4189,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(66, 65, 134)",
+                                      "fill": "rgb(192, 230, 181)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4236,7 +4236,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(60, 79, 138)",
+                                      "fill": "rgb(173, 223, 183)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4283,7 +4283,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(55, 92, 141)",
+                                      "fill": "rgb(154, 215, 184)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4330,7 +4330,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(49, 104, 142)",
+                                      "fill": "rgb(134, 208, 187)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4377,7 +4377,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(44, 115, 142)",
+                                      "fill": "rgb(113, 200, 189)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4424,7 +4424,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(39, 128, 142)",
+                                      "fill": "rgb(95, 192, 191)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4471,7 +4471,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(34, 139, 142)",
+                                      "fill": "rgb(78, 184, 193)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4518,7 +4518,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(32, 150, 140)",
+                                      "fill": "rgb(63, 175, 194)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4565,7 +4565,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(31, 161, 135)",
+                                      "fill": "rgb(51, 164, 193)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4612,7 +4612,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(39, 173, 129)",
+                                      "fill": "rgb(42, 153, 190)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4659,7 +4659,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(53, 183, 121)",
+                                      "fill": "rgb(37, 139, 187)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4706,7 +4706,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(74, 194, 109)",
+                                      "fill": "rgb(33, 126, 182)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4753,7 +4753,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(99, 203, 95)",
+                                      "fill": "rgb(33, 111, 175)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4800,7 +4800,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(128, 211, 77)",
+                                      "fill": "rgb(33, 96, 169)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4847,7 +4847,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(159, 218, 58)",
+                                      "fill": "rgb(34, 83, 162)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4894,7 +4894,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(191, 223, 37)",
+                                      "fill": "rgb(35, 70, 155)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -4941,7 +4941,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(223, 228, 26)",
+                                      "fill": "rgb(31, 59, 144)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5050,7 +5050,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(79, 115, 224)",
+                                      "fill": "rgb(217, 169, 49)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5097,7 +5097,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(93, 125, 222)",
+                                      "fill": "rgb(217, 174, 66)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5144,7 +5144,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(107, 135, 221)",
+                                      "fill": "rgb(216, 178, 83)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5191,7 +5191,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(121, 145, 220)",
+                                      "fill": "rgb(215, 183, 100)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5238,7 +5238,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(135, 155, 218)",
+                                      "fill": "rgb(215, 187, 117)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5285,7 +5285,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(148, 166, 217)",
+                                      "fill": "rgb(214, 191, 134)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5332,7 +5332,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(162, 176, 216)",
+                                      "fill": "rgb(213, 196, 151)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5379,7 +5379,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(176, 186, 214)",
+                                      "fill": "rgb(213, 200, 168)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5426,7 +5426,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(190, 196, 213)",
+                                      "fill": "rgb(212, 204, 185)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5473,7 +5473,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(204, 206, 212)",
+                                      "fill": "rgb(211, 209, 202)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5520,7 +5520,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(211, 209, 202)",
+                                      "fill": "rgb(204, 206, 212)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5567,7 +5567,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(212, 204, 185)",
+                                      "fill": "rgb(190, 196, 213)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5614,7 +5614,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(213, 200, 168)",
+                                      "fill": "rgb(176, 186, 214)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5661,7 +5661,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(213, 196, 151)",
+                                      "fill": "rgb(162, 176, 216)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5708,7 +5708,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(214, 191, 134)",
+                                      "fill": "rgb(148, 166, 217)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5755,7 +5755,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(215, 187, 117)",
+                                      "fill": "rgb(135, 155, 218)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5802,7 +5802,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(215, 183, 100)",
+                                      "fill": "rgb(121, 145, 220)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5849,7 +5849,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(216, 178, 83)",
+                                      "fill": "rgb(107, 135, 221)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5896,7 +5896,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(217, 174, 66)",
+                                      "fill": "rgb(93, 125, 222)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -5943,7 +5943,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "rgb(217, 169, 49)",
+                                      "fill": "rgb(79, 115, 224)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
