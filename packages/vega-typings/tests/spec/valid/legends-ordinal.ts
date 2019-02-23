@@ -58,7 +58,7 @@ export const spec: Spec = {
     {
       "name": "custom",
       "type": "ordinal",
-      "range": {"scheme": ["royalblue", "lightgray", "goldenrod"]},
+      "range": {"scheme": ["goldenrod", "lightgray", "royalblue"]},
       "domain": {"signal": "domain"}
     }
   ],
