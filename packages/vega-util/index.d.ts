@@ -67,8 +67,7 @@ export function fastmap(_?: object): FastMap;
 
 // Arrays
 
-export function array<T extends any[]>(v: T): T;
-export function array<T>(v: T): T[];
+export function array<T>(v: T | T[]): T[];
 
 export function clampRange(range: number[], min: number, max: number): number[];
 
