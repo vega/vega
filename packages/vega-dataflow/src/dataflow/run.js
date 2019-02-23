@@ -148,8 +148,9 @@ export async function runAsync(encode, prerun, postrun) {
   while (this._running) await this._running;
 
   // run dataflow, manage running promise
+  const clear = () => this._running = null;
   (this._running = this.evaluate(encode, prerun, postrun))
-    .then(() => this._running = null);
+    .then(clear, clear);
 
   return this._running;
 }
