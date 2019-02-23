@@ -42,7 +42,7 @@
     "vega-parser": "^5.0.0",
     "vega-projection": "^1.2.1",
     "vega-runtime": "^5.0.0",
-    "vega-scale": "^3.0.0",
+    "vega-scale": "^4.0.0",
     "vega-scenegraph": "^4.0.0",
     "vega-statistics": "^1.2.4",
     "vega-transforms": "^4.0.0",
