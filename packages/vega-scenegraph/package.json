@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
