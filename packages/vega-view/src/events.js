@@ -51,7 +51,7 @@ export function events(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        view.runQueue(() => {
+        view.runAsync(null, () => {
           if (source === VIEW && prevent(view, type)) {
             e.preventDefault();
           }
