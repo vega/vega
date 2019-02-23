@@ -42,11 +42,9 @@ function signalTest(name, op) {
  * @return {View} - This view instance.
  */
 export function setState(state) {
-  var view = this;
-  view.runAfter(function() {
-    view._trigger = false;
-    view._runtime.setState(state);
-    view.run().runAfter(function() { view._trigger = true; });
-  });
+  this.runAsync(null,
+    v => { v._trigger = false; v._runtime.setState(state); },
+    v => { v._trigger = true; }
+  );
   return this;
 }

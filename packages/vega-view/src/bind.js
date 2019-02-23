@@ -33,7 +33,7 @@ export default function(view, el, binding) {
       set: null,
       update: function(value) {
         if (value !== view.signal(param.signal)) {
-          view.runQueue(function() {
+          view.runAsync(null, function() {
             bind.source = true;
             view.signal(param.signal, value);
           });

@@ -1,5 +1,6 @@
 // Utilities
 export {default as UniqueList} from './src/util/UniqueList';
+export {default as asyncCallback} from './src/util/asyncCallback';
 
 // Core Runtime
 export {default as changeset, isChangeSet} from './src/ChangeSet';

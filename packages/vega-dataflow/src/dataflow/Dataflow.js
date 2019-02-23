@@ -4,7 +4,7 @@ import events from './events';
 import {ingest, parse, preload, request} from './load';
 import on from './on';
 import {rank, rerank} from './rank';
-import {run, runAsync, runAfter, enqueue, getPulse} from './run';
+import {evaluate, run, runAsync, runAfter, enqueue, getPulse} from './run';
 import {pulse, touch, update} from './update';
 import changeset from '../ChangeSet';
 import Heap from '../util/Heap';
@@ -100,6 +100,7 @@ prototype.events = events;
 prototype.on = on;
 
 // PULSE PROPAGATION
+prototype.evaluate = evaluate;
 prototype.run = run;
 prototype.runAsync = runAsync;
 prototype.runAfter = runAfter;
