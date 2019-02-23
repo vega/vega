@@ -38,9 +38,20 @@ var view = new vega.View(runtime)
   .logLevel(vega.Warn) // set view logging level
   .initialize(document.querySelector('#view')) // set parent DOM element
   .renderer('svg') // set render type (defaults to 'canvas')
-  .hover(); // enable hover event processing, only call once!
+  .hover(); // enable hover event processing, *only call once*!
 
 view.runAsync(); // evaluate and render the view
+```
+
+Or, if used within an [`async` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function):
+
+```js
+var view = await new vega.View(runtime)
+  .logLevel(vega.Warn) // set view logging level
+  .initialize(document.querySelector('#view')) // set parent DOM element
+  .renderer('svg') // set render type (defaults to 'canvas')
+  .hover() // enable hover event processing, *only call once*!
+  .runAsync(); // evaluate and render the view
 ```
 
 <a name="view_finalize" href="#view_finalize">#</a>
@@ -54,7 +65,7 @@ Prepares the view to be removed. To prevent unwanted behaviors and memory leaks,
 
 ## <a name="view-configuration"></a>View Configuration
 
-Methods for configuring the view state. These methods are often (but not always) invoked immediately after the View constructor, prior to the first invocation of the [runAsync](#view_runAsync) or [run](#view_run) methods.
+Methods for configuring the view state. These methods are often (but not always) invoked immediately after the View constructor, *prior* to the first invocation of the [runAsync](#view_runAsync) or [run](#view_run) methods.
 
 <a name="view_initialize" href="#view_initialize">#</a>
 view.<b>initialize</b>([<i>container</i>, <i>bindContainer</i>])
@@ -66,7 +77,7 @@ Initializes internal rendering and event handling, then returns this view instan
 view.<b>loader</b>([<i>loader</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Get or set the [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images. If the loader is updated _after_ [initialize](#view_initialize) has been invoked, the visualization will be reinitialized. If a Vega View loads data from an external URL, the load request is made _immediately_ upon view construction. To ensure a custom loader is used, _provide the loader as a constructor option!_ Invoking this method will update the loader only _after_ initial data requests have been made. This method will reset the renderer; invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn.
+Get or set the [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images. If the loader is updated _after_ [initialize](#view_initialize) has been invoked, the visualization will be reinitialized. If a Vega View loads data from an external URL, the load request is made _immediately_ upon view construction. To ensure a custom loader is used, _provide the loader as a constructor option!_ Invoking this method will update the loader only _after_ initial data requests have been made. This method will reset the renderer; invoke [`runAsync`](#view_runAsync) after calling this method to ensure the view is redrawn.
 
 <a name="view_logLevel" href="#view_logLevel">#</a>
 view.<b>logLevel</b>(<i>level</i>)
@@ -79,7 +90,7 @@ Sets the current log level and returns this view instance. This method controls 
 view.<b>renderer</b>(<i>type</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and returns this view instance. While typically invoked immediately upon view creation, this method can be called at any time to change the renderer. Invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn.
+Sets the renderer *type* (e.g., `'canvas'` (the default) or `'svg'`) and returns this view instance. While typically invoked immediately upon view creation, this method can be called at any time to change the renderer. Invoke [`runAsync`](#view_runAsync) after calling this method to ensure the view is redrawn.
 
 Additional renderer types may be used if registered via the [renderModule](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/modules.js) method exported by [vega-scenegraph](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/); for an example see the [vega-webgl-renderer](https://github.com/vega/vega-webgl-renderer).
 
@@ -87,7 +98,7 @@ Additional renderer types may be used if registered via the [renderModule](https
 view.<b>tooltip</b>(<i>tooltipHandler</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Get or set the tooltip handler function, which is invoked to handle display of tooltips (for example, when users hover the mouse cursor over an item). This method will reset the renderer; invoke [`runAsync`](#view_runAsync) or [`run`](#view_run) after calling this method to ensure the view is redrawn. The *tooltipHandler* argument should be a function that respects the following method signature:
+Get or set the tooltip handler function, which is invoked to handle display of tooltips (for example, when users hover the mouse cursor over an item). This method will reset the renderer; invoke [`runAsync`](#view_runAsync) after calling this method to ensure the view is redrawn. The *tooltipHandler* argument should be a function that respects the following method signature:
 
 ```js
 function(handler, event, item, value) {
@@ -117,7 +128,7 @@ Enables hover event processing and returns this view instance. The optional argu
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color and returns this view instance. This method does not force an immediate update to the view: invoke the [run](#view_run) method when ready.
+Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color and returns this view instance. This method does not force an immediate update to the view; invoke the [runAsync](#view_runAsync) method when ready.
 
 <a name="view_width" href="#view_width">#</a>
 view.<b>width</b>([<i>width</i>])
@@ -151,24 +162,32 @@ Sets a flag indicating that layout autosize calculations should be re-run on the
 Methods for invoking dataflow evaluation and view rendering.
 
 <a name="view_runAsync" href="#view_runAsync">#</a>
-view.<b>runAsync</b>([<i>encode</i>])
+view.<b>runAsync</b>([<i>encode</i>, <i>prerun</i>, <i>postrun</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
 Evaluates the underlying dataflow graph and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves upon completion of dataflow processing and scengraph rendering. The optional *encode* argument is a String value indicating the name of a custom `"encode"` set to run in addition to the standard `"update"` encoder. Any scenegraph elements modified during dataflow evaluation will automatically be re-rendered in the view.
 
-Internally, this method invokes the `runAsync` method of the [Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js) parent class, and then additionally performs rendering.
+Internally, this method invokes evaluation by the [Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js) parent class, and then additionally performs rendering. The returned [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) will resolve after rendering operations are complete.
+
+The optional *prerun* and *postrun* functions are callbacks that will be invoked immediately before and after dataflow evaluation and rendering. The callback functions are called with this view instance as the sole argument. The callbacks may be [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). If provided, *postrun* will be invoked *after* any callbacks registered via the [runAfter](#view_runAfter) method.
+
+*Most clients should not use the prerun and postrun callback arguments*. The callbacks are provided to support internal Vega operations. To perform post-processing after dataflow evaluation, in most cases clients should invoke [then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) or [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) the [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) returned by [runAsync](#view_runAsync).
 
 <a name="view_run" href="#view_run">#</a>
-view.<b>run</b>([<i>encode</i>])
+view.<b>run</b>([<i>encode</i>, <i>prerun</i>, <i>postrun</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/run.js "Source")
 
-Invokes [runAsync](#view_runAsync) and then returns this view instance. If one or more data sets have been queued to be loaded from external sources, this method may return prior to completion of dataflow evaluation. If no asynchronous processing is needed (for example, no external datasets are in the process of loading), the dataflow evaluation will complete before `run` returns. However, in general *callers have no guarantee that dataflow evaluation is complete when the `run` method returns*. We recommend using [runAsync](#view_runAsync) whenever possible, and invoking `then` on the returned Promise to perform actions once dataflow evaluation is finished.
+Requests asynchronous view evaluation and then synchronously returns this view instance without waiting for evaluation to complete. The arguments are identical to those for [runAsync](#view_runAsync).
+
+This method will return prior to completion of dataflow evaluation. To perform actions after dataflow evaluation is finished, instead use [runAsync](#view_runAsync) and invoke [then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) or [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) on the returned [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 
 <a name="view_runAfter" href="#view_runAfter">#</a>
 view.<b>runAfter</b>(<i>callback</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/run.js "Source")
 
-Schedules a *callback* function to be invoked after the current dataflow evaluation completes. The callback function will be invoked with this view instance provided as the sole parameter. If dataflow evaluation is not currently occurring, the callback function is invoked immediately. This method is used internally to schedule follow-up operations within the dataflow runtime engine. *Most clients should not use this method*; instead call [runAsync](#view_runAsync) and perform follow-up operations when the returned Promise resolves.
+Schedules a *callback* function to be invoked after the current dataflow evaluation completes. The callback function will be called with this view instance as the sole argument. The callback may be an [async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function).
+
+If dataflow evaluation is not currently occurring, the callback function is invoked immediately. This method is used internally to schedule follow-up operations within the dataflow runtime engine. *Most clients should not use this method*; instead call [runAsync](#view_runAsync) and perform follow-up operations when the returned Promise resolves.
 
 <a name="view_dirty" href="#view_dirty">#</a>
 view.<b>dirty</b>(<i>item</i>)
