@@ -4,10 +4,11 @@ import {lookup} from './guide-util';
 import {encoder, has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncode, addEncoders} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       zero = {value: 0},
@@ -41,22 +42,24 @@ export default function(spec, config, userEncode, dataRef) {
     enter.baseline = {value: 'bottom'};
   }
 
-  addEncode(encode, 'align',       lookup('titleAlign', spec, config));
-  addEncode(encode, 'angle',       lookup('titleAngle', spec, config));
-  addEncode(encode, 'baseline',    lookup('titleBaseline', spec, config));
-  addEncode(encode, 'fill',        lookup('titleColor', spec, config));
-  addEncode(encode, 'font',        lookup('titleFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
-  addEncode(encode, 'fontStyle',   lookup('titleFontStyle', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
-  addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));
+  addEncoders(encode, {
+    align:       _('titleAlign'),
+    angle:       _('titleAngle'),
+    baseline:    _('titleBaseline'),
+    fill:        _('titleColor'),
+    fillOpacity: _('titleOpacity'),
+    font:        _('titleFont'),
+    fontSize:    _('titleFontSize'),
+    fontStyle:   _('titleFontStyle'),
+    fontWeight:  _('titleFontWeight'),
+    limit:       _('titleLimit')
+  });
 
-  !addEncode(encode, 'x', lookup('titleX', spec, config), 'update')
+  !addEncode(encode, 'x', _('titleX'), 'update')
     && horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
-  !addEncode(encode, 'y', lookup('titleY', spec, config), 'update')
+  !addEncode(encode, 'y', _('titleY'), 'update')
     && !horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 

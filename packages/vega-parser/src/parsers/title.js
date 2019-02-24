@@ -7,26 +7,26 @@ import {lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole} from './marks/roles';
-import {addEncode, encoder} from './encode/encode-util';
+import {addEncoders, encoder} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString, stringValue} from 'vega-util';
 
-function anchorExpr(startValue, endValue, centerValue) {
-  return 'item.anchor==="' + Start + '"?' + startValue
-    + ':item.anchor==="' + End + '"?' + endValue
-    + ':' + centerValue;
+function anchorExpr(s, e, m) {
+  return `item.anchor==="${Start}"?${s}:item.anchor==="${End}"?${e}:${m}`;
 }
 
 // title text alignment
 var alignExpr = anchorExpr(
-  stringValue(Left), stringValue(Right), stringValue(Center)
+  stringValue(Left),
+  stringValue(Right),
+  stringValue(Center)
 );
 
 // multiplication factor for anchor positioning
 var multExpr = anchorExpr(
-  '+(item.orient==="' + Right + '")',
-  '+(item.orient!=="' + Left + '")',
+  `+(item.orient==="${Right}")`,
+  `+(item.orient!=="${Left}")`,
   '0.5'
 );
 
@@ -35,11 +35,12 @@ export default function(spec, scope) {
 
   var config = scope.config.title,
       encode = extend({}, spec.encode),
+      _ = lookup(spec, config),
       datum, dataRef, title;
 
   // single-element data source for group title
   datum = {
-    orient: lookup('orient', spec, config)
+    orient: _('orient')
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 
@@ -54,10 +55,11 @@ export default function(spec, scope) {
 }
 
 function buildTitle(spec, config, userEncode, dataRef) {
-  var zero = {value: 0},
+  var _ = lookup(spec, config),
+      zero = {value: 0},
       title = spec.text,
-      orient = lookup('orient', spec, config),
-      anchor = lookup('anchor', spec, config),
+      orient = _('orient'),
+      anchor = _('anchor'),
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       extent = {group: (horizontal ? 'width' : 'height')},
@@ -77,11 +79,11 @@ function buildTitle(spec, config, userEncode, dataRef) {
     },
     update: update = {
       opacity: {value: 1},
-      text:   encoder(title),
-      anchor: encoder(anchor),
-      orient: encoder(orient),
-      extent: {field: extent},
-      align:  {signal: alignExpr}
+      text:    encoder(title),
+      anchor:  encoder(anchor),
+      orient:  encoder(orient),
+      extent:  {field: extent},
+      align:   {signal: alignExpr}
     },
     exit: {
       opacity: zero
@@ -100,17 +102,20 @@ function buildTitle(spec, config, userEncode, dataRef) {
     enter.baseline = {value: Bottom};
   }
 
-  addEncode(encode, 'align',      lookup('align', spec, config), 'update');
-  addEncode(encode, 'angle',      lookup('angle', spec, config));
-  addEncode(encode, 'baseline',   lookup('baseline', spec, config));
-  addEncode(encode, 'fill',       lookup('color', spec, config));
-  addEncode(encode, 'font',       lookup('font', spec, config));
-  addEncode(encode, 'fontSize',   lookup('fontSize', spec, config));
-  addEncode(encode, 'fontStyle',  lookup('fontStyle', spec, config));
-  addEncode(encode, 'fontWeight', lookup('fontWeight', spec, config));
-  addEncode(encode, 'frame',      lookup('frame', spec, config));
-  addEncode(encode, 'limit',      lookup('limit', spec, config));
-  addEncode(encode, 'offset',     lookup('offset', spec, config) || 0);
+  addEncoders(encode, {
+    angle:      _('angle'),
+    baseline:   _('baseline'),
+    fill:       _('color'),
+    font:       _('font'),
+    fontSize:   _('fontSize'),
+    fontStyle:  _('fontStyle'),
+    fontWeight: _('fontWeight'),
+    frame:      _('frame'),
+    limit:      _('limit'),
+    offset:     _('offset') || 0
+  }, { // update
+    align:      _('align')
+  });
 
   return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle,
                    null, dataRef, encode, userEncode);

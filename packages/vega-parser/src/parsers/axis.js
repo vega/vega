@@ -20,15 +20,16 @@ export default function(spec, scope) {
       name = axisEncode.name || undefined,
       interactive = axisEncode.interactive,
       style = axisEncode.style,
+      _ = lookup(spec, config),
       datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
-    ticks:  !!lookup('ticks',  spec, config),
-    labels: !!lookup('labels', spec, config),
-    grid:   !!lookup('grid',   spec, config),
-    domain: !!lookup('domain', spec, config),
+    ticks:  !!_('ticks'),
+    labels: !!_('labels'),
+    grid:   !!_('grid'),
+    domain: !!_('domain'),
     title:  !!value(spec.title, false)
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
@@ -36,19 +37,19 @@ export default function(spec, scope) {
   // encoding properties for axis group item
   axisEncode = extendEncode({
     update: {
-      range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
+      range:        {signal: `abs(span(range("${spec.scale}")))`},
       offset:       encoder(value(spec.offset, 0)),
       position:     encoder(value(spec.position, 0)),
-      titlePadding: encoder(lookup('titlePadding', spec, config)),
-      minExtent:    encoder(lookup('minExtent', spec, config)),
-      maxExtent:    encoder(lookup('maxExtent', spec, config))
+      titlePadding: encoder(_('titlePadding')),
+      minExtent:    encoder(_('minExtent')),
+      maxExtent:    encoder(_('maxExtent'))
     }
   }, encode.axis, Skip);
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({
     scale:   scope.scaleRef(spec.scale),
-    extra:   scope.property(lookup('tickExtra', spec, config)),
+    extra:   scope.property(_('tickExtra')),
     count:   scope.objectProperty(spec.tickCount),
     values:  scope.objectProperty(spec.values),
     minstep: scope.property(spec.tickMinStep),
@@ -65,7 +66,7 @@ export default function(spec, scope) {
 
   // include axis ticks if requested
   if (datum.ticks) {
-    size = lookup('tickSize', spec, config);
+    size = _('tickSize');
     children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
   }
 

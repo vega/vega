@@ -13,10 +13,18 @@ export function addEncode(object, name, value, set) {
     } else {
       object[set || 'enter'][name] = {value: value};
     }
-    // object[name] = isObject(value) && !isArray(value) ? value : {value: value};
     return 1;
   } else {
     return 0;
+  }
+}
+
+export function addEncoders(object, enter, update) {
+  for (let name in enter) {
+    addEncode(object, name, enter[name]);
+  }
+  for (let name in update) {
+    addEncode(object, name, update[name], 'update');
   }
 }
 

@@ -3,10 +3,11 @@ import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisDomainRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncoders} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       zero = {value: 0},
       encode, enter, update, u, u2, v;
 
@@ -21,9 +22,12 @@ export default function(spec, config, userEncode, dataRef) {
       opacity: zero
     }
   };
-  addEncode(encode, 'stroke',        lookup('domainColor', spec, config));
-  addEncode(encode, 'strokeWidth',   lookup('domainWidth', spec, config));
-  addEncode(encode, 'strokeOpacity', lookup('domainOpacity', spec, config));
+
+  addEncoders(encode, {
+    stroke:        _('domainColor'),
+    strokeWidth:   _('domainWidth'),
+    strokeOpacity: _('domainOpacity')
+  });
 
   if (orient === Top || orient === Bottom) {
     u = 'x';
