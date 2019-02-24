@@ -135,7 +135,8 @@ const legend = allOf(
     required('fill'),
     required('stroke'),
     required('opacity'),
-    required('strokeDash')
+    required('strokeDash'),
+    required('strokeWidth')
   )
 );
 
