@@ -7,3 +7,6 @@ schema-deploy.js
 build/*.zip
 docs/
 test/
+rollup.js
+rollup-node.js
+schema-deploy.sh
