@@ -3,10 +3,11 @@ import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
-import {addEncode, encoder} from '../encode/encode-util';
+import {addEncoders, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var zero = {value: 0},
+  var _ = lookup(spec, config),
+      zero = {value: 0},
       encode, enter;
 
   encode = {
@@ -25,15 +26,18 @@ export default function(spec, config, userEncode, dataRef) {
       opacity: zero
     }
   };
-  addEncode(encode, 'align',       lookup('titleAlign', spec, config));
-  addEncode(encode, 'baseline',    lookup('titleBaseline', spec, config));
-  addEncode(encode, 'fill',        lookup('titleColor', spec, config));
-  addEncode(encode, 'font',        lookup('titleFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
-  addEncode(encode, 'fontStyle',   lookup('titleFontStyle', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
-  addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));
+
+  addEncoders(encode, {
+    align:       _('titleAlign'),
+    baseline:    _('titleBaseline'),
+    fill:        _('titleColor'),
+    fillOpacity: _('titleOpacity'),
+    font:        _('titleFont'),
+    fontSize:    _('titleFontSize'),
+    fontStyle:   _('titleFontStyle'),
+    fontWeight:  _('titleFontWeight'),
+    limit:       _('titleLimit')
+  });
 
   return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 }

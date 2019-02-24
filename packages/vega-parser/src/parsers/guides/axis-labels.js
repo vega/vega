@@ -3,7 +3,7 @@ import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
-import {addEncode, encoder} from '../encode/encode-util';
+import {addEncoders, encoder} from '../encode/encode-util';
 import {deref} from '../../util';
 
 function flushExpr(scale, threshold, a, b, c) {
@@ -15,29 +15,30 @@ function flushExpr(scale, threshold, a, b, c) {
 }
 
 export default function(spec, config, userEncode, dataRef, size) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       isXAxis = (orient === Top || orient === Bottom),
       scale = spec.scale,
-      flush = deref(lookup('labelFlush', spec, config)),
-      flushOffset = deref(lookup('labelFlushOffset', spec, config)),
+      flush = deref(_('labelFlush')),
+      flushOffset = deref(_('labelFlushOffset')),
       flushOn = flush === 0 || !!flush,
-      labelAlign = lookup('labelAlign', spec, config),
-      labelBaseline = lookup('labelBaseline', spec, config),
+      labelAlign = _('labelAlign'),
+      labelBaseline = _('labelBaseline'),
       zero = {value: 0},
       encode, enter, tickSize, tickPos, align, baseline, offset,
       bound, overlap, separation;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
-  tickSize.offset = encoder(lookup('labelPadding', spec, config) || 0);
+  tickSize.offset = encoder(_('labelPadding') || 0);
   tickSize.offset.mult = sign;
 
   tickPos = {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: lookup('tickOffset', spec, config)
+    offset: _('tickOffset')
   };
 
   if (isXAxis) {
@@ -78,20 +79,23 @@ export default function(spec, config, userEncode, dataRef, size) {
     }
   };
 
-  addEncode(encode, isXAxis ? 'dx' : 'dy', offset);
-  addEncode(encode, 'align',       align);
-  addEncode(encode, 'baseline',    baseline);
-  addEncode(encode, 'angle',       lookup('labelAngle', spec, config));
-  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
-  addEncode(encode, 'font',        lookup('labelFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
-  addEncode(encode, 'fontStyle',   lookup('labelFontStyle', spec, config));
-  addEncode(encode, 'limit',       lookup('labelLimit', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
-  bound   = lookup('labelBound', spec, config);
-  overlap = lookup('labelOverlap', spec, config);
-  separation = lookup('labelSeparation', spec, config);
+  addEncoders(encode, {
+    [isXAxis ? 'dx' : 'dy']: offset,
+    align:       align,
+    baseline:    baseline,
+    angle:       _('labelAngle'),
+    fill:        _('labelColor'),
+    fillOpacity: _('labelOpacity'),
+    font:        _('labelFont'),
+    fontSize:    _('labelFontSize'),
+    fontWeight:  _('labelFontWeight'),
+    fontStyle:   _('labelFontStyle'),
+    limit:       _('labelLimit')
+  });
+
+  bound   = _('labelBound');
+  overlap = _('labelOverlap');
+  separation = _('labelSeparation');
 
   spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 

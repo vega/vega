@@ -1,9 +1,9 @@
 import {Index, Label, Perc, Value, GuideLabelStyle} from './constants';
 import guideMark from './guide-mark';
-import {gradientLength, gradientThickness, isVertical, lookup} from './guide-util';
+import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
-import {addEncode, encoder} from '../encode/encode-util';
+import {addEncoders, encoder} from '../encode/encode-util';
 import {value} from '../../util';
 
 var alignExpr = 'datum.' + Perc + '<=0?"left"'
@@ -13,12 +13,13 @@ var baselineExpr = 'datum.' + Perc + '<=0?"bottom"'
   + ':datum.' + Perc + '>=1?"top":"middle"';
 
 export default function(spec, config, userEncode, dataRef) {
-  var zero = {value: 0},
-      vertical = isVertical(spec, config.gradientDirection),
-      thickness = encoder(gradientThickness(spec, config)),
-      length = gradientLength(spec, config),
-      overlap = lookup('labelOverlap', spec, config),
-      separation = lookup('labelSeparation', spec, config),
+  var _ = lookup(spec, config),
+      zero = {value: 0},
+      vertical = _.isVertical(),
+      thickness = encoder(_.gradientThickness()),
+      length = _.gradientLength(),
+      overlap = _('labelOverlap'),
+      separation = _('labelSeparation'),
       encode, enter, update, u, v, adjust = '';
 
   encode = {
@@ -33,13 +34,16 @@ export default function(spec, config, userEncode, dataRef) {
       opacity: zero
     }
   };
-  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
-  addEncode(encode, 'font',        lookup('labelFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
-  addEncode(encode, 'fontStyle',   lookup('labelFontStyle', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
-  addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
+
+  addEncoders(encode, {
+    fill:        _('labelColor'),
+    fillOpacity: _('labelOpacity'),
+    font:        _('labelFont'),
+    fontSize:    _('labelFontSize'),
+    fontStyle:   _('labelFontStyle'),
+    fontWeight:  _('labelFontWeight'),
+    limit:       value(spec.labelLimit, config.gradientLabelLimit)
+  });
 
   if (vertical) {
     enter.align = {value: 'left'};
