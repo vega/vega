@@ -24,7 +24,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-dataflow": "5.1.0",
+    "vega-dataflow": "5.1.1",
     "vega-event-selector": "^2.0.0",
     "vega-expression": "^2.5.0",
     "vega-functions": "^5.0.1",

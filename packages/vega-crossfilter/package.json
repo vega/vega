@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "d3-array": "^2.0.3",
-    "vega-dataflow": "^5.1.0",
+    "vega-dataflow": "^5.1.1",
     "vega-util": "^1.8.0"
   },
   "devDependencies": {
