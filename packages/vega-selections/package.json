@@ -10,7 +10,7 @@
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "license": "BSD-3-Clause",
   "main": "build/vega-selections.js",
-  "module": "index.js",
+  "module": "index",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -g vega-expression:vega,vega-util:vega -f umd -n vega -o build/vega-selections.js -- index.js",
