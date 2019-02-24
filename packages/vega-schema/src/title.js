@@ -40,7 +40,7 @@ const title = oneOf(
     limit: numberValue,
     encode: titleEncode
   })
-)
+);
 
 export default {
   defs: {
