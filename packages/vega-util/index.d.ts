@@ -78,6 +78,8 @@ export function flush<T extends any>(range: number[], value: number, threshold: 
 
 export function inrange(value: number, range: number[], left: boolean, right: boolean): boolean;
 
+export function lerp(array: number[], fraction: number): number;
+
 export function merge(compare: (a: any, b: any) => number,
   array1: any[], array2: any[]): any[];
 export function merge(compare: (a: any, b: any) => number,
