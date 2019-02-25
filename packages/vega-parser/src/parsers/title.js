@@ -13,20 +13,20 @@ import {Collect} from '../transforms';
 import {extend, isString, stringValue} from 'vega-util';
 
 function anchorExpr(s, e, m) {
-  return `item.anchor==="${Start}"?${s}:item.anchor==="${End}"?${e}:${m}`;
+  return `item.anchor === "${Start}" ? ${s} : item.anchor === "${End}" ? ${e} : ${m}`;
 }
 
 // title text alignment
-var alignExpr = anchorExpr(
+const alignExpr = anchorExpr(
   stringValue(Left),
   stringValue(Right),
   stringValue(Center)
 );
 
 // multiplication factor for anchor positioning
-var multExpr = anchorExpr(
-  `+(item.orient==="${Right}")`,
-  `+(item.orient!=="${Left}")`,
+const multExpr = anchorExpr(
+  `+(item.orient === "${Right}")`,
+  `+(item.orient !== "${Left}")`,
   '0.5'
 );
 

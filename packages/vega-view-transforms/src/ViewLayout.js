@@ -310,21 +310,49 @@ function legendPreprocess(view, legends) {
 }
 
 function legendGroupLayout(view, item, entry) {
-  var x = item.padding - entry.x,
-      y = item.padding - entry.y;
+  var ex = item.padding - entry.x,
+      ey = item.padding - entry.y,
+      title, tpad, tx, ty;
 
   if (item.datum.title) {
-    var title = item.items[1].items[0];
-    y += item.titlePadding + title.fontSize;
+    title = item.items[1].items[0];
+    tpad = item.titlePadding || 0,
+    tx = item.padding - title.x;
+    ty = item.padding - title.y;
+
+    switch (title.orient) {
+      case Left:
+        ex += Math.ceil(title.bounds.width()) + tpad;
+        ty += titleOffset(item, entry);
+        break;
+      case Right:
+        tx += Math.ceil(entry.bounds.width()) + tpad;
+        ty += titleOffset(item, entry);
+        break;
+      case Bottom:
+        ty += Math.ceil(entry.bounds.height()) + tpad;
+        break;
+      default:
+        ey += title.fontSize + tpad;
+    }
   }
 
-  if (x || y) {
-    entry.x += x;
-    entry.y += y;
-    entry.bounds.translate(x, y);
-    entry.mark.bounds.translate(x, y);
-    view.dirty(entry);
-  }
+  if (ex || ey) updateBounds(view, entry, ex, ey);
+  if (tx || ty) updateBounds(view, title, tx, ty);
+}
+
+function titleOffset(item, entry) {
+  return ~~(0.5 * (item.datum.type === 'gradient'
+    ? entry.items[0].items[0].height  // gradient bar
+    : entry.bounds.height()));        // symbol bounds
+}
+
+function updateBounds(view, item, dx, dy) {
+  item.x += dx;
+  item.y += dy;
+  item.bounds.translate(dx, dy);
+  item.mark.bounds.translate(dx, dy);
+  view.dirty(item);
 }
 
 function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {

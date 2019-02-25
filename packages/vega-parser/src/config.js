@@ -184,8 +184,6 @@ function defaults() {
       symbolStrokeWidth: 1.5,
       symbolBaseFillColor: 'transparent',
       symbolBaseStrokeColor: gray,
-      titleAlign: 'left',
-      titleBaseline: 'top',
       titleLimit: 180,
       titlePadding: 5
     },

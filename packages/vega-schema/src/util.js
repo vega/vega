@@ -10,6 +10,8 @@ const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 
 const anchorEnum = ['start', 'middle', 'end'];
 
+const orientEnum = ['left', 'right', 'top', 'bottom'];
+
 export function oneOf(...types) {
   return {oneOf: types};
 }
@@ -142,6 +144,11 @@ export const fontWeightValue = oneOf(
 export const numberValue = oneOf(
   numberType,
   ref('numberValue')
+);
+
+export const orientValue = oneOf(
+  enums(orientEnum),
+  ref('orientValue')
 );
 
 export const stringValue = oneOf(
