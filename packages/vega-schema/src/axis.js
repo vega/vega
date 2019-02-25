@@ -1,7 +1,7 @@
 import {timeIntervals} from './scale';
 import {
-  numberValue, stringValue, booleanValue, colorValue,
-  alignValue, baselineValue, fontWeightValue, dashArrayValue,
+  numberValue, stringValue, booleanValue, colorValue, alignValue,
+  anchorValue, baselineValue, fontWeightValue, dashArrayValue,
   booleanOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal,
   booleanOrNumberOrSignal,
   def, enums, object, oneOf, orSignal, ref,
@@ -54,6 +54,7 @@ const axis = object({
   title: stringOrSignal,
   titlePadding: numberValue,
   titleAlign: alignValue,
+  titleAnchor: anchorValue,
   titleAngle: numberValue,
   titleX: numberValue,
   titleY: numberValue,

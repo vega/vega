@@ -9,6 +9,7 @@ import {
 import { LayoutAlign } from './layout';
 import {
   AlignValue,
+  AnchorValue,
   BooleanValue,
   ColorValue,
   DashArrayValue,
@@ -138,7 +139,8 @@ export interface BaseAxis<
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  DA = DashArrayValue
+  DA = DashArrayValue,
+  AN = AnchorValue
 > {
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
@@ -171,6 +173,11 @@ export interface BaseAxis<
    * Horizontal text alignment of axis titles.
    */
   titleAlign?: A;
+
+  /**
+   * Text anchor position for placing axis titles.
+   */
+  titleAnchor?: AN;
 
   /**
    * Angle in degrees of axis titles.

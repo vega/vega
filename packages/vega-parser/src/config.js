@@ -149,7 +149,6 @@ function defaults() {
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      titleAlign: 'center',
       titlePadding: 4
     },
 
