@@ -4798,7 +4798,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Acceleration",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

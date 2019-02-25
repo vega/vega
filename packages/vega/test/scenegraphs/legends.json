@@ -107,7 +107,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Gradient",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -224,7 +226,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Multi-Stop",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -580,7 +584,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Sequence",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -877,7 +883,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Stops",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

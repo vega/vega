@@ -140,7 +140,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Linear Ramp",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -290,7 +292,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Pow Ramp - Exponent 1.5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -440,7 +444,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Pow Ramp - Exponent 0.5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -832,7 +838,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Log Ramp - Base 10",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -982,7 +990,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Log Ramp - Base 2",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1132,7 +1142,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Symlog Ramp",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1271,7 +1283,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Scheme",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1410,7 +1424,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Scheme Extent [0, 1]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1549,7 +1565,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Scheme Extent [0.2, 1]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1688,7 +1706,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Scheme Extent [0.2, 1] Reverse",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1827,7 +1847,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Scheme Extent [1, 0.2]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1966,7 +1988,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate Default",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2105,7 +2129,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate RGB",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2244,7 +2270,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate RGB Gamma 2.2",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2383,7 +2411,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate LAB",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2522,7 +2552,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate HCL",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2661,7 +2693,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate HSL",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2800,7 +2834,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate HCL-Long",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2939,7 +2975,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Interpolate HSL-Long",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3078,7 +3116,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Diverging Mid 0",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3217,7 +3257,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Diverging Range Mid -5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3356,7 +3398,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Diverging Range Mid 5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

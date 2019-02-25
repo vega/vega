@@ -297,7 +297,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Vertical",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -606,7 +608,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Clipped",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -915,7 +919,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Clipped - Columns",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1224,7 +1230,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Clipped - Columns + Padding",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1533,7 +1541,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Horizontal",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1842,7 +1852,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Horizontal - Clipped",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2151,7 +2163,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": null,
                       "text": "Horizontal - Columns",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
