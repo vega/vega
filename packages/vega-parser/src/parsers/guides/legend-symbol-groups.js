@@ -21,10 +21,10 @@ export default function(spec, config, userEncode, dataRef, columns) {
       symbolOffset = _('symbolOffset'),
       valueRef = {data: 'value'},
       encode = {},
-      xSignal = `${columns}?datum.${Offset}:datum.${Size}`,
+      xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
       yEncode = height ? encoder(height) : {field: Size},
       index = `datum.${Index}`,
-      ncols = `max(1,${columns})`,
+      ncols = `max(1, ${columns})`,
       enter, update, labelOffset, symbols, labels, nrows, sort;
 
   yEncode.mult = 0.5;
@@ -132,14 +132,14 @@ export default function(spec, config, userEncode, dataRef, columns) {
   };
 
   // annotate and sort groups to ensure correct ordering
-  if (_.isVertical(config.symbolDirection)) {
-    nrows = `ceil(item.mark.items.length/${ncols})`;
+  if (_.isVertical(true)) {
+    nrows = `ceil(item.mark.items.length / ${ncols})`;
     update.row.signal = `${index}%${nrows}`;
-    update.column.signal = `floor(${index}/${nrows})`;
+    update.column.signal = `floor(${index} / ${nrows})`;
     sort = {field: ['row', index]};
   } else {
-    update.row.signal = `floor(${index}/${ncols})`;
-    update.column.signal = `${index}%${ncols}`;
+    update.row.signal = `floor(${index} / ${ncols})`;
+    update.column.signal = `${index} % ${ncols}`;
     sort = {field: index};
   }
   // handle zero column case (implies infinite columns)

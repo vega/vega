@@ -4,9 +4,9 @@ import {value} from '../../util';
 export function lookup(spec, config) {
   const _ = name => value(spec[name], config[name]);
 
-  _.isVertical = v => Vertical === value(
+  _.isVertical = s => Vertical === value(
     spec.direction,
-    v || config.gradientDirection
+    s ? config.symbolDirection : config.gradientDirection
   );
 
   _.gradientLength = () => value(
@@ -21,7 +21,7 @@ export function lookup(spec, config) {
 
   _.entryColumns = () => value(
     spec.columns,
-    value(config.columns, +_.isVertical(config.symbolDirection))
+    value(config.columns, +_.isVertical(true))
   );
 
   return _;

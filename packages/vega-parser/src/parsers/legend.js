@@ -41,7 +41,8 @@ export default function(spec, scope) {
   datum = {
     orient: _('orient'),
     title:  spec.title != null,
-    type:   type
+    type:   type,
+    vgrad:  type !== 'symbol' &&  _.isVertical()
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 

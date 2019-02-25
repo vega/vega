@@ -15,6 +15,7 @@ import {
   FontStyleValue,
   FontWeightValue,
   NumberValue,
+  OrientValue,
   StringValue,
   SymbolShapeValue,
   TextBaselineValue,
@@ -134,7 +135,8 @@ export interface BaseLegend<
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue,
-  DA = DashArrayValue
+  DA = DashArrayValue,
+  O = OrientValue
 > {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
@@ -226,6 +228,11 @@ export interface BaseLegend<
    * Opacity of the legend title.
    */
   titleOpacity?: N;
+
+  /**
+   * Orientation of the legend title.
+   */
+  titleOrient?: O;
 
   /**
    * The padding, in pixels, between title and legend.

@@ -3,7 +3,7 @@ import {layoutAlign} from './layout';
 import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
   alignValue, baselineValue, colorValue, dashArrayValue,
-  fontWeightValue, numberValue, stringValue,
+  fontWeightValue, numberValue, orientValue, stringValue,
   numberOrSignal, stringOrSignal, arrayOrSignal,
   numberType, stringType
 } from './util';
@@ -57,8 +57,6 @@ const legendProps = object({
   orient:      enums(legendOrientEnum, {default: 'right'}),
 
   // LEGEND CONFIG
-  format: stringOrSignal,
-  title: stringOrSignal,
   tickCount: tickCountRef,
   tickMinStep: numberOrSignal,
   values: arrayOrSignal,
@@ -72,6 +70,7 @@ const legendProps = object({
   strokeColor: colorValue,
 
   // LEGEND TITLE CONFIG
+  title: stringOrSignal,
   titleAlign: alignValue,
   titleBaseline: baselineValue,
   titleColor: colorValue,
@@ -81,6 +80,7 @@ const legendProps = object({
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
   titleOpacity: numberValue,
+  titleOrient: orientValue,
   titlePadding: numberValue,
 
   // GRADIENT CONFIG
@@ -109,6 +109,7 @@ const legendProps = object({
   symbolType: stringValue,
 
   // LABEL CONFIG
+  format: stringOrSignal,
   labelAlign: alignValue,
   labelBaseline: baselineValue,
   labelColor: colorValue,

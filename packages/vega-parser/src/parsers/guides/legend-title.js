@@ -4,6 +4,11 @@ import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
+import {extend} from 'vega-util';
+
+const angleExpr = 'datum.vgrad ? (item.orient==="left" ? -90 : item.orient==="right" ? 90 : 0) : 0';
+const alignExpr = 'datum.vgrad && (item.orient==="left" || item.orient==="right") ? "center" : "left"';
+const baselineExpr = '(item.orient==="left" || item.orient==="right") ? (datum.vgrad ? (item.orient==="right" ? "bottom" : "top") : "middle") : "top"';
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
@@ -13,15 +18,17 @@ export default function(spec, config, userEncode, dataRef) {
   encode = {
     enter: enter = {
       opacity: zero,
+      orient: encoder(_('titleOrient')),
       x: {field: {group: 'padding'}},
-      y: {field: {group: 'padding'}}
+      y: {field: {group: 'padding'}},
+      angle: {signal: angleExpr},
+      align: {signal: alignExpr},
+      baseline: {signal: baselineExpr},
     },
-    update: {
+    update: extend({}, enter, {
       opacity: {value: 1},
       text: encoder(spec.title),
-      x: enter.x,
-      y: enter.y
-    },
+    }),
     exit: {
       opacity: zero
     }

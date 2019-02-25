@@ -14,7 +14,8 @@ export const fontWeightEnum = [
 export const alignEnum = ['left', 'right', 'center'];
 export const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 export const anchorEnum = ['start', 'middle', 'end'];
-export const areaOrientEnum = ['horizontal', 'vertical'];
+export const orientEnum = ['left', 'right', 'top', 'bottom'];
+export const directionEnum = ['horizontal', 'vertical'];
 export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
@@ -169,7 +170,7 @@ const encodeEntry = object({
   // Area- and line-mark properties
   interpolate: stringValueRef,
   tension: numberValueRef,
-  orient: ref('orientValue'),
+  orient: ref('directionValue'),
 
   // Image-mark properties
   url: stringValueRef,
@@ -211,7 +212,8 @@ export default {
     anchorValue: valueSchema(anchorEnum),
     alignValue: valueSchema(alignEnum),
     baselineValue: valueSchema(baselineEnum),
-    orientValue: valueSchema(areaOrientEnum),
+    directionValue: valueSchema(directionEnum),
+    orientValue: valueSchema(orientEnum),
     strokeCapValue: valueSchema(strokeCapEnum),
     strokeJoinValue: valueSchema(strokeJoinEnum),
     colorRGB,
