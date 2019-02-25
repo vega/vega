@@ -14,7 +14,7 @@
   "license": "BSD-3-Clause",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "main": "build/vega-node.js",
-  "module": "build/vega-module.js",
+  "module": "index",
   "unpkg": "build/vega.min.js",
   "jsdelivr": "build/vega.min.js",
   "repository": "vega/vega",
