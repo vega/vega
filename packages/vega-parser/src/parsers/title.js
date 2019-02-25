@@ -35,14 +35,10 @@ export default function(spec, scope) {
 
   var config = scope.config.title,
       encode = extend({}, spec.encode),
-      _ = lookup(spec, config),
-      datum, dataRef, title;
+      dataRef, title;
 
   // single-element data source for group title
-  datum = {
-    orient: _('orient')
-  };
-  dataRef = ref(scope.add(Collect(null, [datum])));
+  dataRef = ref(scope.add(Collect(null, [{}])));
 
   // build title specification
   encode.name = spec.name;
