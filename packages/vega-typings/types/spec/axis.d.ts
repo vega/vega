@@ -241,6 +241,16 @@ export interface BaseAxis<
   domain?: boolean;
 
   /**
+   * An array of alternating [stroke, space] lengths for dashed domain lines.
+   */
+  domainDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the domain dash array.
+   */
+  domainDashOffset?: N;
+
+  /**
    * Color of axis domain line.
    *
    * __Default value:__ `"gray"`.
@@ -273,6 +283,16 @@ export interface BaseAxis<
    * __Default value:__ `"gray"`
    */
   tickColor?: C;
+
+  /**
+   * An array of alternating [stroke, space] lengths for dashed tick mark lines.
+   */
+  tickDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the tick mark dash array.
+   */
+  tickDashOffset?: N;
 
   /**
    * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
@@ -326,9 +346,14 @@ export interface BaseAxis<
   gridColor?: C;
 
   /**
-   * The offset (in pixels) into which to begin drawing with the grid dash array.
+   * An array of alternating [stroke, space] lengths for dashed grid lines.
    */
   gridDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the grid dash array.
+   */
+  gridDashOffset?: N;
 
   /**
    * The stroke opacity of grid (value between [0,1])

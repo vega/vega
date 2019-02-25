@@ -11,6 +11,7 @@ import { LayoutAlign } from './layout';
 import {
   AlignValue,
   ColorValue,
+  DashArrayValue,
   FontStyleValue,
   FontWeightValue,
   NumberValue,
@@ -132,7 +133,8 @@ export interface BaseLegend<
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  SY = SymbolShapeValue
+  SY = SymbolShapeValue,
+  DA = DashArrayValue
 > {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
@@ -303,6 +305,16 @@ export interface BaseLegend<
   gridAlign?: LA;
 
   // ---------- Symbols ----------
+  /**
+   * An array of alternating [stroke, space] lengths for dashed symbol strokes.
+   */
+  symbolDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the symbol stroke dash array.
+   */
+  symbolDashOffset?: N;
+
   /**
    * The color of the legend symbol,
    */

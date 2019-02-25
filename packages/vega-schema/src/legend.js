@@ -1,10 +1,10 @@
 import {layoutAlign} from './layout';
 
 import {
-  numberValue, stringValue, colorValue,
-  alignValue, baselineValue, fontWeightValue,
-  numberOrSignal, stringOrSignal, arrayOrSignal,
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
+  alignValue, baselineValue, colorValue, dashArrayValue,
+  fontWeightValue, numberValue, stringValue,
+  numberOrSignal, stringOrSignal, arrayOrSignal,
   numberType, stringType
 } from './util';
 
@@ -42,6 +42,7 @@ const legendOrientEnum = [
 ];
 
 const legendProps = object({
+  // LEGEND SCALES
   size:        stringType,
   shape:       stringType,
   fill:        stringType,
@@ -49,10 +50,13 @@ const legendProps = object({
   opacity:     stringType,
   strokeDash:  stringType,
   strokeWidth: stringType,
-  type: enums(legendTypeEnum),
-  direction: enums(legendDirectionEnum),
-  orient: enums(legendOrientEnum, {default: 'right'}),
 
+  // LEGEND TYPE
+  type:        enums(legendTypeEnum),
+  direction:   enums(legendDirectionEnum),
+  orient:      enums(legendOrientEnum, {default: 'right'}),
+
+  // LEGEND CONFIG
   format: stringOrSignal,
   title: stringOrSignal,
   tickCount: tickCountRef,
@@ -94,6 +98,8 @@ const legendProps = object({
   gridAlign: layoutAlign,
 
   // SYMBOL CONFIG
+  symbolDash: dashArrayValue,
+  symbolDashOffset: numberValue,
   symbolFillColor: colorValue,
   symbolOffset: numberValue,
   symbolOpacity: numberValue,

@@ -24,9 +24,11 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   addEncoders(encode, {
-    stroke:        _('domainColor'),
-    strokeWidth:   _('domainWidth'),
-    strokeOpacity: _('domainOpacity')
+    stroke:           _('domainColor'),
+    strokeDash:       _('domainDash'),
+    strokeDashOffset: _('domainDashOffset'),
+    strokeWidth:      _('domainWidth'),
+    strokeOpacity:    _('domainOpacity')
   });
 
   if (orient === Top || orient === Bottom) {
