@@ -69,12 +69,16 @@ const axis = object({
   // DOMAIN CONFIG
   domain: booleanType,
   domainColor: colorValue,
+  domainDash: dashArrayValue,
+  domainDashOffset: numberValue,
   domainOpacity: numberValue,
   domainWidth: numberValue,
 
   // TICK CONFIG
   ticks: booleanType,
   tickColor: colorValue,
+  tickDash: dashArrayValue,
+  tickDashOffset: numberValue,
   tickOffset: numberValue,
   tickOpacity: numberValue,
   tickRound: booleanValue,
@@ -89,6 +93,7 @@ const axis = object({
   gridScale: stringType,
   gridColor: colorValue,
   gridDash: dashArrayValue,
+  gridDashOffset: numberValue,
   gridOpacity: numberValue,
   gridWidth: numberValue,
 

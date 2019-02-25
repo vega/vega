@@ -25,9 +25,11 @@ export default function(spec, config, userEncode, dataRef, size) {
   };
 
   addEncoders(encode, {
-    stroke:        _('tickColor'),
-    strokeOpacity: _('tickOpacity'),
-    strokeWidth:   _('tickWidth')
+    stroke:           _('tickColor'),
+    strokeDash:       _('tickDash'),
+    strokeDashOffset: _('tickDashOffset'),
+    strokeOpacity:    _('tickOpacity'),
+    strokeWidth:      _('tickWidth')
   });
 
   tickSize = encoder(size);

@@ -54,13 +54,15 @@ export default function(spec, config, userEncode, dataRef, columns) {
   }
 
   addEncoders(encode, {
-    fill:        _('symbolFillColor'),
-    shape:       _('symbolType'),
-    size:        _('symbolSize'),
-    stroke:      _('symbolStrokeColor'),
-    strokeWidth: _('symbolStrokeWidth')
+    fill:             _('symbolFillColor'),
+    shape:            _('symbolType'),
+    size:             _('symbolSize'),
+    stroke:           _('symbolStrokeColor'),
+    strokeDash:       _('symbolDash'),
+    strokeDashOffset: _('symbolDashOffset'),
+    strokeWidth:      _('symbolStrokeWidth')
   }, { // update
-    opacity:     _('symbolOpacity')
+    opacity:          _('symbolOpacity')
   });
 
   LegendScales.forEach(function(scale) {

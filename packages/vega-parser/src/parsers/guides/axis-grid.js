@@ -28,10 +28,11 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   addEncoders(encode, {
-    stroke:        _('gridColor'),
-    strokeDash:    _('gridDash'),
-    strokeOpacity: _('gridOpacity'),
-    strokeWidth:   _('gridWidth')
+    stroke:           _('gridColor'),
+    strokeDash:       _('gridDash'),
+    strokeDashOffset: _('gridDashOffset'),
+    strokeOpacity:    _('gridOpacity'),
+    strokeWidth:      _('gridWidth')
   });
 
   tickPos = {
