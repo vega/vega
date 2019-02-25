@@ -1,10 +1,11 @@
 import {Top, Bottom, Left, GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {encoder, has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
 import {addEncode, addEncoders} from '../encode/encode-util';
+import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
@@ -16,20 +17,21 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode = {
     enter: enter = {
-      opacity: zero
+      opacity: zero,
+      anchor: encoder(_('titleAnchor')),
+      align: {signal: alignExpr}
     },
-    update: update = {
+    update: update = extend({}, enter, {
       opacity: {value: 1},
       text: encoder(spec.title)
-    },
+    }),
     exit: {
       opacity: zero
     }
   };
 
   titlePos = {
-    scale: spec.scale,
-    range: 0.5
+    signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
   if (horizontal) {
@@ -43,7 +45,6 @@ export default function(spec, config, userEncode, dataRef) {
   }
 
   addEncoders(encode, {
-    align:       _('titleAlign'),
     angle:       _('titleAngle'),
     baseline:    _('titleBaseline'),
     fill:        _('titleColor'),
@@ -53,6 +54,8 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit')
+  }, { // require update
+    align:       _('titleAlign')
   });
 
   !addEncode(encode, 'x', _('titleX'), 'update')

@@ -1,27 +1,13 @@
-import {
-  Top, Bottom, Left, Right, Center,
-  Start, End, GroupTitleStyle
-} from './guides/constants';
+import {Top, Bottom, Left, Right, GroupTitleStyle} from './guides/constants';
 import guideMark from './guides/guide-mark';
-import {lookup} from './guides/guide-util';
+import {alignExpr, anchorExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole} from './marks/roles';
 import {addEncoders, encoder} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
-import {extend, isString, stringValue} from 'vega-util';
-
-function anchorExpr(s, e, m) {
-  return `item.anchor === "${Start}" ? ${s} : item.anchor === "${End}" ? ${e} : ${m}`;
-}
-
-// title text alignment
-const alignExpr = anchorExpr(
-  stringValue(Left),
-  stringValue(Right),
-  stringValue(Center)
-);
+import {extend, isString} from 'vega-util';
 
 // multiplication factor for anchor positioning
 const multExpr = anchorExpr(
