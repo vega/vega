@@ -184,6 +184,7 @@ function defaults() {
       symbolBaseFillColor: 'transparent',
       symbolBaseStrokeColor: gray,
       titleLimit: 180,
+      titleOrient: 'top',
       titlePadding: 5
     },
 
