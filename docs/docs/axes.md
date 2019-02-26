@@ -16,6 +16,8 @@ Properties for specifying a coordinate axis.
 | orient        | {% include type t="String" %}  | {% include required %} The orientation of the axis. See the [axis orientation reference](#orientation).|
 | bandPosition  | {% include type t="Number" %}  | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain        | {% include type t="Boolean" %} | A boolean flag indicating if the domain (the axis baseline) should be included as part of the axis (default `true`).|
+| domainDash    | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| domainDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
 | domainColor   | {% include type t="Color" %}   | Color of axis domain line. |
 | domainOpacity | {% include type t="Number" %}  | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth   | {% include type t="Number" %}  | Stroke width of axis domain line. |
@@ -24,6 +26,7 @@ Properties for specifying a coordinate axis.
 | grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`).|
 | gridColor     | {% include type t="Color" %}   | Color of axis grid lines. |
 | gridDash      | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
+| gridDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
 | gridOpacity   | {% include type t="Number" %}  | Opacity of axis grid lines. |
 | gridScale     | {% include type t="String" %}  | The name of the scale to use for including grid lines. By default grid lines are driven by the same scale as the ticks and labels.|
 | gridWidth     | {% include type t="Number" %}  | Stroke width of axis grid lines. |
@@ -51,6 +54,8 @@ Properties for specifying a coordinate axis.
 | ticks         | {% include type t="Boolean" %} | A boolean flag indicating if ticks should be included as part of the axis (default `true`).|
 | tickColor     | {% include type t="Color" %}   | Color of axis ticks. |
 | tickCount     | {% include type t="Number|String|Object" %}  | A desired number of ticks, for axes visualizing quantitative scales. The resulting number may be different so that values are "nice" (multiples of 2, 5, 10) and lie within the underlying scale's range. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
+| tickDash      | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| tickDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the tick mark dash array. {% include tag ver="5.0" %} |
 | tickMinStep   | {% include type t="Number" %}  | The minimum desired step between axis ticks, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value. {% include tag ver="5.0" %} |
 | tickExtra     | {% include type t="Boolean" %} | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`. |
 | tickOffset    | {% include type t="Number" %}  | Position offset in pixels to apply to ticks, labels, and gridlines. |
