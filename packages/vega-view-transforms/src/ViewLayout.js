@@ -363,7 +363,7 @@ function legendGroupLayout(view, item, entry) {
     }
     if (tx || ty) translate(view, title, tx, ty);
 
-    // translate legend if title pushes content into negative coordinates
+    // translate legend if title pushes into negative coordinates
     if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
       translate(view, entry, -tx, 0);
       translate(view, title, -tx, 0);
@@ -372,11 +372,10 @@ function legendGroupLayout(view, item, entry) {
 }
 
 function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
-  const grad = item.datum.type === 'gradient',
+  const grad = item.datum.type !== 'symbol',
         vgrad = title.datum.vgrad,
-        s = grad && (lr || !vgrad) && !noBar
-          ? entry.items[0].items[0][x ? 'width' : 'height'] // gradient bar
-          : entry.bounds[x ? 'x2' : 'y2'] - item.padding,
+        e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
+        s = e.bounds[x ? 'x2' : 'y2'] - item.padding,
         u = vgrad && lr ? s : 0,
         v = vgrad && lr ? 0 : s;
 
