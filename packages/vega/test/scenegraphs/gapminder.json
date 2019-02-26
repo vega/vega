@@ -610,9 +610,9 @@
                   "items": [
                     {
                       "x": 800,
-                      "y": -14,
+                      "y": -5,
                       "align": "right",
-                      "baseline": "top",
+                      "baseline": "bottom",
                       "fill": "#444",
                       "opacity": 1,
                       "text": "Fertility (# Children)",

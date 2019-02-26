@@ -91,9 +91,9 @@ export const spec: Spec = {
       "title": "Life Expentancy (Years)",
       "titleColor": "#444",
       "titleAlign": "right",
+      "titleAnchor": "end",
       "titleBaseline": "top",
-      "titleX": 5,
-      "titleY": 0
+      "titleX": 5
     },
     {
       "orient": "bottom",
@@ -101,8 +101,9 @@ export const spec: Spec = {
       "title": "Fertility (# Children)",
       "titleColor": "#444",
       "titleAlign": "right",
-      "titleX": {"signal": "width"},
-      "titleY": {"value": -14}
+      "titleAnchor": "end",
+      "titleBaseline": "bottom",
+      "titleY": -5
     }
   ],
 
