@@ -1,6 +1,6 @@
-import {Top, Bottom, Left, Right, GroupTitleStyle} from './guides/constants';
+import {Top, Bottom, Left, GroupTitleStyle} from './guides/constants';
 import guideMark from './guides/guide-mark';
-import {alignExpr, anchorExpr, lookup} from './guides/guide-util';
+import {alignExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole} from './marks/roles';
@@ -8,13 +8,6 @@ import {addEncoders, encoder} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString} from 'vega-util';
-
-// multiplication factor for anchor positioning
-const multExpr = anchorExpr(
-  `+(item.orient === "${Right}")`,
-  `+(item.orient !== "${Left}")`,
-  '0.5'
-);
 
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
@@ -41,31 +34,22 @@ function buildTitle(spec, config, userEncode, dataRef) {
       zero = {value: 0},
       title = spec.text,
       orient = _('orient'),
-      anchor = _('anchor'),
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
       extent = {group: (horizontal ? 'width' : 'height')},
-      encode, enter, update, pos, opp;
-
-  // title positioning along orientation axis
-  pos = {field: extent, mult: {signal: multExpr}};
-
-  // title baseline position
-  opp = sign < 0 ? zero
-    : horizontal ? {field: {group: 'height'}}
-    : {field: {group: 'width'}};
+      encode, enter;
 
   encode = {
     enter: enter = {
       opacity: zero
     },
-    update: update = {
+    update: {
       opacity: {value: 1},
       text:    encoder(title),
-      anchor:  encoder(anchor),
       orient:  encoder(orient),
-      extent:  {field: extent},
-      align:   {signal: alignExpr}
+      anchor:  encoder(_('anchor')),
+      align:   {signal: alignExpr},
+      extent:  {field: extent}
     },
     exit: {
       opacity: zero
@@ -73,13 +57,9 @@ function buildTitle(spec, config, userEncode, dataRef) {
   };
 
   if (horizontal) {
-    update.x = pos;
-    update.y = opp;
     enter.angle = zero;
     enter.baseline = {value: orient === Top ? Bottom : Top};
   } else {
-    update.x = opp;
-    update.y = pos;
     enter.angle = {value: sign * 90};
     enter.baseline = {value: Bottom};
   }
