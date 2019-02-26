@@ -44292,7 +44292,7 @@
                                       "stroke": "firebrick",
                                       "strokeWidth": 1.5,
                                       "size": 100,
-                                      "shape": "M-0.5,0H1"
+                                      "shape": "stroke"
                                     }
                                   ],
                                   "zindex": 0
@@ -44340,7 +44340,7 @@
                                       "stroke": "forestgreen",
                                       "strokeWidth": 1.5,
                                       "size": 100,
-                                      "shape": "M-0.5,0H1"
+                                      "shape": "stroke"
                                     }
                                   ],
                                   "zindex": 0
