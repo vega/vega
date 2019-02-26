@@ -118,7 +118,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
   // -- LEGEND ENTRY GROUPS --
   encode = {
     enter: {
-      noBound: {value: true}, // ignore width/height in bounds calc
+      noBound: {value: !height}, // ignore width/height in bounds calc
       width: zero,
       height: height ? encoder(height) : zero,
       opacity: zero
