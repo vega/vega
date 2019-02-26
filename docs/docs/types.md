@@ -269,4 +269,16 @@ These properties can be arbitrarily nested in order to perform _indirect_ field 
 
 In addition, `group` and `parent` references may include an optional `level` property to access grandparents and other ancestors. For example, `{"parent": "f", "level": 2}` will use the value of the `f` field of the grandparent's datum. By default, `level = 1`, indicating the immediate parent scope.
 
+<br/><a name="GradientValue" href="#GradientValue">#</a>
+**GradientValue**
+
+Defines a linear gradient to determine colors for a `fill` or `stroke` encoding channel.
+
+| Property      | Type            | Description    |
+| :------------ | :-------------: | :------------- |
+| scale         | {% include type t="String|FieldValue" %} | {% include required %} The name of a scale whose range is a [continuous color scheme](../schemes).|
+| start         | {% include type t="Number[]" %} | The starting coordinate for the gradient as an [x, y] array within a normalized [0, 1] coordinate system. This coordinate is relative to the bounds of the item being colored. Defaults to `[0, 0]`.|
+| stop          | {% include type t="Number[]" %} | The stopping coordinate for the gradient as an [x, y] array within a normalized [0, 1] coordinate system. This coordinate is relative to the bounds of the item being colored. Defaults to `[1, 0]`, for a horizontal gradient that spans the full bounds of an item.|
+| count         | {% include type t="Number" %}   | A suggested target number of sample points to take from the color scale.|
+
 [Back to top](#reference)
