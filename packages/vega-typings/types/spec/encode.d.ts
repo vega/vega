@@ -77,6 +77,9 @@ export type ColorValueRef =
   | ScaledValueRef<string>
   | {
       gradient: Field;
+      start?: number[];
+      stop?: number[];
+      count?: number;
     }
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;

@@ -111,7 +111,12 @@ const colorHCL = object({
 
 const colorValue = oneOf(
   ref('nullableStringValue'),
-  object({_gradient_: scaleRef}),
+  object({
+    _gradient_: scaleRef,
+    start: array(numberType, {minItems: 2, maxItems: 2}),
+    stop:  array(numberType, {minItems: 2, maxItems: 2}),
+    count: numberType
+  }),
   object({
     _color_: oneOf(
       ref('colorRGB'),

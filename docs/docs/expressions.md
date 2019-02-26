@@ -657,8 +657,8 @@ Returns the current band width for the named band scale transform, or zero if th
 Returns the number of steps needed within a band scale, based on the _count_ of domain elements and the inner and outer padding values. While normally calculated within the scale itself, this function can be helpful for determining the size of a chart's layout.
 
 <a name="gradient" href="#gradient">#</a>
-<b>gradient</b>(<i>name</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
-Returns a linear color gradient for the named scale and starting and ending points _p0_ and _p1_ (each an _[x, y]_ array). The optional _count_ argument indicates a desired target number of color stops to use in the gradient.
+<b>gradient</b>(<i>scale</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
+Returns a linear color gradient for the _scale_ (whose range must be a [continuous color scheme](../schemes)) and starting and ending points _p0_ and _p1_, each an _[x, y]_ array. The points _p0_ and _p1_ should be expressed in normalized coordinates in the domain [0, 1], relative to the bounds of the item being colored. If unspecified, _p0_ defaults to `[0, 0]` and _p1_ defaults to `[1, 0]`, for a horizontal gradient that spans the full bounds of an item. The optional _count_ argument indicates a desired target number of sample points to take from the color scale.
 
 <a name="panLinear" href="#panLinear">#</a>
 <b>panLinear</b>(<i>domain</i>, <i>delta</i>)<br/>
