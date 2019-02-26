@@ -62,8 +62,9 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | tickCount     | {% include type t="Number|String|Object" %}  | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
 | tickMinStep   | {% include type t="Number" %}  | The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value. {% include tag ver="5.0" %} |
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
-| titleAlign    | {% include type t="String" %}  | Horizontal text alignment for legend title. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline for legend title. |
+| titleAnchor   | {% include type t="String" %}  | The anchor position for placing the legend title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
+| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the legend title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the legend title. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor    | {% include type t="Color" %}   | Text color of the legend title. |
 | titleFont     | {% include type t="String" %}  | Font name of the legend title. |
 | titleFontSize | {% include type t="Number" %}  | Font size in pixels of the legend title. |
@@ -71,6 +72,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of the legend title. |
 | titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of the legend title. |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
+| titleOrient   | {% include type t="String" %}  | The orientation of the title legend, determining where it is placed relative to the legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups. The default value is `0`.|

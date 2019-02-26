@@ -211,9 +211,10 @@ Additional property blocks can target more specific axis types based on the orie
 | tickRound       | {% include type t="Boolean" %}  | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize        | {% include type t="Number" %}   | Size, or length, in pixels of axis ticks. |
 | tickWidth       | {% include type t="Number" %}   | Width in pixels of axis ticks. |
-| titleAlign      | {% include type t="String" %}   | Horizontal text alignment of axis titles. |
+| titleAlign      | {% include type t="String" %}   | Horizontal text alignment of axis titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
+| titleAnchor   | {% include type t="String" %}  | The anchor position for placing axis titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
 | titleAngle      | {% include type t="Number" %}   | Angle in degrees of axis titles. |
-| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. |
+| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. |
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
@@ -294,8 +295,9 @@ Properties defining default settings for legends. These properties are defined u
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 | symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
-| titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. |
-| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. |
+| titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
+| titleAnchor           | {% include type t="String" %}   | The anchor position for placing legend titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
+| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor            | {% include type t="Color" %}    | Text color of legend titles. |
 | titleFont             | {% include type t="String" %}   | Font name of legend titles. |
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels of legend titles. |
@@ -303,6 +305,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
+| titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 
 ### Usage

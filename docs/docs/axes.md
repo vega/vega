@@ -59,9 +59,10 @@ Properties for specifying a coordinate axis.
 | tickSize      | {% include type t="Number" %}  | The length in pixels of axis ticks.|
 | tickWidth     | {% include type t="Number" %}  | Width in pixels of axis ticks. |
 | title         | {% include type t="String" %}  | A title for the axis (none by default).|
-| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. |
+| titleAnchor   | {% include type t="String" %}  | The anchor position for placing the axis title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
+| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
 | titleAngle    | {% include type t="Number" %}  | Angle in degrees of the axis title. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the axis title. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the axis title. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. |
 | titleColor    | {% include type t="Color" %}   | Text color of the axis title. |
 | titleFont     | {% include type t="String" %}  | Font name of the axis title. |
 | titleFontSize | {% include type t="Number" %}  | Font size of the axis title. |
