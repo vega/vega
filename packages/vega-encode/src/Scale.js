@@ -231,7 +231,7 @@ function configureBins(scale, _, count) {
     if (!bins) {
       // the domain specifies the bins
       scale.bins = scale.domain();
-    } else if (!_.domain) {
+    } else if (!_.domain && !_.domainRaw) {
       // the bins specify the domain
       scale.domain(bins);
       count = bins.length;
