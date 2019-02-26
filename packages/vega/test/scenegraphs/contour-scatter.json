@@ -190,7 +190,7 @@
                   "items": [
                     {
                       "x": 100,
-                      "y": 22,
+                      "y": 21,
                       "align": "center",
                       "baseline": "top",
                       "fill": "#000",
@@ -561,7 +561,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -29,
+                      "x": -28,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",

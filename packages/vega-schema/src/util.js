@@ -8,7 +8,7 @@ const alignEnum = ['left', 'right', 'center'];
 
 const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 
-const anchorEnum = ['start', 'middle', 'end'];
+const anchorEnum = [null, 'start', 'middle', 'end'];
 
 const orientEnum = ['left', 'right', 'top', 'bottom'];
 

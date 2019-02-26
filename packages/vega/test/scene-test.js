@@ -28,7 +28,7 @@ vega.textMetrics.canvas(false);
 
 tape('Vega generates scenegraphs for specifications', function(t) {
   var count = specs.length;
-  specs.forEach(function(name) {
+  specs.forEach(function(name, index) {
     var path = testdir + name + '.json',
         spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
         runtime = vega.parse(spec),
@@ -42,13 +42,17 @@ tape('Vega generates scenegraphs for specifications', function(t) {
         fs.writeFileSync(path, actual);
       } else {
         var expect = fs.readFileSync(path) + '',
-            actualJSON = JSON.parse(actual),
-            expectJSON = JSON.parse(expect),
-            isEqual = vega.sceneEqual(actualJSON, expectJSON);
+            pair = [JSON.parse(actual), JSON.parse(expect)],
+            isEqual = vega.sceneEqual(...pair);
 
         if (OUTPUT_FAILURES && !isEqual) {
-          fs.writeFileSync(name + '-actual.json', JSON.stringify(actualJSON, 0, 2));
-          fs.writeFileSync(name + '-expect.json', JSON.stringify(expectJSON, 0, 2));
+          pair.forEach((scene, i) => {
+            var prefix = vega.pad(index, 2, '0', 'left');
+            fs.writeFileSync(
+              `${prefix}-scene-${i?'expect':'actual'}-${name}.json`,
+              JSON.stringify(scene, 0, 2)
+            );
+          });
         }
 
         t.ok(isEqual, 'scene: ' + name);

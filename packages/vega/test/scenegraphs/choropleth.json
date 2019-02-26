@@ -11089,7 +11089,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Unemployment",
                       "angle": 0,
                       "font": "sans-serif",
@@ -11100,9 +11100,9 @@
                   "zindex": 0
                 }
               ],
-              "x": 836,
+              "x": 837,
               "y": 266,
-              "width": 106,
+              "width": 105,
               "height": 216
             }
           ],

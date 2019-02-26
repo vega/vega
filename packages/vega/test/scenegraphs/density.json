@@ -5722,8 +5722,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 169,
-                              "height": 12,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -5768,9 +5768,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
-                              "width": 169,
-                              "height": 12,
+                              "y": 13,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             }
                           ],
@@ -5786,8 +5786,8 @@
               ],
               "x": 0,
               "y": 0,
-              "width": 167,
-              "height": 25
+              "width": 168,
+              "height": 24
             }
           ],
           "zindex": 1

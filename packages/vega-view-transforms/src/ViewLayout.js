@@ -280,7 +280,7 @@ function titleLayout(view, title, width, height, viewBounds) {
       y = item.y;
   }
 
-  bounds.translate(x - item.x, y - item.y);
+  bounds.translate(x - (item.x || 0), y - (item.y || 0));
   if (set(item, 'x', x) | set(item, 'y', y)) {
     item.bounds = tempBounds;
     view.dirty(item);
@@ -294,60 +294,96 @@ function titleLayout(view, title, width, height, viewBounds) {
 
 function legendPreprocess(view, legends) {
   return legends.reduce(function(w, legend) {
-    var item = legend.items[0];
+    const item = legend.items[0];
 
     // adjust entry to accommodate padding and title
     legendGroupLayout(view, item, item.items[0].items[0]);
 
+    // if left-oriented, calculate maximum legend width
     if (item.datum.orient === Left) {
-      var b = tempBounds.clear();
-      item.items.forEach(function(_) { b.union(_.bounds); });
-      w = Math.max(w, Math.ceil(b.width() + 2 * item.padding - 1));
+      const b = legendBounds(item, tempBounds.clear());
+      w = Math.max(w, Math.ceil(b.width() + 2 * item.padding));
     }
 
     return w;
   }, 0);
 }
 
-function legendGroupLayout(view, item, entry) {
-  var ex = item.padding - entry.x,
-      ey = item.padding - entry.y,
-      title, tpad, tx, ty;
+function legendBounds(item, b) {
+  // aggregate item bounds
+  item.items.forEach(_ => b.union(_.bounds));
 
-  if (item.datum.title) {
-    title = item.items[1].items[0];
-    tpad = item.titlePadding || 0,
-    tx = item.padding - title.x;
-    ty = item.padding - title.y;
+  // anchor to legend origin
+  b.x1 = item.padding;
+  b.y1 = item.padding;
+
+  return b;
+}
+
+function legendGroupLayout(view, item, entry) {
+  var pad = item.padding,
+      ex = pad - entry.x,
+      ey = pad - entry.y;
+
+  if (!item.datum.title) {
+    if (ex || ey) translate(view, entry, ex, ey);
+  } else {
+    var title = item.items[1].items[0],
+        anchor = title.anchor,
+        tpad = item.titlePadding || 0,
+        tx = pad - title.x,
+        ty = pad - title.y;
 
     switch (title.orient) {
       case Left:
         ex += Math.ceil(title.bounds.width()) + tpad;
-        ty += titleOffset(item, entry);
         break;
       case Right:
-        tx += Math.ceil(entry.bounds.width()) + tpad;
-        ty += titleOffset(item, entry);
-        break;
       case Bottom:
-        ty += Math.ceil(entry.bounds.height()) + tpad;
         break;
       default:
         ey += title.fontSize + tpad;
     }
+    if (ex || ey) translate(view, entry, ex, ey);
+
+    switch (title.orient) {
+      case Left:
+        ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+        break;
+      case Right:
+        tx += legendTitleOffset(item, entry, title, End, 1, 0) + tpad;
+        ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+        break;
+      case Bottom:
+        tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+        ty += legendTitleOffset(item, entry, title, End, 0, 0, 1) + tpad;
+        break;
+      default:
+        tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+    }
+    if (tx || ty) translate(view, title, tx, ty);
+
+    // translate legend if title pushes content into negative coordinates
+    if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
+      translate(view, entry, -tx, 0);
+      translate(view, title, -tx, 0);
+    }
   }
-
-  if (ex || ey) updateBounds(view, entry, ex, ey);
-  if (tx || ty) updateBounds(view, title, tx, ty);
 }
 
-function titleOffset(item, entry) {
-  return ~~(0.5 * (item.datum.type === 'gradient'
-    ? entry.items[0].items[0].height  // gradient bar
-    : entry.bounds.height()));        // symbol bounds
+function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
+  const grad = item.datum.type === 'gradient',
+        vgrad = title.datum.vgrad,
+        s = grad && (lr || !vgrad) && !noBar
+          ? entry.items[0].items[0][x ? 'width' : 'height'] // gradient bar
+          : entry.bounds[x ? 'x2' : 'y2'] - item.padding,
+        u = vgrad && lr ? s : 0,
+        v = vgrad && lr ? 0 : s;
+
+  return ~~(anchor === Start ? u : anchor === End ? v : 0.5 * s);
 }
 
-function updateBounds(view, item, dx, dy) {
+function translate(view, item, dx, dy) {
   item.x += dx;
   item.y += dy;
   item.bounds.translate(dx, dy);
@@ -376,11 +412,10 @@ function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {
   tempBounds.clear().union(bounds);
   bounds.clear();
 
-  // aggregate bounds to determine size
-  // shave off 1 pixel because it looks better...
-  item.items.forEach(function(_) { bounds.union(_.bounds); });
-  w = 2 * item.padding - 1;
-  h = 2 * item.padding - 1;
+  // aggregate bounds to determine size, and include origin
+  bounds = legendBounds(item, bounds);
+  w = 2 * item.padding;
+  h = 2 * item.padding;
   if (!bounds.empty()) {
     w = Math.ceil(bounds.width() + w);
     h = Math.ceil(bounds.height() + h);
