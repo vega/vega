@@ -24,6 +24,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [Value](#Value)
 - [ColorValue](#ColorValue)
 - [FieldValue](#FieldValue)
+- [GradientValue](#GradientValue)
 {: .column-list }
 
 ## Literal Values
@@ -268,6 +269,8 @@ Accepts a string or an object indicating a data field value. If string-valued, t
 These properties can be arbitrarily nested in order to perform _indirect_ field lookups. For example, `{"parent": {"datum": "f"}}` will first retrieve the value of the `f` field on the current mark's data object. This value will then be used as the property name to lookup on the enclosing parent group mark's data object.
 
 In addition, `group` and `parent` references may include an optional `level` property to access grandparents and other ancestors. For example, `{"parent": "f", "level": 2}` will use the value of the `f` field of the grandparent's datum. By default, `level = 1`, indicating the immediate parent scope.
+
+[Back to top](#reference)
 
 <br/><a name="GradientValue" href="#GradientValue">#</a>
 **GradientValue**
