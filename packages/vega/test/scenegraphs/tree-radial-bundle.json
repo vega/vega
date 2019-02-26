@@ -44320,8 +44320,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 105,
-                              "height": 12,
+                              "width": 104,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -44367,9 +44367,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
-                              "width": 105,
-                              "height": 12,
+                              "y": 13,
+                              "width": 104,
+                              "height": 11,
                               "opacity": 1
                             }
                           ],
@@ -44395,7 +44395,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Dependencies",
                       "angle": 0,
                       "font": "sans-serif",
@@ -44406,10 +44406,10 @@
                   "zindex": 0
                 }
               ],
-              "x": 596,
-              "y": 660,
-              "width": 106,
-              "height": 42
+              "x": 597,
+              "y": 662,
+              "width": 105,
+              "height": 40
             }
           ],
           "zindex": 0

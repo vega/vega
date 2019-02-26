@@ -281,7 +281,7 @@
                   "items": [
                     {
                       "x": 400,
-                      "y": 22,
+                      "y": 21,
                       "align": "center",
                       "baseline": "top",
                       "fill": "#000",
@@ -815,7 +815,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -76,
+                      "x": -75,
                       "y": 250,
                       "align": "center",
                       "baseline": "bottom",
@@ -62336,7 +62336,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Avg. Temp (°F)",
                       "angle": 0,
                       "font": "sans-serif",
@@ -62349,8 +62349,8 @@
               ],
               "x": 820,
               "y": -16,
-              "width": 124,
-              "height": 517
+              "width": 123,
+              "height": 516
             }
           ],
           "zindex": 0
@@ -62362,7 +62362,7 @@
           "clip": false,
           "items": [
             {
-              "x": -89,
+              "x": -86,
               "y": -20,
               "align": "left",
               "baseline": "bottom",

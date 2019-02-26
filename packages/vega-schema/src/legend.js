@@ -2,7 +2,7 @@ import {layoutAlign} from './layout';
 
 import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
-  alignValue, baselineValue, colorValue, dashArrayValue,
+  alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
   numberOrSignal, stringOrSignal, arrayOrSignal,
   numberType, stringType
@@ -72,6 +72,7 @@ const legendProps = object({
   // LEGEND TITLE CONFIG
   title: stringOrSignal,
   titleAlign: alignValue,
+  titleAnchor: anchorValue,
   titleBaseline: baselineValue,
   titleColor: colorValue,
   titleFont: stringValue,

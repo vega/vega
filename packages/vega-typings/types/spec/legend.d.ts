@@ -10,6 +10,7 @@ import { LabelOverlap, TickCount } from './axis';
 import { LayoutAlign } from './layout';
 import {
   AlignValue,
+  AnchorValue,
   ColorValue,
   DashArrayValue,
   FontStyleValue,
@@ -136,7 +137,8 @@ export interface BaseLegend<
   LO = LabelOverlap | SignalRef,
   SY = SymbolShapeValue,
   DA = DashArrayValue,
-  O = OrientValue
+  O = OrientValue,
+  AN = AnchorValue
 > {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
@@ -182,6 +184,11 @@ export interface BaseLegend<
    * __Default value:__ `"left"`.
    */
   titleAlign?: A;
+
+  /**
+   * Text anchor position for placing legend titles.
+   */
+  titleAnchor?: AN;
 
   /**
    * Vertical text baseline for legend titles.

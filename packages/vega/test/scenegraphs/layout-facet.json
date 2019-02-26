@@ -202,7 +202,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -17,
+                              "x": -16,
                               "y": 19.799999999999997,
                               "align": "center",
                               "baseline": "bottom",
@@ -231,7 +231,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -40,
+                      "x": -37,
                       "y": 19.799999999999997,
                       "align": "right",
                       "baseline": "middle",
@@ -290,7 +290,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -17,
+                              "x": -16,
                               "y": 7.800000000000001,
                               "align": "center",
                               "baseline": "bottom",
@@ -319,7 +319,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -40,
+                      "x": -37,
                       "y": 7.800000000000001,
                       "align": "right",
                       "baseline": "middle",
@@ -390,7 +390,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -17,
+                              "x": -16,
                               "y": 13.799999999999999,
                               "align": "center",
                               "baseline": "bottom",
@@ -419,7 +419,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -40,
+                      "x": -37,
                       "y": 13.799999999999997,
                       "align": "right",
                       "baseline": "middle",
@@ -470,7 +470,7 @@
                   "zindex": 0
                 }
               ],
-              "x": -59,
+              "x": -55,
               "y": 42
             }
           ],

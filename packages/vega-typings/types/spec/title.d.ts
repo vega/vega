@@ -11,7 +11,7 @@ import {
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
-export type TitleAnchor = 'start' | 'middle' | 'end';
+export type TitleAnchor = null | 'start' | 'middle' | 'end';
 export type TitleFrame = 'bounds' | 'group';
 
 export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {

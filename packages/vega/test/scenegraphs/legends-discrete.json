@@ -105,7 +105,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 2",
                       "angle": 0,
                       "font": "sans-serif",
@@ -119,7 +119,7 @@
               "x": -305,
               "y": 0,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -244,7 +244,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 3",
                       "angle": 0,
                       "font": "sans-serif",
@@ -256,9 +256,9 @@
                 }
               ],
               "x": -305,
-              "y": 53,
+              "y": 52,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -405,7 +405,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 4",
                       "angle": 0,
                       "font": "sans-serif",
@@ -417,9 +417,9 @@
                 }
               ],
               "x": -305,
-              "y": 106,
+              "y": 104,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -588,7 +588,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 5",
                       "angle": 0,
                       "font": "sans-serif",
@@ -600,9 +600,9 @@
                 }
               ],
               "x": -305,
-              "y": 159,
+              "y": 156,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -793,7 +793,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 6",
                       "angle": 0,
                       "font": "sans-serif",
@@ -805,9 +805,9 @@
                 }
               ],
               "x": -305,
-              "y": 212,
+              "y": 208,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -1020,7 +1020,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 7",
                       "angle": 0,
                       "font": "sans-serif",
@@ -1032,9 +1032,9 @@
                 }
               ],
               "x": -305,
-              "y": 265,
+              "y": 260,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -1269,7 +1269,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 8",
                       "angle": 0,
                       "font": "sans-serif",
@@ -1281,9 +1281,9 @@
                 }
               ],
               "x": -305,
-              "y": 318,
+              "y": 312,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -1540,7 +1540,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantize 9",
                       "angle": 0,
                       "font": "sans-serif",
@@ -1552,9 +1552,9 @@
                 }
               ],
               "x": -305,
-              "y": 371,
+              "y": 364,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -1679,7 +1679,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantile 3",
                       "angle": 0,
                       "font": "sans-serif",
@@ -1693,7 +1693,7 @@
               "x": 5,
               "y": 0,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -1862,7 +1862,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantile 5",
                       "angle": 0,
                       "font": "sans-serif",
@@ -1874,9 +1874,9 @@
                 }
               ],
               "x": 5,
-              "y": 53,
+              "y": 52,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2089,7 +2089,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Quantile 7",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2101,9 +2101,9 @@
                 }
               ],
               "x": 5,
-              "y": 106,
+              "y": 104,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2206,7 +2206,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Threshold 1",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2218,9 +2218,9 @@
                 }
               ],
               "x": 5,
-              "y": 159,
+              "y": 156,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2345,7 +2345,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Threshold 2",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2357,9 +2357,9 @@
                 }
               ],
               "x": 5,
-              "y": 212,
+              "y": 208,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2506,7 +2506,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Threshold 3",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2518,9 +2518,9 @@
                 }
               ],
               "x": 5,
-              "y": 265,
+              "y": 260,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2689,7 +2689,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Bin-Ordinal 5",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2701,9 +2701,9 @@
                 }
               ],
               "x": 5,
-              "y": 318,
+              "y": 312,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0
@@ -2982,7 +2982,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "orient": null,
+                      "orient": "top",
                       "text": "Bin-Ordinal 10",
                       "angle": 0,
                       "font": "sans-serif",
@@ -2994,9 +2994,9 @@
                 }
               ],
               "x": 5,
-              "y": 371,
+              "y": 364,
               "width": 300,
-              "height": 45
+              "height": 44
             }
           ],
           "zindex": 0

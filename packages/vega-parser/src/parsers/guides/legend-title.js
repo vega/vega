@@ -1,14 +1,22 @@
 import {GuideTitleStyle} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {lookup, alignExpr, anchorExpr} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
-const angleExpr = 'datum.vgrad ? (item.orient==="left" ? -90 : item.orient==="right" ? 90 : 0) : 0';
-const alignExpr = 'datum.vgrad && (item.orient==="left" || item.orient==="right") ? "center" : "left"';
-const baselineExpr = '(item.orient==="left" || item.orient==="right") ? (datum.vgrad ? (item.orient==="right" ? "bottom" : "top") : "middle") : "top"';
+// expression logic for align, anchor, angle, and baseline calculation
+const isL = 'item.orient === "left"',
+      isR = 'item.orient === "right"',
+      isLR = `(${isL} || ${isR})`,
+      isVG = `datum.vgrad && ${isLR}`,
+      baseline = anchorExpr('"top"', '"bottom"', '"middle"'),
+      alignFlip = anchorExpr('"right"', '"left"', '"center"'),
+      exprAlign = `datum.vgrad && ${isR} ? (${alignFlip}) : (${isLR} && !(datum.vgrad && ${isL})) ? "left" : ${alignExpr}`,
+      exprAnchor = `item._anchor || (${isLR} ? "middle" : "start")`,
+      exprAngle = `${isVG} ? (${isL} ? -90 : 90) : 0`,
+      exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
@@ -18,12 +26,14 @@ export default function(spec, config, userEncode, dataRef) {
   encode = {
     enter: enter = {
       opacity: zero,
-      orient: encoder(_('titleOrient')),
+      orient:  encoder(_('titleOrient')),
+      _anchor: encoder(_('titleAnchor')),
+      anchor:  {signal: exprAnchor},
       x: {field: {group: 'padding'}},
       y: {field: {group: 'padding'}},
-      angle: {signal: angleExpr},
-      align: {signal: alignExpr},
-      baseline: {signal: baselineExpr},
+      angle: {signal: exprAngle},
+      align: {signal: exprAlign},
+      baseline: {signal: exprBaseline},
     },
     update: extend({}, enter, {
       opacity: {value: 1},
@@ -35,8 +45,6 @@ export default function(spec, config, userEncode, dataRef) {
   };
 
   addEncoders(encode, {
-    align:       _('titleAlign'),
-    baseline:    _('titleBaseline'),
     fill:        _('titleColor'),
     fillOpacity: _('titleOpacity'),
     font:        _('titleFont'),
@@ -44,6 +52,9 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit')
+  }, { // require update
+    align:       _('titleAlign'),
+    baseline:    _('titleBaseline'),
   });
 
   return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);

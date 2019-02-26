@@ -17,7 +17,9 @@ export const spec: Spec = {
       "symbolStrokeWidth": 2,
       "symbolStrokeColor": "#000",
       "clipHeight": 12,
-      "rowPadding": 2
+      "rowPadding": 2,
+      "titleOrient": {"signal": "titleOrient"},
+      "titleAnchor": {"signal": "titleAnchor"}
     }
   },
 
@@ -33,6 +35,14 @@ export const spec: Spec = {
     {
       "name": "legendPadding", "value": 5,
       "bind": {"input": "range", "min": 0, "max": 20, "step": 1}
+    },
+    {
+      "name": "titleOrient", "value": "top",
+      "bind": {"input": "select", "options": ["top", "left", "bottom", "right"]}
+    },
+    {
+      "name": "titleAnchor", "value": null,
+      "bind": {"input": "select", "options": ["start", "middle", "end", null]}
     }
   ],
 
