@@ -210,6 +210,10 @@ Returns the arctangent of _dy / dx_. Same as JavaScript's `Math.atan2`.
 <b>ceil</b>(<i>value</i>)<br/>
 Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's `Math.ceil`.
 
+<a name="clamp" href="#clamp">#</a>
+<b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
+Restricts _value_ to be between the specified _min_ and _max_.
+
 <a name="cos" href="#cos">#</a>
 <b>cos</b>(<i>value</i>)<br/>
 Trigonometric cosine. Same as JavaScript's `Math.cos`.
@@ -257,10 +261,6 @@ Square root function. Same as JavaScript's `Math.sqrt`.
 <a name="tan" href="#tan">#</a>
 <b>tan</b>(<i>value</i>)<br/>
 Trigonometric tangent. Same as JavaScript's `Math.tan`.
-
-<a name="clamp" href="#clamp">#</a>
-<b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
-Restricts _value_ to be between the specified _min_ and _max_.
 
 [Back to Top](#reference)
 
@@ -391,6 +391,10 @@ Returns the last index of _value_ in the input _array_.
 <a name="length" href="#length">#</a>
 <b>length</b>(<i>array</i>)<br/>
 Returns the length of the input _array_.
+
+<a name="lerp" href="#lerp">#</a>
+<b>lerp</b>(<i>array</i>, <i>fraction</i>)<br/>
+Returns the linearly interpolated value between the first and last entries in the _array_ for the provided interpolation _fraction_ (typically between 0 and 1). For example, `lerp([0, 50], 0.5)` returns 25.
 
 <a name="peek" href="#peek">#</a>
 <b>peek</b>(<i>array</i>)<br/>
