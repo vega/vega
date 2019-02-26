@@ -22,6 +22,12 @@ vega.<b>setRandom</b>(<i>randfunc</i>)
 
 Sets the random number generator to the provided function _randfunc_. Subsequent calls to <a href="#random">random</a> will invoke the new function to generate random numbers. Setting a custom generator can be helpful if one wishes to use an alternative source of randomness or replace the default generator with a deterministic function for testing purposes.
 
+<a name="randomLCG" href="#randomLCG">#</a>
+vega.<b>randomLCG</b>(<i>seed</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lcg.js "Source")
+
+Returns a new random number generator with the given random *seed*. The returned function takes zero arguments and generates random values in the range *[0, 1)* using a [linear congruential generator (LCG)](https://en.wikipedia.org/wiki/Linear_congruential_generator). This method is helpful in conjunction with [setRandom](#setRandom) to ensure deterministally seeded random numbers for stable outputs and testing.
+
 ### Distributions
 
 Methods for sampling and calculating probability distributions. Each method takes a set of distributional parameters and returns a distribution object representing a random variable.
