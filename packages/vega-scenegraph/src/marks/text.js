@@ -77,7 +77,7 @@ function bound(bounds, item, mode) {
   } else if (mode === 2) {
     return bounds.rotatedPoints(item.angle * DegToRad, x, y);
   }
-  return bounds.expand(mode || !w ? 0 : 1);
+  return bounds;
 }
 
 function draw(context, scene, bounds) {
