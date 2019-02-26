@@ -26,7 +26,7 @@ Sets the random number generator to the provided function _randfunc_. Subsequent
 vega.<b>randomLCG</b>(<i>seed</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lcg.js "Source")
 
-Returns a new random number generator with the given random *seed*. The returned function takes zero arguments and generates random values in the range *[0, 1)* using a [linear congruential generator (LCG)](https://en.wikipedia.org/wiki/Linear_congruential_generator). This method is helpful in conjunction with [setRandom](#setRandom) to ensure deterministally seeded random numbers for stable outputs and testing.
+Returns a new random number generator with the given random _seed_. The returned function takes zero arguments and generates random values in the domain [0, 1) using a [linear congruential generator (LCG)](https://en.wikipedia.org/wiki/Linear_congruential_generator). This method is helpful in conjunction with [setRandom](#setRandom) to provide seeded random numbers for stable outputs and testing.
 
 ### Distributions
 
