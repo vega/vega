@@ -637,6 +637,13 @@
     return accessor(fn, fields, 'key');
   }
 
+  function lerp(array, frac) {
+    const lo = array[0],
+          hi = peek(array),
+          f = +frac;
+    return !f ? lo : f === 1 ? hi : lo + f * (hi - lo);
+  }
+
   function merge(compare, array0, array1, output) {
     var n0 = array0.length,
         n1 = array1.length;
@@ -3599,6 +3606,15 @@
       d3Array.quantile(values, 0.50),
       d3Array.quantile(values, 0.75)
     ];
+  }
+
+  function lcg(seed) {
+    // Random numbers using a Linear Congruential Generator with seed value
+    // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
+    return function() {
+      seed = (1103515245 * seed + 12345) % 2147483647;
+      return seed / 2147483647;
+    };
   }
 
   function integer(min, max) {
@@ -9300,7 +9316,7 @@
     } else if (mode === 2) {
       return bounds.rotatedPoints(item.angle * DegToRad, x, y);
     }
-    return bounds.expand(mode || !w ? 0 : 1);
+    return bounds;
   }
 
   function draw$4(context, scene, bounds) {
@@ -12365,7 +12381,7 @@
         y = item.y;
     }
 
-    bounds.translate(x - item.x, y - item.y);
+    bounds.translate(x - (item.x || 0), y - (item.y || 0));
     if (set(item, 'x', x) | set(item, 'y', y)) {
       item.bounds = tempBounds$2;
       view.dirty(item);
@@ -12379,37 +12395,100 @@
 
   function legendPreprocess(view, legends) {
     return legends.reduce(function(w, legend) {
-      var item = legend.items[0];
+      const item = legend.items[0];
 
       // adjust entry to accommodate padding and title
       legendGroupLayout(view, item, item.items[0].items[0]);
 
+      // if left-oriented, calculate maximum legend width
       if (item.datum.orient === Left) {
-        var b = tempBounds$2.clear();
-        item.items.forEach(function(_) { b.union(_.bounds); });
-        w = Math.max(w, Math.ceil(b.width() + 2 * item.padding - 1));
+        const b = legendBounds(item, tempBounds$2.clear());
+        w = Math.max(w, Math.ceil(b.width() + 2 * item.padding));
       }
 
       return w;
     }, 0);
   }
 
+  function legendBounds(item, b) {
+    // aggregate item bounds
+    item.items.forEach(_ => b.union(_.bounds));
+
+    // anchor to legend origin
+    b.x1 = item.padding;
+    b.y1 = item.padding;
+
+    return b;
+  }
+
   function legendGroupLayout(view, item, entry) {
-    var x = item.padding - entry.x,
-        y = item.padding - entry.y;
+    var pad = item.padding,
+        ex = pad - entry.x,
+        ey = pad - entry.y;
 
-    if (item.datum.title) {
-      var title = item.items[1].items[0];
-      y += item.titlePadding + title.fontSize;
-    }
+    if (!item.datum.title) {
+      if (ex || ey) translate$2(view, entry, ex, ey);
+    } else {
+      var title = item.items[1].items[0],
+          anchor = title.anchor,
+          tpad = item.titlePadding || 0,
+          tx = pad - title.x,
+          ty = pad - title.y;
 
-    if (x || y) {
-      entry.x += x;
-      entry.y += y;
-      entry.bounds.translate(x, y);
-      entry.mark.bounds.translate(x, y);
-      view.dirty(entry);
+      switch (title.orient) {
+        case Left:
+          ex += Math.ceil(title.bounds.width()) + tpad;
+          break;
+        case Right:
+        case Bottom:
+          break;
+        default:
+          ey += title.fontSize + tpad;
+      }
+      if (ex || ey) translate$2(view, entry, ex, ey);
+
+      switch (title.orient) {
+        case Left:
+          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          break;
+        case Right:
+          tx += legendTitleOffset(item, entry, title, End, 1, 0) + tpad;
+          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          break;
+        case Bottom:
+          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+          ty += legendTitleOffset(item, entry, title, End, 0, 0, 1) + tpad;
+          break;
+        default:
+          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+      }
+      if (tx || ty) translate$2(view, title, tx, ty);
+
+      // translate legend if title pushes into negative coordinates
+      if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
+        translate$2(view, entry, -tx, 0);
+        translate$2(view, title, -tx, 0);
+      }
     }
+  }
+
+  function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
+    const grad = item.datum.type !== 'symbol',
+          vgrad = title.datum.vgrad,
+          e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
+          s = e.bounds[x ? 'x2' : 'y2'] - item.padding,
+          u = vgrad && lr ? s : 0,
+          v = vgrad && lr ? 0 : s;
+
+    return ~~(anchor === Start ? u : anchor === End ? v : 0.5 * s);
+  }
+
+  function translate$2(view, item, dx, dy) {
+    item.x += dx;
+    item.y += dy;
+    item.bounds.translate(dx, dy);
+    item.mark.bounds.translate(dx, dy);
+    view.dirty(item);
   }
 
   function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {
@@ -12433,11 +12512,10 @@
     tempBounds$2.clear().union(bounds);
     bounds.clear();
 
-    // aggregate bounds to determine size
-    // shave off 1 pixel because it looks better...
-    item.items.forEach(function(_) { bounds.union(_.bounds); });
-    w = 2 * item.padding - 1;
-    h = 2 * item.padding - 1;
+    // aggregate bounds to determine size, and include origin
+    bounds = legendBounds(item, bounds);
+    w = 2 * item.padding;
+    h = 2 * item.padding;
     if (!bounds.empty()) {
       w = Math.ceil(bounds.width() + w);
       h = Math.ceil(bounds.height() + h);
@@ -14257,7 +14335,7 @@
       if (!bins) {
         // the domain specifies the bins
         scale.bins = scale.domain();
-      } else if (!_.domain) {
+      } else if (!_.domain && !_.domainRaw) {
         // the bins specify the domain
         scale.domain(bins);
         count = bins.length;
@@ -17166,7 +17244,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.0.0-rc2";
+  var version = "5.0.0-rc3";
 
   var Default = 'default';
 
@@ -20387,8 +20465,13 @@
     toDate,
     toNumber,
     toString,
+    flush,
+    lerp,
+    merge: merge$2,
     pad,
     peek,
+    span,
+    inrange,
     truncate,
     rgb: d3Color.rgb,
     lab: d3Color.lab,
@@ -20418,11 +20501,7 @@
     screen,
     containerSize,
     windowSize,
-    span,
-    merge: merge$2,
-    flush,
     bandspace,
-    inrange,
     setdata,
     pathShape,
     panLinear,
@@ -22788,10 +22867,18 @@
       } else {
         object[set || 'enter'][name] = {value: value};
       }
-      // object[name] = isObject(value) && !isArray(value) ? value : {value: value};
       return 1;
     } else {
       return 0;
+    }
+  }
+
+  function addEncoders(object, enter, update) {
+    for (let name in enter) {
+      addEncode(object, name, enter[name]);
+    }
+    for (let name in update) {
+      addEncode(object, name, update[name], 'update');
     }
   }
 
@@ -22881,33 +22968,30 @@
     };
   }
 
-  function lookup$4(name, spec, config) {
-    return value(spec[name], config[name]);
-  }
+  function lookup$4(spec, config) {
+    const _ = name => value(spec[name], config[name]);
 
-  function isVertical(spec, configVal) {
-    return value(spec.direction, configVal) === Vertical;
-  }
+    _.isVertical = s => Vertical === value(
+      spec.direction,
+      s ? config.symbolDirection : config.gradientDirection
+    );
 
-  function gradientLength(spec, config) {
-    return value(
+    _.gradientLength = () => value(
       spec.gradientLength,
       config.gradientLength || config.gradientWidth
     );
-  }
 
-  function gradientThickness(spec, config) {
-    return value(
+    _.gradientThickness = () => value(
       spec.gradientThickness,
       config.gradientThickness || config.gradientHeight
     );
-  }
 
-  function entryColumns(spec, config) {
-    return value(
+    _.entryColumns = () => value(
       spec.columns,
-      value(config.columns, +isVertical(spec, config.symbolDirection))
+      value(config.columns, +_.isVertical(true))
     );
+
+    return _;
   }
 
   function getEncoding(name, encode) {
@@ -22923,6 +23007,16 @@
     return s && s[name];
   }
 
+  function anchorExpr(s, e, m) {
+    return `item.anchor === "${Start$1}" ? ${s} : item.anchor === "${End$1}" ? ${e} : ${m}`;
+  }
+
+  const alignExpr = anchorExpr(
+    $(Left$1),
+    $(Right$1),
+    $(Center$1)
+  );
+
   var GroupMark = 'group';
   var RectMark = 'rect';
   var RuleMark = 'rule';
@@ -22930,10 +23024,11 @@
   var TextMark = 'text';
 
   function legendGradient(spec, scale, config, userEncode) {
-    var zero = {value: 0},
-        vertical = isVertical(spec, config.gradientDirection),
-        thickness = gradientThickness(spec, config),
-        length = gradientLength(spec, config),
+    var _ = lookup$4(spec, config),
+        zero = {value: 0},
+        vertical = _.isVertical(),
+        thickness = _.gradientThickness(),
+        length = _.gradientLength(),
         encode, enter, start, stop, width, height;
 
     if (vertical) {
@@ -22964,18 +23059,23 @@
         opacity: zero
       }
     };
-    addEncode(encode, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
-    addEncode(encode, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
-    addEncode(encode, 'opacity',     lookup$4('gradientOpacity', spec, config), 'update');
+
+    addEncoders(encode, {
+      stroke:      _('gradientStrokeColor'),
+      strokeWidth: _('gradientStrokeWidth')
+    }, { // update
+      opacity:     _('gradientOpacity')
+    });
 
     return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
-    var zero = {value: 0},
-        vertical = isVertical(spec, config.gradientDirection),
-        thickness = gradientThickness(spec, config),
-        length = gradientLength(spec, config),
+    var _ = lookup$4(spec, config),
+        zero = {value: 0},
+        vertical = _.isVertical(),
+        thickness = _.gradientThickness(),
+        length = _.gradientLength(),
         encode, enter, u, v, uu, vv, adjust = '';
 
     vertical
@@ -22996,26 +23096,31 @@
       update: extend({}, enter, {opacity: {value: 1}}),
       exit: {opacity: zero}
     };
-    addEncode(encode, 'stroke',      lookup$4('gradientStrokeColor', spec, config));
-    addEncode(encode, 'strokeWidth', lookup$4('gradientStrokeWidth', spec, config));
-    addEncode(encode, 'opacity',     lookup$4('gradientOpacity', spec, config), 'update');
+
+    addEncoders(encode, {
+      stroke:      _('gradientStrokeColor'),
+      strokeWidth: _('gradientStrokeWidth')
+    }, { // update
+      opacity:     _('gradientOpacity')
+    });
 
     return guideMark(RectMark, LegendBandRole, null, Value, dataRef, encode, userEncode);
   }
 
-  var alignExpr = 'datum.' + Perc + '<=0?"left"'
+  var alignExpr$1 = 'datum.' + Perc + '<=0?"left"'
     + ':datum.' + Perc + '>=1?"right":"center"';
 
   var baselineExpr = 'datum.' + Perc + '<=0?"bottom"'
     + ':datum.' + Perc + '>=1?"top":"middle"';
 
   function legendGradientLabels(spec, config, userEncode, dataRef) {
-    var zero = {value: 0},
-        vertical = isVertical(spec, config.gradientDirection),
-        thickness = encoder(gradientThickness(spec, config)),
-        length = gradientLength(spec, config),
-        overlap = lookup$4('labelOverlap', spec, config),
-        separation = lookup$4('labelSeparation', spec, config),
+    var _ = lookup$4(spec, config),
+        zero = {value: 0},
+        vertical = _.isVertical(),
+        thickness = encoder(_.gradientThickness()),
+        length = _.gradientLength(),
+        overlap = _('labelOverlap'),
+        separation = _('labelSeparation'),
         encode, enter, update, u, v, adjust = '';
 
     encode = {
@@ -23030,20 +23135,23 @@
         opacity: zero
       }
     };
-    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
-    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
-    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
-    addEncode(encode, 'fontStyle',   lookup$4('labelFontStyle', spec, config));
-    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
-    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
-    addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
+
+    addEncoders(encode, {
+      fill:        _('labelColor'),
+      fillOpacity: _('labelOpacity'),
+      font:        _('labelFont'),
+      fontSize:    _('labelFontSize'),
+      fontStyle:   _('labelFontStyle'),
+      fontWeight:  _('labelFontWeight'),
+      limit:       value(spec.labelLimit, config.gradientLabelLimit)
+    });
 
     if (vertical) {
       enter.align = {value: 'left'};
       enter.baseline = update.baseline = {signal: baselineExpr};
       u = 'y'; v = 'x'; adjust = '1-';
     } else {
-      enter.align = update.align = {signal: alignExpr};
+      enter.align = update.align = {signal: alignExpr$1};
       enter.baseline = {value: 'top'};
       u = 'x'; v = 'y';
     }
@@ -23082,17 +23190,18 @@
 
   // userEncode is top-level, includes entries, symbols, labels
   function legendSymbolGroups(spec, config, userEncode, dataRef, columns) {
-    var entries = userEncode.entries,
+    var _ = lookup$4(spec, config),
+        entries = userEncode.entries,
         interactive = !!(entries && entries.interactive),
         name = entries ? entries.name : undefined,
-        height = lookup$4('clipHeight', spec, config),
-        symbolOffset = lookup$4('symbolOffset', spec, config),
+        height = _('clipHeight'),
+        symbolOffset = _('symbolOffset'),
         valueRef = {data: 'value'},
         encode = {},
-        xSignal = columns + '?' + 'datum.' + Offset + ':' + 'datum.' + Size,
+        xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
         yEncode = height ? encoder(height) : {field: Size},
-        index = 'datum.' + Index,
-        ncols = 'max(1,' + columns + ')',
+        index = `datum.${Index}`,
+        ncols = `max(1, ${columns})`,
         enter, update, labelOffset, symbols, labels, nrows, sort;
 
     yEncode.mult = 0.5;
@@ -23115,15 +23224,23 @@
     };
 
     if (!spec.fill) {
-      addEncode(encode, 'fill',   config.symbolBaseFillColor);
-      addEncode(encode, 'stroke', config.symbolBaseStrokeColor);
+      addEncoders(encode, {
+        fill:   config.symbolBaseFillColor,
+        stroke: config.symbolBaseStrokeColor
+      });
     }
-    addEncode(encode, 'shape',       lookup$4('symbolType', spec, config));
-    addEncode(encode, 'size',        lookup$4('symbolSize', spec, config));
-    addEncode(encode, 'strokeWidth', lookup$4('symbolStrokeWidth', spec, config));
-    addEncode(encode, 'fill',        lookup$4('symbolFillColor', spec, config));
-    addEncode(encode, 'stroke',      lookup$4('symbolStrokeColor', spec, config));
-    addEncode(encode, 'opacity',     lookup$4('symbolOpacity', spec, config), 'update');
+
+    addEncoders(encode, {
+      fill:             _('symbolFillColor'),
+      shape:            _('symbolType'),
+      size:             _('symbolSize'),
+      stroke:           _('symbolStrokeColor'),
+      strokeDash:       _('symbolDash'),
+      strokeDashOffset: _('symbolDashOffset'),
+      strokeWidth:      _('symbolStrokeWidth')
+    }, { // update
+      opacity:          _('symbolOpacity')
+    });
 
     LegendScales.forEach(function(scale) {
       if (spec[scale]) {
@@ -23139,7 +23256,7 @@
 
     // -- LEGEND LABELS --
     labelOffset = encoder(symbolOffset);
-    labelOffset.offset = lookup$4('labelOffset', spec, config);
+    labelOffset.offset = _('labelOffset');
 
     encode = {
       enter:  enter = {
@@ -23158,15 +23275,17 @@
       }
     };
 
-    addEncode(encode, 'align',       lookup$4('labelAlign', spec, config));
-    addEncode(encode, 'baseline',    lookup$4('labelBaseline', spec, config));
-    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
-    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
-    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
-    addEncode(encode, 'fontStyle',   lookup$4('labelFontStyle', spec, config));
-    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
-    addEncode(encode, 'limit',       lookup$4('labelLimit', spec, config));
-    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
+    addEncoders(encode, {
+      align:       _('labelAlign'),
+      baseline:    _('labelBaseline'),
+      fill:        _('labelColor'),
+      fillOpacity: _('labelOpacity'),
+      font:        _('labelFont'),
+      fontSize:    _('labelFontSize'),
+      fontStyle:   _('labelFontStyle'),
+      fontWeight:  _('labelFontWeight'),
+      limit:       _('labelLimit')
+    });
 
     labels = guideMark(
       TextMark, LegendLabelRole, GuideLabelStyle,
@@ -23176,7 +23295,7 @@
     // -- LEGEND ENTRY GROUPS --
     encode = {
       enter: {
-        noBound: {value: true}, // ignore width/height in bounds calc
+        noBound: {value: !height}, // ignore width/height in bounds calc
         width: zero$1,
         height: height ? encoder(height) : zero$1,
         opacity: zero$1
@@ -23190,18 +23309,18 @@
     };
 
     // annotate and sort groups to ensure correct ordering
-    if (isVertical(spec, config.symbolDirection)) {
-      nrows = 'ceil(item.mark.items.length/' + ncols + ')';
-      update.row.signal = index + '%' + nrows;
-      update.column.signal = 'floor(' + index + '/' + nrows + ')';
+    if (_.isVertical(true)) {
+      nrows = `ceil(item.mark.items.length / ${ncols})`;
+      update.row.signal = `${index}%${nrows}`;
+      update.column.signal = `floor(${index} / ${nrows})`;
       sort = {field: ['row', index]};
     } else {
-      update.row.signal = 'floor(' + index + '/' + ncols + ')';
-      update.column.signal = index + '%' + ncols;
+      update.row.signal = `floor(${index} / ${ncols})`;
+      update.column.signal = `${index} % ${ncols}`;
       sort = {field: index};
     }
     // handle zero column case (implies infinite columns)
-    update.column.signal = columns + '?' + update.column.signal + ':' + index;
+    update.column.signal = `${columns}?${update.column.signal}:${index}`;
 
     // facet legend entries into sub-groups
     dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
@@ -23215,47 +23334,73 @@
   }
 
   function legendSymbolLayout(spec, config) {
+    const _ = lookup$4(spec, config);
+
     // layout parameters for legend entries
     return {
-      align:   lookup$4('gridAlign', spec, config),
-      center:  {row: true, column: false},
-      columns: entryColumns(spec, config),
+      align:   _('gridAlign'),
+      columns: _.entryColumns(),
+      center:  {
+        row: true,
+        column: false
+      },
       padding: {
-        row:    lookup$4('rowPadding', spec, config),
-        column: lookup$4('columnPadding', spec, config)
+        row:    _('rowPadding'),
+        column: _('columnPadding')
       }
     };
   }
 
+  // expression logic for align, anchor, angle, and baseline calculation
+  const isL = 'item.orient === "left"',
+        isR = 'item.orient === "right"',
+        isLR = `(${isL} || ${isR})`,
+        isVG = `datum.vgrad && ${isLR}`,
+        baseline = anchorExpr('"top"', '"bottom"', '"middle"'),
+        alignFlip = anchorExpr('"right"', '"left"', '"center"'),
+        exprAlign = `datum.vgrad && ${isR} ? (${alignFlip}) : (${isLR} && !(datum.vgrad && ${isL})) ? "left" : ${alignExpr}`,
+        exprAnchor = `item._anchor || (${isLR} ? "middle" : "start")`,
+        exprAngle = `${isVG} ? (${isL} ? -90 : 90) : 0`,
+        exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
+
   function legendTitle(spec, config, userEncode, dataRef) {
-    var zero = {value: 0},
+    var _ = lookup$4(spec, config),
+        zero = {value: 0},
         encode, enter;
 
     encode = {
       enter: enter = {
         opacity: zero,
+        orient:  encoder(_('titleOrient')),
+        _anchor: encoder(_('titleAnchor')),
+        anchor:  {signal: exprAnchor},
         x: {field: {group: 'padding'}},
-        y: {field: {group: 'padding'}}
+        y: {field: {group: 'padding'}},
+        angle: {signal: exprAngle},
+        align: {signal: exprAlign},
+        baseline: {signal: exprBaseline},
       },
-      update: {
+      update: extend({}, enter, {
         opacity: {value: 1},
         text: encoder(spec.title),
-        x: enter.x,
-        y: enter.y
-      },
+      }),
       exit: {
         opacity: zero
       }
     };
-    addEncode(encode, 'align',       lookup$4('titleAlign', spec, config));
-    addEncode(encode, 'baseline',    lookup$4('titleBaseline', spec, config));
-    addEncode(encode, 'fill',        lookup$4('titleColor', spec, config));
-    addEncode(encode, 'font',        lookup$4('titleFont', spec, config));
-    addEncode(encode, 'fontSize',    lookup$4('titleFontSize', spec, config));
-    addEncode(encode, 'fontStyle',   lookup$4('titleFontStyle', spec, config));
-    addEncode(encode, 'fontWeight',  lookup$4('titleFontWeight', spec, config));
-    addEncode(encode, 'limit',       lookup$4('titleLimit', spec, config));
-    addEncode(encode, 'fillOpacity', lookup$4('titleOpacity', spec, config));
+
+    addEncoders(encode, {
+      fill:        _('titleColor'),
+      fillOpacity: _('titleOpacity'),
+      font:        _('titleFont'),
+      fontSize:    _('titleFontSize'),
+      fontStyle:   _('titleFontStyle'),
+      fontWeight:  _('titleFontWeight'),
+      limit:       _('titleLimit')
+    }, { // require update
+      align:       _('titleAlign'),
+      baseline:    _('titleBaseline'),
+    });
 
     return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
   }
@@ -23870,6 +24015,7 @@
         name = legendEncode.name || undefined,
         interactive = legendEncode.interactive,
         style = legendEncode.style,
+        _ = lookup$4(spec, config),
         entryEncode, entryLayout, params, children,
         type, datum, dataRef, entryRef, group;
 
@@ -23882,15 +24028,16 @@
 
     // single-element data source for legend group
     datum = {
-      orient: lookup$4('orient', spec, config),
+      orient: _('orient'),
       title:  spec.title != null,
-      type:   type
+      type:   type,
+      vgrad:  type !== 'symbol' &&  _.isVertical()
     };
     dataRef = ref(scope.add(Collect$1(null, [datum])));
 
     // encoding properties for legend group
     legendEncode = extendEncode(
-      buildLegendEncode(spec, config), legendEncode, Skip$1
+      buildLegendEncode(_, config), legendEncode, Skip$1
     );
 
     // encoding properties for legend entry sub-group
@@ -23914,7 +24061,7 @@
       ];
       // adjust default tick count based on the gradient length
       params.count = params.count || scope.signalRef(
-        'max(2,2*floor((' + deref(gradientLength(spec, config)) + ')/100))'
+        `max(2,2*floor((${deref(_.gradientLength())})/100))`
       );
     }
 
@@ -23976,17 +24123,19 @@
     }, 0);
   }
 
-  function buildLegendEncode(spec, config) {
+  function buildLegendEncode(_, config) {
     var encode = {enter: {}, update: {}};
 
-    addEncode(encode, 'offset',       lookup$4('offset', spec, config));
-    addEncode(encode, 'padding',      lookup$4('padding', spec, config));
-    addEncode(encode, 'titlePadding', lookup$4('titlePadding', spec, config));
-    addEncode(encode, 'fill',         lookup$4('fillColor', spec, config));
-    addEncode(encode, 'stroke',       lookup$4('strokeColor', spec, config));
-    addEncode(encode, 'cornerRadius', lookup$4('cornerRadius', spec, config));
-    addEncode(encode, 'strokeWidth',  config.strokeWidth);
-    addEncode(encode, 'strokeDash',   config.strokeDash);
+    addEncoders(encode, {
+      offset:       _('offset'),
+      padding:      _('padding'),
+      titlePadding: _('titlePadding'),
+      cornerRadius: _('cornerRadius'),
+      fill:         _('fillColor'),
+      stroke:       _('strokeColor'),
+      strokeWidth:  config.strokeWidth,
+      strokeDash:   config.strokeDash
+    });
 
     return encode;
   }
@@ -23997,14 +24146,14 @@
         fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
     return expression$1(
-      `max(ceil(sqrt(${size}) + ${strokeWidth}), ${fontSize})`,
+      `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
       scope
     );
   }
 
   function getChannel(name, spec, marks) {
     return spec[name]
-      ? 'scale("' + spec[name] + '",datum)'
+      ? `scale("${spec[name]}",datum)`
       : getEncoding(name, marks[0].encode);
   }
 
@@ -24012,36 +24161,15 @@
     return getEncoding('fontSize', encode) || getStyle('fontSize', scope, style);
   }
 
-  function anchorExpr(startValue, endValue, centerValue) {
-    return 'item.anchor==="' + Start$1 + '"?' + startValue
-      + ':item.anchor==="' + End$1 + '"?' + endValue
-      + ':' + centerValue;
-  }
-
-  // title text alignment
-  var alignExpr$1 = anchorExpr(
-    $(Left$1), $(Right$1), $(Center$1)
-  );
-
-  // multiplication factor for anchor positioning
-  var multExpr = anchorExpr(
-    '+(item.orient==="' + Right$1 + '")',
-    '+(item.orient!=="' + Left$1 + '")',
-    '0.5'
-  );
-
   function parseTitle(spec, scope) {
     spec = isString(spec) ? {text: spec} : spec;
 
     var config = scope.config.title,
         encode = extend({}, spec.encode),
-        datum, dataRef, title;
+        dataRef, title;
 
     // single-element data source for group title
-    datum = {
-      orient: lookup$4('orient', spec, config)
-    };
-    dataRef = ref(scope.add(Collect$1(null, [datum])));
+    dataRef = ref(scope.add(Collect$1(null, [{}])));
 
     // build title specification
     encode.name = spec.name;
@@ -24054,34 +24182,26 @@
   }
 
   function buildTitle(spec, config, userEncode, dataRef) {
-    var zero = {value: 0},
+    var _ = lookup$4(spec, config),
+        zero = {value: 0},
         title = spec.text,
-        orient = lookup$4('orient', spec, config),
-        anchor = lookup$4('anchor', spec, config),
+        orient = _('orient'),
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         horizontal = (orient === Top$1 || orient === Bottom$1),
         extent = {group: (horizontal ? 'width' : 'height')},
-        encode, enter, update, pos, opp;
-
-    // title positioning along orientation axis
-    pos = {field: extent, mult: {signal: multExpr}};
-
-    // title baseline position
-    opp = sign < 0 ? zero
-      : horizontal ? {field: {group: 'height'}}
-      : {field: {group: 'width'}};
+        encode, enter;
 
     encode = {
       enter: enter = {
         opacity: zero
       },
-      update: update = {
+      update: {
         opacity: {value: 1},
-        text:   encoder(title),
-        anchor: encoder(anchor),
-        orient: encoder(orient),
-        extent: {field: extent},
-        align:  {signal: alignExpr$1}
+        text:    encoder(title),
+        orient:  encoder(orient),
+        anchor:  encoder(_('anchor')),
+        align:   {signal: alignExpr},
+        extent:  {field: extent}
       },
       exit: {
         opacity: zero
@@ -24089,28 +24209,27 @@
     };
 
     if (horizontal) {
-      update.x = pos;
-      update.y = opp;
       enter.angle = zero;
       enter.baseline = {value: orient === Top$1 ? Bottom$1 : Top$1};
     } else {
-      update.x = opp;
-      update.y = pos;
       enter.angle = {value: sign * 90};
       enter.baseline = {value: Bottom$1};
     }
 
-    addEncode(encode, 'align',      lookup$4('align', spec, config), 'update');
-    addEncode(encode, 'angle',      lookup$4('angle', spec, config));
-    addEncode(encode, 'baseline',   lookup$4('baseline', spec, config));
-    addEncode(encode, 'fill',       lookup$4('color', spec, config));
-    addEncode(encode, 'font',       lookup$4('font', spec, config));
-    addEncode(encode, 'fontSize',   lookup$4('fontSize', spec, config));
-    addEncode(encode, 'fontStyle',  lookup$4('fontStyle', spec, config));
-    addEncode(encode, 'fontWeight', lookup$4('fontWeight', spec, config));
-    addEncode(encode, 'frame',      lookup$4('frame', spec, config));
-    addEncode(encode, 'limit',      lookup$4('limit', spec, config));
-    addEncode(encode, 'offset',     lookup$4('offset', spec, config) || 0);
+    addEncoders(encode, {
+      angle:      _('angle'),
+      baseline:   _('baseline'),
+      fill:       _('color'),
+      font:       _('font'),
+      fontSize:   _('fontSize'),
+      fontStyle:  _('fontStyle'),
+      fontWeight: _('fontWeight'),
+      frame:      _('frame'),
+      limit:      _('limit'),
+      offset:     _('offset') || 0
+    }, { // update
+      align:      _('align')
+    });
 
     return guideMark(TextMark, TitleRole$1, spec.style || GroupTitleStyle,
                      null, dataRef, encode, userEncode);
@@ -24239,7 +24358,8 @@
   }
 
   function axisDomain(spec, config, userEncode, dataRef) {
-    var orient = spec.orient,
+    var _ = lookup$4(spec, config),
+        orient = spec.orient,
         zero = {value: 0},
         encode, enter, update, u, u2, v;
 
@@ -24254,9 +24374,14 @@
         opacity: zero
       }
     };
-    addEncode(encode, 'stroke',        lookup$4('domainColor', spec, config));
-    addEncode(encode, 'strokeWidth',   lookup$4('domainWidth', spec, config));
-    addEncode(encode, 'strokeOpacity', lookup$4('domainOpacity', spec, config));
+
+    addEncoders(encode, {
+      stroke:           _('domainColor'),
+      strokeDash:       _('domainDash'),
+      strokeDashOffset: _('domainDashOffset'),
+      strokeWidth:      _('domainWidth'),
+      strokeOpacity:    _('domainOpacity')
+    });
 
     if (orient === Top$1 || orient === Bottom$1) {
       u = 'x';
@@ -24279,7 +24404,8 @@
   }
 
   function axisGrid(spec, config, userEncode, dataRef) {
-    var orient = spec.orient,
+    var _ = lookup$4(spec, config),
+        orient = spec.orient,
         vscale = spec.gridScale,
         sign = (orient === Left$1 || orient === Top$1) ? 1 : -1,
         offset = offsetValue$1(spec.offset, sign),
@@ -24297,18 +24423,22 @@
         opacity: zero
       }
     };
-    addEncode(encode, 'stroke',        lookup$4('gridColor', spec, config));
-    addEncode(encode, 'strokeDash',    lookup$4('gridDash', spec, config));
-    addEncode(encode, 'strokeOpacity', lookup$4('gridOpacity', spec, config));
-    addEncode(encode, 'strokeWidth',   lookup$4('gridWidth', spec, config));
+
+    addEncoders(encode, {
+      stroke:           _('gridColor'),
+      strokeDash:       _('gridDash'),
+      strokeDashOffset: _('gridDashOffset'),
+      strokeOpacity:    _('gridOpacity'),
+      strokeWidth:      _('gridWidth')
+    });
 
     tickPos = {
       scale:  spec.scale,
       field:  Value,
-      band:   lookup$4('bandPosition', spec, config),
-      round:  lookup$4('tickRound', spec, config),
-      extra:  lookup$4('tickExtra', spec, config),
-      offset: lookup$4('tickOffset', spec, config)
+      band:   _('bandPosition'),
+      round:  _('tickRound'),
+      extra:  _('tickExtra'),
+      offset: _('tickOffset')
     };
 
     if (orient === Top$1 || orient === Bottom$1) {
@@ -24357,7 +24487,8 @@
   }
 
   function axisTicks(spec, config, userEncode, dataRef, size) {
-    var orient = spec.orient,
+    var _ = lookup$4(spec, config),
+        orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         zero = {value: 0},
         encode, enter, exit, update, tickSize, tickPos;
@@ -24373,9 +24504,14 @@
         opacity: zero
       }
     };
-    addEncode(encode, 'stroke',        lookup$4('tickColor', spec, config));
-    addEncode(encode, 'strokeOpacity', lookup$4('tickOpacity', spec, config));
-    addEncode(encode, 'strokeWidth',   lookup$4('tickWidth', spec, config));
+
+    addEncoders(encode, {
+      stroke:           _('tickColor'),
+      strokeDash:       _('tickDash'),
+      strokeDashOffset: _('tickDashOffset'),
+      strokeOpacity:    _('tickOpacity'),
+      strokeWidth:      _('tickWidth')
+    });
 
     tickSize = encoder(size);
     tickSize.mult = sign;
@@ -24383,10 +24519,10 @@
     tickPos = {
       scale:  spec.scale,
       field:  Value,
-      band:   lookup$4('bandPosition', spec, config),
-      round:  lookup$4('tickRound', spec, config),
-      extra:  lookup$4('tickExtra', spec, config),
-      offset: lookup$4('tickOffset', spec, config)
+      band:   _('bandPosition'),
+      round:  _('tickRound'),
+      extra:  _('tickExtra'),
+      offset: _('tickOffset')
     };
 
     if (orient === Top$1 || orient === Bottom$1) {
@@ -24411,29 +24547,30 @@
   }
 
   function axisLabels(spec, config, userEncode, dataRef, size) {
-    var orient = spec.orient,
+    var _ = lookup$4(spec, config),
+        orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         isXAxis = (orient === Top$1 || orient === Bottom$1),
         scale = spec.scale,
-        flush = deref(lookup$4('labelFlush', spec, config)),
-        flushOffset = deref(lookup$4('labelFlushOffset', spec, config)),
+        flush = deref(_('labelFlush')),
+        flushOffset = deref(_('labelFlushOffset')),
         flushOn = flush === 0 || !!flush,
-        labelAlign = lookup$4('labelAlign', spec, config),
-        labelBaseline = lookup$4('labelBaseline', spec, config),
+        labelAlign = _('labelAlign'),
+        labelBaseline = _('labelBaseline'),
         zero = {value: 0},
         encode, enter, tickSize, tickPos, align, baseline, offset,
         bound, overlap, separation;
 
     tickSize = encoder(size);
     tickSize.mult = sign;
-    tickSize.offset = encoder(lookup$4('labelPadding', spec, config) || 0);
+    tickSize.offset = encoder(_('labelPadding') || 0);
     tickSize.offset.mult = sign;
 
     tickPos = {
       scale:  scale,
       field:  Value,
       band:   0.5,
-      offset: lookup$4('tickOffset', spec, config)
+      offset: _('tickOffset')
     };
 
     if (isXAxis) {
@@ -24474,20 +24611,23 @@
       }
     };
 
-    addEncode(encode, isXAxis ? 'dx' : 'dy', offset);
-    addEncode(encode, 'align',       align);
-    addEncode(encode, 'baseline',    baseline);
-    addEncode(encode, 'angle',       lookup$4('labelAngle', spec, config));
-    addEncode(encode, 'fill',        lookup$4('labelColor', spec, config));
-    addEncode(encode, 'font',        lookup$4('labelFont', spec, config));
-    addEncode(encode, 'fontSize',    lookup$4('labelFontSize', spec, config));
-    addEncode(encode, 'fontWeight',  lookup$4('labelFontWeight', spec, config));
-    addEncode(encode, 'fontStyle',   lookup$4('labelFontStyle', spec, config));
-    addEncode(encode, 'limit',       lookup$4('labelLimit', spec, config));
-    addEncode(encode, 'fillOpacity', lookup$4('labelOpacity', spec, config));
-    bound   = lookup$4('labelBound', spec, config);
-    overlap = lookup$4('labelOverlap', spec, config);
-    separation = lookup$4('labelSeparation', spec, config);
+    addEncoders(encode, {
+      [isXAxis ? 'dx' : 'dy']: offset,
+      align:       align,
+      baseline:    baseline,
+      angle:       _('labelAngle'),
+      fill:        _('labelColor'),
+      fillOpacity: _('labelOpacity'),
+      font:        _('labelFont'),
+      fontSize:    _('labelFontSize'),
+      fontWeight:  _('labelFontWeight'),
+      fontStyle:   _('labelFontStyle'),
+      limit:       _('labelLimit')
+    });
+
+    bound   = _('labelBound');
+    overlap = _('labelOverlap');
+    separation = _('labelSeparation');
 
     spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 
@@ -24505,7 +24645,8 @@
   }
 
   function axisTitle(spec, config, userEncode, dataRef) {
-    var orient = spec.orient,
+    var _ = lookup$4(spec, config),
+        orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         horizontal = (orient === Top$1 || orient === Bottom$1),
         zero = {value: 0},
@@ -24513,20 +24654,21 @@
 
     encode = {
       enter: enter = {
-        opacity: zero
+        opacity: zero,
+        anchor: encoder(_('titleAnchor')),
+        align: {signal: alignExpr}
       },
-      update: update = {
+      update: update = extend({}, enter, {
         opacity: {value: 1},
         text: encoder(spec.title)
-      },
+      }),
       exit: {
         opacity: zero
       }
     };
 
     titlePos = {
-      scale: spec.scale,
-      range: 0.5
+      signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
     };
 
     if (horizontal) {
@@ -24539,23 +24681,26 @@
       enter.baseline = {value: 'bottom'};
     }
 
-    addEncode(encode, 'align',       lookup$4('titleAlign', spec, config));
-    addEncode(encode, 'angle',       lookup$4('titleAngle', spec, config));
-    addEncode(encode, 'baseline',    lookup$4('titleBaseline', spec, config));
-    addEncode(encode, 'fill',        lookup$4('titleColor', spec, config));
-    addEncode(encode, 'font',        lookup$4('titleFont', spec, config));
-    addEncode(encode, 'fontSize',    lookup$4('titleFontSize', spec, config));
-    addEncode(encode, 'fontStyle',   lookup$4('titleFontStyle', spec, config));
-    addEncode(encode, 'fontWeight',  lookup$4('titleFontWeight', spec, config));
-    addEncode(encode, 'limit',       lookup$4('titleLimit', spec, config));
-    addEncode(encode, 'fillOpacity', lookup$4('titleOpacity', spec, config));
+    addEncoders(encode, {
+      angle:       _('titleAngle'),
+      baseline:    _('titleBaseline'),
+      fill:        _('titleColor'),
+      fillOpacity: _('titleOpacity'),
+      font:        _('titleFont'),
+      fontSize:    _('titleFontSize'),
+      fontStyle:   _('titleFontStyle'),
+      fontWeight:  _('titleFontWeight'),
+      limit:       _('titleLimit')
+    }, { // require update
+      align:       _('titleAlign')
+    });
 
-    !addEncode(encode, 'x', lookup$4('titleX', spec, config), 'update')
-      && horizontal && !has('x', userEncode)
+    !addEncode(encode, 'x', _('titleX'), 'update')
+      && !horizontal && !has('x', userEncode)
       && (encode.enter.auto = {value: true});
 
-    !addEncode(encode, 'y', lookup$4('titleY', spec, config), 'update')
-      && !horizontal && !has('y', userEncode)
+    !addEncode(encode, 'y', _('titleY'), 'update')
+      && horizontal && !has('y', userEncode)
       && (encode.enter.auto = {value: true});
 
     return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
@@ -24568,15 +24713,16 @@
         name = axisEncode.name || undefined,
         interactive = axisEncode.interactive,
         style = axisEncode.style,
+        _ = lookup$4(spec, config),
         datum, dataRef, ticksRef, size, group, children;
 
     // single-element data source for axis group
     datum = {
       orient: spec.orient,
-      ticks:  !!lookup$4('ticks',  spec, config),
-      labels: !!lookup$4('labels', spec, config),
-      grid:   !!lookup$4('grid',   spec, config),
-      domain: !!lookup$4('domain', spec, config),
+      ticks:  !!_('ticks'),
+      labels: !!_('labels'),
+      grid:   !!_('grid'),
+      domain: !!_('domain'),
       title:  !!value(spec.title, false)
     };
     dataRef = ref(scope.add(Collect$1({}, [datum])));
@@ -24584,19 +24730,19 @@
     // encoding properties for axis group item
     axisEncode = extendEncode({
       update: {
-        range:        {signal: 'abs(span(range("' + spec.scale + '")))'},
+        range:        {signal: `abs(span(range("${spec.scale}")))`},
         offset:       encoder(value(spec.offset, 0)),
         position:     encoder(value(spec.position, 0)),
-        titlePadding: encoder(lookup$4('titlePadding', spec, config)),
-        minExtent:    encoder(lookup$4('minExtent', spec, config)),
-        maxExtent:    encoder(lookup$4('maxExtent', spec, config))
+        titlePadding: encoder(_('titlePadding')),
+        minExtent:    encoder(_('minExtent')),
+        maxExtent:    encoder(_('maxExtent'))
       }
     }, encode.axis, Skip$1);
 
     // data source for axis ticks
     ticksRef = ref(scope.add(AxisTicks$1({
       scale:   scope.scaleRef(spec.scale),
-      extra:   scope.property(lookup$4('tickExtra', spec, config)),
+      extra:   scope.property(_('tickExtra')),
       count:   scope.objectProperty(spec.tickCount),
       values:  scope.objectProperty(spec.values),
       minstep: scope.property(spec.tickMinStep),
@@ -24613,7 +24759,7 @@
 
     // include axis ticks if requested
     if (datum.ticks) {
-      size = lookup$4('tickSize', spec, config);
+      size = _('tickSize');
       children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
     }
 
@@ -25319,7 +25465,6 @@
         tickRound: true,
         tickSize: 5,
         tickWidth: 1,
-        titleAlign: 'center',
         titlePadding: 4
       },
 
@@ -25354,9 +25499,8 @@
         symbolStrokeWidth: 1.5,
         symbolBaseFillColor: 'transparent',
         symbolBaseStrokeColor: gray,
-        titleAlign: 'left',
-        titleBaseline: 'top',
         titleLimit: 180,
+        titleOrient: 'top',
         titlePadding: 5
       },
 
@@ -25442,6 +25586,7 @@
   exports.bootstrapCI = bootstrapCI;
   exports.quartiles = quartiles;
   exports.setRandom = setRandom;
+  exports.randomLCG = lcg;
   exports.randomInteger = integer;
   exports.randomKDE = randomKDE;
   exports.randomMixture = randomMixture;
@@ -25495,6 +25640,7 @@
   exports.isRegExp = isRegExp;
   exports.isString = isString;
   exports.key = key;
+  exports.lerp = lerp;
   exports.merge = merge;
   exports.pad = pad;
   exports.peek = peek;

@@ -144,6 +144,21 @@
             }
           ]
         },
+        "titleAnchor": {
+          "oneOf": [
+            {
+              "enum": [
+                null,
+                "start",
+                "middle",
+                "end"
+              ]
+            },
+            {
+              "$ref": "#/refs/anchorValue"
+            }
+          ]
+        },
         "titleAngle": {
           "oneOf": [
             {
@@ -302,6 +317,29 @@
             }
           ]
         },
+        "domainDash": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            {
+              "$ref": "#/refs/arrayValue"
+            }
+          ]
+        },
+        "domainDashOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "domainOpacity": {
           "oneOf": [
             {
@@ -335,6 +373,29 @@
             },
             {
               "$ref": "#/refs/colorValue"
+            }
+          ]
+        },
+        "tickDash": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            {
+              "$ref": "#/refs/arrayValue"
+            }
+          ]
+        },
+        "tickDashOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
             }
           ]
         },
@@ -426,6 +487,16 @@
             },
             {
               "$ref": "#/refs/arrayValue"
+            }
+          ]
+        },
+        "gridDashOffset": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
             }
           ]
         },
@@ -1495,7 +1566,7 @@
           "$ref": "#/refs/numberValue"
         },
         "orient": {
-          "$ref": "#/refs/orientValue"
+          "$ref": "#/refs/directionValue"
         },
         "url": {
           "$ref": "#/refs/stringValue"
@@ -1852,12 +1923,6 @@
               ],
               "default": "right"
             },
-            "format": {
-              "$ref": "#/refs/stringOrSignal"
-            },
-            "title": {
-              "$ref": "#/refs/stringOrSignal"
-            },
             "tickCount": {
               "$ref": "#/refs/tickCount"
             },
@@ -1926,6 +1991,9 @@
                 }
               ]
             },
+            "title": {
+              "$ref": "#/refs/stringOrSignal"
+            },
             "titleAlign": {
               "oneOf": [
                 {
@@ -1937,6 +2005,21 @@
                 },
                 {
                   "$ref": "#/refs/alignValue"
+                }
+              ]
+            },
+            "titleAnchor": {
+              "oneOf": [
+                {
+                  "enum": [
+                    null,
+                    "start",
+                    "middle",
+                    "end"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/anchorValue"
                 }
               ]
             },
@@ -2052,6 +2135,21 @@
                 }
               ]
             },
+            "titleOrient": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "left",
+                    "right",
+                    "top",
+                    "bottom"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/orientValue"
+                }
+              ]
+            },
             "titlePadding": {
               "oneOf": [
                 {
@@ -2124,6 +2222,29 @@
                 },
                 {
                   "$ref": "#/refs/signal"
+                }
+              ]
+            },
+            "symbolDash": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                {
+                  "$ref": "#/refs/arrayValue"
+                }
+              ]
+            },
+            "symbolDashOffset": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
                 }
               ]
             },
@@ -2202,6 +2323,9 @@
                   "$ref": "#/refs/stringValue"
                 }
               ]
+            },
+            "format": {
+              "$ref": "#/refs/stringOrSignal"
             },
             "labelAlign": {
               "oneOf": [
@@ -2408,6 +2532,12 @@
               "type": "object",
               "required": [
                 "strokeDash"
+              ]
+            },
+            {
+              "type": "object",
+              "required": [
+                "strokeWidth"
               ]
             }
           ]
@@ -5391,6 +5521,7 @@
               "oneOf": [
                 {
                   "enum": [
+                    null,
                     "start",
                     "middle",
                     "end"
@@ -11958,7 +12089,7 @@
         }
       ]
     },
-    "orientValue": {
+    "directionValue": {
       "oneOf": [
         {
           "type": "array",
@@ -12070,6 +12201,186 @@
                           "enum": [
                             "horizontal",
                             "vertical"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "$ref": "#/refs/field"
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "range": {
+                          "oneOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "range"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "scale",
+                    "value"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "scale",
+                    "band"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "offset"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "orientValue": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/defs/rule"
+              },
+              {
+                "allOf": [
+                  {
+                    "$ref": "#/refs/stringModifiers"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "oneOf": [
+                          {
+                            "$ref": "#/refs/signal"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "enum": [
+                                  "left",
+                                  "right",
+                                  "top",
+                                  "bottom"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "$ref": "#/refs/field"
+                              }
+                            },
+                            "required": [
+                              "field"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "range": {
+                                "oneOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "range"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "scale",
+                          "value"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "scale",
+                          "band"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "offset"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/refs/stringModifiers"
+            },
+            {
+              "anyOf": [
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/refs/signal"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "enum": [
+                            "left",
+                            "right",
+                            "top",
+                            "bottom"
                           ]
                         }
                       },
@@ -12576,6 +12887,25 @@
           "properties": {
             "gradient": {
               "$ref": "#/refs/scale"
+            },
+            "start": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "stop": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "count": {
+              "type": "number"
             }
           },
           "required": [
