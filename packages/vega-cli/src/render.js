@@ -1,8 +1,7 @@
 const vega = require('vega'),
       path = require('path'),
       args = require('./args'),
-      read = require('./read'),
-      lcg = require('./lcg');
+      read = require('./read');
 
 module.exports = function(type, callback, opt) {
   // parse command line arguments
@@ -20,7 +19,7 @@ module.exports = function(type, callback, opt) {
   // use a seeded random number generator, if specified
   if (typeof arg.seed !== 'undefined') {
     if (isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
-    vega.setRandom(lcg(arg.seed));
+    vega.setRandom(vega.randomLCG(arg.seed));
   }
 
   // instantiate view and invoke async render method

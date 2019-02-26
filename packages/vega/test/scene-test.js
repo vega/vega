@@ -11,17 +11,8 @@ var GENERATE_SCENES = false, // flag to generate test scenes
       return spec !== 'wordcloud';
     });
 
-function lcg(seed) {
-  // Random numbers using a Linear Congruential Generator with seed value
-  // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
-  return function() {
-    seed = (1103515245 * seed + 12345) % 2147483647;
-    return seed / 2147483647;
-  };
-}
-
 // Plug-in a seeded random number generator for testing.
-vega.setRandom(lcg(123456789));
+vega.setRandom(vega.randomLCG(123456789));
 
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
