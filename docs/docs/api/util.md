@@ -298,6 +298,12 @@ vega.<b>inrange</b>(<i>value</i>, <i>range</i>[, <i>left</i>, <i>right</i>])
 
 Returns `true` if the input *value* lies within the span of the given *range* array. The *left* and *right* boolean flags control the use of inclusive (true) or exclusive (false) comparisons; if unspecified, inclusive tests are used.
 
+<a name="lerp" href="#lerp">#</a>
+vega.<b>lerp</b>(<i>array</i>, <i>fraction</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/lerp.js "Source")
+
+Returns the linearly interpolated value between the first and last entries in the *array* for the provided interpolation *fraction* (typically between 0 and 1). For example, *lerp([0, 50], 0.5)* returns 25.
+
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/merge.js "Source")
