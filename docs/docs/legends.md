@@ -22,7 +22,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | size          | {% include type t="String" %}  | The name of a scale that maps to a size (area) value.|
 | stroke        | {% include type t="String" %}  | The name of a scale that maps to a stroke color.|
 | strokeDash    | {% include type t="String" %}  | The name of a scale that maps to a stroke dash value.|
-| strokeWidth   | {% include type t="String" %}  | {% include tag ver="5.0" %} The name of a scale that maps to a stroke width value.|
+| strokeWidth   | {% include type t="String" %}  | The name of a scale that maps to a stroke width value. {% include tag ver="5.0" %} |
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `entries`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
 | format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
 | gridAlign     | {% include type t="String" %}  | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
@@ -52,6 +52,8 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | labelOpacity  | {% include type t="Number" %}  | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
 |labelSeparation| {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
+| symbolDash      | {% include type t="Number[]" %} | Stroke dash of symbol outlines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| symbolDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolFillColor | {% include type t="Color" %}  | Fill color for legend symbols. |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
 | symbolOpacity | {% include type t="Number" %}  | Opacity of legend symbols. {% include tag ver="4.1" %} |

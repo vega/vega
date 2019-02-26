@@ -177,11 +177,14 @@ Additional property blocks can target more specific axis types based on the orie
 | bandPosition    | {% include type t="Number" %}   | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain          | {% include type t="Boolean" %}  | Boolean flag indicating if axis domain line should be included by default. |
 | domainColor     | {% include type t="Color" %}    | Color of axis domain line. |
+| domainDash      | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| domainDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
 | domainOpacity   | {% include type t="Number" %}   | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth     | {% include type t="Number" %}   | Stroke width of axis domain line. |
 | grid            | {% include type t="Boolean" %}  | Boolean flag indicating if axis grid lines should be included by default. |
 | gridColor       | {% include type t="Color" %}    | Color of axis grid lines. |
 | gridDash        | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
+| gridDashOffset  | {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
 | gridOpacity     | {% include type t="Number" %}   | Opacity of axis grid lines. |
 | gridWidth       | {% include type t="Number" %}   | Stroke width of axis grid lines. |
 | labels          | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick labels should be included by default. |
@@ -205,6 +208,8 @@ Additional property blocks can target more specific axis types based on the orie
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |
 | tickColor       | {% include type t="Color" %}    | Color of axis ticks. |
+| tickDash        | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| tickDashOffset  | {% include type t="Number" %}   | The pixel offset at which to start the tick mark dash array. {% include tag ver="5.0" %} |
 | tickExtra       | {% include type t="Boolean" %}  | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`. |
 | tickOffset      | {% include type t="Number" %}   | Position offset in pixels to apply to ticks, labels, and gridlines. |
 | tickOpacity     | {% include type t="Number" %}   | Opacity of axis ticks. {% include tag ver="4.1" %} |
@@ -287,6 +292,8 @@ Properties defining default settings for legends. These properties are defined u
 | strokeWidth           | {% include type t="Number" %}   | Border stroke width for the full legend. |
 | symbolBaseFillColor   | {% include type t="Color" %}    | Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
 | symbolBaseStrokeColor | {% include type t="Color" %}    | Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend. |
+| symbolDash            | {% include type t="Number[]" %} | Stroke dash of symbol outlines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| symbolDashOffset      | {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
 | symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
