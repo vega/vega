@@ -59,11 +59,11 @@ export default function(spec, config, userEncode, dataRef) {
   });
 
   !addEncode(encode, 'x', _('titleX'), 'update')
-    && horizontal && !has('x', userEncode)
+    && !horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
   !addEncode(encode, 'y', _('titleY'), 'update')
-    && !horizontal && !has('y', userEncode)
+    && horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
