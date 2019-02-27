@@ -1,2 +1,5 @@
+.prettierignore
+.prettierrc.json
+build-tests.sh
 tests
 tslint.json
