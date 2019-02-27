@@ -379,7 +379,7 @@ function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
         u = vgrad && lr ? s : 0,
         v = vgrad && lr ? 0 : s;
 
-  return ~~(anchor === Start ? u : anchor === End ? v : 0.5 * s);
+  return Math.round(anchor === Start ? u : anchor === End ? v : 0.5 * s);
 }
 
 function translate(view, item, dx, dy) {
