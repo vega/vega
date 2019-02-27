@@ -2,6 +2,14 @@ import Constants from './constants';
 import Functions from './functions';
 import {error, isFunction, isString, toSet} from 'vega-util';
 
+function stripQuotes(s) {
+  var n = s && s.length - 1;
+  return n && (
+      (s[0]==='"' && s[n]==='"') ||
+      (s[0]==='\'' && s[n]==='\'')
+    ) ? s.slice(1, -1) : s;
+}
+
 export default function(opt) {
   opt = opt || {};
 
@@ -52,7 +60,10 @@ export default function(opt) {
         var o = visit(n.object);
         if (d) memberDepth += 1;
         var p = visit(n.property);
-        if (o === fieldvar) { fields[p] = 1; } // HACKish...
+        if (o === fieldvar) {
+          // strip quotes to sanitize field name (#1653)
+          fields[stripQuotes(p)] = 1;
+        }
         if (d) memberDepth -= 1;
         return o + (d ? '.'+p : '['+p+']');
       },
