@@ -25,6 +25,9 @@ import {
   StringValue,
   SymbolShapeValue,
   TextBaselineValue,
+  DashArrayValue,
+  OrientValue,
+  AnchorValue,
 } from './values';
 
 export interface Config
@@ -345,8 +348,11 @@ export interface LegendConfig<
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  SY = SymbolShapeValue
-> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY> {
+  SY = SymbolShapeValue,
+  DA = DashArrayValue,
+  O = OrientValue,
+  AN = AnchorValue
+> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
