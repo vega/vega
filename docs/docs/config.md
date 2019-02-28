@@ -34,7 +34,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 ## <a name="reference"></a>Config Reference
 
 - [View Properties](#view)
-- [Event Properties](#event)
+- [Event Properties](#events)
 - [Mark Properties](#mark)
 - [Style Properties](#style)
 - [Axis Properties](#axes)
