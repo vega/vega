@@ -26,6 +26,10 @@ vega.<b>View</b>(<i>runtime</i>[, <i>options</i>])
 
 Constructor that creates a new View instance for the provided [Vega dataflow *runtime* specification](https://github.com/vega/vega/blob/master/packages/vega-runtime/). If provided, the *options* argument should be an object with one or more of the following properties:
 
+- *background*: View background color. See the [background](#view_background) method.
+- *bind*: DOM container element (or unique CSS selector) for input elements bound to signals. See the [initialize](#view_initialize) method.
+- *container*: Parent DOM container element (or unique CSS selector) for this view. See the [initialize](#view_initialize) method.
+- *hover*: Boolean flag indicating if hover processing should be enabled. See the [hover](#view_hover) method.
 - *loader*: Default [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images.
 - *logLevel*: Initial log level to use. See the [logLevel](#view_logLevel) method.
 - *renderer*: The type of renderer to use (`'canvas'` or `'svg'`). See the [renderer](#view_renderer) method.
@@ -36,9 +40,22 @@ The View constructor call is typically followed by a chain of method calls to se
 ```js
 var view = new vega.View(runtime)
   .logLevel(vega.Warn) // set view logging level
-  .initialize(document.querySelector('#view')) // set parent DOM element
-  .renderer('svg') // set render type (defaults to 'canvas')
-  .hover(); // enable hover event processing, *only call once*!
+  .renderer('svg')     // set render type (defaults to 'canvas')
+  .initialize('#view') // set parent DOM element
+  .hover();            // enable hover event processing, *only call once*!
+
+view.runAsync(); // evaluate and render the view
+```
+
+Alternatively, using View constructor options:
+
+```js
+var view = new vega.View(runtime, {
+    logLevel:  vega.Warn, // view logging level
+    renderer:  'svg',     // render type (defaults to 'canvas')
+    container: '#view',   // parent DOM element
+    hover:     true       // enable hover event processing
+  });
 
 view.runAsync(); // evaluate and render the view
 ```
@@ -46,12 +63,12 @@ view.runAsync(); // evaluate and render the view
 Or, if used within an [`async` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function):
 
 ```js
-var view = await new vega.View(runtime)
-  .logLevel(vega.Warn) // set view logging level
-  .initialize(document.querySelector('#view')) // set parent DOM element
-  .renderer('svg') // set render type (defaults to 'canvas')
-  .hover() // enable hover event processing, *only call once*!
-  .runAsync(); // evaluate and render the view
+var view = await new vega.View(runtime, {
+    logLevel:  vega.Warn, // view logging level
+    renderer:  'svg',     // render type (defaults to 'canvas')
+    container: '#view',   // parent DOM element
+    hover:     true       // enable hover event processing
+  }).runAsync();          // evaluate and render the view
 ```
 
 <a name="view_finalize" href="#view_finalize">#</a>
@@ -112,7 +129,7 @@ The *tooltipHandler* function arguments are:
 - *event* - The [event](https://developer.mozilla.org/en-US/docs/Web/Events) that caused an update to the tooltip display.
 - *item* - The scenegraph item corresponding to the tooltip.
 - *value* - The tooltip value to display. If `null` or `undefined`, indicates that no tooltip should be shown. The tooltip *value* may have an arbitrary type, including Object and Array values. It is up the *tooltipHandler* to appropriately interpret and display this value.
-- In addition, Vega invokes the *tooltipHander* using the current View as the *this* context for the function.
+- In addition, Vega invokes the *tooltipHandler* using the current View as the *this* context for the function.
 
 The default handler uses built-in browser support to show tooltips. It takes a value to show in a tooltip, transforms it to a string value, and sets the HTML `"title"` attribute on the element containing the View. The default handler will coerce literal values to strings, and will show the contents of Object or Array values (up to one level of depth). For Object values, each key-value pair is displayed on its own line of text (`"key1: value\nkey2: value2"`).
 
@@ -128,7 +145,7 @@ Enables hover event processing and returns this view instance. The optional argu
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color and returns this view instance. This method does not force an immediate update to the view; invoke the [runAsync](#view_runAsync) method when ready.
+Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color (overriding any background color defined in the input Vega specification) and returns this view instance. This method does not force an immediate update to the view; invoke the [runAsync](#view_runAsync) method when ready.
 
 <a name="view_width" href="#view_width">#</a>
 view.<b>width</b>([<i>width</i>])

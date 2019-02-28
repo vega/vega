@@ -46,89 +46,80 @@
     <div id="view"></div>
     <div id="external"></div>
     <script>
-var container = document.querySelector('#view'),
-    renderType = 'svg',
-    logLevel = vega.Warn,
-    runtime = null,
-    spec = null,
-    view = null;
+var runtime, spec, view;
 
-var select = document.querySelector('#specs');
+const options = {
+  container: '#view',
+  renderer:  'svg',
+  logLevel:  vega.Warn,
+  hover:     true
+};
+
+const select = document.querySelector('#specs');
 select.addEventListener('change', function() {
   load(select.options[select.selectedIndex].value);
 });
 
-var render = document.querySelector('#render');
+const render = document.querySelector('#render');
 render.addEventListener('change', function() {
   renderType = render.options[render.selectedIndex].value;
-  if (view) view.renderer(renderType).run();
+  if (view) view.renderer(renderType).runAsync();
 });
 
-var level = document.querySelector('#level');
+const level = document.querySelector('#level');
 level.addEventListener('change', function() {
   logLevel = +level.options[level.selectedIndex].value;
   if (view) view.logLevel(logLevel);
 });
 
-fetch('specs-valid.json')
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
+async function init() {
+  try {
+    const data = await fetch('specs-valid.json').then(r => r.json());
+
     // load manifest of test specifications
     data.forEach(function(name) {
-      var opt = document.createElement('option');
+      const opt = document.createElement('option');
       opt.setAttribute('value', name);
       opt.textContent = name;
       select.appendChild(opt);
     });
-  })
-  .then(function() {
+
     // if query string is present, try to load spec
     if (location.search) load(location.search.slice(1));
-  })
-  .catch(function(err) {
+  } catch (err) {
     console.error(err, err.stack);
-  });
+  }
+}
 
-function load(name) {
+async function load(name) {
   if (!name) {
-    if (view) {
-      view.finalize();
-      container.innerHTML = '';
-    }
+    if (view) view.finalize().container().innerHTML = '';
     return;
   }
 
   // update select widget state
   select.selectedIndex = 0;
-  for (var i=0, n=select.options.length; i<n; ++i) {
+  for (let i=0, n=select.options.length; i<n; ++i) {
     if (select.options[i].value === name) {
       select.selectedIndex = i; break;
     }
   }
 
   // load vega spec, then visualize it
-  fetch(url = 'specs-valid/' + name + '.vg.json')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      console.log('LOAD', url);
-      return visualize(spec = data);
-    })
-    .then(function() {
-      console.log('INIT', url);
-    })
-    .catch(function(err) {
-      console.error(err, err.stack);
-    });
+  try {
+    spec = await fetch(`specs-valid/${name}.vg.json`).then(r => r.json());
+    console.log('LOAD', name);
+
+    if (view) view.finalize(); // finalize existing view
+    runtime = vega.parse(spec);
+    view = await new vega.View(runtime, options).runAsync();
+    console.log('INIT', name);
+  } catch (err) {
+    console.error(err, err.stack);
+  }
 }
 
-function visualize(spec) {
-  if (view) view.finalize(); // finalize existing view
-  view = new vega.View(runtime = vega.parse(spec), {
-    logLevel: logLevel,
-    renderer: renderType
-  });
-  return view.initialize(container).hover().runAsync();
-}
+init();
     </script>
   </body>
 </html>

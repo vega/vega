@@ -92,15 +92,17 @@ function generate(n) {
   return data;
 }
 
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .renderer('svg')
-  .hover()
-  .insert('table', generate(20))
-  .signal('count', 20)
-  .run();
+var view = new vega.View(runtimeSpec, {
+  container: '#view',
+  renderer:  'svg',
+  hover:     true
+});
 
-// clean caches once they fit 500 empty slots
+view.insert('table', generate(20))
+    .signal('count', 20)
+    .runAsync();
+
+// clean caches once they have 500 empty slots
 view.cleanThreshold = 500;
 
 setInterval(function() {
@@ -109,7 +111,7 @@ setInterval(function() {
       .insert(generate(1)))
     .signal('count', view.signal('count') + 1) // tuples so far
     .signal('size', view._runtime.nodes[83].value.size) // datajoin map size
-    .run();
+    .runAsync();
 }, 20);
     </script>
   </body>

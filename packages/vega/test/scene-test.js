@@ -18,23 +18,26 @@ vega.setRandom(vega.randomLCG(123456789));
 vega.textMetrics.canvas(false);
 
 tape('Vega generates scenegraphs for specifications', function(t) {
-  var count = specs.length;
-  specs.forEach(function(name, index) {
-    var path = testdir + name + '.json',
-        spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-        runtime = vega.parse(spec),
-        view = new vega.View(runtime, {loader: loader, renderer: 'none'});
+  let count = specs.length;
 
-    view.initialize().runAsync().then(function() {
-      var actual = view.scenegraph().toJSON(2);
+  specs.forEach(async function(name, index) {
+    const path = testdir + name + '.json',
+          spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
+          runtime = vega.parse(spec),
+          view = new vega.View(runtime, {loader: loader, renderer: 'none'});
+
+    try {
+      await view.runAsync();
+
+      const actual = view.scenegraph().toJSON(2);
       if (GENERATE_SCENES) {
         // eslint-disable-next-line no-console
         console.log('WRITING TEST SCENE', name, path);
         fs.writeFileSync(path, actual);
       } else {
-        var expect = fs.readFileSync(path) + '',
-            pair = [JSON.parse(actual), JSON.parse(expect)],
-            isEqual = vega.sceneEqual(...pair);
+        const expect = fs.readFileSync(path) + '',
+              pair = [JSON.parse(actual), JSON.parse(expect)],
+              isEqual = vega.sceneEqual(...pair);
 
         if (OUTPUT_FAILURES && !isEqual) {
           pair.forEach((scene, i) => {
@@ -48,13 +51,13 @@ tape('Vega generates scenegraphs for specifications', function(t) {
 
         t.ok(isEqual, 'scene: ' + name);
       }
-    }).catch(function(err) {
+    } catch (err) {
       // eslint-disable-next-line no-console
       console.error('ERROR', err);
       t.fail(name);
-    }).then(function() {
+    } finally {
       view.finalize();
       if (--count === 0) t.end();
-    });
+    }
   });
 });

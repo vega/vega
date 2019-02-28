@@ -99,10 +99,11 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
       .catch(err => console.error(err));
 
     function render(spec) {
-      view = new vega.View(vega.parse(spec))
-        .renderer('canvas')  // set renderer (canvas or svg)
-        .initialize('#view') // initialize view in parent DOM container
-        .hover();            // enable hover processing, call *once* only
+      view = new vega.View(vega.parse(spec), {
+        renderer:  'canvas',  // renderer (canvas or svg)
+        container: '#view',   // parent DOM container
+        hover:     true       // enable hover processing
+      });
       return view.runAsync();
     }
   </script>
@@ -189,9 +190,7 @@ However, be aware that some system configurations may run into errors while inst
 var vega = require('vega');
 
 // create a new view instance for a given Vega JSON spec
-var view = new vega.View(vega.parse(spec))
-  .renderer('none')
-  .initialize();
+var view = new vega.View(vega.parse(spec), {renderer: 'none'});
 
 // generate a static SVG image
 view.toSVG()
