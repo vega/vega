@@ -46,8 +46,8 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 
 ```html
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@{{ site.data.versions.d3 }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build/vega-core.min.js"></script>
 </head>
 ```
@@ -93,16 +93,17 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
   <script type="text/javascript">
     var view;
 
-    vega.loader()
-      .load('https://vega.github.io/vega/examples/bar-chart.vg.json')
-      .then(function(data) { render(JSON.parse(data)); });
+    fetch('https://vega.github.io/vega/examples/bar-chart.vg.json')
+      .then(res => res.json())
+      .then(spec => render(spec))
+      .catch(err => console.error(err));
 
     function render(spec) {
       view = new vega.View(vega.parse(spec))
         .renderer('canvas')  // set renderer (canvas or svg)
-        .initialize('#view') // initialize view within parent DOM container
+        .initialize('#view') // initialize view in parent DOM container
         .hover();            // enable hover processing, call *once* only
-      view.runAsync();
+      return view.runAsync();
     }
   </script>
 </body>
