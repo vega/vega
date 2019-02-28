@@ -88,14 +88,14 @@ export function isContinuous(key) {
 }
 
 export function isDiscrete(key) {
-  return isBinned(key)
+  return key === BinOrdinal
     || key === Ordinal
     || key === Band
     || key === Point;
 }
 
 export function isDiscretizing(key) {
-  return isBinned(key)
+  return key === BinOrdinal
     || key === Quantile
     || key === Quantize
     || key === Threshold;

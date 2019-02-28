@@ -21,7 +21,6 @@ export {
   Point,
   isValidScaleType,
   isTemporal,
-  isBinned,
   isQuantile,
   isSequential,
   isDiverging,
@@ -45,4 +44,4 @@ export {default as scale} from './src/scales';
 
 export {scheme} from './src/schemes';
 
-export {scaleImplicit} from 'd3-scale';
+export {scaleImplicit, tickFormat} from 'd3-scale';
