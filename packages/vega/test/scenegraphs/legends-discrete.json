@@ -1641,7 +1641,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "48",
+                              "text": "47.7",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1652,7 +1652,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "66",
+                              "text": "66.3",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1802,7 +1802,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "37",
+                              "text": "37.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1812,8 +1812,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
-                              "text": "51",
+                              "opacity": 0,
+                              "text": "50.6",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1823,8 +1823,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
-                              "text": "58",
+                              "opacity": 0,
+                              "text": "57.8",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1835,7 +1835,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "83",
+                              "text": "83.4",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2007,7 +2007,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "30",
+                              "text": "30.1",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2017,8 +2017,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
-                              "text": "45",
+                              "opacity": 0,
+                              "text": "45.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2029,7 +2029,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "51",
+                              "text": "51.3",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2039,8 +2039,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
-                              "text": "56",
+                              "opacity": 0,
+                              "text": "56.4",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2051,7 +2051,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "75",
+                              "text": "74.7",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2061,8 +2061,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
-                              "text": "86",
+                              "opacity": 0,
+                              "text": "86.1",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2179,7 +2179,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "50.0",
+                              "text": "50",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2307,7 +2307,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "30.0",
+                              "text": "30",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2318,7 +2318,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "70.0",
+                              "text": "70",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2457,7 +2457,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "30.0",
+                              "text": "30",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2468,7 +2468,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "70.0",
+                              "text": "70",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2479,7 +2479,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "90.0",
+                              "text": "90",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2629,7 +2629,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "20.0",
+                              "text": "20",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2640,7 +2640,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "40.0",
+                              "text": "40",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2651,7 +2651,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "60.0",
+                              "text": "60",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2662,7 +2662,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "80.0",
+                              "text": "80",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2867,7 +2867,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "10.0",
+                              "text": "10",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2877,8 +2877,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 0,
-                              "text": "20.0",
+                              "opacity": 1,
+                              "text": "20",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2889,7 +2889,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "30.0",
+                              "text": "30",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2899,8 +2899,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 0,
-                              "text": "40.0",
+                              "opacity": 1,
+                              "text": "40",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2911,7 +2911,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "50.0",
+                              "text": "50",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2921,8 +2921,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 0,
-                              "text": "60.0",
+                              "opacity": 1,
+                              "text": "60",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2933,7 +2933,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "70.0",
+                              "text": "70",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2943,8 +2943,8 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 0,
-                              "text": "80.0",
+                              "opacity": 1,
+                              "text": "80",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2955,7 +2955,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "90.0",
+                              "text": "90",
                               "font": "sans-serif",
                               "fontSize": 10
                             }

@@ -1,6 +1,6 @@
 import {labelFormat, labelFraction, labelValues} from './labels';
 import {Symbols, Gradient} from './legend-types';
-import {tickCount, tickFormat} from './ticks';
+import {tickCount} from './ticks';
 import {Transform, ingest} from 'vega-dataflow';
 import {scaleFraction} from 'vega-scale';
 import {constant, inherits, isFunction, peek} from 'vega-util';
@@ -37,11 +37,10 @@ prototype.transform = function(_, pulse) {
       type  = _.type || Symbols,
       scale = _.scale,
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-      format = _.format || tickFormat(scale, count, _.formatSpecifier),
+      format = _.format || labelFormat(scale, count, type, _.formatSpecifier),
       values = _.values || labelValues(scale, count, type),
       domain, fraction, size, offset;
 
-  format = labelFormat(scale, format, type);
   if (items) out.rem = items;
 
   if (type === Symbols) {

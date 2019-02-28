@@ -110,7 +110,7 @@ function binValues(bins, count) {
  * that automatically trims trailing zeroes will be generated.
  * @param {Scale} scale - The scale for which to generate the label formatter.
  * @param {*} [count] - The approximate number of desired ticks.
- * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+ * @param {string} [specifier] - The format specifier. Must be a legal d3
  *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
  * @return {function(*):string} - The generated label formatter.
  */
