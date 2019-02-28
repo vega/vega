@@ -34,16 +34,7 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 </head>
 ```
 
-**Using Vega and D3 together.** The full `vega.js` file bundles up all dependencies, including [d3](https://d3js.org) modules. If you plan to independently use d3.js on your page, you can use a smaller Vega bundle that excludes redundant d3 files. Import d3 first, then import the smaller `vega-core.min.js` file to reduce the total file size.
-
-```html
-<head>
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="https://vega.github.io/vega/vega-core.min.js"></script>
-</head>
-```
-
-**Loading Vega from a CDN.** While the examples here load files from the official Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [jsDelivr](https://www.jsdelivr.com/package/npm/vega):
+**Loading Vega from a CDN.** While the example above loads files from the Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [jsDelivr](https://www.jsdelivr.com/package/npm/vega):
 
 ```html
 <head>
@@ -51,14 +42,16 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 </head>
 ```
 
-If you have already imported d3 and want to use a smaller Vega bundle without d3, load `vega-core`.
+**Using Vega and D3 together.** The full `vega.js` and `vega.min.js` files bundle up all dependencies, including [d3](https://d3js.org) modules and [topojson-client](https://github.com/topojson/topojson-client). If you plan to independently use d3.js on your page, you can use a smaller Vega bundle that excludes redundant d3 files. Import d3 first, then import the smaller `vega-core.min.js` file to reduce the total file size. If you plan to load TopoJSON data files, you'll need to import the topojson-client package as well.
 
 ```html
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@{{ site.data.versions.d3 }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build/vega-core.min.js"></script>
 </head>
 ```
+
 
 [Back to reference](#reference)
 
@@ -108,8 +101,8 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
       view = new vega.View(vega.parse(spec))
         .renderer('canvas')  // set renderer (canvas or svg)
         .initialize('#view') // initialize view within parent DOM container
-        .hover()             // enable hover encode set processing
-        .run();
+        .hover();            // enable hover processing, call *once* only
+      view.runAsync();
     }
   </script>
 </body>
