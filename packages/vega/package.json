@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "5.0.0-rc4",
+  "version": "5.0.0-rc5",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -50,7 +50,7 @@
     "vega-typings": "*",
     "vega-util": "^1.9.0",
     "vega-view": "^5.1.0",
-    "vega-view-transforms": "^4.2.0",
+    "vega-view-transforms": "^4.2.1",
     "vega-voronoi": "^4.0.1",
     "vega-wordcloud": "^4.0.1"
   },
