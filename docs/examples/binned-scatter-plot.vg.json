@@ -98,15 +98,9 @@
       "size": "size",
       "title": "Count",
       "format": "s",
-      "encode": {
-        "symbols": {
-          "update": {
-            "strokeWidth": {"value": 2},
-            "stroke": {"value": "#4682b4"},
-            "shape": {"value": "circle"}
-          }
-        }
-      }
+      "symbolFillColor": "#4682b4",
+      "symbolStrokeColor": "transparent",
+      "symbolType": "circle"
     }
   ],
 
@@ -121,9 +115,7 @@
           "y": {"scale": "y", "signal": "(datum.mpg0 + datum.mpg1) / 2"},
           "size": {"scale": "size", "field": "count"},
           "shape": {"value": "circle"},
-          "strokeWidth": {"value": 2},
-          "stroke": {"value": "#4682b4"},
-          "fill": {"value": "transparent"}
+          "fill": {"value": "#4682b4"}
         }
       }
     }
