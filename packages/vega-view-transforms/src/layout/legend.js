@@ -29,14 +29,11 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
         anchor = _('anchor', Start),
         mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
 
-  // TODO default anchor to start if relative bounds are zero?
-  // Or, what if relative bounds are smaller than the legend group?
-
   const p = {
     align:   Each,
     bounds:  _('bounds', Flush),
     columns: _('direction') === 'vertical' ? 1 : g.length,
-    padding: _('padding', 8),
+    padding: _('margin', 8),
     center:  _('center')
   };
 
