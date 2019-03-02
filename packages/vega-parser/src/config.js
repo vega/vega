@@ -1,33 +1,34 @@
-import {extend, isArray, isObject} from 'vega-util';
+import {isArray, isObject} from 'vega-util';
 
 export default function(configs) {
-  var output = defaults();
-  (configs || []).forEach(function(config) {
-    var key, value, style;
-    if (config) {
-      for (key in config) {
-        if (key === 'style') {
-          style = output.style || (output.style = {});
-          for (key in config.style) {
-            style[key] = extend(style[key] || {}, config.style[key]);
-          }
-        } else {
-          value = config[key];
-          output[key] = isObject(value) && !isArray(value)
-            ? extend(isObject(output[key]) ? output[key] : {}, value)
-            : value;
-        }
-      }
+  return (configs || []).reduce((out, config) => {
+    for (var key in config) {
+      var r = key === 'legend' ? {'layout': 1}
+        : key === 'style' ? true : null;
+      copy(out, key, config[key], r);
     }
-  });
-  return output;
+    return out;
+  }, defaults());
+}
+
+function copy(output, key, value, recurse) {
+  var k, o;
+  if (isObject(value) && !isArray(value)) {
+    o = isObject(output[key]) ? output[key] : (output[key] = {});
+    for (k in value) {
+      if (!recurse || !recurse[k]) o[k] = value[k];
+      else copy(o, k, value[k]);
+    }
+  } else {
+    output[key] = value;
+  }
 }
 
 var defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
     defaultColor = '#4c78a8',
-    black = "#000",
+    black = '#000',
     gray = '#888',
     lightGray = '#ddd';
 
@@ -41,8 +42,8 @@ function defaults() {
     // default padding around visualization
     padding: 0,
 
-    // default for automatic sizing; options: "none", "pad", "fit"
-    // or provide an object (e.g., {"type": "pad", "resize": true})
+    // default for automatic sizing; options: 'none', 'pad', 'fit'
+    // or provide an object (e.g., {'type': 'pad', 'resize': true})
     autosize: 'pad',
 
     // default view background color
@@ -87,20 +88,20 @@ function defaults() {
     // style definitions
     style: {
       // axis & legend labels
-      "guide-label": {
+      'guide-label': {
         fill: black,
         font: defaultFont,
         fontSize: 10
       },
       // axis & legend titles
-      "guide-title": {
+      'guide-title': {
         fill: black,
         font: defaultFont,
         fontSize: 11,
         fontWeight: 'bold'
       },
       // headers, including chart title
-      "group-title": {
+      'group-title': {
         fill: black,
         font: defaultFont,
         fontSize: 13,
@@ -126,6 +127,13 @@ function defaults() {
         fill: 'transparent',
         stroke: lightGray
       }
+    },
+
+    // defaults for title
+    title: {
+      orient: 'top',
+      anchor: 'middle',
+      offset: 4
     },
 
     // defaults for axes
@@ -160,7 +168,6 @@ function defaults() {
     // defaults for legends
     legend: {
       orient: 'right',
-      offset: 18,
       padding: 0,
       gridAlign: 'each',
       columnPadding: 10,
@@ -185,14 +192,13 @@ function defaults() {
       symbolBaseStrokeColor: gray,
       titleLimit: 180,
       titleOrient: 'top',
-      titlePadding: 5
-    },
-
-    // defaults for group title
-    title: {
-      orient: 'top',
-      anchor: 'middle',
-      offset: 4
+      titlePadding: 5,
+      layout: {
+        offset: 18,
+        direction: 'horizontal',
+        left:   { direction: 'vertical' },
+        right:  { direction: 'vertical' }
+      }
     },
 
     // defaults for scale ranges

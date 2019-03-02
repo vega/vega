@@ -8,6 +8,11 @@ export const spec: Spec = {
     "axis": {
       "tickColor": "#ccc",
       "domainColor": "#ccc"
+    },
+    "legend": {
+      "layout": {
+        "anchor": {"signal": "legendAnchor"}
+      }
     }
   },
 
@@ -136,6 +141,10 @@ export const spec: Spec = {
     {
       "name": "layoutOffset", "value": 0,
       "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
+    },
+    {
+      "name": "legendAnchor", "value": "start",
+      "bind": {"input": "select", "options": ["start", "middle", "end"]}
     }
   ],
 

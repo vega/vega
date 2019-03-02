@@ -1,13 +1,13 @@
 import {
-  All, Each, Flush, Column, Row,
+  All, Each, Flush, Column, X, Y, Row, Middle, End,
   Group, AxisRole, LegendRole,
   RowHeader, RowFooter, RowTitle,
   ColHeader, ColFooter, ColTitle
-} from './constants';
+} from '../constants';
+import {tempBounds} from './util';
 import {isObject} from 'vega-util';
-import {Bounds} from 'vega-scenegraph';
 
-function extractGroups(group) {
+function gridLayoutGroups(group) {
   var groups = group.items,
       n = groups.length,
       i = 0, mark, items;
@@ -31,24 +31,18 @@ function extractGroups(group) {
         case AxisRole:
         case LegendRole:
           break;
-        case RowHeader: addAll(items, views.rowheaders); break;
-        case RowFooter: addAll(items, views.rowfooters); break;
-        case ColHeader: addAll(items, views.colheaders); break;
-        case ColFooter: addAll(items, views.colfooters); break;
+        case RowHeader: views.rowheaders.push(...items); break;
+        case RowFooter: views.rowfooters.push(...items); break;
+        case ColHeader: views.colheaders.push(...items); break;
+        case ColFooter: views.colfooters.push(...items); break;
         case RowTitle:  views.rowtitle = items[0]; break;
         case ColTitle:  views.coltitle = items[0]; break;
-        default:        addAll(items, views.marks);
+        default:        views.marks.push(...items);
       }
     }
   }
 
   return views;
-}
-
-function addAll(items, array) {
-  for (var i=0, n=items.length; i<n; ++i) {
-    array.push(items[i]);
-  }
 }
 
 function bboxFlush(item) {
@@ -62,18 +56,6 @@ function bboxFull(item) {
     : b.translate(-(item.x||0), -(item.y||0));
 }
 
-function boundFlush(item, field) {
-  return field === 'x1' ? (item.x || 0)
-    : field === 'y1' ? (item.y || 0)
-    : field === 'x2' ? (item.x || 0) + (item.width || 0)
-    : field === 'y2' ? (item.y || 0) + (item.height || 0)
-    : undefined;
-}
-
-function boundFull(item, field) {
-  return item.bounds[field];
-}
-
 function get(opt, key, d) {
   var v = isObject(opt) ? opt[key] : opt;
   return v != null ? v : (d !== undefined ? d : 0);
@@ -83,35 +65,27 @@ function offsetValue(v) {
   return v < 0 ? Math.ceil(-v) : 0;
 }
 
-export function gridLayout(view, group, opt) {
-  var views = extractGroups(group, opt),
-      groups = views.marks,
-      flush = opt.bounds === Flush,
-      bbox = flush ? bboxFlush : bboxFull,
-      bounds = new Bounds(0, 0, 0, 0),
+export function gridLayout(view, groups, opt) {
+  var bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
+      bounds = tempBounds.set(0, 0, 0, 0),
       alignCol = get(opt.align, Column),
       alignRow = get(opt.align, Row),
       padCol = get(opt.padding, Column),
       padRow = get(opt.padding, Row),
-      off = opt.offset,
-      ncols = group.columns || opt.columns || groups.length,
+      ncols = opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-      cells = nrows * ncols,
-      xOffset = [], xExtent = [], xMax = 0, xInit = 0,
-      yOffset = [], yExtent = [], yMax = 0, yInit = 0,
+      boxes = [],
+      xOffset = [], xExtent = [], xMax = 0,
+      yOffset = [], yExtent = [], yMax = 0,
       n = groups.length,
-      m, i, c, r, b, g, px, py, x, y, band, offset;
+      m, i, c, r, b, g, px, py, x, y, offset;
 
-  for (i=0; i<ncols; ++i) {
-    xExtent[i] = 0;
-  }
-  for (i=0; i<nrows; ++i) {
-    yExtent[i] = 0;
-  }
+  for (i=0; i<ncols; ++i) xExtent[i] = 0;
+  for (i=0; i<nrows; ++i) yExtent[i] = 0;
 
   // determine offsets for each group
   for (i=0; i<n; ++i) {
-    b = bbox(groups[i]);
+    b = boxes[i] = bbox(groups[i]);
     c = i % ncols;
     r = ~~(i / ncols);
     px = Math.ceil(bbox(groups[i]).x2);
@@ -127,8 +101,8 @@ export function gridLayout(view, group, opt) {
 
   // set initial alignment offsets
   for (i=0; i<n; ++i) {
-    if (i % ncols === 0) xOffset[i] = xInit;
-    if (i < ncols) yOffset[i] = yInit;
+    if (i % ncols === 0) xOffset[i] = 0;
+    if (i < ncols) yOffset[i] = 0;
   }
 
   // enforce column alignment constraints
@@ -200,11 +174,12 @@ export function gridLayout(view, group, opt) {
   }
 
   // perform horizontal centering
-  if (get(opt.center, Column) && nrows > 1 && alignCol) {
+  // TODO: remove nrows > 1 constraint?
+  if (alignCol && get(opt.center, Column) && nrows > 1) {
     for (i=0; i<n; ++i) {
       g = groups[i];
       b = alignCol === All ? xMax : xExtent[i % ncols];
-      x = b - bbox(g).x2;
+      x = b - boxes[i].x2;
       if (x > 0) {
         g.x += (px = x / 2);
         g.bounds.translate(px, 0);
@@ -213,11 +188,12 @@ export function gridLayout(view, group, opt) {
   }
 
   // perform vertical centering
-  if (get(opt.center, Row) && ncols !== 1 && alignRow) {
+  // TODO: remove ncols !== 1 constraint?
+  if (alignRow && get(opt.center, Row) && ncols !== 1) {
     for (i=0; i<n; ++i) {
       g = groups[i];
       b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
-      y = b - bbox(g).y2;
+      y = b - boxes[i].y2;
       if (y > 0) {
         g.y += (py = y / 2);
         g.bounds.translate(0, py);
@@ -225,38 +201,76 @@ export function gridLayout(view, group, opt) {
     }
   }
 
-  // update mark bounds, mark dirty
-  for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
+  // position grid relative to anchor
+  for (i=0; i<n; ++i) bounds.union(boxes[i]);
+  x = get(opt.anchor, X);
+  y = get(opt.anchor, Y);
+  switch (get(opt.anchor, Column)) {
+    case End:    x -= bounds.width(); break;
+    case Middle: x -= bounds.width() / 2;
+  }
+  switch (get(opt.anchor, Row)) {
+    case End:    y -= bounds.height(); break;
+    case Middle: y -= bounds.height() / 2;
+  }
+  x = Math.round(x);
+  y = Math.round(y);
+
+  // update mark positions, bounds, dirty
+  bounds.clear();
+  for (i=0; i<n; ++i) {
+    groups[i].mark.bounds.clear();
+  }
   for (i=0; i<n; ++i) {
     g = groups[i];
-    view.dirty(g);
+    g.x += x;
+    g.y += y;
+    g.bounds.translate(x, y);
     bounds.union(g.mark.bounds.union(g.bounds));
+    view.dirty(g);
   }
+
+  return bounds;
+}
+
+export function trellisLayout(view, group, opt) {
+  var views = gridLayoutGroups(group),
+      groups = views.marks,
+      bbox = opt.bounds === Flush ? boundFlush : boundFull,
+      off = opt.offset,
+      ncols = opt.columns || groups.length,
+      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
+      x, y, band, offset;
+
+  // -- initial grid layout
+  const bounds = gridLayout(view, groups, opt);
 
   // -- layout grid headers and footers --
 
-  // aggregation functions for grid margin determination
-  function min(a, b) { return Math.floor(Math.min(a, b)); }
-  function max(a, b) { return Math.ceil(Math.max(a, b)); }
-
-  // bounding box calculation methods
-  bbox = flush ? boundFlush : boundFull;
-
   // perform row header layout
-  band = get(opt.headerBand, Row, null);
-  x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1, band);
+  if (views.rowheaders) {
+    band = get(opt.headerBand, Row, null);
+    x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'), min, 0, bbox, 'x1', 0, ncols, 1, band);
+  }
 
   // perform column header layout
-  band = get(opt.headerBand, Column, null);
-  y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
+  if (views.colheaders) {
+    band = get(opt.headerBand, Column, null);
+    y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
+  }
 
   // perform row footer layout
-  band = get(opt.footerBand, Row, null);
-  layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+  if (views.rowfooters) {
+    band = get(opt.footerBand, Row, null);
+    layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'), max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+  }
 
   // perform column footer layout
-  band = get(opt.footerBand, Column, null);
-  layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+  if (views.colfooters) {
+    band = get(opt.footerBand, Column, null);
+    layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+  }
 
   // perform row title layout
   if (views.rowtitle) {
@@ -272,6 +286,22 @@ export function gridLayout(view, group, opt) {
     layoutTitle(view, views.coltitle, offset, 1, bounds, band);
   }
 }
+
+function boundFlush(item, field) {
+  return field === 'x1' ? (item.x || 0)
+    : field === 'y1' ? (item.y || 0)
+    : field === 'x2' ? (item.x || 0) + (item.width || 0)
+    : field === 'y2' ? (item.y || 0) + (item.height || 0)
+    : undefined;
+}
+
+function boundFull(item, field) {
+  return item.bounds[field];
+}
+
+// aggregation functions for grid margin determination
+function min(a, b) { return Math.floor(Math.min(a, b)); }
+function max(a, b) { return Math.ceil(Math.max(a, b)); }
 
 function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
   var n = groups.length,

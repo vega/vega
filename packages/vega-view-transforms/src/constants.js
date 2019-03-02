@@ -1,47 +1,48 @@
-export var Top = 'top';
-export var Left = 'left';
-export var Right = 'right';
-export var Bottom = 'bottom';
+export const Top = 'top';
+export const Left = 'left';
+export const Right = 'right';
+export const Bottom = 'bottom';
 
-export var TopLeft = 'top-left';
-export var TopRight = 'top-right';
-export var BottomLeft = 'bottom-left';
-export var BottomRight = 'bottom-right';
+export const TopLeft = 'top-left';
+export const TopRight = 'top-right';
+export const BottomLeft = 'bottom-left';
+export const BottomRight = 'bottom-right';
 
-export var Start = 'start';
-export var Middle = 'middle';
-export var End = 'end';
+export const Start = 'start';
+export const Middle = 'middle';
+export const End = 'end';
 
-export var Group = 'group';
+export const X = 'x';
+export const Y = 'y';
 
-export var AxisRole = 'axis';
-export var TitleRole = 'title';
-export var FrameRole = 'frame';
-export var ScopeRole = 'scope';
-export var LegendRole = 'legend';
+export const Group = 'group';
 
-export var RowHeader = 'row-header';
-export var RowFooter = 'row-footer';
-export var RowTitle  = 'row-title';
-export var ColHeader = 'column-header';
-export var ColFooter = 'column-footer';
-export var ColTitle  = 'column-title';
+export const AxisRole = 'axis';
+export const TitleRole = 'title';
+export const FrameRole = 'frame';
+export const ScopeRole = 'scope';
+export const LegendRole = 'legend';
 
-export var Padding = 'padding';
+export const RowHeader = 'row-header';
+export const RowFooter = 'row-footer';
+export const RowTitle  = 'row-title';
+export const ColHeader = 'column-header';
+export const ColFooter = 'column-footer';
+export const ColTitle  = 'column-title';
 
-export var Symbols = 'symbol';
+export const Padding = 'padding';
 
-export var Fit  = 'fit';
-export var FitX = 'fit-x';
-export var FitY = 'fit-y';
-export var Pad  = 'pad';
-export var None = 'none';
+export const Symbols = 'symbol';
 
-export var All = 'all';
-export var Each = 'each';
-export var Flush = 'flush';
+export const Fit  = 'fit';
+export const FitX = 'fit-x';
+export const FitY = 'fit-y';
+export const Pad  = 'pad';
+export const None = 'none';
 
-export var Column = 'column';
-export var Row = 'row';
+export const All = 'all';
+export const Each = 'each';
+export const Flush = 'flush';
 
-
+export const Column = 'column';
+export const Row = 'row';

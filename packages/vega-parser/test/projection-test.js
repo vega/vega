@@ -32,9 +32,9 @@ tape('Parser parses Vega specs with projection', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 13);
-  t.equal(dfs.operators[8].type, 'projection');
-  t.equal(dfs.operators[8].params.fit, geojson);
+  t.equal(dfs.operators.length, 14);
+  t.equal(dfs.operators[9].type, 'projection');
+  t.equal(dfs.operators[9].params.fit, geojson);
 
   t.end();
 });
