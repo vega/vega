@@ -5,6 +5,7 @@ import {
   ColHeader, ColFooter, ColTitle
 } from '../constants';
 import {tempBounds} from './util';
+import {Bounds} from 'vega-scenegraph';
 import {isObject} from 'vega-util';
 
 function gridLayoutGroups(group) {
@@ -46,14 +47,14 @@ function gridLayoutGroups(group) {
 }
 
 function bboxFlush(item) {
-  return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
+  return new Bounds().set(0, 0, item.width || 0, item.height || 0);
 }
 
 function bboxFull(item) {
   var b = item.bounds.clone();
   return b.empty()
     ? b.set(0, 0, 0, 0)
-    : b.translate(-(item.x||0), -(item.y||0));
+    : b.translate(-(item.x || 0), -(item.y || 0));
 }
 
 function get(opt, key, d) {
@@ -75,10 +76,10 @@ export function gridLayout(view, groups, opt) {
       padRow = get(opt.padding, Row),
       ncols = opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-      boxes = [],
-      xOffset = [], xExtent = [], xMax = 0,
-      yOffset = [], yExtent = [], yMax = 0,
       n = groups.length,
+      xOffset = Array(n), xExtent = Array(ncols), xMax = 0,
+      yOffset = Array(n), yExtent = Array(nrows), yMax = 0,
+      dx = Array(n), dy = Array(n), boxes = Array(n),
       m, i, c, r, b, g, px, py, x, y, offset;
 
   for (i=0; i<ncols; ++i) xExtent[i] = 0;
@@ -86,17 +87,18 @@ export function gridLayout(view, groups, opt) {
 
   // determine offsets for each group
   for (i=0; i<n; ++i) {
-    b = boxes[i] = bbox(groups[i]);
+    g = groups[i];
+    b = boxes[i] = bbox(g);
+    g.x = g.x || 0; dx[i] = 0;
+    g.y = g.y || 0; dy[i] = 0;
     c = i % ncols;
     r = ~~(i / ncols);
-    px = Math.ceil(bbox(groups[i]).x2);
-    py = Math.ceil(bbox(groups[i]).y2);
-    xMax = Math.max(xMax, px);
-    yMax = Math.max(yMax, py);
+    xMax = Math.max(xMax, px = Math.ceil(b.x2));
+    yMax = Math.max(yMax, py = Math.ceil(b.y2));
     xExtent[c] = Math.max(xExtent[c], px);
     yExtent[r] = Math.max(yExtent[r], py);
-    xOffset.push(padCol + offsetValue(b.x1));
-    yOffset.push(padRow + offsetValue(b.y1));
+    xOffset[i] = padCol + offsetValue(b.x1);
+    yOffset[i] = padRow + offsetValue(b.y1);
     if (dirty) view.dirty(groups[i]);
   }
 
@@ -158,52 +160,40 @@ export function gridLayout(view, groups, opt) {
 
   // perform horizontal grid layout
   for (x=0, i=0; i<n; ++i) {
-    g = groups[i];
-    px = g.x || 0;
-    g.x = (x = xOffset[i] + (i % ncols ? x : 0));
-    g.bounds.translate(x - px, 0);
+    x = xOffset[i] + (i % ncols ? x : 0);
+    dx[i] += x - groups[i].x;
   }
 
   // perform vertical grid layout
   for (c=0; c<ncols; ++c) {
     for (y=0, i=c; i<n; i += ncols) {
-      g = groups[i];
-      py = g.y || 0;
-      g.y = (y += yOffset[i]);
-      g.bounds.translate(0, y - py);
+      y += yOffset[i];
+      dy[i] += y - groups[i].y;
     }
   }
 
   // perform horizontal centering
-  // TODO: remove nrows > 1 constraint?
   if (alignCol && get(opt.center, Column) && nrows > 1) {
     for (i=0; i<n; ++i) {
-      g = groups[i];
       b = alignCol === All ? xMax : xExtent[i % ncols];
-      x = b - boxes[i].x2;
-      if (x > 0) {
-        g.x += (px = x / 2);
-        g.bounds.translate(px, 0);
-      }
+      x = b - boxes[i].x2 - groups[i].x - dx[i];
+      if (x > 0) dx[i] += x / 2;
     }
   }
 
   // perform vertical centering
-  // TODO: remove ncols !== 1 constraint?
   if (alignRow && get(opt.center, Row) && ncols !== 1) {
     for (i=0; i<n; ++i) {
-      g = groups[i];
       b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
-      y = b - boxes[i].y2;
-      if (y > 0) {
-        g.y += (py = y / 2);
-        g.bounds.translate(0, py);
-      }
+      y = b - boxes[i].y2 - groups[i].y - dy[i];
+      if (y > 0) dy[i] += y / 2;
     }
   }
 
   // position grid relative to anchor
-  for (i=0; i<n; ++i) bounds.union(boxes[i]);
+  for (i=0; i<n; ++i) {
+    bounds.union(boxes[i].translate(dx[i], dy[i]));
+  }
   x = get(opt.anchor, X);
   y = get(opt.anchor, Y);
   switch (get(opt.anchor, Column)) {
@@ -224,10 +214,9 @@ export function gridLayout(view, groups, opt) {
   }
   for (i=0; i<n; ++i) {
     g = groups[i];
-    g.x += x;
-    g.y += y;
-    g.bounds.translate(x, y);
-    bounds.union(g.mark.bounds.union(g.bounds));
+    g.x += (dx[i] += x);
+    g.y += (dy[i] += y);
+    bounds.union(g.mark.bounds.union(g.bounds.translate(dx[i], dy[i])));
     if (dirty) view.dirty(g);
   }
 
