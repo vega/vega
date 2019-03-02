@@ -7,7 +7,7 @@ export function lookup(spec, config) {
 
   _.isVertical = s => Vertical === value(
     spec.direction,
-    s ? config.symbolDirection : config.gradientDirection
+    config.direction || (s ? config.symbolDirection : config.gradientDirection)
   );
 
   _.gradientLength = () => value(

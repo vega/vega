@@ -42,7 +42,7 @@ tape('Parser parses Vega specs with marks', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 24);
+  t.equal(dfs.operators.length, 25);
 
   t.end();
 });

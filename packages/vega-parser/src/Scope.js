@@ -36,6 +36,7 @@ export default function Scope(config) {
 
 function Subscope(scope) {
   this.config = scope.config;
+  this.legends = scope.legends;
 
   this.field = Object.create(scope.field);
   this.signals = Object.create(scope.signals);
