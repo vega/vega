@@ -25,13 +25,13 @@ export const spec: Spec = {
           "anchor": "middle"
         },
         "bottom": {
-          "padding": 2,
+          "margin": 2,
           "direction": "vertical",
           "anchor": "middle",
           "center": true
         },
         "top": {
-          "padding": 2,
+          "margin": 2,
           "direction": "vertical",
           "anchor": "end"
         }
