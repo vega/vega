@@ -110,7 +110,7 @@ Vega's [View component](../docs/api/view) takes a parsed specification and confi
 </body>
 ```
 
-Vega visualizations will be added to a parent DOM element. This element must be provided to the `initialize` method by passing a DOM object or a CSS selector string. **Note:** Any existing content within the parent element _will be removed_ upon view initialization.
+Vega visualizations will be added to a parent DOM container element. This element (either a DOM object or a unique CSS selector string) must be provided  as a View constructor option or an as argument to the View `initialize` method. **Note:** Any existing content within the parent container element _will be removed_ upon view initialization.
 
 [Back to reference](#reference)
 

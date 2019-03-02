@@ -8507,50 +8507,54 @@
     window: Window
   });
 
-  var Top = 'top';
-  var Left = 'left';
-  var Right = 'right';
-  var Bottom = 'bottom';
+  const Top = 'top';
+  const Left = 'left';
+  const Right = 'right';
+  const Bottom = 'bottom';
 
-  var TopLeft = 'top-left';
-  var TopRight = 'top-right';
-  var BottomLeft = 'bottom-left';
-  var BottomRight = 'bottom-right';
+  const TopLeft = 'top-left';
+  const TopRight = 'top-right';
+  const BottomLeft = 'bottom-left';
+  const BottomRight = 'bottom-right';
 
-  var Start = 'start';
-  var End = 'end';
+  const Start = 'start';
+  const Middle = 'middle';
+  const End = 'end';
 
-  var Group = 'group';
+  const X = 'x';
+  const Y = 'y';
 
-  var AxisRole = 'axis';
-  var TitleRole = 'title';
-  var FrameRole = 'frame';
-  var ScopeRole = 'scope';
-  var LegendRole = 'legend';
+  const Group = 'group';
 
-  var RowHeader = 'row-header';
-  var RowFooter = 'row-footer';
-  var RowTitle  = 'row-title';
-  var ColHeader = 'column-header';
-  var ColFooter = 'column-footer';
-  var ColTitle  = 'column-title';
+  const AxisRole = 'axis';
+  const TitleRole = 'title';
+  const FrameRole = 'frame';
+  const ScopeRole = 'scope';
+  const LegendRole = 'legend';
 
-  var Padding = 'padding';
+  const RowHeader = 'row-header';
+  const RowFooter = 'row-footer';
+  const RowTitle  = 'row-title';
+  const ColHeader = 'column-header';
+  const ColFooter = 'column-footer';
+  const ColTitle  = 'column-title';
 
-  var Symbols = 'symbol';
+  const Padding = 'padding';
 
-  var Fit  = 'fit';
-  var FitX = 'fit-x';
-  var FitY = 'fit-y';
-  var Pad  = 'pad';
-  var None$1 = 'none';
+  const Symbols = 'symbol';
 
-  var All = 'all';
-  var Each = 'each';
-  var Flush = 'flush';
+  const Fit  = 'fit';
+  const FitX = 'fit-x';
+  const FitY = 'fit-y';
+  const Pad  = 'pad';
+  const None$1 = 'none';
 
-  var Column = 'column';
-  var Row = 'row';
+  const All = 'all';
+  const Each = 'each';
+  const Flush = 'flush';
+
+  const Column = 'column';
+  const Row = 'row';
 
   function Bounds(b) {
     this.clear();
@@ -8577,6 +8581,15 @@
       this.y1 === +Number.MAX_VALUE &&
       this.x2 === -Number.MAX_VALUE &&
       this.y2 === -Number.MAX_VALUE
+    );
+  };
+
+  prototype$D.equals = function(b) {
+    return (
+      this.x1 === b.x1 &&
+      this.y1 === b.y1 &&
+      this.x2 === b.x2 &&
+      this.y2 === b.y2
     );
   };
 
@@ -14891,464 +14904,14 @@
     }
   };
 
-  function extractGroups(group) {
-    var groups = group.items,
-        n = groups.length,
-        i = 0, mark, items;
-
-    var views = {
-      marks:      [],
-      rowheaders: [],
-      rowfooters: [],
-      colheaders: [],
-      colfooters: [],
-      rowtitle: null,
-      coltitle: null
-    };
-
-    // layout axes, gather legends, collect bounds
-    for (; i<n; ++i) {
-      mark = groups[i];
-      items = mark.items;
-      if (mark.marktype === Group) {
-        switch (mark.role) {
-          case AxisRole:
-          case LegendRole:
-            break;
-          case RowHeader: addAll(items, views.rowheaders); break;
-          case RowFooter: addAll(items, views.rowfooters); break;
-          case ColHeader: addAll(items, views.colheaders); break;
-          case ColFooter: addAll(items, views.colfooters); break;
-          case RowTitle:  views.rowtitle = items[0]; break;
-          case ColTitle:  views.coltitle = items[0]; break;
-          default:        addAll(items, views.marks);
-        }
-      }
-    }
-
-    return views;
-  }
-
-  function addAll(items, array) {
-    for (var i=0, n=items.length; i<n; ++i) {
-      array.push(items[i]);
-    }
-  }
-
-  function bboxFlush(item) {
-    return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
-  }
-
-  function bboxFull(item) {
-    var b = item.bounds.clone();
-    return b.empty()
-      ? b.set(0, 0, 0, 0)
-      : b.translate(-(item.x||0), -(item.y||0));
-  }
-
-  function boundFlush(item, field) {
-    return field === 'x1' ? (item.x || 0)
-      : field === 'y1' ? (item.y || 0)
-      : field === 'x2' ? (item.x || 0) + (item.width || 0)
-      : field === 'y2' ? (item.y || 0) + (item.height || 0)
-      : undefined;
-  }
-
-  function boundFull(item, field) {
-    return item.bounds[field];
-  }
-
-  function get$1(opt, key, d) {
-    var v = isObject(opt) ? opt[key] : opt;
-    return v != null ? v : (d !== undefined ? d : 0);
-  }
-
-  function offsetValue(v) {
-    return v < 0 ? Math.ceil(-v) : 0;
-  }
-
-  function gridLayout(view, group, opt) {
-    var views = extractGroups(group, opt),
-        groups = views.marks,
-        flush = opt.bounds === Flush,
-        bbox = flush ? bboxFlush : bboxFull,
-        bounds = new Bounds(0, 0, 0, 0),
-        alignCol = get$1(opt.align, Column),
-        alignRow = get$1(opt.align, Row),
-        padCol = get$1(opt.padding, Column),
-        padRow = get$1(opt.padding, Row),
-        off = opt.offset,
-        ncols = group.columns || opt.columns || groups.length,
-        nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-        cells = nrows * ncols,
-        xOffset = [], xExtent = [], xMax = 0, xInit = 0,
-        yOffset = [], yExtent = [], yMax = 0, yInit = 0,
-        n = groups.length,
-        m, i, c, r, b, g, px, py, x, y, band, offset;
-
-    for (i=0; i<ncols; ++i) {
-      xExtent[i] = 0;
-    }
-    for (i=0; i<nrows; ++i) {
-      yExtent[i] = 0;
-    }
-
-    // determine offsets for each group
-    for (i=0; i<n; ++i) {
-      b = bbox(groups[i]);
-      c = i % ncols;
-      r = ~~(i / ncols);
-      px = Math.ceil(bbox(groups[i]).x2);
-      py = Math.ceil(bbox(groups[i]).y2);
-      xMax = Math.max(xMax, px);
-      yMax = Math.max(yMax, py);
-      xExtent[c] = Math.max(xExtent[c], px);
-      yExtent[r] = Math.max(yExtent[r], py);
-      xOffset.push(padCol + offsetValue(b.x1));
-      yOffset.push(padRow + offsetValue(b.y1));
-      view.dirty(groups[i]);
-    }
-
-    // set initial alignment offsets
-    for (i=0; i<n; ++i) {
-      if (i % ncols === 0) xOffset[i] = xInit;
-      if (i < ncols) yOffset[i] = yInit;
-    }
-
-    // enforce column alignment constraints
-    if (alignCol === Each) {
-      for (c=1; c<ncols; ++c) {
-        for (offset=0, i=c; i<n; i += ncols) {
-          if (offset < xOffset[i]) offset = xOffset[i];
-        }
-        for (i=c; i<n; i += ncols) {
-          xOffset[i] = offset + xExtent[c-1];
-        }
-      }
-    } else if (alignCol === All) {
-      for (offset=0, i=0; i<n; ++i) {
-        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
-      }
-      for (i=0; i<n; ++i) {
-        if (i % ncols) xOffset[i] = offset + xMax;
-      }
-    } else {
-      for (alignCol=false, c=1; c<ncols; ++c) {
-        for (i=c; i<n; i += ncols) {
-          xOffset[i] += xExtent[c-1];
-        }
-      }
-    }
-
-    // enforce row alignment constraints
-    if (alignRow === Each) {
-      for (r=1; r<nrows; ++r) {
-        for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
-          if (offset < yOffset[i]) offset = yOffset[i];
-        }
-        for (i=r*ncols; i<m; ++i) {
-          yOffset[i] = offset + yExtent[r-1];
-        }
-      }
-    } else if (alignRow === All) {
-      for (offset=0, i=ncols; i<n; ++i) {
-        if (offset < yOffset[i]) offset = yOffset[i];
-      }
-      for (i=ncols; i<n; ++i) {
-        yOffset[i] = offset + yMax;
-      }
-    } else {
-      for (alignRow=false, r=1; r<nrows; ++r) {
-        for (i=r*ncols, m=i+ncols; i<m; ++i) {
-          yOffset[i] += yExtent[r-1];
-        }
-      }
-    }
-
-    // perform horizontal grid layout
-    for (x=0, i=0; i<n; ++i) {
-      g = groups[i];
-      px = g.x || 0;
-      g.x = (x = xOffset[i] + (i % ncols ? x : 0));
-      g.bounds.translate(x - px, 0);
-    }
-
-    // perform vertical grid layout
-    for (c=0; c<ncols; ++c) {
-      for (y=0, i=c; i<n; i += ncols) {
-        g = groups[i];
-        py = g.y || 0;
-        g.y = (y += yOffset[i]);
-        g.bounds.translate(0, y - py);
-      }
-    }
-
-    // perform horizontal centering
-    if (get$1(opt.center, Column) && nrows > 1 && alignCol) {
-      for (i=0; i<n; ++i) {
-        g = groups[i];
-        b = alignCol === All ? xMax : xExtent[i % ncols];
-        x = b - bbox(g).x2;
-        if (x > 0) {
-          g.x += (px = x / 2);
-          g.bounds.translate(px, 0);
-        }
-      }
-    }
-
-    // perform vertical centering
-    if (get$1(opt.center, Row) && ncols !== 1 && alignRow) {
-      for (i=0; i<n; ++i) {
-        g = groups[i];
-        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
-        y = b - bbox(g).y2;
-        if (y > 0) {
-          g.y += (py = y / 2);
-          g.bounds.translate(0, py);
-        }
-      }
-    }
-
-    // update mark bounds, mark dirty
-    for (i=0; i<n; ++i) groups[i].mark.bounds.clear();
-    for (i=0; i<n; ++i) {
-      g = groups[i];
-      view.dirty(g);
-      bounds.union(g.mark.bounds.union(g.bounds));
-    }
-
-    // -- layout grid headers and footers --
-
-    // aggregation functions for grid margin determination
-    function min(a, b) { return Math.floor(Math.min(a, b)); }
-    function max(a, b) { return Math.ceil(Math.max(a, b)); }
-
-    // bounding box calculation methods
-    bbox = flush ? boundFlush : boundFull;
-
-    // perform row header layout
-    band = get$1(opt.headerBand, Row, null);
-    x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$1(off, 'rowHeader'),    min, 0, bbox, 'x1', 0, ncols, 1, band);
-
-    // perform column header layout
-    band = get$1(opt.headerBand, Column, null);
-    y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$1(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
-
-    // perform row footer layout
-    band = get$1(opt.footerBand, Row, null);
-    layoutHeaders(    view, views.rowfooters, groups, ncols, nrows,  get$1(off, 'rowFooter'),    max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
-
-    // perform column footer layout
-    band = get$1(opt.footerBand, Column, null);
-    layoutHeaders(    view, views.colfooters, groups, ncols, ncols,  get$1(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
-
-    // perform row title layout
-    if (views.rowtitle) {
-      offset = x - get$1(off, 'rowTitle');
-      band = get$1(opt.titleBand, Row, 0.5);
-      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
-    }
-
-    // perform column title layout
-    if (views.coltitle) {
-      offset = y - get$1(off, 'columnTitle');
-      band = get$1(opt.titleBand, Column, 0.5);
-      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
-    }
-  }
-
-  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
-    var n = groups.length,
-        init = 0,
-        edge = 0,
-        i, j, k, m, b, h, g, x, y;
-
-    // if no groups, early exit and return 0
-    if (!n) return init;
-
-    // compute margin
-    for (i=start; i<n; i+=stride) {
-      if (groups[i]) init = agg(init, bound(groups[i], bf));
-    }
-
-    // if no headers, return margin calculation
-    if (!headers.length) return init;
-
-    // check if number of headers exceeds number of rows or columns
-    if (headers.length > limit) {
-      view.warn('Grid headers exceed limit: ' + limit);
-      headers = headers.slice(0, limit);
-    }
-
-    // apply offset
-    init += offset;
-
-    // clear mark bounds for all headers
-    for (j=0, m=headers.length; j<m; ++j) {
-      view.dirty(headers[j]);
-      headers[j].mark.bounds.clear();
-    }
-
-    // layout each header
-    for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
-      h = headers[j];
-      b = h.mark.bounds;
-
-      // search for nearest group to align to
-      // necessary if table has empty cells
-      for (k=i; k >= 0 && (g = groups[k]) == null; k-=back);
-
-      // assign coordinates and update bounds
-      if (isX) {
-        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
-        y = init;
-      } else {
-        x = init;
-        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
-      }
-      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
-      h.x = x;
-      h.y = y;
-      view.dirty(h);
-
-      // update current edge of layout bounds
-      edge = agg(edge, b[bf]);
-    }
-
-    return edge;
-  }
-
-  function layoutTitle(view, g, offset, isX, bounds, band) {
-    if (!g) return;
-    view.dirty(g);
-
-    // compute title coordinates
-    var x = offset, y = offset;
-    isX
-      ? (x = Math.round(bounds.x1 + band * bounds.width()))
-      : (y = Math.round(bounds.y1 + band * bounds.height()));
-
-    // assign coordinates and update bounds
-    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
-    g.mark.bounds.clear().union(g.bounds);
-    g.x = x;
-    g.y = y;
-
-    // queue title for redraw
-    view.dirty(g);
-  }
-
-  var AxisOffset = 0.5,
-      tempBounds$2 = new Bounds();
-
-  /**
-   * Layout view elements such as axes and legends.
-   * Also performs size adjustments.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.mark - Scenegraph mark of groups to layout.
-   */
-  function ViewLayout(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$S = inherits(ViewLayout, Transform);
-
-  prototype$S.transform = function(_, pulse) {
-    // TODO incremental update, output?
-    var view = pulse.dataflow;
-    _.mark.items.forEach(function(group) {
-      if (_.layout) gridLayout(view, group, _.layout);
-      layoutGroup(view, group, _);
-    });
-    if (_.modified()) pulse.reflow();
-    return pulse;
-  };
-
-  function layoutGroup(view, group, _) {
-    var items = group.items,
-        width = Math.max(0, group.width || 0),
-        height = Math.max(0, group.height || 0),
-        viewBounds = new Bounds().set(0, 0, width, height),
-        xBounds = viewBounds.clone(),
-        yBounds = viewBounds.clone(),
-        legends = [], title,
-        mark, flow, b, i, n;
-
-    // layout axes, gather legends, collect bounds
-    for (i=0, n=items.length; i<n; ++i) {
-      mark = items[i];
-      switch (mark.role) {
-        case AxisRole:
-          b = isYAxis(mark) ? xBounds : yBounds;
-          b.union(axisLayout(view, mark, width, height));
-          break;
-        case TitleRole:
-          title = mark; break;
-        case LegendRole:
-          legends.push(mark); break;
-        case FrameRole:
-        case ScopeRole:
-        case RowHeader:
-        case RowFooter:
-        case RowTitle:
-        case ColHeader:
-        case ColFooter:
-        case ColTitle:
-          xBounds.union(mark.bounds);
-          yBounds.union(mark.bounds);
-          break;
-        default:
-          viewBounds.union(mark.bounds);
-      }
-    }
-
-    // layout legends, adjust viewBounds
-    if (legends.length) {
-      flow = {
-        leftWidth: legendPreprocess(view, legends),
-        margin: _.legendMargin || 8,
-        left: 0, right: 0, top: 0, bottom: 0
-      };
-
-      for (i=0, n=legends.length; i<n; ++i) {
-        b = legendLayout(view, legends[i], flow, xBounds, yBounds, width, height);
-        if (_.autosize && _.autosize.type === Fit) {
-          // For autosize fit, incorporate the orthogonal dimension only.
-          // Legends that overrun the chart area will then be clipped;
-          // otherwise the chart area gets reduced to nothing!
-          var orient = legends[i].items[0].datum.orient;
-          if (orient === Left || orient === Right) {
-            viewBounds.add(b.x1, 0).add(b.x2, 0);
-          } else if (orient === Top || orient === Bottom) {
-            viewBounds.add(0, b.y1).add(0, b.y2);
-          }
-        } else {
-          viewBounds.union(b);
-        }
-      }
-    }
-
-    // combine bounding boxes
-    viewBounds.union(xBounds).union(yBounds);
-
-    // layout title, adjust bounds
-    if (title) {
-      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
-    }
-
-    // perform size adjustment
-    viewSizeLayout(view, group, viewBounds, _);
-  }
+  const tempBounds$2 = new Bounds();
 
   function set(item, property, value) {
-    if (item[property] === value) {
-      return 0;
-    } else {
-      item[property] = value;
-      return 1;
-    }
+    return item[property] === value ? 0
+      : (item[property] = value, 1);
   }
+
+  const AxisOffset = 0.5;
 
   function isYAxis(mark) {
     var orient = mark.items[0].datum.orient;
@@ -15459,82 +15022,497 @@
     return offset;
   }
 
-  function titleLayout(view, title, width, height, viewBounds) {
-    var item = title.items[0],
-        orient = item.orient,
-        frame = item.frame,
-        anchor = item.anchor,
-        offset = item.offset,
-        bounds = item.bounds,
-        vertical = (orient === Left || orient === Right),
-        start = 0,
-        end = vertical ? height : width,
-        x = 0, y = 0, pos;
+  function gridLayoutGroups(group) {
+    var groups = group.items,
+        n = groups.length,
+        i = 0, mark, items;
 
-    if (frame !== Group) {
-      orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
-        : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
-        : (start = viewBounds.x1, end = viewBounds.x2);
-    } else if (orient === Left) {
-      start = height, end = 0;
+    var views = {
+      marks:      [],
+      rowheaders: [],
+      rowfooters: [],
+      colheaders: [],
+      colfooters: [],
+      rowtitle: null,
+      coltitle: null
+    };
+
+    // layout axes, gather legends, collect bounds
+    for (; i<n; ++i) {
+      mark = groups[i];
+      items = mark.items;
+      if (mark.marktype === Group) {
+        switch (mark.role) {
+          case AxisRole:
+          case LegendRole:
+            break;
+          case RowHeader: views.rowheaders.push(...items); break;
+          case RowFooter: views.rowfooters.push(...items); break;
+          case ColHeader: views.colheaders.push(...items); break;
+          case ColFooter: views.colfooters.push(...items); break;
+          case RowTitle:  views.rowtitle = items[0]; break;
+          case ColTitle:  views.coltitle = items[0]; break;
+          default:        views.marks.push(...items);
+        }
+      }
     }
 
-    pos = (anchor === Start) ? start
-      : (anchor === End) ? end
-      : (start + end) / 2;
-
-    tempBounds$2.clear().union(bounds);
-
-    // position title text
-    switch (orient) {
-      case Top:
-        x = pos;
-        y = viewBounds.y1 - offset;
-        break;
-      case Left:
-        x = viewBounds.x1 - offset;
-        y = pos;
-        break;
-      case Right:
-        x = viewBounds.x2 + offset;
-        y = pos;
-        break;
-      case Bottom:
-        x = pos;
-        y = viewBounds.y2 + offset;
-        break;
-      default:
-        x = item.x;
-        y = item.y;
-    }
-
-    bounds.translate(x - (item.x || 0), y - (item.y || 0));
-    if (set(item, 'x', x) | set(item, 'y', y)) {
-      item.bounds = tempBounds$2;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
-    }
-
-    // update bounds
-    return title.bounds.clear().union(bounds);
+    return views;
   }
 
-  function legendPreprocess(view, legends) {
-    return legends.reduce(function(w, legend) {
-      const item = legend.items[0];
+  function bboxFlush(item) {
+    return {x1: 0, y1: 0, x2: item.width || 0, y2: item.height || 0};
+  }
 
-      // adjust entry to accommodate padding and title
-      legendGroupLayout(view, item, item.items[0].items[0]);
+  function bboxFull(item) {
+    var b = item.bounds.clone();
+    return b.empty()
+      ? b.set(0, 0, 0, 0)
+      : b.translate(-(item.x||0), -(item.y||0));
+  }
 
-      // if left-oriented, calculate maximum legend width
-      if (item.datum.orient === Left) {
-        const b = legendBounds(item, tempBounds$2.clear());
-        w = Math.max(w, Math.ceil(b.width() + 2 * item.padding));
+  function get$1(opt, key, d) {
+    var v = isObject(opt) ? opt[key] : opt;
+    return v != null ? v : (d !== undefined ? d : 0);
+  }
+
+  function offsetValue(v) {
+    return v < 0 ? Math.ceil(-v) : 0;
+  }
+
+  function gridLayout(view, groups, opt) {
+    var dirty = !opt.nodirty,
+        bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
+        bounds = tempBounds$2.set(0, 0, 0, 0),
+        alignCol = get$1(opt.align, Column),
+        alignRow = get$1(opt.align, Row),
+        padCol = get$1(opt.padding, Column),
+        padRow = get$1(opt.padding, Row),
+        ncols = opt.columns || groups.length,
+        nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+        boxes = [],
+        xOffset = [], xExtent = [], xMax = 0,
+        yOffset = [], yExtent = [], yMax = 0,
+        n = groups.length,
+        m, i, c, r, b, g, px, py, x, y, offset;
+
+    for (i=0; i<ncols; ++i) xExtent[i] = 0;
+    for (i=0; i<nrows; ++i) yExtent[i] = 0;
+
+    // determine offsets for each group
+    for (i=0; i<n; ++i) {
+      b = boxes[i] = bbox(groups[i]);
+      c = i % ncols;
+      r = ~~(i / ncols);
+      px = Math.ceil(bbox(groups[i]).x2);
+      py = Math.ceil(bbox(groups[i]).y2);
+      xMax = Math.max(xMax, px);
+      yMax = Math.max(yMax, py);
+      xExtent[c] = Math.max(xExtent[c], px);
+      yExtent[r] = Math.max(yExtent[r], py);
+      xOffset.push(padCol + offsetValue(b.x1));
+      yOffset.push(padRow + offsetValue(b.y1));
+      if (dirty) view.dirty(groups[i]);
+    }
+
+    // set initial alignment offsets
+    for (i=0; i<n; ++i) {
+      if (i % ncols === 0) xOffset[i] = 0;
+      if (i < ncols) yOffset[i] = 0;
+    }
+
+    // enforce column alignment constraints
+    if (alignCol === Each) {
+      for (c=1; c<ncols; ++c) {
+        for (offset=0, i=c; i<n; i += ncols) {
+          if (offset < xOffset[i]) offset = xOffset[i];
+        }
+        for (i=c; i<n; i += ncols) {
+          xOffset[i] = offset + xExtent[c-1];
+        }
       }
+    } else if (alignCol === All) {
+      for (offset=0, i=0; i<n; ++i) {
+        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i=0; i<n; ++i) {
+        if (i % ncols) xOffset[i] = offset + xMax;
+      }
+    } else {
+      for (alignCol=false, c=1; c<ncols; ++c) {
+        for (i=c; i<n; i += ncols) {
+          xOffset[i] += xExtent[c-1];
+        }
+      }
+    }
 
-      return w;
-    }, 0);
+    // enforce row alignment constraints
+    if (alignRow === Each) {
+      for (r=1; r<nrows; ++r) {
+        for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
+          if (offset < yOffset[i]) offset = yOffset[i];
+        }
+        for (i=r*ncols; i<m; ++i) {
+          yOffset[i] = offset + yExtent[r-1];
+        }
+      }
+    } else if (alignRow === All) {
+      for (offset=0, i=ncols; i<n; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i=ncols; i<n; ++i) {
+        yOffset[i] = offset + yMax;
+      }
+    } else {
+      for (alignRow=false, r=1; r<nrows; ++r) {
+        for (i=r*ncols, m=i+ncols; i<m; ++i) {
+          yOffset[i] += yExtent[r-1];
+        }
+      }
+    }
+
+    // perform horizontal grid layout
+    for (x=0, i=0; i<n; ++i) {
+      g = groups[i];
+      px = g.x || 0;
+      g.x = (x = xOffset[i] + (i % ncols ? x : 0));
+      g.bounds.translate(x - px, 0);
+    }
+
+    // perform vertical grid layout
+    for (c=0; c<ncols; ++c) {
+      for (y=0, i=c; i<n; i += ncols) {
+        g = groups[i];
+        py = g.y || 0;
+        g.y = (y += yOffset[i]);
+        g.bounds.translate(0, y - py);
+      }
+    }
+
+    // perform horizontal centering
+    // TODO: remove nrows > 1 constraint?
+    if (alignCol && get$1(opt.center, Column) && nrows > 1) {
+      for (i=0; i<n; ++i) {
+        g = groups[i];
+        b = alignCol === All ? xMax : xExtent[i % ncols];
+        x = b - boxes[i].x2;
+        if (x > 0) {
+          g.x += (px = x / 2);
+          g.bounds.translate(px, 0);
+        }
+      }
+    }
+
+    // perform vertical centering
+    // TODO: remove ncols !== 1 constraint?
+    if (alignRow && get$1(opt.center, Row) && ncols !== 1) {
+      for (i=0; i<n; ++i) {
+        g = groups[i];
+        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
+        y = b - boxes[i].y2;
+        if (y > 0) {
+          g.y += (py = y / 2);
+          g.bounds.translate(0, py);
+        }
+      }
+    }
+
+    // position grid relative to anchor
+    for (i=0; i<n; ++i) bounds.union(boxes[i]);
+    x = get$1(opt.anchor, X);
+    y = get$1(opt.anchor, Y);
+    switch (get$1(opt.anchor, Column)) {
+      case End:    x -= bounds.width(); break;
+      case Middle: x -= bounds.width() / 2;
+    }
+    switch (get$1(opt.anchor, Row)) {
+      case End:    y -= bounds.height(); break;
+      case Middle: y -= bounds.height() / 2;
+    }
+    x = Math.round(x);
+    y = Math.round(y);
+
+    // update mark positions, bounds, dirty
+    bounds.clear();
+    for (i=0; i<n; ++i) {
+      groups[i].mark.bounds.clear();
+    }
+    for (i=0; i<n; ++i) {
+      g = groups[i];
+      g.x += x;
+      g.y += y;
+      g.bounds.translate(x, y);
+      bounds.union(g.mark.bounds.union(g.bounds));
+      if (dirty) view.dirty(g);
+    }
+
+    return bounds;
+  }
+
+  function trellisLayout(view, group, opt) {
+    var views = gridLayoutGroups(group),
+        groups = views.marks,
+        bbox = opt.bounds === Flush ? boundFlush : boundFull,
+        off = opt.offset,
+        ncols = opt.columns || groups.length,
+        nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+        cells = nrows * ncols,
+        x, y, band, offset;
+
+    // -- initial grid layout
+    const bounds = gridLayout(view, groups, opt);
+
+    // -- layout grid headers and footers --
+
+    // perform row header layout
+    if (views.rowheaders) {
+      band = get$1(opt.headerBand, Row, null);
+      x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$1(off, 'rowHeader'), min$2, 0, bbox, 'x1', 0, ncols, 1, band);
+    }
+
+    // perform column header layout
+    if (views.colheaders) {
+      band = get$1(opt.headerBand, Column, null);
+      y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$1(off, 'columnHeader'), min$2, 1, bbox, 'y1', 0, 1, ncols, band);
+    }
+
+    // perform row footer layout
+    if (views.rowfooters) {
+      band = get$1(opt.footerBand, Row, null);
+      layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get$1(off, 'rowFooter'), max$2, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+    }
+
+    // perform column footer layout
+    if (views.colfooters) {
+      band = get$1(opt.footerBand, Column, null);
+      layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get$1(off, 'columnFooter'), max$2, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+    }
+
+    // perform row title layout
+    if (views.rowtitle) {
+      offset = x - get$1(off, 'rowTitle');
+      band = get$1(opt.titleBand, Row, 0.5);
+      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
+    }
+
+    // perform column title layout
+    if (views.coltitle) {
+      offset = y - get$1(off, 'columnTitle');
+      band = get$1(opt.titleBand, Column, 0.5);
+      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
+    }
+  }
+
+  function boundFlush(item, field) {
+    return field === 'x1' ? (item.x || 0)
+      : field === 'y1' ? (item.y || 0)
+      : field === 'x2' ? (item.x || 0) + (item.width || 0)
+      : field === 'y2' ? (item.y || 0) + (item.height || 0)
+      : undefined;
+  }
+
+  function boundFull(item, field) {
+    return item.bounds[field];
+  }
+
+  // aggregation functions for grid margin determination
+  function min$2(a, b) { return Math.floor(Math.min(a, b)); }
+  function max$2(a, b) { return Math.ceil(Math.max(a, b)); }
+
+  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
+    var n = groups.length,
+        init = 0,
+        edge = 0,
+        i, j, k, m, b, h, g, x, y;
+
+    // if no groups, early exit and return 0
+    if (!n) return init;
+
+    // compute margin
+    for (i=start; i<n; i+=stride) {
+      if (groups[i]) init = agg(init, bound(groups[i], bf));
+    }
+
+    // if no headers, return margin calculation
+    if (!headers.length) return init;
+
+    // check if number of headers exceeds number of rows or columns
+    if (headers.length > limit) {
+      view.warn('Grid headers exceed limit: ' + limit);
+      headers = headers.slice(0, limit);
+    }
+
+    // apply offset
+    init += offset;
+
+    // clear mark bounds for all headers
+    for (j=0, m=headers.length; j<m; ++j) {
+      view.dirty(headers[j]);
+      headers[j].mark.bounds.clear();
+    }
+
+    // layout each header
+    for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
+      h = headers[j];
+      b = h.mark.bounds;
+
+      // search for nearest group to align to
+      // necessary if table has empty cells
+      for (k=i; k >= 0 && (g = groups[k]) == null; k-=back);
+
+      // assign coordinates and update bounds
+      if (isX) {
+        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
+        y = init;
+      } else {
+        x = init;
+        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
+      }
+      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+      h.x = x;
+      h.y = y;
+      view.dirty(h);
+
+      // update current edge of layout bounds
+      edge = agg(edge, b[bf]);
+    }
+
+    return edge;
+  }
+
+  function layoutTitle(view, g, offset, isX, bounds, band) {
+    if (!g) return;
+    view.dirty(g);
+
+    // compute title coordinates
+    var x = offset, y = offset;
+    isX
+      ? (x = Math.round(bounds.x1 + band * bounds.width()))
+      : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+    // assign coordinates and update bounds
+    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+    g.mark.bounds.clear().union(g.bounds);
+    g.x = x;
+    g.y = y;
+
+    // queue title for redraw
+    view.dirty(g);
+  }
+
+  // utility for looking up legend layout configuration
+  function lookup$2(config, orient) {
+    const opt = config[orient] || {};
+    return (key, d) => opt[key] != null ? opt[key]
+      : config[key] != null ? config[key]
+      : d;
+  }
+
+  // if legends specify offset directly, use the maximum specified value
+  function offsets(legends, value) {
+    var max = -Infinity;
+    legends.forEach(item => {
+      if (item.offset != null) max = Math.max(max, item.offset);
+    });
+    return max > -Infinity ? max : value;
+  }
+
+  function legendParams(g, orient, config, xb, yb, w, h) {
+    const _ = lookup$2(config, orient),
+          offset = offsets(g, _('offset', 0)),
+          anchor = _('anchor', Start),
+          mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
+
+    const p = {
+      align:   Each,
+      bounds:  _('bounds', Flush),
+      columns: _('direction') === 'vertical' ? 1 : g.length,
+      padding: _('margin', 8),
+      center:  _('center'),
+      nodirty: true
+    };
+
+    switch (orient) {
+      case Left:
+        p.anchor = {
+          x: Math.floor(xb.x1) - offset, column: End,
+          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        };
+        break;
+      case Right:
+        p.anchor = {
+          x: Math.ceil(xb.x2) + offset,
+          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        };
+        break;
+      case Top:
+        p.anchor = {
+          y: Math.floor(yb.y1) - offset, row: End,
+          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        };
+        break;
+      case Bottom:
+        p.anchor = {
+          y: Math.ceil(yb.y2) + offset,
+          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        };
+        break;
+      case TopLeft:
+        p.anchor = {x: offset, y: offset};
+        break;
+      case TopRight:
+        p.anchor = {x: w - offset, y: offset, column: End};
+        break;
+      case BottomLeft:
+        p.anchor = {x: offset, y: h - offset, row: End};
+        break;
+      case BottomRight:
+        p.anchor = {x: w - offset, y: h - offset, column: End, row: End};
+        break;
+    }
+
+    return p;
+  }
+
+  function legendLayout(view, legend) {
+    var item = legend.items[0],
+        datum = item.datum,
+        orient = datum.orient,
+        bounds = item.bounds,
+        x = item.x, y = item.y, w, h;
+
+    // cache current bounds for later comparison
+    item._bounds
+      ? item._bounds.clear().union(bounds)
+      : item._bounds = bounds.clone();
+    bounds.clear();
+
+    // adjust legend to accommodate padding and title
+    legendGroupLayout(view, item, item.items[0].items[0]);
+
+    // aggregate bounds to determine size, and include origin
+    bounds = legendBounds(item, bounds);
+    w = 2 * item.padding;
+    h = 2 * item.padding;
+    if (!bounds.empty()) {
+      w = Math.ceil(bounds.width() + w);
+      h = Math.ceil(bounds.height() + h);
+    }
+
+    if (datum.type === Symbols) {
+      legendEntryLayout(item.items[0].items[0].items[0].items);
+    }
+
+    if (orient !== None$1) {
+      item.x = x = 0;
+      item.y = y = 0;
+    }
+    item.width = w;
+    item.height = h;
+    boundStroke(bounds.set(x, y, x + w, y + h), item);
+    item.mark.bounds.clear().union(bounds);
+
+    return item;
   }
 
   function legendBounds(item, b) {
@@ -15607,7 +15585,7 @@
           u = vgrad && lr ? s : 0,
           v = vgrad && lr ? 0 : s;
 
-    return ~~(anchor === Start ? u : anchor === End ? v : 0.5 * s);
+    return Math.round(anchor === Start ? u : anchor === End ? v : 0.5 * s);
   }
 
   function translate$2(view, item, dx, dy) {
@@ -15616,93 +15594,6 @@
     item.bounds.translate(dx, dy);
     item.mark.bounds.translate(dx, dy);
     view.dirty(item);
-  }
-
-  function legendLayout(view, legend, flow, xBounds, yBounds, width, height) {
-    var item = legend.items[0],
-        datum = item.datum,
-        orient = datum.orient,
-        offset = item.offset,
-        bounds = item.bounds,
-        x = 0,
-        y = 0,
-        w, h, axisBounds;
-
-    if (orient === Top || orient === Bottom) {
-      axisBounds = yBounds,
-      x = flow[orient];
-    } else if (orient === Left || orient === Right) {
-      axisBounds = xBounds;
-      y = flow[orient];
-    }
-
-    tempBounds$2.clear().union(bounds);
-    bounds.clear();
-
-    // aggregate bounds to determine size, and include origin
-    bounds = legendBounds(item, bounds);
-    w = 2 * item.padding;
-    h = 2 * item.padding;
-    if (!bounds.empty()) {
-      w = Math.ceil(bounds.width() + w);
-      h = Math.ceil(bounds.height() + h);
-    }
-
-    if (datum.type === Symbols) {
-      legendEntryLayout(item.items[0].items[0].items[0].items);
-    }
-
-    switch (orient) {
-      case Left:
-        x -= flow.leftWidth + offset - Math.floor(axisBounds.x1);
-        flow.left += h + flow.margin;
-        break;
-      case Right:
-        x += offset + Math.ceil(axisBounds.x2);
-        flow.right += h + flow.margin;
-        break;
-      case Top:
-        y -= h + offset - Math.floor(axisBounds.y1);
-        flow.top += w + flow.margin;
-        break;
-      case Bottom:
-        y += offset + Math.ceil(axisBounds.y2);
-        flow.bottom += w + flow.margin;
-        break;
-      case TopLeft:
-        x += offset;
-        y += offset;
-        break;
-      case TopRight:
-        x += width - w - offset;
-        y += offset;
-        break;
-      case BottomLeft:
-        x += offset;
-        y += height - h - offset;
-        break;
-      case BottomRight:
-        x += width - w - offset;
-        y += height - h - offset;
-        break;
-      default:
-        x = item.x;
-        y = item.y;
-    }
-
-    // update bounds
-    boundStroke(bounds.set(x, y, x + w, y + h), item);
-
-    // update legend layout
-    if (set(item, 'x', x) | set(item, 'width', w) |
-        set(item, 'y', y) | set(item, 'height', h)) {
-      item.bounds = tempBounds$2;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
-    }
-
-    return item.mark.bounds.clear().union(bounds);
   }
 
   function legendEntryLayout(entries) {
@@ -15717,6 +15608,187 @@
       g.width  = widths[g.column];
       g.height = g.bounds.y2 - g.y;
     });
+  }
+
+  function titleLayout(view, title, width, height, viewBounds) {
+    var item = title.items[0],
+        orient = item.orient,
+        frame = item.frame,
+        anchor = item.anchor,
+        offset = item.offset,
+        bounds = item.bounds,
+        vertical = (orient === Left || orient === Right),
+        start = 0,
+        end = vertical ? height : width,
+        x = 0, y = 0, pos;
+
+    if (frame !== Group) {
+      orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
+        : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
+        : (start = viewBounds.x1, end = viewBounds.x2);
+    } else if (orient === Left) {
+      start = height, end = 0;
+    }
+
+    pos = (anchor === Start) ? start
+      : (anchor === End) ? end
+      : (start + end) / 2;
+
+    tempBounds$2.clear().union(bounds);
+
+    // position title text
+    switch (orient) {
+      case Top:
+        x = pos;
+        y = viewBounds.y1 - offset;
+        break;
+      case Left:
+        x = viewBounds.x1 - offset;
+        y = pos;
+        break;
+      case Right:
+        x = viewBounds.x2 + offset;
+        y = pos;
+        break;
+      case Bottom:
+        x = pos;
+        y = viewBounds.y2 + offset;
+        break;
+      default:
+        x = item.x;
+        y = item.y;
+    }
+
+    bounds.translate(x - (item.x || 0), y - (item.y || 0));
+    if (set(item, 'x', x) | set(item, 'y', y)) {
+      item.bounds = tempBounds$2;
+      view.dirty(item);
+      item.bounds = bounds;
+      view.dirty(item);
+    }
+
+    // update bounds
+    return title.bounds.clear().union(bounds);
+  }
+
+  /**
+   * Layout view elements such as axes and legends.
+   * Also performs size adjustments.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.mark - Scenegraph mark of groups to layout.
+   */
+  function ViewLayout(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$S = inherits(ViewLayout, Transform);
+
+  prototype$S.transform = function(_, pulse) {
+    // TODO incremental update, output?
+    var view = pulse.dataflow;
+    _.mark.items.forEach(function(group) {
+      if (_.layout) trellisLayout(view, group, _.layout);
+      layoutGroup(view, group, _);
+    });
+    if (_.modified()) pulse.reflow();
+    return pulse;
+  };
+
+  function layoutGroup(view, group, _) {
+    var items = group.items,
+        width = Math.max(0, group.width || 0),
+        height = Math.max(0, group.height || 0),
+        viewBounds = new Bounds().set(0, 0, width, height),
+        xBounds = viewBounds.clone(),
+        yBounds = viewBounds.clone(),
+        legends = [], title,
+        mark, orient, b, i, n;
+
+    // layout axes, gather legends, collect bounds
+    for (i=0, n=items.length; i<n; ++i) {
+      mark = items[i];
+      switch (mark.role) {
+        case AxisRole:
+          b = isYAxis(mark) ? xBounds : yBounds;
+          b.union(axisLayout(view, mark, width, height));
+          break;
+        case TitleRole:
+          title = mark;
+          break;
+        case LegendRole:
+          legends.push(legendLayout(view, mark));
+          break;
+        case FrameRole:
+        case ScopeRole:
+        case RowHeader:
+        case RowFooter:
+        case RowTitle:
+        case ColHeader:
+        case ColFooter:
+        case ColTitle:
+          xBounds.union(mark.bounds);
+          yBounds.union(mark.bounds);
+          break;
+        default:
+          viewBounds.union(mark.bounds);
+      }
+    }
+
+    // layout legends, adjust viewBounds
+    if (legends.length) {
+      // group legends by orient
+      const l = {};
+      legends.forEach(item => {
+        orient = item.datum.orient || Right;
+        if (orient !== None$1) (l[orient] || (l[orient] = [])).push(item);
+      });
+
+      // perform grid layout for each orient group
+      for (let orient in l) {
+        const g = l[orient];
+        gridLayout(view, g, legendParams(
+          g, orient, _.legends, xBounds, yBounds, width, height
+        ));
+      }
+
+      // update view bounds
+      legends.forEach(item => {
+        const b = item.bounds;
+
+        if (!b.equals(item._bounds)) {
+          item.bounds = item._bounds;
+          view.dirty(item); // dirty previous location
+          item.bounds = b;
+          view.dirty(item);
+        }
+
+        if (_.autosize && _.autosize.type === Fit) {
+          // For autosize fit, incorporate the orthogonal dimension only.
+          // Legends that overrun the chart area will then be clipped;
+          // otherwise the chart area gets reduced to nothing!
+          orient = item.datum.orient;
+          if (orient === Left || orient === Right) {
+            viewBounds.add(b.x1, 0).add(b.x2, 0);
+          } else if (orient === Top || orient === Bottom) {
+            viewBounds.add(0, b.y1).add(0, b.y2);
+          }
+        } else {
+          viewBounds.union(b);
+        }
+      });
+    }
+
+    // combine bounding boxes
+    viewBounds.union(xBounds).union(yBounds);
+
+    // layout title, adjust bounds
+    if (title) {
+      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
+    }
+
+    // perform size adjustment
+    viewSizeLayout(view, group, viewBounds, _);
   }
 
   function viewSizeLayout(view, group, viewBounds, _) {
@@ -15837,10 +15909,6 @@
     return false;
   }
 
-  function isBinned(key) {
-    return key === BinOrdinal;
-  }
-
   function isQuantile(key) {
     return key === Quantile;
   }
@@ -15877,14 +15945,14 @@
   }
 
   function isDiscrete(key) {
-    return isBinned(key)
+    return key === BinOrdinal
       || key === Ordinal
       || key === Band
       || key === Point;
   }
 
   function isDiscretizing(key) {
-    return isBinned(key)
+    return key === BinOrdinal
       || key === Quantile
       || key === Quantize
       || key === Threshold;
@@ -19140,7 +19208,7 @@
    * that automatically trims trailing zeroes will be generated.
    * @param {Scale} scale - The scale for which to generate the label formatter.
    * @param {*} [count] - The approximate number of desired ticks.
-   * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+   * @param {string} [specifier] - The format specifier. Must be a legal d3
    *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
    * @return {function(*):string} - The generated label formatter.
    */
@@ -19440,56 +19508,57 @@
   var Gradient$1 = 'gradient';
 
   const symbols$1 = {
-    [Quantile]:   quantileSymbols,
-    [Quantize]:   quantizeSymbols,
-    [Threshold]:  thresholdSymbols
+    [Quantile]:  'quantiles',
+    [Quantize]:  'thresholds',
+    [Threshold]: 'domain'
+  };
+
+  const formats$1 = {
+    [Quantile]:  'quantiles',
+    [Quantize]:  'domain'
   };
 
   function labelValues(scale, count) {
-    return scale.bins ? binValues$1(scale.bins.slice())
-      : symbols$1[scale.type] ? symbols$1[scale.type](scale)
+    return scale.bins ? binValues$1(scale.bins)
+      : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
       : tickValues(scale, count);
   }
 
-  function quantizeSymbols(scale) {
-    var domain = scale.domain(),
-        x0 = domain[0],
-        x1 = peek(domain),
-        n = scale.range().length,
-        values = new Array(n),
-        i = 0;
+  function thresholdFormat(scale, specifier) {
+    var _ = scale[formats$1[scale.type]](),
+        n = _.length,
+        d = n > 1 ? _[1] - _[0] : _[0], i;
 
-    values[0] = -Infinity;
-    while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
-    values.max = +Infinity;
+    for (i=1; i<n; ++i) {
+      d = Math.min(d, _[i] - _[i-1]);
+    }
 
-    return values;
+    // 3 ticks times 10 for increased resolution
+    return tickFormat(0, d, 3 * 10, specifier);
   }
 
-  function quantileSymbols(scale) {
-    var values = [-Infinity].concat(scale.quantiles());
-    values.max = +Infinity;
-
-    return values;
-  }
-
-  function thresholdSymbols(scale) {
-    var values = [-Infinity].concat(scale.domain());
+  function thresholdValues(thresholds) {
+    const values = [-Infinity].concat(thresholds);
     values.max = +Infinity;
 
     return values;
   }
 
   function binValues$1(bins) {
-    bins.max = bins.pop();
-    return bins;
+    const values = bins.slice(0, -1);
+    values.max = peek(bins);
+
+    return values;
   }
 
   function isDiscreteRange(scale) {
     return symbols$1[scale.type] || scale.bins;
   }
 
-  function labelFormat(scale, format, type) {
+  function labelFormat(scale, count, type, specifier) {
+    const format = formats$1[scale.type] ? thresholdFormat(scale, specifier)
+      : tickFormat$1(scale, count, specifier);
+
     return type === Symbols$1 && isDiscreteRange(scale) ? formatRange(format)
       : type === Discrete ? formatDiscrete(format)
       : formatPoint(format);
@@ -19571,11 +19640,10 @@
         type  = _.type || Symbols$1,
         scale = _.scale,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        format = _.format || tickFormat$1(scale, count, _.formatSpecifier),
+        format = _.format || labelFormat(scale, count, type, _.formatSpecifier),
         values = _.values || labelValues(scale, count, type),
         domain, fraction, size, offset;
 
-    format = labelFormat(scale, format, type);
     if (items) out.rem = items;
 
     if (type === Symbols$1) {
@@ -20448,7 +20516,7 @@
     return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
   }
 
-  function max$2(values, valueof) {
+  function max$3(values, valueof) {
     var n = values.length,
         i = -1,
         value,
@@ -20823,7 +20891,7 @@
 
       // Convert number of thresholds into uniform thresholds.
       if (!Array.isArray(tz)) {
-        var stop = max$2(values0);
+        var stop = max$3(values0);
         tz = tickStep$2(0, stop, tz);
         tz = range$1(0, Math.floor(stop / tz) * tz, tz);
         tz.shift();
@@ -24403,7 +24471,7 @@
     return parent[j] = node, parent[i] = leaf, tree;
   }
 
-  function addAll$1(data) {
+  function addAll(data) {
     var d, i, n = data.length,
         x,
         y,
@@ -24747,7 +24815,7 @@
   };
 
   treeProto.add = tree_add;
-  treeProto.addAll = addAll$1;
+  treeProto.addAll = addAll;
   treeProto.cover = tree_cover;
   treeProto.data = tree_data;
   treeProto.extent = tree_extent;
@@ -25769,7 +25837,7 @@
   });
 
   // Build lookup table mapping tuple keys to tree node instances
-  function lookup$2(tree, key, filter) {
+  function lookup$3(tree, key, filter) {
     var map = {};
     tree.each(function(node) {
       var t = node.data;
@@ -27106,7 +27174,7 @@
       }
 
       // build lookup table
-      lookup$2(tree, tupleid, tupleid);
+      lookup$3(tree, tupleid, tupleid);
     }
 
     out.source.root = tree;
@@ -27329,11 +27397,11 @@
 
     if (run) {
       if (out.source.length) {
-        tree = lookup$2(
+        tree = lookup$3(
           stratify().id(_.key).parentId(_.parentKey)(out.source)
           , _.key, truthy);
       } else {
-        tree = lookup$2(stratify()([{}]), _.key, _.key);
+        tree = lookup$3(stratify()([{}]), _.key, _.key);
       }
     }
 
@@ -29830,7 +29898,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.0.0-rc3";
+  var version = "5.0.0-rc4";
 
   var Default = 'default';
 
@@ -30472,7 +30540,7 @@
         Handler, Renderer;
 
     // containing dom element
-    el = view._el = el ? lookup$3(view, el) : null;
+    el = view._el = el ? lookup$4(view, el) : null;
 
     // select appropriate renderer & handler
     if (!module) view.error('Unrecognized renderer type: ' + type);
@@ -30487,12 +30555,12 @@
 
     // initialize signal bindings
     if (el) {
-      elBind = elBind ? (view._elBind = lookup$3(view, elBind))
+      elBind = elBind ? (view._elBind = lookup$4(view, elBind))
         : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
 
       view._bind.forEach(function(_) {
         if (_.param.element) {
-          _.element = lookup$3(view, _.param.element);
+          _.element = lookup$4(view, _.param.element);
         }
       });
 
@@ -30504,7 +30572,7 @@
     return view;
   }
 
-  function lookup$3(view, el) {
+  function lookup$4(view, el) {
     if (typeof el === 'string') {
       if (typeof document !== 'undefined') {
         el = document.querySelector(el);
@@ -32264,6 +32332,14 @@
     };
   }
 
+  function stripQuotes(s) {
+    var n = s && s.length - 1;
+    return n && (
+        (s[0]==='"' && s[n]==='"') ||
+        (s[0]==='\'' && s[n]==='\'')
+      ) ? s.slice(1, -1) : s;
+  }
+
   function codegen(opt) {
     opt = opt || {};
 
@@ -32314,7 +32390,10 @@
           var o = visit(n.object);
           if (d) memberDepth += 1;
           var p = visit(n.property);
-          if (o === fieldvar) { fields[p] = 1; } // HACKish...
+          if (o === fieldvar) {
+            // strip quotes to sanitize field name (#1653)
+            fields[stripQuotes(p)] = 1;
+          }
           if (d) memberDepth -= 1;
           return o + (d ? '.'+p : '['+p+']');
         },
@@ -33929,7 +34008,7 @@
     );
 
     // initialize background color
-    view._background = ctx.background || null;
+    view._background = options.background || ctx.background || null;
 
     // initialize event configuration
     view._eventConfig = initializeEventConfig(ctx.eventConfig);
@@ -33946,6 +34025,12 @@
 
     // initialize cursor
     cursor(view);
+
+    // initialize hover proessing, if requested
+    if (options.hover) view.hover();
+
+    // initialize DOM container(s) and renderer
+    if (options.container) view.initialize(options.container, options.bind);
   }
 
   var prototype$1k = inherits(View, Dataflow);
@@ -34208,12 +34293,9 @@
 
   function parseAutosize(spec, config) {
     spec = spec || config.autosize;
-    if (isObject(spec)) {
-      return spec;
-    } else {
-      spec = spec || 'pad';
-      return {type: spec};
-    }
+    return isObject(spec)
+      ? spec
+      : {type: spec || 'pad'};
   }
 
   function parsePadding(spec, config) {
@@ -35554,12 +35636,12 @@
     };
   }
 
-  function lookup$4(spec, config) {
+  function lookup$5(spec, config) {
     const _ = name => value$1(spec[name], config[name]);
 
     _.isVertical = s => Vertical === value$1(
       spec.direction,
-      s ? config.symbolDirection : config.gradientDirection
+      config.direction || (s ? config.symbolDirection : config.gradientDirection)
     );
 
     _.gradientLength = () => value$1(
@@ -35610,7 +35692,7 @@
   var TextMark = 'text';
 
   function legendGradient(spec, scale, config, userEncode) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         zero = {value: 0},
         vertical = _.isVertical(),
         thickness = _.gradientThickness(),
@@ -35657,7 +35739,7 @@
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         zero = {value: 0},
         vertical = _.isVertical(),
         thickness = _.gradientThickness(),
@@ -35700,7 +35782,7 @@
     + ':datum.' + Perc + '>=1?"top":"middle"';
 
   function legendGradientLabels(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         zero = {value: 0},
         vertical = _.isVertical(),
         thickness = encoder(_.gradientThickness()),
@@ -35776,7 +35858,7 @@
 
   // userEncode is top-level, includes entries, symbols, labels
   function legendSymbolGroups(spec, config, userEncode, dataRef, columns) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         entries = userEncode.entries,
         interactive = !!(entries && entries.interactive),
         name = entries ? entries.name : undefined,
@@ -35920,7 +36002,7 @@
   }
 
   function legendSymbolLayout(spec, config) {
-    const _ = lookup$4(spec, config);
+    const _ = lookup$5(spec, config);
 
     // layout parameters for legend entries
     return {
@@ -35950,7 +36032,7 @@
         exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
   function legendTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         zero = {value: 0},
         encode, enter;
 
@@ -36520,10 +36602,10 @@
     // add view layout operator if needed
     if (facet || layout) {
       layout = scope.add(ViewLayout$1({
-        layout:       scope.objectProperty(spec.layout),
-        legendMargin: scope.config.legendMargin,
-        mark:         markRef,
-        pulse:        encodeRef
+        layout:   scope.objectProperty(spec.layout),
+        legends:  scope.legends,
+        mark:     markRef,
+        pulse:    encodeRef
       }));
       layoutRef = ref(layout);
     }
@@ -36601,7 +36683,7 @@
         name = legendEncode.name || undefined,
         interactive = legendEncode.interactive,
         style = legendEncode.style,
-        _ = lookup$4(spec, config),
+        _ = lookup$5(spec, config),
         entryEncode, entryLayout, params, children,
         type, datum, dataRef, entryRef, group;
 
@@ -36768,7 +36850,7 @@
   }
 
   function buildTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         zero = {value: 0},
         title = spec.text,
         orient = _('orient'),
@@ -36944,7 +37026,7 @@
   }
 
   function axisDomain(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         orient = spec.orient,
         zero = {value: 0},
         encode, enter, update, u, u2, v;
@@ -36990,7 +37072,7 @@
   }
 
   function axisGrid(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         orient = spec.orient,
         vscale = spec.gridScale,
         sign = (orient === Left$1 || orient === Top$1) ? 1 : -1,
@@ -37073,7 +37155,7 @@
   }
 
   function axisTicks(spec, config, userEncode, dataRef, size) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         zero = {value: 0},
@@ -37133,7 +37215,7 @@
   }
 
   function axisLabels(spec, config, userEncode, dataRef, size) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         isXAxis = (orient === Top$1 || orient === Bottom$1),
@@ -37231,7 +37313,7 @@
   }
 
   function axisTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$4(spec, config),
+    var _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
         horizontal = (orient === Top$1 || orient === Bottom$1),
@@ -37299,7 +37381,7 @@
         name = axisEncode.name || undefined,
         interactive = axisEncode.interactive,
         style = axisEncode.style,
-        _ = lookup$4(spec, config),
+        _ = lookup$5(spec, config),
         datum, dataRef, ticksRef, size, group, children;
 
     // single-element data source for axis group
@@ -37434,6 +37516,7 @@
     scope.addSignal('height', spec.height || 0);
     scope.addSignal('padding', parsePadding(spec.padding, config));
     scope.addSignal('autosize', parseAutosize(spec.autosize, config));
+    scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
     array(spec.signals).forEach(function(_) {
       if (!defined[_.name]) parseSignal(_, scope);
@@ -37455,7 +37538,7 @@
     // Perform view layout
     parent = scope.add(ViewLayout$1({
       layout:       scope.objectProperty(spec.layout),
-      legendMargin: config.legendMargin,
+      legends:      scope.legends,
       autosize:     scope.signalRef('autosize'),
       mark:         root,
       pulse:        ref(encode)
@@ -37507,6 +37590,7 @@
 
   function Subscope(scope) {
     this.config = scope.config;
+    this.legends = scope.legends;
 
     this.field = Object.create(scope.field);
     this.signals = Object.create(scope.signals);
@@ -37903,33 +37987,34 @@
   };
 
   function defaults(configs) {
-    var output = defaults$1();
-    (configs || []).forEach(function(config) {
-      var key, value, style;
-      if (config) {
-        for (key in config) {
-          if (key === 'style') {
-            style = output.style || (output.style = {});
-            for (key in config.style) {
-              style[key] = extend(style[key] || {}, config.style[key]);
-            }
-          } else {
-            value = config[key];
-            output[key] = isObject(value) && !isArray(value)
-              ? extend(isObject(output[key]) ? output[key] : {}, value)
-              : value;
-          }
-        }
+    return (configs || []).reduce((out, config) => {
+      for (var key in config) {
+        var r = key === 'legend' ? {'layout': 1}
+          : key === 'style' ? true : null;
+        copy$3(out, key, config[key], r);
       }
-    });
-    return output;
+      return out;
+    }, defaults$1());
+  }
+
+  function copy$3(output, key, value, recurse) {
+    var k, o;
+    if (isObject(value) && !isArray(value)) {
+      o = isObject(output[key]) ? output[key] : (output[key] = {});
+      for (k in value) {
+        if (!recurse || !recurse[k]) o[k] = value[k];
+        else copy$3(o, k, value[k]);
+      }
+    } else {
+      output[key] = value;
+    }
   }
 
   var defaultFont = 'sans-serif',
       defaultSymbolSize = 30,
       defaultStrokeWidth = 2,
       defaultColor = '#4c78a8',
-      black = "#000",
+      black = '#000',
       gray = '#888',
       lightGray = '#ddd';
 
@@ -37943,8 +38028,8 @@
       // default padding around visualization
       padding: 0,
 
-      // default for automatic sizing; options: "none", "pad", "fit"
-      // or provide an object (e.g., {"type": "pad", "resize": true})
+      // default for automatic sizing; options: 'none', 'pad', 'fit'
+      // or provide an object (e.g., {'type': 'pad', 'resize': true})
       autosize: 'pad',
 
       // default view background color
@@ -37989,20 +38074,20 @@
       // style definitions
       style: {
         // axis & legend labels
-        "guide-label": {
+        'guide-label': {
           fill: black,
           font: defaultFont,
           fontSize: 10
         },
         // axis & legend titles
-        "guide-title": {
+        'guide-title': {
           fill: black,
           font: defaultFont,
           fontSize: 11,
           fontWeight: 'bold'
         },
         // headers, including chart title
-        "group-title": {
+        'group-title': {
           fill: black,
           font: defaultFont,
           fontSize: 13,
@@ -38028,6 +38113,13 @@
           fill: 'transparent',
           stroke: lightGray
         }
+      },
+
+      // defaults for title
+      title: {
+        orient: 'top',
+        anchor: 'middle',
+        offset: 4
       },
 
       // defaults for axes
@@ -38062,7 +38154,6 @@
       // defaults for legends
       legend: {
         orient: 'right',
-        offset: 18,
         padding: 0,
         gridAlign: 'each',
         columnPadding: 10,
@@ -38087,14 +38178,13 @@
         symbolBaseStrokeColor: gray,
         titleLimit: 180,
         titleOrient: 'top',
-        titlePadding: 5
-      },
-
-      // defaults for group title
-      title: {
-        orient: 'top',
-        anchor: 'middle',
-        offset: 4
+        titlePadding: 5,
+        layout: {
+          offset: 18,
+          direction: 'horizontal',
+          left:   { direction: 'vertical' },
+          right:  { direction: 'vertical' }
+        }
       },
 
       // defaults for scale ranges
