@@ -26,6 +26,15 @@ prototype.empty = function() {
   );
 };
 
+prototype.equals = function(b) {
+  return (
+    this.x1 === b.x1 &&
+    this.y1 === b.y1 &&
+    this.x2 === b.x2 &&
+    this.y2 === b.y2
+  );
+};
+
 prototype.set = function(x1, y1, x2, y2) {
   if (x2 < x1) {
     this.x2 = x1;

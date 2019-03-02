@@ -98,6 +98,14 @@ function layoutGroup(view, group, _) {
     // update view bounds
     legends.forEach(item => {
       const b = item.bounds;
+
+      if (!b.equals(item._bounds)) {
+        item.bounds = item._bounds;
+        view.dirty(item); // dirty previous location
+        item.bounds = b;
+        view.dirty(item);
+      }
+
       if (_.autosize && _.autosize.type === Fit) {
         // For autosize fit, incorporate the orthogonal dimension only.
         // Legends that overrun the chart area will then be clipped;

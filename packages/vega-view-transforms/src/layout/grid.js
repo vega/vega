@@ -66,7 +66,8 @@ function offsetValue(v) {
 }
 
 export function gridLayout(view, groups, opt) {
-  var bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
+  var dirty = !opt.nodirty,
+      bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
       bounds = tempBounds.set(0, 0, 0, 0),
       alignCol = get(opt.align, Column),
       alignRow = get(opt.align, Row),
@@ -96,7 +97,7 @@ export function gridLayout(view, groups, opt) {
     yExtent[r] = Math.max(yExtent[r], py);
     xOffset.push(padCol + offsetValue(b.x1));
     yOffset.push(padRow + offsetValue(b.y1));
-    view.dirty(groups[i]);
+    if (dirty) view.dirty(groups[i]);
   }
 
   // set initial alignment offsets
@@ -227,7 +228,7 @@ export function gridLayout(view, groups, opt) {
     g.y += y;
     g.bounds.translate(x, y);
     bounds.union(g.mark.bounds.union(g.bounds));
-    view.dirty(g);
+    if (dirty) view.dirty(g);
   }
 
   return bounds;
