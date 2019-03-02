@@ -3,7 +3,6 @@ import {
   TopLeft, TopRight, BottomLeft, BottomRight, None,
   Each, Flush
 } from '../constants';
-import {set, tempBounds} from './util';
 import {boundStroke} from 'vega-scenegraph';
 
 // utility for looking up legend layout configuration
@@ -34,7 +33,8 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     bounds:  _('bounds', Flush),
     columns: _('direction') === 'vertical' ? 1 : g.length,
     padding: _('margin', 8),
-    center:  _('center')
+    center:  _('center'),
+    nodirty: true
   };
 
   switch (orient) {
@@ -84,9 +84,12 @@ export function legendLayout(view, legend) {
       datum = item.datum,
       orient = datum.orient,
       bounds = item.bounds,
-      x = 0, y = 0, w, h;
+      x = item.x, y = item.y, w, h;
 
-  tempBounds.clear().union(bounds);
+  // cache current bounds for later comparison
+  item._bounds
+    ? item._bounds.clear().union(bounds)
+    : item._bounds = bounds.clone();
   bounds.clear();
 
   // adjust legend to accommodate padding and title
@@ -105,21 +108,13 @@ export function legendLayout(view, legend) {
     legendEntryLayout(item.items[0].items[0].items[0].items);
   }
 
-  if (orient === None) {
-    x = item.x;
-    y = item.y;
+  if (orient !== None) {
+    item.x = x = 0;
+    item.y = y = 0;
   }
-
-  // update bounds
+  item.width = w;
+  item.height = h;
   boundStroke(bounds.set(x, y, x + w, y + h), item);
-
-  // update legend layout
-  if (set(item, 'x', x) | set(item, 'width', w) |
-      set(item, 'y', y) | set(item, 'height', h)) {
-    item.bounds = tempBounds;
-    view.dirty(item); // dirty previous location
-    item.bounds = bounds;
-  }
   item.mark.bounds.clear().union(bounds);
 
   return item;
