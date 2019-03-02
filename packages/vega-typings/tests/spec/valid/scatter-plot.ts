@@ -22,7 +22,7 @@ export const spec: Spec = {
       "layout": {
         "right": {
           "direction": "vertical",
-          "anchor": "middle"
+          "anchor": {"signal": "anchorRight"}
         },
         "bottom": {
           "margin": 2,
@@ -38,6 +38,13 @@ export const spec: Spec = {
       }
     }
   },
+
+  "signals": [
+    {
+      "name": "anchorRight", "value": "middle",
+      "bind": {"input": "select", "options": ["start", "middle", "end"]}
+    }
+  ],
 
   "data": [
     {
@@ -138,13 +145,18 @@ export const spec: Spec = {
       "type": "symbol",
       "from": {"data": "source"},
       "encode": {
-        "update": {
+        "enter": {
           "x": {"scale": "x", "field": "Horsepower"},
           "y": {"scale": "y", "field": "Miles_per_Gallon"},
           "size": {"scale": "size", "field": "Acceleration"},
           "shape": {"value": "circle"},
-          "opacity": {"value": 0.25},
+          "opacity": {"value": 0.25}
+        },
+        "update": {
           "fill": {"value": "#4682b4"}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"}
         }
       }
     }
