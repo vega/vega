@@ -32,7 +32,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | rowPadding    | {% include type t="Number" %}  | The vertical padding in pixels between symbol legend entries. |
 | cornerRadius  | {% include type t="Number" %}  | Corner radius for the full legend. |
 | fillColor     | {% include type t="Color" %}   | Background fill color for the full legend. |
-| offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes.|
+| offset        | {% include type t="Number|Value" %} | The offset in pixels by which to displace the legend from the data rectangle and axes. If provided, this value will override any values specified in the [legend config](../config/#legends). If multiple *offset* values are specified for a collection of legends with the same *orient* value, the maximum *offset* will be used.|
 | padding       | {% include type t="Number|Value" %} | The padding between the border and content of the legend group.|
 | strokeColor   | {% include type t="Color" %}   | Border stroke color for the full legend. |
 | gradientLength      | {% include type t="Number" %} | The length in pixels of the primary axis of a color gradient. This value corresponds to the height of a vertical gradient or the width of a horizontal gradient. |
@@ -79,7 +79,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups. The default value is `0`.|
 
-To create themes, new default values for many legend properties can be set using a [config](../config) object.
+To create themes, new default values for legend properties can be set using a [config](../config/#legends) object. The config object also supports [customized layout](../config/#legends-layout) behavior for collections of legends with the same *orient* value.
 
 
 ## <a name="orientation"></a>Legend Orientation Reference
