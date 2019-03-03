@@ -1,74 +1,69 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('key creates a key accessor', function(t) {
+test('key creates a key accessor', function() {
   var _ = {a:1, b:2, c:3, d:{0:5, e:4}}, k;
 
   k = vega.key();
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), []);
-  t.equal(k(_), '');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual([]);
+  expect(k(_)).toBe('');
 
   k = vega.key('a');
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['a']);
-  t.equal(k(_), '1');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['a']);
+  expect(k(_)).toBe('1');
 
   k = vega.key(['a']);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['a']);
-  t.equal(k(_), '1');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['a']);
+  expect(k(_)).toBe('1');
 
   k = vega.key(['a', 'b', 'c']);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['a', 'b', 'c']);
-  t.equal(k(_), '1|2|3');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['a', 'b', 'c']);
+  expect(k(_)).toBe('1|2|3');
 
   k = vega.key(['a', 'c', 'd.e']);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['a', 'c', 'd.e']);
-  t.equal(k(_), '1|3|4');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['a', 'c', 'd.e']);
+  expect(k(_)).toBe('1|3|4');
 
   k = vega.key(['a', 'c', 'd["e"]', 'd[0]']);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['a', 'c', 'd["e"]', 'd[0]']);
-  t.equal(k(_), '1|3|4|5');
-
-  t.end();
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['a', 'c', 'd["e"]', 'd[0]']);
+  expect(k(_)).toBe('1|3|4|5');
 });
 
-tape('key respects the "flat" argument', function(t) {
+test('key respects the "flat" argument', function() {
   var _ = {"d.e": 1, "d[e]": 2, d:{0:5, e:4}}, k;
 
   k = vega.key('d.e', false);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['d.e']);
-  t.equal(k(_), '4');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['d.e']);
+  expect(k(_)).toBe('4');
 
   k = vega.key('d.e', true);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['d.e']);
-  t.equal(k(_), '1');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['d.e']);
+  expect(k(_)).toBe('1');
 
   k = vega.key('d\\.e', true);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['d.e']);
-  t.equal(k(_), '1');
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['d.e']);
+  expect(k(_)).toBe('1');
 
   k = vega.key('d\\[e\\]', true);
-  t.equal(typeof k, 'function');
-  t.equal(vega.accessorName(k), 'key');
-  t.deepEqual(vega.accessorFields(k), ['d[e]']);
-  t.equal(k(_), '2');
-
-  t.end();
+  expect(typeof k).toBe('function');
+  expect(vega.accessorName(k)).toBe('key');
+  expect(vega.accessorFields(k)).toEqual(['d[e]']);
+  expect(k(_)).toBe('2');
 });

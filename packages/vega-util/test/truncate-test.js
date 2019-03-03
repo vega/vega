@@ -1,28 +1,23 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('truncate truncates strings', function(t) {
+test('truncate truncates strings', function() {
   // should reduce string length
-  t.equal(vega.truncate('123456789', 5), '1234…');
-  t.equal(vega.truncate('123456789', 5, null, ''), '12345');
+  expect(vega.truncate('123456789', 5)).toBe('1234…');
+  expect(vega.truncate('123456789', 5, null, '')).toBe('12345');
 
   // should respect position argument
-  t.equal(vega.truncate('123456789', 5, 'right'), '1234…');
-  t.equal(vega.truncate('123456789', 5, 'left'), '…6789');
-  t.equal(vega.truncate('123456789', 5, 'center'), '12…89');
-
-  t.end();
+  expect(vega.truncate('123456789', 5, 'right')).toBe('1234…');
+  expect(vega.truncate('123456789', 5, 'left')).toBe('…6789');
+  expect(vega.truncate('123456789', 5, 'center')).toBe('12…89');
 });
 
-tape('truncate truncates numbers', function(t) {
+test('truncate truncates numbers', function() {
   // should reduce length
-  t.equal(vega.truncate(123456789, 5), '1234…');
-  t.equal(vega.truncate(123456789, 5, null, ''), '12345');
+  expect(vega.truncate(123456789, 5)).toBe('1234…');
+  expect(vega.truncate(123456789, 5, null, '')).toBe('12345');
 
   // should respect position argument
-  t.equal(vega.truncate(123456789, 5, 'right'), '1234…');
-  t.equal(vega.truncate(123456789, 5, 'left'), '…6789');
-  t.equal(vega.truncate(123456789, 5, 'center'), '12…89');
-
-  t.end();
+  expect(vega.truncate(123456789, 5, 'right')).toBe('1234…');
+  expect(vega.truncate(123456789, 5, 'left')).toBe('…6789');
+  expect(vega.truncate(123456789, 5, 'center')).toBe('12…89');
 });

@@ -1,34 +1,29 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('pad pads strings', function(t) {
+test('pad pads strings', function() {
   // should increase string length
-  t.equal(vega.pad('12345', 8), '12345   ');
-  t.equal(vega.pad('12345', 8, '!'), '12345!!!');
+  expect(vega.pad('12345', 8)).toBe('12345   ');
+  expect(vega.pad('12345', 8, '!')).toBe('12345!!!');
 
   // should return longer inputs as-is
-  t.equal(vega.pad('12345', 3), '12345');
+  expect(vega.pad('12345', 3)).toBe('12345');
 
   // should respect align argument
-  t.equal(vega.pad('12345', 8, ' ', 'right'),  '12345   ');
-  t.equal(vega.pad('12345', 8, ' ', 'left'),   '   12345');
-  t.equal(vega.pad('12345', 8, ' ', 'center'), ' 12345  ');
-
-  t.end();
+  expect(vega.pad('12345', 8, ' ', 'right')).toBe('12345   ');
+  expect(vega.pad('12345', 8, ' ', 'left')).toBe('   12345');
+  expect(vega.pad('12345', 8, ' ', 'center')).toBe(' 12345  ');
 });
 
-tape('pad pads numbers', function(t) {
+test('pad pads numbers', function() {
   // should increase string length
-  t.equal(vega.pad(12345, 8), '12345   ');
-  t.equal(vega.pad(12345, 8, '!'), '12345!!!');
+  expect(vega.pad(12345, 8)).toBe('12345   ');
+  expect(vega.pad(12345, 8, '!')).toBe('12345!!!');
 
   // should return longer inputs as-is
-  t.equal(vega.pad(12345, 3), '12345');
+  expect(vega.pad(12345, 3)).toBe('12345');
 
   // should respect align argument
-  t.equal(vega.pad(12345, 8, ' ', 'right'),  '12345   ');
-  t.equal(vega.pad(12345, 8, ' ', 'left'),   '   12345');
-  t.equal(vega.pad(12345, 8, ' ', 'center'), ' 12345  ');
-
-  t.end();
+  expect(vega.pad(12345, 8, ' ', 'right')).toBe('12345   ');
+  expect(vega.pad(12345, 8, ' ', 'left')).toBe('   12345');
+  expect(vega.pad(12345, 8, ' ', 'center')).toBe(' 12345  ');
 });

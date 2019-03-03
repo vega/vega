@@ -1,33 +1,32 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('stringValue maps values', function(t) {
+test('stringValue maps values', function() {
   // should wrap string arguments in double quotation marks
-  t.strictEqual(vega.stringValue('test'), '"test"');
+  expect(vega.stringValue('test')).toBe('"test"');
 
   // should wrap arrays in square brackets
-  t.equal(vega.stringValue(['1', '2']), '["1","2"]');
+  expect(vega.stringValue(['1', '2'])).toBe('["1","2"]');
 
   // should return boolean arguments as they are
-  t.equal(vega.stringValue(true), true);
-  t.equal(vega.stringValue(false), false);
+  expect(vega.stringValue(true)).toBe(true);
+  expect(vega.stringValue(false)).toBe(false);
 
   // should return number arguments as they are
-  t.equal(vega.stringValue(2), 2);
-  t.equal(vega.stringValue(-2), -2);
-  t.equal(vega.stringValue(-5.32), -5.32);
+  expect(vega.stringValue(2)).toBe(2);
+  expect(vega.stringValue(-2)).toBe(-2);
+  expect(vega.stringValue(-5.32)).toBe(-5.32);
 
   // should recursively wrap arrays in square brackets
-  t.equal(vega.stringValue([['1', 3], '2']), '[["1",3],"2"]');
+  expect(vega.stringValue([['1', 3], '2'])).toBe('[["1",3],"2"]');
 
   // should stringify objects
   var x = {a: {b: {c: 1}}};
-  t.equal(JSON.stringify(x), vega.stringValue(x));
+  expect(JSON.stringify(x)).toBe(vega.stringValue(x));
 
   // should handle quotes in strings
   var tests = ["'hello'", '"hello"'];
   tests.forEach(function(s) {
-    t.equal(s, eval(vega.stringValue(s)));
+    expect(s).toBe(eval(vega.stringValue(s)));
   });
 
   // should handle special characters in strings
@@ -37,8 +36,6 @@ tape('stringValue maps values', function(t) {
     '\u2029' // paragraph separator
   ];
   tests.forEach(function(s) {
-    t.equal(s, eval(vega.stringValue(s)));
+    expect(s).toBe(eval(vega.stringValue(s)));
   });
-
-  t.end();
 });

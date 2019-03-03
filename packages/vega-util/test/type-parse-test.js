@@ -1,80 +1,74 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('toBoolean parses booleans', function(t) {
-  t.equal(vega.toBoolean(null), null);
-  t.equal(vega.toBoolean(undefined), null);
-  t.equal(vega.toBoolean(''), null);
-  t.equal(vega.toBoolean('false'), false);
-  t.equal(vega.toBoolean('true'), true);
-  t.equal(vega.toBoolean('foo'), true);
-  t.equal(vega.toBoolean('1'), true);
-  t.equal(vega.toBoolean('0'), false);
-  t.equal(vega.toBoolean(0), false);
-  t.equal(vega.toBoolean(1), true);
-  t.equal(vega.toBoolean(false), false);
-  t.equal(vega.toBoolean(true), true);
-  t.end();
+test('toBoolean parses booleans', function() {
+  expect(vega.toBoolean(null)).toBe(null);
+  expect(vega.toBoolean(undefined)).toBe(null);
+  expect(vega.toBoolean('')).toBe(null);
+  expect(vega.toBoolean('false')).toBe(false);
+  expect(vega.toBoolean('true')).toBe(true);
+  expect(vega.toBoolean('foo')).toBe(true);
+  expect(vega.toBoolean('1')).toBe(true);
+  expect(vega.toBoolean('0')).toBe(false);
+  expect(vega.toBoolean(0)).toBe(false);
+  expect(vega.toBoolean(1)).toBe(true);
+  expect(vega.toBoolean(false)).toBe(false);
+  expect(vega.toBoolean(true)).toBe(true);
 });
 
-tape('toDate parses dates', function(t) {
+test('toDate parses dates', function() {
   var now = Date.now(),
       d = new Date(now);
 
-  t.equal(vega.toDate(null), null);
-  t.equal(vega.toDate(undefined), null);
-  t.equal(vega.toDate(''), null);
-  t.equal(vega.toDate('1/1/2000'), Date.parse('1/1/2000'));
-  t.ok(isNaN(vega.toDate('foo')));
-  t.equal(vega.toDate(0), 0);
-  t.equal(vega.toDate(1), 1);
-  t.equal(vega.toDate(now), now);
-  t.equal(vega.toDate(d), d);
-  t.ok(isNaN(vega.toDate(true)));
-  t.ok(isNaN(vega.toDate(false)));
-  t.end();
+  expect(vega.toDate(null)).toBe(null);
+  expect(vega.toDate(undefined)).toBe(null);
+  expect(vega.toDate('')).toBe(null);
+  expect(vega.toDate('1/1/2000')).toBe(Date.parse('1/1/2000'));
+  expect(isNaN(vega.toDate('foo'))).toBeTruthy();
+  expect(vega.toDate(0)).toBe(0);
+  expect(vega.toDate(1)).toBe(1);
+  expect(vega.toDate(now)).toBe(now);
+  expect(vega.toDate(d)).toBe(d);
+  expect(isNaN(vega.toDate(true))).toBeTruthy();
+  expect(isNaN(vega.toDate(false))).toBeTruthy();
 });
 
-tape('toDate parses dates with custom parser', function(t) {
+test('toDate parses dates with custom parser', function() {
   function parser(_) {
     return _ === 'epoch' ? 0 : NaN;
   }
 
-  t.equal(vega.toDate(null, parser), null);
-  t.equal(vega.toDate(undefined, parser), null);
-  t.equal(vega.toDate('', parser), null);
-  t.ok(isNaN(vega.toDate('1/1/2000', parser)));
-  t.ok(isNaN(vega.toDate('foo', parser)));
-  t.ok(isNaN(vega.toDate(Date.now(), parser)));
-  t.ok(isNaN(vega.toDate(new Date(), parser)));
-  t.equal(vega.toDate('epoch', parser), 0);
-  t.end();
+  expect(vega.toDate(null, parser)).toBe(null);
+  expect(vega.toDate(undefined, parser)).toBe(null);
+  expect(vega.toDate('', parser)).toBe(null);
+  expect(isNaN(vega.toDate('1/1/2000', parser))).toBeTruthy();
+  expect(isNaN(vega.toDate('foo', parser))).toBeTruthy();
+  expect(isNaN(vega.toDate(Date.now(), parser))).toBeTruthy();
+  expect(isNaN(vega.toDate(new Date(), parser))).toBeTruthy();
+  expect(vega.toDate('epoch', parser)).toBe(0);
 });
 
-tape('toNumber parses numbers', function(t) {
-  t.equal(vega.toNumber(null), null);
-  t.equal(vega.toNumber(undefined), null);
-  t.equal(vega.toNumber(''), null);
-  t.equal(vega.toNumber('0'), 0);
-  t.equal(vega.toNumber('1'), 1);
-  t.equal(vega.toNumber('1e5'), 1e5);
-  t.ok(isNaN(vega.toNumber('foo')));
-  t.equal(vega.toNumber(0), 0);
-  t.equal(vega.toNumber(1), 1);
-  t.equal(vega.toNumber(1e5), 1e5);
-  t.equal(vega.toNumber(true), 1);
-  t.equal(vega.toNumber(false), 0);
-  t.end();
+test('toNumber parses numbers', function() {
+  expect(vega.toNumber(null)).toBe(null);
+  expect(vega.toNumber(undefined)).toBe(null);
+  expect(vega.toNumber('')).toBe(null);
+  expect(vega.toNumber('0')).toBe(0);
+  expect(vega.toNumber('1')).toBe(1);
+  expect(vega.toNumber('1e5')).toBe(1e5);
+  expect(isNaN(vega.toNumber('foo'))).toBeTruthy();
+  expect(vega.toNumber(0)).toBe(0);
+  expect(vega.toNumber(1)).toBe(1);
+  expect(vega.toNumber(1e5)).toBe(1e5);
+  expect(vega.toNumber(true)).toBe(1);
+  expect(vega.toNumber(false)).toBe(0);
 });
 
-tape('toString parses strings', function(t) {
-  t.equal(vega.toString(null), null);
-  t.equal(vega.toString(undefined), null);
-  t.equal(vega.toString(''), null);
-  t.equal(vega.toString('a'), 'a');
-  t.equal(vega.toString(0), '0');
-  t.equal(vega.toString(1), '1');
-  t.equal(vega.toString(true), 'true');
-  t.equal(vega.toString(false), 'false');
-  t.end();
+test('toString parses strings', function() {
+  expect(vega.toString(null)).toBe(null);
+  expect(vega.toString(undefined)).toBe(null);
+  expect(vega.toString('')).toBe(null);
+  expect(vega.toString('a')).toBe('a');
+  expect(vega.toString(0)).toBe('0');
+  expect(vega.toString(1)).toBe('1');
+  expect(vega.toString(true)).toBe('true');
+  expect(vega.toString(false)).toBe('false');
 });

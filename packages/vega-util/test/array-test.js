@@ -1,19 +1,16 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('array wraps values in an array', function(t) {
+test('array wraps values in an array', function() {
   // should return an empty array for null argument
-  t.deepEqual(vega.array(null), []);
+  expect(vega.array(null)).toEqual([]);
 
   // should return an empty array for undefined argument
-  t.deepEqual(vega.array(), []);
+  expect(vega.array()).toEqual([]);
 
   // should return an unmodified array argument
   var value = [1, 2, 3];
-  t.equal(vega.array(value), value);
+  expect(vega.array(value)).toBe(value);
 
   // should return an array for non-array argument
-  t.deepEqual(vega.array(1), [1]);
-
-  t.end();
+  expect(vega.array(1)).toEqual([1]);
 });

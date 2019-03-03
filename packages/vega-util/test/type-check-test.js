@@ -1,67 +1,58 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('isArray tests arrays', function(t) {
-  t.equal(vega.isArray([]), true);
-  t.equal(vega.isArray({}), false);
-  t.equal(vega.isArray('a'), false);
-  t.end();
+test('isArray tests arrays', function() {
+  expect(vega.isArray([])).toBe(true);
+  expect(vega.isArray({})).toBe(false);
+  expect(vega.isArray('a')).toBe(false);
 });
 
-tape('isBoolean tests booleans', function(t) {
-  t.equal(vega.isBoolean(true), true);
-  t.equal(vega.isBoolean(false), true);
-  t.equal(vega.isBoolean({}), false);
-  t.equal(vega.isBoolean('a'), false);
-  t.equal(vega.isBoolean(0), false);
-  t.end();
+test('isBoolean tests booleans', function() {
+  expect(vega.isBoolean(true)).toBe(true);
+  expect(vega.isBoolean(false)).toBe(true);
+  expect(vega.isBoolean({})).toBe(false);
+  expect(vega.isBoolean('a')).toBe(false);
+  expect(vega.isBoolean(0)).toBe(false);
 });
 
-tape('isDate tests dates', function(t) {
-  t.equal(vega.isDate(new Date()), true);
-  t.equal(vega.isDate(Date.now()), false);
-  t.equal(vega.isDate({}), false);
-  t.equal(vega.isDate([]), false);
-  t.end();
+test('isDate tests dates', function() {
+  expect(vega.isDate(new Date())).toBe(true);
+  expect(vega.isDate(Date.now())).toBe(false);
+  expect(vega.isDate({})).toBe(false);
+  expect(vega.isDate([])).toBe(false);
 });
 
-tape('isFunction tests functions', function(t) {
-  t.equal(vega.isFunction(function() { return 1; }), true);
-  t.equal(vega.isFunction({}), false);
-  t.equal(vega.isFunction(null), false);
-  t.end();
+test('isFunction tests functions', function() {
+  expect(vega.isFunction(function() { return 1; })).toBe(true);
+  expect(vega.isFunction({})).toBe(false);
+  expect(vega.isFunction(null)).toBe(false);
 });
 
-tape('isNumber tests numbers', function(t) {
-  t.equal(vega.isNumber(0), true);
-  t.equal(vega.isNumber(1e5), true);
-  t.equal(vega.isNumber(null), false);
-  t.equal(vega.isNumber('a'), false);
-  t.equal(vega.isNumber('1'), false);
-  t.end();
+test('isNumber tests numbers', function() {
+  expect(vega.isNumber(0)).toBe(true);
+  expect(vega.isNumber(1e5)).toBe(true);
+  expect(vega.isNumber(null)).toBe(false);
+  expect(vega.isNumber('a')).toBe(false);
+  expect(vega.isNumber('1')).toBe(false);
 });
 
-tape('isObject tests objects', function(t) {
-  t.equal(vega.isObject({}), true);
-  t.equal(vega.isObject([]), true);
-  t.equal(vega.isObject(new Date()), true);
-  t.equal(vega.isObject(0), false);
-  t.equal(vega.isObject('a'), false);
-  t.equal(vega.isObject(true), false);
-  t.end();
+test('isObject tests objects', function() {
+  expect(vega.isObject({})).toBe(true);
+  expect(vega.isObject([])).toBe(true);
+  expect(vega.isObject(new Date())).toBe(true);
+  expect(vega.isObject(0)).toBe(false);
+  expect(vega.isObject('a')).toBe(false);
+  expect(vega.isObject(true)).toBe(false);
 });
 
-tape('isRegExp tests regular expressions', function(t) {
-  t.equal(vega.isRegExp(/grep+/), true);
-  t.equal(vega.isRegExp(null), false);
-  t.equal(vega.isRegExp('a'), false);
-  t.end();
+test('isRegExp tests regular expressions', function() {
+  expect(vega.isRegExp(/grep+/)).toBe(true);
+  expect(vega.isRegExp(null)).toBe(false);
+  expect(vega.isRegExp('a')).toBe(false);
 });
 
-tape('isString tests strings', function(t) {
-  t.equal(vega.isString(''), true);
-  t.equal(vega.isString('a'), true);
-  t.equal(vega.isString([]), false);
-  t.equal(vega.isString(0), false);
-  t.end();
+test('isString tests strings', function() {
+  expect(vega.isString('')).toBe(true);
+  expect(vega.isString('a')).toBe(true);
+  expect(vega.isString([])).toBe(false);
+  expect(vega.isString(0)).toBe(false);
 });

@@ -1,75 +1,70 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('fastmap maps keys to values', function(t) {
+test('fastmap maps keys to values', function() {
   var m = vega.fastmap();
 
   m.set('foo', 1);
   m.set('bar', 2);
   m.set('baz', 3);
 
-  t.equal(m.has('foo'), true);
-  t.equal(m.has('bar'), true);
-  t.equal(m.has('baz'), true);
-  t.equal(m.has('bak'), false);
+  expect(m.has('foo')).toBe(true);
+  expect(m.has('bar')).toBe(true);
+  expect(m.has('baz')).toBe(true);
+  expect(m.has('bak')).toBe(false);
 
-  t.equal(m.get('foo'), 1);
-  t.equal(m.get('bar'), 2);
-  t.equal(m.get('baz'), 3);
-  t.equal(m.get('bak'), undefined);
+  expect(m.get('foo')).toBe(1);
+  expect(m.get('bar')).toBe(2);
+  expect(m.get('baz')).toBe(3);
+  expect(m.get('bak')).toBe(undefined);
 
-  t.equal(m.size, 3);
+  expect(m.size).toBe(3);
 
   m.delete('foo');
-  t.equal(m.size, 2);
-  t.equal(m.empty, 1);
-  t.equal(m.get('foo'), undefined);
+  expect(m.size).toBe(2);
+  expect(m.empty).toBe(1);
+  expect(m.get('foo')).toBe(undefined);
 
   m.set('foo', 4);
-  t.equal(m.size, 3);
-  t.equal(m.empty, 0);
-  t.equal(m.get('foo'), 4);
+  expect(m.size).toBe(3);
+  expect(m.empty).toBe(0);
+  expect(m.get('foo')).toBe(4);
 
   m.delete('bar');
   m.delete('baz');
-  t.equal(m.size, 1);
-  t.equal(m.empty, 2);
+  expect(m.size).toBe(1);
+  expect(m.empty).toBe(2);
 
   m.clean();
-  t.equal(m.size, 1);
-  t.equal(m.empty, 0);
+  expect(m.size).toBe(1);
+  expect(m.empty).toBe(0);
 
   m.clear();
-  t.equal(m.size, 0);
-  t.equal(m.empty, 0);
-  t.equal(m.has('foo'), false);
-  t.equal(m.get('foo'), undefined);
-
-  t.end();
+  expect(m.size).toBe(0);
+  expect(m.empty).toBe(0);
+  expect(m.has('foo')).toBe(false);
+  expect(m.get('foo')).toBe(undefined);
 });
 
-tape('fastmap accepts object as argument', function(t) {
+test('fastmap accepts object as argument', function() {
   var m = vega.fastmap({a:1, b:2});
-  t.equal(m.size, 2);
-  t.equal(m.empty, 0);
-  t.equal(m.has('a'), true);
-  t.equal(m.has('b'), true);
-  t.equal(m.get('a'), 1);
-  t.equal(m.get('b'), 2);
-  t.end();
+  expect(m.size).toBe(2);
+  expect(m.empty).toBe(0);
+  expect(m.has('a')).toBe(true);
+  expect(m.has('b')).toBe(true);
+  expect(m.get('a')).toBe(1);
+  expect(m.get('b')).toBe(2);
 });
 
-tape('fastmap supports external clean test', function(t) {
+test('fastmap supports external clean test', function() {
   var m = vega.fastmap({a:1, b:2, c:1});
 
   m.test(function(value) { return value === 1; });
   m.clean();
 
-  t.equal(m.size, 1);
-  t.equal(m.empty, 0);
-  t.equal(m.has('a'), false);
-  t.equal(m.has('b'), true);
-  t.equal(m.has('c'), false);
-  t.equal(m.get('b'), 2);
-  t.end();
+  expect(m.size).toBe(1);
+  expect(m.empty).toBe(0);
+  expect(m.has('a')).toBe(false);
+  expect(m.has('b')).toBe(true);
+  expect(m.has('c')).toBe(false);
+  expect(m.get('b')).toBe(2);
 });
