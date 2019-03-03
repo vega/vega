@@ -47,7 +47,7 @@ rollup.rollup({
   input: 'index.js',
   external: external,
   plugins: [
-    nodeResolve({module: true, browser: true}),
+    nodeResolve({browser: true}),
     json()
   ],
   onwarn: function(warning) {
