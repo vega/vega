@@ -9,5 +9,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update              ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cairo pango ; fi
 script:
+  - yarn lerna run build
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn lerna run --scope vega-scenegraph test    ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn lerna run --ignore vega-scenegraph test ; fi
