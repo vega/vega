@@ -1,6 +1,7 @@
 import { SignalRef } from '.';
 
 export type LayoutAlign = 'all' | 'each' | 'none';
+export type LayoutTitleAnchor = 'start' | 'end';
 export type LayoutBounds = 'full' | 'flush' | SignalRef;
 export type LayoutOffset =
   | number
@@ -28,6 +29,8 @@ export interface LayoutParams {
 
   headerBand?: number | SignalRef | RowColumn<number>;
   footerBand?: number | SignalRef | RowColumn<number>;
+
+  titleAnchor?: LayoutTitleAnchor | SignalRef | RowColumn<LayoutTitleAnchor>;
   titleBand?: number | SignalRef | RowColumn<number>;
 }
 

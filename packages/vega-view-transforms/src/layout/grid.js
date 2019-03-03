@@ -231,7 +231,7 @@ export function trellisLayout(view, group, opt) {
       ncols = opt.columns || groups.length,
       nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
       cells = nrows * ncols,
-      x, y, band, offset;
+      x, y, x2, y2, anchor, band, offset;
 
   // -- initial grid layout
   const bounds = gridLayout(view, groups, opt);
@@ -253,25 +253,29 @@ export function trellisLayout(view, group, opt) {
   // perform row footer layout
   if (views.rowfooters) {
     band = get(opt.footerBand, Row, null);
-    layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'), max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+    x2 = layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get(off, 'rowFooter'), max, 0, bbox, 'x2', ncols-1, ncols, 1, band);
   }
 
   // perform column footer layout
   if (views.colfooters) {
     band = get(opt.footerBand, Column, null);
-    layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+    y2 = layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get(off, 'columnFooter'), max, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
   }
 
   // perform row title layout
   if (views.rowtitle) {
-    offset = x - get(off, 'rowTitle');
+    anchor = get(opt.titleAnchor, Row);
+    offset = get(off, 'rowTitle');
+    offset = anchor === End ? x2 + offset : x - offset;
     band = get(opt.titleBand, Row, 0.5);
     layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
   }
 
   // perform column title layout
   if (views.coltitle) {
-    offset = y - get(off, 'columnTitle');
+    anchor = get(opt.titleAnchor, Column);
+    offset = get(off, 'columnTitle');
+    offset = anchor === End ? y2 + offset : y - offset;
     band = get(opt.titleBand, Column, 0.5);
     layoutTitle(view, views.coltitle, offset, 1, bounds, band);
   }
