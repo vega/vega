@@ -1841,6 +1841,55 @@
                   "additionalProperties": false
                 }
               ]
+            },
+            "titleAnchor": {
+              "oneOf": [
+                {
+                  "oneOf": [
+                    {
+                      "enum": [
+                        "start",
+                        "end"
+                      ]
+                    },
+                    {
+                      "$ref": "#/refs/signal"
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "row": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "start",
+                            "end"
+                          ]
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    },
+                    "column": {
+                      "oneOf": [
+                        {
+                          "enum": [
+                            "start",
+                            "end"
+                          ]
+                        },
+                        {
+                          "$ref": "#/refs/signal"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
             }
           },
           "additionalProperties": false
