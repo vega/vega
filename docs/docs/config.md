@@ -34,7 +34,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 ## <a name="reference"></a>Config Reference
 
 - [View Properties](#view)
-- [Event Properties](#event)
+- [Event Properties](#events)
 - [Mark Properties](#mark)
 - [Style Properties](#style)
 - [Axis Properties](#axes)
@@ -283,7 +283,8 @@ Properties defining default settings for legends. These properties are defined u
 | labelOpacity          | {% include type t="Number" %}   | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap          | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
 | labelSeparation       | {% include type t="Number" %}  | {% include tag ver="5.0" %} The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.|
-| offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. |
+| layout                | [Layout](#legends-layout)      | {% include tag ver="5.0" %} An object specifying layout parameters for positioning a collection of legends with the same *orient* value.|
+| offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. If specified, this value will override any values specified in the [legend layout config](#legends-layout).|
 | orient                | {% include type t="String" %}   | Default legend orientation (e.g., `"right"` or `"left"`). |
 | padding               | {% include type t="Number" %}   | Padding in pixels between legend border and contents. |
 | rowPadding            | {% include type t="Number" %}   | The vertical padding in pixels between symbol legend entries. |
@@ -315,9 +316,25 @@ Properties defining default settings for legends. These properties are defined u
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 
+### <a name="legends-layout"></a>Legend Layout Properties {% include tag ver="5.0" %}
+
+Collections of legends with the same *orient* value are positioned together, either vertically or horizontally in sequence. The legend *layout* property enables customization of how legends are organized within a Vega view. The *layout* property is an object value that may contain both top-level properties that apply to all legends and a set of *orient*-specific properties for customizing specific legend orientations.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| anchor                | {% include type t="String" %}   | An anchor value determining the placement of the legends relative to the nearest axis. One of `"start"` (default), `"middle"`, or `"end"`. For example, for legends with *orient* `"top"`, these values respectively correspond to anchoring the legends to the left edge, center, or right edge of the charting area. This property only applies to axes with an *orient* value of `"left"`, `"right"`, `"top"`, or `"bottom"`.|
+| bounds                | {% include type t="String" %}   | The type of bounding box calculation to use for calculating legend extents. One of `"flush"` (the default, for using legend width and height values only) or `"full"` (to use the full bounding box, for example including border stroke widths).|
+| center                | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if legends should be centered within the respective layout area. For example, given a vertical direction, two legends will share a left edge by default. If *center* is true, the smaller legends will be centered in the space spanned by all the legends.|
+| direction             | {% include type t="String" %}   | The direction in which subsequent legends should be spatially positioned. One of `"horizontal"` or `"vertical"`.|
+| margin                | {% include type t="Number" %}   | Margin, in pixels, to place between consecutive legends with the same *orient* value. |
+| offset                | {% include type t="Number" %}   | Offset, in pixels, of the
+legend from the chart body. |
+
+In addition to these top-level properties, the legend layout may include sub-objects (containing the same properties listed above) for any of the legal [legend *orient* values](../legends/#orientation) other than `"none"`: `"left"`, `"right"`, `"top"`, `"bottom"`, `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`.
+
 ### Usage
 
-This example gives every legend a 10 pixel padding and a light gray border.
+This example gives every legend a 10 pixel padding and a light gray border:
 
 ```json
 {
@@ -325,6 +342,23 @@ This example gives every legend a 10 pixel padding and a light gray border.
     "padding": 10,
     "legendStrokeColor": "#ccc",
     "legendStrokeWidth": 1
+  }
+}
+```
+
+This example customizes the layout of legends with *orient* value `"bottom"`, stacking those legends vertically with 2 pixel margins, anchoring their x-positon to the middle of the chart area, and centering the legends within their layout area:
+
+```json
+{
+  "legend": {
+    "layout": {
+      "bottom": {
+        "anchor": "middle",
+        "direction": "vertical",
+        "center": true,
+        "margin": 2,
+      }
+    }
   }
 }
 ```

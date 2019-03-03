@@ -20,7 +20,7 @@ tape('Parser parses Vega specs with axes', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 45);
+  t.equal(dfs.operators.length, 46);
 
   t.end();
 });

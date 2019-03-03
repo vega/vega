@@ -25,15 +25,15 @@ module.exports = function(type, callback, opt) {
   // instantiate view and invoke async render method
   function render(spec) {
     const view = new vega.View(vega.parse(spec, config), {
-        loader: vega.loader({baseURL: base}),
+        loader:   vega.loader({baseURL: base}),
         logLevel: vega.Warn,
         renderer: 'none'
-      })
-      .initialize()
-      .finalize();
+      }).finalize();
 
-    return (type === 'svg' ? view.toSVG(scale) : view.toCanvas(scale, opt))
-      .then(_ => callback(_, arg));
+    return (type === 'svg'
+        ? view.toSVG(scale)
+        : view.toCanvas(scale, opt)
+      ).then(_ => callback(_, arg));
   }
 
   // read input from file or stdin

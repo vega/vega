@@ -77,7 +77,7 @@ export default function View(spec, options) {
   );
 
   // initialize background color
-  view._background = ctx.background || null;
+  view._background = options.background || ctx.background || null;
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(ctx.eventConfig);
@@ -94,6 +94,12 @@ export default function View(spec, options) {
 
   // initialize cursor
   cursor(view);
+
+  // initialize hover proessing, if requested
+  if (options.hover) view.hover();
+
+  // initialize DOM container(s) and renderer
+  if (options.container) view.initialize(options.container, options.bind);
 }
 
 var prototype = inherits(View, Dataflow);

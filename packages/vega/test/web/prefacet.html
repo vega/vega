@@ -113,11 +113,13 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .renderer('svg')
-  .hover()
-  .run();
+var view = new vega.View(runtimeSpec, {
+  container: '#view',
+  renderer:  'svg',
+  hover:     true
+});
+
+view.runAsync();
     </script>
   </body>
 </html>

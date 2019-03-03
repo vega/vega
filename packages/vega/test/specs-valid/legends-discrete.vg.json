@@ -140,33 +140,33 @@
       "name": "bins5",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "domain": {"signal": "sequence(bins5.start, bins5.stop + bins5.step, bins5.step)"}
+      "bins": {"signal": "bins5"}
     },
     {
       "name": "bins10",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "domain": {"signal": "sequence(bins10.start, bins10.stop + bins10.step, bins10.step)"}
+      "bins": {"signal": "bins10"}
     }
   ],
 
   "legends": [
-    {"orient": "left",  "type": "gradient", "fill": "qua2", "title": "Quantize 2", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua3", "title": "Quantize 3", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua4", "title": "Quantize 4", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua5", "title": "Quantize 5", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua6", "title": "Quantize 6", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua7", "title": "Quantize 7", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua8", "title": "Quantize 8", "format": ".3f"},
-    {"orient": "left",  "type": "gradient", "fill": "qua9", "title": "Quantize 9", "format": ".3f"},
+    {"orient": "left",  "type": "gradient", "fill": "qua2", "title": "Quantize 2"},
+    {"orient": "left",  "type": "gradient", "fill": "qua3", "title": "Quantize 3"},
+    {"orient": "left",  "type": "gradient", "fill": "qua4", "title": "Quantize 4"},
+    {"orient": "left",  "type": "gradient", "fill": "qua5", "title": "Quantize 5"},
+    {"orient": "left",  "type": "gradient", "fill": "qua6", "title": "Quantize 6"},
+    {"orient": "left",  "type": "gradient", "fill": "qua7", "title": "Quantize 7"},
+    {"orient": "left",  "type": "gradient", "fill": "qua8", "title": "Quantize 8"},
+    {"orient": "left",  "type": "gradient", "fill": "qua9", "title": "Quantize 9"},
 
-    {"orient": "right", "type": "gradient", "fill": "tile3", "title": "Quantile 3", "format": ".0f"},
-    {"orient": "right", "type": "gradient", "fill": "tile5", "title": "Quantile 5", "format": ".0f"},
-    {"orient": "right", "type": "gradient", "fill": "tile7", "title": "Quantile 7", "format": ".0f"},
-    {"orient": "right", "type": "gradient", "fill": "thresh1", "title": "Threshold 1", "format": ".1f"},
-    {"orient": "right", "type": "gradient", "fill": "thresh2", "title": "Threshold 2", "format": ".1f"},
-    {"orient": "right", "type": "gradient", "fill": "thresh3", "title": "Threshold 3", "format": ".1f"},
-    {"orient": "right", "type": "gradient", "fill": "bins5", "title": "Bin-Ordinal 5", "format": ".1f"},
-    {"orient": "right", "type": "gradient", "fill": "bins10", "title": "Bin-Ordinal 10", "format": ".1f"}
+    {"orient": "right", "type": "gradient", "fill": "tile3", "title": "Quantile 3"},
+    {"orient": "right", "type": "gradient", "fill": "tile5", "title": "Quantile 5"},
+    {"orient": "right", "type": "gradient", "fill": "tile7", "title": "Quantile 7"},
+    {"orient": "right", "type": "gradient", "fill": "thresh1", "title": "Threshold 1"},
+    {"orient": "right", "type": "gradient", "fill": "thresh2", "title": "Threshold 2"},
+    {"orient": "right", "type": "gradient", "fill": "thresh3", "title": "Threshold 3"},
+    {"orient": "right", "type": "gradient", "fill": "bins5", "title": "Bin-Ordinal 5"},
+    {"orient": "right", "type": "gradient", "fill": "bins10", "title": "Bin-Ordinal 10"}
   ]
 }

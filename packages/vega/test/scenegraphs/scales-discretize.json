@@ -571,7 +571,7 @@
                                       "baseline": "middle",
                                       "fill": "#000",
                                       "opacity": 1,
-                                      "text": "< 37",
+                                      "text": "< 37.0",
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -618,7 +618,7 @@
                                       "baseline": "middle",
                                       "fill": "#000",
                                       "opacity": 1,
-                                      "text": "37–52.2",
+                                      "text": "37.0–52.2",
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }

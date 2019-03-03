@@ -12,10 +12,10 @@ import {
   TextBaseline,
 } from '.';
 import { BaseAxis, LabelOverlap } from './axis';
-import { LayoutAlign } from './layout';
+import { LayoutAlign, LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
 import { SignalRef } from './signal';
-import { BaseTitle } from './title';
+import { BaseTitle, TitleAnchor } from './title';
 import {
   AlignValue,
   ColorValue,
@@ -351,7 +351,8 @@ export interface LegendConfig<
   SY = SymbolShapeValue,
   DA = DashArrayValue,
   O = OrientValue,
-  AN = AnchorValue
+  AN = AnchorValue,
+  LL = LegendLayout
 > extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
@@ -402,6 +403,60 @@ export interface LegendConfig<
    * Border stroke width for the full legend.
    */
   strokeWidth?: N;
+
+  /**
+   * Legend orient group layout parameters.
+   */
+  layout?: LL;
+}
+
+export interface BaseLegendLayout<
+  NS = number | SignalRef,
+  BS = boolean | SignalRef,
+  OS = Orientation | SignalRef,
+  LB = LayoutBounds,
+  AN = TitleAnchor
+> {
+  /**
+   * The anchor point for legend orient group layout.
+   */
+  anchor?: AN;
+
+  /**
+   * The bounds calculation to use for legend orient group layout.
+   */
+  bounds?: LB;
+
+  /**
+   * A flag to center legends within a shared orient group.
+   */
+  center?: BS;
+
+  /**
+   * The layout direction for legend orient group layout.
+   */
+  direction?: OS;
+
+  /**
+   * The pixel margin between legends within a orient group.
+   */
+  margin?: NS;
+
+  /**
+   * The pixel offset from the chart body for a legend orient group.
+   */
+  offset?: NS;
+}
+
+export interface LegendLayout extends BaseLegendLayout {
+  left?: BaseLegendLayout;
+  right?: BaseLegendLayout;
+  top?: BaseLegendLayout;
+  bottom?: BaseLegendLayout;
+  'top-left'?: BaseLegendLayout;
+  'top-right'?: BaseLegendLayout;
+  'bottom-left'?: BaseLegendLayout;
+  'bottom-right'?: BaseLegendLayout;
 }
 
 export type TitleConfig = BaseTitle;
