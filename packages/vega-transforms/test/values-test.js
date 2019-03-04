@@ -1,13 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Aggregate = tx.aggregate,
-    Collect = tx.collect,
-    Values = tx.values;
+var util = require('vega-util'), vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, Aggregate = tx.aggregate, Collect = tx.collect, Values = tx.values;
 
-tape('Values extracts values', function(t) {
+test('Values extracts values', function() {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'c', v:2}, {k:'d', v:4}
@@ -21,18 +14,16 @@ tape('Values extracts values', function(t) {
 
   df.pulse(col, changeset().insert(data)).run();
   var values = val.value;
-  t.deepEqual(values, ['a', 'b', 'c', 'd']);
+  expect(values).toEqual(['a', 'b', 'c', 'd']);
 
   df.touch(val).run(); // no-op pulse
-  t.equal(val.value, values); // no change!
+  expect(val.value).toBe(values); // no change!
 
   df.update(srt, util.compare('v', 'descending')).run();
-  t.deepEqual(val.value, ['d', 'b', 'c', 'a']);
-
-  t.end();
+  expect(val.value).toEqual(['d', 'b', 'c', 'a']);
 });
 
-tape('Values extracts sorted domain values', function(t) {
+test('Values extracts sorted domain values', function() {
   var byCount = util.compare('count', 'descending'),
       key = util.field('k'),
       df = new vega.Dataflow(),
@@ -45,18 +36,16 @@ tape('Values extracts sorted domain values', function(t) {
   df.pulse(col, changeset().insert([
     {k:'b', v:1}, {k:'a', v:2}, {k:'a', v:3}
   ])).run();
-  t.deepEqual(val.value, ['a', 'b']);
+  expect(val.value).toEqual(['a', 'b']);
 
   // -- update
   df.pulse(col, changeset().insert([
     {k:'b', v:1}, {k:'b', v:2}, {k:'c', v:3}
   ])).run();
-  t.deepEqual(val.value, ['b', 'a', 'c']);
-
-  t.end();
+  expect(val.value).toEqual(['b', 'a', 'c']);
 });
 
-tape('Values extracts multi-domain values', function(t) {
+test('Values extracts multi-domain values', function() {
   var byCount = util.compare('count', 'descending'),
       count = util.field('count'),
       key = util.field('key'),
@@ -77,13 +66,11 @@ tape('Values extracts multi-domain values', function(t) {
   df.pulse(col, changeset().insert([
     {k1:'b', k2:'a'}, {k1:'a', k2:'c'}, {k1:'c', k2:'a'}
   ])).run();
-  t.deepEqual(val.value, ['a', 'c', 'b']);
+  expect(val.value).toEqual(['a', 'c', 'b']);
 
   // -- update
   df.pulse(col, changeset().insert([
     {k1:'b', k2:'b'}, {k1:'b', k2:'c'}, {k1:'b', k2:'c'}
   ])).run();
-  t.deepEqual(val.value, ['b', 'c', 'a']);
-
-  t.end();
+  expect(val.value).toEqual(['b', 'c', 'a']);
 });

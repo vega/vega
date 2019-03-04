@@ -1,9 +1,4 @@
-var tape = require('tape'),
-    d3 = require('d3-time-format'),
-    vega = require('../'),
-    inferType = vega.inferType,
-    inferTypes = vega.inferTypes,
-    typeParsers = vega.typeParsers;
+var d3 = require('d3-time-format'), vega = require('../'), inferType = vega.inferType, inferTypes = vega.inferTypes, typeParsers = vega.typeParsers;
 
 var fields = ['a', 'b', 'c', 'd', 'e'];
 
@@ -29,90 +24,72 @@ var types = {
   e: 'number'
 };
 
-tape('inferType should infer booleans', function(t) {
-  t.equal(inferType(['true', 'false', NaN, null]), 'boolean');
-  t.equal(inferType([true, false, null]), 'boolean');
-  t.end();
+test('inferType should infer booleans', function() {
+  expect(inferType(['true', 'false', NaN, null])).toBe('boolean');
+  expect(inferType([true, false, null])).toBe('boolean');
 });
 
-tape('inferType should infer integers', function(t) {
-  t.equal(inferType(['0', '1', null, '3', NaN, undefined, '-5']), 'integer');
-  t.equal(inferType([1, 2, 3]), 'integer');
-  t.end();
+test('inferType should infer integers', function() {
+  expect(inferType(['0', '1', null, '3', NaN, undefined, '-5'])).toBe('integer');
+  expect(inferType([1, 2, 3])).toBe('integer');
 });
 
-tape('inferType should infer numbers', function(t) {
-  t.equal(inferType(['0', '1', null, '3.1415', NaN, 'Infinity', '1e-5']), 'number');
-  t.equal(inferType([1, 2.2, 3]), 'number');
-  t.end();
+test('inferType should infer numbers', function() {
+  expect(inferType(['0', '1', null, '3.1415', NaN, 'Infinity', '1e-5'])).toBe('number');
+  expect(inferType([1, 2.2, 3])).toBe('number');
 });
 
-tape('inferType should infer dates', function(t) {
-  t.equal(inferType(['1/1/2001', null, NaN, 'Jan 5, 2001']), 'date');
-  t.equal(inferType([new Date('1/1/2001'), null, new Date('Jan 5, 2001')]), 'date');
-  t.end();
+test('inferType should infer dates', function() {
+  expect(inferType(['1/1/2001', null, NaN, 'Jan 5, 2001'])).toBe('date');
+  expect(inferType([new Date('1/1/2001'), null, new Date('Jan 5, 2001')])).toBe('date');
 });
 
-tape('inferType should infer strings when all else fails', function(t) {
-  t.equal(inferType(['hello', '', '1', 'true', null]), 'string');
-  t.end();
+test('inferType should infer strings when all else fails', function() {
+  expect(inferType(['hello', '', '1', 'true', null])).toBe('string');
 });
 
-tape('inferType should handle fields', function(t) {
+test('inferType should handle fields', function() {
   var data = [
     {a:'1', b:'true'},
     {a:'2', b:'false'},
     {a:'3', b:null}
   ];
-  t.equal(inferType(data, 'a'), 'integer');
-  t.equal(inferType(data, 'b'), 'boolean');
-  t.end();
+  expect(inferType(data, 'a')).toBe('integer');
+  expect(inferType(data, 'b')).toBe('boolean');
 });
 
-tape('inferTypes should infer types for all fields', function(t) {
-  t.deepEqual(inferTypes(data, fields), types);
-  t.deepEqual(inferTypes(strings, fields), types);
-  t.end();
+test('inferTypes should infer types for all fields', function() {
+  expect(inferTypes(data, fields)).toEqual(types);
+  expect(inferTypes(strings, fields)).toEqual(types);
 });
 
-tape('type parsers should parse booleans', function(t) {
-  t.equal(typeParsers.boolean('true'), true);
-  t.equal(typeParsers.boolean('false'), false);
-  t.equal(typeParsers.boolean(null), null);
-  t.end();
+test('type parsers should parse booleans', function() {
+  expect(typeParsers.boolean('true')).toBe(true);
+  expect(typeParsers.boolean('false')).toBe(false);
+  expect(typeParsers.boolean(null)).toBe(null);
 });
 
-tape('type parsers should parse numbers', function(t) {
-  t.equal(typeParsers.number('1'), 1);
-  t.equal(typeParsers.number('3.14'), 3.14);
-  t.equal(typeParsers.number('1e2'), 100);
-  t.equal(typeParsers.number(null), null);
-  t.end();
+test('type parsers should parse numbers', function() {
+  expect(typeParsers.number('1')).toBe(1);
+  expect(typeParsers.number('3.14')).toBe(3.14);
+  expect(typeParsers.number('1e2')).toBe(100);
+  expect(typeParsers.number(null)).toBe(null);
 });
 
-tape('type parsers should parse date', function(t) {
-  t.equal(+typeParsers.date('1/1/2000'), +(new Date(2000, 0, 1)));
-  t.equal(typeParsers.date(null), null);
-  t.end();
+test('type parsers should parse date', function() {
+  expect(+typeParsers.date('1/1/2000')).toBe(+(new Date(2000, 0, 1)));
+  expect(typeParsers.date(null)).toBe(null);
 });
 
-tape('type parsers should parse date with format', function(t) {
-  t.equal(
-    +typeParsers.date('18.07.1990', d3.timeParse('%d.%m.%Y')),
-    +(new Date(1990, 6, 18))
-  );
-  t.equal(
-    +typeParsers.date('07.18.1990', d3.timeParse('%m.%d.%Y')),
-    +(new Date(1990, 6, 18))
-  );
-  t.equal(typeParsers.date(null, '%d.%m.%Y'), null);
-  t.end();
+test('type parsers should parse date with format', function() {
+  expect(+typeParsers.date('18.07.1990', d3.timeParse('%d.%m.%Y'))).toBe(+(new Date(1990, 6, 18)));
+  expect(+typeParsers.date('07.18.1990', d3.timeParse('%m.%d.%Y'))).toBe(+(new Date(1990, 6, 18)));
+  expect(typeParsers.date(null, '%d.%m.%Y')).toBe(null);
 });
 
-tape('type parsers should parse strings', function(t) {
-  t.equal(typeParsers.string('a'), 'a');
-  t.equal(typeParsers.string('bb'), 'bb');
-  t.equal(typeParsers.string(''), null);
-  t.equal(typeParsers.string(null), null);
-  t.end();
+test('type parsers should parse strings', function() {
+  expect(typeParsers.string('a')).toBe('a');
+  expect(typeParsers.string('bb')).toBe('bb');
+  expect(typeParsers.string('')).toBe(null);
+  expect(typeParsers.string(null)).toBe(null);
 });

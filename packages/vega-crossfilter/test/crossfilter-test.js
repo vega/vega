@@ -1,13 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    xf = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    CrossFilter = xf.crossfilter,
-    ResolveFilter = xf.resolvefilter;
+var util = require('vega-util'), vega = require('vega-dataflow'), xf = require('../'), changeset = vega.changeset, Collect = require('vega-transforms').collect, CrossFilter = xf.crossfilter, ResolveFilter = xf.resolvefilter;
 
-tape('Crossfilter filters tuples', function(t) {
+test('Crossfilter filters tuples', function() {
   var data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
@@ -29,57 +22,55 @@ tape('Crossfilter filters tuples', function(t) {
 
   // -- add data
   df.pulse(c0, changeset().insert(data)).run();
-  t.equal(o1.value.length, 4);
-  t.equal(o2.value.length, 4);
-  t.equal(on.value.length, 4);
+  expect(o1.value.length).toBe(4);
+  expect(o2.value.length).toBe(4);
+  expect(on.value.length).toBe(4);
 
   // -- update single query
   df.update(r2, [1,2]).run();
-  t.equal(o1.value.length, 4);
-  t.equal(o2.value.length, 2);
-  t.equal(on.value.length, 2);
+  expect(o1.value.length).toBe(4);
+  expect(o2.value.length).toBe(2);
+  expect(on.value.length).toBe(2);
 
   // -- update multiple queries
   df.update(r1, [1,3])
     .update(r2, [3,4])
     .run();
-  t.equal(o1.value.length, 3);
-  t.equal(o2.value.length, 2);
-  t.equal(on.value.length, 1);
+  expect(o1.value.length).toBe(3);
+  expect(o2.value.length).toBe(2);
+  expect(on.value.length).toBe(1);
 
   // -- remove data
   df.pulse(c0, changeset().remove(data.slice(0, 2))).run();
-  t.equal(o1.value.length, 1);
-  t.equal(o2.value.length, 2);
-  t.equal(on.value.length, 1);
+  expect(o1.value.length).toBe(1);
+  expect(o2.value.length).toBe(2);
+  expect(on.value.length).toBe(1);
 
   // -- remove more data
   df.pulse(c0, changeset().remove(data.slice(-2))).run();
-  t.equal(o1.value.length, 0);
-  t.equal(o2.value.length, 0);
-  t.equal(on.value.length, 0);
+  expect(o1.value.length).toBe(0);
+  expect(o2.value.length).toBe(0);
+  expect(on.value.length).toBe(0);
 
   // -- add data back
   df.pulse(c0, changeset().insert(data)).run();
-  t.equal(o1.value.length, 3);
-  t.equal(o2.value.length, 2);
-  t.equal(on.value.length, 1);
+  expect(o1.value.length).toBe(3);
+  expect(o2.value.length).toBe(2);
+  expect(on.value.length).toBe(1);
 
   // -- modify non-indexed values
   df.pulse(c0, changeset()
     .modify(data[0], 'c', 5)
     .modify(data[3], 'c', 5)).run();
-  t.equal(o1.value.length, 3);
-  t.equal(o2.value.length, 2);
-  t.equal(on.value.length, 1);
-  t.equal(o1.pulse.materialize().mod.length, 2);
-  t.equal(o2.pulse.materialize().mod.length, 1);
-  t.equal(on.pulse.materialize().mod.length, 1);
-
-  t.end();
+  expect(o1.value.length).toBe(3);
+  expect(o2.value.length).toBe(2);
+  expect(on.value.length).toBe(1);
+  expect(o1.pulse.materialize().mod.length).toBe(2);
+  expect(o2.pulse.materialize().mod.length).toBe(1);
+  expect(on.pulse.materialize().mod.length).toBe(1);
 });
 
-tape('Crossfilter consolidates after remove', function(t) {
+test('Crossfilter consolidates after remove', function() {
   var data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
@@ -104,21 +95,19 @@ tape('Crossfilter consolidates after remove', function(t) {
 
   // were dimensions appropriately remapped?
   cf._dims.map(function(dim) {
-    t.equal(dim.size(), 2);
+    expect(dim.size()).toBe(2);
 
     var idx = dim.index();
-    t.equal(idx[0], 1);
-    t.equal(idx[1], 0);
+    expect(idx[0]).toBe(1);
+    expect(idx[1]).toBe(0);
   });
 
   // was the filter state appropriately updated?
   var d = cf.value.data(),
       curr = cf.value.curr();
-  t.equal(cf.value.size(), 2);
-  t.equal(d[0], data[2]);
-  t.equal(d[1], data[3]);
-  t.equal(curr[0], (1 << 2) - 1); // first filter should fail all
-  t.equal(curr[1], 0); // second filter should pass all
-
-  t.end();
+  expect(cf.value.size()).toBe(2);
+  expect(d[0]).toBe(data[2]);
+  expect(d[1]).toBe(data[3]);
+  expect(curr[0]).toBe((1 << 2) - 1); // first filter should fail all
+  expect(curr[1]).toBe(0); // second filter should pass all
 });

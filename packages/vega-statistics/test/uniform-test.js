@@ -1,51 +1,45 @@
-var tape = require('tape'),
-    uniform = require('../').randomUniform;
+var uniform = require('../').randomUniform;
 
-tape('uniform generates random values', function(t) {
+test('uniform generates random values', function() {
   var s = uniform().sample();
-  t.ok(s >= 0 && s < 1);
+  expect(s >= 0 && s < 1).toBeTruthy();
 
   s = uniform(10).sample();
-  t.ok(s >= 0 && s < 10);
+  expect(s >= 0 && s < 10).toBeTruthy();
 
   s = uniform(5, 10).sample();
-  t.ok(s >= 5 && s < 10);
-
-  t.end();
+  expect(s >= 5 && s < 10).toBeTruthy();
 });
 
-tape('uniform evaluates the pdf', function(t) {
+test('uniform evaluates the pdf', function() {
   var n1 = uniform(-1, 1);
-  t.equal(n1.pdf(-2), 0.0);
-  t.equal(n1.pdf(2), 0.0);
-  t.equal(n1.pdf(0), 0.5);
-  t.equal(n1.pdf(-0.5), n1.pdf(0.5));
-  t.equal(n1.pdf(-1), n1.pdf(1));
-  t.end();
+  expect(n1.pdf(-2)).toBe(0.0);
+  expect(n1.pdf(2)).toBe(0.0);
+  expect(n1.pdf(0)).toBe(0.5);
+  expect(n1.pdf(-0.5)).toBe(n1.pdf(0.5));
+  expect(n1.pdf(-1)).toBe(n1.pdf(1));
 });
 
-tape('uniform evaluates the cdf', function(t) {
+test('uniform evaluates the cdf', function() {
   var n1 = uniform(-1, 1);
   // extreme values
-  t.equal(n1.cdf(-2), 0);
-  t.equal(n1.cdf(2), 1);
+  expect(n1.cdf(-2)).toBe(0);
+  expect(n1.cdf(2)).toBe(1);
   // in range values
-  t.equal(n1.cdf(0), 0.50);
-  t.equal(n1.cdf(-0.5), 0.25);
-  t.equal(n1.cdf(0.5), 0.75);
-  t.end();
+  expect(n1.cdf(0)).toBe(0.50);
+  expect(n1.cdf(-0.5)).toBe(0.25);
+  expect(n1.cdf(0.5)).toBe(0.75);
 });
 
-tape('uniform evaluates the inverse cdf', function(t) {
+test('uniform evaluates the inverse cdf', function() {
   var n1 = uniform(-1, 1);
   // extreme values
-  t.ok(isNaN(n1.icdf(-2)));
-  t.ok(isNaN(n1.icdf(2)));
-  t.equal(n1.icdf(0), -1);
-  t.equal(n1.icdf(1), 1);
+  expect(isNaN(n1.icdf(-2))).toBeTruthy();
+  expect(isNaN(n1.icdf(2))).toBeTruthy();
+  expect(n1.icdf(0)).toBe(-1);
+  expect(n1.icdf(1)).toBe(1);
   // in range values
-  t.equal(n1.icdf(0.5), 0);
-  t.equal(n1.icdf(0.25), -0.5);
-  t.equal(n1.icdf(0.75), 0.5);
-  t.end();
+  expect(n1.icdf(0.5)).toBe(0);
+  expect(n1.icdf(0.25)).toBe(-0.5);
+  expect(n1.icdf(0.75)).toBe(0.5);
 });

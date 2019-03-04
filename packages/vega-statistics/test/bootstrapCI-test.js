@@ -1,8 +1,6 @@
-var tape = require('tape'),
-    bootstrapCI = require('../').bootstrapCI;
+var bootstrapCI = require('../').bootstrapCI;
 
-tape('bootstrapCI returns array of undefined for empty data', function(t) {
+test('bootstrapCI returns array of undefined for empty data', function() {
   var ci = bootstrapCI([], 1000, 0.05);
-  t.deepEqual(ci, [undefined, undefined]);
-  t.end();
+  expect(ci).toEqual([undefined, undefined]);
 });

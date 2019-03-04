@@ -1,36 +1,30 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
 function parseSignal(spec, scope) {
   vega.signal(spec, scope);
   vega.signalUpdates(spec, scope);
 }
 
-tape('Parser parses static signals', function(t) {
+test('Parser parses static signals', function() {
   var scope = new vega.Scope();
 
   vega.signal({name: 'a', value: 'foo'}, scope);
   vega.signal({name: 'b', value: 'bar', react: true}, scope);
   vega.signal({name: 'c', value: 'baz', react: false}, scope);
 
-  t.equal(scope.operators.length, 3);
-  t.equal(Object.keys(scope.signals).length, 3);
-  t.equal(scope.signals.a.value, 'foo');
-  t.equal(scope.signals.b.value, 'bar');
-  t.equal(scope.signals.c.value, 'baz');
-  t.equal(scope.signals.a.react, undefined);
-  t.equal(scope.signals.b.react, undefined);
-  t.equal(scope.signals.c.react, false);
-
-  t.end();
+  expect(scope.operators.length).toBe(3);
+  expect(Object.keys(scope.signals).length).toBe(3);
+  expect(scope.signals.a.value).toBe('foo');
+  expect(scope.signals.b.value).toBe('bar');
+  expect(scope.signals.c.value).toBe('baz');
+  expect(scope.signals.a.react).toBe(undefined);
+  expect(scope.signals.b.react).toBe(undefined);
+  expect(scope.signals.c.react).toBe(false);
 });
 
-tape('Parser parses updating signals', function(t) {
-  // update: {expr: 'expr'} | {value: null} | {signal: 'name'},
-  t.end();
-});
+test('Parser parses updating signals', function() {});
 
-tape('Parser parses signals with event-driven updates', function(t) {
+test('Parser parses signals with event-driven updates', function() {
   var scope = new vega.Scope(),
       update, a, b, c, d;
 
@@ -78,42 +72,40 @@ tape('Parser parses signals with event-driven updates', function(t) {
     ]
   }, scope);
 
-  t.equal(Object.keys(scope.signals).length, 4);
-  t.equal(a = scope.signals.a.id, 0);
-  t.equal(b = scope.signals.b.id, 1);
-  t.equal(c = scope.signals.c.id, 3);
-  t.equal(d = scope.signals.d.id, 6);
-  t.equal(scope.signals.a.value, 1);
-  t.equal(scope.signals.b.value, 2);
-  t.equal(scope.signals.c.value, 3);
-  t.equal(scope.signals.d.value, 4);
+  expect(Object.keys(scope.signals).length).toBe(4);
+  expect(a = scope.signals.a.id).toBe(0);
+  expect(b = scope.signals.b.id).toBe(1);
+  expect(c = scope.signals.c.id).toBe(3);
+  expect(d = scope.signals.d.id).toBe(6);
+  expect(scope.signals.a.value).toBe(1);
+  expect(scope.signals.b.value).toBe(2);
+  expect(scope.signals.c.value).toBe(3);
+  expect(scope.signals.d.value).toBe(4);
 
-  t.equal(scope.updates.length, 4);
+  expect(scope.updates.length).toBe(4);
 
   update = scope.updates[0];
-  t.equal(update.source, 2);
-  t.equal(update.target, b);
-  t.equal(update.update, 4);
-  t.equal(update.options.force, true);
+  expect(update.source).toBe(2);
+  expect(update.target).toBe(b);
+  expect(update.update).toBe(4);
+  expect(update.options.force).toBe(true);
 
   update = scope.updates[1];
-  t.equal(update.source && update.source.$ref, a);
-  t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
-  t.equal(update.options, undefined);
+  expect(update.source && update.source.$ref).toBe(a);
+  expect(update.target).toBe(c);
+  expect(update.update.$expr).toBe('var datum=event.item&&event.item.datum;return((2*2));');
+  expect(update.options).toBe(undefined);
 
   update = scope.updates[2];
-  t.equal(update.source, 5);
-  t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
-  t.equal(update.options, undefined);
+  expect(update.source).toBe(5);
+  expect(update.target).toBe(c);
+  expect(update.update.$expr).toBe('var datum=event.item&&event.item.datum;return((2*2));');
+  expect(update.options).toBe(undefined);
 
   update = scope.updates[3];
-  t.equal(update.source, 2);
-  t.equal(update.target, d);
-  t.equal(update.update.$expr, '_.value');
-  t.equal(update.update.$params.value.$ref, c);
-  t.equal(update.options, undefined);
-
-  t.end();
+  expect(update.source).toBe(2);
+  expect(update.target).toBe(d);
+  expect(update.update.$expr).toBe('_.value');
+  expect(update.update.$params.value.$ref).toBe(c);
+  expect(update.options).toBe(undefined);
 });

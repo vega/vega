@@ -1,5 +1,4 @@
-var tape = require('tape'),
-    parse = require('../').parse;
+var parse = require('../').parse;
 
 var geojson = {
   "type": "FeatureCollection",
@@ -18,7 +17,7 @@ var geojson = {
   ]
 };
 
-tape('Parser parses Vega specs with projection', function(t) {
+test('Parser parses Vega specs with projection', function() {
   var spec = {
     "projections": [
         {
@@ -32,9 +31,7 @@ tape('Parser parses Vega specs with projection', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 14);
-  t.equal(dfs.operators[9].type, 'projection');
-  t.equal(dfs.operators[9].params.fit, geojson);
-
-  t.end();
+  expect(dfs.operators.length).toBe(14);
+  expect(dfs.operators[9].type).toBe('projection');
+  expect(dfs.operators[9].params.fit).toBe(geojson);
 });

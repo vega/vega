@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    DataJoin = encode.datajoin;
+var util = require('vega-util'), vega = require('vega-dataflow'), encode = require('../'), changeset = vega.changeset, Collect = require('vega-transforms').collect, DataJoin = encode.datajoin;
 
-tape('DataJoin joins tuples and items', function(t) {
+test('DataJoin joins tuples and items', function() {
   var data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
@@ -19,12 +13,12 @@ tape('DataJoin joins tuples and items', function(t) {
 
   // Insert data, check for resulting items
   df.pulse(c0, changeset().insert(data)).run();
-  t.equal(dj.pulse.add.length, 3);
-  t.equal(dj.pulse.rem.length, 0);
-  t.equal(dj.pulse.mod.length, 0);
-  t.equal(dj.pulse.add[0].datum, data[0]);
-  t.equal(dj.pulse.add[1].datum, data[1]);
-  t.equal(dj.pulse.add[2].datum, data[2]);
+  expect(dj.pulse.add.length).toBe(3);
+  expect(dj.pulse.rem.length).toBe(0);
+  expect(dj.pulse.mod.length).toBe(0);
+  expect(dj.pulse.add[0].datum).toBe(data[0]);
+  expect(dj.pulse.add[1].datum).toBe(data[1]);
+  expect(dj.pulse.add[2].datum).toBe(data[2]);
 
   // Redundant add should not change output size
   // Fake changeset to test invalid insert
@@ -34,36 +28,34 @@ tape('DataJoin joins tuples and items', function(t) {
       return p;
     }
   }).run();
-  t.equal(dj.pulse.add.length, 0);
-  t.equal(dj.pulse.rem.length, 0);
-  t.equal(dj.pulse.mod.length, 1);
-  t.equal(dj.pulse.mod[0].datum, data[0]);
+  expect(dj.pulse.add.length).toBe(0);
+  expect(dj.pulse.rem.length).toBe(0);
+  expect(dj.pulse.mod.length).toBe(1);
+  expect(dj.pulse.mod[0].datum).toBe(data[0]);
 
   // Remove datum, check for fewer items
   df.pulse(c0, changeset().remove(data[0])).run();
-  t.equal(dj.pulse.add.length, 0);
-  t.equal(dj.pulse.rem.length, 1);
-  t.equal(dj.pulse.mod.length, 0);
-  t.equal(dj.pulse.rem[0].datum, data[0]);
+  expect(dj.pulse.add.length).toBe(0);
+  expect(dj.pulse.rem.length).toBe(1);
+  expect(dj.pulse.mod.length).toBe(0);
+  expect(dj.pulse.rem[0].datum).toBe(data[0]);
 
   // Re-introduce datum, check for increased items
   df.pulse(c0, changeset().insert(data[0])).run();
-  t.equal(dj.pulse.add.length, 1);
-  t.equal(dj.pulse.rem.length, 0);
-  t.equal(dj.pulse.mod.length, 0);
-  t.equal(dj.pulse.add[0].datum, data[0]);
+  expect(dj.pulse.add.length).toBe(1);
+  expect(dj.pulse.rem.length).toBe(0);
+  expect(dj.pulse.mod.length).toBe(0);
+  expect(dj.pulse.add[0].datum).toBe(data[0]);
 
   // Modify datum, check for modified item
   df.pulse(c0, changeset().modify(data[1], 'value', 5)).run();
-  t.equal(dj.pulse.add.length, 0);
-  t.equal(dj.pulse.rem.length, 0);
-  t.equal(dj.pulse.mod.length, 1);
-  t.equal(dj.pulse.mod[0].datum, data[1]);
-
-  t.end();
+  expect(dj.pulse.add.length).toBe(0);
+  expect(dj.pulse.rem.length).toBe(0);
+  expect(dj.pulse.mod.length).toBe(1);
+  expect(dj.pulse.mod[0].datum).toBe(data[1]);
 });
 
-tape('DataJoin garbage collects if requested', function(t) {
+test('DataJoin garbage collects if requested', function() {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       dj = df.add(DataJoin, {clean:true, pulse:c0}),
@@ -79,7 +71,5 @@ tape('DataJoin garbage collects if requested', function(t) {
   // burn in by filling up to threshold, then remove all
   df.pulse(c0, changeset().insert(generate())).run();
   df.pulse(c0, changeset().remove(util.truthy)).run();
-  t.equal(dj.value.empty, 0, 'Zero empty map entries');
-
-  t.end();
+  expect(dj.value.empty).toBe(0);
 });

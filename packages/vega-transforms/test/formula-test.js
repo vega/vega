@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Formula = tx.formula,
-    Collect = tx.collect;
+var util = require('vega-util'), vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, Formula = tx.formula, Collect = tx.collect;
 
-tape('Formula extends tuples', function(t) {
+test('Formula extends tuples', function() {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -24,18 +18,16 @@ tape('Formula extends tuples', function(t) {
 
   // add data
   df.pulse(c0, changeset().insert(data)).run();
-  t.equal(fb.pulse.add.length, 3);
-  t.deepEqual(c0.value.map(x), [2, 6, 10]);
-  t.deepEqual(c0.value.map(y), ['f', 'b', 'b']);
+  expect(fb.pulse.add.length).toBe(3);
+  expect(c0.value.map(x)).toEqual([2, 6, 10]);
+  expect(c0.value.map(y)).toEqual(['f', 'b', 'b']);
 
   // modify data
   df.pulse(c0, changeset()
     .modify(data[0], 'value', 'doo')
     .modify(data[0], 'id', '2'))
     .run();
-  t.equal(fb.pulse.mod.length, 1);
-  t.deepEqual(c0.value.map(x), [4, 6, 10]);
-  t.deepEqual(c0.value.map(y), ['d', 'b', 'b']);
-
-  t.end();
+  expect(fb.pulse.mod.length).toBe(1);
+  expect(c0.value.map(x)).toEqual([4, 6, 10]);
+  expect(c0.value.map(y)).toEqual(['d', 'b', 'b']);
 });

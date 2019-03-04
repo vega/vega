@@ -1,54 +1,47 @@
-var tape = require('tape'),
-    bin = require('../').bin;
+var bin = require('../').bin;
 
-tape('bin generates boundaries for exact step size', function(t) {
+test('bin generates boundaries for exact step size', function() {
   var b = bin({extent:[1.3, 10.2], step:1, nice:false});
-  t.equal(b.start, 1.3);
-  t.equal(b.stop, 10.2);
-  t.equal(b.step, 1);
+  expect(b.start).toBe(1.3);
+  expect(b.stop).toBe(10.2);
+  expect(b.step).toBe(1);
 
   b = bin({extent:[1.3, 10.2], step:1, nice:true});
-  t.equal(b.start, 1);
-  t.equal(b.stop, 11);
-  t.equal(b.step, 1);
+  expect(b.start).toBe(1);
+  expect(b.stop).toBe(11);
+  expect(b.step).toBe(1);
 
   b = bin({extent:[99.2258064516129, 2307.451612903226], step:50, nice:true});
-  t.equal(b.start, 50);
-  t.equal(b.stop, 2350);
-  t.equal(b.step, 50);
-
-  t.end();
+  expect(b.start).toBe(50);
+  expect(b.stop).toBe(2350);
+  expect(b.step).toBe(50);
 });
 
-tape('bin generates boundaries for inferred step size', function(t) {
+test('bin generates boundaries for inferred step size', function() {
   var b = bin({extent:[1.3, 10.2], maxbins:10, nice:false});
-  t.equal(b.start, 1.3);
-  t.equal(b.stop, 10.2);
-  t.equal(b.step, 1);
+  expect(b.start).toBe(1.3);
+  expect(b.stop).toBe(10.2);
+  expect(b.step).toBe(1);
 
   b = bin({extent:[1.3, 10.2], maxbins:10, nice:true});
-  t.equal(b.start, 1);
-  t.equal(b.stop, 11);
-  t.equal(b.step, 1);
+  expect(b.start).toBe(1);
+  expect(b.stop).toBe(11);
+  expect(b.step).toBe(1);
 
   b = bin({extent:[99.2258064516129, 2307.451612903226], maxbins:30});
-  t.equal(b.start, 0);
-  t.equal(b.stop, 2400);
-  t.equal(b.step, 100);
+  expect(b.start).toBe(0);
+  expect(b.stop).toBe(2400);
+  expect(b.step).toBe(100);
 
   b = bin({extent:[99.2258064516129, 2307.451612903226], maxbins:64});
-  t.equal(b.start, 50);
-  t.equal(b.stop, 2350);
-  t.equal(b.step, 50);
-
-  t.end();
+  expect(b.start).toBe(50);
+  expect(b.stop).toBe(2350);
+  expect(b.step).toBe(50);
 });
 
-tape('bin generates boundaries with minimum step size', function(t) {
+test('bin generates boundaries with minimum step size', function() {
   var b = bin({extent:[0, 10], minstep:1, maxbins:100});
-  t.equal(b.start, 0);
-  t.equal(b.stop, 10);
-  t.equal(b.step, 1);
-
-  t.end();
+  expect(b.start).toBe(0);
+  expect(b.stop).toBe(10);
+  expect(b.step).toBe(1);
 });

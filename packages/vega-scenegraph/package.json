@@ -14,7 +14,7 @@
     "build": "yarn rollup && yarn schema",
     "postbuild": "terser build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
     "pretest": "yarn prebuild && yarn rollup && yarn schema",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "jest test/svg-renderer-test.js && eslint index.js src test",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },

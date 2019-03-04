@@ -51,7 +51,7 @@ export default function(input) {
           key, value;
       for (key in obj) {
         value = obj[key];
-        if (value !== NULL && (!test || !test(value))) {
+        if (value !== NULL && (!test || !test(value))) {  // eslint-disable-line jest/no-disabled-tests
           next[key] = value;
           ++size;
         }

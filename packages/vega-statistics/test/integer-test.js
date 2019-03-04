@@ -1,53 +1,47 @@
-var tape = require('tape'),
-    integer = require('../').randomInteger;
+var integer = require('../').randomInteger;
 
-tape('integer generates random values', function(t) {
+test('integer generates random values', function() {
   var s = integer(10).sample();
-  t.ok(0 <= s && s < 10);
-  t.equal(s, ~~s);
+  expect(0 <= s && s < 10).toBeTruthy();
+  expect(s).toBe(~~s);
 
   s = integer(5, 10).sample();
-  t.ok(5 <= s && s < 10);
-  t.equal(s, ~~s);
-
-  t.end();
+  expect(5 <= s && s < 10).toBeTruthy();
+  expect(s).toBe(~~s);
 });
 
-tape('integer evaluates the pdf', function(t) {
+test('integer evaluates the pdf', function() {
   var n1 = integer(0, 5);
-  t.equal(n1.pdf(-1), 0.0);
-  t.equal(n1.pdf(5), 0.0);
-  t.equal(n1.pdf(0), 0.2);
-  t.equal(n1.pdf(1), 0.2);
-  t.equal(n1.pdf(2), 0.2);
-  t.equal(n1.pdf(3), 0.2);
-  t.equal(n1.pdf(4), 0.2);
-  t.end();
+  expect(n1.pdf(-1)).toBe(0.0);
+  expect(n1.pdf(5)).toBe(0.0);
+  expect(n1.pdf(0)).toBe(0.2);
+  expect(n1.pdf(1)).toBe(0.2);
+  expect(n1.pdf(2)).toBe(0.2);
+  expect(n1.pdf(3)).toBe(0.2);
+  expect(n1.pdf(4)).toBe(0.2);
 });
 
-tape('integer evaluates the cdf', function(t) {
+test('integer evaluates the cdf', function() {
   var n1 = integer(0, 5);
-  t.equal(n1.cdf(-1), 0.0);
-  t.equal(n1.cdf(0), 0.2);
-  t.equal(n1.cdf(1), 0.4);
-  t.equal(n1.cdf(2), 0.6);
-  t.equal(n1.cdf(3), 0.8);
-  t.equal(n1.cdf(4), 1.0);
-  t.equal(n1.cdf(5), 1.0);
-  t.end();
+  expect(n1.cdf(-1)).toBe(0.0);
+  expect(n1.cdf(0)).toBe(0.2);
+  expect(n1.cdf(1)).toBe(0.4);
+  expect(n1.cdf(2)).toBe(0.6);
+  expect(n1.cdf(3)).toBe(0.8);
+  expect(n1.cdf(4)).toBe(1.0);
+  expect(n1.cdf(5)).toBe(1.0);
 });
 
-tape('integer evaluates the inverse cdf', function(t) {
+test('integer evaluates the inverse cdf', function() {
   var n1 = integer(0, 5);
   // extreme values
-  t.ok(isNaN(n1.icdf(-1)));
-  t.ok(isNaN(n1.icdf(2)));
+  expect(isNaN(n1.icdf(-1))).toBeTruthy();
+  expect(isNaN(n1.icdf(2))).toBeTruthy();
   // in range values
-  t.equal(n1.icdf(0), -1);
-  t.equal(n1.icdf(0.2), 0);
-  t.equal(n1.icdf(0.4), 1);
-  t.equal(n1.icdf(0.6), 2);
-  t.equal(n1.icdf(0.8), 3);
-  t.equal(n1.icdf(1.0), 4);
-  t.end();
+  expect(n1.icdf(0)).toBe(-1);
+  expect(n1.icdf(0.2)).toBe(0);
+  expect(n1.icdf(0.4)).toBe(1);
+  expect(n1.icdf(0.6)).toBe(2);
+  expect(n1.icdf(0.8)).toBe(3);
+  expect(n1.icdf(1.0)).toBe(4);
 });

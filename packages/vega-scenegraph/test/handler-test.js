@@ -1,46 +1,40 @@
-var tape = require('tape'),
-    vega = require('../'),
-    Handler = vega.Handler;
+var vega = require('../'), Handler = vega.Handler;
 
-tape('Handler should support argument free constructor', function(t) {
+test('Handler should support argument free constructor', function() {
   var h = new Handler();
-  t.equal(h._active, null);
-  t.ok(h._handlers);
-  t.end();
+  expect(h._active).toBe(null);
+  expect(h._handlers).toBeTruthy();
 });
 
-tape('Handler should initialize', function(t) {
+test('Handler should initialize', function() {
   var el = {};
   var obj = {};
   var o = [1, 1];
   var h = new Handler();
   var s = h.initialize(el, o, obj);
-  t.equal(s, h);
-  t.equal(h._el, el);
-  t.equal(h._obj, obj);
-  t.deepEqual(h._origin, o);
+  expect(s).toBe(h);
+  expect(h._el).toBe(el);
+  expect(h._obj).toBe(obj);
+  expect(h._origin).toEqual(o);
 
   h.initialize(el, o);
-  t.equal(h._obj, null);
-  t.equal(h.on(), undefined);
-  t.equal(h.off(), undefined);
-  t.end();
+  expect(h._obj).toBe(null);
+  expect(h.on()).toBe(undefined);
+  expect(h.off()).toBe(undefined);
 });
 
-tape('Handler should parse event names', function(t) {
+test('Handler should parse event names', function() {
   var h = new Handler();
-  t.equal(h.eventName('touchstart'), 'touchstart');
-  t.equal(h.eventName('click.foo'), 'click');
-  t.end();
+  expect(h.eventName('touchstart')).toBe('touchstart');
+  expect(h.eventName('click.foo')).toBe('click');
 });
 
-tape('Handler should return array of handlers', function(t) {
+test('Handler should return array of handlers', function() {
   var obj = {};
   var h = new Handler();
-  t.deepEqual(h.handlers(), []);
+  expect(h.handlers()).toEqual([]);
   h._handlers = {'click':[obj]};
   h = h.handlers();
-  t.equal(h && h.length, 1);
-  t.equal(h[0], obj);
-  t.end();
+  expect(h && h.length).toBe(1);
+  expect(h[0]).toBe(obj);
 });

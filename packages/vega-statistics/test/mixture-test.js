@@ -1,23 +1,20 @@
-var tape = require('tape'),
-    d3 = require('d3-array'),
-    stats = require('../'),
-    gaussian = stats.randomNormal();
+var d3 = require('d3-array'), stats = require('../'), gaussian = stats.randomNormal();
 
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
 
-function closeTo(t, a, b, delta) {
-  t.equal(Math.abs(a-b) < delta, true);
+function closeTo(a, b, delta) {
+  expect(Math.abs(a-b) < delta).toBe(true);
 }
 
-function check(t, u, s, values) {
+function check(u, s, values) {
   var sum = values.reduce(function(a,b) { return a+b; }, 0);
   var avg = sum / values.length;
   var dev = values.reduce(function(a,b) { return a+(b-avg)*(b-avg); }, 0);
   dev = dev / (values.length-1);
 
   // mean within 99.9% confidence interval
-  closeTo(t, u, avg, 4*dev/Math.sqrt(values.length));
+  closeTo(u, avg, 4*dev/Math.sqrt(values.length));
 }
 
 function samples(dist, n) {
@@ -26,53 +23,48 @@ function samples(dist, n) {
   return a;
 }
 
-tape('mixture generates samples', function(t) {
+test('mixture generates samples', function() {
   var dists = [
     stats.randomNormal(),
     stats.randomNormal()
   ];
   var mix = stats.randomMixture(dists);
-  check(t, 0, 1, samples(mix, 1000));
+  check(0, 1, samples(mix, 1000));
 
   mix = stats.randomMixture(dists, [2, 1]);
-  check(t, 0, 1, samples(mix, 1000));
+  check(0, 1, samples(mix, 1000));
 
   mix = stats.randomMixture([
     stats.randomNormal(),
     stats.randomUniform()
   ], [1, 0]);
-  check(t, 0, 1, samples(mix, 1000));
-
-  t.end();
+  check(0, 1, samples(mix, 1000));
 });
 
-tape('mixture evaluates the pdf', function(t) {
+test('mixture evaluates the pdf', function() {
   var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
       domain = d3.range(-5, 5.1, 0.5),
       error = domain.reduce(function(sum, x) {
         return sum + Math.abs(mix.pdf(x) - gaussian.pdf(x));
       }, 0);
 
-  t.ok((error / domain.length) < 0.01);
-  t.end();
+  expect((error / domain.length) < 0.01).toBeTruthy();
 });
 
-tape('mixture approximates the cdf', function(t) {
+test('mixture approximates the cdf', function() {
   var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
       domain = d3.range(-5, 5.1, 0.5),
       error = domain.reduce(function(sum, x) {
         return sum + Math.abs(mix.cdf(x) - gaussian.cdf(x));
       }, 0);
 
-  t.ok((error / domain.length) < 0.01);
-  t.end();
+  expect((error / domain.length) < 0.01).toBeTruthy();
 });
 
-tape('mixture does not support the inverse cdf', function(t) {
+test('mixture does not support the inverse cdf', function() {
   var mix = stats.randomMixture([
     stats.randomNormal(),
     stats.randomUniform(-1, 1)
   ]);
-  t.throws(function() { mix.icdf(0.5); });
-  t.end();
+  expect(function() { mix.icdf(0.5); }).toThrow();
 });

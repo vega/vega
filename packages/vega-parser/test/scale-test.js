@@ -1,7 +1,6 @@
-var tape = require('tape'),
-    parse = require('../').parse;
+var parse = require('../').parse;
 
-tape('Parser parses Vega specs with scales', function(t) {
+test('Parser parses Vega specs with scales', function() {
   var spec = {
     "width": 500,
     "height": 300,
@@ -54,20 +53,17 @@ tape('Parser parses Vega specs with scales', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 27);
-  t.deepEqual(dfs.operators.map(function(o) { return o.type; }),
-    ['operator', 'operator', 'operator', 'operator', 'operator',
-     'operator', 'operator', 'operator', 'operator',
-     'collect', 'encode', 'sieve',
-     'scale', 'scale', 'scale',
-     'collect', 'sieve',
-     'field', 'aggregate', 'collect', 'compare', 'values',
-     'extent', 'viewlayout', 'bound', 'render', 'sieve']);
-
-  t.end();
+  expect(dfs.operators.length).toBe(27);
+  expect(dfs.operators.map(function(o) { return o.type; })).toEqual(['operator', 'operator', 'operator', 'operator', 'operator',
+   'operator', 'operator', 'operator', 'operator',
+   'collect', 'encode', 'sieve',
+   'scale', 'scale', 'scale',
+   'collect', 'sieve',
+   'field', 'aggregate', 'collect', 'compare', 'values',
+   'extent', 'viewlayout', 'bound', 'render', 'sieve']);
 });
 
-tape('Parser parses Vega specs with multi-domain scales', function(t) {
+test('Parser parses Vega specs with multi-domain scales', function() {
   var spec = {
     "data": [
       {
@@ -128,17 +124,14 @@ tape('Parser parses Vega specs with multi-domain scales', function(t) {
 
   var dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 33);
-  t.deepEqual(dfs.operators.map(function(o) { return o.type; }),
-    ['operator', 'operator', 'operator', 'operator', 'operator', 'operator',
-     'collect', 'encode', 'sieve',
-     'scale', 'scale', 'scale', 'scale',
-     'collect', 'sieve', 'aggregate', 'collect', 'aggregate', 'collect',
-     'aggregate', 'collect', 'values',
-     'aggregate', 'collect', 'values',
-     'extent', 'extent', 'multiextent', 'multiextent',
-     'viewlayout', 'bound', 'render', 'sieve']);
-
-  t.end();
+  expect(dfs.operators.length).toBe(33);
+  expect(dfs.operators.map(function(o) { return o.type; })).toEqual(['operator', 'operator', 'operator', 'operator', 'operator', 'operator',
+   'collect', 'encode', 'sieve',
+   'scale', 'scale', 'scale', 'scale',
+   'collect', 'sieve', 'aggregate', 'collect', 'aggregate', 'collect',
+   'aggregate', 'collect', 'values',
+   'aggregate', 'collect', 'values',
+   'extent', 'extent', 'multiextent', 'multiextent',
+   'viewlayout', 'bound', 'render', 'sieve']);
 });
 

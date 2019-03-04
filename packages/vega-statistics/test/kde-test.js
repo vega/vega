@@ -1,23 +1,20 @@
-var tape = require('tape'),
-    d3 = require('d3-array'),
-    stats = require('../'),
-    gaussian = stats.randomNormal();
+var d3 = require('d3-array'), stats = require('../'), gaussian = stats.randomNormal();
 
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
 
-function closeTo(t, a, b, delta) {
-  t.equal(Math.abs(a-b) < delta, true);
+function closeTo(a, b, delta) {
+  expect(Math.abs(a-b) < delta).toBe(true);
 }
 
-function check(t, u, s, values) {
+function check(u, s, values) {
   var sum = values.reduce(function(a,b) { return a+b; }, 0);
   var avg = sum / values.length;
   var dev = values.reduce(function(a,b) { return a+(b-avg)*(b-avg); }, 0);
   dev = dev / (values.length-1);
 
   // mean within 99.9% confidence interval
-  closeTo(t, u, avg, 4*dev/Math.sqrt(values.length));
+  closeTo(u, avg, 4*dev/Math.sqrt(values.length));
 }
 
 function samples(dist, n) {
@@ -26,19 +23,17 @@ function samples(dist, n) {
   return a;
 }
 
-tape('kde generates samples', function(t) {
+test('kde generates samples', function() {
   var kde = stats.randomKDE(d3.range(0, 1000)
     .map(gaussian.sample));
-  check(t, 0, 1, samples(kde, 1000));
+  check(0, 1, samples(kde, 1000));
 
   kde = stats.randomKDE(d3.range(0, 1000)
     .map(function() { return 5 * gaussian.sample(); }));
-  check(t, 0, 5, samples(kde, 1000));
-
-  t.end();
+  check(0, 5, samples(kde, 1000));
 });
 
-tape('kde approximates the pdf', function(t) {
+test('kde approximates the pdf', function() {
   var data = d3.range(0, 1000).map(gaussian.sample),
       kde = stats.randomKDE(data),
       domain = d3.range(-5, 5.1, 0.5),
@@ -46,11 +41,10 @@ tape('kde approximates the pdf', function(t) {
         return Math.abs(kde.pdf(x) - gaussian.pdf(x));
       });
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
-  t.end();
+  expect((d3.sum(error) / domain.length) < 0.01).toBeTruthy();
 });
 
-tape('kde approximates the cdf', function(t) {
+test('kde approximates the cdf', function() {
   var data = d3.range(0, 1000).map(gaussian.sample),
       kde = stats.randomKDE(data),
       domain = d3.range(-5, 5.1, 0.5),
@@ -58,11 +52,9 @@ tape('kde approximates the cdf', function(t) {
         return Math.abs(kde.cdf(x) - gaussian.cdf(x));
       });
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
-  t.end();
+  expect((d3.sum(error) / domain.length) < 0.01).toBeTruthy();
 });
 
-tape('kde does not support the inverse cdf', function(t) {
-  t.throws(function() { stats.randomKDE([1,1,1]).icdf(0.5); });
-  t.end();
+test('kde does not support the inverse cdf', function() {
+  expect(function() { stats.randomKDE([1,1,1]).icdf(0.5); }).toThrow();
 });

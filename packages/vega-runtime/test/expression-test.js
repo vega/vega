@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
+var util = require('vega-util'), vega = require('vega-dataflow'), transforms = require('vega-transforms'), runtime = require('../');
 
-tape('Parser parses expressions', function(t) {
+test('Parser parses expressions', function() {
   var values = [
     {"x": 1,  "y": 28},
     {"x": 2,  "y": 43},
@@ -41,18 +37,16 @@ tape('Parser parses expressions', function(t) {
       ids = Object.keys(ops),
       z = util.field('z');
 
-  t.equal(ids.length, spec.operators.length);
+  expect(ids.length).toBe(spec.operators.length);
 
   df.run();
-  t.equal(ids.reduce(function(sum, id) {
+  expect(ids.reduce(function(sum, id) {
     return sum + +(ops[id].stamp === df.stamp());
-  }, 0), spec.operators.length);
+  }, 0)).toBe(spec.operators.length);
 
-  t.equal(typeof ops[1]._update, 'function');
-  t.equal(ops[1].value, 100);
+  expect(typeof ops[1]._update).toBe('function');
+  expect(ops[1].value).toBe(100);
 
-  t.deepEqual(ops[2].value.map(z), [28, 86, 243, 76]);
-  t.deepEqual(ops[5].value.map(z), [243]);
-
-  t.end();
+  expect(ops[2].value.map(z)).toEqual([28, 86, 243, 76]);
+  expect(ops[5].value.map(z)).toEqual([243]);
 });

@@ -1,9 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    Load = tx.load;
+var vega = require('vega-dataflow'), tx = require('../'), Load = tx.load;
 
-tape('Load requests external data', function(t) {
+test('Load requests external data', function(done) {
   var df = new vega.Dataflow(),
       u = df.add('url'),
       f = df.add('format'),
@@ -12,8 +9,8 @@ tape('Load requests external data', function(t) {
   df.add(Load, {url:u, format:f});
 
   df.request = async function(url, format) {
-    t.equal(url, u.value);
-    t.equal(format, f.value);
+    expect(url).toBe(u.value);
+    expect(format).toBe(f.value);
     return {
       data: [++count],
       status: 0
@@ -23,12 +20,12 @@ tape('Load requests external data', function(t) {
   // load should invoke request with provided parameters
   df.runAsync()
     .then(() => {
-      t.equal(count, 1);
+      expect(count).toBe(1);
       // load should re-invoke request if parameters change
       return df.update(u, 'foo').update(f, 'bar').runAsync();
     })
     .then(() => {
-      t.equal(count, 2);
-      t.end();
+      expect(count).toBe(2);
+      done();
     });
 });

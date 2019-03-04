@@ -1,9 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    runtime = require('../'),
-    events = require('./events');
+var vega = require('vega-dataflow'), runtime = require('../'), events = require('./events');
 
-tape('Parser parses event streams', function(t) {
+test('Parser parses event streams', function(done) {
 
   var spec = {
     streams: [
@@ -29,29 +26,29 @@ tape('Parser parses event streams', function(t) {
     streams[id].apply(function() { counts[i] += 1; });
   });
 
-  t.deepEqual(counts, [0,0,0,0,0,0,0]);
+  expect(counts).toEqual([0,0,0,0,0,0,0]);
 
   df.fire('window', 'mousemove', {});
-  t.deepEqual(counts, [1,0,0,0,0,0,0]);
+  expect(counts).toEqual([1,0,0,0,0,0,0]);
 
   df.fire('window', 'mousedown', {});
-  t.deepEqual(counts, [1,1,0,1,0,0,0]);
+  expect(counts).toEqual([1,1,0,1,0,0,0]);
 
   df.fire('window', 'mouseup', {});
-  t.deepEqual(counts, [1,1,1,2,0,0,0]);
+  expect(counts).toEqual([1,1,1,2,0,0,0]);
 
   df.fire('window', 'mousedown', {});
   df.fire('window', 'mousemove', {});
   df.fire('window', 'mousemove', {});
   df.fire('window', 'mouseup', {});
-  t.deepEqual(counts, [3,2,2,4,2,1,0]);
+  expect(counts).toEqual([3,2,2,4,2,1,0]);
 
   df.fire('window', 'mousedown', {});
   df.fire('window', 'mousemove', {buttons: 1});
   df.fire('window', 'mouseup', {});
 
   setTimeout(function() {
-    t.deepEqual(counts, [4,3,3,6,3,1,1]);
-    t.end();
+    expect(counts).toEqual([4,3,3,6,3,1,1]);
+    done();
   }, 105);
 });

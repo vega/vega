@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('../').collect,
-    changeset = vega.changeset;
+var util = require('vega-util'), vega = require('vega-dataflow'), Collect = require('../').collect, changeset = vega.changeset;
 
-tape('Collect collects tuples', function(t) {
+test('Collect collects tuples', function() {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -16,55 +12,53 @@ tape('Collect collects tuples', function(t) {
       c0 = df.add(Collect, {sort:so});
 
   df.run(); // initialize
-  t.equal(c0.value.length, 0);
-  t.equal(!!c0.modified(), false);
+  expect(c0.value.length).toBe(0);
+  expect(!!c0.modified()).toBe(false);
 
   // add data
   df.pulse(c0, changeset().insert(data)).run();
-  t.equal(c0.value.length, 3);
-  t.equal(c0.value[0], data[0]);
-  t.equal(c0.value[1], data[1]);
-  t.equal(c0.value[2], data[2]);
-  t.equal(!!c0.modified(), true);
+  expect(c0.value.length).toBe(3);
+  expect(c0.value[0]).toBe(data[0]);
+  expect(c0.value[1]).toBe(data[1]);
+  expect(c0.value[2]).toBe(data[2]);
+  expect(!!c0.modified()).toBe(true);
 
   // sort data
   df.update(so, util.compare('value')).run();
-  t.equal(c0.value.length, 3);
-  t.equal(c0.value[0], data[1]);
-  t.equal(c0.value[1], data[2]);
-  t.equal(c0.value[2], data[0]);
-  t.equal(!!c0.modified(), true);
+  expect(c0.value.length).toBe(3);
+  expect(c0.value[0]).toBe(data[1]);
+  expect(c0.value[1]).toBe(data[2]);
+  expect(c0.value[2]).toBe(data[0]);
+  expect(!!c0.modified()).toBe(true);
 
   // add new data
   data.push({id:2, value:'abc'});
   df.pulse(c0, changeset().insert(data[3])).run();
-  t.equal(c0.value.length, 4);
-  t.equal(c0.value[0], data[3]);
-  t.equal(c0.value[1], data[1]);
-  t.equal(c0.value[2], data[2]);
-  t.equal(c0.value[3], data[0]);
-  t.equal(!!c0.modified(), true);
+  expect(c0.value.length).toBe(4);
+  expect(c0.value[0]).toBe(data[3]);
+  expect(c0.value[1]).toBe(data[1]);
+  expect(c0.value[2]).toBe(data[2]);
+  expect(c0.value[3]).toBe(data[0]);
+  expect(!!c0.modified()).toBe(true);
 
   // remove data
   df.pulse(c0, changeset().remove(data[1])).run();
-  t.equal(c0.value.length, 3);
-  t.equal(c0.value[0], data[3]);
-  t.equal(c0.value[1], data[2]);
-  t.equal(c0.value[2], data[0]);
-  t.equal(!!c0.modified(), true);
+  expect(c0.value.length).toBe(3);
+  expect(c0.value[0]).toBe(data[3]);
+  expect(c0.value[1]).toBe(data[2]);
+  expect(c0.value[2]).toBe(data[0]);
+  expect(!!c0.modified()).toBe(true);
 
   // modify data
   df.pulse(c0, changeset().modify(data[0], 'value', 'boo')).run();
-  t.equal(c0.value.length, 3);
-  t.equal(c0.value[0], data[3]);
-  t.equal(c0.value[1], data[2]);
-  t.equal(c0.value[2], data[0]);
-  t.equal(!!c0.modified(), true);
+  expect(c0.value.length).toBe(3);
+  expect(c0.value[0]).toBe(data[3]);
+  expect(c0.value[1]).toBe(data[2]);
+  expect(c0.value[2]).toBe(data[0]);
+  expect(!!c0.modified()).toBe(true);
 
   // do nothing
   df.touch(c0).run();
-  t.equal(c0.value.length, 3);
-  t.equal(!!c0.modified(), false);
-
-  t.end();
+  expect(c0.value.length).toBe(3);
+  expect(!!c0.modified()).toBe(false);
 });

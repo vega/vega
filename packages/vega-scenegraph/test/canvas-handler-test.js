@@ -1,14 +1,13 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    loader = require('vega-loader').loader,
-    Renderer = vega.CanvasRenderer,
-    Handler = vega.CanvasHandler,
-    jsdom = require('jsdom'),
-    win = (new jsdom.JSDOM()).window,
-    doc = win.document;
+var fs = require('fs');
+var vega = require('../');
+var loader = require('vega-loader').loader;
+var Renderer = vega.CanvasRenderer;
+var Handler = vega.CanvasHandler;
+var jsdom = require('jsdom');
+var win = (new jsdom.JSDOM()).window;
+var doc = win.document;
 
-var res = './test/resources/';
+var res = __dirname + '/resources/';
 
 var marks = JSON.parse(load('marks.json'));
 for (var name in marks) { vega.sceneFromJSON(marks[name]); }
@@ -48,7 +47,7 @@ function event(name, x, y) {
   return evt;
 }
 
-tape('CanvasHandler should add/remove event callbacks', function(t) {
+test('CanvasHandler should add/remove event callbacks', function() {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -63,48 +62,46 @@ tape('CanvasHandler should add/remove event callbacks', function(t) {
   handler.on(btype, f);
   handler.on(ctype, f);
 
-  t.equal(Object.keys(h).length, 2);
-  t.equal(array(h[atype]).length, 2);
-  t.equal(array(h[ctype]).length, 1);
+  expect(Object.keys(h).length).toBe(2);
+  expect(array(h[atype]).length).toBe(2);
+  expect(array(h[ctype]).length).toBe(1);
 
-  t.equal(object(h[atype][0]).type, atype);
-  t.equal(object(h[atype][1]).type, btype);
-  t.equal(object(h[ctype][0]).type, ctype);
+  expect(object(h[atype][0]).type).toBe(atype);
+  expect(object(h[atype][1]).type).toBe(btype);
+  expect(object(h[ctype][0]).type).toBe(ctype);
 
-  t.equal(object(h[atype][0]).handler, f);
-  t.equal(object(h[atype][1]).handler, f);
-  t.equal(object(h[ctype][0]).handler, f);
+  expect(object(h[atype][0]).handler).toBe(f);
+  expect(object(h[atype][1]).handler).toBe(f);
+  expect(object(h[ctype][0]).handler).toBe(f);
 
   // remove event callback by type
   handler.off(atype);
 
-  t.equal(Object.keys(h).length, 2);
-  t.equal(array(h[atype]).length, 1);
-  t.equal(array(h[ctype]).length, 1);
+  expect(Object.keys(h).length).toBe(2);
+  expect(array(h[atype]).length).toBe(1);
+  expect(array(h[ctype]).length).toBe(1);
 
-  t.equal(object(h[atype][0]).type, btype);
-  t.equal(object(h[ctype][0]).type, ctype);
+  expect(object(h[atype][0]).type).toBe(btype);
+  expect(object(h[ctype][0]).type).toBe(ctype);
 
-  t.equal(object(h[atype][0]).handler, f);
-  t.equal(object(h[ctype][0]).handler, f);
+  expect(object(h[atype][0]).handler).toBe(f);
+  expect(object(h[ctype][0]).handler).toBe(f);
 
   // remove all event callbacks
   handler.off(btype, f);
   handler.off(ctype, f);
 
-  t.equal(array(h[atype]).length, 0);
-  t.equal(array(h[ctype]).length, 0);
-
-  t.end();
+  expect(array(h[atype]).length).toBe(0);
+  expect(array(h[ctype]).length).toBe(0);
 });
 
-tape('CanvasHandler should handle input events', function(t) {
+test('CanvasHandler should handle input events', function() {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
-  t.equal(handler.scene(), scene);
+  expect(handler.scene()).toBe(scene);
 
   var canvas = handler.canvas();
   var count = 0;
@@ -113,7 +110,7 @@ tape('CanvasHandler should handle input events', function(t) {
   handler.events.forEach(function(name) {
     handler.on(name, increment);
   });
-  t.equal(handler.handlers().length, handler.events.length);
+  expect(handler.handlers().length).toBe(handler.events.length);
 
   handler.events.forEach(function(name) {
     canvas.dispatchEvent(event(name));
@@ -134,57 +131,52 @@ tape('CanvasHandler should handle input events', function(t) {
 
   // 12 events above + 8 triggered:
   //   2*(mouseover, mouseout) + 2*(dragenter, dragleave)
-  t.equal(count, handler.events.length + 20);
+  expect(count).toBe(handler.events.length + 20);
 
   handler.off('mousemove', {});
-  t.equal(handler.handlers().length, handler.events.length);
+  expect(handler.handlers().length).toBe(handler.events.length);
 
   handler.off('nonevent');
-  t.equal(handler.handlers().length, handler.events.length);
+  expect(handler.handlers().length).toBe(handler.events.length);
 
   handler.events.forEach(function(name) {
     handler.off(name, increment);
   });
-  t.equal(handler.handlers().length, 0);
-  t.end();
+  expect(handler.handlers().length).toBe(0);
 });
 
-tape('CanvasHandler should pick elements in scenegraph', function(t) {
+test('CanvasHandler should pick elements in scenegraph', function() {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler().initialize(render(scene, 400, 200));
-  t.ok(handler.pick(scene, 20, 180, 20, 180));
-  t.notOk(handler.pick(scene, 0, 0, 0, 0));
-  t.notOk(handler.pick(scene, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(scene, 20, 180, 20, 180)).toBeTruthy();
+  expect(handler.pick(scene, 0, 0, 0, 0)).toBeFalsy();
+  expect(handler.pick(scene, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick arc mark', function(t) {
+test('CanvasHandler should pick arc mark', function() {
   var mark = marks.arc;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 260, 300, 260, 300));
-  t.notOk(handler.pick(mark, 248, 250, 248, 250));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 260, 300, 260, 300)).toBeTruthy();
+  expect(handler.pick(mark, 248, 250, 248, 250)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick area mark', function(t) {
+test('CanvasHandler should pick area mark', function() {
   var mark = marks['area-h'];
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 100, 150, 100, 150));
-  t.notOk(handler.pick(mark, 100, 50, 100, 50));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  expect(handler.pick(mark, 100, 150, 100, 150)).toBeTruthy();
+  expect(handler.pick(mark, 100, 50, 100, 50)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 
   mark = marks['area-v'];
   handler = new Handler().initialize(render(mark, 500, 500));
   handler.context().pixelRatio = 0.99; // for test coverage
-  t.ok(handler.pick(mark, 100, 100, 100, 100));
-  t.notOk(handler.pick(mark, 50, 50, 50, 50));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-
-  t.end();
+  expect(handler.pick(mark, 100, 100, 100, 100)).toBeTruthy();
+  expect(handler.pick(mark, 50, 50, 50, 50)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick group mark', function(t) {
+test('CanvasHandler should pick group mark', function() {
   var mark = {
     "marktype": "group",
     "name": "class-name",
@@ -193,100 +185,91 @@ tape('CanvasHandler should pick group mark', function(t) {
     ]
   };
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 50, 50, 50, 50));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 50, 50, 50, 50)).toBeTruthy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick image mark', function(t) {
+test('CanvasHandler should pick image mark', function(done) {
   var mark = marks.image;
   renderAsync(mark, 500, 500, function(el) {
     var handler = new Handler().initialize(el);
-    t.ok(handler.pick(mark, 250, 150, 250, 150));
-    t.notOk(handler.pick(mark, 100, 305, 100, 305));
-    t.notOk(handler.pick(mark, 800, 800, 800, 800));
-    t.end();
+    expect(handler.pick(mark, 250, 150, 250, 150)).toBeTruthy();
+    expect(handler.pick(mark, 100, 305, 100, 305)).toBeFalsy();
+    expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
+    done();
   });
 });
 
-tape('CanvasHandler should pick line mark', function(t) {
+test('CanvasHandler should pick line mark', function() {
   var mark = marks['line-2'];
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.notOk(handler.pick(mark, 100, 144, 100, 144));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  expect(handler.pick(mark, 100, 144, 100, 144)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
-  t.ok(handler.pick(mark, 0, 144, 0, 144));
+  expect(handler.pick(mark, 0, 144, 0, 144)).toBeTruthy();
 
   mark = marks['line-1'];
   handler = new Handler().initialize(render(mark, 500, 500));
-  t.notOk(handler.pick(mark, 100, 144, 100, 144));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  expect(handler.pick(mark, 100, 144, 100, 144)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 
   // fake isPointInStroke until node canvas supports it
   g = handler.context();
   g.isPointInStroke = function() { return true; };
-  t.ok(handler.pick(mark, 0, 144, 0, 144));
-
-  t.end();
+  expect(handler.pick(mark, 0, 144, 0, 144)).toBeTruthy();
 });
 
-tape('CanvasHandler should pick path mark', function(t) {
+test('CanvasHandler should pick path mark', function() {
   var mark = marks.path;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 150, 150, 150, 150));
-  t.notOk(handler.pick(mark, 200, 300, 300, 300));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 150, 150, 150, 150)).toBeTruthy();
+  expect(handler.pick(mark, 200, 300, 300, 300)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick rect mark', function(t) {
+test('CanvasHandler should pick rect mark', function() {
   var mark = marks.rect;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 50, 50, 50, 50));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 50, 50, 50, 50)).toBeTruthy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick rule mark', function(t) {
+test('CanvasHandler should pick rule mark', function() {
   var mark = marks.rule;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.notOk(handler.pick(mark, 100, 198, 100, 198));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
+  expect(handler.pick(mark, 100, 198, 100, 198)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 
   // fake isPointInStroke until node canvas supports it
   var g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
-  t.ok(handler.pick(mark, 5, 0, 5, 0));
-
-  t.end();
+  expect(handler.pick(mark, 5, 0, 5, 0)).toBeTruthy();
 });
 
-tape('CanvasHandler should pick symbol mark', function(t) {
+test('CanvasHandler should pick symbol mark', function() {
   var mark = marks.symbol;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 50, 90, 50, 90));
-  t.notOk(handler.pick(mark, 155, 22, 155, 22));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 50, 90, 50, 90)).toBeTruthy();
+  expect(handler.pick(mark, 155, 22, 155, 22)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should pick text mark', function(t) {
+test('CanvasHandler should pick text mark', function() {
   var mark = marks.text;
   var handler = new Handler().initialize(render(mark, 500, 500));
-  t.ok(handler.pick(mark, 3, 45, 3, 45));
-  t.ok(handler.pick(mark, 140, 160, 140, 160));
-  t.ok(handler.pick(mark, 49, 120, 49, 120));
-  t.notOk(handler.pick(mark, 52, 120, 52, 120));
-  t.notOk(handler.pick(mark, 800, 800, 800, 800));
-  t.end();
+  expect(handler.pick(mark, 3, 45, 3, 45)).toBeTruthy();
+  expect(handler.pick(mark, 140, 160, 140, 160)).toBeTruthy();
+  expect(handler.pick(mark, 49, 120, 49, 120)).toBeTruthy();
+  expect(handler.pick(mark, 52, 120, 52, 120)).toBeFalsy();
+  expect(handler.pick(mark, 800, 800, 800, 800)).toBeFalsy();
 });
 
-tape('CanvasHandler should not pick empty marks', function(t) {
+test('CanvasHandler should not pick empty marks', function() {
   var scene = {marktype:'', items:[]};
   var types = [
     'arc',
@@ -305,8 +288,6 @@ tape('CanvasHandler should not pick empty marks', function(t) {
   for (i=0; i<types.length; ++i) {
     scene.marktype = types[i];
     handler = new Handler().initialize(render(scene, 500, 500));
-    t.equal(handler.pick(scene, 0, 0, 0, 0), null);
+    expect(handler.pick(scene, 0, 0, 0, 0)).toBe(null);
   }
-
-  t.end();
 });

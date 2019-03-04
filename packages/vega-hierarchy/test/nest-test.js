@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Nest = require('../').nest;
+var field = require('vega-util').field, vega = require('vega-dataflow'), Collect = require('vega-transforms').collect, Nest = require('../').nest;
 
-tape('Nest tuples', function(t) {
+test('Nest tuples', function() {
   var dataA = {id: 'A', job: 'Doctor'},
       nodeA = {key: dataA.job, values: [dataA]},
       childA = {data: dataA, height: 0, depth: 2};
@@ -40,15 +36,15 @@ tape('Nest tuples', function(t) {
 
   // test and remove circular properties first
   var d = out.value;
-  t.equal(d.root.children[0].parent, d.root);
-  t.equal(d.root.children[1].parent, d.root);
-  t.equal(d.root.lookup['1'].parent, d.root.children[0]);
-  t.equal(d.root.lookup['2'].parent, d.root.children[1]);
+  expect(d.root.children[0].parent).toBe(d.root);
+  expect(d.root.children[1].parent).toBe(d.root);
+  expect(d.root.lookup['1'].parent).toBe(d.root.children[0]);
+  expect(d.root.lookup['2'].parent).toBe(d.root.children[1]);
   delete d.root.children[0].parent;
   delete d.root.children[1].parent;
   delete d.root.lookup['1'].parent;
   delete d.root.lookup['2'].parent;
-  t.deepEqual(d, expected);
+  expect(d).toEqual(expected);
 
 
   // -- test data removals
@@ -70,16 +66,14 @@ tape('Nest tuples', function(t) {
 
   // test and remove circular properties first
   d = out.value;
-  t.equal(d.root.children[0].parent, d.root);
-  t.equal(d.root.lookup['2'].parent, d.root.children[0]);
+  expect(d.root.children[0].parent).toBe(d.root);
+  expect(d.root.lookup['2'].parent).toBe(d.root.children[0]);
   delete d.root.children[0].parent;
   delete d.root.lookup['2'].parent;
-  t.deepEqual(d, expected);
-
-  t.end();
+  expect(d).toEqual(expected);
 });
 
-tape('Nest empty data', function(t) {
+test('Nest empty data', function() {
   // Setup nest aggregation
   var df = new vega.Dataflow(),
       collect = df.add(Collect),
@@ -87,10 +81,8 @@ tape('Nest empty data', function(t) {
       out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, vega.changeset().insert([])).run();
-  t.equal(out.value.length, 0);
+  expect(out.value.length).toBe(0);
   var root = out.value.root;
-  t.equal(root.children, undefined);
-  t.deepEqual(root.lookup, {});
-
-  t.end();
+  expect(root.children).toBe(undefined);
+  expect(root.lookup).toEqual({});
 });

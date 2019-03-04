@@ -1,8 +1,7 @@
-var tape = require('tape'),
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    boundContext = vega.boundContext,
-    EPSILON = 1e-10;
+var vega = require('../');
+var Bounds = vega.Bounds;
+var boundContext = vega.boundContext;
+var EPSILON = 1e-10;
 
 function boundEqual(b, array) {
   return Math.abs(b.x1 - array[0]) < EPSILON
@@ -11,7 +10,7 @@ function boundEqual(b, array) {
       && Math.abs(b.y2 - array[3]) < EPSILON;
 }
 
-tape('boundContext should bound arc segments', function(t) {
+test('boundContext should bound arc segments', function() {
   var x = 0,
       y = 0,
       r = 1,
@@ -50,17 +49,15 @@ tape('boundContext should bound arc segments', function(t) {
 
   angles.forEach(function(_) {
     boundContext(b.clear()).arc(x, y, r, 0, _.angle, false);
-    t.ok(boundEqual(b, _.bounds), 'bound-cw: ' + _.angle);
+    expect(boundEqual(b, _.bounds)).toBeTruthy();
 
     boundContext(b.clear()).arc(x, y, r, _.angle, 0, true);
-    t.ok(boundEqual(b, _.bounds), 'bound-ccw: ' + _.angle);
+    expect(boundEqual(b, _.bounds)).toBeTruthy();
 
     boundContext(b.clear()).arc(x, y, r, rotate, rotate + _.angle, false);
-    t.ok(boundEqual(b, _.rotate), 'rotate-cw: ' + _.angle);
+    expect(boundEqual(b, _.rotate)).toBeTruthy();
 
     boundContext(b.clear()).arc(x, y, r, rotate + _.angle, rotate, true);
-    t.ok(boundEqual(b, _.rotate), 'rotate-ccw: ' + _.angle);
+    expect(boundEqual(b, _.rotate)).toBeTruthy();
   });
-
-  t.end();
 });

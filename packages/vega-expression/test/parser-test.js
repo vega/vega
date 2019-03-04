@@ -1,5 +1,4 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
 function parse(str) {
   return function() {
@@ -7,103 +6,97 @@ function parse(str) {
   };
 }
 
-tape('Parser should allow literal boolean expressions', function(t) {
-  t.deepEqual(parse('true')(), {
+test('Parser should allow literal boolean expressions', function() {
+  expect(parse('true')()).toEqual({
     type: 'Literal',
     value: true,
     raw: 'true'
   });
-  t.doesNotThrow(parse('false'));
-  t.end();
+  expect(parse('false')).not.toThrow();
 });
 
-tape('Parser should allow literal number expressions', function(t) {
-  t.deepEqual(parse('3')(), {
+test('Parser should allow literal number expressions', function() {
+  expect(parse('3')()).toEqual({
     type: 'Literal',
     value: 3,
     raw: '3'
   });
-  t.doesNotThrow(parse('3.4'));
-  t.doesNotThrow(parse('3e5'));
-  t.doesNotThrow(parse('3e+5'));
+  expect(parse('3.4')).not.toThrow();
+  expect(parse('3e5')).not.toThrow();
+  expect(parse('3e+5')).not.toThrow();
 
-  t.throws(parse('0x'));
-  t.throws(parse('0x0H'));
-  t.throws(parse('3e+H'));
+  expect(parse('0x')).toThrow();
+  expect(parse('0x0H')).toThrow();
+  expect(parse('3e+H')).toThrow();
   // octal is disabled in strict mode
-  t.throws(parse('012'));
+  expect(parse('012')).toThrow();
   // 9 and A are not octal digits.
-  t.throws(parse('09'));
-  t.throws(parse('01A'));
-  t.end();
+  expect(parse('09')).toThrow();
+  expect(parse('01A')).toThrow();
 });
 
-tape('Parser should allow literal string expressions', function(t) {
-  t.deepEqual(parse("'a'")(), {
+test('Parser should allow literal string expressions', function() {
+  expect(parse("'a'")()).toEqual({
     type: 'Literal',
     value: 'a',
     raw: "'a'"
   });
-  t.doesNotThrow(parse('"b"'));
-  t.doesNotThrow(parse('"escaped newline\\\r\n"'));
+  expect(parse('"b"')).not.toThrow();
+  expect(parse('"escaped newline\\\r\n"')).not.toThrow();
 
-  t.throws(parse('"unterminated'));
-  t.throws(parse('"unterminated\r\n'));
-  t.end();
+  expect(parse('"unterminated')).toThrow();
+  expect(parse('"unterminated\r\n')).toThrow();
 });
 
-tape('Parser should allow literal regular expressions', function(t) {
-  t.deepEqual(parse('/a/')(), {
+test('Parser should allow literal regular expressions', function() {
+  expect(parse('/a/')()).toEqual({
     type: 'Literal',
     value: {},
     raw: '/a/',
     regex: { pattern: 'a', flags: ''}
   });
   // Empty regex
-  t.deepEqual(parse('//')(), {
+  expect(parse('//')()).toEqual({
     type: 'Literal',
     value: {},
     raw: '/(?:)/',
     regex: { pattern: '', flags: ''}
   });
-  t.doesNotThrow(parse('/[0-9]+/gi'));
-  t.doesNotThrow(parse('/a\\u{41}/u'));
-  t.throws(parse('/a\\u{110000}/u'));
+  expect(parse('/[0-9]+/gi')).not.toThrow();
+  expect(parse('/a\\u{41}/u')).not.toThrow();
+  expect(parse('/a\\u{110000}/u')).toThrow();
 
-  t.doesNotThrow(parse('/a/gimuy'));
+  expect(parse('/a/gimuy')).not.toThrow();
 
   // t.throws(parse('/a/a')); // TODO
-  t.throws(parse('/a/\\u0067'));
-  t.throws(parse('/unterminated'));
-  t.throws(parse('/unterminated\n'));
-  t.throws(parse('/cannot escape newline\\\n/'));
-
-  t.end();
+  expect(parse('/a/\\u0067')).toThrow();
+  expect(parse('/unterminated')).toThrow();
+  expect(parse('/unterminated\n')).toThrow();
+  expect(parse('/cannot escape newline\\\n/')).toThrow();
 });
 
-tape('Parser should allow literal array expressions', function(t) {
-  t.deepEqual(parse('[]')(), {
+test('Parser should allow literal array expressions', function() {
+  expect(parse('[]')()).toEqual({
     type: 'ArrayExpression',
     elements: []
   });
-  t.doesNotThrow(parse('[0,1,2]'));
-  t.doesNotThrow(parse('["a","b","c"]'));
-  t.deepEqual(parse('[0,,]')(), {
+  expect(parse('[0,1,2]')).not.toThrow();
+  expect(parse('["a","b","c"]')).not.toThrow();
+  expect(parse('[0,,]')()).toEqual({
     type: 'ArrayExpression',
     elements: [
       {type: 'Literal', value: 0, raw: '0'},
       null
     ]
   });
-  t.end();
 });
 
-tape('Parser should allow literal object expressions', function(t) {
-  t.deepEqual(parse('{}')(), {
+test('Parser should allow literal object expressions', function() {
+  expect(parse('{}')()).toEqual({
     type: 'ObjectExpression',
     properties: []
   });
-  t.deepEqual(parse('{a:1, b:"c"}')(), {
+  expect(parse('{a:1, b:"c"}')()).toEqual({
     type: 'ObjectExpression',
     properties: [
       {
@@ -120,19 +113,18 @@ tape('Parser should allow literal object expressions', function(t) {
       }
     ]
   });
-  t.doesNotThrow(parse('{a:[0,1,2], b:[{a:1},{a:2}]}'));
-  t.doesNotThrow(parse('{1:1}'));
+  expect(parse('{a:[0,1,2], b:[{a:1},{a:2}]}')).not.toThrow();
+  expect(parse('{1:1}')).not.toThrow();
 
   // disallow duplicate keys
-  t.throws(parse('{a: 1, a: 2}'));
-  t.throws(parse('{'));
-  t.throws(parse('{01:true}'));
-  t.throws(parse('{/regex/:true}'));
-  t.end();
+  expect(parse('{a: 1, a: 2}')).toThrow();
+  expect(parse('{')).toThrow();
+  expect(parse('{01:true}')).toThrow();
+  expect(parse('{/regex/:true}')).toThrow();
 });
 
-tape('Parser should allow unary expressions', function(t) {
-  t.deepEqual(parse('+"1"')(), {
+test('Parser should allow unary expressions', function() {
+  expect(parse('+"1"')()).toEqual({
     type: 'UnaryExpression',
     operator: '+',
     prefix: true,
@@ -142,144 +134,136 @@ tape('Parser should allow unary expressions', function(t) {
       raw: '"1"'
     }
   });
-  t.doesNotThrow(parse('+1'));
-  t.doesNotThrow(parse('-1'));
-  t.doesNotThrow(parse('~1'));
-  t.doesNotThrow(parse('!1'));
-  t.end();
+  expect(parse('+1')).not.toThrow();
+  expect(parse('-1')).not.toThrow();
+  expect(parse('~1')).not.toThrow();
+  expect(parse('!1')).not.toThrow();
 });
 
-tape('Parser should allow binary expressions', function(t) {
-  t.deepEqual(parse('1+2')(), {
+test('Parser should allow binary expressions', function() {
+  expect(parse('1+2')()).toEqual({
     type: 'BinaryExpression',
     operator: '+',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
   });
-  t.doesNotThrow(parse('1-2'));
-  t.doesNotThrow(parse('1*2'));
-  t.doesNotThrow(parse('1/2'));
-  t.doesNotThrow(parse('1%2'));
-  t.doesNotThrow(parse('1&2'));
-  t.doesNotThrow(parse('1|2'));
-  t.doesNotThrow(parse('1>>2'));
-  t.doesNotThrow(parse('1<<2'));
-  t.doesNotThrow(parse('1>>>2'));
-  t.doesNotThrow(parse('1^2'));
-  t.doesNotThrow(parse('"a"+"b"'));
-  t.doesNotThrow(parse('1 in a'));
-  t.end();
+  expect(parse('1-2')).not.toThrow();
+  expect(parse('1*2')).not.toThrow();
+  expect(parse('1/2')).not.toThrow();
+  expect(parse('1%2')).not.toThrow();
+  expect(parse('1&2')).not.toThrow();
+  expect(parse('1|2')).not.toThrow();
+  expect(parse('1>>2')).not.toThrow();
+  expect(parse('1<<2')).not.toThrow();
+  expect(parse('1>>>2')).not.toThrow();
+  expect(parse('1^2')).not.toThrow();
+  expect(parse('"a"+"b"')).not.toThrow();
+  expect(parse('1 in a')).not.toThrow();
 });
 
-tape('Parser should allow logical expressions', function(t) {
-  t.deepEqual(parse('1 && 2')(), {
+test('Parser should allow logical expressions', function() {
+  expect(parse('1 && 2')()).toEqual({
     type: 'LogicalExpression',
     operator: '&&',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
   });
-  t.doesNotThrow(parse('1 || 2'));
-  t.end();
+  expect(parse('1 || 2')).not.toThrow();
 });
 
-tape('Parser should allow comparison expressions', function(t) {
-  t.deepEqual(parse('1 < 2')(), {
+test('Parser should allow comparison expressions', function() {
+  expect(parse('1 < 2')()).toEqual({
     type: 'BinaryExpression',
     operator: '<',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
   })
-  t.doesNotThrow(parse('1 > 2'));
-  t.doesNotThrow(parse('1 <= 2'));
-  t.doesNotThrow(parse('1 >= 2'));
-  t.doesNotThrow(parse('1 == 2'));
-  t.doesNotThrow(parse('1 === 2'));
-  t.doesNotThrow(parse('1 != 2'));
-  t.doesNotThrow(parse('1 !== 2'));
-  t.end();
+  expect(parse('1 > 2')).not.toThrow();
+  expect(parse('1 <= 2')).not.toThrow();
+  expect(parse('1 >= 2')).not.toThrow();
+  expect(parse('1 == 2')).not.toThrow();
+  expect(parse('1 === 2')).not.toThrow();
+  expect(parse('1 != 2')).not.toThrow();
+  expect(parse('1 !== 2')).not.toThrow();
 });
 
-tape('Parser should allow complex expressions', function(t) {
-  t.doesNotThrow(parse('1 + 2 - 3 / 4 * a.a + 4 & 3'));
-  t.end();
+test('Parser should allow complex expressions', function() {
+  expect(parse('1 + 2 - 3 / 4 * a.a + 4 & 3')).not.toThrow();
 });
 
-tape('Parser should allow ternary conditional expressions', function(t) {
-  t.deepEqual(parse('a ? b : c')(), {
+test('Parser should allow ternary conditional expressions', function() {
+  expect(parse('a ? b : c')()).toEqual({
     type: 'ConditionalExpression',
     test: {type: 'Identifier', name: 'a'},
     consequent: {type: 'Identifier', name: 'b'},
     alternate: {type: 'Identifier', name: 'c'}
   });
-  t.doesNotThrow(parse('1 ? 2 : 3'));
-  t.end();
+  expect(parse('1 ? 2 : 3')).not.toThrow();
 });
 
-tape('Parser should allow identifier expressions', function(t) {
-  t.deepEqual(parse('a')(), {
+test('Parser should allow identifier expressions', function() {
+  expect(parse('a')()).toEqual({
     type: 'Identifier',
     name: 'a'
   });
-  t.doesNotThrow(parse('a3'));
-  t.doesNotThrow(parse('µ'));
-  t.doesNotThrow(parse('$f'));
-  t.doesNotThrow(parse('_'));
+  expect(parse('a3')).not.toThrow();
+  expect(parse('µ')).not.toThrow();
+  expect(parse('$f')).not.toThrow();
+  expect(parse('_')).not.toThrow();
   // JS identifiers can contain escape sequences!
-  t.deepEqual(parse('\\u0041')(), {
+  expect(parse('\\u0041')()).toEqual({
     type: 'Identifier',
     name: 'A'
   });
-  t.deepEqual(parse('A\\u0041')(), {
+  expect(parse('A\\u0041')()).toEqual({
     type: 'Identifier',
     name: 'AA'
   });
 
   // but only \uXXXX escapes
-  t.throws(parse('id\\n'));
-  t.throws(parse('\\n'));
-  t.throws(parse('\\x4E'));
+  expect(parse('id\\n')).toThrow();
+  expect(parse('\\n')).toThrow();
+  expect(parse('\\x4E')).toThrow();
   // And the unescaped character must be otherwise valid.
-  t.throws(parse('\\u0030')); // \u0030 = '0', not allowed at start of identifier
-  t.throws(parse('id\\u0020')); // \u0020 is a control character
-  t.end();
+  expect(parse('\\u0030')).toThrow(); // \u0030 = '0', not allowed at start of identifier
+  expect(parse('id\\u0020')).toThrow(); // \u0020 is a control character
 });
 
-tape('Parser should allow member expressions', function(t) {
-  t.deepEqual(parse('a[0]')(), {
+test('Parser should allow member expressions', function() {
+  expect(parse('a[0]')()).toEqual({
     type: 'MemberExpression',
     computed: true,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Literal', value: 0, raw: '0'}
   });
-  t.deepEqual(parse('a.b')(), {
+  expect(parse('a.b')()).toEqual({
     type: 'MemberExpression',
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'b', member: true}
   })
-  t.doesNotThrow(parse('a["b"]'));
-  t.doesNotThrow(parse('a["two words"]'));
-  t.deepEqual(parse('a.true')(), {
+  expect(parse('a["b"]')).not.toThrow();
+  expect(parse('a["two words"]')).not.toThrow();
+  expect(parse('a.true')()).toEqual({
     type: 'MemberExpression',
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'true', member: true}
   })
-  t.doesNotThrow(parse('a.function'));
-  t.doesNotThrow(parse('a.null'));
+  expect(parse('a.function')).not.toThrow();
+  expect(parse('a.null')).not.toThrow();
 
-  t.throws(parse('a.+'));
-  t.throws(parse('a."hello"'));
-  t.end();
+  expect(parse('a.+')).toThrow();
+  expect(parse('a."hello"')).toThrow();
 });
 
-tape('Parser should allow call expressions', function(t) {
-  t.deepEqual(parse('a()')(), {
+test('Parser should allow call expressions', function() {
+  expect(parse('a()')()).toEqual({
     type: 'CallExpression',
     callee: {type: 'Identifier', name: 'a'},
     arguments: []
   });
-  t.deepEqual(parse('a(0,1,2)')(), {
+  expect(parse('a(0,1,2)')()).toEqual({
     type: 'CallExpression',
     callee: {type: 'Identifier', name: 'a'},
     arguments: [
@@ -288,263 +272,226 @@ tape('Parser should allow call expressions', function(t) {
       {type: 'Literal', value: 2, raw: '2'}
     ]
   })
-  t.doesNotThrow(parse('A()'));
-  t.doesNotThrow(parse('A(0,1,2)'));
-  t.doesNotThrow(parse('foo.bar(0,1,2)'));
-  t.end();
+  expect(parse('A()')).not.toThrow();
+  expect(parse('A(0,1,2)')).not.toThrow();
+  expect(parse('foo.bar(0,1,2)')).not.toThrow();
 });
 
-tape('Parser should not allow illegal identifier expressions', function(t) {
-  t.throws(parse('3a'));
-  t.throws(parse('#e'));
-  t.throws(parse('@e'));
-  t.end();
+test('Parser should not allow illegal identifier expressions', function() {
+  expect(parse('3a')).toThrow();
+  expect(parse('#e')).toThrow();
+  expect(parse('@e')).toThrow();
 });
 
-tape('Parser should not allow illegal member expressions', function(t) {
-  t.throws(parse('a.3'));
-  t.end();
+test('Parser should not allow illegal member expressions', function() {
+  expect(parse('a.3')).toThrow();
 });
 
-tape('Parser should not allow single-line comments', function(t) {
-  t.throws(parse('3 // comment'));
-  t.end();
+test('Parser should not allow single-line comments', function() {
+  expect(parse('3 // comment')).toThrow();
 });
 
-tape('Parser should not allow multi-line comments', function(t) {
-  t.throws(parse('/* comment */ 3'));
-  t.throws(parse('3 /* comment */'));
-  t.end();
+test('Parser should not allow multi-line comments', function() {
+  expect(parse('/* comment */ 3')).toThrow();
+  expect(parse('3 /* comment */')).toThrow();
 });
 
-tape('Parser should not allow empty statements', function(t) {
-  t.throws(parse(''));
-  t.throws(parse(' '));
-  t.end();
+test('Parser should not allow empty statements', function() {
+  expect(parse('')).toThrow();
+  expect(parse(' ')).toThrow();
 });
 
-tape('Parser should not allow debugger statements', function(t) {
-  t.throws(parse('debugger'));
-  t.end();
+test('Parser should not allow debugger statements', function() {
+  expect(parse('debugger')).toThrow();
 });
 
-tape('Parser should not allow continue statements', function(t) {
-  t.throws(parse('continue'));
-  t.end();
+test('Parser should not allow continue statements', function() {
+  expect(parse('continue')).toThrow();
 });
 
-tape('Parser should not allow break statements', function(t) {
-  t.throws(parse('break'));
-  t.end();
+test('Parser should not allow break statements', function() {
+  expect(parse('break')).toThrow();
 });
 
-tape('Parser should not allow reserved keywords', function(t) {
+test('Parser should not allow reserved keywords', function() {
   // future reserved words
-  t.throws(parse('class'));
-  t.throws(parse('enum'));
-  t.throws(parse('export'));
-  t.throws(parse('extends'));
-  t.throws(parse('import'));
-  t.throws(parse('super'));
+  expect(parse('class')).toThrow();
+  expect(parse('enum')).toThrow();
+  expect(parse('export')).toThrow();
+  expect(parse('extends')).toThrow();
+  expect(parse('import')).toThrow();
+  expect(parse('super')).toThrow();
   // strict mode reserved words
-  t.throws(parse('implements'));
-  t.throws(parse('interface'));
-  t.throws(parse('package'));
-  t.throws(parse('private'));
-  t.throws(parse('protected'));
-  t.throws(parse('public'));
-  t.throws(parse('static'));
-  t.throws(parse('yield'));
-  t.throws(parse('let'));
-  t.end();
+  expect(parse('implements')).toThrow();
+  expect(parse('interface')).toThrow();
+  expect(parse('package')).toThrow();
+  expect(parse('private')).toThrow();
+  expect(parse('protected')).toThrow();
+  expect(parse('public')).toThrow();
+  expect(parse('static')).toThrow();
+  expect(parse('yield')).toThrow();
+  expect(parse('let')).toThrow();
 });
 
-tape('Parser should not allow object get/set expressions', function(t) {
-  t.throws(parse('{get b() {}}'));
-  t.throws(parse('{set b(x) {}}'));
-  t.end();
+test('Parser should not allow object get/set expressions', function() {
+  expect(parse('{get b() {}}')).toThrow();
+  expect(parse('{set b(x) {}}')).toThrow();
 });
 
-tape('Parser should not allow assignment expressions', function(t) {
-  t.throws(parse('index = 3'));
-  t.throws(parse('index += 3'));
-  t.throws(parse('index -= 3'));
-  t.throws(parse('index *= 3'));
-  t.throws(parse('index /= 3'));
-  t.throws(parse('index %= 3'));
-  t.throws(parse('index >>= 1'));
-  t.throws(parse('index <<= 1'));
-  t.throws(parse('index >>>= 1'));
-  t.throws(parse('index &= 1'));
-  t.throws(parse('index |= 1'));
-  t.throws(parse('index ^= 1'));
-  t.end();
+test('Parser should not allow assignment expressions', function() {
+  expect(parse('index = 3')).toThrow();
+  expect(parse('index += 3')).toThrow();
+  expect(parse('index -= 3')).toThrow();
+  expect(parse('index *= 3')).toThrow();
+  expect(parse('index /= 3')).toThrow();
+  expect(parse('index %= 3')).toThrow();
+  expect(parse('index >>= 1')).toThrow();
+  expect(parse('index <<= 1')).toThrow();
+  expect(parse('index >>>= 1')).toThrow();
+  expect(parse('index &= 1')).toThrow();
+  expect(parse('index |= 1')).toThrow();
+  expect(parse('index ^= 1')).toThrow();
 });
 
-tape('Parser should not allow postfix update expressions', function(t) {
-  t.throws(parse('index++'));
-  t.throws(parse('index--'));
-  t.end();
+test('Parser should not allow postfix update expressions', function() {
+  expect(parse('index++')).toThrow();
+  expect(parse('index--')).toThrow();
 });
 
-tape('Parser should not allow prefix update expressions', function(t) {
-  t.throws(parse('++index'));
-  t.throws(parse('--index'));
-  t.end();
+test('Parser should not allow prefix update expressions', function() {
+  expect(parse('++index')).toThrow();
+  expect(parse('--index')).toThrow();
 });
 
-tape('Parser should not allow sequence expressions', function(t) {
-  t.throws(parse('(3, 4)'));
-  t.throws(parse('("a", 3+4)'));
-  t.end();
+test('Parser should not allow sequence expressions', function() {
+  expect(parse('(3, 4)')).toThrow();
+  expect(parse('("a", 3+4)')).toThrow();
 });
 
-tape('Parser should not allow multiple statements', function(t) {
-  t.throws(parse('3; 4'));
-  t.throws(parse('"a"; 3+4'));
-  t.end();
+test('Parser should not allow multiple statements', function() {
+  expect(parse('3; 4')).toThrow();
+  expect(parse('"a"; 3+4')).toThrow();
 });
 
-tape('Parser should not allow variable statements', function(t) {
-  t.throws(parse('var x = 4'));
-  t.end();
+test('Parser should not allow variable statements', function() {
+  expect(parse('var x = 4')).toThrow();
 });
 
-tape('Parser should not allow return statements', function(t) {
-  t.throws(parse('return 4'));
-  t.end();
+test('Parser should not allow return statements', function() {
+  expect(parse('return 4')).toThrow();
 });
 
-tape('Parser should not allow function declarations', function(t) {
-  t.throws(parse('function f() {}'));
-  t.throws(parse('function f() { 1 }'));
-  t.throws(parse('function f() { return 1; }'));
-  t.end();
+test('Parser should not allow function declarations', function() {
+  expect(parse('function f() {}')).toThrow();
+  expect(parse('function f() { 1 }')).toThrow();
+  expect(parse('function f() { return 1; }')).toThrow();
 });
 
-tape('Parser should not allow function expressions', function(t) {
-  t.throws(parse('function() {}'));
-  t.throws(parse('function() { 1 }'));
-  t.throws(parse('function() { return 1; }'));
-  t.end();
+test('Parser should not allow function expressions', function() {
+  expect(parse('function() {}')).toThrow();
+  expect(parse('function() { 1 }')).toThrow();
+  expect(parse('function() { return 1; }')).toThrow();
 });
 
-tape('Parser should not allow new statements', function(t) {
-  t.throws(parse('new Date()'));
-  t.throws(parse('new Array(3)'));
-  t.end();
+test('Parser should not allow new statements', function() {
+  expect(parse('new Date()')).toThrow();
+  expect(parse('new Array(3)')).toThrow();
 });
 
-tape('Parser should not allow block statements', function(t) {
-  t.throws(parse('{3+4}'));
-  t.throws(parse('{"a"}'));
-  t.end();
+test('Parser should not allow block statements', function() {
+  expect(parse('{3+4}')).toThrow();
+  expect(parse('{"a"}')).toThrow();
 });
 
-tape('Parser should not allow labeled statements', function(t) {
-  t.throws(parse('label: 3'));
-  t.end();
+test('Parser should not allow labeled statements', function() {
+  expect(parse('label: 3')).toThrow();
 });
 
-tape('Parser should not allow with statements', function(t) {
-  t.throws(parse('with({a:1,b:2}) { a }'));
-  t.end();
+test('Parser should not allow with statements', function() {
+  expect(parse('with({a:1,b:2}) { a }')).toThrow();
 });
 
-tape('Parser should not allow try/catch statements', function(t) {
-  t.throws(parse('try { 3 } catch (err) { 4 }'));
-  t.throws(parse('try { undefined() } catch (err) { 4 }'));
-  t.end();
+test('Parser should not allow try/catch statements', function() {
+  expect(parse('try { 3 } catch (err) { 4 }')).toThrow();
+  expect(parse('try { undefined() } catch (err) { 4 }')).toThrow();
 });
 
-tape('Parser should not allow if statements', function(t) {
-  t.throws(parse('if (1<2) 4; else 5'));
-  t.throws(parse('if (2<1) 4; else 5'));
-  t.end();
+test('Parser should not allow if statements', function() {
+  expect(parse('if (1<2) 4; else 5')).toThrow();
+  expect(parse('if (2<1) 4; else 5')).toThrow();
 });
 
-tape('Parser should not allow switch statements', function(t) {
-  t.throws(parse('switch("a") { default: 3; }'));
-  t.throws(parse('switch("a") { case "a": 4; break; default: 3; }'));
-  t.end();
+test('Parser should not allow switch statements', function() {
+  expect(parse('switch("a") { default: 3; }')).toThrow();
+  expect(parse('switch("a") { case "a": 4; break; default: 3; }')).toThrow();
 });
 
-tape('Parser should not allow for statements', function(t) {
-  t.throws(parse('for (; index>5; ) { index; }'));
-  t.end();
+test('Parser should not allow for statements', function() {
+  expect(parse('for (; index>5; ) { index; }')).toThrow();
 });
 
-tape('Parser should not allow for-in statements', function(t) {
-  t.throws(parse('for (i in self) { 3; }'));
-  t.end();
+test('Parser should not allow for-in statements', function() {
+  expect(parse('for (i in self) { 3; }')).toThrow();
 });
 
-tape('Parser should not allow while statements', function(t) {
-  t.throws(parse('while (1 < 2) { 3; }'));
-  t.throws(parse('while (1 > 2) { 3; }'));
-  t.end();
+test('Parser should not allow while statements', function() {
+  expect(parse('while (1 < 2) { 3; }')).toThrow();
+  expect(parse('while (1 > 2) { 3; }')).toThrow();
 });
 
-tape('Parser should not allow do-while statements', function(t) {
-  t.throws(parse('do { 3 } while (1 < 2)'));
-  t.throws(parse('do { 3 } while (1 > 2)'));
-  t.end();
+test('Parser should not allow do-while statements', function() {
+  expect(parse('do { 3 } while (1 < 2)')).toThrow();
+  expect(parse('do { 3 } while (1 > 2)')).toThrow();
 });
 
-tape('Parser should not allow octal literals or escape sequences', function(t) {
+test('Parser should not allow octal literals or escape sequences', function() {
   // octal literals are not allowed in strict mode.
-  t.throws(parse('"\\01"'));
-  t.throws(parse('012'));
-  t.end();
+  expect(parse('"\\01"')).toThrow();
+  expect(parse('012')).toThrow();
 });
 
-tape('Parser should not allow void expressions', function(t) {
-  t.throws(parse('void(0)'));
-  t.end();
+test('Parser should not allow void expressions', function() {
+  expect(parse('void(0)')).toThrow();
 });
 
-tape('Parser should not allow delete expressions', function(t) {
-  t.throws(parse('delete a.x'));
-  t.end();
+test('Parser should not allow delete expressions', function() {
+  expect(parse('delete a.x')).toThrow();
 });
 
-tape('Parser should not allow typeof expressions', function(t) {
-  t.throws(parse('typeof "hello"'));
-  t.end();
+test('Parser should not allow typeof expressions', function() {
+  expect(parse('typeof "hello"')).toThrow();
 });
 
-tape('Parser should parse escape sequences', function(t) {
-  t.deepEqual(parse('"\\\n\\b\\f\\n\\r\\t\\v\\z\\u0023\\u{41}\\u{2F804}"')(), {
+test('Parser should parse escape sequences', function() {
+  expect(parse('"\\\n\\b\\f\\n\\r\\t\\v\\z\\u0023\\u{41}\\u{2F804}"')()).toEqual({
     type: 'Literal',
     value: '\b\f\n\r\t\vz\u0023\u0041\uD87E\uDC04',
     raw: '"\\\n\\b\\f\\n\\r\\t\\v\\z\\u0023\\u{41}\\u{2F804}"'
   });
   // \0 is a special case, not an octal literal
-  t.doesNotThrow(parse('"\\0"'));
+  expect(parse('"\\0"')).not.toThrow();
 
   // octal literals are not allowed in strict mode
-  t.throws(parse('"\\251"'));
+  expect(parse('"\\251"')).toThrow();
   // malformed hex escape
   // t.throws(parse('"\\xhi"')); // TODO
   // unicode codepoint is too large
-  t.throws(parse('"\\u{110000}"'));
+  expect(parse('"\\u{110000}"')).toThrow();
   // malformed unicode codepoint escape
-  t.throws(parse('"\\u{}"'));
-  t.end();
+  expect(parse('"\\u{}"')).toThrow();
 });
 
-tape('Parser should ignore whitespace', function(t) {
+test('Parser should ignore whitespace', function() {
   var tree = {
     type: "BinaryExpression",
     operator: "+",
     left: {type: "Literal", value: 1, raw: "1"},
     right: {type: "Literal", value: 2, raw: "2"}
   };
-  t.deepEqual(parse('1+ 2')(), tree);
-  t.deepEqual(parse('1+\n2')(), tree);
-  t.deepEqual(parse('1+\t2')(), tree);
-  t.deepEqual(parse('1+\v2')(), tree);
-  t.deepEqual(parse('1+\uFEFF2')(), tree);
-  t.deepEqual(parse('1+\r\n2')(), tree);
-  t.end();
+  expect(parse('1+ 2')()).toEqual(tree);
+  expect(parse('1+\n2')()).toEqual(tree);
+  expect(parse('1+\t2')()).toEqual(tree);
+  expect(parse('1+\v2')()).toEqual(tree);
+  expect(parse('1+\uFEFF2')()).toEqual(tree);
+  expect(parse('1+\r\n2')()).toEqual(tree);
 });

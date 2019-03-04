@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Pivot = tx.pivot;
+var util = require('vega-util'), vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, Collect = tx.collect, Pivot = tx.pivot;
 
-tape('Pivot pivots values', function(t) {
+test('Pivot pivots values', function() {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -28,50 +22,48 @@ tape('Pivot pivots values', function(t) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 3);
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 1);
-  t.equal(d[0].v, 2);
-  t.equal(d[1].a, 'B');
-  t.equal(d[1].u, 3);
-  t.equal(d[1].v, 4);
-  t.equal(d[2].a, 'C');
-  t.equal(d[2].u, 5);
-  t.equal(d[2].v, 6);
+  expect(d.length).toBe(3);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(1);
+  expect(d[0].v).toBe(2);
+  expect(d[1].a).toBe('B');
+  expect(d[1].u).toBe(3);
+  expect(d[1].v).toBe(4);
+  expect(d[2].a).toBe('C');
+  expect(d[2].u).toBe(5);
+  expect(d[2].v).toBe(6);
 
   // -- process mods
   df.pulse(c0, changeset().modify(data[1], 'c', 9)).run();
   d = out.value;
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 1);
-  t.equal(d[0].v, 9);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(1);
+  expect(d[0].v).toBe(9);
 
   // -- process block rems
   df.pulse(c0, changeset().remove(data.slice(4))).run();
   d = out.value;
-  t.equal(d.length, 2);
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 1);
-  t.equal(d[0].v, 9);
-  t.equal(d[1].a, 'B');
-  t.equal(d[1].u, 3);
-  t.equal(d[1].v, 4);
+  expect(d.length).toBe(2);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(1);
+  expect(d[0].v).toBe(9);
+  expect(d[1].a).toBe('B');
+  expect(d[1].u).toBe(3);
+  expect(d[1].v).toBe(4);
 
   // -- process partial rems
   df.pulse(c0, changeset().remove([data[0], data[3]])).run();
   d = out.value;
-  t.equal(d.length, 2);
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 0);
-  t.equal(d[0].v, 9);
-  t.equal(d[1].a, 'B');
-  t.equal(d[1].u, 3);
-  t.equal(d[1].v, 0);
-
-  t.end();
+  expect(d.length).toBe(2);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(0);
+  expect(d[0].v).toBe(9);
+  expect(d[1].a).toBe('B');
+  expect(d[1].u).toBe(3);
+  expect(d[1].v).toBe(0);
 });
 
-tape('Pivot pivots values within limit', function(t) {
+test('Pivot pivots values within limit', function() {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -93,22 +85,20 @@ tape('Pivot pivots values within limit', function(t) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 2);
-  t.equal(Object.keys(d[0]).length, 3);
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 1);
-  t.equal(d[0].v, 2);
-  t.equal(d[0].w, undefined);
-  t.equal(Object.keys(d[1]).length, 3);
-  t.equal(d[1].a, 'B');
-  t.equal(d[1].u, 4);
-  t.equal(d[1].v, 5);
-  t.equal(d[1].w, undefined);
-
-  t.end();
+  expect(d.length).toBe(2);
+  expect(Object.keys(d[0]).length).toBe(3);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(1);
+  expect(d[0].v).toBe(2);
+  expect(d[0].w).toBe(undefined);
+  expect(Object.keys(d[1]).length).toBe(3);
+  expect(d[1].a).toBe('B');
+  expect(d[1].u).toBe(4);
+  expect(d[1].v).toBe(5);
+  expect(d[1].w).toBe(undefined);
 });
 
-tape('Pivot handles count aggregate', function(t) {
+test('Pivot handles count aggregate', function() {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:null},
@@ -128,16 +118,14 @@ tape('Pivot handles count aggregate', function(t) {
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 3);
-  t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 1);
-  t.equal(d[0].v, 1);
-  t.equal(d[1].a, 'B');
-  t.equal(d[1].u, 0);
-  t.equal(d[1].v, 1);
-  t.equal(d[2].a, 'C');
-  t.equal(d[2].u, 1);
-  t.equal(d[2].v, 0);
-
-  t.end();
+  expect(d.length).toBe(3);
+  expect(d[0].a).toBe('A');
+  expect(d[0].u).toBe(1);
+  expect(d[0].v).toBe(1);
+  expect(d[1].a).toBe('B');
+  expect(d[1].u).toBe(0);
+  expect(d[1].v).toBe(1);
+  expect(d[2].a).toBe('C');
+  expect(d[2].u).toBe(1);
+  expect(d[2].v).toBe(0);
 });

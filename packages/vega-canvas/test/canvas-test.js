@@ -1,18 +1,14 @@
-var tape = require('tape'),
-    vega = require('../'),
-    canvas = require('canvas');
+var vega = require('../'), canvas = require('canvas');
 
-tape('Canvas loader loads node canvas', function(t) {
+test('Canvas loader loads node canvas', function() {
   var c = vega.canvas(10, 20);
-  t.ok(c);
-  t.ok(c.getContext);
-  t.equal(c.width, 10);
-  t.equal(c.height, 20);
-  t.equal(vega.image(), canvas.Image);
+  expect(c).toBeTruthy();
+  expect(c.getContext).toBeTruthy();
+  expect(c.width).toBe(10);
+  expect(c.height).toBe(20);
+  expect(vega.image()).toBe(canvas.Image);
 
   c = vega.canvas();
-  t.equal(c.width, 0);
-  t.equal(c.height, 0);
-
-  t.end();
+  expect(c.width).toBe(0);
+  expect(c.height).toBe(0);
 });

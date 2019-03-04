@@ -1,9 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
+var vega = require('vega-dataflow'), transforms = require('vega-transforms'), runtime = require('../');
 
-tape('Parser parses faceted dataflow specs', function(t) {
+test('Parser parses faceted dataflow specs', function() {
   var values = [
     {"k": "a", "x": 1,  "y": 28},
     {"k": "b", "x": 2,  "y": 43},
@@ -47,14 +44,11 @@ tape('Parser parses faceted dataflow specs', function(t) {
       ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes;
 
-  t.equal(Object.keys(ops).length, spec.operators.length);
+  expect(Object.keys(ops).length).toBe(spec.operators.length);
 
   // test that all subflow operators were created and run
   df.run();
-  t.equal(
-    count(ctx, df.stamp()),
-    spec.operators.length + nkey * (len0 + nkey * len1)
-  );
+  expect(count(ctx, df.stamp())).toBe(spec.operators.length + nkey * (len0 + nkey * len1));
 
   // test that subflows contain correct values
   var subflows = ops[1].value,
@@ -63,13 +57,11 @@ tape('Parser parses faceted dataflow specs', function(t) {
       extentA = collectA._targets[0],
       extentB = collectB._targets[0];
 
-  t.equal(collectA.value.length, size);
-  t.deepEqual(extentA.value, [28, 81]);
+  expect(collectA.value.length).toBe(size);
+  expect(extentA.value).toEqual([28, 81]);
 
-  t.equal(collectB.value.length, size);
-  t.deepEqual(extentB.value, [19, 43]);
-
-  t.end();
+  expect(collectB.value.length).toBe(size);
+  expect(extentB.value).toEqual([19, 43]);
 });
 
 function count(ctx, stamp) {

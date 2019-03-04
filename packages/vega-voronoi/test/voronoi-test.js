@@ -1,11 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Voronoi = require('../').voronoi,
-    Collect = require('vega-transforms').collect,
-    changeset = vega.changeset;
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var Voronoi = require('../').voronoi;
+var Collect = require('vega-transforms').collect;
+var changeset = vega.changeset;
 
-tape('Voronoi generates voronoi cell paths', function(t) {
+test('Voronoi generates voronoi cell paths', function() {
   var data = [
     {x: 10, y: 10},
     {x: 20, y: 10}
@@ -24,7 +23,6 @@ tape('Voronoi generates voronoi cell paths', function(t) {
 
   df.pulse(c0, changeset().insert(data)).run();
   var out = vo.pulse.add;
-  t.equal(out[0].path, 'M15,20L15,0L0,0L0,20Z');
-  t.equal(out[1].path, 'M15,0L15,20L30,20L30,0Z');
-  t.end();
+  expect(out[0].path).toBe('M15,20L15,0L0,0L0,20Z');
+  expect(out[1].path).toBe('M15,0L15,20L30,20L30,0Z');
 });

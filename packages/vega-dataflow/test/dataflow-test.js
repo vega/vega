@@ -1,7 +1,6 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('Dataflow propagates values (run)', function(t) {
+test('Dataflow propagates values (run)', function() {
   var df = new vega.Dataflow(),
       s1 = df.add(10),
       s2 = df.add(3),
@@ -10,31 +9,29 @@ tape('Dataflow propagates values (run)', function(t) {
       op = [s1, s2, n1, n2],
       stamp = function(_) { return _.stamp; };
 
-  t.equal(df.stamp(), 0); // timestamp 0
+  expect(df.stamp()).toBe(0); // timestamp 0
 
   // these tests ensure that dataflow evaluation completes synchronously
   // (i.e., subsequent code lines have access to calculated output)
   // if run is invoked with no pending datasets or async operators
 
   df.run();
-  t.equal(df.stamp(), 1); // timestamp 1
-  t.deepEqual(op.map(stamp), [1, 1, 1, 1]);
-  t.equal(n2.value, 30.75);
+  expect(df.stamp()).toBe(1); // timestamp 1
+  expect(op.map(stamp)).toEqual([1, 1, 1, 1]);
+  expect(n2.value).toBe(30.75);
 
   df.update(s1, 5).run();
-  t.equal(df.stamp(), 2); // timestamp 2
-  t.deepEqual(op.map(stamp), [2, 1, 2, 2]);
-  t.equal(n2.value, 15.75);
+  expect(df.stamp()).toBe(2); // timestamp 2
+  expect(op.map(stamp)).toEqual([2, 1, 2, 2]);
+  expect(n2.value).toBe(15.75);
 
   df.update(s2, 1).run();
-  t.equal(df.stamp(), 3); // timestamp 3
-  t.deepEqual(op.map(stamp), [2, 3, 2, 3]);
-  t.equal(n2.value, 5.25);
-
-  t.end();
+  expect(df.stamp()).toBe(3); // timestamp 3
+  expect(op.map(stamp)).toEqual([2, 3, 2, 3]);
+  expect(n2.value).toBe(5.25);
 });
 
-tape('Dataflow propagates values (runAsync)', function(t) {
+test('Dataflow propagates values (runAsync)', function(done) {
   var df = new vega.Dataflow(),
       s1 = df.add(10),
       s2 = df.add(3),
@@ -43,54 +40,54 @@ tape('Dataflow propagates values (runAsync)', function(t) {
       op = [s1, s2, n1, n2],
       stamp = function(_) { return _.stamp; };
 
-  t.equal(df.stamp(), 0); // timestamp 0
+  expect(df.stamp()).toBe(0); // timestamp 0
 
   df.runAsync()
     .then(function() {
-      t.equal(df.stamp(), 1); // timestamp 1
-      t.deepEqual(op.map(stamp), [1, 1, 1, 1]);
-      t.equal(n2.value, 30.75);
+      expect(df.stamp()).toBe(1); // timestamp 1
+      expect(op.map(stamp)).toEqual([1, 1, 1, 1]);
+      expect(n2.value).toBe(30.75);
       return df.update(s1, 5).runAsync();
     })
     .then(function() {
-      t.equal(df.stamp(), 2); // timestamp 2
-      t.deepEqual(op.map(stamp), [2, 1, 2, 2]);
-      t.equal(n2.value, 15.75);
+      expect(df.stamp()).toBe(2); // timestamp 2
+      expect(op.map(stamp)).toEqual([2, 1, 2, 2]);
+      expect(n2.value).toBe(15.75);
       return df.update(s2, 1).runAsync();
     })
     .then(function() {
-      t.equal(df.stamp(), 3); // timestamp 3
-      t.deepEqual(op.map(stamp), [2, 3, 2, 3]);
-      t.equal(n2.value, 5.25);
-      t.end();
+      expect(df.stamp()).toBe(3); // timestamp 3
+      expect(op.map(stamp)).toEqual([2, 3, 2, 3]);
+      expect(n2.value).toBe(5.25);
+      done();
     });
 });
 
-tape('Dataflow loads external data', function(t) {
+test('Dataflow loads external data', function(done) {
   var df = new vega.Dataflow(),
       op = df.add(null);
 
   df.preload(op, null)
     .then(function(res) {
-      t.equal(res.status, -1); // load fail due to bad url
+      expect(res.status).toBe(-1); // load fail due to bad url
       return df.preload(op, 'README.md', {type: 'json'});
     })
     .then(function(res) {
-      t.equal(res.status, -2); // parse fail due to improper format
+      expect(res.status).toBe(-2); // parse fail due to improper format
       return df.preload(op, 'package.json');
     })
     .then(function(res) {
-      t.equal(res.status, 0); // successful load and parse
+      expect(res.status).toBe(0); // successful load and parse
       return df.runAsync();
     })
     .then(function() {
-      t.equal(op.pulse.add.length, 1);
-      t.equal(op.pulse.add[0].name, 'vega-dataflow');
-      t.end();
+      expect(op.pulse.add.length).toBe(1);
+      expect(op.pulse.add[0].name).toBe('vega-dataflow');
+      done();
     });
 });
 
-tape('Dataflow handles errors', function(t) {
+test('Dataflow handles errors', function() {
   var df = new vega.Dataflow(),
       error = 0;
 
@@ -99,9 +96,8 @@ tape('Dataflow handles errors', function(t) {
 
   df.run();
 
-  t.equal(error, 1);
-  t.equal(df._pulse, null);
-  t.equal(Object.keys(df._pulses).length, 0);
-  t.equal(df._postrun.length, 0);
-  t.end();
+  expect(error).toBe(1);
+  expect(df._pulse).toBe(null);
+  expect(Object.keys(df._pulses).length).toBe(0);
+  expect(df._postrun.length).toBe(0);
 });

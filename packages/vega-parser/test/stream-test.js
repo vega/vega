@@ -1,7 +1,6 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('Parser parses stream definitions', function(t) {
+test('Parser parses stream definitions', function() {
   var scope = new vega.Scope(),
       dom, view, between, merge, nested, timer;
 
@@ -60,15 +59,15 @@ tape('Parser parses stream definitions', function(t) {
     throttle: 500
   }, scope);
 
-  t.equal(scope.streams.length, 12);
+  expect(scope.streams.length).toBe(12);
 
-  t.deepEqual(scope.streams[0], {
+  expect(scope.streams[0]).toEqual({
     id: 1,
     source: 'window',
     type: 'mousemove'
   });
 
-  t.deepEqual(scope.streams[1], {
+  expect(scope.streams[1]).toEqual({
     id: dom,
     stream: 1,
     filter: 'event.metaKey',
@@ -76,13 +75,13 @@ tape('Parser parses stream definitions', function(t) {
     debounce: 2
   });
 
-  t.deepEqual(scope.streams[2], {
+  expect(scope.streams[2]).toEqual({
     id: 3,
     source: 'view',
     type: 'mousedown'
   });
 
-  t.deepEqual(scope.streams[3], {
+  expect(scope.streams[3]).toEqual({
     id: view,
     stream: 3,
     filter: "(event.shiftKey&&((event.item&&(event.item.mark.marktype==='rect'))&&(event.item.mark.name==='foo')))",
@@ -90,52 +89,50 @@ tape('Parser parses stream definitions', function(t) {
     debounce: 4
   });
 
-  t.deepEqual(scope.streams[4], {
+  expect(scope.streams[4]).toEqual({
     id: 5,
     source: 'view',
     type: 'mouseup'
   });
 
-  t.deepEqual(scope.streams[5], {
+  expect(scope.streams[5]).toEqual({
     id: between,
     stream: 1,
     between: [3, 5]
   });
 
-  t.deepEqual(scope.streams[6], {
+  expect(scope.streams[6]).toEqual({
     id: merge,
     merge: [3, 5]
   });
 
-  t.deepEqual(scope.streams[7], {
+  expect(scope.streams[7]).toEqual({
     id: 8,
     stream: 1,
     between: [3, 5]
   });
 
-  t.deepEqual(scope.streams[8], {
+  expect(scope.streams[8]).toEqual({
     id: 9,
     source: 'view',
     type: 'touchstart'
   });
 
-  t.deepEqual(scope.streams[9], {
+  expect(scope.streams[9]).toEqual({
     id: 10,
     source: 'view',
     type: 'touchend'
   });
 
-  t.deepEqual(scope.streams[10], {
+  expect(scope.streams[10]).toEqual({
     id: nested,
     stream: 8,
     between: [9, 10]
   });
 
-  t.deepEqual(scope.streams[11], {
+  expect(scope.streams[11]).toEqual({
     id: timer,
     source: 'timer',
     type: 500
   });
-
-  t.end();
 });

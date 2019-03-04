@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Aggregate = tx.aggregate;
+var util = require('vega-util'), vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, Collect = tx.collect, Aggregate = tx.aggregate;
 
-tape('Aggregate aggregates tuples', function(t) {
+test('Aggregate aggregates tuples', function() {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -27,62 +21,60 @@ tape('Aggregate aggregates tuples', function(t) {
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, 2);
-  t.equal(d[0].k, 'a');
-  t.equal(d[0].count_v, 2);
-  t.equal(d[0].sum_v, 3);
-  t.equal(d[0].min_v, 1);
-  t.equal(d[0].max_v, 2);
-  t.equal(d[1].k, 'b');
-  t.equal(d[1].count_v, 2);
-  t.equal(d[1].sum_v, 7);
-  t.equal(d[1].min_v, 3);
-  t.equal(d[1].max_v, 4);
+  expect(d.length).toBe(2);
+  expect(d[0].k).toBe('a');
+  expect(d[0].count_v).toBe(2);
+  expect(d[0].sum_v).toBe(3);
+  expect(d[0].min_v).toBe(1);
+  expect(d[0].max_v).toBe(2);
+  expect(d[1].k).toBe('b');
+  expect(d[1].count_v).toBe(2);
+  expect(d[1].sum_v).toBe(7);
+  expect(d[1].min_v).toBe(3);
+  expect(d[1].max_v).toBe(4);
 
   // -- test rems
   df.pulse(col, changeset().remove(data.slice(0, 2))).run();
   d = out.value;
-  t.equal(d.length, 2);
-  t.equal(d[0].k, 'a');
-  t.equal(d[0].count_v, 1);
-  t.equal(d[0].sum_v, 2);
-  t.equal(d[0].min_v, 2);
-  t.equal(d[0].max_v, 2);
-  t.equal(d[1].k, 'b');
-  t.equal(d[1].count_v, 1);
-  t.equal(d[1].sum_v, 4);
-  t.equal(d[1].min_v, 4);
-  t.equal(d[1].max_v, 4);
+  expect(d.length).toBe(2);
+  expect(d[0].k).toBe('a');
+  expect(d[0].count_v).toBe(1);
+  expect(d[0].sum_v).toBe(2);
+  expect(d[0].min_v).toBe(2);
+  expect(d[0].max_v).toBe(2);
+  expect(d[1].k).toBe('b');
+  expect(d[1].count_v).toBe(1);
+  expect(d[1].sum_v).toBe(4);
+  expect(d[1].min_v).toBe(4);
+  expect(d[1].max_v).toBe(4);
 
   // -- test mods, no groupby change
   df.pulse(col, changeset().modify(data[2], 'v', 3)).run();
   d = out.value;
-  t.equal(d.length, 2);
-  t.equal(d[0].k, 'a');
-  t.equal(d[0].count_v, 1);
-  t.equal(d[0].sum_v, 3);
-  t.equal(d[0].min_v, 3);
-  t.equal(d[0].max_v, 3);
-  t.equal(d[1].k, 'b');
-  t.equal(d[1].count_v, 1);
-  t.equal(d[1].sum_v, 4);
-  t.equal(d[1].min_v, 4);
-  t.equal(d[1].max_v, 4);
+  expect(d.length).toBe(2);
+  expect(d[0].k).toBe('a');
+  expect(d[0].count_v).toBe(1);
+  expect(d[0].sum_v).toBe(3);
+  expect(d[0].min_v).toBe(3);
+  expect(d[0].max_v).toBe(3);
+  expect(d[1].k).toBe('b');
+  expect(d[1].count_v).toBe(1);
+  expect(d[1].sum_v).toBe(4);
+  expect(d[1].min_v).toBe(4);
+  expect(d[1].max_v).toBe(4);
 
   // -- test mods, groupby change
   df.pulse(col, changeset().modify(data[2], 'k', 'b')).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(d[0].k, 'b');
-  t.equal(d[0].count_v, 2);
-  t.equal(d[0].sum_v, 7);
-  t.equal(d[0].min_v, 3);
-  t.equal(d[0].max_v, 4);
-
-  t.end();
+  expect(d.length).toBe(1);
+  expect(d[0].k).toBe('b');
+  expect(d[0].count_v).toBe(2);
+  expect(d[0].sum_v).toBe(7);
+  expect(d[0].min_v).toBe(3);
+  expect(d[0].max_v).toBe(4);
 });
 
-tape('Aggregate handles count aggregates', function(t) {
+test('Aggregate handles count aggregates', function() {
   var data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
@@ -105,11 +97,11 @@ tape('Aggregate handles count aggregates', function(t) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(Object.keys(d[0]).length, 3); // outputs
-  t.equal(d[0].count, 3);
-  t.equal(d[0].count_foo, 3);
-  t.equal(d[0].count_bar, 3);
+  expect(d.length).toBe(1);
+  expect(Object.keys(d[0]).length).toBe(3); // outputs
+  expect(d[0].count).toBe(3);
+  expect(d[0].count_foo).toBe(3);
+  expect(d[0].count_bar).toBe(3);
 
   // multiple counts plus other measures
   df = new vega.Dataflow();
@@ -123,18 +115,16 @@ tape('Aggregate handles count aggregates', function(t) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(Object.keys(d[0]).length, 4); // outputs
-  t.equal(d[0].count, 3);
-  t.equal(d[0].sum_foo, 6);
-  t.equal(d[0].sum_bar, 9);
-  t.equal(d[0].count_bar, 3);
-
-  t.end();
+  expect(d.length).toBe(1);
+  expect(Object.keys(d[0]).length).toBe(4); // outputs
+  expect(d[0].count).toBe(3);
+  expect(d[0].sum_foo).toBe(6);
+  expect(d[0].sum_bar).toBe(9);
+  expect(d[0].count_bar).toBe(3);
 });
 
 
-tape('Aggregate properly handles empty aggregation cells', function(t) {
+test('Aggregate properly handles empty aggregation cells', function() {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -154,28 +144,26 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
 
   // -- add data
   df.pulse(col, changeset().insert(data)).run();
-  t.equal(out.value.length, 2);
+  expect(out.value.length).toBe(2);
 
   // -- remove category 'b'
   df.pulse(col, changeset()
     .remove(function(d) { return d.k === 'b'; })).run();
-  t.equal(out.value.length, 1);
+  expect(out.value.length).toBe(1);
 
   // -- modify tuple
   df.pulse(col, changeset().modify(data[0], 'v', 2)).run();
 
   var d = out.value;
-  t.equal(d.length, 1);
-  t.equal(d[0].k, 'a');
-  t.equal(d[0].count_v, 2);
-  t.equal(d[0].sum_v, 4);
-  t.equal(d[0].min_v, 2);
-  t.equal(d[0].max_v, 2);
-
-  t.end();
+  expect(d.length).toBe(1);
+  expect(d[0].k).toBe('a');
+  expect(d[0].count_v).toBe(2);
+  expect(d[0].sum_v).toBe(4);
+  expect(d[0].min_v).toBe(2);
+  expect(d[0].max_v).toBe(2);
 });
 
-tape('Aggregate handles distinct aggregates', function(t) {
+test('Aggregate handles distinct aggregates', function() {
   var data = [
     {foo:null},
     {foo:null},
@@ -202,23 +190,21 @@ tape('Aggregate handles distinct aggregates', function(t) {
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(d[0].distinct_foo, 4);
+  expect(d.length).toBe(1);
+  expect(d[0].distinct_foo).toBe(4);
 
   df.pulse(col, changeset().remove(data[0])).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(d[0].distinct_foo, 4);
+  expect(d.length).toBe(1);
+  expect(d[0].distinct_foo).toBe(4);
 
   df.pulse(col, changeset().remove(data[1])).run();
   d = out.value;
-  t.equal(d.length, 1);
-  t.equal(d[0].distinct_foo, 3);
-
-  t.end();
+  expect(d.length).toBe(1);
+  expect(d[0].distinct_foo).toBe(3);
 });
 
-tape('Aggregate handles cross-product', function(t) {
+test('Aggregate handles cross-product', function() {
   var data = [
     {a: 0, b: 2},
     {a: 1, b: 3}
@@ -241,70 +227,68 @@ tape('Aggregate handles cross-product', function(t) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, 4);
-  t.equal(d[0].a, 0);
-  t.equal(d[0].b, 2);
-  t.equal(d[0].count, 1);
-  t.equal(d[1].a, 0);
-  t.equal(d[1].b, 3);
-  t.equal(d[1].count, 0);
-  t.equal(d[2].a, 1);
-  t.equal(d[2].b, 2);
-  t.equal(d[2].count, 0);
-  t.equal(d[3].a, 1);
-  t.equal(d[3].b, 3);
-  t.equal(d[3].count, 1);
+  expect(d.length).toBe(4);
+  expect(d[0].a).toBe(0);
+  expect(d[0].b).toBe(2);
+  expect(d[0].count).toBe(1);
+  expect(d[1].a).toBe(0);
+  expect(d[1].b).toBe(3);
+  expect(d[1].count).toBe(0);
+  expect(d[2].a).toBe(1);
+  expect(d[2].b).toBe(2);
+  expect(d[2].count).toBe(0);
+  expect(d[3].a).toBe(1);
+  expect(d[3].b).toBe(3);
+  expect(d[3].count).toBe(1);
 
   // -- test mod
   df.pulse(col, changeset().modify(data[0], 'b', 4)).run();
   d = out.value;
-  t.equal(d.length, 6);
-  t.equal(d[0].a, 0);
-  t.equal(d[0].b, 2);
-  t.equal(d[0].count, 0);
-  t.equal(d[1].a, 0);
-  t.equal(d[1].b, 3);
-  t.equal(d[1].count, 0);
-  t.equal(d[2].a, 0);
-  t.equal(d[2].b, 4);
-  t.equal(d[2].count, 1);
-  t.equal(d[3].a, 1);
-  t.equal(d[3].b, 2);
-  t.equal(d[3].count, 0);
-  t.equal(d[4].a, 1);
-  t.equal(d[4].b, 3);
-  t.equal(d[4].count, 1);
-  t.equal(d[5].a, 1);
-  t.equal(d[5].b, 4);
-  t.equal(d[5].count, 0);
+  expect(d.length).toBe(6);
+  expect(d[0].a).toBe(0);
+  expect(d[0].b).toBe(2);
+  expect(d[0].count).toBe(0);
+  expect(d[1].a).toBe(0);
+  expect(d[1].b).toBe(3);
+  expect(d[1].count).toBe(0);
+  expect(d[2].a).toBe(0);
+  expect(d[2].b).toBe(4);
+  expect(d[2].count).toBe(1);
+  expect(d[3].a).toBe(1);
+  expect(d[3].b).toBe(2);
+  expect(d[3].count).toBe(0);
+  expect(d[4].a).toBe(1);
+  expect(d[4].b).toBe(3);
+  expect(d[4].count).toBe(1);
+  expect(d[5].a).toBe(1);
+  expect(d[5].b).toBe(4);
+  expect(d[5].count).toBe(0);
 
   // -- test rem
   df.pulse(col, changeset().remove(data)).run();
   d = out.value;
-  t.equal(d.length, 6);
-  t.equal(d[0].a, 0);
-  t.equal(d[0].b, 2);
-  t.equal(d[0].count, 0);
-  t.equal(d[1].a, 0);
-  t.equal(d[1].b, 3);
-  t.equal(d[1].count, 0);
-  t.equal(d[2].a, 0);
-  t.equal(d[2].b, 4);
-  t.equal(d[2].count, 0);
-  t.equal(d[3].a, 1);
-  t.equal(d[3].b, 2);
-  t.equal(d[3].count, 0);
-  t.equal(d[4].a, 1);
-  t.equal(d[4].b, 3);
-  t.equal(d[4].count, 0);
-  t.equal(d[5].a, 1);
-  t.equal(d[5].b, 4);
-  t.equal(d[5].count, 0);
-
-  t.end();
+  expect(d.length).toBe(6);
+  expect(d[0].a).toBe(0);
+  expect(d[0].b).toBe(2);
+  expect(d[0].count).toBe(0);
+  expect(d[1].a).toBe(0);
+  expect(d[1].b).toBe(3);
+  expect(d[1].count).toBe(0);
+  expect(d[2].a).toBe(0);
+  expect(d[2].b).toBe(4);
+  expect(d[2].count).toBe(0);
+  expect(d[3].a).toBe(1);
+  expect(d[3].b).toBe(2);
+  expect(d[3].count).toBe(0);
+  expect(d[4].a).toBe(1);
+  expect(d[4].b).toBe(3);
+  expect(d[4].count).toBe(0);
+  expect(d[5].a).toBe(1);
+  expect(d[5].b).toBe(4);
+  expect(d[5].count).toBe(0);
 });
 
-tape('Aggregate handles empty/invalid data', function(t) {
+test('Aggregate handles empty/invalid data', function() {
   var ops = [
     'count',
     'valid',
@@ -333,8 +317,6 @@ tape('Aggregate handles empty/invalid data', function(t) {
   var d = out.value[0];
 
   ops.forEach(function(op, i) {
-    t.equal(d[op], res[i], op);
+    expect(d[op]).toBe(res[i]);
   });
-
-  t.end();
 });

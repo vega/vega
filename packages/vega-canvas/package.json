@@ -19,7 +19,7 @@
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js index.browser.js src test",
+    "test": "jest && eslint index.js index.browser.js src test",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },

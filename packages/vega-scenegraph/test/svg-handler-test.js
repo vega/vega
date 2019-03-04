@@ -1,12 +1,11 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    Renderer = vega.SVGRenderer,
-    Handler = vega.SVGHandler,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
+var fs = require('fs');
+var vega = require('../');
+var Renderer = vega.SVGRenderer;
+var Handler = vega.SVGHandler;
+var jsdom = require('jsdom');
+var doc = (new jsdom.JSDOM()).window.document;
 
-var res = './test/resources/';
+var res = __dirname + '/resources/';
 
 var marks = JSON.parse(load('marks.json'));
 for (var name in marks) { vega.sceneFromJSON(marks[name]); }
@@ -57,7 +56,7 @@ function event(name, x, y) {
   return evt;
 }
 
-tape('SVGHandler should add/remove event callbacks', function(t) {
+test('SVGHandler should add/remove event callbacks', function() {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -72,48 +71,46 @@ tape('SVGHandler should add/remove event callbacks', function(t) {
   handler.on(btype, f);
   handler.on(ctype, f);
 
-  t.equal(Object.keys(h).length, 2);
-  t.equal(array(h[atype]).length, 2);
-  t.equal(array(h[ctype]).length, 1);
+  expect(Object.keys(h).length).toBe(2);
+  expect(array(h[atype]).length).toBe(2);
+  expect(array(h[ctype]).length).toBe(1);
 
-  t.equal(object(h[atype][0]).type, atype);
-  t.equal(object(h[atype][1]).type, btype);
-  t.equal(object(h[ctype][0]).type, ctype);
+  expect(object(h[atype][0]).type).toBe(atype);
+  expect(object(h[atype][1]).type).toBe(btype);
+  expect(object(h[ctype][0]).type).toBe(ctype);
 
-  t.equal(object(h[atype][0]).handler, f);
-  t.equal(object(h[atype][1]).handler, f);
-  t.equal(object(h[ctype][0]).handler, f);
+  expect(object(h[atype][0]).handler).toBe(f);
+  expect(object(h[atype][1]).handler).toBe(f);
+  expect(object(h[ctype][0]).handler).toBe(f);
 
   // remove event callback by type
   handler.off(atype);
 
-  t.equal(Object.keys(h).length, 2);
-  t.equal(array(h[atype]).length, 1);
-  t.equal(array(h[ctype]).length, 1);
+  expect(Object.keys(h).length).toBe(2);
+  expect(array(h[atype]).length).toBe(1);
+  expect(array(h[ctype]).length).toBe(1);
 
-  t.equal(object(h[atype][0]).type, btype);
-  t.equal(object(h[ctype][0]).type, ctype);
+  expect(object(h[atype][0]).type).toBe(btype);
+  expect(object(h[ctype][0]).type).toBe(ctype);
 
-  t.equal(object(h[atype][0]).handler, f);
-  t.equal(object(h[ctype][0]).handler, f);
+  expect(object(h[atype][0]).handler).toBe(f);
+  expect(object(h[ctype][0]).handler).toBe(f);
 
   // remove all event callbacks
   handler.off(btype, f);
   handler.off(ctype, f);
 
-  t.equal(array(h[atype]).length, 0);
-  t.equal(array(h[ctype]).length, 0);
-
-  t.end();
+  expect(array(h[atype]).length).toBe(0);
+  expect(array(h[ctype]).length).toBe(0);
 });
 
-tape('SVGHandler should handle input events', function(t) {
+test('SVGHandler should handle input events', function() {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
-  t.equal(handler.scene(), scene);
+  expect(handler.scene()).toBe(scene);
 
   var svg = handler.canvas();
   var count = 0;
@@ -122,7 +119,7 @@ tape('SVGHandler should handle input events', function(t) {
   events.forEach(function(name) {
     handler.on(name, increment);
   });
-  t.equal(handler.handlers().length, events.length);
+  expect(handler.handlers().length).toBe(events.length);
 
   events.forEach(function(name) {
     svg.dispatchEvent(event(name));
@@ -141,18 +138,17 @@ tape('SVGHandler should handle input events', function(t) {
   svg.dispatchEvent(event('dragleave', 1, 1));
 
   // 11 events above + no sub-events from JSDOM
-  t.equal(count, events.length + 11);
+  expect(count).toBe(events.length + 11);
 
   handler.off('mousemove', {});
-  t.equal(handler.handlers().length, events.length);
+  expect(handler.handlers().length).toBe(events.length);
 
   handler.off('nonevent');
-  t.equal(handler.handlers().length, events.length);
+  expect(handler.handlers().length).toBe(events.length);
 
   events.forEach(function(name) {
     handler.off(name, increment);
   });
 
-  t.equal(handler.handlers().length, 0);
-  t.end();
+  expect(handler.handlers().length).toBe(0);
 });

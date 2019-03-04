@@ -1,5 +1,4 @@
-var tape = require('tape'),
-    vega = require('../'), // eslint-disable-line no-unused-vars
+var vega = require('../'), // eslint-disable-line no-unused-vars
     ajv = require('ajv'),
     fs = require('fs'),
     schema = require('../build/vega-schema.json'),
@@ -15,32 +14,26 @@ var validator = new ajv({
 
 var validate = validator.compile(schema);
 
-tape('JSON schema is valid', function(t) {
-  t.ok(validator.validateSchema(schema));
-  t.end();
+test('JSON schema is valid', function() {
+  expect(validator.validateSchema(schema)).toBe(true);
 });
 
-tape('JSON schema recognizes valid specifications', function(t) {
-  var dir = process.cwd() + '/test/specs-valid/';
+test('JSON schema recognizes valid specifications', function() {
+  var dir = __dirname + '/specs-valid/';
   validSpecs.forEach(function(file) {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
         valid = validate(spec);
-    t.ok(valid, 'valid schema: ' + file);
     if (!valid) console.log(validate.errors); // eslint-disable-line no-console
+    expect(valid).toBe(true);
   });
-
-  t.end();
 });
 
-tape('JSON schema recognizes invalid specifications', function(t) {
-  var dir = process.cwd() + '/test/specs-invalid/';
+test('JSON schema recognizes invalid specifications', function() {
+  var dir = __dirname + '/specs-invalid/';
   invalidSpecs.forEach(function(file) {
     var specs = JSON.parse(fs.readFileSync(dir + file + '.json'));
-    specs.forEach(function(spec, index) {
-      t.notOk(validate(spec),
-        'invalid schema (' + index + '): ' + file);
+    specs.forEach(function(spec) {
+      expect(validate(spec)).toBe(false);
     });
   });
-
-  t.end();
 });

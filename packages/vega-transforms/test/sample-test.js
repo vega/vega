@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    tupleid = vega.tupleid,
-    Collect = tx.collect,
-    Sample = tx.sample;
+var vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, tupleid = vega.tupleid, Collect = tx.collect, Sample = tx.sample;
 
-tape('Sample samples tuples without backing source', function(t) {
+test('Sample samples tuples without backing source', function() {
   var n = 100,
       ns = 20,
       data = Array(n),
@@ -20,8 +14,8 @@ tape('Sample samples tuples without backing source', function(t) {
 
   // -- initial sample
   df.pulse(s, changeset().insert(data)).run();
-  t.equal(s.value.length, ns);
-  t.notDeepEqual(s.value.length, data.slice(0, ns));
+  expect(s.value.length).toBe(ns);
+  expect(s.value.length).not.toEqual(data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(function(t) { map[tupleid(t)] = 1; });
@@ -36,21 +30,19 @@ tape('Sample samples tuples without backing source', function(t) {
   df.pulse(s, changeset()
     .modify(inTuple, 'v', -1)
     .modify(outTuple, 'v', -1)).run();
-  t.equal(s.value.length, ns);
-  t.deepEqual(s.pulse.mod, [inTuple]);
+  expect(s.value.length).toBe(ns);
+  expect(s.pulse.mod).toEqual([inTuple]);
 
   // -- remove half of sample, no backing source
   map = {};
   var rems = s.value.slice(0, 10);
   rems.forEach(function(t) { map[tupleid(t)] = 1; });
   df.pulse(s, changeset().remove(rems)).run();
-  t.equal(s.value.length, ns - 10);
-  t.equal(s.value.some(function(t) { return map[tupleid(t)]; }), false);
-
-  t.end();
+  expect(s.value.length).toBe(ns - 10);
+  expect(s.value.some(function(t) { return map[tupleid(t)]; })).toBe(false);
 });
 
-tape('Sample samples tuples with backing source', function(t) {
+test('Sample samples tuples with backing source', function() {
   var n = 100,
     ns = 20,
     data = Array(n),
@@ -65,8 +57,8 @@ tape('Sample samples tuples with backing source', function(t) {
 
   // -- initial sample
   df.pulse(c, changeset().insert(data)).run();
-  t.equal(s.value.length, ns);
-  t.notDeepEqual(s.value.length, data.slice(0, ns));
+  expect(s.value.length).toBe(ns);
+  expect(s.value.length).not.toEqual(data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(function(t) { map[tupleid(t)] = 1; });
@@ -81,12 +73,10 @@ tape('Sample samples tuples with backing source', function(t) {
   df.pulse(c, changeset()
     .modify(inTuple, 'v', -1)
     .modify(outTuple, 'v', -1)).run();
-  t.equal(s.value.length, ns);
-  t.deepEqual(s.pulse.mod, [inTuple]);
+  expect(s.value.length).toBe(ns);
+  expect(s.pulse.mod).toEqual([inTuple]);
 
   // -- remove half of sample, with backing source
   df.pulse(c, changeset().remove(s.value.slice())).run();
-  t.equal(s.value.length, ns);
-
-  t.end();
+  expect(s.value.length).toBe(ns);
 });

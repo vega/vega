@@ -11,7 +11,7 @@
     "license": "lerna exec -- cp ../../LICENSE .",
     "release": "yarn license && lerna publish from-package",
     "serve": "http-server packages/vega/ -c-1 -p8080 -o",
-    "test": "lerna run test",
+    "test": "lerna run pretest && TZ=America/Los_Angeles jest",
     "postinstall": "yarn data"
   },
   "devDependencies": {
@@ -20,15 +20,18 @@
     "canvas": "^2.3.1",
     "dtslint": "^0.5.3",
     "eslint": "^5.15.0",
+    "eslint-plugin-jest": "^22.3.0",
     "http-server": "^0.11.1",
+    "jest": "^24.1.0",
+    "jest-puppeteer": "^4.0.0",
     "jsdom": "^13.2.0",
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
+    "puppeteer": "^1.12.2",
     "rimraf": "^2.6.3",
     "rollup": "^1.4.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.1",
-    "tape": "^4.10.1",
     "terser": "^3.16.1",
     "typescript": "^3.3.3",
     "vega-datasets": "^1.22.0"

@@ -1,33 +1,32 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('Parser parses event selector strings', function(t) {
+test('Parser parses event selector strings', function() {
   var events;
 
   events = vega.selector('rect:mousedown');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect'
   });
 
   events = vega.selector('rect:mousedown, rect:touchstart');
-  t.equal(events.length, 2);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(2);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect'
   });
-  t.deepEqual(events[1], {
+  expect(events[1]).toEqual({
     source: 'view',
     type: 'touchstart',
     marktype: 'rect'
   });
 
   events = vega.selector('rect:mousedown!');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -35,16 +34,16 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('@foo:mouseup');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mouseup',
     markname: 'foo'
   });
 
   events = vega.selector('rect:mousedown{1000}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -52,8 +51,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('rect:mousedown{100,200}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -62,8 +61,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('rect:mousedown{0,200}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -71,8 +70,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('rect:mousedown{,200}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -80,8 +79,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('rect:mousedown{200,0}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -89,8 +88,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('rect:mousedown{200,}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     marktype: 'rect',
@@ -98,16 +97,16 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('mousedown[event.x>10][event.metaKey]');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'mousedown',
     filter: ['event.x>10', 'event.metaKey']
   });
 
   events = vega.selector('wheel![event.shiftKey]');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'wheel',
     consume: true,
@@ -115,8 +114,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('wheel![event.shiftKey]{200}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'wheel',
     consume: true,
@@ -125,8 +124,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('path:wheel![event.shiftKey]{200}');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'view',
     type: 'wheel',
     marktype: 'path',
@@ -136,8 +135,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('[mousedown, mouseup] > window:mousemove');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'window',
     type: 'mousemove',
     between: [
@@ -147,8 +146,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('[touchstart, touchend] > [mousedown, mouseup] > window:mousemove');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     between: [
       {source: 'view', type: 'touchstart'},
       {source: 'view', type: 'touchend'}
@@ -164,8 +163,8 @@ tape('Parser parses event selector strings', function(t) {
   });
 
   events = vega.selector('[mousedown[!event.item], window:mouseup] > window:mousemove');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'window',
     type: 'mousemove',
     between: [
@@ -173,50 +172,45 @@ tape('Parser parses event selector strings', function(t) {
       {source: 'window', type: 'mouseup'}
     ]
   });
-
-  t.end();
 });
 
-tape('Parser allows configurable source', function(t) {
+test('Parser allows configurable source', function() {
   var events = vega.selector('rect:mousedown', 'scope');
-  t.equal(events.length, 1);
-  t.deepEqual(events[0], {
+  expect(events.length).toBe(1);
+  expect(events[0]).toEqual({
     source: 'scope',
     type: 'mousedown',
     marktype: 'rect'
   });
-  t.end();
 });
 
-tape('Parser rejects invalid event selector strings', function(t) {
-  t.throws(function() { vega.selector(''); });
-  t.throws(function() { vega.selector('foo{}'); });
-  t.throws(function() { vega.selector('foo{a}'); });
-  t.throws(function() { vega.selector('foo{1,2,3}'); });
+test('Parser rejects invalid event selector strings', function() {
+  expect(function() { vega.selector(''); }).toThrow();
+  expect(function() { vega.selector('foo{}'); }).toThrow();
+  expect(function() { vega.selector('foo{a}'); }).toThrow();
+  expect(function() { vega.selector('foo{1,2,3}'); }).toThrow();
 
-  t.throws(function() { vega.selector('{foo'); });
-  t.throws(function() { vega.selector('}foo'); });
-  t.throws(function() { vega.selector('foo{'); });
-  t.throws(function() { vega.selector('foo}'); });
-  t.throws(function() { vega.selector('foo{1'); });
-  t.throws(function() { vega.selector('foo}1'); });
-  t.throws(function() { vega.selector('foo{1}a'); });
-  t.throws(function() { vega.selector('{}'); });
-  t.throws(function() { vega.selector('{1}'); });
-  t.throws(function() { vega.selector('{1}a'); });
+  expect(function() { vega.selector('{foo'); }).toThrow();
+  expect(function() { vega.selector('}foo'); }).toThrow();
+  expect(function() { vega.selector('foo{'); }).toThrow();
+  expect(function() { vega.selector('foo}'); }).toThrow();
+  expect(function() { vega.selector('foo{1'); }).toThrow();
+  expect(function() { vega.selector('foo}1'); }).toThrow();
+  expect(function() { vega.selector('foo{1}a'); }).toThrow();
+  expect(function() { vega.selector('{}'); }).toThrow();
+  expect(function() { vega.selector('{1}'); }).toThrow();
+  expect(function() { vega.selector('{1}a'); }).toThrow();
 
-  t.throws(function() { vega.selector('[foo'); });
-  t.throws(function() { vega.selector(']foo'); });
-  t.throws(function() { vega.selector('foo['); });
-  t.throws(function() { vega.selector('foo]'); });
-  t.throws(function() { vega.selector('foo[1'); });
-  t.throws(function() { vega.selector('foo]1'); });
-  t.throws(function() { vega.selector('foo[1]a'); });
+  expect(function() { vega.selector('[foo'); }).toThrow();
+  expect(function() { vega.selector(']foo'); }).toThrow();
+  expect(function() { vega.selector('foo['); }).toThrow();
+  expect(function() { vega.selector('foo]'); }).toThrow();
+  expect(function() { vega.selector('foo[1'); }).toThrow();
+  expect(function() { vega.selector('foo]1'); }).toThrow();
+  expect(function() { vega.selector('foo[1]a'); }).toThrow();
 
-  t.throws(function() { vega.selector('[]'); });
-  t.throws(function() { vega.selector('[a]'); });
-  t.throws(function() { vega.selector('[a,b]'); });
-  t.throws(function() { vega.selector('[a,b] >'); });
-
-  t.end();
+  expect(function() { vega.selector('[]'); }).toThrow();
+  expect(function() { vega.selector('[a]'); }).toThrow();
+  expect(function() { vega.selector('[a,b]'); }).toThrow();
+  expect(function() { vega.selector('[a,b] >'); }).toThrow();
 });

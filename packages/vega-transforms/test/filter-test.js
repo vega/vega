@@ -1,12 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Filter = tx.filter;
+var util = require('vega-util'), vega = require('vega-dataflow'), tx = require('../'), changeset = vega.changeset, Collect = tx.collect, Filter = tx.filter;
 
-tape('Filter filters tuples', function(t) {
+test('Filter filters tuples', function() {
   var lt3 = util.accessor(function(d) { return d.id < 3; }, ['id']);
   var baz = util.accessor(function(d) { return d.value === 'baz'; }, ['value']);
 
@@ -24,30 +18,28 @@ tape('Filter filters tuples', function(t) {
 
   df.pulse(c0, changeset().insert(data));
   df.update(e0, util.truthy).run();
-  t.deepEqual(c1.value, data);
+  expect(c1.value).toEqual(data);
 
   df.update(e0, util.falsy).run();
-  t.equal(c1.value.length, 0);
+  expect(c1.value.length).toBe(0);
 
   df.update(e0, lt3).run();
-  t.deepEqual(c1.value, [data[0]]);
+  expect(c1.value).toEqual([data[0]]);
 
   df.update(e0, baz).run();
-  t.deepEqual(c1.value, [data[2]]);
+  expect(c1.value).toEqual([data[2]]);
 
   df.pulse(c0, changeset().modify(data[0], 'value', 'baz')).run();
-  t.deepEqual(c1.value, [data[2], data[0]]);
+  expect(c1.value).toEqual([data[2], data[0]]);
 
   df.pulse(c0, changeset().modify(data[2], 'value', 'foo')).run();
-  t.deepEqual(c1.value, [data[0]]);
+  expect(c1.value).toEqual([data[0]]);
 
   df.pulse(c0, changeset().modify(data[1], 'id', 4)).run();
-  t.deepEqual(c1.value, [data[0]]);
-
-  t.end();
+  expect(c1.value).toEqual([data[0]]);
 });
 
-tape('Filter does not leak memory', function(t) {
+test('Filter does not leak memory', function() {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       f0 = df.add(Filter, {expr: util.field('value'), pulse: c0}),
@@ -63,7 +55,5 @@ tape('Filter does not leak memory', function(t) {
   // burn in by filling up to threshold, then remove all
   df.pulse(c0, changeset().insert(generate())).run();
   df.pulse(c0, changeset().remove(util.truthy)).run();
-  t.equal(f0.value.empty, 0, 'Zero empty map entries');
-
-  t.end();
+  expect(f0.value.empty).toBe(0);
 });

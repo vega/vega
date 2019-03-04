@@ -1,10 +1,9 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Wordcloud = require('../').wordcloud;
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var Collect = require('vega-transforms').collect;
+var Wordcloud = require('../').wordcloud;
 
-tape('Wordcloud generates wordcloud layout', function(t) {
+test('Wordcloud generates wordcloud layout', function() {
   var data = [
     {text: 'foo', size: 49, index: 0},
     {text: 'bar', size: 36, index: 1},
@@ -30,18 +29,16 @@ tape('Wordcloud generates wordcloud layout', function(t) {
   rot.set(function(t) { return angles[t.index]; });
 
   df.pulse(c0, vega.changeset().insert(data)).run();
-  t.equal(c0.value.length, data.length);
-  t.equal(wc.stamp, df.stamp());
+  expect(c0.value.length).toBe(data.length);
+  expect(wc.stamp).toBe(df.stamp());
 
   for (var i=0, n=data.length; i<n; ++i) {
-    t.ok(data[i].x != null && !isNaN(data[i].x));
-    t.ok(data[i].y != null && !isNaN(data[i].y));
-    t.equal(data[i].font, 'sans-serif');
-    t.equal(data[i].fontSize, Math.sqrt(data[i].size));
-    t.equal(data[i].fontStyle, 'normal');
-    t.equal(data[i].fontWeight, 'normal');
-    t.equal(data[i].angle, angles[i]);
+    expect(data[i].x != null && !isNaN(data[i].x)).toBeTruthy();
+    expect(data[i].y != null && !isNaN(data[i].y)).toBeTruthy();
+    expect(data[i].font).toBe('sans-serif');
+    expect(data[i].fontSize).toBe(Math.sqrt(data[i].size));
+    expect(data[i].fontStyle).toBe('normal');
+    expect(data[i].fontWeight).toBe('normal');
+    expect(data[i].angle).toBe(angles[i]);
   }
-
-  t.end();
 });

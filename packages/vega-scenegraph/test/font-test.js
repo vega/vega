@@ -1,64 +1,54 @@
-var tape = require('tape'),
-    vega = require('../'),
-    font = vega.font;
+var vega = require('../'), font = vega.font;
 
-tape('font should produce default font string', function(t) {
-  t.equal(font({}), '11px sans-serif');
-  t.end();
+test('font should produce default font string', function() {
+  expect(font({})).toBe('11px sans-serif');
 });
 
-tape('font should include font style', function(t) {
-  t.equal(font({
+test('font should include font style', function() {
+  expect(font({
     fontStyle: 'italic'
-  }), 'italic 11px sans-serif');
-  t.end();
+  })).toBe('italic 11px sans-serif');
 });
 
-tape('font should include font variant', function(t) {
-  t.equal(font({
+test('font should include font variant', function() {
+  expect(font({
     fontVariant: 'small-caps'
-  }), 'small-caps 11px sans-serif');
-  t.end();
+  })).toBe('small-caps 11px sans-serif');
 });
 
-tape('font should include font weight', function(t) {
-  t.equal(font({
+test('font should include font weight', function() {
+  expect(font({
     fontWeight: 'bold'
-  }), 'bold 11px sans-serif');
-  t.end();
+  })).toBe('bold 11px sans-serif');
 });
 
-tape('font should include font size', function(t) {
-  t.equal(font({
+test('font should include font size', function() {
+  expect(font({
     fontSize: 18
-  }), '18px sans-serif');
-  t.end();
+  })).toBe('18px sans-serif');
 });
 
-tape('font should include font family', function(t) {
-  t.equal(font({
+test('font should include font family', function() {
+  expect(font({
     font: 'Helvetica'
-  }), '11px Helvetica');
-  t.end();
+  })).toBe('11px Helvetica');
 });
 
-tape('font should include all properties style', function(t) {
-  t.equal(font({
+test('font should include all properties style', function() {
+  expect(font({
     fontStyle: 'italic',
     fontVariant: 'small-caps',
     fontWeight: 'bold',
     fontSize: 18,
     font: 'Helvetica'
-  }), 'italic small-caps bold 18px Helvetica');
-  t.end();
+  })).toBe('italic small-caps bold 18px Helvetica');
 });
 
-tape('font should handle quotes if requested', function(t) {
-  t.equal(font({
+test('font should handle quotes if requested', function() {
+  expect(font({
     font: '"Helvetica Neue"'
-  }, true), '11px \'Helvetica Neue\'');
-  t.equal(font({
+  }, true)).toBe('11px \'Helvetica Neue\'');
+  expect(font({
     font: "'Helvetica Neue'"
-  }, true), '11px \'Helvetica Neue\'');
-  t.end();
+  }, true)).toBe('11px \'Helvetica Neue\'');
 });

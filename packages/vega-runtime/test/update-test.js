@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    runtime = require('../'),
-    events = require('./events');
+var vega = require('vega-dataflow'), runtime = require('../'), events = require('./events');
 
-tape('Parser parses event-driven operator updates', function(t) {
-
+test('Parser parses event-driven operator updates', function() {
   var spec = {
     operators: [
       { id:0, type:'Operator', value:50 },
@@ -35,25 +31,23 @@ tape('Parser parses event-driven operator updates', function(t) {
       ops = ctx.nodes;
 
   df.update(ops[0], 2).run();
-  t.equal(ops[0].value, 2);
-  t.equal(ops[1].value, 0);
-  t.equal(ops[2].value, 1);
+  expect(ops[0].value).toBe(2);
+  expect(ops[1].value).toBe(0);
+  expect(ops[2].value).toBe(1);
 
   df.fire('window', 'mousedown', {});
-  t.equal(ops[0].value, 2);
-  t.equal(ops[1].value, 0);
-  t.equal(ops[2].value, 2);
+  expect(ops[0].value).toBe(2);
+  expect(ops[1].value).toBe(0);
+  expect(ops[2].value).toBe(2);
 
   df.fire('window', 'mousemove', {buttons: 1});
-  t.equal(ops[0].value, -1);
-  t.equal(ops[1].value, 5);
-  t.equal(ops[2].value, 2);
+  expect(ops[0].value).toBe(-1);
+  expect(ops[1].value).toBe(5);
+  expect(ops[2].value).toBe(2);
 
   df.fire('window', 'mouseup', {});
   df.fire('window', 'mousemove', {buttons: 1});
-  t.equal(ops[0].value, -1);
-  t.equal(ops[1].value, 5);
-  t.equal(ops[2].value, 2);
-
-  t.end();
+  expect(ops[0].value).toBe(-1);
+  expect(ops[1].value).toBe(5);
+  expect(ops[2].value).toBe(2);
 });

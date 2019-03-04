@@ -1,18 +1,11 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Window = tx.window;
+var util = require('vega-util')
+var vega = require('vega-dataflow')
+var tx = require('../')
+var changeset = vega.changeset
+var Collect = tx.collect
+var Window = tx.window;
 
-function match(t, actual, expect) {
-  for (var k in expect) {
-    t.equal(actual[k], expect[k]);
-  }
-}
-
-tape('Window processes single partition', function(t) {
+test('Window processes single partition', function() {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -53,36 +46,36 @@ tape('Window processes single partition', function(t) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, data.length);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 1, sum_v: 1, min_v: 1, max_v: 1,
     row_number: 1, rank: 1, dense_rank: 1, percent_rank: 0,
     cume_dist: 0.2, ntile: 1, lag_v: null, lead_v: 3,
     first_value_v: 1, last_value_v: 1, nth_value_v: null
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'b', v: 3, key: 1,
     count: 2, sum_v: 4, min_v: 1, max_v: 3,
     row_number: 2, rank: 2, dense_rank: 2, percent_rank: 0.25,
     cume_dist: 0.4, ntile: 1, lag_v: 1, lead_v: 2,
     first_value_v: 1, last_value_v: 3, nth_value_v: 3
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 3, sum_v: 6, min_v: 1, max_v: 3,
     row_number: 3, rank: 3, dense_rank: 3, percent_rank: 0.5,
     cume_dist: 0.8, ntile: 2, lag_v: 3, lead_v: 4,
     first_value_v: 1, last_value_v: 2, nth_value_v: 3
   });
-  match(t, d[3], {
+  expect(d[3]).toMatchObject({
     k: 'b', v: 4, key: 2,
     count: 4, sum_v: 10, min_v: 1, max_v: 4,
     row_number: 4, rank: 3, dense_rank: 3, percent_rank: 0.5,
     cume_dist: 0.8, ntile: 2, lag_v: 2, lead_v: 3,
     first_value_v: 1, last_value_v: 4, nth_value_v: 3
   });
-  match(t, d[4], {
+  expect(d[4]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 5, sum_v: 13, min_v: 1, max_v: 4,
     row_number: 5, rank: 5, dense_rank: 4, percent_rank: 1,
@@ -93,33 +86,31 @@ tape('Window processes single partition', function(t) {
   // -- test rem
   df.pulse(col, changeset().remove([data[1], data[3]])).run();
   d = out.value;
-  t.equal(d.length, data.length - 2);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length - 2);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 1, sum_v: 1, min_v: 1, max_v: 1,
     row_number: 1, rank: 1, dense_rank: 1, percent_rank: 0,
     cume_dist: 1/3, ntile: 1, lag_v: null, lead_v: 2,
     first_value_v: 1, last_value_v: 1, nth_value_v: null
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 2, sum_v: 3, min_v: 1, max_v: 2,
     row_number: 2, rank: 2, dense_rank: 2, percent_rank: 0.5,
     cume_dist: 2/3, ntile: 2, lag_v: 1, lead_v: 3,
     first_value_v: 1, last_value_v: 2, nth_value_v: 2
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 3, sum_v: 6, min_v: 1, max_v: 3,
     row_number: 3, rank: 3, dense_rank: 3, percent_rank: 1,
     cume_dist: 1, ntile: 2, lag_v: 2, lead_v: null,
     first_value_v: 1, last_value_v: 3, nth_value_v: 2
   });
-
-  t.end();
 });
 
-tape('Window processes multiple partitions', function(t) {
+test('Window processes multiple partitions', function() {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -161,47 +152,45 @@ tape('Window processes multiple partitions', function(t) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value.sort(util.compare('k', 'key'));
-  t.equal(d.length, data.length);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 1, sum_v: 1, min_v: 1, max_v: 1,
     row_number: 1, rank: 1, dense_rank: 1, percent_rank: 0,
     cume_dist: 1/3, ntile: 1, lag_v: null, lead_v: 2,
     first_value_v: 1, last_value_v: 1, nth_value_v: null
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 2, sum_v: 3, min_v: 1, max_v: 2,
     row_number: 2, rank: 2, dense_rank: 2, percent_rank: 0.5,
     cume_dist: 2/3, ntile: 2, lag_v: 1, lead_v: 3,
     first_value_v: 1, last_value_v: 2, nth_value_v: 2
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 3, sum_v: 6, min_v: 1, max_v: 3,
     row_number: 3, rank: 3, dense_rank: 3, percent_rank: 1,
     cume_dist: 1, ntile: 2, lag_v: 2, lead_v: null,
     first_value_v: 1, last_value_v: 3, nth_value_v: 2
   });
-  match(t, d[3], {
+  expect(d[3]).toMatchObject({
     k: 'b', v: 3, key: 1,
     count: 1, sum_v: 3, min_v: 3, max_v: 3,
     row_number: 1, rank: 1, dense_rank: 1, percent_rank: 0,
     cume_dist: 0.5, ntile: 1, lag_v: null, lead_v: 4,
     first_value_v: 3, last_value_v: 3, nth_value_v: null
   });
-  match(t, d[4], {
+  expect(d[4]).toMatchObject({
     k: 'b', v: 4, key: 2,
     count: 2, sum_v: 7, min_v: 3, max_v: 4,
     row_number: 2, rank: 2, dense_rank: 2, percent_rank: 1,
     cume_dist: 1, ntile: 2, lag_v: 3, lead_v: null,
     first_value_v: 3, last_value_v: 4, nth_value_v: 4
   });
-
-  t.end();
 });
 
-tape('Window processes range frames', function(t) {
+test('Window processes range frames', function() {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -226,28 +215,28 @@ tape('Window processes range frames', function(t) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, data.length);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 5, sum_v: 13, min_v: 1, max_v: 4,
     first_value_v: 1, last_value_v: 3
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'b', v: 3, key: 1,
     count: 4, sum_v: 12, min_v: 2, max_v: 4,
     first_value_v: 3, last_value_v: 3
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 3, sum_v: 9, min_v: 2, max_v: 4,
     first_value_v: 2, last_value_v: 3
   });
-  match(t, d[3], {
+  expect(d[3]).toMatchObject({
     k: 'b', v: 4, key: 2,
     count: 3, sum_v: 9, min_v: 2, max_v: 4,
     first_value_v: 2, last_value_v: 3
   });
-  match(t, d[4], {
+  expect(d[4]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 1, sum_v: 3, min_v: 3, max_v: 3,
     first_value_v: 3, last_value_v: 3
@@ -256,37 +245,35 @@ tape('Window processes range frames', function(t) {
   // -- test mod
   df.pulse(col, changeset().modify(data[3], 'key', 4)).run();
   d = out.value;
-  t.equal(d.length, data.length);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 5, sum_v: 13, min_v: 1, max_v: 4,
     first_value_v: 1, last_value_v: 4
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'b', v: 3, key: 1,
     count: 4, sum_v: 12, min_v: 2, max_v: 4,
     first_value_v: 3, last_value_v: 4
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 3, sum_v: 9, min_v: 2, max_v: 4,
     first_value_v: 2, last_value_v: 4
   });
-  match(t, d[3], {
+  expect(d[3]).toMatchObject({
     k: 'b', v: 4, key: 4,
     count: 1, sum_v: 4, min_v: 4, max_v: 4,
     first_value_v: 4, last_value_v: 4
   });
-  match(t, d[4], {
+  expect(d[4]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 2, sum_v: 7, min_v: 3, max_v: 4,
     first_value_v: 3, last_value_v: 4
   });
-
-  t.end();
 });
 
-tape('Window processes row frames', function(t) {
+test('Window processes row frames', function() {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -311,32 +298,30 @@ tape('Window processes row frames', function(t) {
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, data.length);
-  match(t, d[0], {
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({
     k: 'a', v: 1, key: 0,
     count: 2, sum_v: 4, mean_v: 2, rank: 1
   });
-  match(t, d[1], {
+  expect(d[1]).toMatchObject({
     k: 'b', v: 3, key: 1,
     count: 3, sum_v: 6, mean_v: 2, rank: 2
   });
-  match(t, d[2], {
+  expect(d[2]).toMatchObject({
     k: 'a', v: 2, key: 2,
     count: 3, sum_v: 9, mean_v: 3, rank: 3
   });
-  match(t, d[3], {
+  expect(d[3]).toMatchObject({
     k: 'b', v: 4, key: 2,
     count: 3, sum_v: 9, mean_v: 3, rank: 3
   });
-  match(t, d[4], {
+  expect(d[4]).toMatchObject({
     k: 'a', v: 3, key: 3,
     count: 2, sum_v: 7, mean_v: 3.5, rank: 5
   });
-
-  t.end();
 });
 
-tape('Window processes unsorted values', function(t) {
+test('Window processes unsorted values', function() {
   var data = [
     {key:0}, {key:1}, {key:2}, {key:3}, {key:4}
   ];
@@ -351,12 +336,10 @@ tape('Window processes unsorted values', function(t) {
 
   df.pulse(col, changeset().insert(data)).run();
   var d = out.value;
-  t.equal(d.length, data.length);
-  match(t, d[0], {key: 0, rank: 1, dense_rank: 1});
-  match(t, d[1], {key: 1, rank: 2, dense_rank: 2});
-  match(t, d[2], {key: 2, rank: 3, dense_rank: 3});
-  match(t, d[3], {key: 3, rank: 4, dense_rank: 4});
-  match(t, d[4], {key: 4, rank: 5, dense_rank: 5});
-
-  t.end();
+  expect(d.length).toBe(data.length);
+  expect(d[0]).toMatchObject({key: 0, rank: 1, dense_rank: 1});
+  expect(d[1]).toMatchObject({key: 1, rank: 2, dense_rank: 2});
+  expect(d[2]).toMatchObject({key: 2, rank: 3, dense_rank: 3});
+  expect(d[3]).toMatchObject({key: 3, rank: 4, dense_rank: 4});
+  expect(d[4]).toMatchObject({key: 4, rank: 5, dense_rank: 5});
 });

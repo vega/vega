@@ -1,9 +1,6 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Force = require('../').force;
+var vega = require('vega-dataflow'), Collect = require('vega-transforms').collect, Force = require('../').force;
 
-tape('Force places points', function(t) {
+test('Force places points', function() {
   var data = [
     {label: 'a'},
     {label: 'b'},
@@ -25,12 +22,10 @@ tape('Force places points', function(t) {
   });
 
   df.pulse(c0, vega.changeset().insert(data)).run();
-  t.equal(c0.value.length, data.length);
+  expect(c0.value.length).toBe(data.length);
 
   for (var i=0, n=data.length; i<n; ++i) {
-    t.ok(data[i].x != null && !isNaN(data[i].x));
-    t.ok(data[i].y != null && !isNaN(data[i].y));
+    expect(data[i].x != null && !isNaN(data[i].x)).toBeTruthy();
+    expect(data[i].y != null && !isNaN(data[i].y)).toBeTruthy();
   }
-
-  t.end();
 });

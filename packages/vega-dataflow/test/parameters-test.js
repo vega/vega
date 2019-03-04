@@ -1,48 +1,45 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
-tape('Parameters handles parameter values', function(t) {
+test('Parameters handles parameter values', function() {
   var p = new vega.Parameters;
 
   // test initial state
-  t.equal(p.modified('foo'), false);
-  t.equal(p.modified('bar', 1), false);
-  t.equal(p.modified(['foo', 'bar']), false);
+  expect(p.modified('foo')).toBe(false);
+  expect(p.modified('bar', 1)).toBe(false);
+  expect(p.modified(['foo', 'bar'])).toBe(false);
 
   // test scalar parameter
-  t.equal(p.set('foo', -1, 3), p);
-  t.equal(p.modified('foo'), true);
-  t.equal(p.modified('foo', -1), true);
-  t.equal(p.modified('foo', null), true);
-  t.equal(p.modified('foo', undefined), true);
-  t.equal(p.modified('foo', 0), false);
-  t.equal(p.modified('foo', 1), false);
-  t.equal(p.foo, 3);
+  expect(p.set('foo', -1, 3)).toBe(p);
+  expect(p.modified('foo')).toBe(true);
+  expect(p.modified('foo', -1)).toBe(true);
+  expect(p.modified('foo', null)).toBe(true);
+  expect(p.modified('foo', undefined)).toBe(true);
+  expect(p.modified('foo', 0)).toBe(false);
+  expect(p.modified('foo', 1)).toBe(false);
+  expect(p.foo).toBe(3);
 
   // test array parameter
   var bar = ['a', 'b', 'c'];
-  t.equal(p.set('bar', -1, bar), p);
-  t.equal(p.modified('bar'), true);
-  t.equal(p.modified('bar', 0), true);
-  t.equal(p.modified('bar', 1), true);
-  t.equal(p.modified('bar', 2), true);
-  t.equal(p.modified('bar', 3), false);
+  expect(p.set('bar', -1, bar)).toBe(p);
+  expect(p.modified('bar')).toBe(true);
+  expect(p.modified('bar', 0)).toBe(true);
+  expect(p.modified('bar', 1)).toBe(true);
+  expect(p.modified('bar', 2)).toBe(true);
+  expect(p.modified('bar', 3)).toBe(false);
 
   // test clear
-  t.equal(p.clear(), p);
-  t.equal(p.modified('foo'), false);
-  t.equal(p.modified('bar'), false);
-  t.equal(p.modified('bar', 0), false);
-  t.equal(p.modified('bar', 1), false);
-  t.equal(p.modified('bar', 2), false);
+  expect(p.clear()).toBe(p);
+  expect(p.modified('foo')).toBe(false);
+  expect(p.modified('bar')).toBe(false);
+  expect(p.modified('bar', 0)).toBe(false);
+  expect(p.modified('bar', 1)).toBe(false);
+  expect(p.modified('bar', 2)).toBe(false);
 
   // test array index parameter
-  t.equal(p.set('bar', 1, 'd'), p);
-  t.equal(p.modified('foo'), false);
-  t.equal(p.modified('bar'), true);
-  t.equal(p.modified('bar', 0), false);
-  t.equal(p.modified('bar', 1), true);
-  t.equal(p.modified('bar', 2), false);
-
-  t.end();
+  expect(p.set('bar', 1, 'd')).toBe(p);
+  expect(p.modified('foo')).toBe(false);
+  expect(p.modified('bar')).toBe(true);
+  expect(p.modified('bar', 0)).toBe(false);
+  expect(p.modified('bar', 1)).toBe(true);
+  expect(p.modified('bar', 2)).toBe(false);
 });

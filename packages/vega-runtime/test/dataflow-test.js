@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = util.extend({}, require('vega-transforms'), require('vega-encode')),
-    runtime = require('../');
+var util = require('vega-util'), vega = require('vega-dataflow'), transforms = util.extend({}, require('vega-transforms'), require('vega-encode')), runtime = require('../');
 
-tape('Parser parses dataflow specs', function(t) {
+test('Parser parses dataflow specs', function() {
   var values = [
     {"x": 1,  "y": 28},
     {"x": 2,  "y": 43},
@@ -29,36 +25,34 @@ tape('Parser parses dataflow specs', function(t) {
       ops = ctx.nodes,
       ids = Object.keys(ops);
 
-  t.equal(Object.keys(ctx.fn).length, 2);
-  t.equal(ids.length, spec.operators.length);
+  expect(Object.keys(ctx.fn).length).toBe(2);
+  expect(ids.length).toBe(spec.operators.length);
 
   df.run();
 
-  t.equal(ids.reduce(function(sum, id) {
+  expect(ids.reduce(function(sum, id) {
     return sum + +(ops[id].stamp === df.stamp());
-  }, 0), spec.operators.length);
+  }, 0)).toBe(spec.operators.length);
 
-  t.equal(ops[0].value, 500);
+  expect(ops[0].value).toBe(500);
 
-  t.equal(ops[1].value, 300);
+  expect(ops[1].value).toBe(300);
 
-  t.equal(ops[2].value.length, values.length);
+  expect(ops[2].value.length).toBe(values.length);
 
-  t.equal(Object.keys(ops[3].value).length, 4);
+  expect(Object.keys(ops[3].value).length).toBe(4);
 
-  t.deepEqual(ops[4].value.length, 4);
+  expect(ops[4].value.length).toEqual(4);
 
-  t.deepEqual(ops[5].value, [1, 2, 3, 4]);
+  expect(ops[5].value).toEqual([1, 2, 3, 4]);
 
   var sx = ops[6].value;
-  t.deepEqual(sx.domain(), [1, 2, 3, 4]);
-  t.deepEqual(sx.range(), [0, 500]);
+  expect(sx.domain()).toEqual([1, 2, 3, 4]);
+  expect(sx.range()).toEqual([0, 500]);
 
-  t.deepEqual(ops[7].value, [19, 81]);
+  expect(ops[7].value).toEqual([19, 81]);
 
   var sy = ops[8].value;
-  t.deepEqual(sy.domain(), [19, 81]);
-  t.deepEqual(sy.range(), [300, 0]);
-
-  t.end();
+  expect(sy.domain()).toEqual([19, 81]);
+  expect(sy.range()).toEqual([300, 0]);
 });

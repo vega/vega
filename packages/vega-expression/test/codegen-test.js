@@ -1,5 +1,4 @@
-var tape = require('tape'),
-    vega = require('../');
+var vega = require('../');
 
 function regexEqual(x, y) {
   return (x instanceof RegExp) && (y instanceof RegExp) &&
@@ -7,7 +6,7 @@ function regexEqual(x, y) {
     (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
 }
 
-tape('Evaluate expressions without white or black list', function(t) {
+test('Evaluate expressions without white or black list', function() {
   var codegen = vega.codegen({
     globalvar: 'global'
   });
@@ -26,23 +25,21 @@ tape('Evaluate expressions without white or black list', function(t) {
   var unicode = 'd\u00A9';
   global._val_ = 5;
   global[unicode] = 3.14;
-  t.equal(evaluate('global._val_+1'), 6);
-  t.equal(evaluate('global["'+unicode+'"]'),3.14);
+  expect(evaluate('global._val_+1')).toBe(6);
+  expect(evaluate('global["'+unicode+'"]')).toBe(3.14);
   delete global._val_;
   delete global[unicode];
 
   // should return string input to codegen
   var value = codegen('d');
-  t.equal(value.code, 'd');
+  expect(value.code).toBe('d');
 
   // should not allow unknown ast node type
-  t.throws(function() { codegen({}); });
-  t.throws(function() { codegen({type: 'foo'}); });
-
-  t.end();
+  expect(function() { codegen({}); }).toThrow();
+  expect(function() { codegen({type: 'foo'}); }).toThrow();
 });
 
-tape('Evaluate expressions with black list', function(t) {
+test('Evaluate expressions with black list', function() {
   var codegen = vega.codegen({
     blacklist: ['a', 'b', 'c'],
     globalvar: 'global',
@@ -61,19 +58,17 @@ tape('Evaluate expressions with black list', function(t) {
   };
 
   // should not allow blacklisted ids
-  t.throws(evaluate.fn('a'));
-  t.throws(evaluate.fn('b'));
-  t.throws(evaluate.fn('c'));
+  expect(evaluate.fn('a')).toThrow();
+  expect(evaluate.fn('b')).toThrow();
+  expect(evaluate.fn('c')).toThrow();
 
   // should allow non-blacklisted ids
-  t.doesNotThrow(evaluate.fn('d'));
-  t.doesNotThrow(evaluate.fn('global'));
-  t.doesNotThrow(evaluate.fn('this'));
-
-  t.end();
+  expect(evaluate.fn('d')).not.toThrow();
+  expect(evaluate.fn('global')).not.toThrow();
+  expect(evaluate.fn('this')).not.toThrow();
 });
 
-tape('Evaluate expressions with white list', function(t) {
+test('Evaluate expressions with white list', function() {
   var codegen = vega.codegen({
     whitelist: ['datum', 'event', 'signals'],
     globalvar: 'global'
@@ -96,220 +91,218 @@ tape('Evaluate expressions with white list', function(t) {
 
   // Simple evaluation
   // should eval simple integer expressions
-  t.equal(evaluate('1'), 1);
-  t.equal(evaluate('0xFF'), 255);
-  t.equal(evaluate('1+1'), 2);
-  t.equal(evaluate('1 + 1'), 2);
-  t.equal(evaluate('1+(2+3)'), 6);
-  t.equal(evaluate('3 * (2+1)'), 9);
+  expect(evaluate('1')).toBe(1);
+  expect(evaluate('0xFF')).toBe(255);
+  expect(evaluate('1+1')).toBe(2);
+  expect(evaluate('1 + 1')).toBe(2);
+  expect(evaluate('1+(2+3)')).toBe(6);
+  expect(evaluate('3 * (2+1)')).toBe(9);
 
   // should not allow octal literals
-  t.throws(evaluate.fn('001'));
+  expect(evaluate.fn('001')).toThrow();
 
   // should eval simple string expressions
-  t.equal(evaluate('"a"'), 'a');
-  t.equal(evaluate('"\t"'), '\t');
-  t.equal(evaluate('"\u00A9"'), '\u00A9');
-  t.equal(evaluate('"a" + "b"'), 'ab');
+  expect(evaluate('"a"')).toBe('a');
+  expect(evaluate('"\t"')).toBe('\t');
+  expect(evaluate('"\u00A9"')).toBe('\u00A9');
+  expect(evaluate('"a" + "b"')).toBe('ab');
 
   // should eval simple boolean expressions
-  t.equal(evaluate('true'), true);
-  t.equal(evaluate('true && false'), false);
-  t.equal(evaluate('true || false'), true);
+  expect(evaluate('true')).toBe(true);
+  expect(evaluate('true && false')).toBe(false);
+  expect(evaluate('true || false')).toBe(true);
 
   // should eval simple combined expressions
-  t.equal(evaluate('(2>3) ? 1 : 2'), 2);
-  t.equal(evaluate('1 + "ab".length'), 3);
+  expect(evaluate('(2>3) ? 1 : 2')).toBe(2);
+  expect(evaluate('1 + "ab".length')).toBe(3);
 
   // should eval simple regular expressions
-  t.equal(regexEqual(/pattern/, evaluate('/pattern/')), true);
-  t.equal(regexEqual(/[0-9]+/, evaluate('/[0-9]+/')), true);
-  t.equal(regexEqual(/[0-9]+/, evaluate('/[1-9]+/')), false);
-  t.equal(regexEqual(/[a-z]/gi, evaluate('/[a-z]/gi')), true);
+  expect(regexEqual(/pattern/, evaluate('/pattern/'))).toBe(true);
+  expect(regexEqual(/[0-9]+/, evaluate('/[0-9]+/'))).toBe(true);
+  expect(regexEqual(/[0-9]+/, evaluate('/[1-9]+/'))).toBe(false);
+  expect(regexEqual(/[a-z]/gi, evaluate('/[a-z]/gi'))).toBe(true);
 
-  t.equal(regexEqual(/pattern/, evaluate('regexp("pattern")')), true);
-  t.equal(regexEqual(/[0-9]+/, evaluate('regexp("[0-9]+")')), true);
-  t.equal(regexEqual(/[0-9]+/, evaluate('regexp("[1-9]+")')), false);
-  t.equal(regexEqual(/[a-z]/gi, evaluate('regexp("[a-z]", "gi")')), true);
+  expect(regexEqual(/pattern/, evaluate('regexp("pattern")'))).toBe(true);
+  expect(regexEqual(/[0-9]+/, evaluate('regexp("[0-9]+")'))).toBe(true);
+  expect(regexEqual(/[0-9]+/, evaluate('regexp("[1-9]+")'))).toBe(false);
+  expect(regexEqual(/[a-z]/gi, evaluate('regexp("[a-z]", "gi")'))).toBe(true);
 
   // should eval array expressions
-  t.deepEqual(evaluate('[]'), []);
-  t.deepEqual(evaluate('[1,2,3]'), [1,2,3]);
-  t.deepEqual(evaluate('["a","b"]'), ['a','b']);
+  expect(evaluate('[]')).toEqual([]);
+  expect(evaluate('[1,2,3]')).toEqual([1,2,3]);
+  expect(evaluate('["a","b"]')).toEqual(['a','b']);
 
   // should eval unary expressions
-  t.equal(evaluate('-3'), -3);
-  t.equal(evaluate('+"4"'), 4);
-  t.equal(evaluate('~~5.2'), 5);
-  t.equal(evaluate('!1'), false);
+  expect(evaluate('-3')).toBe(-3);
+  expect(evaluate('+"4"')).toBe(4);
+  expect(evaluate('~~5.2')).toBe(5);
+  expect(evaluate('!1')).toBe(false);
 
   // should not allow unary update expressions
-  t.throws(evaluate.fn('++1'));
-  t.throws(evaluate.fn('1++'));
+  expect(evaluate.fn('++1')).toThrow();
+  expect(evaluate.fn('1++')).toThrow();
 
   // should eval constant values
-  t.equal(evaluate('null'), null);
-  t.equal(evaluate('E'), Math.E);
-  t.equal(evaluate('PI'), Math.PI);
-  t.equal(evaluate('SQRT2'), Math.SQRT2);
+  expect(evaluate('null')).toBe(null);
+  expect(evaluate('E')).toBe(Math.E);
+  expect(evaluate('PI')).toBe(Math.PI);
+  expect(evaluate('SQRT2')).toBe(Math.SQRT2);
 
   // Evaluation with arguments
   // should handle data argument
-  t.equal(evaluate('datum.a'), 2);
-  t.equal(evaluate('datum["a"]'), 2);
+  expect(evaluate('datum.a')).toBe(2);
+  expect(evaluate('datum["a"]')).toBe(2);
 
   // should handle event argument
-  t.equal(evaluate('event.type'), 'mousemove');
+  expect(evaluate('event.type')).toBe('mousemove');
 
   // should handle unicode
-  t.equal(evaluate('datum.föö'), 5);
+  expect(evaluate('datum.föö')).toBe(5);
 
   // Function evaluation
   // should eval math functions', function() {
-  t.equal(evaluate('isNaN(1/0)'), isNaN(1/0));
-  t.equal(evaluate('isFinite(1)'), isFinite(1));
-  t.equal(evaluate('isFinite(1/0)'), isFinite(1/0));
-  t.equal(evaluate('abs(-3)'), Math.abs(-3));
-  t.equal(evaluate('acos(1)'), Math.acos(1));
-  t.equal(evaluate('asin(1)'), Math.asin(1));
-  t.equal(evaluate('atan(1)'), Math.atan(1));
-  t.equal(evaluate('atan2(1,2)'), Math.atan2(1,2));
-  t.equal(evaluate('ceil(0.5)'), Math.ceil(0.5));
-  t.equal(evaluate('cos(1)'), Math.cos(1));
-  t.equal(evaluate('exp(1)'), Math.exp(1));
-  t.equal(evaluate('floor(0.5)'), Math.floor(0.5));
-  t.equal(evaluate('log(2)'), Math.log(2));
-  t.equal(evaluate('max(0,1)'), Math.max(0,1));
-  t.equal(evaluate('min(0,1)'), Math.min(0,1));
-  t.equal(evaluate('pow(2,3)'), Math.pow(2,3));
-  t.equal(evaluate('round(0.5)'), Math.round(0.5));
-  t.equal(evaluate('sin(1)'), Math.sin(1));
-  t.equal(evaluate('sqrt(2)'), Math.sqrt(2));
-  t.equal(evaluate('tan(1)'), Math.tan(1));
+  expect(evaluate('isNaN(1/0)')).toBe(isNaN(1/0));
+  expect(evaluate('isFinite(1)')).toBe(isFinite(1));
+  expect(evaluate('isFinite(1/0)')).toBe(isFinite(1/0));
+  expect(evaluate('abs(-3)')).toBe(Math.abs(-3));
+  expect(evaluate('acos(1)')).toBe(Math.acos(1));
+  expect(evaluate('asin(1)')).toBe(Math.asin(1));
+  expect(evaluate('atan(1)')).toBe(Math.atan(1));
+  expect(evaluate('atan2(1,2)')).toBe(Math.atan2(1,2));
+  expect(evaluate('ceil(0.5)')).toBe(Math.ceil(0.5));
+  expect(evaluate('cos(1)')).toBe(Math.cos(1));
+  expect(evaluate('exp(1)')).toBe(Math.exp(1));
+  expect(evaluate('floor(0.5)')).toBe(Math.floor(0.5));
+  expect(evaluate('log(2)')).toBe(Math.log(2));
+  expect(evaluate('max(0,1)')).toBe(Math.max(0,1));
+  expect(evaluate('min(0,1)')).toBe(Math.min(0,1));
+  expect(evaluate('pow(2,3)')).toBe(Math.pow(2,3));
+  expect(evaluate('round(0.5)')).toBe(Math.round(0.5));
+  expect(evaluate('sin(1)')).toBe(Math.sin(1));
+  expect(evaluate('sqrt(2)')).toBe(Math.sqrt(2));
+  expect(evaluate('tan(1)')).toBe(Math.tan(1));
   for (var i=0; i<5; ++i) {
     var r = evaluate('random()');
-    t.equal(r >= 0 && r <= 1, true);
+    expect(r >= 0 && r <= 1).toBe(true);
   }
 
   // should eval clamp function
-  t.equal(evaluate('clamp(5, 0, 10)'), 5);
-  t.equal(evaluate('clamp(-1, 0, 10)'), 0);
-  t.equal(evaluate('clamp(11, 0, 10)'), 10);
-  t.throws(evaluate.fn('clamp(0,1)'));
-  t.throws(evaluate.fn('clamp(0,1,2,3)'));
+  expect(evaluate('clamp(5, 0, 10)')).toBe(5);
+  expect(evaluate('clamp(-1, 0, 10)')).toBe(0);
+  expect(evaluate('clamp(11, 0, 10)')).toBe(10);
+  expect(evaluate.fn('clamp(0,1)')).toThrow();
+  expect(evaluate.fn('clamp(0,1,2,3)')).toThrow();
 
   // should eval string functions
-  t.equal(evaluate('length("123")'), '123'.length);
-  t.equal(evaluate('upper("abc")'), 'abc'.toUpperCase());
-  t.equal(evaluate('lower("abc")'), 'abc'.toLowerCase());
-  t.equal(evaluate('slice("123",1)'), '123'.slice(1));
-  t.equal(evaluate('slice("123",-1)'), '123'.slice(-1));
-  t.equal(evaluate('slice("123",0,1)'), '123'.slice(0,1));
-  t.deepEqual(evaluate('split("1 2 3"," ")'), '1 2 3'.split(' '));
-  t.equal(evaluate('substring("123",0,1)'), '123'.substring(0,1));
-  t.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
-  t.equal(evaluate('parseInt("42")'),parseInt('42'));
-  t.equal(evaluate('indexof("hello world", "l")'), 2);
-  t.equal(evaluate('lastindexof("hello world", "l")'), 9);
-  t.equal(evaluate('replace("hello world", /hello/, "goodbye")'), 'goodbye world');
+  expect(evaluate('length("123")')).toBe('123'.length);
+  expect(evaluate('upper("abc")')).toBe('abc'.toUpperCase());
+  expect(evaluate('lower("abc")')).toBe('abc'.toLowerCase());
+  expect(evaluate('slice("123",1)')).toBe('123'.slice(1));
+  expect(evaluate('slice("123",-1)')).toBe('123'.slice(-1));
+  expect(evaluate('slice("123",0,1)')).toBe('123'.slice(0,1));
+  expect(evaluate('split("1 2 3"," ")')).toEqual('1 2 3'.split(' '));
+  expect(evaluate('substring("123",0,1)')).toBe('123'.substring(0,1));
+  expect(evaluate('parseFloat("3.14")')).toBe(parseFloat('3.14'));
+  expect(evaluate('parseInt("42")')).toBe(parseInt('42'));
+  expect(evaluate('indexof("hello world", "l")')).toBe(2);
+  expect(evaluate('lastindexof("hello world", "l")')).toBe(9);
+  expect(evaluate('replace("hello world", /hello/, "goodbye")')).toBe('goodbye world');
 
   // should eval regular expression functions
-  t.equal(evaluate('test(/ain/, "spain")'), /ain/.test('spain'));
-  t.equal(evaluate('test(/ain/, "france")'), /ain/.test('france'));
+  expect(evaluate('test(/ain/, "spain")')).toBe(/ain/.test('spain'));
+  expect(evaluate('test(/ain/, "france")')).toBe(/ain/.test('france'));
 
   // should eval datetime functions
   var d = new Date(2001,1,1),
       u = Date.UTC(2009, 9, 1, 10);
 
-  t.equal(Math.abs(Date.now() - evaluate('now()')) <= 5, true);
-  t.equal(evaluate('+datetime(2001,1,1)'), +d);
-  t.equal(evaluate('time(datetime(2001,1,1))'), +d);
-  t.equal(evaluate('timezoneoffset(datetime(2001,1,1))'),d.getTimezoneOffset());
+  expect(Math.abs(Date.now() - evaluate('now()')) <= 5).toBe(true);
+  expect(evaluate('+datetime(2001,1,1)')).toBe(+d);
+  expect(evaluate('time(datetime(2001,1,1))')).toBe(+d);
+  expect(evaluate('timezoneoffset(datetime(2001,1,1))')).toBe(d.getTimezoneOffset());
 
-  t.equal(evaluate('day(datetime(2001,1,1))'), d.getDay());
-  t.equal(evaluate('year(datetime(2001,1,1))'), d.getFullYear());
-  t.equal(evaluate('month(datetime(2001,1,1))'), d.getMonth());
-  t.equal(evaluate('hours(datetime(2001,1,1))'), d.getHours());
-  t.equal(evaluate('minutes(datetime(2001,1,1))'), d.getMinutes());
-  t.equal(evaluate('seconds(datetime(2001,1,1))'), d.getSeconds());
-  t.equal(evaluate('milliseconds(datetime(2001,1,1))'), d.getMilliseconds());
+  expect(evaluate('day(datetime(2001,1,1))')).toBe(d.getDay());
+  expect(evaluate('year(datetime(2001,1,1))')).toBe(d.getFullYear());
+  expect(evaluate('month(datetime(2001,1,1))')).toBe(d.getMonth());
+  expect(evaluate('hours(datetime(2001,1,1))')).toBe(d.getHours());
+  expect(evaluate('minutes(datetime(2001,1,1))')).toBe(d.getMinutes());
+  expect(evaluate('seconds(datetime(2001,1,1))')).toBe(d.getSeconds());
+  expect(evaluate('milliseconds(datetime(2001,1,1))')).toBe(d.getMilliseconds());
 
-  t.equal(evaluate('utcday(datetime(2001,1,1))'), d.getUTCDay());
-  t.equal(evaluate('utcyear(datetime(2001,1,1))'), d.getUTCFullYear());
-  t.equal(evaluate('utcmonth(datetime(2001,1,1))'), d.getUTCMonth());
-  t.equal(evaluate('utchours(datetime(2001,1,1))'), d.getUTCHours());
-  t.equal(evaluate('utcminutes(datetime(2001,1,1))'), d.getUTCMinutes());
-  t.equal(evaluate('utcseconds(datetime(2001,1,1))'), d.getUTCSeconds());
-  t.equal(evaluate('utcmilliseconds(datetime(2001,1,1))'), d.getUTCMilliseconds());
+  expect(evaluate('utcday(datetime(2001,1,1))')).toBe(d.getUTCDay());
+  expect(evaluate('utcyear(datetime(2001,1,1))')).toBe(d.getUTCFullYear());
+  expect(evaluate('utcmonth(datetime(2001,1,1))')).toBe(d.getUTCMonth());
+  expect(evaluate('utchours(datetime(2001,1,1))')).toBe(d.getUTCHours());
+  expect(evaluate('utcminutes(datetime(2001,1,1))')).toBe(d.getUTCMinutes());
+  expect(evaluate('utcseconds(datetime(2001,1,1))')).toBe(d.getUTCSeconds());
+  expect(evaluate('utcmilliseconds(datetime(2001,1,1))')).toBe(d.getUTCMilliseconds());
 
   for (var date=1; date<=7; ++date) {
     d = new Date(2001, 1, date);
-    t.equal(evaluate('date(datetime(2001,1,'+date+'))'), d.getDate());
-    t.equal(evaluate('utcdate(datetime(2001,1,'+date+'))'), d.getUTCDate());
+    expect(evaluate('date(datetime(2001,1,'+date+'))')).toBe(d.getDate());
+    expect(evaluate('utcdate(datetime(2001,1,'+date+'))')).toBe(d.getUTCDate());
   }
 
-  t.equal(evaluate('utc(2009,9,1,10)'), u);
-  t.equal(evaluate('utchours(utc(2009,9,1,10))'), new Date(u).getUTCHours());
+  expect(evaluate('utc(2009,9,1,10)')).toBe(u);
+  expect(evaluate('utchours(utc(2009,9,1,10))')).toBe(new Date(u).getUTCHours());
 
   // should evaluate if statements
-  t.equal(evaluate('if(datum.a > 1, 1, 2)'), 1);
-  t.equal(evaluate('if(event.type === "mousedown", 1, 2)'), 2);
-  t.equal(evaluate('if(datum.a > 1, if(event.type === "mousedown", 3, 4), 2)'), 4);
-  t.throws(evaluate.fn('if(datum.a > 1, 1)'));
-  t.throws(evaluate.fn('if(datum.a > 1, 1, 2, 3)'));
+  expect(evaluate('if(datum.a > 1, 1, 2)')).toBe(1);
+  expect(evaluate('if(event.type === "mousedown", 1, 2)')).toBe(2);
+  expect(evaluate('if(datum.a > 1, if(event.type === "mousedown", 3, 4), 2)')).toBe(4);
+  expect(evaluate.fn('if(datum.a > 1, 1)')).toThrow();
+  expect(evaluate.fn('if(datum.a > 1, 1, 2, 3)')).toThrow();
 
   // "if" should be isolated from surrounding expression
-  t.equal(evaluate('0 * if(datum.a > 1, 1, 2)'), 0);
+  expect(evaluate('0 * if(datum.a > 1, 1, 2)')).toBe(0);
 
   // should not eval undefined functions
-  t.throws(evaluate.fn('Array()'));
-  t.throws(evaluate.fn('Function()'));
-  t.throws(evaluate.fn('Object()'));
-  t.throws(evaluate.fn('String()'));
+  expect(evaluate.fn('Array()')).toThrow();
+  expect(evaluate.fn('Function()')).toThrow();
+  expect(evaluate.fn('Object()')).toThrow();
+  expect(evaluate.fn('String()')).toThrow();
 
   // Validation checks
   // should not allow nested function calls
-  t.throws(evaluate.fn('d.hasOwnProperty("a")'));
-  t.throws(evaluate.fn('Math.random()'));
-  t.throws(evaluate.fn('Array.prototype.slice.call([])'));
+  expect(evaluate.fn('d.hasOwnProperty("a")')).toThrow();
+  expect(evaluate.fn('Math.random()')).toThrow();
+  expect(evaluate.fn('Array.prototype.slice.call([])')).toThrow();
 
   // should not allow top-level identifiers outside whitelist
-  t.throws(evaluate.fn('Math'));
-  t.throws(evaluate.fn('Array'));
-  t.throws(evaluate.fn('String'));
-  t.throws(evaluate.fn('Object'));
-  t.throws(evaluate.fn('XMLHttpRequest'));
-  t.throws(evaluate.fn('a'));
-  t.throws(evaluate.fn('datum[Math]'));
+  expect(evaluate.fn('Math')).toThrow();
+  expect(evaluate.fn('Array')).toThrow();
+  expect(evaluate.fn('String')).toThrow();
+  expect(evaluate.fn('Object')).toThrow();
+  expect(evaluate.fn('XMLHttpRequest')).toThrow();
+  expect(evaluate.fn('a')).toThrow();
+  expect(evaluate.fn('datum[Math]')).toThrow();
 
   // should allow nested identifiers outside whitelist
-  t.doesNotThrow(evaluate.fn('datum.eval'));
-  t.doesNotThrow(evaluate.fn('datum.Math'));
-  t.doesNotThrow(evaluate.fn('datum.a.eval'));
-  t.doesNotThrow(evaluate.fn('{eval:0, Math:1}'));
+  expect(evaluate.fn('datum.eval')).not.toThrow();
+  expect(evaluate.fn('datum.Math')).not.toThrow();
+  expect(evaluate.fn('datum.a.eval')).not.toThrow();
+  expect(evaluate.fn('{eval:0, Math:1}')).not.toThrow();
 
   // should not allow eval
-  t.throws(evaluate.fn('eval'));
-  t.throws(evaluate.fn('eval()'));
-  t.throws(evaluate.fn('eval("1+2")'));
+  expect(evaluate.fn('eval')).toThrow();
+  expect(evaluate.fn('eval()')).toThrow();
+  expect(evaluate.fn('eval("1+2")')).toThrow();
 
   // should not allow Function constructor
-  t.throws(evaluate.fn('Function("1+2")'));
+  expect(evaluate.fn('Function("1+2")')).toThrow();
 
   // should not allow debugger invocation
-  t.throws(evaluate.fn('debugger'));
+  expect(evaluate.fn('debugger')).toThrow();
 
   // should not allow this reference
-  t.throws(evaluate.fn('this'));
+  expect(evaluate.fn('this')).toThrow();
 
   // should not allow arguments reference
-  t.throws(evaluate.fn('arguments'));
+  expect(evaluate.fn('arguments')).toThrow();
 
   // should not allow global variable reference
-  t.throws(evaluate.fn('window'));
-  t.throws(evaluate.fn('document'));
-  t.throws(evaluate.fn('self'));
-  t.throws(evaluate.fn('global'));
-
-  t.end();
+  expect(evaluate.fn('window')).toThrow();
+  expect(evaluate.fn('document')).toThrow();
+  expect(evaluate.fn('self')).toThrow();
+  expect(evaluate.fn('global')).toThrow();
 });

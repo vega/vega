@@ -1,33 +1,29 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Compare = require('../').compare;
+var vega = require('vega-dataflow'), Compare = require('../').compare;
 
-tape('Compare generates comparator functions', function(t) {
+test('Compare generates comparator functions', function() {
   var df = new vega.Dataflow(),
       c = df.add('foo'),
       o = df.add('ascending'),
       f = df.add(Compare, {fields:c, orders:o});
 
   df.run();
-  t.equal(typeof f.value, 'function');
-  t.deepEqual(f.value.fields, ['foo']);
+  expect(typeof f.value).toBe('function');
+  expect(f.value.fields).toEqual(['foo']);
 
   df.update(o, 'descending').run();
-  t.equal(typeof f.value, 'function');
-  t.deepEqual(f.value.fields, ['foo']);
+  expect(typeof f.value).toBe('function');
+  expect(f.value.fields).toEqual(['foo']);
 
   df.update(c, 'bar').run();
-  t.equal(typeof f.value, 'function');
-  t.deepEqual(f.value.fields, ['bar']);
+  expect(typeof f.value).toBe('function');
+  expect(f.value.fields).toEqual(['bar']);
 
   df.update(c, ['foo', 'bar'])
     .update(o, ['descending', 'descending'])
     .run();
-  t.equal(typeof f.value, 'function');
-  t.deepEqual(f.value.fields, ['foo', 'bar']);
+  expect(typeof f.value).toBe('function');
+  expect(f.value.fields).toEqual(['foo', 'bar']);
 
   df.update(c, null).update(o, null).run();
-  t.equal(f.value, null);
-
-  t.end();
+  expect(f.value).toBe(null);
 });

@@ -1,15 +1,34 @@
-parserOptions:
-    sourceType: "module"
-    ecmaVersion: 2018
-
-env:
-    es6: true
-    browser: true
-    node: true
-
-extends:
-    "eslint:recommended"
-
-rules:
-    no-cond-assign: 0
-    no-fallthrough: ["error", { "commentPattern": "break omitted" }]
+{
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2018
+	},
+	"env": {
+		"es6": true,
+		"browser": true,
+		"node": true,
+		"jest/globals": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:jest/recommended"
+	],
+	"rules": {
+		"no-cond-assign": 0,
+		"no-fallthrough": [
+			"error",
+			{
+				"commentPattern": "break omitted"
+			}
+		]
+	},
+	"plugins": [
+		"jest"
+	],
+	"globals": {
+		"page": true,
+		"browser": true,
+		"context": true,
+		"jestPuppeteer": true
+	}
+}

@@ -1,9 +1,4 @@
-var tape = require('tape'),
-    context = require('d3-path').path,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    pathParse = vega.pathParse,
-    pathRender = vega.pathRender;
+var context = require('d3-path').path, vega = require('../'), Bounds = vega.Bounds, pathParse = vega.pathParse, pathRender = vega.pathRender;
 
 function bound(path, bounds) {
   pathRender(vega.boundContext(bounds), path, 0, 0);
@@ -109,63 +104,56 @@ var output = [
   'M0,0C-5.522847498307931,5.522847498307935,-5.522847498307933,14.477152501692064,0,20C5.522847498307933,25.522847498307936,14.47715250169206,25.522847498307936,19.999999999999996,20.000000000000004Z'
 ];
 
-tape('pathParse should parse svg path', function(t) {
+test('pathParse should parse svg path', function() {
   var s1 = "M1,1L1,2";
   var s2 = "M 1 1 L 1 2";
   var s3 = "M 1,1 L 1 2";
   var p = [['M',1,1], ['L',1,2]];
-  t.deepEqual(pathParse(s1), p);
-  t.deepEqual(pathParse(s2), p);
-  t.deepEqual(pathParse(s3), p);
-  t.end();
+  expect(pathParse(s1)).toEqual(p);
+  expect(pathParse(s2)).toEqual(p);
+  expect(pathParse(s3)).toEqual(p);
 });
 
-tape('pathParse should handle repeated arguments', function(t) {
+test('pathParse should handle repeated arguments', function() {
   var s = "M 1 1 L 1 2 3 4";
   var p = [['M',1,1], ['L',1,2], ['L',3,4]];
-  t.deepEqual(pathParse(s), p);
-  t.end();
+  expect(pathParse(s)).toEqual(p);
 });
 
-tape('pathParse should skip NaN parameters', function(t) {
+test('pathParse should skip NaN parameters', function() {
   var s = "M 1 1 L 1 x";
   var p = [['M',1,1], ['L',1]];
-  t.deepEqual(pathParse(s), p);
-  t.end();
+  expect(pathParse(s)).toEqual(p);
 });
 
-tape('boundContext should calculate paths bounds', function(t) {
+test('boundContext should calculate paths bounds', function() {
   for (var i=0; i<paths.length; ++i) {
     var p = pathParse(paths[i]);
     var b = bound(p, new Bounds());
-    t.equal(b.x1, bounds[i].x1);
-    t.equal(b.x2, bounds[i].x2);
-    t.equal(b.y1, bounds[i].y1);
-    t.equal(b.y2, bounds[i].y2);
+    expect(b.x1).toBe(bounds[i].x1);
+    expect(b.x2).toBe(bounds[i].x2);
+    expect(b.y1).toBe(bounds[i].y1);
+    expect(b.y2).toBe(bounds[i].y2);
   }
-  t.end();
 });
 
-tape('pathRender should render paths', function(t) {
+test('pathRender should render paths', function() {
   var ctx, p;
   for (var i=0; i<paths.length; ++i) {
     p = pathParse(paths[i]);
     pathRender(ctx = context(), p, 0, 0);
-    t.ok(vega.pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
+    expect(vega.pathEqual(ctx+'', output[i])).toBeTruthy();
   }
-  t.end();
 });
 
-tape('pathRender should translate paths', function(t) {
+test('pathRender should translate paths', function() {
   var ctx = context();
   pathRender(ctx, pathParse(paths[1]), 10, 50);
-  t.equal(ctx+'', 'M20,60L30,80');
-  t.end();
+  expect(ctx+'').toBe('M20,60L30,80');
 });
 
-tape('pathRender should scale paths', function(t) {
+test('pathRender should scale paths', function() {
   var ctx = context();
   pathRender(ctx, pathParse(paths[1]), 0, 0, 2);
-  t.equal(ctx+'', 'M20,20L40,60');
-  t.end();
+  expect(ctx+'').toBe('M20,20L40,60');
 });
