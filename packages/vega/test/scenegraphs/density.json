@@ -5787,7 +5787,8 @@
               "x": 0,
               "y": 0,
               "width": 168,
-              "height": 24
+              "height": 24,
+              "orient": "top-left"
             }
           ],
           "zindex": 1

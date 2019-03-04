@@ -3980,7 +3980,8 @@
               "x": 404,
               "y": 139,
               "width": 105,
-              "height": 73
+              "height": 73,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -4428,7 +4429,8 @@
               "x": 6,
               "y": 371,
               "width": 388,
-              "height": 18
+              "height": 18,
+              "orient": "bottom"
             }
           ],
           "zindex": 0
@@ -4780,7 +4782,8 @@
               "x": 51.5,
               "y": 391,
               "width": 297,
-              "height": 18
+              "height": 18,
+              "orient": "bottom"
             }
           ],
           "zindex": 0

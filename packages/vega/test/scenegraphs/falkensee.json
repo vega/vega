@@ -1490,7 +1490,8 @@
               "x": 8,
               "y": 8,
               "width": 158,
-              "height": 38
+              "height": 38,
+              "orient": "top-left"
             }
           ],
           "zindex": 0

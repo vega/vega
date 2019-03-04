@@ -1477,7 +1477,8 @@
               "x": 289,
               "y": 0,
               "width": 123,
-              "height": 105
+              "height": 105,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -1823,7 +1824,8 @@
               "x": 289,
               "y": 113,
               "width": 123,
-              "height": 92
+              "height": 92,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2175,7 +2177,8 @@
               "x": -188,
               "y": 0,
               "width": 114,
-              "height": 105
+              "height": 105,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -2527,7 +2530,8 @@
               "x": -188,
               "y": 113,
               "width": 114,
-              "height": 109
+              "height": 109,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -2668,7 +2672,8 @@
               "fill": "#fff",
               "fillOpacity": 0.5,
               "stroke": "#888",
-              "cornerRadius": 4
+              "cornerRadius": 4,
+              "orient": "top-left"
             }
           ],
           "zindex": 0
@@ -2809,7 +2814,8 @@
               "fill": "#fff",
               "fillOpacity": 0.5,
               "stroke": "#888",
-              "cornerRadius": 4
+              "cornerRadius": 4,
+              "orient": "top-right"
             }
           ],
           "zindex": 0
@@ -2950,7 +2956,8 @@
               "fill": "#fff",
               "fillOpacity": 0.5,
               "stroke": "#888",
-              "cornerRadius": 4
+              "cornerRadius": 4,
+              "orient": "bottom-left"
             }
           ],
           "zindex": 0
@@ -3091,7 +3098,8 @@
               "fill": "#fff",
               "fillOpacity": 0.5,
               "stroke": "#888",
-              "cornerRadius": 4
+              "cornerRadius": 4,
+              "orient": "bottom-right"
             }
           ],
           "zindex": 0

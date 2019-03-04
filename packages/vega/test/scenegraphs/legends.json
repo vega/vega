@@ -121,7 +121,8 @@
               "x": -100,
               "y": 0,
               "width": 100,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -240,7 +241,8 @@
               "x": -100,
               "y": 52,
               "width": 100,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -598,7 +600,8 @@
               "x": 18,
               "y": 0,
               "width": 70,
-              "height": 109
+              "height": 109,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -897,7 +900,8 @@
               "x": 18,
               "y": 117,
               "width": 48,
-              "height": 79
+              "height": 79,
+              "orient": "right"
             }
           ],
           "zindex": 0

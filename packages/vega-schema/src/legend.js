@@ -5,7 +5,7 @@ import {
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
   numberOrSignal, stringOrSignal, arrayOrSignal,
-  numberType, stringType
+  numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
@@ -54,7 +54,7 @@ const legendProps = object({
   // LEGEND TYPE
   type:        enums(legendTypeEnum),
   direction:   enums(legendDirectionEnum),
-  orient:      enums(legendOrientEnum, {default: 'right'}),
+  orient:      orSignal(enums(legendOrientEnum, {default: 'right'})),
 
   // LEGEND CONFIG
   tickCount: tickCountRef,

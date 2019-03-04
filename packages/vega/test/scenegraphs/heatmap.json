@@ -62350,7 +62350,8 @@
               "x": 820,
               "y": -16,
               "width": 123,
-              "height": 516
+              "height": 516,
+              "orient": "none"
             }
           ],
           "zindex": 0

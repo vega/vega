@@ -119,7 +119,8 @@
               "x": -305,
               "y": 0,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -258,7 +259,8 @@
               "x": -305,
               "y": 52,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -419,7 +421,8 @@
               "x": -305,
               "y": 104,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -602,7 +605,8 @@
               "x": -305,
               "y": 156,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -807,7 +811,8 @@
               "x": -305,
               "y": 208,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1034,7 +1039,8 @@
               "x": -305,
               "y": 260,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1283,7 +1289,8 @@
               "x": -305,
               "y": 312,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1554,7 +1561,8 @@
               "x": -305,
               "y": 364,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1693,7 +1701,8 @@
               "x": 5,
               "y": 0,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -1876,7 +1885,8 @@
               "x": 5,
               "y": 52,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2103,7 +2113,8 @@
               "x": 5,
               "y": 104,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2220,7 +2231,8 @@
               "x": 5,
               "y": 156,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2359,7 +2371,8 @@
               "x": 5,
               "y": 208,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2520,7 +2533,8 @@
               "x": 5,
               "y": 260,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2703,7 +2717,8 @@
               "x": 5,
               "y": 312,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2996,7 +3011,8 @@
               "x": 5,
               "y": 364,
               "width": 300,
-              "height": 44
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0

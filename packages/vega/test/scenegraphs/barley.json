@@ -4969,7 +4969,8 @@
               "x": 349,
               "y": 0,
               "width": 54,
-              "height": 49
+              "height": 49,
+              "orient": "right"
             }
           ],
           "zindex": 0

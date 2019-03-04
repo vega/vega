@@ -39,7 +39,6 @@ export default function(spec, scope) {
 
   // single-element data source for legend group
   datum = {
-    orient: _('orient'),
     title:  spec.title != null,
     type:   type,
     vgrad:  type !== 'symbol' &&  _.isVertical()
@@ -138,6 +137,7 @@ function buildLegendEncode(_, config) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
+    orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
     titlePadding: _('titlePadding'),

@@ -83,7 +83,7 @@ function layoutGroup(view, group, _) {
     // group legends by orient
     const l = {};
     legends.forEach(item => {
-      orient = item.datum.orient || Right;
+      orient = item.orient || Right;
       if (orient !== None) (l[orient] || (l[orient] = [])).push(item);
     });
 
@@ -110,11 +110,14 @@ function layoutGroup(view, group, _) {
         // For autosize fit, incorporate the orthogonal dimension only.
         // Legends that overrun the chart area will then be clipped;
         // otherwise the chart area gets reduced to nothing!
-        orient = item.datum.orient;
-        if (orient === Left || orient === Right) {
-          viewBounds.add(b.x1, 0).add(b.x2, 0);
-        } else if (orient === Top || orient === Bottom) {
-          viewBounds.add(0, b.y1).add(0, b.y2);
+        switch(item.orient) {
+          case Left:
+          case Right:
+            viewBounds.add(b.x1, 0).add(b.x2, 0);
+            break;
+          case Top:
+          case Bottom:
+            viewBounds.add(0, b.y1).add(0, b.y2);
         }
       } else {
         viewBounds.union(b);

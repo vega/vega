@@ -82,7 +82,7 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
 export function legendLayout(view, legend) {
   var item = legend.items[0],
       datum = item.datum,
-      orient = datum.orient,
+      orient = item.orient,
       bounds = item.bounds,
       x = item.x, y = item.y, w, h;
 
