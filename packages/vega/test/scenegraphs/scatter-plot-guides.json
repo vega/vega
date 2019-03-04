@@ -4803,7 +4803,8 @@
               "x": 218,
               "y": 0,
               "width": 62,
-              "height": 55
+              "height": 55,
+              "orient": "right"
             }
           ],
           "zindex": 0

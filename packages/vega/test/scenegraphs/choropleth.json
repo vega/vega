@@ -11103,7 +11103,8 @@
               "x": 837,
               "y": 266,
               "width": 105,
-              "height": 216
+              "height": 216,
+              "orient": "bottom-right"
             }
           ],
           "zindex": 0

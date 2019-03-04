@@ -145,7 +145,7 @@ export interface BaseLegend<
    *
    * __Default value:__ `"right"`
    */
-  orient?: LegendOrient;
+  orient?: LegendOrient | SignalRef;
 
   // ---------- Legend Group ----------
   /**

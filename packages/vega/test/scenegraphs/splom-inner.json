@@ -22645,7 +22645,8 @@
               "x": 600,
               "y": 0,
               "width": 96,
-              "height": 61
+              "height": 61,
+              "orient": "right"
             }
           ],
           "zindex": 0

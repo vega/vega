@@ -511,7 +511,8 @@
               "x": 38,
               "y": 0,
               "width": 70,
-              "height": 118
+              "height": 118,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -810,7 +811,8 @@
               "x": 38,
               "y": 126,
               "width": 98,
-              "height": 106
+              "height": 106,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -1015,7 +1017,8 @@
               "x": 38,
               "y": 240,
               "width": 79,
-              "height": 66
+              "height": 66,
+              "orient": "right"
             }
           ],
           "zindex": 0

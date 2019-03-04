@@ -2132,7 +2132,8 @@
               "x": 818,
               "y": 0,
               "width": 168,
-              "height": 92
+              "height": 92,
+              "orient": "right"
             }
           ],
           "zindex": 0

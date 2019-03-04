@@ -11080,7 +11080,8 @@
               "x": -76,
               "y": 0,
               "width": 58,
-              "height": 362
+              "height": 362,
+              "orient": "left"
             }
           ],
           "zindex": 0

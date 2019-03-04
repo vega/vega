@@ -1485,7 +1485,8 @@
               "x": 10,
               "y": 498,
               "width": 168,
-              "height": 92
+              "height": 92,
+              "orient": "bottom-left"
             }
           ],
           "zindex": 0
