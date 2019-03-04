@@ -1,3 +1,4 @@
+import {zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RectMark} from '../marks/marktypes';
@@ -7,7 +8,6 @@ import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {
   var _ = lookup(spec, config),
-      zero = {value: 0},
       vertical = _.isVertical(),
       thickness = _.gradientThickness(),
       length = _.gradientLength(),
@@ -34,7 +34,7 @@ export default function(spec, scale, config, userEncode) {
       height: encoder(height)
     },
     update: extend({}, enter, {
-      opacity: {value: 1},
+      opacity: one,
       fill: {gradient: scale, start: start, stop: stop}
     }),
     exit: {

@@ -1,4 +1,7 @@
-import {Index, Label, Perc, Value, GuideLabelStyle} from './constants';
+import {
+  Index, Label, Perc, Value, GuideLabelStyle, zero, one,
+  Top, Bottom, Left, Right, Center, Middle
+} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
@@ -6,15 +9,11 @@ import {LegendLabelRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 import {value} from '../../util';
 
-var alignExpr = 'datum.' + Perc + '<=0?"left"'
-  + ':datum.' + Perc + '>=1?"right":"center"';
-
-var baselineExpr = 'datum.' + Perc + '<=0?"bottom"'
-  + ':datum.' + Perc + '>=1?"top":"middle"';
+const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,
+      baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
-      zero = {value: 0},
       vertical = _.isVertical(),
       thickness = encoder(_.gradientThickness()),
       length = _.gradientLength(),
@@ -27,7 +26,7 @@ export default function(spec, config, userEncode, dataRef) {
       opacity: zero
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       text: {field: Label}
     },
     exit: {

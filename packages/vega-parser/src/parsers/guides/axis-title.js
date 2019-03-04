@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, GuideTitleStyle} from './constants';
+import {Top, Bottom, Left, GuideTitleStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {encoder, has} from '../encode/encode-util';
@@ -12,7 +12,6 @@ export default function(spec, config, userEncode, dataRef) {
       orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
-      zero = {value: 0},
       encode, enter, update, titlePos;
 
   encode = {
@@ -22,7 +21,7 @@ export default function(spec, config, userEncode, dataRef) {
       align: {signal: alignExpr}
     },
     update: update = extend({}, enter, {
-      opacity: {value: 1},
+      opacity: one,
       text: encoder(spec.title)
     }),
     exit: {

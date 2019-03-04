@@ -1,4 +1,4 @@
-import {Left, Top, Bottom, Value} from './constants';
+import {Left, Top, Bottom, Value, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
@@ -12,19 +12,12 @@ export default function(spec, config, userEncode, dataRef) {
       vscale = spec.gridScale,
       sign = (orient === Left || orient === Top) ? 1 : -1,
       offset = offsetValue(spec.offset, sign),
-      zero = {value: 0},
       encode, enter, exit, update, tickPos, u, v, v2, s;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: update = {
-      opacity: {value: 1}
-    },
-    exit: exit = {
-      opacity: zero
-    }
+    enter: enter = {opacity: zero},
+    update: update = {opacity: one},
+    exit: exit = {opacity: zero}
   };
 
   addEncoders(encode, {

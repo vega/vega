@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle} from './constants';
+import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
@@ -25,7 +25,6 @@ export default function(spec, config, userEncode, dataRef, size) {
       flushOn = flush === 0 || !!flush,
       labelAlign = _('labelAlign'),
       labelBaseline = _('labelBaseline'),
-      zero = {value: 0},
       encode, enter, tickSize, tickPos, align, baseline, offset,
       bound, overlap, separation;
 
@@ -48,7 +47,6 @@ export default function(spec, config, userEncode, dataRef, size) {
     baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
     offset = !labelAlign;
   } else {
-
     align = labelAlign || (orient === Right ? 'left' : 'right');
     baseline = labelBaseline || (flushOn
       ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
@@ -67,7 +65,7 @@ export default function(spec, config, userEncode, dataRef, size) {
       y: isXAxis ? tickSize : tickPos
     },
     update: {
-      opacity: {value: 1},
+      opacity: one,
       text: {field: Label},
       x: enter.x,
       y: enter.y
