@@ -3,24 +3,34 @@ const vega = require('vega'),
       args = require('./args'),
       read = require('./read');
 
+function load(file) {
+  return require(path.resolve(file));
+}
+
 module.exports = function(type, callback, opt) {
   // parse command line arguments
   const arg = args(type);
 
   // set baseURL, if specified. default to input spec directory
-  const base = arg.b || (arg._[0] ? path.dirname(arg._[0]) : null);
+  const base = arg.base || (arg._[0] ? path.dirname(arg._[0]) : null);
 
   // load config file, if specified
-  const config = arg.config ? require(path.resolve(arg.config)) : null;
+  const config = arg.config ? load(arg.config) : null;
 
   // set output image scale factor
-  const scale = arg.s || undefined;
+  const scale = arg.scale || undefined;
 
   // use a seeded random number generator, if specified
   if (typeof arg.seed !== 'undefined') {
     if (isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
     vega.setRandom(vega.randomLCG(arg.seed));
   }
+
+  // load custom number format locale, if specified
+  if (arg.format) vega.formatLocale(load(arg.format));
+
+  // load custom date/time format locale, if specified
+  if (arg.timeFormat) vega.formatTimeLocale(load(arg.timeFormat));
 
   // instantiate view and invoke async render method
   function render(spec) {

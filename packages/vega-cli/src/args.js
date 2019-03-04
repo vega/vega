@@ -20,6 +20,14 @@ To load data, you may need to set a base directory:
     .alias('c', 'config')
     .describe('c', 'Vega config object. Either a JSON file or a .js file that exports the config object.');
 
+  args.string('f')
+    .alias('f', 'format')
+    .describe('f', 'Number format locale descriptor. Either a JSON file or a .js file that exports the locale object.');
+
+  args.string('t')
+    .alias('t', 'timeFormat')
+    .describe('t', 'Date/time format locale descriptor. Either a JSON file or a .js file that exports the locale object.');
+
   if (type === 'svg') {
     args.boolean('h')
       .alias('h', 'header')
