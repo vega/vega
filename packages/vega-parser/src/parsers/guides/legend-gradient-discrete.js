@@ -1,4 +1,4 @@
-import {Value, Perc, Perc2} from './constants';
+import {Value, Perc, Perc2, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RectMark} from '../marks/marktypes';
@@ -8,7 +8,6 @@ import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
-      zero = {value: 0},
       vertical = _.isVertical(),
       thickness = _.gradientThickness(),
       length = _.gradientLength(),
@@ -29,7 +28,7 @@ export default function(spec, scale, config, userEncode, dataRef) {
 
   encode = {
     enter: enter,
-    update: extend({}, enter, {opacity: {value: 1}}),
+    update: extend({}, enter, {opacity: one}),
     exit: {opacity: zero}
   };
 

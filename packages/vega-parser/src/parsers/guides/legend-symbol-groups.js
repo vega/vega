@@ -1,5 +1,5 @@
 import {
-  Index, Label, Offset, Size, Value,
+  Index, Label, Offset, Size, Value, zero, one,
   Skip, GuideLabelStyle, LegendScales
 } from './constants';
 import guideGroup from './guide-group';
@@ -8,8 +8,6 @@ import {lookup} from './guide-util';
 import {SymbolMark, TextMark} from '../marks/marktypes';
 import {ScopeRole, LegendSymbolRole, LegendLabelRole} from '../marks/roles';
 import {addEncoders, encoder, extendEncode} from '../encode/encode-util';
-
-var zero = {value: 0};
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
@@ -37,7 +35,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       y: yEncode
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       x: enter.x,
       y: enter.y
     },
@@ -88,7 +86,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       y: yEncode
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       text: {field: Label},
       x: enter.x,
       y: enter.y
@@ -125,7 +123,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     },
     exit: {opacity: zero},
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       row: {signal: null},
       column: {signal: null}
     }

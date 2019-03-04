@@ -30,19 +30,19 @@ export default function(spec, scope) {
     labels: !!_('labels'),
     grid:   !!_('grid'),
     domain: !!_('domain'),
-    title:  !!value(spec.title, false)
+    title:  spec.title != null
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
   // encoding properties for axis group item
   axisEncode = extendEncode({
     update: {
-      range:        {signal: `abs(span(range("${spec.scale}")))`},
-      offset:       encoder(value(spec.offset, 0)),
+      offset:       encoder(_('offset') || 0),
       position:     encoder(value(spec.position, 0)),
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
-      maxExtent:    encoder(_('maxExtent'))
+      maxExtent:    encoder(_('maxExtent')),
+      range:        {signal: `abs(span(range("${spec.scale}")))`}
     }
   }, encode.axis, Skip);
 

@@ -1,10 +1,9 @@
-import {GuideTitleStyle} from './constants';
+import {GuideTitleStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup, alignExpr, anchorExpr} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
-import {extend} from 'vega-util';
+import {addEncoders} from '../encode/encode-util';
 
 // expression logic for align, anchor, angle, and baseline calculation
 const isL = 'item.orient === "left"',
@@ -19,32 +18,26 @@ const isL = 'item.orient === "left"',
       exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      zero = {value: 0},
-      encode, enter;
+  var _ = lookup(spec, config), encode;
 
   encode = {
-    enter: enter = {
-      opacity: zero,
-      orient:  encoder(_('titleOrient')),
-      _anchor: encoder(_('titleAnchor')),
-      anchor:  {signal: exprAnchor},
+    enter: {opacity: zero},
+    update: {
+      opacity: one,
       x: {field: {group: 'padding'}},
-      y: {field: {group: 'padding'}},
-      angle: {signal: exprAngle},
-      align: {signal: exprAlign},
-      baseline: {signal: exprBaseline},
+      y: {field: {group: 'padding'}}
     },
-    update: extend({}, enter, {
-      opacity: {value: 1},
-      text: encoder(spec.title),
-    }),
-    exit: {
-      opacity: zero
-    }
+    exit: {opacity: zero}
   };
 
   addEncoders(encode, {
+    orient:      _('titleOrient'),
+    _anchor:     _('titleAnchor'),
+    anchor:      {signal: exprAnchor},
+    angle:       {signal: exprAngle},
+    align:       {signal: exprAlign},
+    baseline:    {signal: exprBaseline},
+    text:        spec.title,
     fill:        _('titleColor'),
     fillOpacity: _('titleOpacity'),
     font:        _('titleFont'),

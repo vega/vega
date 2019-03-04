@@ -1,4 +1,4 @@
-import {Top, Bottom} from './constants';
+import {Top, Bottom, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
@@ -8,19 +8,12 @@ import {addEncoders} from '../encode/encode-util';
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      zero = {value: 0},
       encode, enter, update, u, u2, v;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: update = {
-      opacity: {value: 1}
-    },
-    exit: {
-      opacity: zero
-    }
+    enter: enter = {opacity: zero},
+    update: update = {opacity: one},
+    exit: {opacity: zero}
   };
 
   addEncoders(encode, {
