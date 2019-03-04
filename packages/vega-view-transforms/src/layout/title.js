@@ -3,8 +3,8 @@ import {set, tempBounds} from './util';
 
 export function titleLayout(view, title, width, height, viewBounds) {
   var item = title.items[0],
-      orient = item.orient,
       frame = item.frame,
+      orient = item.orient,
       anchor = item.anchor,
       offset = item.offset,
       bounds = item.bounds,

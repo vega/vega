@@ -124,5 +124,5 @@ export interface BaseTitle<
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
    */
-  orient?: TitleOrient;
+  orient?: TitleOrient | SignalRef;
 }
