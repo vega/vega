@@ -1959,18 +1959,25 @@
               ]
             },
             "orient": {
-              "enum": [
-                "none",
-                "left",
-                "right",
-                "top",
-                "bottom",
-                "top-left",
-                "top-right",
-                "bottom-left",
-                "bottom-right"
-              ],
-              "default": "right"
+              "oneOf": [
+                {
+                  "enum": [
+                    "none",
+                    "left",
+                    "right",
+                    "top",
+                    "bottom",
+                    "top-left",
+                    "top-right",
+                    "bottom-left",
+                    "bottom-right"
+                  ],
+                  "default": "right"
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
             },
             "tickCount": {
               "$ref": "#/refs/tickCount"
@@ -5557,14 +5564,21 @@
               "type": "string"
             },
             "orient": {
-              "enum": [
-                "none",
-                "left",
-                "right",
-                "top",
-                "bottom"
-              ],
-              "default": "top"
+              "oneOf": [
+                {
+                  "enum": [
+                    "none",
+                    "left",
+                    "right",
+                    "top",
+                    "bottom"
+                  ],
+                  "default": "top"
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
             },
             "anchor": {
               "oneOf": [
