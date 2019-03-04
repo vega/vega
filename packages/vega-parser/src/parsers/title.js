@@ -1,13 +1,16 @@
-import {Top, Bottom, Left, GroupTitleStyle} from './guides/constants';
+import {Top, Bottom, Left, Right, GroupTitleStyle} from './guides/constants';
 import guideMark from './guides/guide-mark';
 import {alignExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole} from './marks/roles';
-import {addEncoders, encoder} from './encode/encode-util';
+import {addEncoders} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString} from 'vega-util';
+
+const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`,
+      baselineExpr = `item.orient==="${Bottom}"?"${Top}":"${Bottom}"`;
 
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
@@ -33,40 +36,21 @@ function buildTitle(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
       zero = {value: 0},
       title = spec.text,
-      orient = _('orient'),
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      horizontal = (orient === Top || orient === Bottom),
-      extent = {group: (horizontal ? 'width' : 'height')},
-      encode, enter;
+      encode;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: {
-      opacity: {value: 1},
-      text:    encoder(title),
-      orient:  encoder(orient),
-      anchor:  encoder(_('anchor')),
-      align:   {signal: alignExpr},
-      extent:  {field: extent}
-    },
-    exit: {
-      opacity: zero
-    }
+    enter: {opacity: zero},
+    update: {opacity: {value: 1}},
+    exit: {opacity: zero}
   };
 
-  if (horizontal) {
-    enter.angle = zero;
-    enter.baseline = {value: orient === Top ? Bottom : Top};
-  } else {
-    enter.angle = {value: sign * 90};
-    enter.baseline = {value: Bottom};
-  }
-
   addEncoders(encode, {
-    angle:      _('angle'),
-    baseline:   _('baseline'),
+    text:       title,
+    orient:     _('orient'),
+    anchor:     _('anchor'),
+    align:      {signal: alignExpr},
+    angle:      {signal: angleExpr},
+    baseline:   {signal: baselineExpr},
     fill:       _('color'),
     font:       _('font'),
     fontSize:   _('fontSize'),
@@ -76,7 +60,9 @@ function buildTitle(spec, config, userEncode, dataRef) {
     limit:      _('limit'),
     offset:     _('offset') || 0
   }, { // update
-    align:      _('align')
+    align:      _('align'),
+    angle:      _('angle'),
+    baseline:   _('baseline')
   });
 
   return guideMark(TextMark, TitleRole, spec.style || GroupTitleStyle,

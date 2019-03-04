@@ -2,7 +2,7 @@ import {
   numberValue, stringValue, stringOrSignal, anchorValue,
   alignValue, baselineValue, colorValue, fontWeightValue,
   def, enums, object, oneOf, pattern, ref,
-  booleanType, numberType, stringType
+  booleanType, numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
@@ -21,7 +21,7 @@ const title = oneOf(
   stringType,
   object({
     name: stringType,
-    orient: enums(titleOrientEnum, {default: 'top'}),
+    orient: orSignal(enums(titleOrientEnum, {default: 'top'})),
     anchor: anchorValue,
     frame: oneOf(enums(titleFrameEnum), stringValueRef),
     offset: numberValue,
