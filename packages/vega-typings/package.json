@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
@@ -12,7 +12,7 @@
   ],
   "license": "BSD-3-Clause",
   "scripts": {
-    "format": "prettier $([ \"$CI\" = true ] && echo --list-different || echo --write) './**/*.{ts,tsx,js,json,css}'",
+    "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "build-tests": "./build-tests.sh",
     "pretest": "npm run build-tests",
     "test": "yarn format && dtslint ."
