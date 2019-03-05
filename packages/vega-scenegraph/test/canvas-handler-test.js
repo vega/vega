@@ -3,9 +3,6 @@ var vega = require('../');
 var loader = require('vega-loader').loader;
 var Renderer = vega.CanvasRenderer;
 var Handler = vega.CanvasHandler;
-var jsdom = require('jsdom');
-var win = (new jsdom.JSDOM()).window;
-var doc = win.document;
 
 var res = __dirname + '/resources/';
 
@@ -21,25 +18,25 @@ function loadScene(file) {
 }
 
 function render(scene, w, h) {
-  global.document = doc;
+  global.document = document;
   var r = new Renderer()
-    .initialize(doc.body, w, h)
+    .initialize(document.body, w, h)
     .render(scene);
   delete global.document;
   return r.element();
 }
 
 function renderAsync(scene, w, h, callback) {
-  global.document = doc;
+  global.document = document;
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
-    .initialize(doc.body, w, h)
+    .initialize(document.body, w, h)
     .renderAsync(scene)
     .then(function(r) { callback(r.element()); });
   delete global.document;
 }
 
 function event(name, x, y) {
-  var evt = new win.MouseEvent(name, {clientX: x, clientY: y});
+  var evt = new window.MouseEvent(name, {clientX: x, clientY: y});
   evt.changedTouches = [{
     clientX: x || 0,
     clientY: y || 0

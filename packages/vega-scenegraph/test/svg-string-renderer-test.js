@@ -30,12 +30,12 @@ function render(scene, w, h) {
     .svg();
 }
 
-function renderAsync(scene, w, h, callback) {
+async function renderAsync(scene, w, h) {
   vega.resetSVGClipId();
-  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
+  const r = await new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
-    .renderAsync(scene)
-    .then(function(r) { callback(r.svg()); });
+    .renderAsync(scene);
+  return r.svg();
 }
 
 test('SVGStringRenderer should build empty group for item-less area mark', function() {
@@ -288,13 +288,11 @@ test('SVGStringRenderer should render group mark', function() {
   expect(svg).toBe(file);
 });
 
-test('SVGStringRenderer should render image mark', function(done) {
-  renderAsync(marks.image, 500, 500, function(svg) {
-    generate('svg/marks-image.svg', svg);
-    var file = load('svg/marks-image.svg');
-    expect(svg).toBe(file);
-    done();
-  });
+test('SVGStringRenderer should render image mark', async function() {
+  var svg = await renderAsync(marks.image, 500, 500)
+  generate('svg/marks-image.svg', svg);
+  var file = load('svg/marks-image.svg');
+  expect(svg).toBe(file);
 });
 
 test('SVGStringRenderer should render line mark', function() {
@@ -351,12 +349,10 @@ test('SVGStringRenderer should render text mark', function() {
   expect(svg).toBe(file);
 });
 
-test('SVGStringRenderer should inject hyperlinks', function(done) {
+test('SVGStringRenderer should inject hyperlinks', async function() {
   var scene = loadScene('scenegraph-href.json');
-  renderAsync(scene, 400, 200, function(svg) {
-    generate('svg/scenegraph-href.svg', svg);
-    var file = load('svg/scenegraph-href.svg');
-    expect(svg).toBe(file);
-    done();
-  });
+  var svg = await renderAsync(scene, 400, 200);
+  generate('svg/scenegraph-href.svg', svg);
+  var file = load('svg/scenegraph-href.svg');
+  expect(svg).toBe(file);
 });

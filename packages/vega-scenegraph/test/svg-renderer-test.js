@@ -3,8 +3,6 @@ var loader = require('vega-loader').loader;
 var vega = require('../');
 var Bounds = vega.Bounds;
 var Renderer = vega.SVGRenderer;
-var jsdom = require('jsdom');
-var doc = (new jsdom.JSDOM()).window.document;
 
 var res = __dirname + '/resources/';
 
@@ -35,8 +33,8 @@ function compensate(svg) {
 
 function render(scene, w, h) {
   // clear document first
-  for (var i=doc.body.children.length; --i>=0;) {
-    doc.body.removeChild(doc.body.children[i]);
+  for (var i=document.body.children.length; --i>=0;) {
+    document.body.removeChild(document.body.children[i]);
   }
 
   // reset clip id counter
@@ -44,25 +42,25 @@ function render(scene, w, h) {
 
   // then render svg
   return compensate(new Renderer()
-    .initialize(doc.body, w, h)
+    .initialize(document.body, w, h)
     .render(scene)
     .svg());
 }
 
-function renderAsync(scene, w, h, callback) {
+async function renderAsync(scene, w, h) {
   // clear document first
-  for (var i=doc.body.children.length; --i>=0;) {
-    doc.body.removeChild(doc.body.children[i]);
+  for (var i=document.body.children.length; --i>=0;) {
+    document.body.removeChild(document.body.children[i]);
   }
 
   // reset clip id counter
   vega.resetSVGClipId();
 
   // then render svg
-  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
-    .initialize(doc.body, w, h)
-    .renderAsync(scene)
-    .then(function(r) { callback(compensate(r.svg())); });
+  var r = await new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
+    .initialize(document.body, w, h)
+    .renderAsync(scene);
+  return compensate(r.svg());
 }
 
 // workaround for broken jsdom style parser
@@ -98,7 +96,7 @@ test('SVGRenderer should render scenegraph to svg', function() {
 
 test('SVGRenderer should support clipping and gradients', function() {
   var r = new Renderer()
-    .initialize(doc.body, 102, 102);
+    .initialize(document.body, 102, 102);
 
   vega.resetSVGClipId();
   var scene = loadScene('scenegraph-defs.json');
@@ -130,7 +128,7 @@ test('SVGRenderer should support full redraw', function() {
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
-    .initialize(doc.body, 400, 200)
+    .initialize(document.body, 400, 200)
     .background('white')
     .render(scene);
 
@@ -158,7 +156,7 @@ test('SVGRenderer should support enter-item redraw', function() {
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
-    .initialize(doc.body, 400, 200)
+    .initialize(document.body, 400, 200)
     .background('white')
     .render(scene);
 
@@ -183,7 +181,7 @@ test('SVGRenderer should support exit-item redraw', function() {
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
-    .initialize(doc.body, 400, 200)
+    .initialize(document.body, 400, 200)
     .background('white')
     .render(scene);
 
@@ -204,7 +202,7 @@ test('SVGRenderer should support single-item redraw', function() {
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
-    .initialize(doc.body, 400, 200)
+    .initialize(document.body, 400, 200)
     .background('white')
     .render(scene);
 
@@ -224,7 +222,7 @@ test('SVGRenderer should support multi-item redraw', function() {
 
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
-    .initialize(doc.body, 400, 400)
+    .initialize(document.body, 400, 400)
     .background('white')
     .render(scene);
 
@@ -243,7 +241,7 @@ test('SVGRenderer should support enter-group redraw', function() {
 
   var scene = loadScene('scenegraph-barley.json');
   var r = new Renderer()
-    .initialize(doc.body, 500, 600)
+    .initialize(document.body, 500, 600)
     .background('white')
     .render(scene);
 
@@ -316,12 +314,10 @@ test('SVGRenderer should render group mark', function() {
   expect(svg).toBe(file);
 });
 
-test('SVGRenderer should render image mark', function(done) {
-  renderAsync(marks.image, 500, 500, function(svg) {
-    var file = load('svg/marks-image.svg');
-    expect(svg).toBe(file);
-    done();
-  });
+test('SVGRenderer should render image mark', async function() {
+  var svg = await renderAsync(marks.image, 500, 500);
+  var file = load('svg/marks-image.svg');
+  expect(svg).toBe(file);
 });
 
 test('SVGRenderer should render line mark', function() {

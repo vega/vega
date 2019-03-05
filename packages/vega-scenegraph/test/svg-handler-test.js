@@ -2,8 +2,6 @@ var fs = require('fs');
 var vega = require('../');
 var Renderer = vega.SVGRenderer;
 var Handler = vega.SVGHandler;
-var jsdom = require('jsdom');
-var doc = (new jsdom.JSDOM()).window.document;
 
 var res = __dirname + '/resources/';
 
@@ -40,16 +38,16 @@ function loadScene(file) {
 }
 
 function render(scene, w, h) {
-  global.document = doc;
+  global.document = document;
   var r = new Renderer()
-    .initialize(doc.body, w, h)
+    .initialize(document.body, w, h)
     .render(scene);
   delete global.document;
   return r.element();
 }
 
 function event(name, x, y) {
-  var evt = doc.createEvent('MouseEvents');
+  var evt = document.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
   evt.clientX = x || 0;
   evt.clientY = y || 0;

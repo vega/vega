@@ -1,5 +1,4 @@
 module.exports = {
-  testEnvironment: "node",
   testRegex: "(/__tests__/.*|(\\.|/|-)(test|spec))\\.(jsx?|tsx?)$",
   moduleFileExtensions: ["ts", "js"],
   testPathIgnorePatterns: [
@@ -10,4 +9,3 @@ module.exports = {
     "bin"
   ]
 };
-  
