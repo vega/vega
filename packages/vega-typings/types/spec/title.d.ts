@@ -55,7 +55,8 @@ export interface BaseTitle<
   A = AlignValue,
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
-  AN = AnchorValue
+  AN = AnchorValue,
+  O = TitleOrient | SignalRef
 > {
   /**
    * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
@@ -124,5 +125,5 @@ export interface BaseTitle<
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
    */
-  orient?: TitleOrient | SignalRef;
+  orient?: O;
 }
