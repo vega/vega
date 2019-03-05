@@ -138,14 +138,15 @@ export interface BaseLegend<
   SY = SymbolShapeValue,
   DA = DashArrayValue,
   O = OrientValue,
-  AN = AnchorValue
+  AN = AnchorValue,
+  LOR = LegendOrient | SignalRef
 > {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
    *
    * __Default value:__ `"right"`
    */
-  orient?: LegendOrient | SignalRef;
+  orient?: LOR;
 
   // ---------- Legend Group ----------
   /**

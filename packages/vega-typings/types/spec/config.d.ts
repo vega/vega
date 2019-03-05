@@ -13,21 +13,21 @@ import {
 } from '.';
 import { BaseAxis, LabelOverlap } from './axis';
 import { LayoutAlign, LayoutBounds } from './layout';
-import { BaseLegend } from './legend';
+import { BaseLegend, LegendOrient } from './legend';
 import { SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 import {
   AlignValue,
+  AnchorValue,
   ColorValue,
+  DashArrayValue,
   FontStyleValue,
   FontWeightValue,
   NumberValue,
+  OrientValue,
   StringValue,
   SymbolShapeValue,
   TextBaselineValue,
-  DashArrayValue,
-  OrientValue,
-  AnchorValue,
 } from './values';
 
 export interface Config
@@ -352,8 +352,8 @@ export interface LegendConfig<
   DA = DashArrayValue,
   O = OrientValue,
   AN = AnchorValue,
-  LL = LegendLayout
-> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN> {
+  LOR = LegendOrient | SignalRef
+> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN, LOR> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -407,7 +407,7 @@ export interface LegendConfig<
   /**
    * Legend orient group layout parameters.
    */
-  layout?: LL;
+  layout?: LegendLayout;
 }
 
 export interface BaseLegendLayout<
