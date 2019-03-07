@@ -26,6 +26,8 @@ export type LabelOverlap = boolean | 'parity' | 'greedy';
 
 export type TickCount = number | TimeInterval | SignalRef;
 
+export type FormatType = 'number' | 'time';
+
 export interface Axis extends BaseAxis {
   /**
    * The orientation of the axis. One of `"top"`, `"bottom"`, `"left"` or `"right"`. The orientation can be used to further specialize the axis type (e.g., a y axis oriented for the right edge of the chart).
@@ -48,6 +50,11 @@ export interface Axis extends BaseAxis {
    * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
    */
   format?: string | SignalRef;
+
+  /**
+   * The format type for axis labels (number or time).
+   */
+  formatType?: FormatType | SignalRef;
 
   /**
    * A title for the axis (none by default).
