@@ -47,7 +47,7 @@ export async function evaluate(encode, prerun, postrun) {
 
   // increment timestamp clock
   let stamp = ++df._clock,
-    count = 0, op, next, dt, error;
+      count = 0, op, next, dt, error;
 
   // set the current pulse
   df._pulse = new Pulse(df, stamp, encode);
@@ -110,12 +110,11 @@ export async function evaluate(encode, prerun, postrun) {
 
   // invoke callbacks queued via runAfter
   if (df._postrun.length) {
-    const pr = df._postrun;
+    const pr = df._postrun.sort((a, b) => b.priority - a.priority);
     df._postrun = [];
-    pr.sort((a, b) => b.priority - a.priority)
-      .forEach(async function(_) {
-        await asyncCallback(df, _.callback);
-      });
+    for (let i=0; i<pr.length; ++i) {
+      await asyncCallback(df, pr[i].callback);
+    }
   }
 
   // invoke postrun function, if provided
