@@ -53,6 +53,7 @@ export default function(spec, scope) {
     count:   scope.objectProperty(spec.tickCount),
     values:  scope.objectProperty(spec.values),
     minstep: scope.property(spec.tickMinStep),
+    formatType: scope.property(spec.formatType),
     formatSpecifier: scope.property(spec.format)
   })));
 

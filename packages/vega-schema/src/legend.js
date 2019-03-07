@@ -5,7 +5,7 @@ import {
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
   numberOrSignal, stringOrSignal, arrayOrSignal,
-  numberType, stringType, orSignal
+  formatType, numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
@@ -111,6 +111,7 @@ const legendProps = object({
 
   // LABEL CONFIG
   format: stringOrSignal,
+  formatType: orSignal(formatType),
   labelAlign: alignValue,
   labelBaseline: baselineValue,
   labelColor: colorValue,

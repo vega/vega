@@ -5,7 +5,7 @@ import {
   booleanOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal,
   booleanOrNumberOrSignal,
   def, enums, object, oneOf, orSignal, ref,
-  booleanType, numberType, stringType, signalRef
+  booleanType, formatType, numberType, stringType, signalRef
 } from './util';
 
 // types defined elsewhere
@@ -42,6 +42,7 @@ const axis = object({
   _orient_: enums(axisOrientEnum),
   _scale_: stringType,
   format: stringOrSignal,
+  formatType: orSignal(formatType),
   minExtent: numberValue,
   maxExtent: numberValue,
   offset: numberValue,

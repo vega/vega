@@ -34,7 +34,7 @@ prototype.transform = function(_, pulse) {
       scale = _.scale,
       tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
       count = tickCount(scale, tally, _.minstep),
-      format = _.format || tickFormat(scale, count, _.formatSpecifier),
+      format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType),
       values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;
