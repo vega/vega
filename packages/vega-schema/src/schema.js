@@ -1,4 +1,4 @@
-import {def, type, numberType, objectType, stringType} from './util';
+import {def, ref, type, numberType, objectType, stringType} from './util';
 
 import autosize from './autosize';
 import axis from './axis';
@@ -53,7 +53,8 @@ export default function(definitions) {
           height: numberType,
           padding: def('padding'),
           autosize: def('autosize'),
-          background: def('background')
+          background: def('background'),
+          style: ref('style')
         }
       }
     ]
