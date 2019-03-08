@@ -15,17 +15,17 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | :------------ |:------------------------------:| :------------- |
 | type          | {% include type t="String" %}  | The type of legend to include. One of `symbol` for discrete symbol legends, or `gradient` for a continuous color gradient. If `gradient` is used only the _fill_ or _stroke_ scale parameters are considered. If unspecified, the _type_ will be inferred based on the scale parameters used and their backing scale types.|
 | direction     | {% include type t="String" %}  | The direction of the legend, one of `"vertical"` (default) or `"horizontal"`.|
-| orient        | {% include type t="String" %}  | The orientation of the legend, determining where the legend is placed relative to a chart's data rectangle (default `right`). See the [legend orientation reference](#orientation).|
-| fill          | {% include type t="String" %}  | The name of a scale that maps to a fill color.|
-| opacity       | {% include type t="String" %}  | The name of a scale that maps to an opacity value.|
-| shape         | {% include type t="String" %}  | The name of a scale that maps to a shape value.|
-| size          | {% include type t="String" %}  | The name of a scale that maps to a size (area) value.|
-| stroke        | {% include type t="String" %}  | The name of a scale that maps to a stroke color.|
-| strokeDash    | {% include type t="String" %}  | The name of a scale that maps to a stroke dash value.|
+| orient        | {% include type t="String" %}  | The orientation of the legend, determining where the legend is placed relative to a chart's data rectangle (default `right`). See the [legend orientation reference](#orientation). |
+| fill          | {% include type t="String" %}  | The name of a scale that maps to a fill color. |
+| opacity       | {% include type t="String" %}  | The name of a scale that maps to an opacity value. |
+| shape         | {% include type t="String" %}  | The name of a scale that maps to a shape value. |
+| size          | {% include type t="String" %}  | The name of a scale that maps to a size (area) value. |
+| stroke        | {% include type t="String" %}  | The name of a scale that maps to a stroke color. |
+| strokeDash    | {% include type t="String" %}  | The name of a scale that maps to a stroke dash value. |
 | strokeWidth   | {% include type t="String" %}  | The name of a scale that maps to a stroke width value. {% include tag ver="5.0" %} |
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom legend styling. Supports encoding blocks for `legend`, `title`, `entries`, `labels`, `symbols` and `gradient`. See [custom legend encodings](#custom). |
-| format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
-| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for ordinal scales. If specified, the *format* property must have a valid specifier pattern for the given type.|
+| format        | {% include type t="String" %}  | The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values,  must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier. |
+| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for ordinal scales. If specified, the *format* property must have a valid specifier pattern for the given type. {% include tag ver="5.1" %} |
 | gridAlign     | {% include type t="String" %}  | The alignment to apply to symbol legends rows and columns. The supported string values are `all`, `each` (the default), and `none`. For more information, see the [grid layout documentation](../layout). |
 | clipHeight    | {% include type t="Number" %}  | The height in pixels to clip symbol legend entries and limit their size. By default no clipping is performed. |
 | columns       | {% include type t="Number" %}  | The number of columns in which to arrange symbol legend entries. A value of `0` or lower indicates a single row with one column per entry. The default is `0` for horizontal symbol legends and `1` for vertical symbol legends. |
