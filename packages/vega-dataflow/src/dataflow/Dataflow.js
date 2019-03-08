@@ -32,7 +32,7 @@ export default function Dataflow() {
   this._pulses = {};
   this._pulse = null;
 
-  this._heap = new Heap((a, b) => a.qrank - b.qrank);
+  this._heap = Heap((a, b) => a.qrank - b.qrank);
   this._postrun = [];
 }
 
