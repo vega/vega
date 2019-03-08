@@ -61,6 +61,19 @@
         "format": {
           "$ref": "#/refs/stringOrSignal"
         },
+        "formatType": {
+          "oneOf": [
+            {
+              "enum": [
+                "number",
+                "time"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
         "minExtent": {
           "oneOf": [
             {
@@ -2382,6 +2395,19 @@
             },
             "format": {
               "$ref": "#/refs/stringOrSignal"
+            },
+            "formatType": {
+              "oneOf": [
+                {
+                  "enum": [
+                    "number",
+                    "time"
+                  ]
+                },
+                {
+                  "$ref": "#/refs/signal"
+                }
+              ]
             },
             "labelAlign": {
               "oneOf": [
@@ -13520,6 +13546,9 @@
         },
         "background": {
           "$ref": "#/defs/background"
+        },
+        "style": {
+          "$ref": "#/refs/style"
         }
       }
     }
