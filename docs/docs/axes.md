@@ -21,10 +21,10 @@ Properties for specifying a coordinate axis.
 | domainColor   | {% include type t="Color" %}   | Color of axis domain line. |
 | domainOpacity | {% include type t="Number" %}  | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth   | {% include type t="Number" %}  | Stroke width of axis domain line. |
-| encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom).|
-| format        | {% include type t="String" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
-| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type.|
-| grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`).|
+| encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom). |
+| format        | {% include type t="String" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier. |
+| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type. {% include tag ver="5.1" %} |
+| grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`). |
 | gridColor     | {% include type t="Color" %}   | Color of axis grid lines. |
 | gridDash      | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
 | gridDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
