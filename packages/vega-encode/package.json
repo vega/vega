@@ -1,6 +1,6 @@
 {
   "name": "vega-encode",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
     "vega",
