@@ -34,7 +34,7 @@ export function copy(name, group) {
 
 export function scale(name, value, group) {
   const s = getScale(name, (group || this).context);
-  return s ? s(value) : undefined;
+  return s && value !== undefined ? s(value) : undefined;
 }
 
 export function invert(name, range, group) {
