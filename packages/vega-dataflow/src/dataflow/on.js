@@ -78,12 +78,13 @@ function onOperator(df, source, target, update, params, options) {
 
     op = new Operator(null, update, params, false);
     op.modified(options && options.force);
-    op.rank = 0;
+    op.rank = source.rank; // immediately follow source
 
     if (target) {
       op.skip(true); // skip first invocation
       op.value = target.value;
       op.targets().add(target);
+      df.connect(target, [op]); // rerank as needed, #1672
     }
   }
 
