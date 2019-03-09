@@ -451,7 +451,7 @@ Truncates an input *string* to a target *length*. The optional *align* argument 
 ## <a name="logging"></a>Logging
 
 <a name="logger" href="#logger">#</a>
-vega.<b>logger</b>([<i>level</i>])
+vega.<b>logger</b>([<i>level</i>, <i>method</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Generates a new logger instance for selectively writing log messages to the JavaScript console. The optional *level* argument indicates the initial log level to use (one of [None](#none), [Warn](#warn), [Info](#info), or [Debug](#debug)), and defaults to [None](#none) if not specified.
@@ -463,6 +463,8 @@ The generated logger instance provides the following methods:
 - <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a warning message. The messages will be written to the console using the `console.warn` method if the current log level is [Warn](#warn) or higher.
 - <b>info</b>(<i>message1</i>[, <i>message2</i>, …]): Logs an informative message. The messages will be written to the console using the `console.log` method if the current log level is [Info](#info) or higher.
 - <b>debug</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a debugging message. The messages will be written to the console using the `console.log` method if the current log level is [Debug](#debug) or higher.
+
+To override the choice of console method invoked (`console.log`, `console.warn`, or `console.error`), use the optional *method* argument (one of `"log"`, `"warn"`, or `"error"`) to route all log messages through the same method.
 
 <a name="None" href="#None">#</a>
 vega.<b>None</b>
