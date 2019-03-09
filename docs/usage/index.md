@@ -139,8 +139,12 @@ If no output file is given, the resulting PNG or SVG data will be written to sta
 * __-c__, __--config__, - [String] Provide a [Vega config object](https://vega.github.io/vega/docs/config/). A file path string to a JSON file or .js file that exports an object.
 * __-f__, __--format__, - [String] Set the [number format locale](https://vega.github.io/vega/docs/api/locale/#formatLocale). A file path string to a JSON file or .js file that exports an object.
 * __-t__, __--timeFormat__, - [String] Set [data/time format locale](https://vega.github.io/vega/docs/api/locale/#timeFormatLocale). A file path string to a JSON file or .js file that exports an object.
+* __-l__, __--loglevel__ - [String] Level of log messages written to standard error output. One of `error`, `warn` (default), `info`, or `debug`.
+* __--help__ - [Flag] Print usage help to the console.
 
 To install the command line utilities, you must install the `vega-cli` npm package. For example, `yarn global add vega-cli` or `npm install -g vega-cli` will install the utilities for global use. If you install the package locally, the commands are accessible via your node_modules folder (`./node_modules/bin/vg2png`). The command line utilities depend on the [node-canvas](https://github.com/Automattic/node-canvas) package. See below for more [information about Vega and node-canvas](#node-canvas).
+
+All errors and logging message will be written to standard error output (`stderr`). To create a log file, pipe the stderr output to the desired file. For example: `vg2pdf ...arguments 2> vg2pdf.log`.
 
 ### Examples
 
@@ -158,16 +162,16 @@ Render the bar chart example to an SVG file, including XML headers:
 vg2svg -h test/specs-valid/bar.vg.json bar.svg
 ```
 
+Render the arc example as a PDF, piped to a file via standard output:
+
+```
+vg2pdf test/specs-valid/arc.vg.json > arc.pdf
+```
+
 Render the choropleth example to a PNG file. A base directory is specified for loading data files:
 
 ```
 vg2png -b test test/specs-valid/choropleth.vg.json > choropleth.png
-```
-
-Render the arc example to a PDF file:
-
-```
-vg2pdf test/specs-valid/arc.vg.json > arc.pdf
 ```
 
 Render the bar chart example to a PNG file at double resolution:
