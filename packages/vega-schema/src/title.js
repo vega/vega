@@ -33,6 +33,8 @@ const title = oneOf(
     angle: numberValue,
     baseline: baselineValue,
     color: colorValue,
+    dx: numberValue,
+    dy: numberValue,
     font: stringValue,
     fontSize: numberValue,
     fontStyle: stringValue,

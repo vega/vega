@@ -51,6 +51,8 @@ function buildTitle(spec, config, userEncode, dataRef) {
     align:      {signal: alignExpr},
     angle:      {signal: angleExpr},
     baseline:   {signal: baselineExpr},
+    dx:         _('dx'),
+    dy:         _('dy'),
     fill:       _('color'),
     font:       _('font'),
     fontSize:   _('fontSize'),

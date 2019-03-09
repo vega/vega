@@ -91,6 +91,16 @@ export interface BaseTitle<
   color?: C;
 
   /**
+   * Delta offset for title text x-coordinate.
+   */
+  dx?: N;
+
+  /**
+   * Delta offset for title text y-coordinate.
+   */
+  dy?: N;
+
+  /**
    * Font name for title text.
    */
   font?: S;
