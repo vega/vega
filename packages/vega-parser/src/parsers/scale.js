@@ -56,7 +56,7 @@ function parseLiteral(v, scope) {
 function parseArray(v, scope) {
   return v.signal
     ? scope.signalRef(v.signal)
-    : v.map(function(v) { return parseLiteral(v, scope); });
+    : v.map(v => parseLiteral(v, scope));
 }
 
 function dataLookupError(name) {
@@ -259,7 +259,5 @@ function parseScaleRange(spec, scope, params) {
     error('Unsupported range type: ' + stringValue(range));
   }
 
-  return range.map(function(v) {
-    return parseLiteral(v, scope);
-  });
+  return range.map(v => (isArray(v) ? parseArray : parseLiteral)(v, scope));
 }
