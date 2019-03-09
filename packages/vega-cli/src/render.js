@@ -7,12 +7,22 @@ function load(file) {
   return require(path.resolve(file));
 }
 
+const Levels = {
+  error: vega.Error,
+  warn:  vega.Warn,
+  info:  vega.Info,
+  debug: vega.Debug
+};
+
 module.exports = function(type, callback, opt) {
   // parse command line arguments
   const arg = args(type);
 
   // set baseURL, if specified. default to input spec directory
   const base = arg.base || (arg._[0] ? path.dirname(arg._[0]) : null);
+
+  // set log level, defaults to logging warning messages
+  const loglevel = Levels[String(arg.loglevel).toLowerCase()] || vega.Warn;
 
   // load config file, if specified
   const config = arg.config ? load(arg.config) : null;
@@ -32,13 +42,13 @@ module.exports = function(type, callback, opt) {
   // load custom date/time format locale, if specified
   if (arg.timeFormat) vega.formatTimeLocale(load(arg.timeFormat));
 
-  // instantiate view and invoke async render method
+  // instantiate view and invoke headless render method
   function render(spec) {
     const view = new vega.View(vega.parse(spec, config), {
-        loader:   vega.loader({baseURL: base}),
-        logLevel: vega.Warn,
-        renderer: 'none'
-      }).finalize();
+        loader: vega.loader({baseURL: base}),   // load files from base path
+        logger: vega.logger(loglevel, 'error'), // route all logging to stderr
+        renderer: 'none'                        // no primary renderer needed
+      }).finalize();                            // clear any timers, etc
 
     return (type === 'svg'
         ? view.toSVG(scale)

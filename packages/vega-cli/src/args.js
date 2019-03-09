@@ -3,6 +3,7 @@ module.exports = function(type) {
 Usage: vg2${type} [vega_json_spec_file] [output_${type}_file]
   If no arguments are provided, reads from stdin.
   If output_${type}_file is not provided, writes to stdout.
+  For errors and log messages, writes to stderr.
 
 To load data, you may need to set a base directory:
   For web retrieval, use '-b http://host/data/'.
@@ -15,6 +16,10 @@ To load data, you may need to set a base directory:
   args.string('b')
     .alias('b', 'base')
     .describe('b', 'Base directory for data loading. Defaults to the directory of the input spec.');
+
+  args.string('l')
+    .alias('l', 'loglevel')
+    .describe('l', 'Level of log messages written to stderr. One of "error", "warn" (default), "info", or "debug".');
 
   args.string('c')
     .alias('c', 'config')
