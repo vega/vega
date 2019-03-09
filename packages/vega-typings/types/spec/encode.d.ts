@@ -22,18 +22,24 @@ export type BaseValueRef<T> =
     }
   | {
       field: Field;
-    }
-  | {
-      range: number | boolean;
     };
 export type ScaledValueRef<T> =
   | BaseValueRef<T>
-  | (BaseValueRef<T> & {
+  | {
       scale: Field;
-    })
+      value: boolean | number | string | null;
+    }
+  | {
+      scale: Field;
+      field: Field;
+    }
   | {
       scale: Field;
       band: boolean | number;
+    }
+  | {
+      scale: Field;
+      range: number | boolean;
     };
 export type NumericValueRef = (ScaledValueRef<number> | {}) & {
   exponent?: number | NumericValueRef;
