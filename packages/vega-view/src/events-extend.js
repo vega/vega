@@ -29,20 +29,23 @@ import {point} from 'vega-scenegraph';
  * @return {Event} - The extended input event.
  */
 export default function(view, event, item) {
-  var el = view._renderer.canvas(),
-      p, e, translate;
+  event.dataflow = view;
+  event.item = item;
 
-  if (el) {
-    translate = offset(view);
-    e = event.changedTouches ? event.changedTouches[0] : event;
-    p = point(e, el);
-    p[0] -= translate[0];
-    p[1] -= translate[1];
+  if (view._renderer) {
+    var el = view._renderer.canvas(),
+        p, e, translate;
+
+    if (el) {
+      translate = offset(view);
+      e = event.changedTouches ? event.changedTouches[0] : event;
+      p = point(e, el);
+      p[0] -= translate[0];
+      p[1] -= translate[1];
+    }
+    event.vega = extension(view, item, p);
   }
 
-  event.dataflow = view;
-  event.vega = extension(view, item, p);
-  event.item = item;
   return event;
 }
 
