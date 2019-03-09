@@ -137,6 +137,7 @@ export function truncate(a: string, length: number,
 
 export interface LoggerInterface {
   level: (_: number) => number | LoggerInterface;
+  error(...args: any[]): LoggerInterface;
   warn(...args: any[]): LoggerInterface;
   info(...args: any[]): LoggerInterface;
   debug(...args: any[]): LoggerInterface;
@@ -147,6 +148,6 @@ export const Warn: number;
 export const Info: number;
 export const Debug: number;
 
-export function logger(_?: number): LoggerInterface;
+export function logger(_?: number, method?: string): LoggerInterface;
 export function log(...args: any[]): void;
 export function error(msg: string): Error;
