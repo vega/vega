@@ -10,7 +10,8 @@ export type RangeEnum =
   | 'ramp'
   | 'diverging'
   | 'heatmap';
-export type RangeRaw = (null | boolean | string | number | SignalRef)[];
+export type RangeRawArray = (number | SignalRef)[];
+export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray)[];
 export type RangeScheme =
   | RangeEnum
   | RangeRaw

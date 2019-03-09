@@ -39,9 +39,14 @@ export const sortOrderEnum = [
 
 const rangeConstant = enums(rangeConstantEnum);
 
-const arrayAllTypes = array(
-  oneOf(nullType, booleanType, stringType, numberType, signalRef)
-);
+const arrayAllTypes = array(oneOf(
+  nullType,
+  booleanType,
+  stringType,
+  numberType,
+  signalRef,
+  array(numberOrSignal)
+));
 
 const scheme = object({
   _scheme_: oneOf(
