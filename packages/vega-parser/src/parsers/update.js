@@ -11,7 +11,7 @@ export default function(spec, scope, target) {
       update = spec.update,
       encode = spec.encode,
       sources = [],
-      value = '', entry;
+      entry = {target: target};
 
   if (!events) {
     error('Signal update missing events specification.');
@@ -23,14 +23,13 @@ export default function(spec, scope, target) {
   }
 
   // separate event streams from signal updates
-  events = array(events).filter(function(stream) {
-    if (stream.signal || stream.scale) {
-      sources.push(stream);
-      return 0;
-    } else {
-      return 1;
-    }
-  });
+  events = array(events)
+    .filter(s => s.signal || s.scale ? (sources.push(s), 0) : 1);
+
+  // merge internal operator listeners
+  if (sources.length > 1) {
+    sources = [mergeSources(sources)];
+  }
 
   // merge event streams, include as source
   if (events.length) {
@@ -43,7 +42,7 @@ export default function(spec, scope, target) {
   }
 
   // resolve update value
-  value = isString(update) ? parseExpression(update, scope, preamble)
+  entry.update = isString(update) ? parseExpression(update, scope, preamble)
     : update.expr != null ? parseExpression(update.expr, scope, preamble)
     : update.value != null ? update.value
     : update.signal != null ? {
@@ -51,11 +50,6 @@ export default function(spec, scope, target) {
         $params: {value: scope.signalRef(update.signal)}
       }
     : error('Invalid signal update specification.');
-
-  entry = {
-    target: target,
-    update: value
-  };
 
   if (spec.force) {
     entry.options = {force: true};
@@ -71,5 +65,13 @@ function streamSource(stream, scope) {
     source: stream.signal ? scope.signalRef(stream.signal)
           : stream.scale ? scope.scaleRef(stream.scale)
           : parseStream(stream, scope)
+  };
+}
+
+function mergeSources(sources) {
+  return {
+    signal: '['
+      + sources.map(s => s.scale ? 'scale("' + s.scale + '")' : s.signal)
+      + ']'
   };
 }
