@@ -19,6 +19,8 @@ Properties for specifying a title.
 | angle         | {% include type t="Number" %}  | Angle in degrees of the title text. |
 | baseline      | {% include type t="String" %}  | Vertical baseline of the title text. |
 | color         | {% include type t="Color" %}   | Text color of the title text. |
+| dx            | {% include type t="Number" %}  | Horizontal offset added to the title x-coordinate. {% include tag ver="5.2" %} |
+| dy            | {% include type t="Number" %}  | Vertical offset added to the title y-coordinate. {% include tag ver="5.2" %} |
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom title styling. This is a standard encode block for text marks, and may contain `enter`, `exit`, `update`, and `hover` property sets. To set a custom font, font size, _etc._ for a title, one can either use custom encode blocks or update the title [config](../config).|
 | font          | {% include type t="String" %}  | Font name of the title text. |
 | fontSize      | {% include type t="Number" %}  | Font size in pixels of the title text. |

@@ -377,6 +377,8 @@ Properties defining default settings for titles. These properties are defined un
 | angle                 | {% include type t="Number" %}   | Angle in degrees of the title text. |
 | baseline              | {% include type t="String" %}   | Vertical text baseline of the title. |
 | color                 | {% include type t="Color" %}    | Text color of the title text. |
+| dx                    | {% include type t="Number" %}   | Horizontal offset added to the title x-coordinate. {% include tag ver="5.2" %} |
+| dy                    | {% include type t="Number" %}   | Vertical offset added to the title y-coordinate. {% include tag ver="5.2" %} |
 | font                  | {% include type t="String" %}   | Font name of the title text. |
 | fontSize              | {% include type t="Number" %}   | Font size in pixels of the title text. |
 | fontStyle             | {% include type t="String" %}   | Font style of the title text (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
