@@ -38,8 +38,9 @@ export default function View(spec, options) {
   options = options || {};
 
   Dataflow.call(view);
-  view.loader(options.loader || view._loader);
-  view.logLevel(options.logLevel || 0);
+  if (options.loader) view.loader(options.loader);
+  if (options.logger) view.logger(options.logger);
+  if (options.logLevel != null) view.logLevel(options.logLevel);
 
   view._el = null;
   view._elBind = null;
