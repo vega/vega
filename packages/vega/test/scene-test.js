@@ -24,7 +24,10 @@ tape('Vega generates scenegraphs for specifications', function(t) {
     const path = testdir + name + '.json',
           spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
           runtime = vega.parse(spec),
-          view = new vega.View(runtime, {loader: loader, renderer: 'none'});
+          view = new vega.View(runtime, {
+            loader: loader,
+            renderer: 'none'
+          }).finalize(); // remove timers, event listeners
 
     try {
       await view.runAsync();
@@ -56,7 +59,6 @@ tape('Vega generates scenegraphs for specifications', function(t) {
       console.error('ERROR', err);
       t.fail(name);
     } finally {
-      view.finalize();
       if (--count === 0) t.end();
     }
   });
