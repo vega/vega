@@ -198,6 +198,17 @@ tape('Evaluate expressions with white list', function(t) {
   t.throws(evaluate.fn('clamp(0,1)'));
   t.throws(evaluate.fn('clamp(0,1,2,3)'));
 
+  // should eval array functions
+  t.deepEqual(evaluate('length([1, 2, 3])'), [1, 2, 3].length);
+  t.deepEqual(evaluate('join([1, 2, 3])'), [1, 2, 3].join());
+  t.deepEqual(evaluate('join([1, 2, 3], ", ")'), [1, 2, 3].join(', '));
+  t.deepEqual(evaluate('indexof([1, 2, 2, 3], 2)'), [1, 2, 2, 3].indexOf(2));
+  t.deepEqual(evaluate('lastindexof([1, 2, 2, 3], 2)'), [1, 2, 2, 3].lastIndexOf(2));
+  t.deepEqual(evaluate('reverse([1, 2, 3])'), [1, 2, 3].reverse());
+  t.deepEqual(evaluate('slice([1, 2, 3], 1)'), [1, 2, 3].slice(1));
+  t.deepEqual(evaluate('slice([1, 2, 3], -1)'), [1, 2, 3].slice(-1));
+  t.deepEqual(evaluate('slice([1, 2, 3], 1, -1)'), [1, 2, 3].slice(1, -1));
+
   // should eval string functions
   t.equal(evaluate('length("123")'), '123'.length);
   t.equal(evaluate('upper("abc")'), 'abc'.toUpperCase());
@@ -207,6 +218,7 @@ tape('Evaluate expressions with white list', function(t) {
   t.equal(evaluate('slice("123",0,1)'), '123'.slice(0,1));
   t.deepEqual(evaluate('split("1 2 3"," ")'), '1 2 3'.split(' '));
   t.equal(evaluate('substring("123",0,1)'), '123'.substring(0,1));
+  t.equal(evaluate('trim(" 123 ")'), ' 123 '.trim());
   t.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
   t.equal(evaluate('parseInt("42")'),parseInt('42'));
   t.equal(evaluate('indexof("hello world", "l")'), 2);
