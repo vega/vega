@@ -3111,6 +3111,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3198,6 +3204,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3441,6 +3453,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3531,6 +3549,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3584,6 +3608,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3671,6 +3701,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3724,6 +3760,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3812,6 +3854,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3912,6 +3960,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -3999,6 +4053,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4083,6 +4143,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4173,6 +4239,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4257,6 +4329,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4395,6 +4473,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4488,6 +4572,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4593,6 +4683,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4686,6 +4782,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4791,6 +4893,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4884,6 +4992,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -4990,6 +5104,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -5083,6 +5203,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -5189,6 +5315,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -5282,6 +5414,12 @@
                       },
                       {
                         "$ref": "#/refs/signal"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/refs/numberOrSignal"
+                        }
                       }
                     ]
                   }
@@ -5705,6 +5843,26 @@
                 },
                 {
                   "$ref": "#/refs/colorValue"
+                }
+              ]
+            },
+            "dx": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "dy": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
                 }
               ]
             },
