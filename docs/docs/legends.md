@@ -61,7 +61,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | symbolSize    | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor | {% include type t="Color" %}  | Stroke color for legend symbols. |
 | symbolStrokeWidth | {% include type t="Number" %} | Default legend symbol stroke width. |
-| symbolType    | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
+| symbolType    | {% include type t="String" %}   | Default [symbol mark shape type](../marks/symbol/) (such as `"circle"`) for legend symbols. |
 | tickCount     | {% include type t="Number|String|Object" %}  | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
 | tickMinStep   | {% include type t="Number" %}  | The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value. {% include tag ver="5.0" %} |
 | title         | {% include type t="String" %}  | The title for the legend (none by default).|
