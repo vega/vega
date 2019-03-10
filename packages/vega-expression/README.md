@@ -122,8 +122,10 @@ This package provides the following constants and functions:
 **Sequence (Array or String) Functions**
 
 - [`length`](https://vega.github.io/vega/docs/expressions/#length)
+- [`join`](https://vega.github.io/vega/docs/expressions/#join)
 - [`indexof`](https://vega.github.io/vega/docs/expressions/#indexof)
 - [`lastindexof`](https://vega.github.io/vega/docs/expressions/#lastindexof)
+- [`reverse`](https://vega.github.io/vega/docs/expressions/#reverse)
 - [`slice`](https://vega.github.io/vega/docs/expressions/#slice)
 
 **String Functions**
@@ -132,9 +134,10 @@ This package provides the following constants and functions:
 - [`parseInt`](https://vega.github.io/vega/docs/expressions/#parseInt)
 - [`upper`](https://vega.github.io/vega/docs/expressions/#upper)
 - [`lower`](https://vega.github.io/vega/docs/expressions/#lower)
-- [`substring`](https://vega.github.io/vega/docs/expressions/#substring)
-- [`split`](https://vega.github.io/vega/docs/expressions/#split)
 - [`replace`](https://vega.github.io/vega/docs/expressions/#replace)
+- [`split`](https://vega.github.io/vega/docs/expressions/#split)
+- [`substring`](https://vega.github.io/vega/docs/expressions/#substring)
+- [`trim`](https://vega.github.io/vega/docs/expressions/#trim)
 
 **RegExp Functions**
 

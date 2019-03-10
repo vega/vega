@@ -76,10 +76,12 @@ export default function(codegen) {
     utcseconds:      fn('getUTCSeconds', DATE, 0),
     utcmilliseconds: fn('getUTCMilliseconds', DATE, 0),
 
-    // shared sequence functions
+    // sequence functions
     length:      fn('length', null, -1),
+    join:        fn('join', null),
     indexof:     fn('indexOf', null),
     lastindexof: fn('lastIndexOf', null),
+    reverse:     fn('reverse', null),
     slice:       fn('slice', null),
 
     // STRING functions
@@ -90,6 +92,7 @@ export default function(codegen) {
     substring:   fn('substring', STRING),
     split:       fn('split', STRING),
     replace:     fn('replace', STRING),
+    trim:        fn('trim', STRING, 0),
 
     // REGEXP functions
     regexp:  REGEXP,
