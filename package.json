@@ -21,7 +21,7 @@
     "dtslint": "^0.5.3",
     "eslint": "^5.15.1",
     "http-server": "^0.11.1",
-    "jsdom": "^13.2.0",
+    "jsdom": "^14.0.0",
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
