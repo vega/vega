@@ -24,7 +24,8 @@ An event stream definition can be specified in multiple ways:
 - [Event stream objects](#object) indicate which events to capture.
 - [Event stream selectors](#selector) string provide a convenient shorthand for event stream objects. For example, `"rect:mouseover"`, `"click[event.shiftKey]"`, or `"timer{1000}"`.
 - [Signal references](#signal) capture signal updates. For example, `{"signal": "name"}`.
-- An array of multiple [event stream objects](#object) and/or [signal references](#signal) to capture.
+- [Scale references](#scale) capture scale updates. For example, `{"scale": "xscale"}`.
+- An array of multiple [event stream objects](#object), [signal references](#signal), or [scale references](#scale) to capture.
 
 
 ## <a name="types"></a>Supported Event Types
@@ -228,7 +229,7 @@ This example initiates a drag upon mousedown on a `rect` mark, then tracks the d
 
 ## <a name="signal"></a>Signal References
 
-Event stream definitions can also be simple [signal references](../types/#Signal):
+Event stream definitions can be [signal references](../types/#Signal):
 
 {: .suppress-error}
 ```json
@@ -247,6 +248,32 @@ In this case, an update will be triggered whenever the signal `foo` changes. Sig
 "on": [
   {
     "events": [{"signal": "foo"}, {"type": "click", "marktype": "rect"}],
+    "update": "..."
+  }
+]
+```
+
+## <a name="scale"></a>Scale References
+
+Event stream definitions can also monitor changes to [scales](../scales):
+
+{: .suppress-error}
+```json
+"on": [
+  {
+    "events": {"scale": "xscale"},
+    "update": "..."
+  }
+]
+```
+
+Here, an update is triggered whenever the scale `xscale` is modified. Scale references can be combined with signal references and event stream objects by providing an array to the _events_ property:
+
+{: .suppress-error}
+```json
+"on": [
+  {
+    "events": [{"scale": "xscale"}, {"signal": "foo"}],
     "update": "..."
   }
 ]
