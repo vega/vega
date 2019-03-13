@@ -520,7 +520,7 @@ Now we can add a new `path` mark to the `marks` array to visualize the routes:
   "from": {"data": "routes"},
   "encode": {
     "enter": {
-      "path": {"field": "layout_path"},
+      "path": {"field": "path"},
       "stroke": {"value": "black"},
       "strokeOpacity": {"value": 0.15}
     }
