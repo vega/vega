@@ -243,7 +243,7 @@ Our `tooltip` signal tracks the datum for the currently highlighted bar. We now 
           "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
           "text": {"signal": "tooltip.amount"},
           "fillOpacity": [
-            {"test": "datum === tooltip", "value": 0},
+            {"test": "isNaN(tooltip.amount)", "value": 0},
             {"value": 1}
           ]
         }
@@ -252,7 +252,7 @@ Our `tooltip` signal tracks the datum for the currently highlighted bar. We now 
   ]
 ```
 
-A single text mark instance serves as our tooltip text (note that the `from` property is omitted). The position and text values are drawn directly from the `tooltip` signal. To only show the tooltip text when the mouse pointer is over a rectangle, we set the `fillOpacity` using _production rules_: a chain of if-then-else rules for visual encoding. If the current datum matches the selected tooltip datum, the tooltip text is opaque, otherwise it is fully transparent.
+A single text mark instance serves as our tooltip text (note that the `from` property is omitted). The position and text values are drawn directly from the `tooltip` signal. To only show the tooltip text when the mouse pointer is over a rectangle, we set the `fillOpacity` using _production rules_: a chain of if-then-else rules for visual encoding. If `tooltip` is an empty object, the tooltip text is fully transparent since `isNaN(tooltip.amount)` is `true`, otherwise it is opaque.
 
 Signals can be applied throughout a specification. For example, they can be used to specify the properties of [transforms](../../docs/transforms), [scales](../../docs/scales) and [mark encodings](../../docs/marks). For more details, see the [signals](../../docs/signals) documentation.
 
