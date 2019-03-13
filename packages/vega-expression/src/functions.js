@@ -81,8 +81,11 @@ export default function(codegen) {
     join:        fn('join', null),
     indexof:     fn('indexOf', null),
     lastindexof: fn('lastIndexOf', null),
-    reverse:     fn('reverse', null),
     slice:       fn('slice', null),
+
+    reverse: function(args) {
+      return '('+codegen(args[0])+').slice().reverse()';
+    },
 
     // STRING functions
     parseFloat:  'parseFloat',
