@@ -616,6 +616,15 @@ Next, we add the Voronoi cells to the visualization as an invisible set of `path
 
 We set the `fill` to `transparent` to ensure that the Voronoi cells can't be seen, but still receive input events. We also specify a `name` property so that we can refer to these marks elsewhere.
 
+Next, we add `"autosize": "none"` to keep the size of the visualization solely determined by the provided width, height, and paddings. Without this, the Voronoi cells will trigger unwanted automatic resizing:
+
+{: .suppress-error}
+```json
+"padding": {...},
+"autosize": "none",
+"signals": [...],
+```
+
 Finally, we update our `hover` signal to respond to mouse events on the Voronoi cells instead of on the circle `symbol` marks:
 
 {: .suppress-error}
