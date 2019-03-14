@@ -3394,53 +3394,51 @@
     if (!isFunction(target)) target = constant(target);
 
     if (update === undefined) {
-      func = function(e) {
-        df.touch(target(e));
-      };
+      func = e => df.touch(target(e));
     } else if (isFunction(update)) {
       op = new Operator(null, update, params, false);
-      func = function(e) {
-        var v, t = target(e);
+      func = e => {
         op.evaluate(e);
-        isChangeSet(v = op.value) ? df.pulse(t, v, options) : df.update(t, v, opt);
+        const t = target(e), v = op.value;
+        isChangeSet(v) ? df.pulse(t, v, options) : df.update(t, v, opt);
       };
     } else {
-      func = function(e) {
-        df.update(target(e), update, opt);
-      };
+      func = e => df.update(target(e), update, opt);
     }
 
     stream.apply(func);
   }
 
   function onOperator(df, source, target, update, params, options) {
-    var func, op;
-
     if (update === undefined) {
-      op = target;
+      source.targets().add(target);
     } else {
-      func = isFunction(update) ? update : constant(update);
-      update = !target ? func : function(_, pulse) {
-        var value = func(_, pulse);
-        if (!target.skip()) {
-          target.skip(value !== this.value).value = value;
-        }
-        return value;
-      };
-
-      op = new Operator(null, update, params, false);
-      op.modified(options && options.force);
-      op.rank = source.rank; // immediately follow source
+      const opt = options || {},
+            op = new Operator(null, updater(target, update), params, false);
+      op.modified(opt.force);
+      op.rank = source.rank;       // immediately follow source
+      source.targets().add(op);    // add dependency
 
       if (target) {
-        op.skip(true); // skip first invocation
-        op.value = target.value;
-        op.targets().add(target);
-        df.connect(target, [op]); // rerank as needed, #1672
+        op.skip(true);             // skip first invocation
+        op.value = target.value;   // initialize value
+        op.targets().add(target);  // chain dependencies
+        df.connect(target, [op]);  // rerank as needed, #1672
       }
     }
+  }
 
-    source.targets().add(op);
+  function updater(target, update) {
+    update = isFunction(update) ? update : constant(update);
+    return target
+      ? function(_, pulse) {
+          const value = update(_, pulse);
+          if (!target.skip()) {
+            target.skip(value !== this.value).value = value;
+          }
+          return value;
+        }
+      : update;
   }
 
   /**
@@ -3454,7 +3452,7 @@
 
   /**
    * Re-ranks an operator and all downstream target dependencies. This
-   * is necessary when upstream depencies of higher rank are added to
+   * is necessary when upstream dependencies of higher rank are added to
    * a target operator.
    * @param {Operator} op - The operator to re-rank.
    */
@@ -25291,8 +25289,8 @@
     function initializeNodes() {
       for (var i = 0, n = nodes.length, node; i < n; ++i) {
         node = nodes[i], node.index = i;
-        if (!isNaN(node.fx)) node.x = node.fx;
-        if (!isNaN(node.fy)) node.y = node.fy;
+        if (node.fx != null) node.x = node.fx;
+        if (node.fy != null) node.y = node.fy;
         if (isNaN(node.x) || isNaN(node.y)) {
           var radius = initialRadius * Math.sqrt(i), angle = i * initialAngle;
           node.x = radius * Math.cos(angle);
@@ -29876,7 +29874,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.2.0";
+  var version = "5.3.0";
 
   var Default = 'default';
 
@@ -30017,23 +30015,21 @@
    * @return {Event} - The extended input event.
    */
   function eventExtend(view, event, item) {
-    event.dataflow = view;
-    event.item = item;
+    var r  = view._renderer,
+        el = r && r.canvas(),
+        p, e, translate;
 
-    if (view._renderer) {
-      var el = view._renderer.canvas(),
-          p, e, translate;
-
-      if (el) {
-        translate = offset$1(view);
-        e = event.changedTouches ? event.changedTouches[0] : event;
-        p = point$4(e, el);
-        p[0] -= translate[0];
-        p[1] -= translate[1];
-      }
-      event.vega = extension(view, item, p);
+    if (el) {
+      translate = offset$1(view);
+      e = event.changedTouches ? event.changedTouches[0] : event;
+      p = point$4(e, el);
+      p[0] -= translate[0];
+      p[1] -= translate[1];
     }
 
+    event.dataflow = view;
+    event.item = item;
+    event.vega = extension(view, item, p);
     return event;
   }
 
@@ -32284,11 +32280,16 @@
       utcseconds:      fn('getUTCSeconds', DATE, 0),
       utcmilliseconds: fn('getUTCMilliseconds', DATE, 0),
 
-      // shared sequence functions
+      // sequence functions
       length:      fn('length', null, -1),
+      join:        fn('join', null),
       indexof:     fn('indexOf', null),
       lastindexof: fn('lastIndexOf', null),
       slice:       fn('slice', null),
+
+      reverse: function(args) {
+        return '('+codegen(args[0])+').slice().reverse()';
+      },
 
       // STRING functions
       parseFloat:  'parseFloat',
@@ -32298,6 +32299,7 @@
       substring:   fn('substring', STRING),
       split:       fn('split', STRING),
       replace:     fn('replace', STRING),
+      trim:        fn('trim', STRING, 0),
 
       // REGEXP functions
       regexp:  REGEXP,
