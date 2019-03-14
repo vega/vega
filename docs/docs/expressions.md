@@ -385,7 +385,7 @@ Returns the first index of _value_ in the input _array_.
 Tests whether _value_ lies within (or is equal to either) the first and last values of the _range_ array.
 
 <a name="join" href="#join">#</a>
-<b>join</b>(<i>array</i>[, <i>separator</i>])<br/>
+<b>join</b>(<i>array</i>[, <i>separator</i>]) {% include tag ver="5.3" %}<br/>
 Returns a new string by concatenating all of the elements of the input _array_, separated by commas or a specified _separator_ string.
 
 <a name="lastindexof" href="#lastindexof">#</a>
@@ -405,7 +405,7 @@ Returns the linearly interpolated value between the first and last entries in th
 Returns the last element in the input _array_. Similar to the built-in `Array.pop` method, except that it does not remove the last element. This method is a convenient shorthand for `array[array.length - 1]`.
 
 <a name="reverse" href="#reverse">#</a>
-<b>reverse</b>(<i>array</i>)<br/>
+<b>reverse</b>(<i>array</i>) {% include tag ver="5.3" %}<br/>
 Returns a new array with elements in a reverse order of the input _array_. The first array element becomes the last, and the last array element becomes the first.
 
 <a name="sequence" href="#sequence">#</a>
@@ -472,7 +472,7 @@ Returns an array of tokens created by splitting the input _string_ according to 
 Returns a section of _string_ between the _start_ and _end_ indices.
 
 <a name="trim" href="#trim">#</a>
-<b>trim</b>(<i>string</i>)<br/>
+<b>trim</b>(<i>string</i>) {% include tag ver="5.3" %}<br/>
 Returns a trimmed string with preceding and trailing whitespace removed.
 
 <a name="truncate" href="#truncate">#</a>
