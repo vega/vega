@@ -1,0 +1,552 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Drag out a rectangular brush to highlight points.",
+  "autosize": "pad",
+  "padding": 5,
+  "width": 200,
+  "height": 200,
+  "style": "cell",
+  "data": [
+    {"name": "brush_store"},
+    {"name": "grid_store"},
+    {"name": "source_0", "url": "data/cars.json", "format": {"type": "json"}}
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "brush",
+      "update": "vlSelectionResolve(\"brush_store\", \"union\")"
+    },
+    {"name": "grid", "update": "vlSelectionResolve(\"grid_store\")"},
+    {
+      "name": "brush_x",
+      "value": [],
+      "on": [
+        {
+          "events": {
+            "source": "scope",
+            "type": "mousedown",
+            "filter": [
+              "event.shiftKey",
+              "!event.item || event.item.mark.name !== \"brush_brush\"",
+              "inScope(event.item)"
+            ]
+          },
+          "update": "[x(unit), x(unit)]"
+        },
+        {
+          "events": {
+            "source": "window",
+            "type": "mousemove",
+            "consume": true,
+            "between": [
+              {
+                "source": "scope",
+                "type": "mousedown",
+                "filter": [
+                  "event.shiftKey",
+                  "!event.item || event.item.mark.name !== \"brush_brush\"",
+                  "inScope(event.item)"
+                ]
+              },
+              {"source": "window", "type": "mouseup"}
+            ]
+          },
+          "update": "[brush_x[0], clamp(x(unit), 0, width)]"
+        },
+        {
+          "events": {"scale": "x"},
+          "update": "span(brush_x) ? [scale(\"x\", brush_Horsepower[0]), scale(\"x\", brush_Horsepower[1])] : brush_x"
+        },
+        {
+          "events": {"signal": "brush_translate_delta"},
+          "update": "clampRange(panLinear(brush_translate_anchor.extent_x, brush_translate_delta.x / span(brush_translate_anchor.extent_x)), 0, width)"
+        },
+        {
+          "events": {"signal": "brush_zoom_delta"},
+          "update": "clampRange(zoomLinear(brush_x, brush_zoom_anchor.x, brush_zoom_delta), 0, width)"
+        }
+      ]
+    },
+    {
+      "name": "brush_Horsepower",
+      "on": [
+        {
+          "events": {"signal": "brush_x"},
+          "update": "span(brush_x) ? invert(\"x\", brush_x) : null"
+        }
+      ]
+    },
+    {
+      "name": "brush_y",
+      "value": [],
+      "on": [
+        {
+          "events": {
+            "source": "scope",
+            "type": "mousedown",
+            "filter": [
+              "event.shiftKey",
+              "!event.item || event.item.mark.name !== \"brush_brush\"",
+              "inScope(event.item)"
+            ]
+          },
+          "update": "[y(unit), y(unit)]"
+        },
+        {
+          "events": {
+            "source": "window",
+            "type": "mousemove",
+            "consume": true,
+            "between": [
+              {
+                "source": "scope",
+                "type": "mousedown",
+                "filter": [
+                  "event.shiftKey",
+                  "!event.item || event.item.mark.name !== \"brush_brush\"",
+                  "inScope(event.item)"
+                ]
+              },
+              {"source": "window", "type": "mouseup"}
+            ]
+          },
+          "update": "[brush_y[0], clamp(y(unit), 0, height)]"
+        },
+        {
+          "events": {"scale": "y"},
+          "update": "span(brush_y) ? [scale(\"y\", brush_Miles_per_Gallon[0]), scale(\"y\", brush_Miles_per_Gallon[1])] : brush_y"
+        },
+        {
+          "events": {"signal": "brush_translate_delta"},
+          "update": "clampRange(panLinear(brush_translate_anchor.extent_y, brush_translate_delta.y / span(brush_translate_anchor.extent_y)), 0, height)"
+        },
+        {
+          "events": {"signal": "brush_zoom_delta"},
+          "update": "clampRange(zoomLinear(brush_y, brush_zoom_anchor.y, brush_zoom_delta), 0, height)"
+        }
+      ]
+    },
+    {
+      "name": "brush_Miles_per_Gallon",
+      "on": [
+        {
+          "events": {"signal": "brush_y"},
+          "update": "span(brush_y) ? invert(\"y\", brush_y): null"
+        }
+      ]
+    },
+    {
+      "name": "brush_tuple",
+      "on": [
+        {
+          "events": [
+            {"signal": "brush_Horsepower"},
+            {"signal": "brush_Miles_per_Gallon"}
+          ],
+          "update": "brush_Horsepower && brush_Miles_per_Gallon ? {unit: \"\", fields: brush_tuple_fields, values: [brush_Horsepower,brush_Miles_per_Gallon]} : null"
+        }
+      ]
+    },
+    {
+      "name": "brush_tuple_fields",
+      "value": [
+        {"field": "Horsepower", "channel": "x", "type": "R"},
+        {"field": "Miles_per_Gallon", "channel": "y", "type": "R"}
+      ]
+    },
+    {
+      "name": "brush_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "mousedown",
+              "filter": [
+                "event.shiftKey",
+                "event.item&&event.item.mark.name==='brush_brush'",
+                "inScope(event.item)"
+              ],
+              "markname": "brush_brush"
+            }
+          ],
+          "update": "{x: x(unit), y: y(unit), extent_x: slice(brush_x), extent_y: slice(brush_y)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_translate_delta",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {
+                  "source": "scope",
+                  "type": "mousedown",
+                  "filter": [
+                    "event.shiftKey",
+                    "event.item&&event.item.mark.name==='brush_brush'",
+                    "inScope(event.item)"
+                  ],
+                  "markname": "brush_brush"
+                },
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: brush_translate_anchor.x - x(unit), y: brush_translate_anchor.y - y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_zoom_anchor",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "filter": [
+                "event.shiftKey",
+                "event.item&&event.item.mark.name==='brush_brush'",
+                "inScope(event.item)"
+              ],
+              "markname": "brush_brush"
+            }
+          ],
+          "update": "{x: x(unit), y: y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_zoom_delta",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "filter": [
+                "event.shiftKey",
+                "event.item&&event.item.mark.name==='brush_brush'",
+                "inScope(event.item)"
+              ],
+              "markname": "brush_brush"
+            }
+          ],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        }
+      ]
+    },
+    {
+      "name": "brush_modify",
+      "update": "modify(\"brush_store\", brush_tuple, {unit: \"\"})"
+    },
+    {
+      "name": "grid_Horsepower",
+      "on": [
+        {
+          "events": {"signal": "grid_translate_delta"},
+          "update": "panLinear(grid_translate_anchor.extent_x, -grid_translate_delta.x / width)"
+        },
+        {
+          "events": {"signal": "grid_zoom_delta"},
+          "update": "zoomLinear(domain(\"x\"), grid_zoom_anchor.x, grid_zoom_delta)"
+        }
+      ]
+    },
+    {
+      "name": "grid_Miles_per_Gallon",
+      "on": [
+        {
+          "events": {"signal": "grid_translate_delta"},
+          "update": "panLinear(grid_translate_anchor.extent_y, grid_translate_delta.y / height)"
+        },
+        {
+          "events": {"signal": "grid_zoom_delta"},
+          "update": "zoomLinear(domain(\"y\"), grid_zoom_anchor.y, grid_zoom_delta)"
+        }
+      ]
+    },
+    {
+      "name": "grid_tuple",
+      "on": [
+        {
+          "events": [
+            {"signal": "grid_Horsepower"},
+            {"signal": "grid_Miles_per_Gallon"}
+          ],
+          "update": "grid_Horsepower && grid_Miles_per_Gallon ? {unit: \"\", fields: grid_tuple_fields, values: [grid_Horsepower,grid_Miles_per_Gallon]} : null"
+        }
+      ]
+    },
+    {
+      "name": "grid_tuple_fields",
+      "value": [
+        {"field": "Horsepower", "channel": "x", "type": "R"},
+        {"field": "Miles_per_Gallon", "channel": "y", "type": "R"}
+      ]
+    },
+    {
+      "name": "grid_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "mousedown",
+              "filter": [
+                "!event.shiftKey",
+                "inScope(event.item)"
+              ]
+            }
+          ],
+          "update": "{x: x(unit), y: y(unit), extent_x: domain(\"x\"), extent_y: domain(\"y\")}"
+        }
+      ]
+    },
+    {
+      "name": "grid_translate_delta",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {
+                  "source": "scope",
+                  "type": "mousedown",
+                  "filter": [
+                    "!event.shiftKey",
+                    "inScope(event.item)"
+                  ]
+                },
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: grid_translate_anchor.x - x(unit), y: grid_translate_anchor.y - y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_anchor",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "filter": [
+                "!event.shiftKey",
+                "inScope(event.item)"
+              ]
+            }
+          ],
+          "update": "{x: invert(\"x\", x(unit)), y: invert(\"y\", y(unit))}"
+        }
+      ]
+    },
+    {
+      "name": "grid_zoom_delta",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "filter": [
+                "!event.shiftKey",
+                "inScope(event.item)"
+              ]
+            }
+          ],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        }
+      ]
+    },
+    {
+      "name": "grid_modify",
+      "update": "modify(\"grid_store\", grid_tuple, true)"
+    }
+  ],
+  "marks": [
+    {
+      "name": "brush_brush_bg",
+      "type": "rect",
+      "clip": true,
+      "encode": {
+        "enter": {"fill": {"value": "#333"}, "fillOpacity": {"value": 0.125}},
+        "update": {
+          "x": {"signal": "brush_x[0]"},
+          "y": {"signal": "brush_y[0]"},
+          "x2": {"signal": "brush_x[1]"},
+          "y2": {"signal": "brush_y[1]"}
+        }
+      }
+    },
+    {
+      "name": "marks",
+      "type": "symbol",
+      "clip": true,
+      "style": ["point"],
+      "from": {"data": "source_0"},
+      "encode": {
+        "update": {
+          "opacity": {"value": 0.7},
+          "fill": [
+            {
+              "test": "datum[\"Horsepower\"] === null || isNaN(datum[\"Horsepower\"]) || datum[\"Miles_per_Gallon\"] === null || isNaN(datum[\"Miles_per_Gallon\"])",
+              "value": null
+            },
+            {"value": "transparent"}
+          ],
+          "stroke": [
+            {
+              "test": "datum[\"Horsepower\"] === null || isNaN(datum[\"Horsepower\"]) || datum[\"Miles_per_Gallon\"] === null || isNaN(datum[\"Miles_per_Gallon\"])",
+              "value": null
+            },
+            {
+              "test": "!(length(data(\"brush_store\"))) || (vlSelectionTest(\"brush_store\", datum, \"union\"))",
+              "scale": "color",
+              "field": "Cylinders"
+            },
+            {"value": "grey"}
+          ],
+          "tooltip": {
+            "signal": "{\"Horsepower\": format(datum[\"Horsepower\"], \"\"), \"Miles_per_Gallon\": format(datum[\"Miles_per_Gallon\"], \"\"), \"Cylinders\": ''+datum[\"Cylinders\"]}"
+          },
+          "x": {"scale": "x", "field": "Horsepower"},
+          "y": {"scale": "y", "field": "Miles_per_Gallon"}
+        }
+      }
+    },
+    {
+      "name": "brush_brush",
+      "type": "rect",
+      "clip": true,
+      "encode": {
+        "enter": {"fill": {"value": "transparent"}},
+        "update": {
+          "x": {"signal": "brush_x[0]"},
+          "y": {"signal": "brush_y[0]"},
+          "x2": {"signal": "brush_x[1]"},
+          "y2": {"signal": "brush_y[1]"},
+          "stroke": [
+            {
+              "test": "brush_x[0] !== brush_x[1] && brush_y[0] !== brush_y[1]",
+              "value": "white"
+            },
+            {"value": null}
+          ]
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "source_0", "field": "Horsepower"},
+      "domainRaw": {"signal": "grid[\"Horsepower\"]"},
+      "range": [0, {"signal": "width"}],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "source_0", "field": "Miles_per_Gallon"},
+      "domainRaw": {"signal": "grid[\"Miles_per_Gallon\"]"},
+      "range": [{"signal": "height"}, 0],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "source_0", "field": "Cylinders", "sort": true},
+      "range": "ordinal",
+      "interpolate": "hcl"
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Horsepower",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "zindex": 1
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Miles_per_Gallon",
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "zindex": 1
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    }
+  ],
+  "legends": [
+    {
+      "stroke": "color",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "title": "Cylinders",
+      "symbolFillColor": "transparent",
+      "symbolOpacity": 0.7
+    }
+  ]
+}

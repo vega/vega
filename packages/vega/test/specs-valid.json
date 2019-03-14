@@ -70,6 +70,8 @@
   "scales-discretize",
   "scatter-plot",
   "scatter-plot-guides",
+  "scatter-brush-filter",
+  "scatter-brush-panzoom",
   "shift-select",
   "splom-inner",
   "splom-outer",
