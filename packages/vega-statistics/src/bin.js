@@ -5,8 +5,8 @@ export default function(_) {
       logb = Math.log(base),
       div = _.divide || [5, 2],
       min = _.extent[0],
-      // If min === max, increase the max by 10% (or by 1 for min = max = 0)
-      max = _.extent[1] > min ? _.extent[1] : min + 0.1 * Math.abs(min === 0 ? 10 : min),
+      // if min === max, increase the max by 10% (or by 1 for min = max = 0)
+      max = _.extent[1] > min ? _.extent[1] : (min ? min + 0.1 * Math.abs(min) : 1),
       span = max - min,
       step, level, minstep, precision, v, i, n, eps;
 
