@@ -42,6 +42,7 @@ export interface SceneContext {
 
 export type SceneGroup = SceneItem & {
   context: SceneContext;
+  datum?: any;
   items: SceneItem[];
   height: number;
   width: number;
