@@ -1,6 +1,6 @@
 import parseExpression from './expression';
 import {View, Scope} from '../util';
-import {array, error, stringValue} from 'vega-util';
+import {error, stringValue} from 'vega-util';
 
 var Timer = 'timer';
 
@@ -18,11 +18,8 @@ function eventSource(source) {
 }
 
 function mergeStream(stream, scope) {
-  var list = stream.merge.map(function(s) {
-    return parseStream(s, scope);
-  });
-
-  var entry = streamParameters({merge: list}, stream, scope);
+  var list = stream.merge.map(s => parseStream(s, scope)),
+      entry = streamParameters({merge: list}, stream, scope);
   return scope.addStream(entry).id;
 }
 
@@ -61,7 +58,7 @@ function streamParameters(entry, stream, scope) {
     ];
   }
 
-  param = stream.filter ? array(stream.filter) : [];
+  param = stream.filter ? [].concat(stream.filter) : [];
   if (stream.marktype || stream.markname || stream.markrole) {
     // add filter for mark type, name and/or role
     param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
