@@ -20,7 +20,7 @@ tape('bin generates boundaries for exact step size', function(t) {
   t.end();
 });
 
-tape('bin generates when the data has single value = 1', function (t) {
+tape('bin generates when the extent has the same values for min and max', function (t) {
   var b = bin({extent: [1, 1]});
   t.equal(b.start, 1);
   t.equal(b.stop, 1.1);
