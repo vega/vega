@@ -17,6 +17,7 @@ export class Bounds {
 
 export interface SceneItem {
   bounds: Bounds;
+  datum?: object;
   mark: { role: string };
   x: number;
   y: number;
@@ -42,7 +43,6 @@ export interface SceneContext {
 
 export type SceneGroup = SceneItem & {
   context: SceneContext;
-  datum?: any;
   items: SceneItem[];
   height: number;
   width: number;
