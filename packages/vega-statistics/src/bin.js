@@ -6,7 +6,7 @@ export default function(_) {
       div  = _.divide || [5, 2],
       min  = _.extent[0],
       max  = _.extent[1],
-      span = max - min,
+      span = (max - min) || Math.abs(min) || 1,
       step, level, minstep, precision, v, i, n, eps;
 
   if (_.step) {
@@ -48,7 +48,7 @@ export default function(_) {
 
   return {
     start: min,
-    stop:  max,
+    stop:  max === min ? min + step : max,
     step:  step
   };
 }
