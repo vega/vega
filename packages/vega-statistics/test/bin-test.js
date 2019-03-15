@@ -20,8 +20,20 @@ tape('bin generates boundaries for exact step size', function(t) {
   t.end();
 });
 
-tape('bin generates boundaries for inferred step size', function(t) {
-  var b = bin({extent:[1.3, 10.2], maxbins:10, nice:false});
+tape('bin generates when the data has single value = 1', function (t) {
+  var b = bin({extent: [1, 1]});
+  t.equal(b.start, 1);
+  t.equal(b.stop, 1.1);
+
+  b = bin({extent: [0, 0]});
+  t.equal(b.start, 0);
+  t.equal(b.stop, 1);
+
+  t.end();
+});
+
+tape('bin generates boundaries for inferred step size', function (t) {
+  var b = bin({extent: [1.3, 10.2], maxbins: 10, nice: false});
   t.equal(b.start, 1.3);
   t.equal(b.stop, 10.2);
   t.equal(b.step, 1);

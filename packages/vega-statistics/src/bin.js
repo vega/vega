@@ -1,13 +1,14 @@
 export default function(_) {
   // determine range
   var maxb = _.maxbins || 20,
-      base = _.base || 10,
-      logb = Math.log(base),
-      div  = _.divide || [5, 2],
-      min  = _.extent[0],
-      max  = _.extent[1],
-      span = max - min,
-      step, level, minstep, precision, v, i, n, eps;
+    base = _.base || 10,
+    logb = Math.log(base),
+    div = _.divide || [5, 2],
+    min = _.extent[0],
+    // If min = max, increase the max by 10% (or by 1 for min = max = 0)
+    max = _.extent[1] > min ? _.extent[1] : min + 0.1 * Math.abs(min === 0 ? 10 : min),
+    span = max - min,
+    step, level, minstep, precision, v, i, n, eps;
 
   if (_.step) {
     // if step size is explicitly given, use that
