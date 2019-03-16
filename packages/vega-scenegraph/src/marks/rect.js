@@ -1,5 +1,6 @@
 import boundStroke from '../bound/boundStroke';
 import {rectangle} from '../path/shapes';
+import {intersectRect} from '../util/intersect';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
 
@@ -29,5 +30,6 @@ export default {
   attr:   attr,
   bound:  bound,
   draw:   drawAll(draw),
-  pick:   pickPath(draw)
+  pick:   pickPath(draw),
+  isect:  intersectRect
 };

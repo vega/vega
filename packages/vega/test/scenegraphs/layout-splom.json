@@ -17318,7 +17318,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -36,
+                              "x": -35,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17539,7 +17539,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -20,
+                              "x": -19,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17720,7 +17720,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -36,
+                              "x": -35,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17901,7 +17901,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -20,
+                              "x": -19,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18111,7 +18111,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 36,
+                              "x": 35,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18332,7 +18332,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 20,
+                              "x": 19,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18513,7 +18513,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 36,
+                              "x": 35,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18694,7 +18694,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 20,
+                              "x": 19,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18905,7 +18905,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": -22,
+                              "y": -21,
                               "align": "center",
                               "baseline": "bottom",
                               "fill": "#000",
@@ -19126,7 +19126,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": -22,
+                              "y": -21,
                               "align": "center",
                               "baseline": "bottom",
                               "fill": "#000",
@@ -19307,7 +19307,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": -22,
+                              "y": -21,
                               "align": "center",
                               "baseline": "bottom",
                               "fill": "#000",
@@ -19488,7 +19488,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": -22,
+                              "y": -21,
                               "align": "center",
                               "baseline": "bottom",
                               "fill": "#000",
@@ -19698,7 +19698,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -19919,7 +19919,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -20100,7 +20100,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -20281,7 +20281,7 @@
                           "items": [
                             {
                               "x": 60,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -20398,7 +20398,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -20447,7 +20447,7 @@
                               ],
                               "x": 0,
                               "y": 16,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -20496,7 +20496,7 @@
                               ],
                               "x": 0,
                               "y": 32,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             }
@@ -20523,7 +20523,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Species",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -20532,10 +20534,11 @@
                   "zindex": 0
                 }
               ],
-              "x": 579,
+              "x": 576,
               "y": 0,
-              "width": 97,
-              "height": 61
+              "width": 96,
+              "height": 61,
+              "orient": "right"
             }
           ],
           "zindex": 0

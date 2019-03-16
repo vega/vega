@@ -3,7 +3,7 @@ var tape = require('tape'),
     transforms = require('vega-transforms'),
     runtime = require('../');
 
-tape('Parser parses faceted dataflow specs', function(test) {
+tape('Parser parses faceted dataflow specs', function(t) {
   var values = [
     {"k": "a", "x": 1,  "y": 28},
     {"k": "b", "x": 2,  "y": 43},
@@ -47,11 +47,11 @@ tape('Parser parses faceted dataflow specs', function(test) {
       ctx = runtime.parse(spec, runtime.context(df, transforms)),
       ops = ctx.nodes;
 
-  test.equal(Object.keys(ops).length, spec.operators.length);
+  t.equal(Object.keys(ops).length, spec.operators.length);
 
   // test that all subflow operators were created and run
   df.run();
-  test.equal(
+  t.equal(
     count(ctx, df.stamp()),
     spec.operators.length + nkey * (len0 + nkey * len1)
   );
@@ -63,13 +63,13 @@ tape('Parser parses faceted dataflow specs', function(test) {
       extentA = collectA._targets[0],
       extentB = collectB._targets[0];
 
-  test.equal(collectA.value.length, size);
-  test.deepEqual(extentA.value, [28, 81]);
+  t.equal(collectA.value.length, size);
+  t.deepEqual(extentA.value, [28, 81]);
 
-  test.equal(collectB.value.length, size);
-  test.deepEqual(extentB.value, [19, 43]);
+  t.equal(collectB.value.length, size);
+  t.deepEqual(extentB.value, [19, 43]);
 
-  test.end();
+  t.end();
 });
 
 function count(ctx, stamp) {

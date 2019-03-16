@@ -1,30 +1,29 @@
-import {Top, Left, Bottom, Value} from './constants';
+import {Top, Left, Bottom, Value, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
-import {addEncode, encoder} from '../encode/encode-util';
+import {addEncoders, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
-      zero = {value: 0},
       encode, enter, exit, update, tickSize, tickPos;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: update = {
-      opacity: {value: 1}
-    },
-    exit: exit = {
-      opacity: zero
-    }
+    enter: enter = {opacity: zero},
+    update: update = {opacity: one},
+    exit: exit = {opacity: zero}
   };
-  addEncode(encode, 'stroke',        lookup('tickColor', spec, config));
-  addEncode(encode, 'strokeOpacity', lookup('tickOpacity', spec, config));
-  addEncode(encode, 'strokeWidth',   lookup('tickWidth', spec, config));
+
+  addEncoders(encode, {
+    stroke:           _('tickColor'),
+    strokeDash:       _('tickDash'),
+    strokeDashOffset: _('tickDashOffset'),
+    strokeOpacity:    _('tickOpacity'),
+    strokeWidth:      _('tickWidth')
+  });
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -32,10 +31,10 @@ export default function(spec, config, userEncode, dataRef, size) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   lookup('bandPosition', spec, config),
-    round:  lookup('tickRound', spec, config),
-    extra:  lookup('tickExtra', spec, config),
-    offset: lookup('tickOffset', spec, config)
+    band:   _('bandPosition'),
+    round:  _('tickRound'),
+    extra:  _('tickExtra'),
+    offset: _('tickOffset')
   };
 
   if (orient === Top || orient === Bottom) {

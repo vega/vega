@@ -48,10 +48,11 @@ export {
 export {
   scale,
   scheme,
-  schemeDiscretized,
   interpolate,
+  interpolateColors,
   interpolateRange,
-  timeInterval
+  timeInterval,
+  quantizeInterpolator
 } from 'vega-scale';
 
 export {

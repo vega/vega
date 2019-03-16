@@ -7,7 +7,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Values = tx.values;
 
-tape('Values extracts values', function(test) {
+tape('Values extracts values', function(t) {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'c', v:2}, {k:'d', v:4}
@@ -21,18 +21,18 @@ tape('Values extracts values', function(test) {
 
   df.pulse(col, changeset().insert(data)).run();
   var values = val.value;
-  test.deepEqual(values, ['a', 'b', 'c', 'd']);
+  t.deepEqual(values, ['a', 'b', 'c', 'd']);
 
   df.touch(val).run(); // no-op pulse
-  test.equal(val.value, values); // no change!
+  t.equal(val.value, values); // no change!
 
   df.update(srt, util.compare('v', 'descending')).run();
-  test.deepEqual(val.value, ['d', 'b', 'c', 'a']);
+  t.deepEqual(val.value, ['d', 'b', 'c', 'a']);
 
-  test.end();
+  t.end();
 });
 
-tape('Values extracts sorted domain values', function(test) {
+tape('Values extracts sorted domain values', function(t) {
   var byCount = util.compare('count', 'descending'),
       key = util.field('k'),
       df = new vega.Dataflow(),
@@ -45,18 +45,18 @@ tape('Values extracts sorted domain values', function(test) {
   df.pulse(col, changeset().insert([
     {k:'b', v:1}, {k:'a', v:2}, {k:'a', v:3}
   ])).run();
-  test.deepEqual(val.value, ['a', 'b']);
+  t.deepEqual(val.value, ['a', 'b']);
 
   // -- update
   df.pulse(col, changeset().insert([
     {k:'b', v:1}, {k:'b', v:2}, {k:'c', v:3}
   ])).run();
-  test.deepEqual(val.value, ['b', 'a', 'c']);
+  t.deepEqual(val.value, ['b', 'a', 'c']);
 
-  test.end();
+  t.end();
 });
 
-tape('Values extracts multi-domain values', function(test) {
+tape('Values extracts multi-domain values', function(t) {
   var byCount = util.compare('count', 'descending'),
       count = util.field('count'),
       key = util.field('key'),
@@ -77,13 +77,13 @@ tape('Values extracts multi-domain values', function(test) {
   df.pulse(col, changeset().insert([
     {k1:'b', k2:'a'}, {k1:'a', k2:'c'}, {k1:'c', k2:'a'}
   ])).run();
-  test.deepEqual(val.value, ['a', 'c', 'b']);
+  t.deepEqual(val.value, ['a', 'c', 'b']);
 
   // -- update
   df.pulse(col, changeset().insert([
     {k1:'b', k2:'b'}, {k1:'b', k2:'c'}, {k1:'b', k2:'c'}
   ])).run();
-  test.deepEqual(val.value, ['b', 'c', 'a']);
+  t.deepEqual(val.value, ['b', 'c', 'a']);
 
-  test.end();
+  t.end();
 });

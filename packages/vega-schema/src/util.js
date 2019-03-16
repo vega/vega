@@ -8,7 +8,11 @@ const alignEnum = ['left', 'right', 'center'];
 
 const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 
-const anchorEnum = ['start', 'middle', 'end'];
+const anchorEnum = [null, 'start', 'middle', 'end'];
+
+const formatTypeEnum = ['number', 'time'];
+
+const orientEnum = ['left', 'right', 'top', 'bottom'];
 
 export function oneOf(...types) {
   return {oneOf: types};
@@ -103,6 +107,8 @@ export const colorStringType = stringType;
 export const nullType = type('null');
 export const signalRef = ref('signal');
 
+export const formatType = enums(formatTypeEnum);
+
 export const alignValue = oneOf(
   enums(alignEnum),
   ref('alignValue')
@@ -142,6 +148,11 @@ export const fontWeightValue = oneOf(
 export const numberValue = oneOf(
   numberType,
   ref('numberValue')
+);
+
+export const orientValue = oneOf(
+  enums(orientEnum),
+  ref('orientValue')
 );
 
 export const stringValue = oneOf(

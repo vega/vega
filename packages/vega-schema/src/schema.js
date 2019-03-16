@@ -1,4 +1,4 @@
-import {def, type, numberType, objectType, stringType} from './util';
+import {def, ref, type, numberType, objectType, stringType} from './util';
 
 import autosize from './autosize';
 import axis from './axis';
@@ -36,7 +36,7 @@ function addModule(schema, module) {
 
 export default function(definitions) {
   var schema = {
-    $schema: 'http://json-schema.org/draft-04/schema#',
+    $schema: 'http://json-schema.org/draft-06/schema#',
     title: 'Vega Visualization Specification Language',
     defs: {},
     refs: {},
@@ -53,7 +53,8 @@ export default function(definitions) {
           height: numberType,
           padding: def('padding'),
           autosize: def('autosize'),
-          background: def('background')
+          background: def('background'),
+          style: ref('style')
         }
       }
     ]

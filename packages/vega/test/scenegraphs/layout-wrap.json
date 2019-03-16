@@ -366,7 +366,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -389,7 +389,7 @@
                 }
               ],
               "x": 0,
-              "y": 226
+              "y": 225
             },
             {
               "items": [
@@ -744,7 +744,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -766,8 +766,8 @@
                   "zindex": 0
                 }
               ],
-              "x": 343,
-              "y": 226
+              "x": 342,
+              "y": 225
             },
             {
               "items": [
@@ -1122,7 +1122,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -1144,8 +1144,8 @@
                   "zindex": 0
                 }
               ],
-              "x": 686,
-              "y": 226
+              "x": 684,
+              "y": 225
             }
           ],
           "zindex": 0
@@ -2237,7 +2237,7 @@
                   "zindex": 0
                 }
               ],
-              "x": 343,
+              "x": 342,
               "y": 0,
               "width": 200,
               "height": 100,
@@ -2780,7 +2780,7 @@
                   "zindex": 0
                 }
               ],
-              "x": 686,
+              "x": 684,
               "y": 0,
               "width": 200,
               "height": 100,
@@ -3324,7 +3324,7 @@
                 }
               ],
               "x": 0,
-              "y": 125,
+              "y": 124,
               "width": 200,
               "height": 100,
               "stroke": "#ccc"
@@ -3866,8 +3866,8 @@
                   "zindex": 0
                 }
               ],
-              "x": 343,
-              "y": 125,
+              "x": 342,
+              "y": 124,
               "width": 200,
               "height": 100,
               "stroke": "#ccc"
@@ -4409,8 +4409,8 @@
                   "zindex": 0
                 }
               ],
-              "x": 686,
-              "y": 125,
+              "x": 684,
+              "y": 124,
               "width": 200,
               "height": 100,
               "stroke": "#ccc"
@@ -4484,7 +4484,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 49,
+                              "width": 48,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -4532,7 +4532,7 @@
                               ],
                               "x": 0,
                               "y": 16,
-                              "width": 49,
+                              "width": 48,
                               "height": 12.5,
                               "opacity": 1
                             }
@@ -4559,7 +4559,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Year",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -4568,10 +4570,11 @@
                   "zindex": 0
                 }
               ],
-              "x": 913,
+              "x": 910,
               "y": 0,
-              "width": 57,
-              "height": 53
+              "width": 56,
+              "height": 53,
+              "orient": "right"
             }
           ],
           "zindex": 0

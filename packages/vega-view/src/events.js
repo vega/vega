@@ -51,16 +51,12 @@ export function events(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        if (source === VIEW && prevent(view, type)) {
-          e.preventDefault();
-        }
-        try {
+        view.runAsync(null, () => {
+          if (source === VIEW && prevent(view, type)) {
+            e.preventDefault();
+          }
           s.receive(eventExtend(view, e, item));
-        } catch (error) {
-          view.error(error);
-        } finally {
-          view.run();
-        }
+        });
       },
       sources;
 

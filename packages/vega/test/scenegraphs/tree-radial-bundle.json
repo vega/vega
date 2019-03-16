@@ -44292,7 +44292,7 @@
                                       "stroke": "firebrick",
                                       "strokeWidth": 1.5,
                                       "size": 100,
-                                      "shape": "M-0.5,0H1"
+                                      "shape": "stroke"
                                     }
                                   ],
                                   "zindex": 0
@@ -44320,8 +44320,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 105,
-                              "height": 12,
+                              "width": 104,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -44340,7 +44340,7 @@
                                       "stroke": "forestgreen",
                                       "strokeWidth": 1.5,
                                       "size": 100,
-                                      "shape": "M-0.5,0H1"
+                                      "shape": "stroke"
                                     }
                                   ],
                                   "zindex": 0
@@ -44367,9 +44367,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
-                              "width": 105,
-                              "height": 12,
+                              "y": 13,
+                              "width": 104,
+                              "height": 11,
                               "opacity": 1
                             }
                           ],
@@ -44395,7 +44395,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Dependencies",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -44404,10 +44406,11 @@
                   "zindex": 0
                 }
               ],
-              "x": 596,
-              "y": 660,
-              "width": 106,
-              "height": 42
+              "x": 597,
+              "y": 662,
+              "width": 105,
+              "height": 40,
+              "orient": "bottom-right"
             }
           ],
           "zindex": 0

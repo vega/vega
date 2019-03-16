@@ -14,7 +14,10 @@ export const fontWeightEnum = [
 export const alignEnum = ['left', 'right', 'center'];
 export const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 export const anchorEnum = ['start', 'middle', 'end'];
-export const areaOrientEnum = ['horizontal', 'vertical'];
+export const orientEnum = ['left', 'right', 'top', 'bottom'];
+export const directionEnum = ['horizontal', 'vertical'];
+export const strokeCapEnum = ['butt', 'round', 'square'];
+export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
 export function valueSchema(type, nullable) {
   type = Array.isArray(type) ? {enum: type} : {type: type};
@@ -75,6 +78,7 @@ const numberModifiers = object({
 }, undefined);
 
 // defined below
+const anyValueRef = ref('anyValue');
 const arrayValueRef = ref('arrayValue');
 const booleanValueRef = ref('booleanValue');
 const colorValueRef = ref('colorValue');
@@ -107,7 +111,12 @@ const colorHCL = object({
 
 const colorValue = oneOf(
   ref('nullableStringValue'),
-  object({_gradient_: scaleRef}),
+  object({
+    _gradient_: scaleRef,
+    start: array(numberType, {minItems: 2, maxItems: 2}),
+    stop:  array(numberType, {minItems: 2, maxItems: 2}),
+    count: numberType
+  }),
   object({
     _color_: oneOf(
       ref('colorRGB'),
@@ -133,11 +142,16 @@ const encodeEntry = object({
   fill: colorValueRef,
   fillOpacity: numberValueRef,
   stroke: colorValueRef,
-  strokeWidth: numberValueRef,
   strokeOpacity: numberValueRef,
+  strokeWidth: numberValueRef,
+  strokeCap: ref('strokeCapValue'),
   strokeDash: arrayValueRef,
   strokeDashOffset: numberValueRef,
+  strokeJoin: ref('strokeJoinValue'),
+  strokeMiterLimit: numberValueRef,
   cursor: stringValueRef,
+  tooltip: anyValueRef,
+  zindex: numberValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,
@@ -161,7 +175,7 @@ const encodeEntry = object({
   // Area- and line-mark properties
   interpolate: stringValueRef,
   tension: numberValueRef,
-  orient: ref('orientValue'),
+  orient: ref('directionValue'),
 
   // Image-mark properties
   url: stringValueRef,
@@ -193,7 +207,7 @@ export default {
     scale,
     stringModifiers,
     numberModifiers,
-    value: valueSchema({}, 'value'),
+    anyValue: valueSchema(undefined),
     numberValue: valueSchema('number'),
     stringValue: valueSchema('string'),
     booleanValue: valueSchema('boolean'),
@@ -203,7 +217,10 @@ export default {
     anchorValue: valueSchema(anchorEnum),
     alignValue: valueSchema(alignEnum),
     baselineValue: valueSchema(baselineEnum),
-    orientValue: valueSchema(areaOrientEnum),
+    directionValue: valueSchema(directionEnum),
+    orientValue: valueSchema(orientEnum),
+    strokeCapValue: valueSchema(strokeCapEnum),
+    strokeJoinValue: valueSchema(strokeJoinEnum),
     colorRGB,
     colorHSL,
     colorLAB,

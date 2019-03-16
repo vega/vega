@@ -289,6 +289,12 @@ vega.<b>inrange</b>(<i>value</i>, <i>range</i>[, <i>left</i>, <i>right</i>])
 
 Returns `true` if the input *value* lies within the span of the given *range* array. The *left* and *right* boolean flags control the use of inclusive (true) or exclusive (false) comparisons; if unspecified, inclusive tests are used.
 
+<a name="lerp" href="#lerp">#</a>
+vega.<b>lerp</b>(<i>array</i>, <i>fraction</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/lerp.js "Source")
+
+Returns the linearly interpolated value between the first and last entries in the *array* for the provided interpolation *fraction* (typically between 0 and 1). For example, *lerp([0, 50], 0.5)* returns 25.
+
 <a name="merge" href="#merge">#</a>
 vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/merge.js "Source")
@@ -436,7 +442,7 @@ Truncates an input *string* to a target *length*. The optional *align* argument 
 ### Logging
 
 <a name="logger" href="#logger">#</a>
-vega.<b>logger</b>([<i>level</i>])
+vega.<b>logger</b>([<i>level</i>, <i>method</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
 Generates a new logger instance for selectively writing log messages to the JavaScript console. The optional *level* argument indicates the initial log level to use (one of [None](#none), [Warn](#warn), [Info](#info), or [Debug](#debug)), and defaults to [None](#none) if not specified.
@@ -448,6 +454,8 @@ The generated logger instance provides the following methods:
 - <b>warn</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a warning message. The messages will be written to the console using the `console.warn` method if the current log level is [Warn](#warn) or higher.
 - <b>info</b>(<i>message1</i>[, <i>message2</i>, …]): Logs an informative message. The messages will be written to the console using the `console.log` method if the current log level is [Info](#info) or higher.
 - <b>debug</b>(<i>message1</i>[, <i>message2</i>, …]): Logs a debugging message. The messages will be written to the console using the `console.log` method if the current log level is [Debug](#debug) or higher.
+
+To override the choice of console method invoked (`console.log`, `console.warn`, or `console.error`), use the optional *method* argument (one of `"log"`, `"warn"`, or `"error"`) to route all log messages through the same method.
 
 <a name="None" href="#None">#</a>
 vega.<b>None</b>

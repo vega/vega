@@ -1,66 +1,68 @@
 import {Symbols, Discrete} from './legend-types';
-import {tickValues} from './ticks';
+import {tickFormat, tickValues} from './ticks';
 
-import {Quantile, Quantize, Threshold, BinOrdinal} from 'vega-scale';
+import {
+  Quantile,
+  Quantize,
+  Threshold,
+  tickFormat as spanFormat,
+  Time
+} from 'vega-scale';
 import {peek} from 'vega-util';
 
 const symbols = {
-  [Quantile]:   quantileSymbols,
-  [Quantize]:   quantizeSymbols,
-  [Threshold]:  thresholdSymbols,
-  [BinOrdinal]: binSymbols
+  [Quantile]:  'quantiles',
+  [Quantize]:  'thresholds',
+  [Threshold]: 'domain'
+};
+
+const formats = {
+  [Quantile]:  'quantiles',
+  [Quantize]:  'domain'
 };
 
 export function labelValues(scale, count) {
-  var values = symbols[scale.type];
-  return values ? values(scale)
-    : scale.bins ? binValues(scale.bins.slice())
+  return scale.bins ? binValues(scale.bins)
+    : symbols[scale.type] ? thresholdValues(scale[symbols[scale.type]]())
     : tickValues(scale, count);
 }
 
-function quantizeSymbols(scale) {
-  var domain = scale.domain(),
-      x0 = domain[0],
-      x1 = peek(domain),
-      n = scale.range().length,
-      values = new Array(n),
-      i = 0;
+export function thresholdFormat(scale, specifier) {
+  var _ = scale[formats[scale.type]](),
+      n = _.length,
+      d = n > 1 ? _[1] - _[0] : _[0], i;
 
-  values[0] = -Infinity;
-  while (++i < n) values[i] = (i * x1 - (i - n) * x0) / n;
+  for (i=1; i<n; ++i) {
+    d = Math.min(d, _[i] - _[i-1]);
+  }
+
+  // 3 ticks times 10 for increased resolution
+  return spanFormat(0, d, 3 * 10, specifier);
+}
+
+function thresholdValues(thresholds) {
+  const values = [-Infinity].concat(thresholds);
   values.max = +Infinity;
 
   return values;
-}
-
-function quantileSymbols(scale) {
-  var values = [-Infinity].concat(scale.quantiles());
-  values.max = +Infinity;
-
-  return values;
-}
-
-function thresholdSymbols(scale) {
-  var values = [-Infinity].concat(scale.domain());
-  values.max = +Infinity;
-
-  return values;
-}
-
-function binSymbols(scale) {
-  return binValues(scale.domain());
 }
 
 function binValues(bins) {
-  bins.max = bins.pop();
-  return bins;
+  const values = bins.slice(0, -1);
+  values.max = peek(bins);
+
+  return values;
 }
 
 function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, format, type) {
+export function labelFormat(scale, count, type, specifier, formatType) {
+  const format = formats[scale.type] && formatType !== Time
+    ? thresholdFormat(scale, specifier)
+    : tickFormat(scale, count, specifier, formatType);
+
   return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
     : type === Discrete ? formatDiscrete(format)
     : formatPoint(format);

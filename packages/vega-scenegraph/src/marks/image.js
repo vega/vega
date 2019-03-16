@@ -1,6 +1,7 @@
 import {visit} from '../util/visit';
 import {pick} from '../util/canvas/pick';
 import {translate} from '../util/svg/transform';
+import {truthy} from 'vega-util';
 
 function getImage(item, renderer) {
   var image = item.image;
@@ -100,6 +101,7 @@ export default {
   bound:    bound,
   draw:     draw,
   pick:     pick(),
+  isect:    truthy, // bounds check is sufficient
   get:      getImage,
   xOffset:  imageXOffset,
   yOffset:  imageYOffset

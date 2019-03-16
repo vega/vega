@@ -57,9 +57,7 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .hover()
+new vega.View(runtimeSpec, {container: '#view', hover: true})
   .runAsync()
   .then(function(view) {
     // generate png and svg snapshots, assign to image elements

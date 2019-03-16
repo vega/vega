@@ -22,18 +22,24 @@ export type BaseValueRef<T> =
     }
   | {
       field: Field;
-    }
-  | {
-      range: number | boolean;
     };
 export type ScaledValueRef<T> =
   | BaseValueRef<T>
-  | (BaseValueRef<T> & {
+  | {
       scale: Field;
-    })
+      value: boolean | number | string | null;
+    }
+  | {
+      scale: Field;
+      field: Field;
+    }
   | {
       scale: Field;
       band: boolean | number;
+    }
+  | {
+      scale: Field;
+      range: number | boolean;
     };
 export type NumericValueRef = (ScaledValueRef<number> | {}) & {
   exponent?: number | NumericValueRef;
@@ -45,8 +51,10 @@ export type NumericValueRef = (ScaledValueRef<number> | {}) & {
 export type StringValueRef = ScaledValueRef<string>;
 export type SymbolShapeValueRef = ScaledValueRef<SymbolShape>;
 export type FontWeightValueRef = ScaledValueRef<FontWeight>;
+export type FontStyleValueRef = ScaledValueRef<FontStyle>;
 export type AlignValueRef = ScaledValueRef<Align>;
 export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
+export type OrientValueRef = ScaledValueRef<Orient>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
 export type ArrayValueRef = ScaledValueRef<any[]>;
@@ -75,6 +83,9 @@ export type ColorValueRef =
   | ScaledValueRef<string>
   | {
       gradient: Field;
+      start?: number[];
+      stop?: number[];
+      count?: number;
     }
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;
@@ -112,6 +123,7 @@ export type Align = 'left' | 'center' | 'right';
 export interface AlignProperty {
   align?: ProductionRule<ScaledValueRef<Align>>;
 }
+export type Orient = 'left' | 'right' | 'top' | 'bottom';
 export interface DefinedProperty {
   defined?: ProductionRule<BooleanValueRef>;
 }
@@ -185,10 +197,15 @@ export type SymbolShape =
   | 'triangle-down'
   | 'triangle-right'
   | 'triangle-left'
+  | 'arrow'
+  | 'triangle'
+  | 'wedge'
+  | 'stroke'
   | string;
 export interface SymbolEncodeEntry extends EncodeEntry {
   size?: ProductionRule<NumericValueRef>;
   shape?: ProductionRule<ScaledValueRef<SymbolShape>>;
+  angle?: ProductionRule<NumericValueRef>;
 }
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';
@@ -206,7 +223,9 @@ export type FontWeight =
   | 700
   | 800
   | 900;
-export type FontStyle = 'normal' | 'italic';
+
+// see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
+export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
   text?: ProductionRule<StringValueRef>;
   angle?: ProductionRule<NumericValueRef>;
@@ -222,7 +241,7 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
   limit?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
 }
-export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty, ThetaProperty {}
+export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty {}
 export interface Encodable<T> {
   encode?: Encode<T>;
 }

@@ -11,7 +11,7 @@ A gallery of world maps using various [cartographic projections](../../docs/proj
 This example uses projections from the [d3-geo-projection](https://github.com/d3/d3-geo-projection) library that are not included in the standard Vega release. To register extended projections with Vega, simply import the [vega-projection-extended](https://github.com/vega/vega-projection-extended) library:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.1"></script>
 ```
 
 <br/>

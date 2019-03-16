@@ -34,7 +34,11 @@ export function parseScale(spec, scope) {
   }
 
   if (spec.nice != null) {
-    parseScaleNice(spec.nice, params);
+    params.nice = parseScaleNice(spec.nice);
+  }
+
+  if (spec.bins != null) {
+    params.bins = parseScaleBins(spec.bins, scope);
   }
 
   for (key in spec) {
@@ -52,7 +56,7 @@ function parseLiteral(v, scope) {
 function parseArray(v, scope) {
   return v.signal
     ? scope.signalRef(v.signal)
-    : v.map(function(v) { return parseLiteral(v, scope); });
+    : v.map(v => parseLiteral(v, scope));
 }
 
 function dataLookupError(name) {
@@ -190,10 +194,18 @@ function numericMultipleDomain(domain, scope, fields) {
   return ref(scope.add(MultiExtent({extents: extents})));
 }
 
+// -- SCALE BINS -----
+
+function parseScaleBins(v, scope) {
+  return v.signal || isArray(v)
+    ? parseArray(v, scope)
+    : scope.objectProperty(v);
+}
+
 // -- SCALE NICE -----
 
-function parseScaleNice(nice, params) {
-  params.nice = isObject(nice)
+function parseScaleNice(nice) {
+  return isObject(nice)
     ? {
         interval: parseLiteral(nice.interval),
         step: parseLiteral(nice.step)
@@ -247,7 +259,5 @@ function parseScaleRange(spec, scope, params) {
     error('Unsupported range type: ' + stringValue(range));
   }
 
-  return range.map(function(v) {
-    return parseLiteral(v, scope);
-  });
+  return range.map(v => (isArray(v) ? parseArray : parseLiteral)(v, scope));
 }

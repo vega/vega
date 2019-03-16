@@ -32,8 +32,9 @@ prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       ticks = this.value,
       scale = _.scale,
-      count = _.count == null ? (_.values ? _.values.length : 10) : tickCount(scale, _.count),
-      format = _.format || tickFormat(scale, count, _.formatSpecifier),
+      tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
+      count = tickCount(scale, tally, _.minstep),
+      format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType),
       values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;

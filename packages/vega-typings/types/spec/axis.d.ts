@@ -1,29 +1,32 @@
 import {
   GroupEncodeEntry,
   GuideEncodeEntry,
-  TimeInterval,
-  NumericValueRef,
   RuleEncodeEntry,
   SignalRef,
   TextEncodeEntry,
+  TimeInterval,
 } from '.';
-import { FontWeight, Align, TextBaseline, ArrayValueRef } from './encode';
+import { LayoutAlign } from './layout';
 import {
+  AlignValue,
+  AnchorValue,
+  BooleanValue,
+  ColorValue,
+  DashArrayValue,
+  FontStyleValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  ColorValue,
-  FontWeightValue,
-  AlignValue,
   TextBaselineValue,
-  SymbolShapeValue,
-  BooleanValue,
-  DashArrayValue,
 } from './values';
-import { LayoutAlign } from './layout';
 
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
 export type LabelOverlap = boolean | 'parity' | 'greedy';
+
+export type TickCount = number | TimeInterval | SignalRef;
+
+export type FormatType = 'number' | 'time';
 
 export interface Axis extends BaseAxis {
   /**
@@ -49,6 +52,11 @@ export interface Axis extends BaseAxis {
   format?: string | SignalRef;
 
   /**
+   * The format type for axis labels (number or time).
+   */
+  formatType?: FormatType | SignalRef;
+
+  /**
    * A title for the axis (none by default).
    */
   title?: StringValue;
@@ -72,7 +80,12 @@ export interface Axis extends BaseAxis {
    *
    * @minimum 0
    */
-  tickCount?: number | TimeInterval | SignalRef;
+  tickCount?: TickCount;
+
+  /**
+   * The minimum desired step between axis ticks, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value.
+   */
+  tickMinStep?: number | SignalRef;
 
   /**
    * Explicitly set the visible axis tick and label values.
@@ -128,11 +141,13 @@ export interface BaseAxis<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  DA = DashArrayValue
+  DA = DashArrayValue,
+  AN = AnchorValue
 > {
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
@@ -165,6 +180,11 @@ export interface BaseAxis<
    * Horizontal text alignment of axis titles.
    */
   titleAlign?: A;
+
+  /**
+   * Text anchor position for placing axis titles.
+   */
+  titleAnchor?: AN;
 
   /**
    * Angle in degrees of axis titles.
@@ -204,6 +224,11 @@ export interface BaseAxis<
   titleFontSize?: N;
 
   /**
+   * Font style of the title.
+   */
+  titleFontStyle?: FS;
+
+  /**
    * Font weight of the title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
@@ -228,6 +253,16 @@ export interface BaseAxis<
    * __Default value:__ `true`
    */
   domain?: boolean;
+
+  /**
+   * An array of alternating [stroke, space] lengths for dashed domain lines.
+   */
+  domainDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the domain dash array.
+   */
+  domainDashOffset?: N;
 
   /**
    * Color of axis domain line.
@@ -264,7 +299,17 @@ export interface BaseAxis<
   tickColor?: C;
 
   /**
-   * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`.
+   * An array of alternating [stroke, space] lengths for dashed tick mark lines.
+   */
+  tickDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the tick mark dash array.
+   */
+  tickDashOffset?: N;
+
+  /**
+   * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPosition": 1` and an axis `"padding"` value of `0`.
    */
   tickExtra?: B;
 
@@ -315,9 +360,14 @@ export interface BaseAxis<
   gridColor?: C;
 
   /**
-   * The offset (in pixels) into which to begin drawing with the grid dash array.
+   * An array of alternating [stroke, space] lengths for dashed grid lines.
    */
   gridDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the grid dash array.
+   */
+  gridDashOffset?: N;
 
   /**
    * The stroke opacity of grid (value between [0,1])
@@ -379,6 +429,11 @@ export interface BaseAxis<
   labelOverlap?: LO;
 
   /**
+   * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
+   */
+  labelSeparation?: NS;
+
+  /**
    * The rotation angle of the axis labels.
    *
    * __Default value:__ `-90` for nominal and ordinal fields; `0` otherwise.
@@ -404,6 +459,11 @@ export interface BaseAxis<
    * @minimum 0
    */
   labelFontSize?: N;
+
+  /**
+   * Font style of the title.
+   */
+  labelFontStyle?: FS;
 
   /**
    * Font weight of axis tick labels.

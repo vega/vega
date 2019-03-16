@@ -1,35 +1,46 @@
 var tape = require('tape'),
     vega = require('../'), // eslint-disable-line no-unused-vars
-    tv4 = require('tv4'),
+    ajv = require('ajv'),
     fs = require('fs'),
     schema = require('../build/vega-schema.json'),
     validSpecs = require('./specs-valid.json'),
     invalidSpecs = require('./specs-invalid.json');
 
-function validate(spec) {
-  return tv4.validate(spec, schema);
-}
+var validator = new ajv({
+    allErrors: true,
+    verbose: true,
+    extendRefs: 'fail'
+  })
+  .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-tape('JSON schema recognizes valid specifications', function(test) {
-  var dir = process.cwd() + '/test/specs-valid/';
-  validSpecs.forEach(function(file) {
-    var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json'));
-    test.ok(validate(spec), 'valid schema: ' + file);
-    if (tv4.error) console.log(tv4.error); // eslint-disable-line no-console
-  });
+var validate = validator.compile(schema);
 
-  test.end();
+tape('JSON schema is valid', function(t) {
+  t.ok(validator.validateSchema(schema));
+  t.end();
 });
 
-tape('JSON schema recognizes invalid specifications', function(test) {
+tape('JSON schema recognizes valid specifications', function(t) {
+  var dir = process.cwd() + '/test/specs-valid/';
+  validSpecs.forEach(function(file) {
+    var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
+        valid = validate(spec);
+    t.ok(valid, 'valid schema: ' + file);
+    if (!valid) console.log(validate.errors); // eslint-disable-line no-console
+  });
+
+  t.end();
+});
+
+tape('JSON schema recognizes invalid specifications', function(t) {
   var dir = process.cwd() + '/test/specs-invalid/';
   invalidSpecs.forEach(function(file) {
     var specs = JSON.parse(fs.readFileSync(dir + file + '.json'));
     specs.forEach(function(spec, index) {
-      test.notOk(validate(spec),
+      t.notOk(validate(spec),
         'invalid schema (' + index + '): ' + file);
     });
   });
 
-  test.end();
+  t.end();
 });

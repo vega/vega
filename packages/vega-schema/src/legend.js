@@ -1,18 +1,18 @@
 import {layoutAlign} from './layout';
 
 import {
-  numberValue, stringValue, colorValue,
-  alignValue, baselineValue, fontWeightValue,
-  numberOrSignal, stringOrSignal, arrayOrSignal,
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
-  numberType, stringType
+  alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
+  fontWeightValue, numberValue, orientValue, stringValue,
+  numberOrSignal, stringOrSignal, arrayOrSignal,
+  formatType, numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
 const styleRef = ref('style');
 const labelOverlapRef = ref('labelOverlap');
-const tickCountRef = ref('tickCountRef');
+const tickCountRef = ref('tickCount');
 
 const guideEncodeRef = def('guideEncode');
 const guideEncode = pattern(
@@ -42,6 +42,7 @@ const legendOrientEnum = [
 ];
 
 const legendProps = object({
+  // LEGEND SCALES
   size:        stringType,
   shape:       stringType,
   fill:        stringType,
@@ -49,13 +50,15 @@ const legendProps = object({
   opacity:     stringType,
   strokeDash:  stringType,
   strokeWidth: stringType,
-  type: enums(legendTypeEnum),
-  direction: enums(legendDirectionEnum),
-  orient: enums(legendOrientEnum, {default: 'right'}),
 
-  format: stringOrSignal,
-  title: stringOrSignal,
+  // LEGEND TYPE
+  type:        enums(legendTypeEnum),
+  direction:   enums(legendDirectionEnum),
+  orient:      orSignal(enums(legendOrientEnum, {default: 'right'})),
+
+  // LEGEND CONFIG
   tickCount: tickCountRef,
+  tickMinStep: numberOrSignal,
   values: arrayOrSignal,
   zindex: numberType,
 
@@ -67,14 +70,18 @@ const legendProps = object({
   strokeColor: colorValue,
 
   // LEGEND TITLE CONFIG
+  title: stringOrSignal,
   titleAlign: alignValue,
+  titleAnchor: anchorValue,
   titleBaseline: baselineValue,
   titleColor: colorValue,
   titleFont: stringValue,
   titleFontSize: numberValue,
+  titleFontStyle: stringValue,
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
   titleOpacity: numberValue,
+  titleOrient: orientValue,
   titlePadding: numberValue,
 
   // GRADIENT CONFIG
@@ -92,6 +99,8 @@ const legendProps = object({
   gridAlign: layoutAlign,
 
   // SYMBOL CONFIG
+  symbolDash: dashArrayValue,
+  symbolDashOffset: numberValue,
   symbolFillColor: colorValue,
   symbolOffset: numberValue,
   symbolOpacity: numberValue,
@@ -101,11 +110,14 @@ const legendProps = object({
   symbolType: stringValue,
 
   // LABEL CONFIG
+  format: stringOrSignal,
+  formatType: orSignal(formatType),
   labelAlign: alignValue,
   labelBaseline: baselineValue,
   labelColor: colorValue,
   labelFont: stringValue,
   labelFontSize: numberValue,
+  labelFontStyle: stringValue,
   labelFontWeight: fontWeightValue,
   labelLimit: numberValue,
   labelOffset: numberValue,
@@ -132,7 +144,8 @@ const legend = allOf(
     required('fill'),
     required('stroke'),
     required('opacity'),
-    required('strokeDash')
+    required('strokeDash'),
+    required('strokeWidth')
   )
 );
 

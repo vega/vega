@@ -13,15 +13,18 @@ import {
   isInterpolating,
   isLogarithmic,
   bandSpace,
+  interpolateColors,
   interpolateRange,
   interpolate as getInterpolate,
   scale as getScale,
   scheme as getScheme,
-  scaleImplicit
+  scaleImplicit,
+  quantizeInterpolator
 } from 'vega-scale';
 
+import {range as sequence} from 'd3-array';
+
 import {
-  piecewise,
   interpolate,
   interpolateRound
 } from 'd3-interpolate';
@@ -76,13 +79,9 @@ prototype.transform = function(_, pulse) {
       : df.warn('Unsupported scale property: ' + key);
   }
 
-  configureRange(scale, _, configureDomain(scale, _, df));
-
-  if (_.bins) {
-    scale.bins = _.bins;
-  } else if (scale.bins) {
-    delete scale.bins;
-  }
+  configureRange(scale, _,
+    configureBins(scale, _, configureDomain(scale, _, df))
+  );
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
@@ -205,6 +204,44 @@ function domainCheck(type, domain, df) {
   return domain;
 }
 
+function configureBins(scale, _, count) {
+  let bins = _.bins;
+
+  if (bins && !isArray(bins)) {
+    // generate bin boundary array
+    const domain = (bins.start == null || bins.stop == null) && scale.domain(),
+          start = bins.start == null ? domain[0] : bins.start,
+          stop = bins.stop == null ? peek(domain) : bins.stop,
+          step = bins.step;
+
+    if (!step) error('Scale bins parameter missing step property.');
+    bins = sequence(start, stop + step, step);
+  }
+
+  if (bins) {
+    // assign bin boundaries to scale instance
+    scale.bins = bins;
+  } else if (scale.bins) {
+    // no current bins, remove bins if previously set
+    delete scale.bins;
+  }
+
+  // special handling for bin-ordinal scales
+  if (scale.type === BinOrdinal) {
+    if (!bins) {
+      // the domain specifies the bins
+      scale.bins = scale.domain();
+    } else if (!_.domain && !_.domainRaw) {
+      // the bins specify the domain
+      scale.domain(bins);
+      count = bins.length;
+    }
+  }
+
+  // return domain cardinality
+  return count;
+}
+
 function configureRange(scale, _, count) {
   var round = _.round || false,
       range = _.range;
@@ -222,7 +259,9 @@ function configureRange(scale, _, count) {
 
   // given a range array for an interpolating scale, convert to interpolator
   else if (range && isInterpolating(scale.type)) {
-    return scale.interpolator(interpolateColors(_, flip(range, _.reverse)));
+    return scale.interpolator(
+      interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
+    );
   }
 
   // configure rounding / interpolation
@@ -251,10 +290,10 @@ function configureRangeStep(type, _, count) {
 
 function configureScheme(type, _, count) {
   var extent = _.schemeExtent,
-      name, scheme, discrete;
+      name, scheme;
 
   if (isArray(_.scheme)) {
-    scheme = interpolateColors(_, _.scheme);
+    scheme = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
   } else {
     name = _.scheme.toLowerCase();
     scheme = getScheme(name);
@@ -269,16 +308,8 @@ function configureScheme(type, _, count) {
 
   // adjust and/or quantize scheme as appropriate
   return isInterpolating(type) ? adjustScheme(scheme, extent, _.reverse)
-    : !extent && (discrete = getScheme(name + '-' + count)) ? discrete
-    : isFunction(scheme) ? quantize(adjustScheme(scheme, extent), count)
+    : isFunction(scheme) ? quantizeInterpolator(adjustScheme(scheme, extent), count)
     : type === Ordinal ? scheme : scheme.slice(0, count);
-}
-
-function interpolateColors(_, colors) {
-  return piecewise(
-    getInterpolate(_.interpolate || 'rgb', _.interpolateGamma),
-    colors
-  );
 }
 
 function adjustScheme(scheme, extent, reverse) {
@@ -291,9 +322,3 @@ function flip(array, reverse) {
   return reverse ? array.slice().reverse() : array;
 }
 
-function quantize(interpolator, count) {
-  var samples = new Array(count),
-      n = count + 1;
-  for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
-  return samples;
-}

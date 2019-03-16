@@ -5,7 +5,7 @@ var tape = require('tape'),
     tx = require('../'),
     Sequence = tx.sequence;
 
-tape('Sequence generates sequences', function(test) {
+tape('Sequence generates sequences', function(t) {
   var df = new vega.Dataflow(),
       start = df.add(0),
       stop = df.add(11),
@@ -15,24 +15,24 @@ tape('Sequence generates sequences', function(test) {
 
   // -- initial run
   df.run();
-  test.equal(s.value.length, 11);
-  test.deepEqual(s.value.map(field('data')), range(0, 11));
-  test.deepEqual(s.pulse.add.map(field('data')), range(0, 11));
-  test.deepEqual(s.pulse.rem, []);
+  t.equal(s.value.length, 11);
+  t.deepEqual(s.value.map(field('data')), range(0, 11));
+  t.deepEqual(s.pulse.add.map(field('data')), range(0, 11));
+  t.deepEqual(s.pulse.rem, []);
 
   // -- set step size
   df.update(step, 2).run();
-  test.equal(s.value.length, 6);
-  test.deepEqual(s.value.map(field('data')), range(0, 11, 2));
-  test.deepEqual(s.pulse.add.map(field('data')), range(0, 11, 2));
-  test.deepEqual(s.pulse.rem.map(field('data')), range(0, 11));
+  t.equal(s.value.length, 6);
+  t.deepEqual(s.value.map(field('data')), range(0, 11, 2));
+  t.deepEqual(s.pulse.add.map(field('data')), range(0, 11, 2));
+  t.deepEqual(s.pulse.rem.map(field('data')), range(0, 11));
 
   // -- set output field name
   df.update(as, 'foo').run();
-  test.equal(s.value.length, 6);
-  test.deepEqual(s.value.map(field('foo')), range(0, 11, 2));
-  test.deepEqual(s.pulse.add.map(field('foo')), range(0, 11, 2));
-  test.deepEqual(s.pulse.rem.map(field('data')), range(0, 11, 2));
+  t.equal(s.value.length, 6);
+  t.deepEqual(s.value.map(field('foo')), range(0, 11, 2));
+  t.deepEqual(s.pulse.add.map(field('foo')), range(0, 11, 2));
+  t.deepEqual(s.pulse.rem.map(field('data')), range(0, 11, 2));
 
-  test.end();
+  t.end();
 });

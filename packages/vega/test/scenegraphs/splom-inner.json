@@ -22506,7 +22506,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -22555,7 +22555,7 @@
                               ],
                               "x": 0,
                               "y": 16,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -22604,7 +22604,7 @@
                               ],
                               "x": 0,
                               "y": 32,
-                              "width": 97,
+                              "width": 96,
                               "height": 12.5,
                               "opacity": 1
                             }
@@ -22631,7 +22631,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Species",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -22642,8 +22644,9 @@
               ],
               "x": 600,
               "y": 0,
-              "width": 97,
-              "height": 61
+              "width": 96,
+              "height": 61,
+              "orient": "right"
             }
           ],
           "zindex": 0

@@ -1,24 +1,24 @@
-import {Index, Label, Perc, Value, GuideLabelStyle} from './constants';
+import {
+  Index, Label, Perc, Value, GuideLabelStyle, zero, one,
+  Top, Bottom, Left, Right, Center, Middle
+} from './constants';
 import guideMark from './guide-mark';
-import {gradientLength, gradientThickness, isVertical, lookup} from './guide-util';
+import {lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
-import {addEncode, encoder} from '../encode/encode-util';
+import {addEncoders, encoder} from '../encode/encode-util';
 import {value} from '../../util';
 
-var alignExpr = 'datum.' + Perc + '<=0?"left"'
-  + ':datum.' + Perc + '>=1?"right":"center"';
-
-var baselineExpr = 'datum.' + Perc + '<=0?"bottom"'
-  + ':datum.' + Perc + '>=1?"top":"middle"';
+const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,
+      baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  var zero = {value: 0},
-      vertical = isVertical(spec, config.gradientDirection),
-      thickness = encoder(gradientThickness(spec, config)),
-      length = gradientLength(spec, config),
-      overlap = lookup('labelOverlap', spec, config),
-      separation = lookup('labelSeparation', spec, config),
+  var _ = lookup(spec, config),
+      vertical = _.isVertical(),
+      thickness = encoder(_.gradientThickness()),
+      length = _.gradientLength(),
+      overlap = _('labelOverlap'),
+      separation = _('labelSeparation'),
       encode, enter, update, u, v, adjust = '';
 
   encode = {
@@ -26,19 +26,23 @@ export default function(spec, config, userEncode, dataRef) {
       opacity: zero
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       text: {field: Label}
     },
     exit: {
       opacity: zero
     }
   };
-  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
-  addEncode(encode, 'font',        lookup('labelFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
-  addEncode(encode, 'limit',       value(spec.labelLimit, config.gradientLabelLimit));
+
+  addEncoders(encode, {
+    fill:        _('labelColor'),
+    fillOpacity: _('labelOpacity'),
+    font:        _('labelFont'),
+    fontSize:    _('labelFontSize'),
+    fontStyle:   _('labelFontStyle'),
+    fontWeight:  _('labelFontWeight'),
+    limit:       value(spec.labelLimit, config.gradientLabelLimit)
+  });
 
   if (vertical) {
     enter.align = {value: 'left'};

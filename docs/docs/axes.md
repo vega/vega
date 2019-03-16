@@ -16,14 +16,18 @@ Properties for specifying a coordinate axis.
 | orient        | {% include type t="String" %}  | {% include required %} The orientation of the axis. See the [axis orientation reference](#orientation).|
 | bandPosition  | {% include type t="Number" %}  | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain        | {% include type t="Boolean" %} | A boolean flag indicating if the domain (the axis baseline) should be included as part of the axis (default `true`).|
+| domainDash    | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| domainDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
 | domainColor   | {% include type t="Color" %}   | Color of axis domain line. |
 | domainOpacity | {% include type t="Number" %}  | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth   | {% include type t="Number" %}  | Stroke width of axis domain line. |
-| encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom).|
-| format        | {% include type t="String" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.|
-| grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`).|
+| encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom). |
+| format        | {% include type t="String" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier. |
+| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type. {% include tag ver="5.1" %} |
+| grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`). |
 | gridColor     | {% include type t="Color" %}   | Color of axis grid lines. |
 | gridDash      | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
+| gridDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
 | gridOpacity   | {% include type t="Number" %}  | Opacity of axis grid lines. |
 | gridScale     | {% include type t="String" %}  | The name of the scale to use for including grid lines. By default grid lines are driven by the same scale as the ticks and labels.|
 | gridWidth     | {% include type t="Number" %}  | Stroke width of axis grid lines. |
@@ -37,12 +41,13 @@ Properties for specifying a coordinate axis.
 | labelFlushOffset | {% include type t="Number" %} | Indicates the number of pixels by which to offset flush-adjusted labels (default `0`). For example, a value of `2` will push flush-adjusted labels 2 pixels outward from the center of the axis. Offsets can help the labels better visually group with corresponding axis ticks.|
 | labelFont     | {% include type t="String" %}  | Font name for axis tick labels. |
 | labelFontSize | {% include type t="Number" %}  | Font size of axis tick labels. |
+| labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of axis tick labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of axis tick labels. |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelPadding  | {% include type t="Number" %}  | The padding in pixels between labels and ticks.|
-|labelSeparation| {% include type t="Number" %}  | {% include tag ver="5.0" %} The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.|
+|labelSeparation| {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | minExtent     | {% include type t="Number|Value" %} | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.|
 | maxExtent     | {% include type t="Number|Value" %} | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles.|
 | offset        | {% include type t="Number|Value" %} | The orthogonal offset in pixels by which to displace the axis from its position along the edge of the chart.|
@@ -50,19 +55,24 @@ Properties for specifying a coordinate axis.
 | ticks         | {% include type t="Boolean" %} | A boolean flag indicating if ticks should be included as part of the axis (default `true`).|
 | tickColor     | {% include type t="Color" %}   | Color of axis ticks. |
 | tickCount     | {% include type t="Number|String|Object" %}  | A desired number of ticks, for axes visualizing quantitative scales. The resulting number may be different so that values are "nice" (multiples of 2, 5, 10) and lie within the underlying scale's range. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
-| tickExtra     | {% include type t="Boolean" %} | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPostion": 1` and an axis `"padding"` value of `0`. |
+| tickDash      | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| tickDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the tick mark dash array. {% include tag ver="5.0" %} |
+| tickMinStep   | {% include type t="Number" %}  | The minimum desired step between axis ticks, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value. {% include tag ver="5.0" %} |
+| tickExtra     | {% include type t="Boolean" %} | Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPosition": 1` and an axis `"padding"` value of `0`. |
 | tickOffset    | {% include type t="Number" %}  | Position offset in pixels to apply to ticks, labels, and gridlines. |
 | tickOpacity   | {% include type t="Number" %}  | Opacity of axis ticks. {% include tag ver="4.1" %} |
 | tickRound     | {% include type t="Boolean" %} | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize      | {% include type t="Number" %}  | The length in pixels of axis ticks.|
 | tickWidth     | {% include type t="Number" %}  | Width in pixels of axis ticks. |
 | title         | {% include type t="String" %}  | A title for the axis (none by default).|
-| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of axis title. |
-| titleAngle    | {% include type t="Number" %}  | Angle in degrees of axis title. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline for axis title. |
-| titleColor    | {% include type t="Color" %}   | Text color of axis title. |
-| titleFont     | {% include type t="String" %}  | Font name for axis title. |
-| titleFontSize | {% include type t="Number" %}  | Font size of axis title. |
+| titleAnchor   | {% include type t="String" %}  | The anchor position for placing the axis title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
+| titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
+| titleAngle    | {% include type t="Number" %}  | Angle in degrees of the axis title. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the axis title. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. |
+| titleColor    | {% include type t="Color" %}   | Text color of the axis title. |
+| titleFont     | {% include type t="String" %}  | Font name of the axis title. |
+| titleFontSize | {% include type t="Number" %}  | Font size of the axis title. |
+| titleFontStyle  | {% include type t="String" %} | Font style of the axis title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of axis title. |
 | titleLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of the axis title. |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of axis title. {% include tag ver="4.1" %} |

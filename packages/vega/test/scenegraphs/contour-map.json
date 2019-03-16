@@ -30689,61 +30689,61 @@
                   "clip": false,
                   "items": [
                     {
-                      "fill": "#440154",
+                      "fill": "rgb(68, 1, 84)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#482878",
+                      "fill": "rgb(72, 40, 120)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#3e4989",
+                      "fill": "rgb(62, 75, 137)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#31688e",
+                      "fill": "rgb(49, 104, 142)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#26828e",
+                      "fill": "rgb(38, 131, 142)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#1f9e89",
+                      "fill": "rgb(31, 157, 137)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#35b779",
+                      "fill": "rgb(53, 183, 121)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#6ece58",
+                      "fill": "rgb(109, 206, 89)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#b5de2b",
+                      "fill": "rgb(180, 222, 44)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1
                     },
                     {
-                      "fill": "#fde725",
+                      "fill": "rgb(253, 231, 37)",
                       "fillOpacity": 0.3,
                       "stroke": "firebrick",
                       "strokeWidth": 1

@@ -10,24 +10,25 @@ import {
   RangeScheme,
   SymbolShape,
   TextBaseline,
-  TitleAnchor,
-  TitleOrient,
 } from '.';
 import { BaseAxis, LabelOverlap } from './axis';
-import { BaseLegend } from './legend';
-import {
-  NumberValue,
-  StringValue,
-  ColorValue,
-  FontWeightValue,
-  AlignValue,
-  TextBaselineValue,
-  SymbolShapeValue,
-  BooleanValue,
-} from './values';
+import { LayoutAlign, LayoutBounds } from './layout';
+import { BaseLegend, LegendOrient } from './legend';
 import { SignalRef } from './signal';
-import { LayoutAlign } from './layout';
-import { BaseTitle } from './title';
+import { BaseTitle, TitleAnchor } from './title';
+import {
+  AlignValue,
+  AnchorValue,
+  ColorValue,
+  DashArrayValue,
+  FontStyleValue,
+  FontWeightValue,
+  NumberValue,
+  OrientValue,
+  StringValue,
+  SymbolShapeValue,
+  TextBaselineValue,
+} from './values';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -342,12 +343,17 @@ export interface LegendConfig<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  SY = SymbolShapeValue
-> extends BaseLegend<N, NS, S, C, FW, A, TB, LA, LO, SY> {
+  SY = SymbolShapeValue,
+  DA = DashArrayValue,
+  O = OrientValue,
+  AN = AnchorValue,
+  LOR = LegendOrient | SignalRef
+> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN, LOR> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -392,6 +398,65 @@ export interface LegendConfig<
    * Border stroke dash pattern for the full legend.
    */
   strokeDash?: number[];
+
+  /**
+   * Border stroke width for the full legend.
+   */
+  strokeWidth?: N;
+
+  /**
+   * Legend orient group layout parameters.
+   */
+  layout?: LegendLayout;
+}
+
+export interface BaseLegendLayout<
+  NS = number | SignalRef,
+  BS = boolean | SignalRef,
+  OS = Orientation | SignalRef,
+  LB = LayoutBounds,
+  AN = TitleAnchor
+> {
+  /**
+   * The anchor point for legend orient group layout.
+   */
+  anchor?: AN;
+
+  /**
+   * The bounds calculation to use for legend orient group layout.
+   */
+  bounds?: LB;
+
+  /**
+   * A flag to center legends within a shared orient group.
+   */
+  center?: BS;
+
+  /**
+   * The layout direction for legend orient group layout.
+   */
+  direction?: OS;
+
+  /**
+   * The pixel margin between legends within a orient group.
+   */
+  margin?: NS;
+
+  /**
+   * The pixel offset from the chart body for a legend orient group.
+   */
+  offset?: NS;
+}
+
+export interface LegendLayout extends BaseLegendLayout {
+  left?: BaseLegendLayout;
+  right?: BaseLegendLayout;
+  top?: BaseLegendLayout;
+  bottom?: BaseLegendLayout;
+  'top-left'?: BaseLegendLayout;
+  'top-right'?: BaseLegendLayout;
+  'bottom-left'?: BaseLegendLayout;
+  'bottom-right'?: BaseLegendLayout;
 }
 
 export type TitleConfig = BaseTitle;

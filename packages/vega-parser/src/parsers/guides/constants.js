@@ -1,34 +1,34 @@
-export var Top = 'top';
-export var Left = 'left';
-export var Right = 'right';
-export var Bottom = 'bottom';
-export var Center = 'center';
+export const Top = 'top';
+export const Left = 'left';
+export const Right = 'right';
+export const Bottom = 'bottom';
+export const Center = 'center';
 
-export var Vertical = 'vertical';
+export const Vertical = 'vertical';
 
-export var Start = 'start';
-export var Middle = 'middle';
-export var End = 'end';
+export const Start = 'start';
+export const Middle = 'middle';
+export const End = 'end';
 
-export var Index  = 'index';
-export var Label  = 'label';
-export var Offset = 'offset';
-export var Perc   = 'perc';
-export var Perc2  = 'perc2';
-export var Size   = 'size';
-export var Value  = 'value';
+export const Index  = 'index';
+export const Label  = 'label';
+export const Offset = 'offset';
+export const Perc   = 'perc';
+export const Perc2  = 'perc2';
+export const Size   = 'size';
+export const Value  = 'value';
 
-export var GuideLabelStyle = 'guide-label';
-export var GuideTitleStyle = 'guide-title';
-export var GroupTitleStyle = 'group-title';
+export const GuideLabelStyle = 'guide-label';
+export const GuideTitleStyle = 'guide-title';
+export const GroupTitleStyle = 'group-title';
 
-export var Symbols = 'symbol';
-export var Gradient = 'gradient';
-export var Discrete = 'discrete';
+export const Symbols = 'symbol';
+export const Gradient = 'gradient';
+export const Discrete = 'discrete';
 
 // Encoding channels supported by legends
 // In priority order of 'canonical' scale
-export var LegendScales = [
+export const LegendScales = [
   'size',
   'shape',
   'fill',
@@ -38,7 +38,10 @@ export var LegendScales = [
   'opacity'
 ];
 
-export var Skip = {
+export const Skip = {
   name: 1,
   interactive: 1
 };
+
+export const zero = {value: 0};
+export const one = {value: 1};

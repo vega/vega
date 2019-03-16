@@ -42,50 +42,49 @@ function onStream(df, stream, target, update, params, options) {
   if (!isFunction(target)) target = constant(target);
 
   if (update === undefined) {
-    func = function(e) {
-      df.touch(target(e));
-    };
+    func = e => df.touch(target(e));
   } else if (isFunction(update)) {
     op = new Operator(null, update, params, false);
-    func = function(e) {
-      var v, t = target(e);
+    func = e => {
       op.evaluate(e);
-      isChangeSet(v = op.value) ? df.pulse(t, v, options) : df.update(t, v, opt);
+      const t = target(e), v = op.value;
+      isChangeSet(v) ? df.pulse(t, v, options) : df.update(t, v, opt);
     };
   } else {
-    func = function(e) {
-      df.update(target(e), update, opt);
-    };
+    func = e => df.update(target(e), update, opt);
   }
 
   stream.apply(func);
 }
 
 function onOperator(df, source, target, update, params, options) {
-  var func, op;
-
   if (update === undefined) {
-    op = target;
+    source.targets().add(target);
   } else {
-    func = isFunction(update) ? update : constant(update);
-    update = !target ? func : function(_, pulse) {
-      var value = func(_, pulse);
-      if (!target.skip()) {
-        target.skip(value !== this.value).value = value;
-      }
-      return value;
-    };
-
-    op = new Operator(null, update, params, false);
-    op.modified(options && options.force);
-    op.rank = 0;
+    const opt = options || {},
+          op = new Operator(null, updater(target, update), params, false);
+    op.modified(opt.force);
+    op.rank = source.rank;       // immediately follow source
+    source.targets().add(op);    // add dependency
 
     if (target) {
-      op.skip(true); // skip first invocation
-      op.value = target.value;
-      op.targets().add(target);
+      op.skip(true);             // skip first invocation
+      op.value = target.value;   // initialize value
+      op.targets().add(target);  // chain dependencies
+      df.connect(target, [op]);  // rerank as needed, #1672
     }
   }
+}
 
-  source.targets().add(op);
+function updater(target, update) {
+  update = isFunction(update) ? update : constant(update);
+  return target
+    ? function(_, pulse) {
+        const value = update(_, pulse);
+        if (!target.skip()) {
+          target.skip(value !== this.value).value = value;
+        }
+        return value;
+      }
+    : update;
 }

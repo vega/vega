@@ -86,10 +86,10 @@ export default function(spec, scope) {
   // add view layout operator if needed
   if (facet || layout) {
     layout = scope.add(ViewLayout({
-      layout:       scope.objectProperty(spec.layout),
-      legendMargin: scope.config.legendMargin,
-      mark:         markRef,
-      pulse:        encodeRef
+      layout:   scope.objectProperty(spec.layout),
+      legends:  scope.legends,
+      mark:     markRef,
+      pulse:    encodeRef
     }));
     layoutRef = ref(layout);
   }

@@ -11,7 +11,7 @@ export function rank(op) {
 
 /**
  * Re-ranks an operator and all downstream target dependencies. This
- * is necessary when upstream depencies of higher rank are added to
+ * is necessary when upstream dependencies of higher rank are added to
  * a target operator.
  * @param {Operator} op - The operator to re-rank.
  */

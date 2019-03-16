@@ -1,5 +1,5 @@
 import * as Encode from './encode';
-import { SortOrder, Scope, SignalRef, Transform, OnMarkTrigger } from '.';
+import { SortOrder, Scope, SignalRef, Transforms, OnMarkTrigger } from '.';
 
 export type Facet =
   | {
@@ -52,7 +52,7 @@ export interface BaseMark {
   sort?: Compare;
   interactive?: boolean | SignalRef;
   from?: From;
-  transform?: Transform[];
+  transform?: Transforms[];
   zindex?: number;
   on?: OnMarkTrigger[];
   style?: string | string[];

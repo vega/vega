@@ -610,9 +610,9 @@
                   "items": [
                     {
                       "x": 800,
-                      "y": -14,
+                      "y": -5,
                       "align": "right",
-                      "baseline": "top",
+                      "baseline": "bottom",
                       "fill": "#444",
                       "opacity": 1,
                       "text": "Fertility (# Children)",
@@ -1209,8 +1209,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 169,
-                              "height": 12,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -1255,9 +1255,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
-                              "width": 169,
-                              "height": 12,
+                              "y": 13,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -1302,9 +1302,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 28,
-                              "width": 169,
-                              "height": 12,
+                              "y": 26,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -1349,9 +1349,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 42,
-                              "width": 169,
-                              "height": 12,
+                              "y": 39,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -1396,9 +1396,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 56,
-                              "width": 169,
-                              "height": 12,
+                              "y": 52,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             },
                             {
@@ -1443,9 +1443,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 70,
-                              "width": 169,
-                              "height": 12,
+                              "y": 65,
+                              "width": 168,
+                              "height": 11,
                               "opacity": 1
                             }
                           ],
@@ -1471,7 +1471,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Region",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1481,9 +1483,10 @@
                 }
               ],
               "x": 10,
-              "y": 492,
-              "width": 169,
-              "height": 98
+              "y": 498,
+              "width": 168,
+              "height": 92,
+              "orient": "bottom-left"
             }
           ],
           "zindex": 0
@@ -1496,7 +1499,7 @@
           "items": [
             {
               "x": 0,
-              "y": -10,
+              "y": -9,
               "align": "left",
               "baseline": "bottom",
               "fill": "#000",

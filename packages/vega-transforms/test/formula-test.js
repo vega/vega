@@ -6,7 +6,7 @@ var tape = require('tape'),
     Formula = tx.formula,
     Collect = tx.collect;
 
-tape('Formula extends tuples', function(test) {
+tape('Formula extends tuples', function(t) {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -24,18 +24,18 @@ tape('Formula extends tuples', function(test) {
 
   // add data
   df.pulse(c0, changeset().insert(data)).run();
-  test.equal(fb.pulse.add.length, 3);
-  test.deepEqual(c0.value.map(x), [2, 6, 10]);
-  test.deepEqual(c0.value.map(y), ['f', 'b', 'b']);
+  t.equal(fb.pulse.add.length, 3);
+  t.deepEqual(c0.value.map(x), [2, 6, 10]);
+  t.deepEqual(c0.value.map(y), ['f', 'b', 'b']);
 
   // modify data
   df.pulse(c0, changeset()
     .modify(data[0], 'value', 'doo')
     .modify(data[0], 'id', '2'))
     .run();
-  test.equal(fb.pulse.mod.length, 1);
-  test.deepEqual(c0.value.map(x), [4, 6, 10]);
-  test.deepEqual(c0.value.map(y), ['d', 'b', 'b']);
+  t.equal(fb.pulse.mod.length, 1);
+  t.deepEqual(c0.value.map(x), [4, 6, 10]);
+  t.deepEqual(c0.value.map(y), ['d', 'b', 'b']);
 
-  test.end();
+  t.end();
 });

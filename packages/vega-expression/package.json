@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -11,7 +11,7 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
   "main": "build/vega-expression.js",
-  "module": "index.js",
+  "module": "index",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",

@@ -210,6 +210,10 @@ Returns the arctangent of _dy / dx_. Same as JavaScript's `Math.atan2`.
 <b>ceil</b>(<i>value</i>)<br/>
 Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's `Math.ceil`.
 
+<a name="clamp" href="#clamp">#</a>
+<b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
+Restricts _value_ to be between the specified _min_ and _max_.
+
 <a name="cos" href="#cos">#</a>
 <b>cos</b>(<i>value</i>)<br/>
 Trigonometric cosine. Same as JavaScript's `Math.cos`.
@@ -257,10 +261,6 @@ Square root function. Same as JavaScript's `Math.sqrt`.
 <a name="tan" href="#tan">#</a>
 <b>tan</b>(<i>value</i>)<br/>
 Trigonometric tangent. Same as JavaScript's `Math.tan`.
-
-<a name="clamp" href="#clamp">#</a>
-<b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
-Restricts _value_ to be between the specified _min_ and _max_.
 
 [Back to Top](#reference)
 
@@ -384,6 +384,10 @@ Returns the first index of _value_ in the input _array_.
 <b>inrange</b>(<i>value</i>, <i>range</i>)<br/>
 Tests whether _value_ lies within (or is equal to either) the first and last values of the _range_ array.
 
+<a name="join" href="#join">#</a>
+<b>join</b>(<i>array</i>[, <i>separator</i>]) {% include tag ver="5.3" %}<br/>
+Returns a new string by concatenating all of the elements of the input _array_, separated by commas or a specified _separator_ string.
+
 <a name="lastindexof" href="#lastindexof">#</a>
 <b>lastindexof</b>(<i>array</i>, <i>value</i>)<br/>
 Returns the last index of _value_ in the input _array_.
@@ -392,9 +396,17 @@ Returns the last index of _value_ in the input _array_.
 <b>length</b>(<i>array</i>)<br/>
 Returns the length of the input _array_.
 
+<a name="lerp" href="#lerp">#</a>
+<b>lerp</b>(<i>array</i>, <i>fraction</i>)<br/>
+Returns the linearly interpolated value between the first and last entries in the _array_ for the provided interpolation _fraction_ (typically between 0 and 1). For example, `lerp([0, 50], 0.5)` returns 25.
+
 <a name="peek" href="#peek">#</a>
 <b>peek</b>(<i>array</i>)<br/>
 Returns the last element in the input _array_. Similar to the built-in `Array.pop` method, except that it does not remove the last element. This method is a convenient shorthand for `array[array.length - 1]`.
+
+<a name="reverse" href="#reverse">#</a>
+<b>reverse</b>(<i>array</i>) {% include tag ver="5.3" %}<br/>
+Returns a new array with elements in a reverse order of the input _array_. The first array element becomes the last, and the last array element becomes the first.
 
 <a name="sequence" href="#sequence">#</a>
 <b>sequence</b>([<i>start</i>, ]<i>stop</i>[, <i>step</i>])<br/>
@@ -458,6 +470,10 @@ Returns an array of tokens created by splitting the input _string_ according to 
 <a name="substring" href="#substring">#</a>
 <b>substring</b>(<i>string</i>, <i>start</i>[, <i>end</i>])<br/>
 Returns a section of _string_ between the _start_ and _end_ indices.
+
+<a name="trim" href="#trim">#</a>
+<b>trim</b>(<i>string</i>) {% include tag ver="5.3" %}<br/>
+Returns a trimmed string with preceding and trailing whitespace removed.
 
 <a name="truncate" href="#truncate">#</a>
 <b>truncate</b>(<i>string</i>, <i>length</i>[, <i>align</i>, <i>ellipsis</i>])<br/>
@@ -653,8 +669,8 @@ Returns the current band width for the named band scale transform, or zero if th
 Returns the number of steps needed within a band scale, based on the _count_ of domain elements and the inner and outer padding values. While normally calculated within the scale itself, this function can be helpful for determining the size of a chart's layout.
 
 <a name="gradient" href="#gradient">#</a>
-<b>gradient</b>(<i>name</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
-Returns a linear color gradient for the named scale and starting and ending points _p0_ and _p1_ (each an _[x, y]_ array). The optional _count_ argument indicates a desired target number of color stops to use in the gradient.
+<b>gradient</b>(<i>scale</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
+Returns a linear color gradient for the _scale_ (whose range must be a [continuous color scheme](../schemes)) and starting and ending points _p0_ and _p1_, each an _[x, y]_ array. The points _p0_ and _p1_ should be expressed in normalized coordinates in the domain [0, 1], relative to the bounds of the item being colored. If unspecified, _p0_ defaults to `[0, 0]` and _p1_ defaults to `[1, 0]`, for a horizontal gradient that spans the full bounds of an item. The optional _count_ argument indicates a desired target number of sample points to take from the color scale.
 
 <a name="panLinear" href="#panLinear">#</a>
 <b>panLinear</b>(<i>domain</i>, <i>delta</i>)<br/>

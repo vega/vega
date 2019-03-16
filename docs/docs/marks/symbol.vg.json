@@ -9,7 +9,7 @@
       "bind": {"input": "select", "options": [
         "arrow", "circle", "square", "cross", "diamond", "triangle",
         "triangle-up", "triangle-down", "triangle-right", "triangle-left",
-        "wedge",
+        "wedge", "stroke",
         "M-1,-1H1V1H-1Z",
         "M0,.5L.6,.8L.5,.1L1,-.3L.3,-.4L0,-1L-.3,-.4L-1,-.3L-.5,.1L-.6,.8L0,.5Z"
       ]

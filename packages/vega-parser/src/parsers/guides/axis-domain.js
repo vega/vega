@@ -1,29 +1,28 @@
-import {Top, Bottom} from './constants';
+import {Top, Bottom, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisDomainRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncoders} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var orient = spec.orient,
-      zero = {value: 0},
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       encode, enter, update, u, u2, v;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: update = {
-      opacity: {value: 1}
-    },
-    exit: {
-      opacity: zero
-    }
+    enter: enter = {opacity: zero},
+    update: update = {opacity: one},
+    exit: {opacity: zero}
   };
-  addEncode(encode, 'stroke',        lookup('domainColor', spec, config));
-  addEncode(encode, 'strokeWidth',   lookup('domainWidth', spec, config));
-  addEncode(encode, 'strokeOpacity', lookup('domainOpacity', spec, config));
+
+  addEncoders(encode, {
+    stroke:           _('domainColor'),
+    strokeDash:       _('domainDash'),
+    strokeDashOffset: _('domainDashOffset'),
+    strokeWidth:      _('domainWidth'),
+    strokeOpacity:    _('domainOpacity')
+  });
 
   if (orient === Top || orient === Bottom) {
     u = 'x';

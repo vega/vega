@@ -14,6 +14,7 @@ export interface Spec extends Scope, Encodable<EncodeEntry> {
   padding?: Padding;
   autosize?: AutoSize;
   background?: Background;
+  style?: string | string[];
 }
 
 export * from './autosize';

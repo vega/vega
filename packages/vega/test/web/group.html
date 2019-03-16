@@ -114,22 +114,20 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var view = new vega.View(runtimeSpec)
-  .initialize(document.querySelector('#view'))
-  .hover()
-  .run();
+var view = new vega.View(runtimeSpec, {container: '#view', hover: true});
+view.runAsync();
 
 document.querySelector('#scale').addEventListener('click', function(evt) {
   var rx = view.signal('rangex'),
       ry = view.signal('rangey');
   rx = (rx[0] === 0) ? [100, 400] : [0, 500];
   ry = (ry[1] === 0) ? [400, 100] : [500, 0];
-  view.signal('rangex', rx).signal('rangey', ry).run();
+  view.signal('rangex', rx).signal('rangey', ry).runAsync();
 });
 
 document.querySelector('#palette').addEventListener('click', function(evt) {
   var p = palettes[++palette % palettes.length];
-  view.signal('palette', p).run();
+  view.signal('palette', p).runAsync();
 });
 
 document.querySelector('#parent').addEventListener('click', function(evt) {
@@ -137,10 +135,8 @@ document.querySelector('#parent').addEventListener('click', function(evt) {
   var newTuple = vega.extend({}, tuple, {id: null, cat: category});
 
   view.pulse(view._runtime.data.top.input,
-    vega.changeset()
-      .remove(tuple)
-      .insert(newTuple)
-  ).run();
+    vega.changeset().remove(tuple).insert(newTuple)
+  ).runAsync();
   tuple = newTuple;
 });
 

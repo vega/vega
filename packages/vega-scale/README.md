@@ -52,12 +52,6 @@ Registry function for adding and accessing color schemes. The *name* argument is
 By default, the scheme registry includes entries for all scheme types provided by the
 [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic) module. Valid schemes are either arrays of color values (e.g., applicable to `'ordinal'` scales) or [interpolator](https://github.com/d3/d3-scale#sequential_interpolator) functions (e.g., applicable to `'sequential'` scales.)
 
-<a name="schemeDiscretized" href="#schemeDiscretized">#</a>
-vega.<b>schemeDiscretized</b>(<i>name</i>[, <i>schemes</i>, <i>interpolator</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/schemes.js "Source")
-
-Registry function for adding and accessing discretized color schemes, consisting of an array of color schemes for specific value counts. The *name* argument is a String indicating the name of the color scheme. If the *schemes* argument is not specified, this method returns the matching array of color schemes value in the registry, or `null` if not found. If the *schemes* argument is provided, it must be an array of valid color arrays, with non-null entries at indices for each supported value count. For example, the array at index 3 should be a 3-color array. The optional *interpolator* argument provides a continuous color [interpolator](https://github.com/d3/d3-scale#sequential_interpolator) to use when a specific item count is not provided or undefined. If the *interpolator* argument is not provided, an interpolator will be automatically created using basis spline interpolation in the RGB color space for the last (largest) color array in *schemes*.
-
 <a name="interpolate" href="#interpolate">#</a>
 vega.<b>interpolate</b>(<i>name</i>[, <i>gamma</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/interpolate.js "Source")
@@ -69,6 +63,12 @@ var rgbBasis = vega.interpolate('rgb-basis'); // d3.interpolateRgbBasis
 var rgbGamma = vega.interpolate('rgb', 2.2);  // d3.interpolateRgb.gamma(2.2)
 ```
 
+<a name="interpolateColors" href="#interpolateColors">#</a>
+vega.<b>interpolateColors</b>(<i>colors</i>[, <i>type</i>, <i>gamma</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/interpolate.js "Source")
+
+Given an array of discrete *colors*, returns an interpolator function that maps the domain [0, 1] to a continuous spectrum of colors using piecewise linear interpolation. The optional parameters *type* and *gamma* specify an interpolation type (default `"rgb"`) and gamma correction (default `1`) supported by the [interpolate](#interpolate) method.
+
 <a name="interpolateRange" href="#interpolateRange">#</a>
 vega.<b>interpolateRange</b>(<i>interpolator</i>, <i>range</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/interpolate.js "Source")
@@ -79,7 +79,7 @@ Given a D3 *interpolator* instance, return a new interpolator with a modified in
 var number = d3.interpolateNumber(0, 10);
 number(0);   // 0
 number(0.5); // 5
-number(1);   // 1
+number(1);   // 10
 
 var range = vega.interpolateRange(number, [0.2, 0.8]);
 range(0);   // 2
@@ -88,13 +88,13 @@ range(1);   // 8
 ```
 
 <a name="timeInterval" href="#timeInterval">#</a>
-vega.<b>timeInterval</b>(<i>unit</i>)
+vega.<b>timeInterval</b>(<i>unit</i>[, <i>type</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/timeInterval.js "Source")
 
-Given a string _unit_, return a corresponding [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`.
+Given a string _unit_, return a corresponding [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. The optional _type_ indicates the time zone to use, either `"time"` (default, for local time) or `"utc"` (for [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)).
 
-<a name="utcInterval" href="#utcInterval">#</a>
-vega.<b>utcInterval</b>(<i>unit</i>)
-[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/timeInterval.js "Source")
+<a name="quantizeInterpolator" href="#quantizeInterpolator">#</a>
+vega.<b>quantizeInterpolator</b>(<i>interpolator</i>, <i>count</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/interpolate.js "Source")
 
-Given a string _unit_, return a corresponding UTC-variant of a [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`.
+Given an *interpolator* function, returns *count* evenly-spaced samples. This method is particularly useful for generating a discrete color scheme from a continuous color interpolator.

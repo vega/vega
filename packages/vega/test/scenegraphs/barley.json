@@ -4880,8 +4880,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 47,
-                              "height": 11,
+                              "width": 46,
+                              "height": 10.535533905932738,
                               "opacity": 1
                             },
                             {
@@ -4928,8 +4928,8 @@
                               ],
                               "x": 0,
                               "y": 14,
-                              "width": 47,
-                              "height": 11,
+                              "width": 46,
+                              "height": 10.535533905932738,
                               "opacity": 1
                             }
                           ],
@@ -4955,7 +4955,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Year",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -4964,10 +4966,11 @@
                   "zindex": 0
                 }
               ],
-              "x": 350,
+              "x": 349,
               "y": 0,
-              "width": 55,
-              "height": 49
+              "width": 54,
+              "height": 49,
+              "orient": "right"
             }
           ],
           "zindex": 0

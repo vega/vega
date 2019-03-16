@@ -1,0 +1,413 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "autosize": "pad",
+  "padding": 5,
+  "width": 200,
+  "height": 200,
+  "style": "cell",
+  "data": [
+    {"name": "brush_store"},
+    {
+      "name": "source_0",
+      "url": "data/unemployment-across-industries.json",
+      "format": {"type": "json", "parse": {"date": "date"}}
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "formula",
+          "as": "yearmonth_date",
+          "expr": "datetime(year(datum[\"date\"]), month(datum[\"date\"]), 1, 0, 0, 0, 0)"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["yearmonth_date"],
+          "ops": ["sum"],
+          "fields": ["count"],
+          "as": ["sum_count"]
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "!(length(data(\"brush_store\"))) || (vlSelectionTest(\"brush_store\", datum))"
+        },
+        {
+          "type": "formula",
+          "as": "yearmonth_date",
+          "expr": "datetime(year(datum[\"date\"]), month(datum[\"date\"]), 1, 0, 0, 0, 0)"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["yearmonth_date"],
+          "ops": ["sum"],
+          "fields": ["count"],
+          "as": ["sum_count"]
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {"name": "brush", "update": "vlSelectionResolve(\"brush_store\")"},
+    {
+      "name": "brush_x",
+      "value": [],
+      "on": [
+        {
+          "events": {
+            "source": "scope",
+            "type": "mousedown",
+            "filter": [
+              "!event.item || event.item.mark.name !== \"brush_brush\"",
+              "inScope(event.item)"
+            ]
+          },
+          "update": "[x(unit), x(unit)]"
+        },
+        {
+          "events": {
+            "source": "window",
+            "type": "mousemove",
+            "consume": true,
+            "between": [
+              {
+                "source": "scope",
+                "type": "mousedown",
+                "filter": [
+                  "!event.item || event.item.mark.name !== \"brush_brush\"",
+                  "inScope(event.item)"
+                ]
+              },
+              {"source": "window", "type": "mouseup"}
+            ]
+          },
+          "update": "[brush_x[0], clamp(x(unit), 0, width)]"
+        },
+        {
+          "events": {"scale": "x"},
+          "update": "span(brush_x) && !(+invert('x', brush_x)[0] === +brush_yearmonth_date[0] && +invert('x', brush_x)[1] === +brush_yearmonth_date[1]) ? [scale('x', brush_yearmonth_date[0]), scale('x', brush_yearmonth_date[1])] : brush_x"
+        },
+        {
+          "events": {"signal": "brush_translate_delta"},
+          "update": "clampRange(panLinear(brush_translate_anchor.extent_x, brush_translate_delta.x / span(brush_translate_anchor.extent_x)), 0, width)"
+        },
+        {
+          "events": {"signal": "brush_zoom_delta"},
+          "update": "clampRange(zoomLinear(brush_x, brush_zoom_anchor.x, brush_zoom_delta), 0, width)"
+        }
+      ]
+    },
+    {
+      "name": "brush_yearmonth_date",
+      "on": [
+        {
+          "events": {"signal": "brush_x"},
+          "update": "span(brush_x) ? invert(\"x\", brush_x) : null"
+        }
+      ]
+    },
+    {
+      "name": "brush_tuple",
+      "on": [
+        {
+          "events": [{"signal": "brush_yearmonth_date"}],
+          "update": "brush_yearmonth_date ? {unit: \"layer_0\", fields: brush_tuple_fields, values: [brush_yearmonth_date]} : null"
+        }
+      ]
+    },
+    {
+      "name": "brush_tuple_fields",
+      "value": [{"field": "yearmonth_date", "channel": "x", "type": "R"}]
+    },
+    {
+      "name": "brush_translate_anchor",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {"source": "scope", "type": "mousedown", "markname": "brush_brush"}
+          ],
+          "update": "{x: x(unit), y: y(unit), extent_x: slice(brush_x)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_translate_delta",
+      "value": {},
+      "on": [
+        {
+          "events": [
+            {
+              "source": "window",
+              "type": "mousemove",
+              "consume": true,
+              "between": [
+                {
+                  "source": "scope",
+                  "type": "mousedown",
+                  "markname": "brush_brush"
+                },
+                {"source": "window", "type": "mouseup"}
+              ]
+            }
+          ],
+          "update": "{x: brush_translate_anchor.x - x(unit), y: brush_translate_anchor.y - y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_zoom_anchor",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "markname": "brush_brush"
+            }
+          ],
+          "update": "{x: x(unit), y: y(unit)}"
+        }
+      ]
+    },
+    {
+      "name": "brush_zoom_delta",
+      "on": [
+        {
+          "events": [
+            {
+              "source": "scope",
+              "type": "wheel",
+              "consume": true,
+              "markname": "brush_brush"
+            }
+          ],
+          "force": true,
+          "update": "pow(1.001, event.deltaY * pow(16, event.deltaMode))"
+        }
+      ]
+    },
+    {
+      "name": "brush_modify",
+      "update": "modify(\"brush_store\", brush_tuple, true)"
+    }
+  ],
+  "marks": [
+    {
+      "name": "brush_brush_bg",
+      "type": "rect",
+      "clip": true,
+      "encode": {
+        "enter": {"fill": {"value": "#333"}, "fillOpacity": {"value": 0.125}},
+        "update": {
+          "x": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "signal": "brush_x[0]"
+            },
+            {"value": 0}
+          ],
+          "y": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "value": 0
+            },
+            {"value": 0}
+          ],
+          "x2": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "signal": "brush_x[1]"
+            },
+            {"value": 0}
+          ],
+          "y2": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "field": {"group": "height"}
+            },
+            {"value": 0}
+          ]
+        }
+      }
+    },
+    {
+      "name": "layer_0_marks",
+      "type": "area",
+      "style": ["area"],
+      "sort": {"field": "datum[\"yearmonth_date\"]", "order": "descending"},
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "orient": {"value": "vertical"},
+          "fill": {"value": "#4c78a8"},
+          "tooltip": {
+            "signal": "{\"date (year-month)\": timeFormat(datum[\"yearmonth_date\"], '%b %Y'), \"Sum of count\": format(datum[\"sum_count\"], \"\")}"
+          },
+          "x": {"scale": "x", "field": "yearmonth_date"},
+          "y": {"scale": "y", "field": "sum_count"},
+          "y2": {"scale": "y", "value": 0},
+          "defined": {
+            "signal": "datum[\"yearmonth_date\"] !== null && !isNaN(datum[\"yearmonth_date\"]) && datum[\"sum_count\"] !== null && !isNaN(datum[\"sum_count\"])"
+          }
+        }
+      }
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "area",
+      "style": ["area"],
+      "sort": {"field": "datum[\"yearmonth_date\"]", "order": "descending"},
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "orient": {"value": "vertical"},
+          "fill": {"value": "goldenrod"},
+          "tooltip": {
+            "signal": "{\"date (year-month)\": timeFormat(datum[\"yearmonth_date\"], '%b %Y'), \"Sum of count\": format(datum[\"sum_count\"], \"\")}"
+          },
+          "x": {"scale": "x", "field": "yearmonth_date"},
+          "y": {"scale": "y", "field": "sum_count"},
+          "y2": {"scale": "y", "value": 0},
+          "defined": {
+            "signal": "datum[\"yearmonth_date\"] !== null && !isNaN(datum[\"yearmonth_date\"]) && datum[\"sum_count\"] !== null && !isNaN(datum[\"sum_count\"])"
+          }
+        }
+      }
+    },
+    {
+      "name": "brush_brush",
+      "type": "rect",
+      "clip": true,
+      "encode": {
+        "enter": {"fill": {"value": "transparent"}},
+        "update": {
+          "x": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "signal": "brush_x[0]"
+            },
+            {"value": 0}
+          ],
+          "y": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "value": 0
+            },
+            {"value": 0}
+          ],
+          "x2": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "signal": "brush_x[1]"
+            },
+            {"value": 0}
+          ],
+          "y2": [
+            {
+              "test": "data(\"brush_store\").length && data(\"brush_store\")[0].unit === \"layer_0\"",
+              "field": {"group": "height"}
+            },
+            {"value": 0}
+          ],
+          "stroke": [
+            {"test": "brush_x[0] !== brush_x[1]", "value": "white"},
+            {"value": null}
+          ]
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {
+        "fields": [
+          {"data": "data_0", "field": "yearmonth_date"},
+          {"data": "data_1", "field": "yearmonth_date"}
+        ]
+      },
+      "range": [0, {"signal": "width"}]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {
+        "fields": [
+          {"data": "data_0", "field": "sum_count"},
+          {"data": "data_1", "field": "sum_count"}
+        ]
+      },
+      "range": [{"signal": "height"}, 0],
+      "nice": true,
+      "zero": true
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "date (year-month)",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "encode": {
+        "labels": {
+          "update": {"text": {"signal": "timeFormat(datum.value, '%b %Y')"}}
+        }
+      },
+      "zindex": 1
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Sum of count",
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "zindex": 1
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "domain": false,
+      "labels": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    }
+  ]
+}

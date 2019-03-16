@@ -346,7 +346,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -66,
+                      "x": -65,
                       "y": 125,
                       "align": "center",
                       "baseline": "bottom",
@@ -699,7 +699,7 @@
                   "items": [
                     {
                       "x": 250,
-                      "y": 22,
+                      "y": 21,
                       "align": "center",
                       "baseline": "top",
                       "fill": "#000",
@@ -1402,8 +1402,8 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 159,
-                              "height": 11,
+                              "width": 158,
+                              "height": 10,
                               "opacity": 1
                             },
                             {
@@ -1448,9 +1448,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
-                              "width": 159,
-                              "height": 11,
+                              "y": 12,
+                              "width": 158,
+                              "height": 10,
                               "opacity": 1
                             }
                           ],
@@ -1476,7 +1476,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Period",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1487,8 +1489,9 @@
               ],
               "x": 8,
               "y": 8,
-              "width": 159,
-              "height": 41
+              "width": 158,
+              "height": 38,
+              "orient": "top-left"
             }
           ],
           "zindex": 0
@@ -1500,8 +1503,8 @@
           "clip": false,
           "items": [
             {
-              "x": 212.6193063937629,
-              "y": -10,
+              "x": 214.1193063937629,
+              "y": -9,
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",

@@ -39,9 +39,14 @@ export const sortOrderEnum = [
 
 const rangeConstant = enums(rangeConstantEnum);
 
-const arrayAllTypes = array(
-  oneOf(nullType, booleanType, stringType, numberType, signalRef)
-);
+const arrayAllTypes = array(oneOf(
+  nullType,
+  booleanType,
+  stringType,
+  numberType,
+  signalRef,
+  array(numberOrSignal)
+));
 
 const scheme = object({
   _scheme_: oneOf(
@@ -70,7 +75,15 @@ const bandRange = oneOf(
 );
 
 const scaleBinsRef = ref('scaleBins');
-const scaleBins = orSignal(array(numberOrSignal));
+const scaleBins = oneOf(
+  array(numberOrSignal),
+  object({
+    _step_: numberOrSignal,
+    start: numberOrSignal,
+    stop: numberOrSignal
+  }),
+  signalRef
+);
 
 const scaleInterpolateRef = ref('scaleInterpolate');
 const scaleInterpolate = oneOf(
@@ -198,7 +211,14 @@ const scale = oneOf(
     ...scaleDomainProps
   }),
   object({
-    _type_: enums([Quantile, BinOrdinal]),
+    _type_: enums([Quantile]),
+    range: schemeRange,
+    interpolate: scaleInterpolateRef,
+    ...scaleDomainProps
+  }),
+  object({
+    _type_: enums([BinOrdinal]),
+    bins: scaleBinsRef,
     range: schemeRange,
     interpolate: scaleInterpolateRef,
     ...scaleDomainProps

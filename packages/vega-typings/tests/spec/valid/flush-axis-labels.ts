@@ -17,6 +17,10 @@ export const spec: Spec = {
       "bind": {"input": "select", "options": [true, false, "parity", "greedy"]}
     },
     {
+      "name": "labelSeparation", "value": 0,
+      "bind": {"input": "range", "min": -10, "max": 30, "step": 1}
+    },
+    {
       "name": "labelBound", "value": -1,
       "bind": {"input": "range", "min": -1, "max": 30, "step": 1}
     },
@@ -66,6 +70,7 @@ export const spec: Spec = {
       "format": "s",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -74,6 +79,7 @@ export const spec: Spec = {
       "scale": "backwardx",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -83,6 +89,7 @@ export const spec: Spec = {
       "format": "s",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     },
@@ -91,6 +98,7 @@ export const spec: Spec = {
       "scale": "backwardy",
       "labelFlush": {"signal": "labelFlush"},
       "labelFlushOffset": {"signal": "labelFlushOffset"},
+      "labelSeparation": {"signal": "labelSeparation"},
       "labelOverlap": {"signal": "labelOverlap"},
       "labelBound": {"signal": "labelBound"}
     }

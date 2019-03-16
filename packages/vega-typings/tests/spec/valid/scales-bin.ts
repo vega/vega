@@ -10,12 +10,12 @@ export const spec: Spec = {
 
   "signals": [
     {
-      "name": "binDomain",
-      "update": "sequence(bins.start, bins.stop + bins.step, bins.step)"
-    },
-    {
       "name": "maxbins", "value": 10,
       "bind": {"input": "select", "options": [5, 10, 20, 50]}
+    },
+    {
+      "name": "binDomain",
+      "update": "[bins.start, bins.stop]"
     }
   ],
 
@@ -62,23 +62,29 @@ export const spec: Spec = {
     },
     {
       "name": "xscale",
-      "type": "bin-linear",
+      "type": "linear",
       "range": "width",
       "round": true,
-      "domain": {"signal": "binDomain"}
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "bins"}
     },
     {
       "name": "size",
-      "type": "bin-linear",
+      "type": "linear",
       "range": [10, 100],
       "round": true,
-      "domain": {"signal": "binDomain"}
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "bins"}
     },
     {
       "name": "color",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "domain": {"signal": "binDomain"}
+      "bins": {
+        "start": {"signal": "bins.start"},
+        "stop": {"signal": "bins.stop"},
+        "step": {"signal": "bins.step"}
+      }
     }
   ],
 

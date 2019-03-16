@@ -13,6 +13,7 @@ export {default as SVGHandler} from './src/SVGHandler';
 export {default as SVGRenderer} from './src/SVGRenderer';
 export {default as SVGStringRenderer} from './src/SVGStringRenderer';
 export {RenderType, renderModule} from './src/modules';
+export {intersect} from './src/intersect';
 
 export {default as Marks} from './src/marks/index';
 
@@ -37,6 +38,12 @@ export {resetSVGClipId} from './src/util/svg/clip';
 
 export {sceneEqual, pathEqual} from './src/util/equal';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
+export {
+  intersectPath,
+  intersectPoint,
+  intersectRule,
+  intersectBoxLine
+} from './src/util/intersect';
 export {
   zorder as sceneZOrder,
   visit as sceneVisit,

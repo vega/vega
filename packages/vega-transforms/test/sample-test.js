@@ -6,12 +6,12 @@ var tape = require('tape'),
     Collect = tx.collect,
     Sample = tx.sample;
 
-tape('Sample samples tuples without backing source', function(test) {
+tape('Sample samples tuples without backing source', function(t) {
   var n = 100,
       ns = 20,
       data = Array(n),
       map = {},
-      i, t;
+      i, tid;
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
@@ -20,8 +20,8 @@ tape('Sample samples tuples without backing source', function(test) {
 
   // -- initial sample
   df.pulse(s, changeset().insert(data)).run();
-  test.equal(s.value.length, ns);
-  test.notDeepEqual(s.value.length, data.slice(0, ns));
+  t.equal(s.value.length, ns);
+  t.notDeepEqual(s.value.length, data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(function(t) { map[tupleid(t)] = 1; });
@@ -29,33 +29,33 @@ tape('Sample samples tuples without backing source', function(test) {
   var outTuple = null;
 
   for (i=0; i<n; ++i) {
-    t = data[i];
-    if (!map[tupleid(t)]) { outTuple = t; break; }
+    tid = data[i];
+    if (!map[tupleid(tid)]) { outTuple = tid; break; }
   }
 
   df.pulse(s, changeset()
     .modify(inTuple, 'v', -1)
     .modify(outTuple, 'v', -1)).run();
-  test.equal(s.value.length, ns);
-  test.deepEqual(s.pulse.mod, [inTuple]);
+  t.equal(s.value.length, ns);
+  t.deepEqual(s.pulse.mod, [inTuple]);
 
   // -- remove half of sample, no backing source
   map = {};
   var rems = s.value.slice(0, 10);
   rems.forEach(function(t) { map[tupleid(t)] = 1; });
   df.pulse(s, changeset().remove(rems)).run();
-  test.equal(s.value.length, ns - 10);
-  test.equal(s.value.some(function(t) { return map[tupleid(t)]; }), false);
+  t.equal(s.value.length, ns - 10);
+  t.equal(s.value.some(function(t) { return map[tupleid(t)]; }), false);
 
-  test.end();
+  t.end();
 });
 
-tape('Sample samples tuples with backing source', function(test) {
+tape('Sample samples tuples with backing source', function(t) {
   var n = 100,
     ns = 20,
     data = Array(n),
     map = {},
-    i, t;
+    i, tid;
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
@@ -65,8 +65,8 @@ tape('Sample samples tuples with backing source', function(test) {
 
   // -- initial sample
   df.pulse(c, changeset().insert(data)).run();
-  test.equal(s.value.length, ns);
-  test.notDeepEqual(s.value.length, data.slice(0, ns));
+  t.equal(s.value.length, ns);
+  t.notDeepEqual(s.value.length, data.slice(0, ns));
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(function(t) { map[tupleid(t)] = 1; });
@@ -74,19 +74,19 @@ tape('Sample samples tuples with backing source', function(test) {
   var outTuple = null;
 
   for (i=0; i<n; ++i) {
-    t = data[i];
-    if (!map[tupleid(t)]) { outTuple = t; break; }
+    tid = data[i];
+    if (!map[tupleid(tid)]) { outTuple = tid; break; }
   }
 
   df.pulse(c, changeset()
     .modify(inTuple, 'v', -1)
     .modify(outTuple, 'v', -1)).run();
-  test.equal(s.value.length, ns);
-  test.deepEqual(s.pulse.mod, [inTuple]);
+  t.equal(s.value.length, ns);
+  t.deepEqual(s.pulse.mod, [inTuple]);
 
   // -- remove half of sample, with backing source
   df.pulse(c, changeset().remove(s.value.slice())).run();
-  test.equal(s.value.length, ns);
+  t.equal(s.value.length, ns);
 
-  test.end();
+  t.end();
 });

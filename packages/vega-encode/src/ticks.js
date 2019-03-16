@@ -1,5 +1,6 @@
-import {isLogarithmic, timeInterval} from 'vega-scale';
-import {error, isObject, isString, peek} from 'vega-util';
+import {isLogarithmic, timeInterval, Time} from 'vega-scale';
+import {error, isNumber, isObject, isString, peek, span} from 'vega-util';
+import {timeFormat} from 'd3-time-format';
 import {
   format as numberFormat,
   formatSpecifier
@@ -9,10 +10,15 @@ import {
  * Determine the tick count or interval function.
  * @param {Scale} scale - The scale for which to generate tick values.
  * @param {*} count - The desired tick count or interval specifier.
+ * @param {number} minStep - The desired minimum step between tick values.
  * @return {*} - The tick count or interval function.
  */
-export function tickCount(scale, count) {
+export function tickCount(scale, count, minStep) {
   var step;
+
+  if (isNumber(count) && minStep != null) {
+    count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+  }
 
   if (isObject(count)) {
     step = count.step;
@@ -38,8 +44,9 @@ export function tickCount(scale, count) {
  */
 export function validTicks(scale, ticks, count) {
   var range = scale.range(),
-      lo = range[0],
-      hi = peek(range);
+      lo = Math.floor(range[0]),
+      hi = Math.ceil(peek(range));
+
   if (lo > hi) {
     range = hi;
     hi = lo;
@@ -48,7 +55,7 @@ export function validTicks(scale, ticks, count) {
 
   ticks = ticks.filter(function(v) {
     v = scale(v);
-    return !(v < lo || v > hi)
+    return lo <= v && v <= hi;
   });
 
   if (count > 0 && ticks.length > 1) {
@@ -74,7 +81,7 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? binValues(scale.bins, count)
+  return scale.bins ? validTicks(scale, binValues(scale.bins, count))
     : scale.ticks ? scale.ticks(count)
     : scale.domain();
 }
@@ -104,12 +111,13 @@ function binValues(bins, count) {
  * that automatically trims trailing zeroes will be generated.
  * @param {Scale} scale - The scale for which to generate the label formatter.
  * @param {*} [count] - The approximate number of desired ticks.
- * @param {string} [specifier] - The format specifier. Must be a legal d3 4.0
+ * @param {string} [specifier] - The format specifier. Must be a legal d3
  *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
  * @return {function(*):string} - The generated label formatter.
  */
-export function tickFormat(scale, count, specifier) {
+export function tickFormat(scale, count, specifier, formatType) {
   var format = scale.tickFormat ? scale.tickFormat(count, specifier)
+    : specifier && formatType === Time ? timeFormat(specifier)
     : specifier ? numberFormat(specifier)
     : String;
 

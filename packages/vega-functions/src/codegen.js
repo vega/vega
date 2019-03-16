@@ -42,6 +42,7 @@ import {
   extent,
   flush,
   inrange,
+  lerp,
   pad,
   peek,
   quarter,
@@ -93,6 +94,10 @@ import {
 import {
   default as inScope
 } from './inscope';
+
+import {
+  default as intersect
+} from './intersect';
 
 import {
   warn,
@@ -166,8 +171,13 @@ export const functionContext = {
   toDate,
   toNumber,
   toString,
+  flush,
+  lerp,
+  merge,
   pad,
   peek,
+  span,
+  inrange,
   truncate,
   rgb,
   lab,
@@ -190,17 +200,14 @@ export const functionContext = {
   debug,
   extent,
   inScope,
+  intersect,
   clampRange,
   pinchDistance,
   pinchAngle,
   screen,
   containerSize,
   windowSize,
-  span,
-  merge,
-  flush,
   bandspace,
-  inrange,
   setdata,
   pathShape,
   panLinear,

@@ -17,5 +17,10 @@ export interface NewSignal extends BaseSignal {
   update?: Expr;
   bind?: Binding;
 }
-export type Signal = NewSignal | PushSignal;
+export interface InitSignal extends BaseSignal {
+  value?: SignalValue;
+  init: Expr;
+  bind?: Binding;
+}
+export type Signal = NewSignal | InitSignal | PushSignal;
 export type SignalValue = any;

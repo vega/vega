@@ -198,7 +198,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -569,7 +569,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -29,
+                              "x": -28,
                               "y": 100,
                               "align": "center",
                               "baseline": "bottom",
@@ -4587,8 +4587,8 @@
                                       ],
                                       "x": 0,
                                       "y": 0,
-                                      "width": 41,
-                                      "height": 11,
+                                      "width": 40,
+                                      "height": 10,
                                       "opacity": 1
                                     },
                                     {
@@ -4634,8 +4634,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 14,
-                                      "width": 41,
+                                      "y": 13,
+                                      "width": 40,
                                       "height": 11.858898943540673,
                                       "opacity": 1
                                     },
@@ -4682,8 +4682,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 29,
-                                      "width": 41,
+                                      "y": 28,
+                                      "width": 40,
                                       "height": 15.582762530298218,
                                       "opacity": 1
                                     },
@@ -4730,8 +4730,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 48,
-                                      "width": 41,
+                                      "y": 47,
+                                      "width": 40,
                                       "height": 17.91619848709567,
                                       "opacity": 1
                                     },
@@ -4778,8 +4778,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 69,
-                                      "width": 41,
+                                      "y": 68,
+                                      "width": 40,
                                       "height": 20.544003745317525,
                                       "opacity": 1
                                     }
@@ -4806,7 +4806,9 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
+                              "orient": "top",
                               "text": "Acceleration",
+                              "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
                               "fontWeight": "bold"
@@ -4817,8 +4819,9 @@
                       ],
                       "x": 218,
                       "y": 0,
-                      "width": 106,
-                      "height": 106
+                      "width": 105,
+                      "height": 105,
+                      "orient": "right"
                     }
                   ],
                   "zindex": 0
@@ -5051,7 +5054,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -5422,7 +5425,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -29,
+                              "x": -28,
                               "y": 100,
                               "align": "center",
                               "baseline": "bottom",
@@ -9440,8 +9443,8 @@
                                       ],
                                       "x": 0,
                                       "y": 0,
-                                      "width": 41,
-                                      "height": 11,
+                                      "width": 40,
+                                      "height": 10,
                                       "opacity": 1
                                     },
                                     {
@@ -9487,8 +9490,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 14,
-                                      "width": 41,
+                                      "y": 13,
+                                      "width": 40,
                                       "height": 11.858898943540673,
                                       "opacity": 1
                                     },
@@ -9535,8 +9538,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 29,
-                                      "width": 41,
+                                      "y": 28,
+                                      "width": 40,
                                       "height": 15.582762530298218,
                                       "opacity": 1
                                     },
@@ -9583,8 +9586,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 48,
-                                      "width": 41,
+                                      "y": 47,
+                                      "width": 40,
                                       "height": 17.91619848709567,
                                       "opacity": 1
                                     },
@@ -9631,8 +9634,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 69,
-                                      "width": 41,
+                                      "y": 68,
+                                      "width": 40,
                                       "height": 20.544003745317525,
                                       "opacity": 1
                                     }
@@ -9659,7 +9662,9 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
+                              "orient": "top",
                               "text": "Acceleration",
+                              "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
                               "fontWeight": "bold"
@@ -9670,14 +9675,15 @@
                       ],
                       "x": 218,
                       "y": 0,
-                      "width": 106,
-                      "height": 106
+                      "width": 105,
+                      "height": 105,
+                      "orient": "right"
                     }
                   ],
                   "zindex": 0
                 }
               ],
-              "x": 376,
+              "x": 372,
               "y": 0,
               "width": 200,
               "height": 200
@@ -9904,7 +9910,7 @@
                           "items": [
                             {
                               "x": 100,
-                              "y": 22,
+                              "y": 21,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -10275,7 +10281,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -29,
+                              "x": -28,
                               "y": 100,
                               "align": "center",
                               "baseline": "bottom",
@@ -14293,8 +14299,8 @@
                                       ],
                                       "x": 0,
                                       "y": 0,
-                                      "width": 41,
-                                      "height": 11,
+                                      "width": 40,
+                                      "height": 10,
                                       "opacity": 1
                                     },
                                     {
@@ -14340,8 +14346,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 14,
-                                      "width": 41,
+                                      "y": 13,
+                                      "width": 40,
                                       "height": 11.858898943540673,
                                       "opacity": 1
                                     },
@@ -14388,8 +14394,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 29,
-                                      "width": 41,
+                                      "y": 28,
+                                      "width": 40,
                                       "height": 15.582762530298218,
                                       "opacity": 1
                                     },
@@ -14436,8 +14442,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 48,
-                                      "width": 41,
+                                      "y": 47,
+                                      "width": 40,
                                       "height": 17.91619848709567,
                                       "opacity": 1
                                     },
@@ -14484,8 +14490,8 @@
                                         }
                                       ],
                                       "x": 0,
-                                      "y": 69,
-                                      "width": 41,
+                                      "y": 68,
+                                      "width": 40,
                                       "height": 20.544003745317525,
                                       "opacity": 1
                                     }
@@ -14512,7 +14518,9 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
+                              "orient": "top",
                               "text": "Acceleration",
+                              "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
                               "fontWeight": "bold"
@@ -14523,14 +14531,15 @@
                       ],
                       "x": 218,
                       "y": 0,
-                      "width": 106,
-                      "height": 106
+                      "width": 105,
+                      "height": 105,
+                      "orient": "right"
                     }
                   ],
                   "zindex": 0
                 }
               ],
-              "x": 752,
+              "x": 744,
               "y": 0,
               "width": 200,
               "height": 200

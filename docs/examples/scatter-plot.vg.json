@@ -71,16 +71,10 @@
       "size": "size",
       "title": "Acceleration",
       "format": "s",
-      "encode": {
-        "symbols": {
-          "update": {
-            "strokeWidth": {"value": 2},
-            "opacity": {"value": 0.5},
-            "stroke": {"value": "#4682b4"},
-            "shape": {"value": "circle"}
-          }
-        }
-      }
+      "symbolStrokeColor": "#4682b4",
+      "symbolStrokeWidth": 2,
+      "symbolOpacity": 0.5,
+      "symbolType": "circle"
     }
   ],
 

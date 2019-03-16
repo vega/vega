@@ -29,7 +29,8 @@ import {point} from 'vega-scenegraph';
  * @return {Event} - The extended input event.
  */
 export default function(view, event, item) {
-  var el = view._renderer.canvas(),
+  var r  = view._renderer,
+      el = r && r.canvas(),
       p, e, translate;
 
   if (el) {
@@ -41,8 +42,8 @@ export default function(view, event, item) {
   }
 
   event.dataflow = view;
-  event.vega = extension(view, item, p);
   event.item = item;
+  event.vega = extension(view, item, p);
   return event;
 }
 

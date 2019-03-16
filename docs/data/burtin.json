@@ -1,31 +1,31 @@
 [
   {
     "Bacteria":"Aerobacter aerogenes",
-    "Penicilin":870,
+    "Penicillin":870,
     "Streptomycin":1,
     "Neomycin":1.6,
     "Gram_Staining":"negative",
     "Genus": "other"
   },
   {
-    "Bacteria":"Brucella abortus",
-    "Penicilin":1,
-    "Streptomycin":2,
-    "Neomycin":0.02,
-    "Gram_Staining":"negative",
-    "Genus": "other"
-  },
-  {
-    "Bacteria":"Brucella anthracis",
-    "Penicilin":0.001,
+    "Bacteria":"Bacillus anthracis",
+    "Penicillin":0.001,
     "Streptomycin":0.01,
     "Neomycin":0.007,
     "Gram_Staining":"positive",
     "Genus": "other"
   },
   {
+    "Bacteria":"Brucella abortus",
+    "Penicillin":1,
+    "Streptomycin":2,
+    "Neomycin":0.02,
+    "Gram_Staining":"negative",
+    "Genus": "other"
+  },
+  {
     "Bacteria":"Diplococcus pneumoniae",
-    "Penicilin":0.005,
+    "Penicillin":0.005,
     "Streptomycin":11,
     "Neomycin":10,
     "Gram_Staining":"positive",
@@ -33,7 +33,7 @@
   },
   {
     "Bacteria":"Escherichia coli",
-    "Penicilin":100,
+    "Penicillin":100,
     "Streptomycin":0.4,
     "Neomycin":0.1,
     "Gram_Staining":"negative",
@@ -41,7 +41,7 @@
   },
   {
     "Bacteria":"Klebsiella pneumoniae",
-    "Penicilin":850,
+    "Penicillin":850,
     "Streptomycin":1.2,
     "Neomycin":1,
     "Gram_Staining":"negative",
@@ -49,7 +49,7 @@
   },
   {
     "Bacteria":"Mycobacterium tuberculosis",
-    "Penicilin":800,
+    "Penicillin":800,
     "Streptomycin":5,
     "Neomycin":2,
     "Gram_Staining":"negative",
@@ -57,7 +57,7 @@
   },
   {
     "Bacteria":"Proteus vulgaris",
-    "Penicilin":3,
+    "Penicillin":3,
     "Streptomycin":0.1,
     "Neomycin":0.1,
     "Gram_Staining":"negative",
@@ -65,7 +65,7 @@
   },
   {
     "Bacteria":"Pseudomonas aeruginosa",
-    "Penicilin":850,
+    "Penicillin":850,
     "Streptomycin":2,
     "Neomycin":0.4,
     "Gram_Staining":"negative",
@@ -73,7 +73,7 @@
   },
   {
     "Bacteria":"Salmonella (Eberthella) typhosa",
-    "Penicilin":1,
+    "Penicillin":1,
     "Streptomycin":0.4,
     "Neomycin":0.008,
     "Gram_Staining":"negative",
@@ -81,7 +81,7 @@
   },
   {
     "Bacteria":"Salmonella schottmuelleri",
-    "Penicilin":10,
+    "Penicillin":10,
     "Streptomycin":0.8,
     "Neomycin":0.09,
     "Gram_Staining":"negative",
@@ -89,7 +89,7 @@
   },
   {
     "Bacteria":"Staphylococcus albus",
-    "Penicilin":0.007,
+    "Penicillin":0.007,
     "Streptomycin":0.1,
     "Neomycin":0.001,
     "Gram_Staining":"positive",
@@ -97,7 +97,7 @@
   },
   {
     "Bacteria":"Staphylococcus aureus",
-    "Penicilin":0.03,
+    "Penicillin":0.03,
     "Streptomycin":0.03,
     "Neomycin":0.001,
     "Gram_Staining":"positive",
@@ -105,7 +105,7 @@
   },
   {
     "Bacteria":"Streptococcus fecalis",
-    "Penicilin":1,
+    "Penicillin":1,
     "Streptomycin":1,
     "Neomycin":0.1,
     "Gram_Staining":"positive",
@@ -113,7 +113,7 @@
   },
   {
     "Bacteria":"Streptococcus hemolyticus",
-    "Penicilin":0.001,
+    "Penicillin":0.001,
     "Streptomycin":14,
     "Neomycin":10,
     "Gram_Staining":"positive",
@@ -121,7 +121,7 @@
   },
   {
     "Bacteria":"Streptococcus viridans",
-    "Penicilin":0.005,
+    "Penicillin":0.005,
     "Streptomycin":10,
     "Neomycin":40,
     "Gram_Staining":"positive",

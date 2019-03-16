@@ -21,7 +21,6 @@ export {
   Point,
   isValidScaleType,
   isTemporal,
-  isBinned,
   isQuantile,
   isSequential,
   isDiverging,
@@ -32,8 +31,17 @@ export {
   isDiscretizing
 } from './src/scales/types';
 
-export {default as scale} from './src/scales';
-export {interpolate, interpolateRange, scaleCopy, scaleFraction} from './src/interpolate';
-export {scheme, schemeDiscretized} from './src/schemes';
+export {
+  interpolate,
+  interpolateColors,
+  interpolateRange,
+  scaleCopy,
+  scaleFraction,
+  quantizeInterpolator
+} from './src/interpolate';
 
-export {scaleImplicit} from 'd3-scale';
+export {default as scale} from './src/scales';
+
+export {scheme} from './src/schemes';
+
+export {scaleImplicit, tickFormat} from 'd3-scale';

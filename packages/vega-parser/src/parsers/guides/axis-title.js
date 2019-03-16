@@ -1,34 +1,36 @@
-import {Top, Bottom, Left, GuideTitleStyle} from './constants';
+import {Top, Bottom, Left, GuideTitleStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {encoder, has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncode, addEncoders} from '../encode/encode-util';
+import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
       horizontal = (orient === Top || orient === Bottom),
-      zero = {value: 0},
       encode, enter, update, titlePos;
 
   encode = {
     enter: enter = {
-      opacity: zero
+      opacity: zero,
+      anchor: encoder(_('titleAnchor')),
+      align: {signal: alignExpr}
     },
-    update: update = {
-      opacity: {value: 1},
+    update: update = extend({}, enter, {
+      opacity: one,
       text: encoder(spec.title)
-    },
+    }),
     exit: {
       opacity: zero
     }
   };
 
   titlePos = {
-    scale: spec.scale,
-    range: 0.5
+    signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
   if (horizontal) {
@@ -41,22 +43,26 @@ export default function(spec, config, userEncode, dataRef) {
     enter.baseline = {value: 'bottom'};
   }
 
-  addEncode(encode, 'align',       lookup('titleAlign', spec, config));
-  addEncode(encode, 'angle',       lookup('titleAngle', spec, config));
-  addEncode(encode, 'baseline',    lookup('titleBaseline', spec, config));
-  addEncode(encode, 'fill',        lookup('titleColor', spec, config));
-  addEncode(encode, 'font',        lookup('titleFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('titleFontSize', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('titleFontWeight', spec, config));
-  addEncode(encode, 'limit',       lookup('titleLimit', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('titleOpacity', spec, config));
+  addEncoders(encode, {
+    angle:       _('titleAngle'),
+    baseline:    _('titleBaseline'),
+    fill:        _('titleColor'),
+    fillOpacity: _('titleOpacity'),
+    font:        _('titleFont'),
+    fontSize:    _('titleFontSize'),
+    fontStyle:   _('titleFontStyle'),
+    fontWeight:  _('titleFontWeight'),
+    limit:       _('titleLimit')
+  }, { // require update
+    align:       _('titleAlign')
+  });
 
-  !addEncode(encode, 'x', lookup('titleX', spec, config), 'update')
-    && horizontal && !has('x', userEncode)
+  !addEncode(encode, 'x', _('titleX'), 'update')
+    && !horizontal && !has('x', userEncode)
     && (encode.enter.auto = {value: true});
 
-  !addEncode(encode, 'y', lookup('titleY', spec, config), 'update')
-    && !horizontal && !has('y', userEncode)
+  !addEncode(encode, 'y', _('titleY'), 'update')
+    && horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);

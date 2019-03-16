@@ -1,41 +1,40 @@
-import {Left, Top, Bottom, Value} from './constants';
+import {Left, Top, Bottom, Value, zero, one} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisGridRole} from '../marks/roles';
-import {addEncode} from '../encode/encode-util';
+import {addEncoders} from '../encode/encode-util';
+import {extend, isObject} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var orient = spec.orient,
+  var _ = lookup(spec, config),
+      orient = spec.orient,
       vscale = spec.gridScale,
       sign = (orient === Left || orient === Top) ? 1 : -1,
-      offset = sign * spec.offset || 0,
-      zero = {value: 0},
+      offset = offsetValue(spec.offset, sign),
       encode, enter, exit, update, tickPos, u, v, v2, s;
 
   encode = {
-    enter: enter = {
-      opacity: zero
-    },
-    update: update = {
-      opacity: {value: 1}
-    },
-    exit: exit = {
-      opacity: zero
-    }
+    enter: enter = {opacity: zero},
+    update: update = {opacity: one},
+    exit: exit = {opacity: zero}
   };
-  addEncode(encode, 'stroke',        lookup('gridColor', spec, config));
-  addEncode(encode, 'strokeDash',    lookup('gridDash', spec, config));
-  addEncode(encode, 'strokeOpacity', lookup('gridOpacity', spec, config));
-  addEncode(encode, 'strokeWidth',   lookup('gridWidth', spec, config));
+
+  addEncoders(encode, {
+    stroke:           _('gridColor'),
+    strokeDash:       _('gridDash'),
+    strokeDashOffset: _('gridDashOffset'),
+    strokeOpacity:    _('gridOpacity'),
+    strokeWidth:      _('gridWidth')
+  });
 
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   lookup('bandPosition', spec, config),
-    round:  lookup('tickRound', spec, config),
-    extra:  lookup('tickExtra', spec, config),
-    offset: lookup('tickOffset', spec, config)
+    band:   _('bandPosition'),
+    round:  _('tickRound'),
+    extra:  _('tickExtra'),
+    offset: _('tickOffset')
   };
 
   if (orient === Top || orient === Bottom) {
@@ -52,12 +51,35 @@ export default function(spec, config, userEncode, dataRef) {
   update[u] = enter[u] = exit[u] = tickPos;
 
   if (vscale) {
-    enter[v] = {scale: vscale, range: 0, mult: sign, offset: offset};
+    update[v] = enter[v] = {scale: vscale, range: 0, mult: sign, offset: offset};
     update[v2] = enter[v2] = {scale: vscale, range: 1, mult: sign, offset: offset};
   } else {
-    enter[v] = {value: offset};
+    update[v] = enter[v] = {value: 0, offset: offset};
     update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
   }
 
   return guideMark(RuleMark, AxisGridRole, null, Value, dataRef, encode, userEncode);
+}
+
+function offsetValue(offset, sign)  {
+  if (sign === 1) {
+    // do nothing!
+  } else if (!isObject(offset)) {
+    offset = sign * (offset || 0);
+  } else {
+    var entry = offset = extend({}, offset);
+
+    while (entry.mult != null) {
+      if (!isObject(entry.mult)) {
+        entry.mult *= sign;
+        return offset;
+      } else {
+        entry = entry.mult = extend({}, entry.mult);
+      }
+    }
+
+    entry.mult = sign;
+  }
+
+  return offset;
 }

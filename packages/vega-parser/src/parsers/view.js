@@ -23,6 +23,7 @@ export default function parseView(spec, scope) {
   scope.addSignal('height', spec.height || 0);
   scope.addSignal('padding', parsePadding(spec.padding, config));
   scope.addSignal('autosize', parseAutosize(spec.autosize, config));
+  scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
   array(spec.signals).forEach(function(_) {
     if (!defined[_.name]) parseSignal(_, scope);
@@ -44,7 +45,7 @@ export default function parseView(spec, scope) {
   // Perform view layout
   parent = scope.add(ViewLayout({
     layout:       scope.objectProperty(spec.layout),
-    legendMargin: config.legendMargin,
+    legends:      scope.legends,
     autosize:     scope.signalRef('autosize'),
     mark:         root,
     pulse:        ref(encode)

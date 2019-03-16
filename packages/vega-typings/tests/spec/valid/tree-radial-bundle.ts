@@ -205,13 +205,7 @@ export const spec: Spec = {
       "stroke": "color",
       "orient": "bottom-right",
       "title": "Dependencies",
-      "encode": {
-        "symbols": {
-          "enter": {
-            "shape": {"value": "M-0.5,0H1"}
-          }
-        }
-      }
+      "symbolType": "stroke"
     }
   ]
 };

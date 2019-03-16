@@ -6,20 +6,21 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { FontWeight, SymbolShape, TextBaseline, ColorValueRef } from './encode';
-import { TimeInterval } from './scale';
-import {
-  NumberValue,
-  StringValue,
-  AlignValue,
-  FontWeightValue,
-  TextBaselineValue,
-  SymbolShapeValue,
-  ColorValue,
-  BooleanValue,
-} from './values';
+import { FormatType, LabelOverlap, TickCount } from './axis';
 import { LayoutAlign } from './layout';
-import { LabelOverlap } from './axis';
+import {
+  AlignValue,
+  AnchorValue,
+  ColorValue,
+  DashArrayValue,
+  FontStyleValue,
+  FontWeightValue,
+  NumberValue,
+  OrientValue,
+  StringValue,
+  SymbolShapeValue,
+  TextBaselineValue,
+} from './values';
 
 export interface GuideEncodeEntry<T> {
   name?: string;
@@ -57,6 +58,7 @@ export interface Legend extends BaseLegend {
   fill?: string;
   stroke?: string;
   strokeDash?: string;
+  strokeWidth?: string;
   opacity?: string;
 
   /**
@@ -77,6 +79,11 @@ export interface Legend extends BaseLegend {
   format?: string | SignalRef;
 
   /**
+   * The format type for legend labels (number or time).
+   */
+  formatType?: FormatType | SignalRef;
+
+  /**
    * The title for the legend.
    */
   title?: string | SignalRef;
@@ -84,7 +91,12 @@ export interface Legend extends BaseLegend {
   /**
    * The desired number of tick values for quantitative legends.
    */
-  tickCount?: number | TimeInterval;
+  tickCount?: TickCount;
+
+  /**
+   * The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value.
+   */
+  tickMinStep?: number | SignalRef;
 
   /**
    * Explicitly set the visible legend values.
@@ -123,18 +135,23 @@ export interface BaseLegend<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   LA = LayoutAlign | SignalRef,
   LO = LabelOverlap | SignalRef,
-  SY = SymbolShapeValue
+  SY = SymbolShapeValue,
+  DA = DashArrayValue,
+  O = OrientValue,
+  AN = AnchorValue,
+  LOR = LegendOrient | SignalRef
 > {
   /**
    * The orientation of the legend, which determines how the legend is positioned within the scene. One of "left", "right", "top-left", "top-right", "bottom-left", "bottom-right", "none".
    *
    * __Default value:__ `"right"`
    */
-  orient?: LegendOrient;
+  orient?: LOR;
 
   // ---------- Legend Group ----------
   /**
@@ -166,11 +183,6 @@ export interface BaseLegend<
    */
   strokeColor?: C;
 
-  /**
-   * Border stroke width for the full legend.
-   */
-  strokeWidth?: N;
-
   // ---------- Title ----------
   /**
    * Horizontal text alignment for legend titles.
@@ -178,6 +190,11 @@ export interface BaseLegend<
    * __Default value:__ `"left"`.
    */
   titleAlign?: A;
+
+  /**
+   * Text anchor position for placing legend titles.
+   */
+  titleAnchor?: AN;
 
   /**
    * Vertical text baseline for legend titles.
@@ -202,6 +219,11 @@ export interface BaseLegend<
   titleFontSize?: N;
 
   /**
+   * The font style of the legend title.
+   */
+  titleFontStyle?: FS;
+
+  /**
    * The font weight of the legend title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
@@ -219,6 +241,11 @@ export interface BaseLegend<
    * Opacity of the legend title.
    */
   titleOpacity?: N;
+
+  /**
+   * Orientation of the legend title.
+   */
+  titleOrient?: O;
 
   /**
    * The padding, in pixels, between title and legend.
@@ -299,6 +326,16 @@ export interface BaseLegend<
 
   // ---------- Symbols ----------
   /**
+   * An array of alternating [stroke, space] lengths for dashed symbol strokes.
+   */
+  symbolDash?: DA;
+
+  /**
+   * The pixel offset at which to start drawing with the symbol stroke dash array.
+   */
+  symbolDashOffset?: N;
+
+  /**
    * The color of the legend symbol,
    */
   symbolFillColor?: C;
@@ -378,6 +415,11 @@ export interface BaseLegend<
   labelFontSize?: N;
 
   /**
+   * The font style of legend label.
+   */
+  labelFontStyle?: FS;
+
+  /**
    * The font weight of legend label.
    */
   labelFontWeight?: FW;
@@ -413,4 +455,9 @@ export interface BaseLegend<
    * __Default value:__ `true`.
    */
   labelOverlap?: LO;
+
+  /**
+   * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
+   */
+  labelSeparation?: NS;
 }

@@ -59,84 +59,88 @@ This package provides the following constants and functions:
 
 **Constants**
 
-- `[NaN](https://vega.github.io/vega/docs/expressions/#NaN)`
-- `[E](https://vega.github.io/vega/docs/expressions/#E)`
-- `[LN2](https://vega.github.io/vega/docs/expressions/#LN2)`
-- `[LN10](https://vega.github.io/vega/docs/expressions/#LN10)`
-- `[LOG2E](https://vega.github.io/vega/docs/expressions/#LOG2E)`
-- `[LOG10E](https://vega.github.io/vega/docs/expressions/#LOG10E)`
-- `[PI](https://vega.github.io/vega/docs/expressions/#PI)`
-- `[SQRT1_2](https://vega.github.io/vega/docs/expressions/#SQRT1_2)`
-- `[SQRT2](https://vega.github.io/vega/docs/expressions/#SQRT2)`
-- `[MIN_VALUE](https://vega.github.io/vega/docs/expressions/#MIN_VALUE)`
-- `[MAX_VALUE](https://vega.github.io/vega/docs/expressions/#MAX_VALUE)`
+- [`NaN`](https://vega.github.io/vega/docs/expressions/#NaN)
+- [`E`](https://vega.github.io/vega/docs/expressions/#E)
+- [`LN2`](https://vega.github.io/vega/docs/expressions/#LN2)
+- [`LN10`](https://vega.github.io/vega/docs/expressions/#LN10)
+- [`LOG2E`](https://vega.github.io/vega/docs/expressions/#LOG2E)
+- [`LOG10E`](https://vega.github.io/vega/docs/expressions/#LOG10E)
+- [`PI`](https://vega.github.io/vega/docs/expressions/#PI)
+- [`SQRT1_2`](https://vega.github.io/vega/docs/expressions/#SQRT1_2)
+- [`SQRT2`](https://vega.github.io/vega/docs/expressions/#SQRT2)
+- [`MIN_VALUE`](https://vega.github.io/vega/docs/expressions/#MIN_VALUE)
+- [`MAX_VALUE`](https://vega.github.io/vega/docs/expressions/#MAX_VALUE)
 
 **Math Functions**
 
-- `[isNaN](https://vega.github.io/vega/docs/expressions/#isNaN)`
-- `[isFinite](https://vega.github.io/vega/docs/expressions/#isFinite)`
-- `[abs](https://vega.github.io/vega/docs/expressions/#abs)`
-- `[acos](https://vega.github.io/vega/docs/expressions/#acos)`
-- `[asin](https://vega.github.io/vega/docs/expressions/#asin)`
-- `[atan](https://vega.github.io/vega/docs/expressions/#atan)`
-- `[atan2](https://vega.github.io/vega/docs/expressions/#atan2)`
-- `[ceil](https://vega.github.io/vega/docs/expressions/#ceil)`
-- `[cos](https://vega.github.io/vega/docs/expressions/#cos)`
-- `[exp](https://vega.github.io/vega/docs/expressions/#exp)`
-- `[floor](https://vega.github.io/vega/docs/expressions/#floor)`
-- `[log](https://vega.github.io/vega/docs/expressions/#log)`
-- `[max](https://vega.github.io/vega/docs/expressions/#max)`
-- `[min](https://vega.github.io/vega/docs/expressions/#min)`
-- `[pow](https://vega.github.io/vega/docs/expressions/#pow)`
-- `[random](https://vega.github.io/vega/docs/expressions/#random)`
-- `[round](https://vega.github.io/vega/docs/expressions/#round)`
-- `[sin](https://vega.github.io/vega/docs/expressions/#sin)`
-- `[sqrt](https://vega.github.io/vega/docs/expressions/#sqrt)`
-- `[tan](https://vega.github.io/vega/docs/expressions/#tan)`
-- `[clamp](https://vega.github.io/vega/docs/expressions/#clamp)`
+- [`isNaN`](https://vega.github.io/vega/docs/expressions/#isNaN)
+- [`isFinite`](https://vega.github.io/vega/docs/expressions/#isFinite)
+- [`abs`](https://vega.github.io/vega/docs/expressions/#abs)
+- [`acos`](https://vega.github.io/vega/docs/expressions/#acos)
+- [`asin`](https://vega.github.io/vega/docs/expressions/#asin)
+- [`atan`](https://vega.github.io/vega/docs/expressions/#atan)
+- [`atan2`](https://vega.github.io/vega/docs/expressions/#atan2)
+- [`ceil`](https://vega.github.io/vega/docs/expressions/#ceil)
+- [`cos`](https://vega.github.io/vega/docs/expressions/#cos)
+- [`exp`](https://vega.github.io/vega/docs/expressions/#exp)
+- [`floor`](https://vega.github.io/vega/docs/expressions/#floor)
+- [`log`](https://vega.github.io/vega/docs/expressions/#log)
+- [`max`](https://vega.github.io/vega/docs/expressions/#max)
+- [`min`](https://vega.github.io/vega/docs/expressions/#min)
+- [`pow`](https://vega.github.io/vega/docs/expressions/#pow)
+- [`random`](https://vega.github.io/vega/docs/expressions/#random)
+- [`round`](https://vega.github.io/vega/docs/expressions/#round)
+- [`sin`](https://vega.github.io/vega/docs/expressions/#sin)
+- [`sqrt`](https://vega.github.io/vega/docs/expressions/#sqrt)
+- [`tan`](https://vega.github.io/vega/docs/expressions/#tan)
+- [`clamp`](https://vega.github.io/vega/docs/expressions/#clamp)
 
 **Date/Time Functions**
 
-- `[now](https://vega.github.io/vega/docs/expressions/#now)`
-- `[utc](https://vega.github.io/vega/docs/expressions/#utc)`
-- `[datetime](https://vega.github.io/vega/docs/expressions/#datetime)`
-- `[date](https://vega.github.io/vega/docs/expressions/#date)`
-- `[day](https://vega.github.io/vega/docs/expressions/#day)`
-- `[year](https://vega.github.io/vega/docs/expressions/#year)`
-- `[month](https://vega.github.io/vega/docs/expressions/#month)`
-- `[hours](https://vega.github.io/vega/docs/expressions/#hours)`
-- `[minutes](https://vega.github.io/vega/docs/expressions/#minutes)`
-- `[seconds](https://vega.github.io/vega/docs/expressions/#seconds)`
-- `[milliseconds](https://vega.github.io/vega/docs/expressions/#milliseconds)`
-- `[time](https://vega.github.io/vega/docs/expressions/#time)`
-- `[timezoneoffset](https://vega.github.io/vega/docs/expressions/#timezoneoffset)`
-- `[utcdate](https://vega.github.io/vega/docs/expressions/#utcdate)`
-- `[utcday](https://vega.github.io/vega/docs/expressions/#utcday)`
-- `[utcyear](https://vega.github.io/vega/docs/expressions/#utcyear)`
-- `[utcmonth](https://vega.github.io/vega/docs/expressions/#utcmonth)`
-- `[utchours](https://vega.github.io/vega/docs/expressions/#utchours)`
-- `[utcminutes](https://vega.github.io/vega/docs/expressions/#utcminutes)`
-- `[utcseconds](https://vega.github.io/vega/docs/expressions/#utcseconds)`
-- `[utcmilliseconds](https://vega.github.io/vega/docs/expressions/#utcmilliseconds)`
+- [`now`](https://vega.github.io/vega/docs/expressions/#now)
+- [`utc`](https://vega.github.io/vega/docs/expressions/#utc)
+- [`datetime`](https://vega.github.io/vega/docs/expressions/#datetime)
+- [`date`](https://vega.github.io/vega/docs/expressions/#date)
+- [`day`](https://vega.github.io/vega/docs/expressions/#day)
+- [`year`](https://vega.github.io/vega/docs/expressions/#year)
+- [`month`](https://vega.github.io/vega/docs/expressions/#month)
+- [`hours`](https://vega.github.io/vega/docs/expressions/#hours)
+- [`minutes`](https://vega.github.io/vega/docs/expressions/#minutes)
+- [`seconds`](https://vega.github.io/vega/docs/expressions/#seconds)
+- [`milliseconds`](https://vega.github.io/vega/docs/expressions/#milliseconds)
+- [`time`](https://vega.github.io/vega/docs/expressions/#time)
+- [`timezoneoffset`](https://vega.github.io/vega/docs/expressions/#timezoneoffset)
+- [`utcdate`](https://vega.github.io/vega/docs/expressions/#utcdate)
+- [`utcday`](https://vega.github.io/vega/docs/expressions/#utcday)
+- [`utcyear`](https://vega.github.io/vega/docs/expressions/#utcyear)
+- [`utcmonth`](https://vega.github.io/vega/docs/expressions/#utcmonth)
+- [`utchours`](https://vega.github.io/vega/docs/expressions/#utchours)
+- [`utcminutes`](https://vega.github.io/vega/docs/expressions/#utcminutes)
+- [`utcseconds`](https://vega.github.io/vega/docs/expressions/#utcseconds)
+- [`utcmilliseconds`](https://vega.github.io/vega/docs/expressions/#utcmilliseconds)
 
 **Sequence (Array or String) Functions**
 
-- `[length](https://vega.github.io/vega/docs/expressions/#length)`
-- `[indexof](https://vega.github.io/vega/docs/expressions/#indexof)`
-- `[lastindexof](https://vega.github.io/vega/docs/expressions/#lastindexof)`
-- `[slice](https://vega.github.io/vega/docs/expressions/#slice)`
+- [`length`](https://vega.github.io/vega/docs/expressions/#length)
+- [`join`](https://vega.github.io/vega/docs/expressions/#join)
+- [`indexof`](https://vega.github.io/vega/docs/expressions/#indexof)
+- [`lastindexof`](https://vega.github.io/vega/docs/expressions/#lastindexof)
+- [`reverse`](https://vega.github.io/vega/docs/expressions/#reverse)
+- [`slice`](https://vega.github.io/vega/docs/expressions/#slice)
 
 **String Functions**
 
-- `[parseFloat](https://vega.github.io/vega/docs/expressions/#parseFloat)`
-- `[parseInt](https://vega.github.io/vega/docs/expressions/#parseInt)`
-- `[upper](https://vega.github.io/vega/docs/expressions/#upper)`
-- `[lower](https://vega.github.io/vega/docs/expressions/#lower)`
-- `[substring](https://vega.github.io/vega/docs/expressions/#substring)`
-- `[split](https://vega.github.io/vega/docs/expressions/#split)`
-- `[replace](https://vega.github.io/vega/docs/expressions/#replace)`
+- [`parseFloat`](https://vega.github.io/vega/docs/expressions/#parseFloat)
+- [`parseInt`](https://vega.github.io/vega/docs/expressions/#parseInt)
+- [`upper`](https://vega.github.io/vega/docs/expressions/#upper)
+- [`lower`](https://vega.github.io/vega/docs/expressions/#lower)
+- [`replace`](https://vega.github.io/vega/docs/expressions/#replace)
+- [`split`](https://vega.github.io/vega/docs/expressions/#split)
+- [`substring`](https://vega.github.io/vega/docs/expressions/#substring)
+- [`trim`](https://vega.github.io/vega/docs/expressions/#trim)
 
 **RegExp Functions**
 
-- `[regexp](https://vega.github.io/vega/docs/expressions/#regexp)`
-- `[test](https://vega.github.io/vega/docs/expressions/#test)`
+- [`regexp`](https://vega.github.io/vega/docs/expressions/#regexp)
+- [`test`](https://vega.github.io/vega/docs/expressions/#test)
+

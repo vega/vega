@@ -8,11 +8,11 @@ import legendGradientLabels from './guides/legend-gradient-labels';
 import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, gradientLength, lookup} from './guides/guide-util';
+import {getEncoding, getStyle, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
-import {addEncode, extendEncode} from './encode/encode-util';
+import {addEncoders, extendEncode} from './encode/encode-util';
 import {ref, deref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 
@@ -26,6 +26,7 @@ export default function(spec, scope) {
       name = legendEncode.name || undefined,
       interactive = legendEncode.interactive,
       style = legendEncode.style,
+      _ = lookup(spec, config),
       entryEncode, entryLayout, params, children,
       type, datum, dataRef, entryRef, group;
 
@@ -38,15 +39,15 @@ export default function(spec, scope) {
 
   // single-element data source for legend group
   datum = {
-    orient: lookup('orient', spec, config),
     title:  spec.title != null,
-    type:   type
+    type:   type,
+    vgrad:  type !== 'symbol' &&  _.isVertical()
   };
   dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(spec, config), legendEncode, Skip
+    buildLegendEncode(_, config), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -54,10 +55,12 @@ export default function(spec, scope) {
 
   // data source for legend values
   entryRef = ref(scope.add(LegendEntries(params = {
-    type:   type,
-    scale:  scope.scaleRef(scale),
-    count:  scope.objectProperty(spec.tickCount),
-    values: scope.objectProperty(spec.values),
+    type:    type,
+    scale:   scope.scaleRef(scale),
+    count:   scope.objectProperty(spec.tickCount),
+    values:  scope.objectProperty(spec.values),
+    minstep: scope.property(spec.tickMinStep),
+    formatType: scope.property(spec.formatType),
     formatSpecifier: scope.property(spec.format)
   })));
 
@@ -69,7 +72,7 @@ export default function(spec, scope) {
     ];
     // adjust default tick count based on the gradient length
     params.count = params.count || scope.signalRef(
-      'max(2,2*floor((' + deref(gradientLength(spec, config)) + ')/100))'
+      `max(2,2*floor((${deref(_.gradientLength())})/100))`
     );
   }
 
@@ -131,17 +134,20 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(spec, config) {
+function buildLegendEncode(_, config) {
   var encode = {enter: {}, update: {}};
 
-  addEncode(encode, 'offset',       lookup('offset', spec, config));
-  addEncode(encode, 'padding',      lookup('padding', spec, config));
-  addEncode(encode, 'titlePadding', lookup('titlePadding', spec, config));
-  addEncode(encode, 'fill',         lookup('fillColor', spec, config));
-  addEncode(encode, 'stroke',       lookup('strokeColor', spec, config));
-  addEncode(encode, 'cornerRadius', lookup('cornerRadius', spec, config));
-  addEncode(encode, 'strokeWidth',  config.strokeWidth);
-  addEncode(encode, 'strokeDash',   config.strokeDash);
+  addEncoders(encode, {
+    orient:       _('orient'),
+    offset:       _('offset'),
+    padding:      _('padding'),
+    titlePadding: _('titlePadding'),
+    cornerRadius: _('cornerRadius'),
+    fill:         _('fillColor'),
+    stroke:       _('strokeColor'),
+    strokeWidth:  config.strokeWidth,
+    strokeDash:   config.strokeDash
+  });
 
   return encode;
 }
@@ -152,14 +158,14 @@ function sizeExpression(spec, scope, marks) {
       fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
   return parseExpression(
-    `max(ceil(sqrt(${size}) + ${strokeWidth}), ${fontSize})`,
+    `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
     scope
   );
 }
 
 function getChannel(name, spec, marks) {
   return spec[name]
-    ? 'scale("' + spec[name] + '",datum)'
+    ? `scale("${spec[name]}",datum)`
     : getEncoding(name, marks[0].encode);
 }
 

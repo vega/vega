@@ -4,7 +4,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Nest = require('../').nest;
 
-tape('Nest tuples', function(test) {
+tape('Nest tuples', function(t) {
   var dataA = {id: 'A', job: 'Doctor'},
       nodeA = {key: dataA.job, values: [dataA]},
       childA = {data: dataA, height: 0, depth: 2};
@@ -40,15 +40,15 @@ tape('Nest tuples', function(test) {
 
   // test and remove circular properties first
   var d = out.value;
-  test.equal(d.root.children[0].parent, d.root);
-  test.equal(d.root.children[1].parent, d.root);
-  test.equal(d.root.lookup['1'].parent, d.root.children[0]);
-  test.equal(d.root.lookup['2'].parent, d.root.children[1]);
+  t.equal(d.root.children[0].parent, d.root);
+  t.equal(d.root.children[1].parent, d.root);
+  t.equal(d.root.lookup['1'].parent, d.root.children[0]);
+  t.equal(d.root.lookup['2'].parent, d.root.children[1]);
   delete d.root.children[0].parent;
   delete d.root.children[1].parent;
   delete d.root.lookup['1'].parent;
   delete d.root.lookup['2'].parent;
-  test.deepEqual(d, expected);
+  t.deepEqual(d, expected);
 
 
   // -- test data removals
@@ -70,16 +70,16 @@ tape('Nest tuples', function(test) {
 
   // test and remove circular properties first
   d = out.value;
-  test.equal(d.root.children[0].parent, d.root);
-  test.equal(d.root.lookup['2'].parent, d.root.children[0]);
+  t.equal(d.root.children[0].parent, d.root);
+  t.equal(d.root.lookup['2'].parent, d.root.children[0]);
   delete d.root.children[0].parent;
   delete d.root.lookup['2'].parent;
-  test.deepEqual(d, expected);
+  t.deepEqual(d, expected);
 
-  test.end();
+  t.end();
 });
 
-tape('Nest empty data', function(test) {
+tape('Nest empty data', function(t) {
   // Setup nest aggregation
   var df = new vega.Dataflow(),
       collect = df.add(Collect),
@@ -87,10 +87,10 @@ tape('Nest empty data', function(test) {
       out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, vega.changeset().insert([])).run();
-  test.equal(out.value.length, 0);
+  t.equal(out.value.length, 0);
   var root = out.value.root;
-  test.equal(root.children, undefined);
-  test.deepEqual(root.lookup, {});
+  t.equal(root.children, undefined);
+  t.deepEqual(root.lookup, {});
 
-  test.end();
+  t.end();
 });

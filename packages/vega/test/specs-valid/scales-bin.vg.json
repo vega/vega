@@ -7,16 +7,12 @@
 
   "signals": [
     {
-      "name": "binValues",
-      "update": "sequence(bins.start, bins.stop + bins.step, bins.step)"
+      "name": "maxbins", "value": 10,
+      "bind": {"input": "select", "options": [5, 10, 20, 50]}
     },
     {
       "name": "binDomain",
       "update": "[bins.start, bins.stop]"
-    },
-    {
-      "name": "maxbins", "value": 10,
-      "bind": {"input": "select", "options": [5, 10, 20, 50]}
     }
   ],
 
@@ -67,7 +63,7 @@
       "range": "width",
       "round": true,
       "domain": {"signal": "binDomain"},
-      "bins": {"signal": "binValues"}
+      "bins": {"signal": "bins"}
     },
     {
       "name": "size",
@@ -75,13 +71,17 @@
       "range": [10, 100],
       "round": true,
       "domain": {"signal": "binDomain"},
-      "bins": {"signal": "binValues"}
+      "bins": {"signal": "bins"}
     },
     {
       "name": "color",
       "type": "bin-ordinal",
       "range": {"scheme": "purpleorange"},
-      "domain": {"signal": "binValues"}
+      "bins": {
+        "start": {"signal": "bins.start"},
+        "stop": {"signal": "bins.stop"},
+        "step": {"signal": "bins.step"}
+      }
     }
   ],
 

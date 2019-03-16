@@ -140,7 +140,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Linear Ramp",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -149,10 +151,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
+              "x": -308,
               "y": 0,
-              "width": 301,
-              "height": 45
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -290,7 +293,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Pow Ramp - Exponent 1.5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -299,10 +304,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 53,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 52,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -440,7 +446,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Pow Ramp - Exponent 0.5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -449,10 +457,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 106,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 104,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -832,7 +841,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Log Ramp - Base 10",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -841,10 +852,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 159,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 156,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -982,7 +994,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Log Ramp - Base 2",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -991,10 +1005,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 212,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 208,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1132,7 +1147,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Symlog Ramp",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1141,10 +1158,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 265,
-              "width": 304,
-              "height": 45
+              "x": -308,
+              "y": 260,
+              "width": 303,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1271,7 +1289,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Scheme",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1280,10 +1300,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 318,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 312,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1410,7 +1431,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Scheme Extent [0, 1]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1419,10 +1442,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 371,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 364,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1549,7 +1573,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Scheme Extent [0.2, 1]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1558,10 +1584,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 424,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 416,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1688,7 +1715,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Scheme Extent [0.2, 1] Reverse",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1697,10 +1726,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 477,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 468,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1827,7 +1857,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Scheme Extent [1, 0.2]",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1836,10 +1868,11 @@
                   "zindex": 0
                 }
               ],
-              "x": -309,
-              "y": 530,
-              "width": 301,
-              "height": 45
+              "x": -308,
+              "y": 520,
+              "width": 300,
+              "height": 44,
+              "orient": "left"
             }
           ],
           "zindex": 0
@@ -1966,7 +1999,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate Default",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1977,8 +2012,9 @@
               ],
               "x": 5,
               "y": 0,
-              "width": 301,
-              "height": 45
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2105,7 +2141,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate RGB",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2115,9 +2153,10 @@
                 }
               ],
               "x": 5,
-              "y": 53,
-              "width": 301,
-              "height": 45
+              "y": 52,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2244,7 +2283,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate RGB Gamma 2.2",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2254,9 +2295,10 @@
                 }
               ],
               "x": 5,
-              "y": 106,
-              "width": 301,
-              "height": 45
+              "y": 104,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2383,7 +2425,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate LAB",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2393,9 +2437,10 @@
                 }
               ],
               "x": 5,
-              "y": 159,
-              "width": 301,
-              "height": 45
+              "y": 156,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2522,7 +2567,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate HCL",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2532,9 +2579,10 @@
                 }
               ],
               "x": 5,
-              "y": 212,
-              "width": 301,
-              "height": 45
+              "y": 208,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2661,7 +2709,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate HSL",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2671,9 +2721,10 @@
                 }
               ],
               "x": 5,
-              "y": 265,
-              "width": 301,
-              "height": 45
+              "y": 260,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2800,7 +2851,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate HCL-Long",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2810,9 +2863,10 @@
                 }
               ],
               "x": 5,
-              "y": 318,
-              "width": 301,
-              "height": 45
+              "y": 312,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -2939,7 +2993,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Interpolate HSL-Long",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2949,9 +3005,10 @@
                 }
               ],
               "x": 5,
-              "y": 371,
-              "width": 301,
-              "height": 45
+              "y": 364,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -3078,7 +3135,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Diverging Mid 0",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3088,9 +3147,10 @@
                 }
               ],
               "x": 5,
-              "y": 424,
-              "width": 301,
-              "height": 45
+              "y": 416,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -3217,7 +3277,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Diverging Range Mid -5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3227,9 +3289,10 @@
                 }
               ],
               "x": 5,
-              "y": 477,
-              "width": 301,
-              "height": 45
+              "y": 468,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0
@@ -3356,7 +3419,9 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
+                      "orient": "top",
                       "text": "Diverging Range Mid 5",
+                      "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3366,9 +3431,10 @@
                 }
               ],
               "x": 5,
-              "y": 530,
-              "width": 301,
-              "height": 45
+              "y": 520,
+              "width": 300,
+              "height": 44,
+              "orient": "right"
             }
           ],
           "zindex": 0

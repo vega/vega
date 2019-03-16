@@ -17,6 +17,7 @@ export class Bounds {
 
 export interface SceneItem {
   bounds: Bounds;
+  datum?: object;
   mark: { role: string };
   x: number;
   y: number;

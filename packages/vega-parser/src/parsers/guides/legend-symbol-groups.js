@@ -1,29 +1,28 @@
 import {
-  Index, Label, Offset, Size, Value,
+  Index, Label, Offset, Size, Value, zero, one,
   Skip, GuideLabelStyle, LegendScales
 } from './constants';
 import guideGroup from './guide-group';
 import guideMark from './guide-mark';
-import {entryColumns, isVertical, lookup} from './guide-util';
+import {lookup} from './guide-util';
 import {SymbolMark, TextMark} from '../marks/marktypes';
 import {ScopeRole, LegendSymbolRole, LegendLabelRole} from '../marks/roles';
-import {addEncode, encoder, extendEncode} from '../encode/encode-util';
-
-var zero = {value: 0};
+import {addEncoders, encoder, extendEncode} from '../encode/encode-util';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
-  var entries = userEncode.entries,
+  var _ = lookup(spec, config),
+      entries = userEncode.entries,
       interactive = !!(entries && entries.interactive),
       name = entries ? entries.name : undefined,
-      height = lookup('clipHeight', spec, config),
-      symbolOffset = lookup('symbolOffset', spec, config),
+      height = _('clipHeight'),
+      symbolOffset = _('symbolOffset'),
       valueRef = {data: 'value'},
       encode = {},
-      xSignal = columns + '?' + 'datum.' + Offset + ':' + 'datum.' + Size,
+      xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
       yEncode = height ? encoder(height) : {field: Size},
-      index = 'datum.' + Index,
-      ncols = 'max(1,' + columns + ')',
+      index = `datum.${Index}`,
+      ncols = `max(1, ${columns})`,
       enter, update, labelOffset, symbols, labels, nrows, sort;
 
   yEncode.mult = 0.5;
@@ -36,7 +35,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       y: yEncode
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       x: enter.x,
       y: enter.y
     },
@@ -46,15 +45,23 @@ export default function(spec, config, userEncode, dataRef, columns) {
   };
 
   if (!spec.fill) {
-    addEncode(encode, 'fill',   config.symbolBaseFillColor);
-    addEncode(encode, 'stroke', config.symbolBaseStrokeColor);
+    addEncoders(encode, {
+      fill:   config.symbolBaseFillColor,
+      stroke: config.symbolBaseStrokeColor
+    });
   }
-  addEncode(encode, 'shape',       lookup('symbolType', spec, config));
-  addEncode(encode, 'size',        lookup('symbolSize', spec, config));
-  addEncode(encode, 'strokeWidth', lookup('symbolStrokeWidth', spec, config));
-  addEncode(encode, 'fill',        lookup('symbolFillColor', spec, config));
-  addEncode(encode, 'stroke',      lookup('symbolStrokeColor', spec, config));
-  addEncode(encode, 'opacity',     lookup('symbolOpacity', spec, config), 'update');
+
+  addEncoders(encode, {
+    fill:             _('symbolFillColor'),
+    shape:            _('symbolType'),
+    size:             _('symbolSize'),
+    stroke:           _('symbolStrokeColor'),
+    strokeDash:       _('symbolDash'),
+    strokeDashOffset: _('symbolDashOffset'),
+    strokeWidth:      _('symbolStrokeWidth')
+  }, { // update
+    opacity:          _('symbolOpacity')
+  });
 
   LegendScales.forEach(function(scale) {
     if (spec[scale]) {
@@ -70,7 +77,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
 
   // -- LEGEND LABELS --
   labelOffset = encoder(symbolOffset);
-  labelOffset.offset = lookup('labelOffset', spec, config);
+  labelOffset.offset = _('labelOffset');
 
   encode = {
     enter:  enter = {
@@ -79,7 +86,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       y: yEncode
     },
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       text: {field: Label},
       x: enter.x,
       y: enter.y
@@ -89,14 +96,17 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   };
 
-  addEncode(encode, 'align',       lookup('labelAlign', spec, config));
-  addEncode(encode, 'baseline',    lookup('labelBaseline', spec, config));
-  addEncode(encode, 'fill',        lookup('labelColor', spec, config));
-  addEncode(encode, 'font',        lookup('labelFont', spec, config));
-  addEncode(encode, 'fontSize',    lookup('labelFontSize', spec, config));
-  addEncode(encode, 'fontWeight',  lookup('labelFontWeight', spec, config));
-  addEncode(encode, 'limit',       lookup('labelLimit', spec, config));
-  addEncode(encode, 'fillOpacity', lookup('labelOpacity', spec, config));
+  addEncoders(encode, {
+    align:       _('labelAlign'),
+    baseline:    _('labelBaseline'),
+    fill:        _('labelColor'),
+    fillOpacity: _('labelOpacity'),
+    font:        _('labelFont'),
+    fontSize:    _('labelFontSize'),
+    fontStyle:   _('labelFontStyle'),
+    fontWeight:  _('labelFontWeight'),
+    limit:       _('labelLimit')
+  });
 
   labels = guideMark(
     TextMark, LegendLabelRole, GuideLabelStyle,
@@ -106,32 +116,32 @@ export default function(spec, config, userEncode, dataRef, columns) {
   // -- LEGEND ENTRY GROUPS --
   encode = {
     enter: {
-      noBound: {value: true}, // ignore width/height in bounds calc
+      noBound: {value: !height}, // ignore width/height in bounds calc
       width: zero,
       height: height ? encoder(height) : zero,
       opacity: zero
     },
     exit: {opacity: zero},
     update: update = {
-      opacity: {value: 1},
+      opacity: one,
       row: {signal: null},
       column: {signal: null}
     }
   };
 
   // annotate and sort groups to ensure correct ordering
-  if (isVertical(spec, config.symbolDirection)) {
-    nrows = 'ceil(item.mark.items.length/' + ncols + ')';
-    update.row.signal = index + '%' + nrows;
-    update.column.signal = 'floor(' + index + '/' + nrows + ')';
+  if (_.isVertical(true)) {
+    nrows = `ceil(item.mark.items.length / ${ncols})`;
+    update.row.signal = `${index}%${nrows}`;
+    update.column.signal = `floor(${index} / ${nrows})`;
     sort = {field: ['row', index]};
   } else {
-    update.row.signal = 'floor(' + index + '/' + ncols + ')';
-    update.column.signal = index + '%' + ncols;
+    update.row.signal = `floor(${index} / ${ncols})`;
+    update.column.signal = `${index} % ${ncols}`;
     sort = {field: index};
   }
   // handle zero column case (implies infinite columns)
-  update.column.signal = columns + '?' + update.column.signal + ':' + index;
+  update.column.signal = `${columns}?${update.column.signal}:${index}`;
 
   // facet legend entries into sub-groups
   dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
@@ -145,14 +155,19 @@ export default function(spec, config, userEncode, dataRef, columns) {
 }
 
 export function legendSymbolLayout(spec, config) {
+  const _ = lookup(spec, config);
+
   // layout parameters for legend entries
   return {
-    align:   lookup('gridAlign', spec, config),
-    center:  {row: true, column: false},
-    columns: entryColumns(spec, config),
+    align:   _('gridAlign'),
+    columns: _.entryColumns(),
+    center:  {
+      row: true,
+      column: false
+    },
     padding: {
-      row:    lookup('rowPadding', spec, config),
-      column: lookup('columnPadding', spec, config)
+      row:    _('rowPadding'),
+      column: _('columnPadding')
     }
   };
 }

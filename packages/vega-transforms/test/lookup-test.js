@@ -7,7 +7,7 @@ var tape = require('tape'),
     Lookup = tx.lookup,
     TupleIndex = tx.tupleindex;
 
-tape('Lookup looks up matching tuples', function(test) {
+tape('Lookup looks up matching tuples', function(t) {
   var lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -38,26 +38,26 @@ tape('Lookup looks up matching tuples', function(test) {
 
   // add lookup table
   df.pulse(c0, changeset().insert(lut)).run();
-  test.equal(ti.value.size, 3);
+  t.equal(ti.value.size, 3);
 
   // add primary data
   df.pulse(c1, changeset().insert(data)).run();
   var p = lu.pulse.add;
-  test.equal(p.length, 4);
-  test.deepEqual(p.map(uv), ['baz', 'bar', 'foo', 'bar']);
-  test.deepEqual(p.map(vv), ['foo', 'baz', 'baz', 'bar']);
+  t.equal(p.length, 4);
+  t.deepEqual(p.map(uv), ['baz', 'bar', 'foo', 'bar']);
+  t.deepEqual(p.map(vv), ['foo', 'baz', 'baz', 'bar']);
 
   // swap lookup keys
   df.update(lk, [y,x]).run();
   p = lu.pulse.mod;
-  test.equal(p.length, 4);
-  test.deepEqual(p.map(vv), ['baz', 'bar', 'foo', 'bar']);
-  test.deepEqual(p.map(uv), ['foo', 'baz', 'baz', 'bar']);
+  t.equal(p.length, 4);
+  t.deepEqual(p.map(vv), ['baz', 'bar', 'foo', 'bar']);
+  t.deepEqual(p.map(uv), ['foo', 'baz', 'baz', 'bar']);
 
-  test.end();
+  t.end();
 });
 
-tape('Lookup looks up matching values', function(test) {
+tape('Lookup looks up matching values', function(t) {
   var lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -87,25 +87,25 @@ tape('Lookup looks up matching values', function(test) {
 
   // add lookup table
   df.pulse(c0, changeset().insert(lut)).run();
-  test.equal(ti.value.size, 3);
+  t.equal(ti.value.size, 3);
 
   // add primary data
   df.pulse(c1, changeset().insert(data)).run();
   var p = lu.pulse.add;
-  test.equal(p.length, 4);
-  test.deepEqual(p.map(value), ['baz', 'bar', 'foo', 'bar']);
+  t.equal(p.length, 4);
+  t.deepEqual(p.map(value), ['baz', 'bar', 'foo', 'bar']);
 
   // swap lookup keys
   df.update(lk, [y]).run();
   p = lu.pulse.mod;
-  test.equal(p.length, 4);
-  test.deepEqual(p.map(value), ['foo', 'baz', 'baz', 'bar']);
+  t.equal(p.length, 4);
+  t.deepEqual(p.map(value), ['foo', 'baz', 'baz', 'bar']);
 
   // modify lookup table
   df.pulse(c0, changeset().modify(lut[0], 'value', 'fud')).run();
   p = lu.pulse.mod;
-  test.equal(p.length, 4);
-  test.deepEqual(p.map(value), ['fud', 'baz', 'baz', 'bar']);
+  t.equal(p.length, 4);
+  t.deepEqual(p.map(value), ['fud', 'baz', 'baz', 'bar']);
 
-  test.end();
+  t.end();
 });

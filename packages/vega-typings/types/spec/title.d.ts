@@ -1,17 +1,17 @@
-import { Encodable, NumericValueRef, SignalRef, TextEncodeEntry } from '.';
-import { TextBaseline } from './encode';
+import { Encodable, SignalRef, TextEncodeEntry } from '.';
 import {
+  AlignValue,
+  AnchorValue,
+  ColorValue,
+  FontStyleValue,
+  FontWeightValue,
   NumberValue,
   StringValue,
-  AnchorValue,
-  FontWeightValue,
-  ColorValue,
   TextBaselineValue,
-  AlignValue,
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
-export type TitleAnchor = 'start' | 'middle' | 'end';
+export type TitleAnchor = null | 'start' | 'middle' | 'end';
 export type TitleFrame = 'bounds' | 'group';
 
 export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
@@ -51,10 +51,12 @@ export interface BaseTitle<
   S = StringValue,
   C = ColorValue,
   FW = FontWeightValue,
+  FS = FontStyleValue,
   A = AlignValue,
   TB = TextBaselineValue,
   F = TitleFrame | StringValue,
-  AN = AnchorValue
+  AN = AnchorValue,
+  O = TitleOrient | SignalRef
 > {
   /**
    * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
@@ -89,6 +91,16 @@ export interface BaseTitle<
   color?: C;
 
   /**
+   * Delta offset for title text x-coordinate.
+   */
+  dx?: N;
+
+  /**
+   * Delta offset for title text y-coordinate.
+   */
+  dy?: N;
+
+  /**
    * Font name for title text.
    */
   font?: S;
@@ -101,6 +113,11 @@ export interface BaseTitle<
    * @minimum 0
    */
   fontSize?: N;
+
+  /**
+   * Font style for title text.
+   */
+  fontStyle?: FS;
 
   /**
    * Font weight for title text.
@@ -118,5 +135,5 @@ export interface BaseTitle<
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
    */
-  orient?: TitleOrient;
+  orient?: O;
 }

@@ -11,55 +11,55 @@ var GENERATE_SCENES = false, // flag to generate test scenes
       return spec !== 'wordcloud';
     });
 
-function lcg(seed) {
-  // Random numbers using a Linear Congruential Generator with seed value
-  // Uses glibc values from https://en.wikipedia.org/wiki/Linear_congruential_generator
-  return function() {
-    seed = (1103515245 * seed + 12345) % 2147483647;
-    return seed / 2147483647;
-  };
-}
-
 // Plug-in a seeded random number generator for testing.
-vega.setRandom(lcg(123456789));
+vega.setRandom(vega.randomLCG(123456789));
 
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
 
-tape('Vega generates scenegraphs for specifications', function(test) {
-  var count = specs.length;
-  specs.forEach(function(name) {
-    var path = testdir + name + '.json',
-        spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-        runtime = vega.parse(spec),
-        view = new vega.View(runtime, {loader: loader, renderer: 'none'});
+tape('Vega generates scenegraphs for specifications', function(t) {
+  let count = specs.length;
 
-    view.initialize().runAsync().then(function() {
-      var actual = view.scenegraph().toJSON(2);
+  specs.forEach(async function(name, index) {
+    const path = testdir + name + '.json',
+          spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
+          runtime = vega.parse(spec),
+          view = new vega.View(runtime, {
+            loader: loader,
+            renderer: 'none'
+          }).finalize(); // remove timers, event listeners
+
+    try {
+      await view.runAsync();
+
+      const actual = view.scenegraph().toJSON(2);
       if (GENERATE_SCENES) {
         // eslint-disable-next-line no-console
         console.log('WRITING TEST SCENE', name, path);
         fs.writeFileSync(path, actual);
       } else {
-        var expect = fs.readFileSync(path) + '',
-            actualJSON = JSON.parse(actual),
-            expectJSON = JSON.parse(expect),
-            isEqual = vega.sceneEqual(actualJSON, expectJSON);
+        const expect = fs.readFileSync(path) + '',
+              pair = [JSON.parse(actual), JSON.parse(expect)],
+              isEqual = vega.sceneEqual(...pair);
 
         if (OUTPUT_FAILURES && !isEqual) {
-          fs.writeFileSync(name + '-actual.json', JSON.stringify(actualJSON, 0, 2));
-          fs.writeFileSync(name + '-expect.json', JSON.stringify(expectJSON, 0, 2));
+          pair.forEach((scene, i) => {
+            var prefix = vega.pad(index, 2, '0', 'left');
+            fs.writeFileSync(
+              `${prefix}-scene-${i?'expect':'actual'}-${name}.json`,
+              JSON.stringify(scene, 0, 2)
+            );
+          });
         }
 
-        test.ok(isEqual, 'scene: ' + name);
+        t.ok(isEqual, 'scene: ' + name);
       }
-    }).catch(function(err) {
+    } catch (err) {
       // eslint-disable-next-line no-console
       console.error('ERROR', err);
-      test.fail(name);
-    }).then(function() {
-      view.finalize();
-      if (--count === 0) test.end();
-    });
+      t.fail(name);
+    } finally {
+      if (--count === 0) t.end();
+    }
   });
 });

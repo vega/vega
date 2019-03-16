@@ -1,7 +1,6 @@
-import {canvas} from 'vega-canvas';
+import {context} from './canvas/context';
 
-var context,
-    currFontHeight;
+var currFontHeight;
 
 export var textMetrics = {
   height: fontSize,
@@ -38,8 +37,7 @@ export function fontSize(item) {
 }
 
 function useCanvas(use) {
-  context = use && (context = canvas(1,1)) ? context.getContext('2d') : null;
-  textMetrics.width = context ? measureWidth : estimateWidth;
+  textMetrics.width = (use && context) ? measureWidth : estimateWidth;
 }
 
 export function textValue(item) {
@@ -56,10 +54,12 @@ export function truncate(item) {
       text = item.text + '',
       width;
 
-  if (context) {
+  if (textMetrics.width === measureWidth) {
+    // we are using canvas
     context.font = font(item);
     width = measure;
   } else {
+    // we are relying on estimates
     currFontHeight = fontSize(item);
     width = estimate;
   }

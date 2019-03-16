@@ -38,7 +38,7 @@ export const spec: Spec = {
       "name": "color",
       "type": "linear",
       "domain": [90, 190],
-      "range": "heatmap"
+      "range": {"scheme": "blueorange"}
     }
   ],
 
@@ -48,7 +48,7 @@ export const spec: Spec = {
       "from": {"data": "contours"},
       "encode": {
         "enter": {
-          "stroke": {"value": "#777"},
+          "stroke": {"value": "#ccc"},
           "strokeWidth": {"value": 1},
           "fill": {"scale": "color", "field": "value"}
         }

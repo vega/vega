@@ -8,8 +8,15 @@ const layoutAlignEnum = ['all', 'each', 'none'];
 
 const layoutBoundsEnum = ['full', 'flush'];
 
+const layoutTitleAnchorEnum = ['start', 'end'];
+
 export const layoutAlign = oneOf(
   enums(layoutAlignEnum),
+  signalRef
+);
+
+const layoutTitleAnchor = oneOf(
+  enums(layoutTitleAnchorEnum),
   signalRef
 );
 
@@ -50,7 +57,11 @@ const layout = orSignal(object({
   ),
   headerBand: band,
   footerBand: band,
-  titleBand: band
+  titleBand: band,
+  titleAnchor: oneOf(
+    layoutTitleAnchor,
+    object({row: layoutTitleAnchor, column: layoutTitleAnchor})
+  )
 }));
 
 export default {
