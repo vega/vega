@@ -5,11 +5,9 @@ import isFunction from './isFunction';
 import splitAccessPath from './splitAccessPath';
 import stringValue from './stringValue';
 
-type Order = 'ascending' | 'descending';
-
 export default function(
   fields: string | string[] | AccessorFn | AccessorFn[],
-  orders?: (Order) | (Order)[],
+  orders?: SortOrder | SortOrder[],
 ) {
   var idx: number[] = [],
     fieldsAny = fields as any, // fixme

@@ -27,13 +27,14 @@ export type RangeBand =
   | {
       step: number | SignalRef;
     };
-export type SortOrder = 'ascending' | 'descending' | SignalRef;
+export type SortOrder = 'ascending' | 'descending';
+export type SortOrderOrSignal = SortOrder | SignalRef;
 export type SortField =
   | boolean
   | {
       field?: ScaleField;
       op: ScaleField;
-      order?: SortOrder;
+      order?: SortOrderOrSignal;
     };
 
 /**
@@ -43,7 +44,7 @@ export type UnionSortField =
   | boolean
   | {
       op: 'count';
-      order?: SortOrder;
+      order?: SortOrderOrSignal;
     };
 export type ScaleField = string | SignalRef;
 
