@@ -1,8 +1,6 @@
 import isArray from './isArray';
 
-function array<T extends any[]>(_: T): T;
-function array<T>(_: T): T[];
-function array(_: any): any {
+function array<T>(_: T | T[]): T[] {
   return _ != null ? (isArray(_) ? _ : [_]) : [];
 }
 
