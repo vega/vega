@@ -1,4 +1,5 @@
 import { SignalRef, Compare, Vector2, ExprRef, FontWeight, FontStyle, Vector7 } from '.';
+import { Data } from './data';
 
 export type Transforms =
   | AggregateTransform
@@ -42,7 +43,8 @@ export type Transforms =
   | _TODO_<'treemap'>
   | _TODO_<'voronoi'>
   | WindowTransform
-  | WordcloudTransform;
+  | WordcloudTransform
+  | LabelTransform;
 
 export interface AggregateTransform {
   type: 'aggregate';
@@ -157,11 +159,11 @@ export type ContourTransform = {
   cellSize?: number | SignalRef;
   bandwidth?: number | SignalRef;
 } & (
-  | {
+    | {
       count?: number | SignalRef;
       nice?: number | SignalRef;
     }
-  | {
+    | {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
 
@@ -341,6 +343,19 @@ export interface WordcloudTransform {
   text?: string | TransformField;
   spiral?: 'archimedian' | 'rectangular';
   padding?: number | TransformField;
+  as?: Vector7<string | SignalRef> | SignalRef;
+}
+
+export interface LabelTransform {
+  type: 'label';
+  padding?: number | TransformField;
+  markIndex?: number;
+  lineAnchor?: 'begin' | 'end';
+  avoidBaseMark?: boolean;
+  size?: Vector2<number>;
+  offset?: number[] | number;
+  anchor?: string[] | string;
+  avoidMark?: Data;
   as?: Vector7<string | SignalRef> | SignalRef;
 }
 
