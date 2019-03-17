@@ -53,13 +53,13 @@ export type LegendOrient =
   | 'bottom-right';
 
 export interface Legend extends BaseLegend {
-  size?: string;
-  shape?: string;
+  size?: number;
+  shape?: SymbolShape;
   fill?: string;
   stroke?: string;
-  strokeDash?: string;
-  strokeWidth?: string;
-  opacity?: string;
+  strokeDash?: number[];
+  strokeWidth?: number;
+  opacity?: number;
 
   /**
    * The type of legend to include. One of `"symbol"` for discrete symbol legends, or `"gradient"` for a continuous color gradient. If gradient is used only the fill or stroke scale parameters are considered. If unspecified, the type will be inferred based on the scale parameters used and their backing scale types.
