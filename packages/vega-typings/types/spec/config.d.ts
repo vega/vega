@@ -121,7 +121,7 @@ export interface MarkConfig {
   /**
    * The amount to offset background rendering for stroked group marks.
    */
-  strokeOffset?: number;
+  strokeOffset?: number | SignalRef;
 
   /**
    * The stroke cap for line ending style.
