@@ -1,0 +1,50 @@
+{
+  "name": "vega-label",
+  "version": "1.0.0",
+  "description": "Labeling algorithm for Vega.",
+  "keywords": [
+    "vega",
+    "label",
+    "layout"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
+  "maintainers": [
+    "Chanwut Kittivorawong"
+  ],
+  "main": "build/vega-label.js",
+  "jsnext:main": "index",
+  "module": "index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vega/vega-label.git"
+  },
+  "scripts": {
+    "build": "npm run test",
+    "pretest": "rm -rf build && mkdir build && rollup -g vega-scenegraph:vega,vega-canvas:vega,vega-dataflow:vega,vega-scale:vega,vega-statistics:vega,vega-util:vega -f umd -n vegaLabel -o build/vega-label.js -- index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "npm run build",
+    "postpublish": "git push && git push --tags && zip -j build/vega-label.zip -- LICENSE README.md build/vega-label.js build/vega-label.min.js",
+    "prettierbase": "prettier '{src,specs,test}/**/*.{js,json}'"
+  },
+  "dependencies": {
+    "vega-canvas": "^1.1.0",
+    "vega-dataflow": "^4.0.3",
+    "vega-scale": "^2.4.0",
+    "vega-scenegraph": "^3.2.2",
+    "vega-statistics": "^1.2.1",
+    "vega-util": "^1.7.0"
+  },
+  "devDependencies": {
+    "canvas": "^2.2.0",
+    "eslint": "4",
+    "prettier": "1.14.2",
+    "rollup": "^0.63.2",
+    "tape": "4",
+    "vega-transforms": "^2.0.0"
+  },
+  "browser": {
+    "canvas": false,
+    "canvas-prebuilt": false
+  }
+}
