@@ -1,0 +1,184 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 150,
+  "height": 150,
+  "signals": [
+    {
+      "name": "chartPadding",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": -75,
+        "max": 30,
+        "step": 1
+      }
+    },
+    {
+      "name": "padding",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": -75,
+        "max": 30,
+        "step": 1
+      }
+    }
+  ],
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {
+          "x": 4.5,
+          "y": 4.5,
+          "label": "point1"
+        },
+        {
+          "x": 4.5,
+          "y": 5.5,
+          "label": "point2"
+        },
+        {
+          "x": 5.5,
+          "y": 4.5,
+          "label": "point3"
+        },
+        {
+          "x": 5.5,
+          "y": 5.5,
+          "label": "point4"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "label": "point5"
+        },
+        {
+          "x": 1,
+          "y": 9,
+          "label": "point6"
+        },
+        {
+          "x": 9,
+          "y": 1,
+          "label": "point7"
+        },
+        {
+          "x": 9,
+          "y": 9,
+          "label": "point8"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": [
+        0,
+        10
+      ],
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": [
+        0,
+        10
+      ],
+      "range": "height"
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "tickCount": 5,
+      "orient": "bottom"
+    },
+    {
+      "scale": "y",
+      "tickCount": 5,
+      "orient": "left"
+    }
+  ],
+  "marks": [
+    {
+      "name": "baseMark",
+      "type": "symbol",
+      "from": {
+        "data": "source"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "x",
+            "field": "x"
+          },
+          "y": {
+            "scale": "y",
+            "field": "y"
+          },
+          "size": {
+            "value": 200
+          }
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "from": {
+        "data": "baseMark"
+      },
+      "encode": {
+        "update": {
+          "text": {
+            "field": "datum.label"
+          }
+        }
+      },
+      "transform": [
+        {
+          "type": "label",
+          "size": [
+            150,
+            150
+          ],
+          "padding": {
+            "signal": "chartPadding"
+          }
+        }
+      ]
+    },
+    {
+      "type": "rule",
+      "from": {
+        "data": "label"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "field": "datum.x"
+          },
+          "y": {
+            "field": "datum.y"
+          },
+          "x2": {
+            "field": "x"
+          },
+          "y2": {
+            "field": "y"
+          },
+          "strokeOpacity": {
+            "field": "opacity"
+          },
+          "strokeWidth": {
+            "value": 2
+          }
+        }
+      }
+    }
+  ]
+}
