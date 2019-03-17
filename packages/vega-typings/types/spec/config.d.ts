@@ -71,7 +71,7 @@ export interface MarkConfig {
    * __Default value:__ (None)
    *
    */
-  fill?: string;
+  fill?: string | SignalRef;
 
   /**
    * Default Stroke Color.  This has higher precedence than config.color
@@ -79,7 +79,7 @@ export interface MarkConfig {
    * __Default value:__ (None)
    *
    */
-  stroke?: string;
+  stroke?: string | SignalRef;
 
   // ---------- Opacity ----------
   /**
@@ -90,7 +90,7 @@ export interface MarkConfig {
    * @minimum 0
    * @maximum 1
    */
-  opacity?: number;
+  opacity?: number | SignalRef;
 
   /**
    * The fill opacity (value between [0,1]).
@@ -100,7 +100,7 @@ export interface MarkConfig {
    * @minimum 0
    * @maximum 1
    */
-  fillOpacity?: number;
+  fillOpacity?: number | SignalRef;
 
   /**
    * The stroke opacity (value between [0,1]).
@@ -110,7 +110,7 @@ export interface MarkConfig {
    * @minimum 0
    * @maximum 1
    */
-  strokeOpacity?: number;
+  strokeOpacity?: number | SignalRef;
 
   // ---------- Stroke Style ----------
   /**
@@ -118,17 +118,17 @@ export interface MarkConfig {
    *
    * @minimum 0
    */
-  strokeWidth?: number;
+  strokeWidth?: number | SignalRef;
 
   /**
    * An array of alternating stroke, space lengths for creating dashed or dotted lines.
    */
-  strokeDash?: number[];
+  strokeDash?: number[] | SignalRef;
 
   /**
    * The offset (in pixels) into which to begin drawing with the stroke dash array.
    */
-  strokeDashOffset?: number;
+  strokeDashOffset?: number | SignalRef;
 
   /**
    * The amount to offset background rendering for stroked group marks.
@@ -141,7 +141,7 @@ export interface MarkConfig {
    * __Default value:__ `butt`
    *
    */
-  strokeCap?: string;
+  strokeCap?: string | SignalRef;
 
   /**
    * The stroke line join method.
@@ -149,12 +149,12 @@ export interface MarkConfig {
    * __Default value:__ `miter`
    *
    */
-  strokeJoin?: string;
+  strokeJoin?: string | SignalRef;
 
   /**
    * The miter limit at which to bevel a line join.
    */
-  strokeMiterLimit?: number;
+  strokeMiterLimit?: number | SignalRef;
 
   // ---------- Orientation: Bar, Tick, Line, Area ----------
   /**
@@ -168,7 +168,7 @@ export interface MarkConfig {
    * For stacked charts, this is always determined by the orientation of the stack;
    * therefore explicitly specified value will be ignored.
    */
-  orient?: Orientation;
+  orient?: Orientation | SignalRef;
 
   // ---------- Interpolation: Line / area ----------
   /**
@@ -187,13 +187,13 @@ export interface MarkConfig {
    * - `"bundle"`: equivalent to basis, except the tension parameter is used to straighten the spline.
    * - `"monotone"`: cubic interpolation that preserves monotonicity in y.
    */
-  interpolate?: Interpolate;
+  interpolate?: Interpolate | SignalRef;
   /**
    * Depending on the interpolation type, sets the tension parameter (for line and area marks).
    * @minimum 0
    * @maximum 1
    */
-  tension?: number;
+  tension?: number | SignalRef;
 
   /**
    * The default symbol shape to use. One of: `"circle"` (default), `"square"`, `"cross"`, `"diamond"`, `"triangle-up"`, or `"triangle-down"`, or a custom SVG path.
@@ -201,7 +201,7 @@ export interface MarkConfig {
    * __Default value:__ `"circle"`
    *
    */
-  shape?: SymbolShape;
+  shape?: SymbolShape | SignalRef;
 
   /**
    * The pixel area each the point/circle/square.
@@ -211,7 +211,7 @@ export interface MarkConfig {
    *
    * @minimum 0
    */
-  size?: number;
+  size?: number | SignalRef;
 
   // Text / Label Mark Config
   /**
@@ -224,7 +224,7 @@ export interface MarkConfig {
    * @minimum 0
    * @maximum 360
    */
-  angle?: number;
+  angle?: number | SignalRef;
 
   /**
    * The vertical alignment of the text. One of `"top"`, `"bottom"`, `"middle"`, `"alphabetic"`.
@@ -232,28 +232,28 @@ export interface MarkConfig {
    * __Default value:__ `"middle"`
    *
    */
-  baseline?: TextBaseline;
+  baseline?: TextBaseline | SignalRef;
 
   /**
    * The horizontal offset, in pixels, between the text label and its anchor point. The offset is applied after rotation by the _angle_ property.
    */
-  dx?: number;
+  dx?: number | SignalRef;
 
   /**
    * The vertical offset, in pixels, between the text label and its anchor point. The offset is applied after rotation by the _angle_ property.
    */
-  dy?: number;
+  dy?: number | SignalRef;
 
   /**
    * Polar coordinate radial offset, in pixels, of the text label from the origin determined by the `x` and `y` properties.
    * @minimum 0
    */
-  radius?: number;
+  radius?: number | SignalRef;
 
   /**
    * The maximum length of the text mark in pixels (default 0, indicating no limit). The text value will be automatically truncated if the rendered size exceeds the limit.
    */
-  limit?: number;
+  limit?: number | SignalRef;
 
   /**
    * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property is ignored if the text is array-valued.
@@ -268,45 +268,45 @@ export interface MarkConfig {
   /**
    * Polar coordinate angle, in radians, of the text label from the origin determined by the `x` and `y` properties. Values for `theta` follow the same convention of `arc` mark `startAngle` and `endAngle` properties: angles are measured in radians, with `0` indicating "north".
    */
-  theta?: number;
+  theta?: number | SignalRef;
 
   /**
    * The typeface to set the text in (e.g., `"Helvetica Neue"`).
    */
-  font?: string;
+  font?: string | SignalRef;
 
   /**
    * The font size, in pixels.
    * @minimum 0
    */
-  fontSize?: number;
+  fontSize?: number | SignalRef;
 
   /**
    * The font style (e.g., `"italic"`).
    */
-  fontStyle?: FontStyle;
+  fontStyle?: FontStyle | SignalRef;
   /**
    * The font weight.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  fontWeight?: FontWeight;
+  fontWeight?: FontWeight | SignalRef;
 
   /**
    * Placeholder text if the `text` channel is not specified
    */
-  text?: string;
+  text?: string | SignalRef;
 
   /**
    * A URL to load upon mouse click. If defined, the mark acts as a hyperlink.
    *
    * @format uri
    */
-  href?: string;
+  href?: string | SignalRef;
 
   /**
    * The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.
    */
-  cursor?: Cursor;
+  cursor?: Cursor | SignalRef;
 }
 
 export type Cursor =
