@@ -160,11 +160,11 @@ export type ContourTransform = {
   cellSize?: number | SignalRef;
   bandwidth?: number | SignalRef;
 } & (
-    | {
+  | {
       count?: number | SignalRef;
       nice?: number | SignalRef;
     }
-    | {
+  | {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
 
