@@ -4,10 +4,11 @@
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "repository": "vega/vega",
   "scripts": {
-    "build": "lerna run build",
+    "build": "lerna run build && yarn docsbuild",
     "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve",
+    "docsbuild": "cd packages/vega/build && cp vega.js vega.min.js vega-core.js vega-core.min.js vega-schema.json ../../../docs/",
     "license": "lerna exec -- cp ../../LICENSE .",
     "release": "yarn license && lerna publish from-package",
     "serve": "http-server packages/vega/ -c-1 -p8080 -o",
