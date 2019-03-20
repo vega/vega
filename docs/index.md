@@ -14,6 +14,8 @@ Vega provides basic building blocks for a wide variety of visualization designs:
 
 A Vega _specification_ defines an interactive visualization in a [JSON](http://en.wikipedia.org/wiki/JSON) format. Specifications are parsed by Vega's JavaScript _runtime_ to generate both static images or interactive web-based views. Vega provides a convenient representation for computational generation of visualizations, and can serve as a foundation for new APIs and visual analysis tools.
 
-To get started with Vega, take a look at the [tutorials](tutorials), [example gallery](examples), and [usage guide](usage), or read [about the project's goals](about). To create common statistical graphics in a more concise form, check out [Vega-Lite](https://vega.github.io/vega-lite), a higher-level language built on top of Vega.
+To get started with Vega, take a look at the [tutorials](tutorials), [example gallery](examples), and [usage guide](usage), or read [about the project's goals](about).
+
+To rapidly create common statistical graphics, check out [Vega-Lite](https://vega.github.io/vega-lite), a higher-level language built on top of Vega. Not that into JavaScript? Take a look at the [Altair Python API](https://altair-viz.github.io/) for Vega-Lite.
 
 Need help or want to share examples? Join the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or the [Vega Slack organization](http://bit.ly/vega-slack)!
