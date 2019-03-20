@@ -3486,7 +3486,7 @@
         div  = _.divide || [5, 2],
         min  = _.extent[0],
         max  = _.extent[1],
-        span = max - min,
+        span = (max - min) || Math.abs(min) || 1,
         step, level, minstep, precision, v, i, n, eps;
 
     if (_.step) {
@@ -3528,7 +3528,7 @@
 
     return {
       start: min,
-      stop:  max,
+      stop:  max === min ? min + step : max,
       step:  step
     };
   }
@@ -17288,7 +17288,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.3.0";
+  var version = "5.3.1";
 
   var Default = 'default';
 
@@ -21885,11 +21885,8 @@
   }
 
   function mergeStream(stream, scope) {
-    var list = stream.merge.map(function(s) {
-      return parseStream$1(s, scope);
-    });
-
-    var entry = streamParameters({merge: list}, stream, scope);
+    var list = stream.merge.map(s => parseStream$1(s, scope)),
+        entry = streamParameters({merge: list}, stream, scope);
     return scope.addStream(entry).id;
   }
 
@@ -21928,7 +21925,7 @@
       ];
     }
 
-    param = stream.filter ? array(stream.filter) : [];
+    param = stream.filter ? [].concat(stream.filter) : [];
     if (stream.marktype || stream.markname || stream.markrole) {
       // add filter for mark type, name and/or role
       param.push(filterMark(stream.marktype, stream.markname, stream.markrole));
