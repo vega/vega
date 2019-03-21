@@ -41,7 +41,7 @@ prototype.transform = function(_, pulse) {
 
   ticks = values.map(function(value, i) {
     return ingest({
-      index: i / (values.length - 1),
+      index: i / (values.length - 1 || 1),
       value: value,
       label: format(value)
     });
