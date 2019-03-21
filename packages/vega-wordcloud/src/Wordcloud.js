@@ -1,6 +1,6 @@
 import cloud from './CloudLayout';
 import {Transform} from 'vega-dataflow';
-import {constant, inherits, isFunction} from 'vega-util';
+import {constant, error, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';
 import {random} from 'vega-statistics';
 
@@ -33,6 +33,10 @@ Wordcloud.Definition = {
 var prototype = inherits(Wordcloud, Transform);
 
 prototype.transform = function(_, pulse) {
+  if (_.size && !(_.size[0] && _.size[1])) {
+    error('Wordcloud size dimensions must be non-zero.');
+  }
+
   function modp(param) {
     var p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
