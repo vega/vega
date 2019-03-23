@@ -1,3 +1,10 @@
+<p align="center">
+   <a href="https://vega.github.io/vega/">
+      <img src="https://github.com/vega/logos/blob/master/assets/VG_Color@512.png?raw=true" width=220></img>
+   </a>
+</p>
+
+
 # Vega: A Visualization Grammar
 
 <a href="https://vega.github.io/vega/examples">
