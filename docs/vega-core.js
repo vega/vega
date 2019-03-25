@@ -9385,7 +9385,7 @@
 
   var trail$1 = markMultiItemPath('trail', trail, pickTrail);
 
-  var marks = {
+  var Marks = {
     arc:     arc$1,
     area:    area$1,
     group:   group,
@@ -9401,7 +9401,7 @@
   };
 
   function boundItem(item, func, opt) {
-    var type = marks[item.mark.marktype],
+    var type = Marks[item.mark.marktype],
         bound = func || type.bound;
     if (type.nested) item = item.mark;
 
@@ -9411,7 +9411,7 @@
   var DUMMY = {mark: null};
 
   function boundMark(mark, bounds, opt) {
-    var type  = marks[mark.marktype],
+    var type  = Marks[mark.marktype],
         bound = type.bound,
         items = mark.items,
         hasItems = items && items.length,
@@ -9586,7 +9586,7 @@
     var mark = item && item.mark,
         mdef, p;
 
-    if (mark && (mdef = marks[mark.marktype]).tip) {
+    if (mark && (mdef = Marks[mark.marktype]).tip) {
       p = point(event, el);
       p[0] -= origin[0];
       p[1] -= origin[1];
@@ -10188,7 +10188,7 @@
   // gx, gy -- the relative coordinates within the current group
   prototype$H.pick = function(scene, x, y, gx, gy) {
     var g = this.context(),
-        mark = marks[scene.marktype];
+        mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   };
 
@@ -10341,7 +10341,7 @@
   };
 
   prototype$I.draw = function(ctx, scene, bounds) {
-    var mark = marks[scene.marktype];
+    var mark = Marks[scene.marktype];
     if (scene.clip) clip$1(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
@@ -10690,7 +10690,7 @@
       if (mark.marktype !== type) {
         // memoize mark instance lookup
         type = mark.marktype;
-        mdef = marks[type];
+        mdef = Marks[type];
       }
 
       if (mark.zdirty && mark.dirty !== id) {
@@ -10748,7 +10748,7 @@
 
     var renderer = this,
         svg = this._svg,
-        mdef = marks[scene.marktype],
+        mdef = Marks[scene.marktype],
         events = scene.interactive === false ? 'none' : null,
         isGroup = mdef.tag === 'g',
         sibling = null,
@@ -11144,7 +11144,7 @@
 
   prototype$L.mark = function(scene) {
     var renderer = this,
-        mdef = marks[scene.marktype],
+        mdef = Marks[scene.marktype],
         tag  = mdef.tag,
         defs = this._defs,
         str = '',
@@ -11312,7 +11312,7 @@
           intersectGroup(items[i], box, filter, hits);
         }
       } else {
-        for (const test = marks[type].isect; i<n; ++i) {
+        for (const test = Marks[type].isect; i<n; ++i) {
           let item = items[i];
           if (intersectItem(item, box, test)) hits.push(item);
         }
@@ -11335,21 +11335,21 @@
     // test intersect against group
     // skip groups by default unless filter says otherwise
     if ((filter && filter(group.mark)) &&
-        intersectItem(group, box, marks.group.isect)) {
+        intersectItem(group, box, Marks.group.isect)) {
       hits.push(group);
     }
 
     // recursively test children marks
     // translate box to group coordinate space
-    const marks$1 = group.items,
-          n = marks$1 && marks$1.length;
+    const marks = group.items,
+          n = marks && marks.length;
 
     if (n) {
       const x = group.x || 0,
             y = group.y || 0;
       box.translate(-x, -y);
       for (let i=0; i<n; ++i) {
-        intersectMark(marks$1[i], box, filter, hits);
+        intersectMark(marks[i], box, filter, hits);
       }
       box.translate(x, y);
     }
@@ -11431,7 +11431,7 @@
     var view = pulse.dataflow,
         mark = _.mark,
         type = mark.marktype,
-        entry = marks[type],
+        entry = Marks[type],
         bound = entry.bound,
         markBounds = mark.bounds, rebound;
 
@@ -13547,7 +13547,7 @@
 
     ticks = values.map(function(value, i) {
       return ingest({
-        index: i / (values.length - 1),
+        index: i / (values.length - 1 || 1),
         value: value,
         label: format(value)
       });
@@ -16484,6 +16484,10 @@
   var prototype$1g = inherits(Wordcloud, Transform);
 
   prototype$1g.transform = function(_, pulse) {
+    if (_.size && !(_.size[0] && _.size[1])) {
+      error('Wordcloud size dimensions must be non-zero.');
+    }
+
     function modp(param) {
       var p = _[param];
       return isFunction(p) && pulse.modified(p.fields);
@@ -17288,7 +17292,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.3.1";
+  var version = "5.3.2";
 
   var Default = 'default';
 
@@ -19604,7 +19608,7 @@
     return expr;
   }
 
-  var Constants = {
+  var constants = {
     NaN:       'NaN',
     E:         'Math.E',
     LN2:       'Math.LN2',
@@ -19618,7 +19622,7 @@
     MAX_VALUE: 'Number.MAX_VALUE'
   };
 
-  function Functions(codegen) {
+  function functions(codegen) {
 
     function fncall(name, args, cast, type) {
       var obj = codegen(args[0]);
@@ -19742,8 +19746,8 @@
 
     var whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
         blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
-        constants = opt.constants || Constants,
-        functions = (opt.functions || Functions)(visit),
+        constants$1 = opt.constants || constants,
+        functions$1 = (opt.functions || functions)(visit),
         globalvar = opt.globalvar,
         fieldvar = opt.fieldvar,
         globals = {},
@@ -19772,8 +19776,8 @@
           return id;
         } else if (blacklist.hasOwnProperty(id)) {
           return error('Illegal identifier: ' + id);
-        } else if (constants.hasOwnProperty(id)) {
-          return constants[id];
+        } else if (constants$1.hasOwnProperty(id)) {
+          return constants$1[id];
         } else if (whitelist.hasOwnProperty(id)) {
           return id;
         } else {
@@ -19801,7 +19805,7 @@
           }
           var callee = n.callee.name;
           var args = n.arguments;
-          var fn = functions.hasOwnProperty(callee) && functions[callee];
+          var fn = functions$1.hasOwnProperty(callee) && functions$1[callee];
           if (!fn) error('Unrecognized function: ' + callee);
           return isFunction(fn)
             ? fn(args)
@@ -19854,8 +19858,8 @@
       return result;
     }
 
-    codegen.functions = functions;
-    codegen.constants = constants;
+    codegen.functions = functions$1;
+    codegen.constants = constants$1;
 
     return codegen;
   }
@@ -20585,7 +20589,7 @@
 
   // Build expression function registry
   function buildFunctions(codegen) {
-    const fn = Functions(codegen);
+    const fn = functions(codegen);
     eventFunctions.forEach(name => fn[name] = eventPrefix + name);
     for (let name in functionContext) { fn[name] = thisPrefix + name; }
     return fn;
@@ -20637,7 +20641,7 @@
     fieldvar:   'datum',
     globalvar:  function(id) { return '_[' + $(SignalPrefix + id) + ']'; },
     functions:  buildFunctions,
-    constants:  Constants,
+    constants:  constants,
     visitors:   astVisitors
   };
 
@@ -20810,7 +20814,7 @@
   function getSubflow(_, ctx) {
     var spec = _.$subflow;
     return function(dataflow, key, parent) {
-      var subctx = parseDataflow(spec, ctx.fork()),
+      var subctx = parse$4(spec, ctx.fork()),
           op = subctx.get(spec.operators[0].id),
           p = subctx.signals.parent;
       if (p) p.set(parent);
@@ -20936,7 +20940,7 @@
   /**
    * Parse a serialized dataflow specification.
    */
-  function parseDataflow(spec, ctx) {
+  function parse$4(spec, ctx) {
     var operators = spec.operators || [];
 
     // parse background
@@ -21155,7 +21159,7 @@
 
   function runtime(view, spec, functions) {
     var fn = functions || functionContext;
-    return parseDataflow(spec, context$2(view, transforms, fn));
+    return parse$4(spec, context$2(view, transforms, fn));
   }
 
   function scale$3(name) {
@@ -21741,7 +21745,7 @@
     }
   }
 
-  function expression$1(expr, scope, preamble) {
+  function parseExpression$1(expr, scope, preamble) {
     var params = {}, ast, gen;
 
     // parse the expression to an abstract syntax tree (ast)
@@ -21935,7 +21939,7 @@
       param.push('inScope(event.item)');
     }
     if (param.length) {
-      entry.filter = expression$1('(' + param.join(')&&(') + ')').$expr;
+      entry.filter = parseExpression$1('(' + param.join(')&&(') + ')').$expr;
     }
 
     if ((param = stream.throttle) != null) {
@@ -22208,8 +22212,8 @@
     }
 
     // resolve update value
-    entry.update = isString(update) ? expression$1(update, scope, preamble)
-      : update.expr != null ? expression$1(update.expr, scope, preamble)
+    entry.update = isString(update) ? parseExpression$1(update, scope, preamble)
+      : update.expr != null ? parseExpression$1(update.expr, scope, preamble)
       : update.value != null ? update.value
       : update.signal != null ? {
           $expr:   '_.value',
@@ -22256,7 +22260,7 @@
     }
 
     if (expr) {
-      expr = expression$1(expr, scope);
+      expr = parseExpression$1(expr, scope);
       op.update = expr.$expr;
       op.params = expr.$params;
     }
@@ -22684,8 +22688,8 @@
       : null;
   }
 
-  function expression$2(code, scope, params, fields) {
-    var expr = expression$1(code, scope);
+  function expression$1(code, scope, params, fields) {
+    var expr = parseExpression$1(code, scope);
     expr.$fields.forEach(function(name) { fields[name] = 1; });
     extend(params, expr.$params);
     return expr.$expr;
@@ -22700,7 +22704,7 @@
 
     if (ref.signal) {
       object = 'datum';
-      field = expression$2(ref.signal, scope, params, fields);
+      field = expression$1(ref.signal, scope, params, fields);
     } else if (ref.group || ref.parent) {
       level = Math.max(1, ref.level || 1);
       object = 'item';
@@ -22794,7 +22798,7 @@
       }
       scaleName = $(ScalePrefix) + '+'
         + (name.signal
-          ? '(' + expression$2(name.signal, scope, params, fields) + ')'
+          ? '(' + expression$1(name.signal, scope, params, fields) + ')'
           : field$1(name, scope, params, fields));
     }
 
@@ -22821,7 +22825,7 @@
       return gradient$1(enc, scope, params, fields);
     }
 
-    var value = enc.signal ? expression$2(enc.signal, scope, params, fields)
+    var value = enc.signal ? expression$1(enc.signal, scope, params, fields)
       : enc.color ? color$1(enc.color, scope, params, fields)
       : enc.field != null ? field$1(enc.field, scope, params, fields)
       : enc.value !== undefined ? $(enc.value)
@@ -22865,7 +22869,7 @@
     rules.forEach(function(rule) {
       var value = entry$1(channel, rule, scope, params, fields);
       code += rule.test
-        ? expression$2(rule.test, scope, params, fields) + '?' + value + ':'
+        ? expression$1(rule.test, scope, params, fields) + '?' + value + ':'
         : value;
     });
 
@@ -23482,7 +23486,7 @@
       : $(value);
   }
 
-  function role(spec) {
+  function getRole(spec) {
     var role = spec.role || '';
     return (!role.indexOf('axis') || !role.indexOf('legend'))
       ? role
@@ -23493,7 +23497,7 @@
     return {
       marktype:    spec.type,
       name:        spec.name || undefined,
-      role:        spec.role || role(spec),
+      role:        spec.role || getRole(spec),
       zindex:      +spec.zindex || undefined
     };
   }
@@ -23571,7 +23575,7 @@
       var expr = def.expr || isField(type);
       return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
            : expr && outerField(value) ? fieldRef(value.field, value.as)
-           : isExpr(type) ? expression$1(value, scope)
+           : isExpr(type) ? parseExpression$1(value, scope)
            : isData(type) ? ref(scope.getData(value).values)
            : isField(type) ? fieldRef(value)
            : isCompare(type) ? scope.compareRef(value)
@@ -23912,17 +23916,17 @@
           .join(',')
       + '),0)';
 
-    expr = expression$1(update, scope);
+    expr = parseExpression$1(update, scope);
     op.update = expr.$expr;
     op.params = expr.$params;
   }
 
   function parseMark(spec, scope) {
-    var role$1 = role(spec),
+    var role = getRole(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
-        layout = spec.layout || role$1 === ScopeRole$1 || role$1 === FrameRole$1,
-        nested = role$1 === MarkRole || layout || facet,
+        layout = spec.layout || role === ScopeRole$1 || role === FrameRole$1,
+        nested = role === MarkRole || layout || facet,
         overlap = spec.overlap,
         ops, op, input, store, bound, render, sieve, name,
         joinRef, markRef, encodeRef, layoutRef, boundRef;
@@ -23956,7 +23960,7 @@
 
     // add visual encoders
     op = scope.add(Encode$1(
-      encoders(spec.encode, spec.type, role$1, spec.style, scope, {pulse: markRef})
+      encoders(spec.encode, spec.type, role, spec.style, scope, {pulse: markRef})
     ));
 
     // monitor parent marks to propagate changes
@@ -24199,7 +24203,7 @@
         strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
         fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
-    return expression$1(
+    return parseExpression$1(
       `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
       scope
     );
@@ -25215,7 +25219,7 @@
     var code = Object.keys(this.lambdas);
     for (var i=0, n=code.length; i<n; ++i) {
       var s = code[i],
-          e = expression$1(s, this),
+          e = parseExpression$1(s, this),
           op = this.lambdas[s];
       op.params = e.$params;
       op.update = e.$expr;
@@ -25268,7 +25272,7 @@
   }
 
   prototype$1l.exprRef = function(code, name) {
-    var params = {expr: expression$1(code, this)};
+    var params = {expr: parseExpression$1(code, this)};
     if (name) params.expr.$name = name;
     return ref(this.add(Expression$1(params)));
   };
@@ -25353,8 +25357,11 @@
     if (isObject(value) && !isArray(value)) {
       o = isObject(output[key]) ? output[key] : (output[key] = {});
       for (k in value) {
-        if (!recurse || !recurse[k]) o[k] = value[k];
-        else copy$1(o, k, value[k]);
+        if (recurse && (recurse === true || recurse[k])) {
+          copy$1(o, k, value[k]);
+        } else {
+          o[k] = value[k];
+        }
       }
     } else {
       output[key] = value;
@@ -25570,7 +25577,7 @@
     };
   }
 
-  function parse$4(spec, config) {
+  function parse$5(spec, config) {
     if (!isObject(spec)) error('Input Vega specification must be an object.');
     return parseView(spec, new Scope$1(defaults([config, spec.config])))
       .toRuntime();
@@ -25581,83 +25588,85 @@
 
   exports.timeFormatLocale = d3TimeFormat.timeFormatDefaultLocale;
   exports.formatLocale = d3Format.formatDefaultLocale;
-  exports.version = version;
+  exports.Bounds = Bounds;
+  exports.CanvasHandler = CanvasHandler;
+  exports.CanvasRenderer = CanvasRenderer;
   exports.Dataflow = Dataflow;
+  exports.Debug = Debug;
+  exports.Error = Error$1;
   exports.EventStream = EventStream;
+  exports.Gradient = Gradient;
+  exports.GroupItem = GroupItem;
+  exports.Handler = Handler;
+  exports.Info = Info;
+  exports.Item = Item;
+  exports.Marks = Marks;
+  exports.MultiPulse = MultiPulse;
+  exports.None = None;
+  exports.Operator = Operator;
   exports.Parameters = Parameters;
   exports.Pulse = Pulse;
-  exports.MultiPulse = MultiPulse;
-  exports.Operator = Operator;
+  exports.RenderType = RenderType;
+  exports.Renderer = Renderer;
+  exports.ResourceLoader = ResourceLoader;
+  exports.SVGHandler = SVGHandler;
+  exports.SVGRenderer = SVGRenderer;
+  exports.SVGStringRenderer = SVGStringRenderer;
+  exports.Scenegraph = Scenegraph;
   exports.Transform = Transform;
-  exports.changeset = changeset;
-  exports.ingest = ingest;
-  exports.isTuple = isTuple;
-  exports.definition = definition;
-  exports.transform = transform;
-  exports.transforms = transforms;
-  exports.tupleid = tupleid;
-  exports.scale = scale$1;
-  exports.scheme = scheme;
-  exports.interpolate = interpolate;
-  exports.interpolateColors = interpolateColors;
-  exports.interpolateRange = interpolateRange;
-  exports.timeInterval = timeInterval;
-  exports.quantizeInterpolator = quantizeInterpolator;
-  exports.projection = projection;
   exports.View = View;
-  exports.expressionFunction = expressionFunction;
-  exports.parse = parse$4;
-  exports.runtime = parseDataflow;
-  exports.runtimeContext = context$2;
+  exports.Warn = Warn;
+  exports.accessor = accessor;
+  exports.accessorFields = accessorFields;
+  exports.accessorName = accessorName;
+  exports.array = array;
   exports.bin = bin;
   exports.bootstrapCI = bootstrapCI;
-  exports.quartiles = quartiles;
-  exports.setRandom = setRandom;
-  exports.randomLCG = lcg;
-  exports.randomInteger = integer;
-  exports.randomKDE = randomKDE;
-  exports.randomMixture = randomMixture;
-  exports.randomNormal = randomNormal;
-  exports.randomUniform = randomUniform;
-  exports.accessor = accessor;
-  exports.accessorName = accessorName;
-  exports.accessorFields = accessorFields;
-  exports.id = id;
-  exports.identity = identity;
-  exports.zero = zero;
-  exports.one = one;
-  exports.truthy = truthy;
-  exports.falsy = falsy;
-  exports.logger = logger;
-  exports.None = None;
-  exports.Error = Error$1;
-  exports.Warn = Warn;
-  exports.Info = Info;
-  exports.Debug = Debug;
-  exports.panLinear = panLinear;
-  exports.panLog = panLog;
-  exports.panPow = panPow;
-  exports.panSymlog = panSymlog;
-  exports.zoomLinear = zoomLinear;
-  exports.zoomLog = zoomLog;
-  exports.zoomPow = zoomPow;
-  exports.zoomSymlog = zoomSymlog;
-  exports.quarter = quarter;
-  exports.utcquarter = utcquarter;
-  exports.array = array;
+  exports.boundClip = boundClip;
+  exports.boundContext = context;
+  exports.boundItem = boundItem;
+  exports.boundMark = boundMark;
+  exports.boundStroke = boundStroke;
+  exports.changeset = changeset;
   exports.clampRange = clampRange;
+  exports.closeTag = closeTag;
   exports.compare = compare;
   exports.constant = constant;
   exports.debounce = debounce;
+  exports.definition = definition;
+  exports.domChild = domChild;
+  exports.domClear = domClear;
+  exports.domCreate = domCreate;
+  exports.domFind = domFind;
   exports.error = error;
+  exports.expressionFunction = expressionFunction;
   exports.extend = extend;
   exports.extent = extent;
   exports.extentIndex = extentIndex;
+  exports.falsy = falsy;
   exports.fastmap = fastmap;
   exports.field = field;
   exports.flush = flush;
+  exports.font = font;
+  exports.fontFamily = fontFamily;
+  exports.fontSize = fontSize;
+  exports.format = format;
+  exports.formats = formats;
+  exports.id = id;
+  exports.identity = identity;
+  exports.inferType = inferType;
+  exports.inferTypes = inferTypes;
+  exports.ingest = ingest;
   exports.inherits = inherits;
   exports.inrange = inrange;
+  exports.interpolate = interpolate;
+  exports.interpolateColors = interpolateColors;
+  exports.interpolateRange = interpolateRange;
+  exports.intersect = intersect;
+  exports.intersectBoxLine = intersectBoxLine;
+  exports.intersectPath = intersectPath;
+  exports.intersectPoint = intersectPoint;
+  exports.intersectRule = intersectRule;
   exports.isArray = isArray;
   exports.isBoolean = isBoolean;
   exports.isDate = isDate;
@@ -25666,81 +25675,79 @@
   exports.isObject = isObject;
   exports.isRegExp = isRegExp;
   exports.isString = isString;
+  exports.isTuple = isTuple;
   exports.key = key;
   exports.lerp = lerp;
+  exports.loader = loader;
+  exports.logger = logger;
   exports.merge = merge;
+  exports.one = one;
+  exports.openTag = openTag;
   exports.pad = pad;
+  exports.panLinear = panLinear;
+  exports.panLog = panLog;
+  exports.panPow = panPow;
+  exports.panSymlog = panSymlog;
+  exports.parse = parse$5;
+  exports.pathCurves = curves;
+  exports.pathEqual = pathEqual;
+  exports.pathParse = pathParse;
+  exports.pathRectangle = vg_rect;
+  exports.pathRender = pathRender;
+  exports.pathSymbols = symbols;
+  exports.pathTrail = vg_trail;
   exports.peek = peek;
+  exports.point = point;
+  exports.projection = projection;
+  exports.quantizeInterpolator = quantizeInterpolator;
+  exports.quarter = quarter;
+  exports.quartiles = quartiles;
+  exports.randomInteger = integer;
+  exports.randomKDE = randomKDE;
+  exports.randomLCG = lcg;
+  exports.randomMixture = randomMixture;
+  exports.randomNormal = randomNormal;
+  exports.randomUniform = randomUniform;
+  exports.read = read;
+  exports.renderModule = renderModule;
   exports.repeat = repeat;
+  exports.resetSVGClipId = resetSVGClipId;
+  exports.responseType = responseType;
+  exports.runtime = parse$4;
+  exports.runtimeContext = context$2;
+  exports.scale = scale$1;
+  exports.sceneEqual = sceneEqual;
+  exports.sceneFromJSON = sceneFromJSON;
+  exports.scenePickVisit = pickVisit;
+  exports.sceneToJSON = sceneToJSON;
+  exports.sceneVisit = visit;
+  exports.sceneZOrder = zorder;
+  exports.scheme = scheme;
+  exports.setRandom = setRandom;
   exports.span = span;
   exports.splitAccessPath = splitAccessPath;
   exports.stringValue = $;
+  exports.textMetrics = textMetrics;
+  exports.timeInterval = timeInterval;
   exports.toBoolean = toBoolean;
   exports.toDate = toDate;
   exports.toNumber = toNumber;
-  exports.toString = toString;
   exports.toSet = toSet;
+  exports.toString = toString;
+  exports.transform = transform;
+  exports.transforms = transforms;
   exports.truncate = truncate;
-  exports.visitArray = visitArray;
-  exports.loader = loader;
-  exports.read = read;
-  exports.inferType = inferType;
-  exports.inferTypes = inferTypes;
+  exports.truthy = truthy;
+  exports.tupleid = tupleid;
   exports.typeParsers = typeParsers;
-  exports.format = format;
-  exports.formats = formats;
-  exports.responseType = responseType;
-  exports.Bounds = Bounds;
-  exports.Gradient = Gradient;
-  exports.GroupItem = GroupItem;
-  exports.ResourceLoader = ResourceLoader;
-  exports.Item = Item;
-  exports.Scenegraph = Scenegraph;
-  exports.Handler = Handler;
-  exports.Renderer = Renderer;
-  exports.CanvasHandler = CanvasHandler;
-  exports.CanvasRenderer = CanvasRenderer;
-  exports.SVGHandler = SVGHandler;
-  exports.SVGRenderer = SVGRenderer;
-  exports.SVGStringRenderer = SVGStringRenderer;
-  exports.RenderType = RenderType;
-  exports.renderModule = renderModule;
-  exports.intersect = intersect;
-  exports.Marks = marks;
-  exports.boundClip = boundClip;
-  exports.boundContext = context;
-  exports.boundStroke = boundStroke;
-  exports.boundItem = boundItem;
-  exports.boundMark = boundMark;
-  exports.pathCurves = curves;
-  exports.pathSymbols = symbols;
-  exports.pathRectangle = vg_rect;
-  exports.pathTrail = vg_trail;
-  exports.pathParse = pathParse;
-  exports.pathRender = pathRender;
-  exports.point = point;
-  exports.domCreate = domCreate;
-  exports.domFind = domFind;
-  exports.domChild = domChild;
-  exports.domClear = domClear;
-  exports.openTag = openTag;
-  exports.closeTag = closeTag;
-  exports.font = font;
-  exports.fontFamily = fontFamily;
-  exports.fontSize = fontSize;
-  exports.textMetrics = textMetrics;
-  exports.resetSVGClipId = resetSVGClipId;
-  exports.sceneEqual = sceneEqual;
-  exports.pathEqual = pathEqual;
-  exports.sceneToJSON = sceneToJSON;
-  exports.sceneFromJSON = sceneFromJSON;
-  exports.intersectPath = intersectPath;
-  exports.intersectPoint = intersectPoint;
-  exports.intersectRule = intersectRule;
-  exports.intersectBoxLine = intersectBoxLine;
-  exports.sceneZOrder = zorder;
-  exports.sceneVisit = visit;
-  exports.scenePickVisit = pickVisit;
+  exports.utcquarter = utcquarter;
+  exports.version = version;
+  exports.visitArray = visitArray;
+  exports.zero = zero;
+  exports.zoomLinear = zoomLinear;
+  exports.zoomLog = zoomLog;
+  exports.zoomPow = zoomPow;
+  exports.zoomSymlog = zoomSymlog;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
