@@ -16,8 +16,11 @@ function copy(output, key, value, recurse) {
   if (isObject(value) && !isArray(value)) {
     o = isObject(output[key]) ? output[key] : (output[key] = {});
     for (k in value) {
-      if (!recurse || !recurse[k]) o[k] = value[k];
-      else copy(o, k, value[k]);
+      if (recurse && (recurse === true || recurse[k])) {
+        copy(o, k, value[k]);
+      } else {
+        o[k] = value[k];
+      }
     }
   } else {
     output[key] = value;
