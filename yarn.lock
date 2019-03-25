@@ -1856,7 +1856,7 @@ download-file-sync@^1.0.4:
   resolved "https://registry.yarnpkg.com/download-file-sync/-/download-file-sync-1.0.4.tgz#d3e3c543f836f41039455b9034c72e355b036019"
   integrity sha1-0+PFQ/g29BA5RVuQNMcuNVsDYBk=
 
-dts-critic@^1.0.1:
+dts-critic@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/dts-critic/-/dts-critic-1.0.4.tgz#75aa92e59602a36a8fda113964fce24f80241591"
   integrity sha512-pBIkn1L8fFtYnoftv6e6KYO9zieDQU0AbbdKZWEp/M3VFvDyythNfcAUv+QRncboQQxmo3bDGBoVkZbSXdzBBA==
@@ -1865,13 +1865,13 @@ dts-critic@^1.0.1:
     download-file-sync "^1.0.4"
     yargs "^12.0.5"
 
-dtslint@0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-0.5.5.tgz#24b16835290d785e242a9d7b994cf6359a8e5bd4"
-  integrity sha512-uhb2qU9RpIO4dIKh8QbSoOWq5dOibtiM/DgHsy7DUNw1um4gesZX/nRZkoWq5DeS0bYAzRRXOhNRrNdhJKi8Uw==
+dtslint@0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-0.5.7.tgz#5aa11479b94cb9a9f4a170f308732d9d559ec595"
+  integrity sha512-JLgONRkTNxp568/xbtEBnv4zEAluGWAq2hEFOYK6BzGXCy9aF89cbsv5VCFD4omN1JYuzPIQTUBOM9VjtGcgEQ==
   dependencies:
     definitelytyped-header-parser "^1.0.1"
-    dts-critic "^1.0.1"
+    dts-critic "^1.0.4"
     fs-extra "^6.0.1"
     request "^2.88.0"
     strip-json-comments "^2.0.1"
@@ -4721,10 +4721,10 @@ rollup-pluginutils@^2.5.0:
     estree-walker "^0.6.0"
     micromatch "^3.1.10"
 
-rollup@^1.7.2:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.7.2.tgz#6a2c50843915cba2c1432028e741f2ccb39e8ca3"
-  integrity sha512-HdbjbHsvoLDwJU/lWEyktVlLdXR7mtnNxRnzaDb+fiNiboAxDYCpwLz1zLGI3+k890PacAptSGrqJLJnABMKJg==
+rollup@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.7.3.tgz#cade518b92e23efa72026e264e29d9a56cbf8eb9"
+  integrity sha512-U3/HaZujvGofNZQldfIknKoaNFNRS+j8/uCS/jSy3FrxF9t0FBsgZW4+VXLHG7l1daTgE6+jEy0Dv7cVCB2NPg==
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "^11.11.6"
@@ -5403,7 +5403,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.3.3:
+typescript@^3.3.4000:
   version "3.3.4000"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.4000.tgz#76b0f89cfdbf97827e1112d64f283f1151d6adf0"
   integrity sha512-jjOcCZvpkl2+z7JFn0yBOoLQyLoIkNZAs/fYJkUG6VKy6zLPHJGfQJYFHzibB6GJaF/8QrcECtlQ5cpvRHSMEA==
