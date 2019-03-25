@@ -1,4 +1,4 @@
-# Vega: A Visualization Grammar
+# Vega: A Visualization Grammar <a href="https://vega.github.io/vega/"><img align="right" src="https://github.com/vega/logos/blob/master/assets/VG_Color@512.png?raw=true" height="38"></img></a>
 
 <a href="https://vega.github.io/vega/examples">
 <img src="https://vega.github.io/vega/assets/banner.png" alt="Vega Examples" width="900"></img>
