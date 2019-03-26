@@ -279,9 +279,26 @@ Defines a linear gradient to determine colors for a `fill` or `stroke` encoding 
 
 | Property      | Type            | Description    |
 | :------------ | :-------------: | :------------- |
-| scale         | {% include type t="String|FieldValue" %} | {% include required %} The name of a scale whose range is a [continuous color scheme](../schemes).|
+| gradient         | {% include type t="String|FieldValue" %} | {% include required %} The name of a scale whose range is a [continuous color scheme](../schemes).|
 | start         | {% include type t="Number[]" %} | The starting coordinate for the gradient as an [x, y] array within a normalized [0, 1] coordinate system. This coordinate is relative to the bounds of the item being colored. Defaults to `[0, 0]`.|
 | stop          | {% include type t="Number[]" %} | The stopping coordinate for the gradient as an [x, y] array within a normalized [0, 1] coordinate system. This coordinate is relative to the bounds of the item being colored. Defaults to `[1, 0]`, for a horizontal gradient that spans the full bounds of an item.|
 | count         | {% include type t="Number" %}   | A suggested target number of sample points to take from the color scale.|
+
+<b>Example</b>
+
+{: .suppress-error}
+```json
+{
+  "encode": {
+  ...
+  "fill": {
+            "gradient": "myColorScale",
+            "start": [0, 1],
+            "stop": [0, 0],
+            "count": 10
+          }
+  }
+}
+```
 
 [Back to top](#reference)
