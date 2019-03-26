@@ -700,10 +700,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/node@^11.11.6":
-  version "11.11.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.6.tgz#df929d1bb2eee5afdda598a41930fe50b43eaa6a"
-  integrity sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==
+"@types/node@^11.11.6", "@types/node@^11.11.7":
+  version "11.11.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.7.tgz#f1c35a906b82adae76ede5ab0d2088e58fa37843"
+  integrity sha512-bHbRcyD6XpXVLg42QYaQCjvDXaCFkvb3WbCIxSDmhGbJYVroxvYzekk9QGg1beeIawfvSLkdZpP0h7jxE4ihnA==
 
 "@types/parsimmon@^1.3.0":
   version "1.10.0"
@@ -1865,10 +1865,10 @@ dts-critic@^1.0.4:
     download-file-sync "^1.0.4"
     yargs "^12.0.5"
 
-dtslint@0.5.7:
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-0.5.7.tgz#5aa11479b94cb9a9f4a170f308732d9d559ec595"
-  integrity sha512-JLgONRkTNxp568/xbtEBnv4zEAluGWAq2hEFOYK6BzGXCy9aF89cbsv5VCFD4omN1JYuzPIQTUBOM9VjtGcgEQ==
+dtslint@0.5.8:
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-0.5.8.tgz#acae2c66ef84baa9f24479618c9c750db290b8ac"
+  integrity sha512-Cj181xOKecrUjRpEv6B5GUCaG/wnt43huWFJ7Q4PGe8ZyynQZRGXnavwINK5HDWgv+CZA6t0jBxKmTQrepTCtg==
   dependencies:
     definitelytyped-header-parser "^1.0.1"
     dts-critic "^1.0.4"
@@ -5409,9 +5409,9 @@ typescript@^3.3.4000:
   integrity sha512-jjOcCZvpkl2+z7JFn0yBOoLQyLoIkNZAs/fYJkUG6VKy6zLPHJGfQJYFHzibB6GJaF/8QrcECtlQ5cpvRHSMEA==
 
 typescript@next:
-  version "3.4.0-dev.20190323"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.0-dev.20190323.tgz#044b7f85a5349c3e7b421e8b7712e393c52ed78c"
-  integrity sha512-fMhSnWPbHHDiXZ3+YoKgjFsp9YyETddNLeSjKE4CsnFFTTc5uA9GNipN1pDvnPmvimTCyLbOWNmuCy6uqGV8QQ==
+  version "3.4.0-dev.20190326"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.0-dev.20190326.tgz#69c67904f24024c13d08b784de66462470097f37"
+  integrity sha512-W45DtiS4kt+RZEeeyrAS62dwldwSIFu33VZnuDiDI5uGJeZ8XirV4DAgsMcQmKt3UqguyJfNMut6eBN9TFLnOw==
 
 uglify-js@^3.1.4:
   version "3.5.2"
