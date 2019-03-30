@@ -14581,7 +14581,7 @@
 
     for (; j<m; ++j) {
       t = group[j];
-      v = field(t);
+      v = +field(t);
       if (v < 0) {
         t[y0] = lastNeg;
         t[y1] = (lastNeg += v);
@@ -17292,7 +17292,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.3.2";
+  var version = "5.3.3";
 
   var Default = 'default';
 
@@ -25586,8 +25586,18 @@
   // -- Transforms -----
   extend(transforms, tx, vtx, encode, geo, force, tree, voronoi, wordcloud, xf);
 
-  exports.timeFormatLocale = d3TimeFormat.timeFormatDefaultLocale;
-  exports.formatLocale = d3Format.formatDefaultLocale;
+  Object.defineProperty(exports, 'timeFormatLocale', {
+    enumerable: true,
+    get: function () {
+      return d3TimeFormat.timeFormatDefaultLocale;
+    }
+  });
+  Object.defineProperty(exports, 'formatLocale', {
+    enumerable: true,
+    get: function () {
+      return d3Format.formatDefaultLocale;
+    }
+  });
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;
   exports.CanvasRenderer = CanvasRenderer;
