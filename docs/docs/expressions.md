@@ -133,7 +133,7 @@ Returns true if _value_ is a number, false otherwise. `NaN` and `Infinity` are c
 
 <a name="isObject" href="#isObject">#</a>
 <b>isObject</b>(<i>value</i>)<br/>
-Returns true if _value_ is an object, false otherwise. Following JavaScript `typeof` convention, `null` values are considered objects.
+Returns true if _value_ is an object (including arrays and Dates), false otherwise.
 
 <a name="isRegExp" href="#isRegExp">#</a>
 <b>isRegExp</b>(<i>value</i>)<br/>
