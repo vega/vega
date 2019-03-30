@@ -87,7 +87,7 @@ function stackZero(group, max, field, y0, y1) {
 
   for (; j<m; ++j) {
     t = group[j];
-    v = field(t);
+    v = +field(t);
     if (v < 0) {
       t[y0] = lastNeg;
       t[y1] = (lastNeg += v);
