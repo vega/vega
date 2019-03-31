@@ -6065,6 +6065,9 @@
     return out;
   };
 
+  // epsilon bias to offset floating point error (#1737)
+  const EPSILON = 1e-14;
+
   /**
    * Generates a binning function for discretizing data.
    * @constructor
@@ -6150,7 +6153,7 @@
         return null;
       } else {
         v = Math.max(start, Math.min(+v, stop - step));
-        return start + step * Math.floor((v - start) / step);
+        return start + step * Math.floor(EPSILON + (v - start) / step);
       }
     };
 
@@ -29676,7 +29679,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.3.3";
+  var version = "5.3.4";
 
   var Default = 'default';
 
