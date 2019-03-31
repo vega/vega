@@ -2,6 +2,9 @@ import {Transform} from 'vega-dataflow';
 import {bin} from 'vega-statistics';
 import {inherits, accessor, accessorFields, accessorName} from 'vega-util';
 
+// epsilon bias to offset floating point error (#1737)
+const EPSILON = 1e-14;
+
 /**
  * Generates a binning function for discretizing data.
  * @constructor
@@ -87,7 +90,7 @@ prototype._bins = function(_) {
       return null;
     } else {
       v = Math.max(start, Math.min(+v, stop - step));
-      return start + step * Math.floor((v - start) / step);
+      return start + step * Math.floor(EPSILON + (v - start) / step);
     }
   };
 
