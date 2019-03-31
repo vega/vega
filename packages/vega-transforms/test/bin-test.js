@@ -19,7 +19,7 @@ tape('Bin discretizes values', function(t) {
 
   // stress test floating point math
   var extents = [
-    [0, 1e-13],
+    [0, 1e-50],
     [0, 0.1],
     [0, 0.5],
     [0.5, 1],
