@@ -16,23 +16,23 @@
     "postinstall": "yarn data"
   },
   "devDependencies": {
-    "@types/node": "^11.12.2",
+    "@types/node": "^11.13.0",
     "ajv": "^6.10.0",
     "canvas": "^2.4.1",
-    "dtslint": "^0.5.9",
+    "dtslint": "^0.6.0",
     "eslint": "^5.16.0",
     "http-server": "^0.11.1",
     "jsdom": "^14.0.0",
     "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
-    "rollup": "^1.7.4",
+    "rollup": "^1.8.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^4.0.1",
     "tape": "^4.10.1",
     "terser": "^3.17.0",
     "typescript": "^3.4.1",
-    "vega-datasets": "^1.24.1"
+    "vega-datasets": "^1.24.3"
   },
   "workspaces": [
     "packages/*"
