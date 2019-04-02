@@ -19,7 +19,7 @@
     "@types/node": "^11.12.2",
     "ajv": "^6.10.0",
     "canvas": "^2.4.1",
-    "dtslint": "^0.5.9",
+    "dtslint": "^0.6.0",
     "eslint": "^5.16.0",
     "http-server": "^0.11.1",
     "jsdom": "^14.0.0",
