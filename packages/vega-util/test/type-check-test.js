@@ -35,9 +35,12 @@ tape('isFunction tests functions', function(t) {
 tape('isNumber tests numbers', function(t) {
   t.equal(vega.isNumber(0), true);
   t.equal(vega.isNumber(1e5), true);
+  t.equal(vega.isNumber(NaN), true);
+  t.equal(vega.isNumber(Infinity), true);
   t.equal(vega.isNumber(null), false);
   t.equal(vega.isNumber('a'), false);
   t.equal(vega.isNumber('1'), false);
+  t.equal(vega.isNumber(''), false);
   t.end();
 });
 
