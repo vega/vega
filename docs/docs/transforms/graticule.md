@@ -16,7 +16,6 @@ This transform generates a new data stream containing a single [GeoJSON](https:/
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| field               | {% include type t="Field" %}   | The data field to bin.|
 | extentMajor         | {% include type t="Array[]" %} | The major extent of the graticule as a two-element array of coordinates.|
 | extentMinor         | {% include type t="Array[]" %} | The minor extent of the graticule as a two-element array of coordinates.|
 | extent              | {% include type t="Array[]" %} | Sets both the major and minor extents to the same values.|
