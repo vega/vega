@@ -8,7 +8,7 @@ title: A Visualization Grammar
 **Vega** is a _visualization grammar_, a declarative language for creating, saving, and sharing interactive visualization designs. With Vega, you can describe the visual appearance and interactive behavior of a visualization in a JSON format, and generate web-based views using Canvas or SVG.
 
 {:.lead-buttons .float-right}
-[Version {{ site.data.versions.vega }}](https://github.com/vega/vega/releases/tag/v{{ site.data.versions.vega }})
+[Version {{ site.data.versions.vega__latest }}](https://github.com/vega/vega/releases/tag/v{{ site.data.versions.vega__latest }})
 
 Vega provides basic building blocks for a wide variety of visualization designs: [data loading](docs/data) and [transformation](docs/transforms), [scales](docs/scales), [map projections](docs/projections), [axes](docs/axes), [legends](docs/legends), and [graphical marks](docs/marks) such as rectangles, lines, plotting symbols, _etc_. Interaction techniques can be specified using [reactive signals](docs/signals) that dynamically modify a visualization in response to [input event streams](docs/event-streams).
 

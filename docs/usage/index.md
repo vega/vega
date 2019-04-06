@@ -47,7 +47,7 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 ```html
 <head>
   <script src="https://cdn.jsdelivr.net/npm/d3@{{ site.data.versions.d3 }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@{{ site.data.versions.topojson }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build/vega-core.min.js"></script>
 </head>
 ```
