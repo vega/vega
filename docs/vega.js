@@ -14767,13 +14767,11 @@
 
   var methods = {
     parity: function(items) {
-      return items.filter(function(item, i) {
-        return i % 2 ? (item.opacity = 0) : 1;
-      });
+      return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
     },
     greedy: function(items, sep) {
       var a;
-      return items.filter(function(b, i) {
+      return items.filter((b, i) => {
         if (!i || !intersect$2(a.bounds, b.bounds, sep)) {
           a = b;
           return 1;
@@ -14817,14 +14815,12 @@
     }
     b.expand(tolerance || 1);
 
-    return function(item) {
-      return b.encloses(item.bounds);
-    };
+    return item => b.encloses(item.bounds);
   }
 
   // reset all items to be fully opaque
   function reset(source) {
-    source.forEach(function(item) { item.opacity = 1; });
+    source.forEach(item => item.opacity = 1);
     return source;
   }
 
@@ -14838,9 +14834,9 @@
     var reduce = methods[_.method] || methods.parity,
         source = pulse.materialize(pulse.SOURCE).source,
         sep = _.separation || 0,
-        items, test;
+        items, test, bounds;
 
-    if (!source) return;
+    if (!source || !source.length) return;
 
     if (!_.method) {
       // early exit if method is falsy
@@ -14874,10 +14870,16 @@
 
     if (_.boundScale && _.boundTolerance >= 0) {
       test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-      source.forEach(function(item) {
+      source.forEach(item => {
         if (!test(item)) item.opacity = 0;
       });
     }
+
+    // re-calculate mark bounds
+    bounds = items[0].mark.bounds.clear();
+    source.forEach(item => {
+      if (item.opacity) bounds.union(item.bounds);
+    });
 
     return pulse;
   };
@@ -24135,19 +24137,21 @@
      if (isFunction(proj[key])) proj[key](value);
   }
 
-  function collectGeoJSON(features) {
-    features = array(features);
-    return features.length === 1
-      ? features[0]
+  function collectGeoJSON(data) {
+    data = array(data);
+    return data.length === 1 ? data[0]
       : {
           type: FeatureCollection,
-          features: features.reduce(function(list, f) {
-              (f && f.type === FeatureCollection) ? list.push.apply(list, f.features)
-                : isArray(f) ? list.push.apply(list, f)
-                : list.push(f);
-              return list;
-            }, [])
+          features: data.reduce((a, f) => a.concat(featurize(f)), [])
         };
+  }
+
+  function featurize(f) {
+    return f.type === FeatureCollection
+      ? f.features
+      : array(f).map(
+          d => d.type === Feature ? d : {type: Feature, geometry: d}
+        );
   }
 
 
@@ -29679,7 +29683,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.3.4";
+  var version = "5.3.5";
 
   var Default = 'default';
 
