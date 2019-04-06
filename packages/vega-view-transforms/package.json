@@ -18,7 +18,7 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-view-transforms.js -c -m -o build/vega-view-transforms.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
@@ -26,5 +26,8 @@
     "vega-dataflow": "^5.1.1",
     "vega-scenegraph": "^4.1.0",
     "vega-util": "^1.8.0"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
   }
 }

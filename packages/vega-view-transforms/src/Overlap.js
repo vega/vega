@@ -34,13 +34,11 @@ var prototype = inherits(Overlap, Transform);
 
 var methods = {
   parity: function(items) {
-    return items.filter(function(item, i) {
-      return i % 2 ? (item.opacity = 0) : 1;
-    });
+    return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
   },
   greedy: function(items, sep) {
     var a;
-    return items.filter(function(b, i) {
+    return items.filter((b, i) => {
       if (!i || !intersect(a.bounds, b.bounds, sep)) {
         a = b;
         return 1;
@@ -84,14 +82,12 @@ function boundTest(scale, orient, tolerance) {
   }
   b.expand(tolerance || 1);
 
-  return function(item) {
-    return b.encloses(item.bounds);
-  };
+  return item => b.encloses(item.bounds);
 }
 
 // reset all items to be fully opaque
 function reset(source) {
-  source.forEach(function(item) { item.opacity = 1; });
+  source.forEach(item => item.opacity = 1);
   return source;
 }
 
@@ -105,9 +101,9 @@ prototype.transform = function(_, pulse) {
   var reduce = methods[_.method] || methods.parity,
       source = pulse.materialize(pulse.SOURCE).source,
       sep = _.separation || 0,
-      items, test;
+      items, test, bounds;
 
-  if (!source) return;
+  if (!source || !source.length) return;
 
   if (!_.method) {
     // early exit if method is falsy
@@ -141,10 +137,16 @@ prototype.transform = function(_, pulse) {
 
   if (_.boundScale && _.boundTolerance >= 0) {
     test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-    source.forEach(function(item) {
+    source.forEach(item => {
       if (!test(item)) item.opacity = 0;
-    })
+    });
   }
+
+  // re-calculate mark bounds
+  bounds = items[0].mark.bounds.clear();
+  source.forEach(item => {
+    if (item.opacity) bounds.union(item.bounds);
+  });
 
   return pulse;
 };
