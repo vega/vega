@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "5.3.4",
+  "version": "5.3.5",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -37,7 +37,7 @@
     "vega-expression": "^2.6.0",
     "vega-functions": "^5.2.0",
     "vega-force": "^4.0.1",
-    "vega-geo": "^4.0.1",
+    "vega-geo": "^4.0.2",
     "vega-hierarchy": "^4.0.1",
     "vega-loader": "^4.0.0",
     "vega-parser": "^5.6.2",
@@ -50,7 +50,7 @@
     "vega-typings": "^0.6.2",
     "vega-util": "^1.10.0",
     "vega-view": "^5.2.1",
-    "vega-view-transforms": "^4.3.0",
+    "vega-view-transforms": "^4.3.1",
     "vega-voronoi": "^4.0.1",
     "vega-wordcloud": "^4.0.2"
   },

@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
