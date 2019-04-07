@@ -1,7 +1,9 @@
 /*eslint no-console: "warn"*/
 import labelLayout from './LabelLayout';
-import {Transform} from 'vega-dataflow';
-import {inherits, isFunction} from 'vega-util';
+import BitMap from './BitMap';
+import { labelWidth } from './LabelPlacers/Common';
+import { Transform } from 'vega-dataflow';
+import { inherits, isFunction } from 'vega-util';
 
 const Output = ['x', 'y', 'opacity', 'align', 'baseline', 'originalOpacity', 'transformed'];
 
@@ -15,17 +17,17 @@ export default function Label(params) {
 
 Label.Definition = {
   type: 'Label',
-  metadata: {modifies: true},
+  metadata: { modifies: true },
   params: [
-    {name: 'padding', type: 'number', default: 0},
-    {name: 'markIndex', type: 'number', default: 0},
-    {name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end'},
-    {name: 'avoidBaseMark', type: 'boolean', default: true},
-    {name: 'size', type: 'number', array: true, length: [2]},
-    {name: 'offset', type: 'number', default: [1]},
-    {name: 'sort', type: 'field'},
-    {name: 'anchor', type: 'string', default: defaultAnchors},
-    {name: 'avoidMarks', type: 'data', array: true},
+    { name: 'padding', type: 'number', default: 0 },
+    { name: 'markIndex', type: 'number', default: 0 },
+    { name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end' },
+    { name: 'avoidBaseMark', type: 'boolean', default: true },
+    { name: 'size', type: 'number', array: true, length: [2] },
+    { name: 'offset', type: 'number', default: [1] },
+    { name: 'sort', type: 'field' },
+    { name: 'anchor', type: 'string', default: defaultAnchors },
+    { name: 'avoidMarks', type: 'data', array: true },
     {
       name: 'as',
       type: 'string',
@@ -36,9 +38,12 @@ Label.Definition = {
   ]
 };
 
+Label.BitMap = BitMap;
+Label.labelWidth = labelWidth;
+
 const prototype = inherits(Label, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   function modp(param) {
     const p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
