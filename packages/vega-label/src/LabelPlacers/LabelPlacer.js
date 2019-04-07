@@ -1,7 +1,5 @@
-/*eslint no-console: "warn"*/
-/*eslint no-empty: "warn"*/
-import {canvas} from 'vega-canvas';
-import {labelWidth, checkCollision} from './Common';
+import { canvas } from 'vega-canvas';
+import { labelWidth, checkCollision } from './Common';
 
 const SIZE_FACTOR = 0.707106781186548; // this is 1 over square root of 2
 

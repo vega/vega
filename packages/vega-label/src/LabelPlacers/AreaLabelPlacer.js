@@ -1,7 +1,5 @@
-/*eslint no-console: "warn"*/
-/*eslint no-empty: "warn"*/
-import {canvas} from 'vega-canvas';
-import {labelWidth, checkCollision} from './Common';
+import { canvas } from 'vega-canvas';
+import { labelWidth, checkCollision } from './Common';
 
 const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
