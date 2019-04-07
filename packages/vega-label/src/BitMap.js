@@ -1,6 +1,4 @@
-/*eslint no-fallthrough: "warn" */
-/*eslint no-console: "warn"*/
-import {Marks} from 'vega-scenegraph';
+import { Marks } from 'vega-scenegraph';
 
 const DIV = 0x5;
 const MOD = 0x1f;
@@ -333,7 +331,7 @@ function drawMark(context, originalItems, labelInside) {
   }
 
   // draw items into canvas
-  Marks[items[0].mark.marktype].draw(context, {items: items}, null);
+  Marks[items[0].mark.marktype].draw(context, { items: items }, null);
 }
 
 /**

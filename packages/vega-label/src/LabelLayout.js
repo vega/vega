@@ -1,9 +1,6 @@
-/*eslint no-console: "warn"*/
-/*eslint no-empty: "warn"*/
-/*eslint no-unused-vars: "warn"*/
 import LabelPlacer from './LabelPlacers/LabelPlacer';
 import AreaLabelPlacer from './LabelPlacers/AreaLabelPlacer';
-import {default as BitMap, prepareBitmap} from './BitMap';
+import { default as BitMap, prepareBitmap } from './BitMap';
 
 // 8-bit representation of anchors
 const TOP = 0x0,
@@ -26,13 +23,13 @@ const anchorTextToNumber = {
   'bottom-right': BOTTOM + RIGHT
 };
 
-export default function() {
+export default function () {
   let offsets, sort, anchors, avoidMarks, size;
   let avoidBaseMark, lineAnchor, markIndex, padding;
   let label = {},
     texts = [];
 
-  label.layout = function() {
+  label.layout = function () {
     const n = texts.length;
     if (!n) {
       // return immediately when there is not a label to be placed
@@ -102,7 +99,7 @@ export default function() {
     return data;
   };
 
-  label.texts = function(_) {
+  label.texts = function (_) {
     if (arguments.length) {
       texts = _;
       return label;
@@ -111,7 +108,7 @@ export default function() {
     }
   };
 
-  label.offset = function(_, len) {
+  label.offset = function (_, len) {
     if (arguments.length) {
       const n = _.length;
       offsets = new Float64Array(len);
@@ -130,7 +127,7 @@ export default function() {
     }
   };
 
-  label.anchor = function(_, len) {
+  label.anchor = function (_, len) {
     if (arguments.length) {
       const n = _.length;
       anchors = new Int8Array(len);
@@ -149,7 +146,7 @@ export default function() {
     }
   };
 
-  label.sort = function(_) {
+  label.sort = function (_) {
     if (arguments.length) {
       sort = _;
       return label;
@@ -158,7 +155,7 @@ export default function() {
     }
   };
 
-  label.avoidMarks = function(_) {
+  label.avoidMarks = function (_) {
     if (arguments.length) {
       avoidMarks = _;
       return label;
@@ -167,7 +164,7 @@ export default function() {
     }
   };
 
-  label.size = function(_) {
+  label.size = function (_) {
     if (arguments.length) {
       size = _;
       return label;
@@ -176,7 +173,7 @@ export default function() {
     }
   };
 
-  label.avoidBaseMark = function(_) {
+  label.avoidBaseMark = function (_) {
     if (arguments.length) {
       avoidBaseMark = _;
       return label;
@@ -185,7 +182,7 @@ export default function() {
     }
   };
 
-  label.lineAnchor = function(_) {
+  label.lineAnchor = function (_) {
     if (arguments.length) {
       lineAnchor = _;
       return label;
@@ -194,7 +191,7 @@ export default function() {
     }
   };
 
-  label.markIndex = function(_) {
+  label.markIndex = function (_) {
     if (arguments.length) {
       markIndex = _;
       return label;
@@ -203,7 +200,7 @@ export default function() {
     }
   };
 
-  label.padding = function(_) {
+  label.padding = function (_) {
     if (arguments.length) {
       padding = _;
       return label;
@@ -252,13 +249,13 @@ function getMarkBoundaryFactory(marktype, grouptype, lineAnchor, markIndex) {
     // no reactive geometry
     return d => [d.x, d.x, d.x, d.y, d.y, d.y];
   } else if (marktype === 'line' || marktype === 'area') {
-    return function(d) {
+    return function (d) {
       const datum = d.datum;
       return [datum.x, datum.x, datum.x, datum.y, datum.y, datum.y];
     };
   } else if (grouptype === 'line') {
     const endItemIndex = lineAnchor === 'begin' ? m => m - 1 : () => 0;
-    return function(d) {
+    return function (d) {
       const items = d.datum.items[markIndex].items;
       const m = items.length;
       if (m) {
@@ -272,7 +269,7 @@ function getMarkBoundaryFactory(marktype, grouptype, lineAnchor, markIndex) {
       }
     };
   } else {
-    return function(d) {
+    return function (d) {
       const b = d.datum.bounds;
       return [b.x1, (b.x1 + b.x2) / 2.0, b.x2, b.y1, (b.y1 + b.y2) / 2.0, b.y2];
     };

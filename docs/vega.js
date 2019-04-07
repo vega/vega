@@ -32674,6 +32674,7 @@
   });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   var version = "5.10.0";
 
   // initialize aria role and label attributes
@@ -32704,6 +32705,8 @@
   /*eslint no-console: "warn"*/
   /*eslint no-empty: "warn"*/
 
+=======
+>>>>>>> update documentation
   /**
    * Calculate width of `text` with font size `fontSize` and font `font`
    * @param {object} context 2d-context of canvas
@@ -32717,11 +32720,18 @@
     return context.measureText(text).width;
   }
 
+  /**
+   * Check if the area in `x1`, `y1`, `x2`, `y2` has occupied pixel
+   * @param {number} x1 starting range of x-axis to be checked
+   * @param {number} x2 ending range of x-axis to be checked
+   * @param {number} y1 starting range of y-axis to be checked
+   * @param {number} y2 ending range of y-axis to be checked
+   * @param {object} bitMap bitmap to be checking
+   * @returns true if there is a pixel occupied in the area. Otherwise, false.
+   */
   function checkCollision(x1, y1, x2, y2, bitMap) {
     return bitMap.getInRangeScaled(x1, y2, x2, y2) || bitMap.getInRangeScaled(x1, y1, x2, y2 - 1);
   }
-
-  /*eslint no-console: "warn"*/
 
   const SIZE_FACTOR = 0.707106781186548; // this is 1 over square root of 2
 
@@ -32824,8 +32834,6 @@
   function isInMarkBound(x1, y1, x2, y2, markBound) {
     return markBound[0] <= x1 && x2 <= markBound[2] && markBound[3] <= y1 && y2 <= markBound[5];
   }
-
-  /*eslint no-console: "warn"*/
 
   const X_DIR = [-1, -1, 1, 1];
   const Y_DIR = [-1, 1, -1, 1];
@@ -32995,8 +33003,6 @@
     obj.yStack = newYStack;
     obj.size *= 2;
   }
-
-  /*eslint no-fallthrough: "warn" */
 
   const DIV = 0x5;
   const MOD$1 = 0x1f;
@@ -33329,7 +33335,7 @@
     }
 
     // draw items into canvas
-    marks[items[0].mark.marktype].draw(context, {items: items}, null);
+    marks[items[0].mark.marktype].draw(context, { items: items }, null);
   }
 
   /**
@@ -33379,8 +33385,6 @@
     return item;
   }
 
-  /*eslint no-console: "warn"*/
-
   // 8-bit representation of anchors
   const TOP = 0x0,
     MIDDLE = 0x1 << 0x2,
@@ -33402,13 +33406,13 @@
     'bottom-right': BOTTOM + RIGHT
   };
 
-  function labelLayout() {
+  function labelLayout () {
     let offsets, sort, anchors, avoidMarks, size;
     let avoidBaseMark, lineAnchor, markIndex, padding;
     let label = {},
       texts = [];
 
-    label.layout = function() {
+    label.layout = function () {
       const n = texts.length;
       if (!n) {
         // return immediately when there is not a label to be placed
@@ -33478,7 +33482,7 @@
       return data;
     };
 
-    label.texts = function(_) {
+    label.texts = function (_) {
       if (arguments.length) {
         texts = _;
         return label;
@@ -33487,7 +33491,7 @@
       }
     };
 
-    label.offset = function(_, len) {
+    label.offset = function (_, len) {
       if (arguments.length) {
         const n = _.length;
         offsets = new Float64Array(len);
@@ -33506,7 +33510,7 @@
       }
     };
 
-    label.anchor = function(_, len) {
+    label.anchor = function (_, len) {
       if (arguments.length) {
         const n = _.length;
         anchors = new Int8Array(len);
@@ -33525,7 +33529,7 @@
       }
     };
 
-    label.sort = function(_) {
+    label.sort = function (_) {
       if (arguments.length) {
         sort = _;
         return label;
@@ -33534,7 +33538,7 @@
       }
     };
 
-    label.avoidMarks = function(_) {
+    label.avoidMarks = function (_) {
       if (arguments.length) {
         avoidMarks = _;
         return label;
@@ -33543,7 +33547,7 @@
       }
     };
 
-    label.size = function(_) {
+    label.size = function (_) {
       if (arguments.length) {
         size = _;
         return label;
@@ -33552,7 +33556,7 @@
       }
     };
 
-    label.avoidBaseMark = function(_) {
+    label.avoidBaseMark = function (_) {
       if (arguments.length) {
         avoidBaseMark = _;
         return label;
@@ -33561,7 +33565,7 @@
       }
     };
 
-    label.lineAnchor = function(_) {
+    label.lineAnchor = function (_) {
       if (arguments.length) {
         lineAnchor = _;
         return label;
@@ -33570,7 +33574,7 @@
       }
     };
 
-    label.markIndex = function(_) {
+    label.markIndex = function (_) {
       if (arguments.length) {
         markIndex = _;
         return label;
@@ -33579,7 +33583,7 @@
       }
     };
 
-    label.padding = function(_) {
+    label.padding = function (_) {
       if (arguments.length) {
         padding = _;
         return label;
@@ -33628,13 +33632,13 @@
       // no reactive geometry
       return d => [d.x, d.x, d.x, d.y, d.y, d.y];
     } else if (marktype === 'line' || marktype === 'area') {
-      return function(d) {
+      return function (d) {
         const datum = d.datum;
         return [datum.x, datum.x, datum.x, datum.y, datum.y, datum.y];
       };
     } else if (grouptype === 'line') {
       const endItemIndex = lineAnchor === 'begin' ? m => m - 1 : () => 0;
-      return function(d) {
+      return function (d) {
         const items = d.datum.items[markIndex].items;
         const m = items.length;
         if (m) {
@@ -33648,14 +33652,12 @@
         }
       };
     } else {
-      return function(d) {
+      return function (d) {
         const b = d.datum.bounds;
         return [b.x1, (b.x1 + b.x2) / 2.0, b.x2, b.y1, (b.y1 + b.y2) / 2.0, b.y2];
       };
     }
   }
-
-  /*eslint no-console: "warn"*/
 
   const Output$5 = ['x', 'y', 'opacity', 'align', 'baseline', 'originalOpacity', 'transformed'];
 
@@ -33669,17 +33671,17 @@
 
   Label.Definition = {
     type: 'Label',
-    metadata: {modifies: true},
+    metadata: { modifies: true },
     params: [
-      {name: 'padding', type: 'number', default: 0},
-      {name: 'markIndex', type: 'number', default: 0},
-      {name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end'},
-      {name: 'avoidBaseMark', type: 'boolean', default: true},
-      {name: 'size', type: 'number', array: true, length: [2]},
-      {name: 'offset', type: 'number', default: [1]},
-      {name: 'sort', type: 'field'},
-      {name: 'anchor', type: 'string', default: defaultAnchors},
-      {name: 'avoidMarks', type: 'data', array: true},
+      { name: 'padding', type: 'number', expr: true, default: 0 },
+      { name: 'markIndex', type: 'number', default: 0 },
+      { name: 'lineAnchor', type: 'string', expr: true, values: ['begin', 'end'], default: 'end' },
+      { name: 'avoidBaseMark', type: 'boolean', default: true },
+      { name: 'size', type: 'number', array: true, length: [2] },
+      { name: 'offset', type: 'number', expr: true, default: [1] },
+      { name: 'sort', type: 'field' },
+      { name: 'anchor', type: 'string', expr: true, default: defaultAnchors },
+      { name: 'avoidMarks', type: 'data', array: true },
       {
         name: 'as',
         type: 'string',
@@ -33690,9 +33692,12 @@
     ]
   };
 
+  Label.BitMap = BitMap;
+  Label.labelWidth = labelWidth;
+
   const prototype$1j = inherits(Label, Transform);
 
-  prototype$1j.transform = function(_, pulse) {
+  prototype$1j.transform = function (_, pulse) {
     function modp(param) {
       const p = _[param];
       return isFunction(p) && pulse.modified(p.fields);
@@ -33740,6 +33745,12 @@
 
     return pulse.reflow(mod).modifies(as);
   };
+
+
+
+  var label = /*#__PURE__*/Object.freeze({
+    label: Label
+  });
 
   var version = "5.3.5";
 >>>>>>> update readme
@@ -42703,10 +42714,14 @@
 
   // -- Transforms -----
 <<<<<<< HEAD
+<<<<<<< HEAD
   extend(transforms, tx, vtx, encode, geo, force, tree$1, reg, voronoi, wordcloud, xf);
 =======
   extend(transforms, tx, vtx, encode, geo, force, tree$1, voronoi$1, wordcloud, xf, {label: Label});
 >>>>>>> update readme
+=======
+  extend(transforms, tx, vtx, encode, geo, force, tree$1, voronoi$1, wordcloud, xf, label);
+>>>>>>> update documentation
 
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;

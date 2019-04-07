@@ -1,4 +1,3 @@
-/*eslint no-console: "warn"*/
 import labelLayout from './LabelLayout';
 import BitMap from './BitMap';
 import { labelWidth } from './LabelPlacers/Common';
@@ -19,14 +18,14 @@ Label.Definition = {
   type: 'Label',
   metadata: { modifies: true },
   params: [
-    { name: 'padding', type: 'number', default: 0 },
+    { name: 'padding', type: 'number', expr: true, default: 0 },
     { name: 'markIndex', type: 'number', default: 0 },
-    { name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end' },
+    { name: 'lineAnchor', type: 'string', expr: true, values: ['begin', 'end'], default: 'end' },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'size', type: 'number', array: true, length: [2] },
-    { name: 'offset', type: 'number', default: [1] },
+    { name: 'offset', type: 'number', expr: true, default: [1] },
     { name: 'sort', type: 'field' },
-    { name: 'anchor', type: 'string', default: defaultAnchors },
+    { name: 'anchor', type: 'string', expr: true, default: defaultAnchors },
     { name: 'avoidMarks', type: 'data', array: true },
     {
       name: 'as',
