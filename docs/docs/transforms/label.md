@@ -6,7 +6,7 @@ permalink: /docs/transforms/label/index.html
 
 The **label** transform repositions texts in text mark, so that their placements are not colliding with other elements in the chart. Those elements include marks that have name included in property `avoidMarks` and the mark that is used as backing data (as explained in [reactive geometry](../../marks/#reactivegeom)) of the text mark this label transform is transforming.
 
-The label transform is useful for labeling data points by creating a text mark that takes in data from the mark that represents the data point (we will call this 'base mark' for this label documentation), then use the label transform on the text mark to reposition the text, so that the texts appear near their data points without colliding into other objects in the chart.
+The label transform is useful for labeling data points by creating a text mark that takes in data from the mark that represents the data point (we will call this mark the "base mark"). You can then use the label transform on the text mark to reposition the text so that the texts appear near their data points without colliding with other objects in the chart.
 
 ## Transform Parameters
 
@@ -29,7 +29,7 @@ The label transform is useful for labeling data points by creating a text mark t
 
 {% include embed spec="label-examples/basic-concept-no-label" %}
 
-In this scatter plot example, we can add label to each point by adding text mark with the same `x` and `y` encoding channels to the chart. Since `x` and `y` encoding channels of the text mark follow the ones from the symbol mark (as we call this base mark), we can use reactive geometry to get information from the symbol mark and only modify the text.
+In this scatter plot example, we can add labels to each point by adding a text mark with the same `x` and `y` encoding channels to the chart. Since `x` and `y` encoding channels of the text mark follow the ones from the symbol mark (as we call this base mark), we can use reactive geometry to get information from the symbol mark and only modify the text.
 
 {% include embed spec="label-examples/basic-concept-no-transform" %}
 

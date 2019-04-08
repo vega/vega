@@ -1972,7 +1972,7 @@
         : "");
   }
 
-  function dsvFormat(delimiter) {
+  function dsv(delimiter) {
     var reFormat = new RegExp("[\"" + delimiter + "\n\r]"),
         DELIMITER = delimiter.charCodeAt(0);
 
@@ -2078,10 +2078,17 @@
     };
   }
 
+<<<<<<< HEAD
+=======
+  var csv = dsv(",");
+
+  var tsv = dsv("\t");
+
+>>>>>>> update vega.js in docs
   function delimitedFormat(delimiter) {
     const parse = function(data, format) {
       const delim = {delimiter: delimiter};
-      return dsv(data, format ? extend(format, delim) : delim);
+      return dsv$1(data, format ? extend(format, delim) : delim);
     };
 
     parse.responseType = 'text';
@@ -2089,16 +2096,16 @@
     return parse;
   }
 
-  function dsv(data, format) {
+  function dsv$1(data, format) {
     if (format.header) {
       data = format.header
         .map($)
         .join(format.delimiter) + '\n' + data;
     }
-    return dsvFormat(format.delimiter).parse(data + '');
+    return dsv(format.delimiter).parse(data + '');
   }
 
-  dsv.responseType = 'text';
+  dsv$1.responseType = 'text';
 
   function isBuffer(_) {
     return (typeof Buffer === 'function' && isFunction(Buffer.isBuffer))
@@ -2370,7 +2377,7 @@
   topojson.responseType = 'json';
 
   const format = {
-    dsv: dsv,
+    dsv: dsv$1,
     csv: delimitedFormat(','),
     tsv: delimitedFormat('\t'),
     json: json,
@@ -2483,6 +2490,7 @@
       return (end - start) / k;
     });
   };
+  var milliseconds = millisecond.range;
 
   var durationSecond = 1e3;
   var durationMinute = 6e4;
@@ -2499,6 +2507,7 @@
   }, function(date) {
     return date.getUTCSeconds();
   });
+  var seconds = second.range;
 
   var minute = newInterval(function(date) {
     date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
@@ -2509,6 +2518,7 @@
   }, function(date) {
     return date.getMinutes();
   });
+  var minutes = minute.range;
 
   var hour = newInterval(function(date) {
     date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
@@ -2519,6 +2529,7 @@
   }, function(date) {
     return date.getHours();
   });
+  var hours = hour.range;
 
   var day = newInterval(function(date) {
     date.setHours(0, 0, 0, 0);
@@ -2529,6 +2540,7 @@
   }, function(date) {
     return date.getDate() - 1;
   });
+  var days = day.range;
 
   function weekday(i) {
     return newInterval(function(date) {
@@ -2549,6 +2561,10 @@
   var friday = weekday(5);
   var saturday = weekday(6);
 
+  var sundays = sunday.range;
+  var mondays = monday.range;
+  var thursdays = thursday.range;
+
   var month = newInterval(function(date) {
     date.setDate(1);
     date.setHours(0, 0, 0, 0);
@@ -2559,6 +2575,7 @@
   }, function(date) {
     return date.getMonth();
   });
+  var months = month.range;
 
   var year = newInterval(function(date) {
     date.setMonth(0, 1);
@@ -2581,6 +2598,7 @@
       date.setFullYear(date.getFullYear() + step * k);
     });
   };
+  var years = year.range;
 
   var utcMinute = newInterval(function(date) {
     date.setUTCSeconds(0, 0);
@@ -2591,6 +2609,7 @@
   }, function(date) {
     return date.getUTCMinutes();
   });
+  var utcMinutes = utcMinute.range;
 
   var utcHour = newInterval(function(date) {
     date.setUTCMinutes(0, 0, 0);
@@ -2601,6 +2620,7 @@
   }, function(date) {
     return date.getUTCHours();
   });
+  var utcHours = utcHour.range;
 
   var utcDay = newInterval(function(date) {
     date.setUTCHours(0, 0, 0, 0);
@@ -2611,6 +2631,7 @@
   }, function(date) {
     return date.getUTCDate() - 1;
   });
+  var utcDays = utcDay.range;
 
   function utcWeekday(i) {
     return newInterval(function(date) {
@@ -2631,6 +2652,10 @@
   var utcFriday = utcWeekday(5);
   var utcSaturday = utcWeekday(6);
 
+  var utcSundays = utcSunday.range;
+  var utcMondays = utcMonday.range;
+  var utcThursdays = utcThursday.range;
+
   var utcMonth = newInterval(function(date) {
     date.setUTCDate(1);
     date.setUTCHours(0, 0, 0, 0);
@@ -2641,6 +2666,7 @@
   }, function(date) {
     return date.getUTCMonth();
   });
+  var utcMonths = utcMonth.range;
 
   var utcYear = newInterval(function(date) {
     date.setUTCMonth(0, 1);
@@ -2663,6 +2689,7 @@
       date.setUTCFullYear(date.getUTCFullYear() + step * k);
     });
   };
+  var utcYears = utcYear.range;
 
   function localDate(d) {
     if (0 <= d.y && d.y < 100) {
@@ -5064,7 +5091,7 @@
     return v ? Math.sqrt(v) : v;
   }
 
-  function sequence(start, stop, step) {
+  function range(start, stop, step) {
     start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
 
     var i = -1,
@@ -7481,6 +7508,7 @@
       method = dist[method];
 
       var as = _.as || ['value', 'density'],
+<<<<<<< HEAD
           domain = _.extent || extent(dist.data()),
           values = sampleCurve(method, domain, minsteps, maxsteps).map(v => {
             var tuple = {};
@@ -7488,6 +7516,17 @@
             tuple[as[1]] = v[1];
             return ingest(tuple);
           });
+=======
+          domain = _.extent || extent$1(dist.data()),
+          step = (domain[1] - domain[0]) / (_.steps || 100),
+          values = range(domain[0], domain[1] + step/2, step)
+            .map(function(v) {
+              var tuple = {};
+              tuple[as[0]] = v;
+              tuple[as[1]] = method(v);
+              return ingest(tuple);
+            });
+>>>>>>> update vega.js in docs
 
       if (this.value) out.rem = this.value;
       this.value = out.add = out.source = values;
@@ -9187,7 +9226,7 @@
 
     out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
 
-    this.value = sequence(_.start, _.stop, _.step || 1).map(function(v) {
+    this.value = range(_.start, _.stop, _.step || 1).map(function(v) {
       var t = {};
       t[as] = v;
       return ingest(t);
@@ -11085,7 +11124,7 @@
     return p[1];
   }
 
-  function d3_line() {
+  function line() {
     var x$1 = x,
         y$1 = y,
         defined = constant$1(true),
@@ -11136,7 +11175,7 @@
     return line;
   }
 
-  function d3_area() {
+  function area() {
     var x0 = x,
         x1 = null,
         y0 = constant$1(0),
@@ -11185,7 +11224,7 @@
     }
 
     function arealine() {
-      return d3_line().defined(defined).curve(curve).context(context);
+      return line().defined(defined).curve(curve).context(context);
     }
 
     area.x = function(_) {
@@ -13075,6 +13114,7 @@
     return trail;
   }
 
+<<<<<<< HEAD
   function value(a, b) {
     return a != null ? a : b;
   }
@@ -13117,12 +13157,39 @@
       || item.cornerRadiusBottomRight
       || item.cornerRadiusBottomLeft;
   }
+=======
+  function x$1(item)    { return item.x || 0; }
+  function y$1(item)    { return item.y || 0; }
+  function w(item)    { return item.width || 0; }
+  function ts(item)   { return item.size || 1; }
+  function h(item)    { return item.height || 0; }
+  function xw(item)   { return (item.x || 0) + (item.width || 0); }
+  function yh(item)   { return (item.y || 0) + (item.height || 0); }
+  function sa(item)   { return item.startAngle || 0; }
+  function ea(item)   { return item.endAngle || 0; }
+  function pa(item)   { return item.padAngle || 0; }
+  function ir(item)   { return item.innerRadius || 0; }
+  function or(item)   { return item.outerRadius || 0; }
+  function cr(item)   { return item.cornerRadius || 0; }
+  function def(item)  { return !(item.defined === false); }
+  function size(item) { return item.size == null ? 64 : item.size; }
+  function type(item) { return symbols(item.shape || 'circle'); }
+
+  var arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
+                            .innerRadius(ir).outerRadius(or).cornerRadius(cr),
+      areavShape  = area().x(x$1).y1(y$1).y0(yh).defined(def),
+      areahShape  = area().y(y$1).x1(x$1).x0(xw).defined(def),
+      lineShape   = line().x(x$1).y(y$1).defined(def),
+      rectShape   = vg_rect().x(x$1).y(y$1).width(w).height(h).cornerRadius(cr),
+      symbolShape = d3_symbol().type(type).size(size),
+      trailShape  = vg_trail().x(x$1).y(y$1).defined(def).size(ts);
+>>>>>>> update vega.js in docs
 
   function arc(context, item) {
     return arcShape.context(context)(item);
   }
 
-  function area(context, items) {
+  function area$1(context, items) {
     var item = items[0],
         interp = item.interpolate || 'linear';
     return (item.orient === 'horizontal' ? areahShape : areavShape)
@@ -13130,7 +13197,7 @@
       .context(context)(items);
   }
 
-  function line(context, items) {
+  function line$1(context, items) {
     var item = items[0],
         interp = item.interpolate || 'linear';
     return lineShape.curve(curves(interp, item.orient, item.tension))
@@ -13780,7 +13847,7 @@
 
   }
 
-  var area$1 = markMultiItemPath('area', area, pickArea);
+  var area$2 = markMultiItemPath('area', area$1, pickArea);
 
   function clip(context, scene) {
     var clip = scene.clip;
@@ -14144,7 +14211,7 @@
     yOffset:  imageYOffset
   };
 
-  var line$1 = markMultiItemPath('line', line, pickLine);
+  var line$2 = markMultiItemPath('line', line$1, pickLine);
 
   function attr$2(emit, item) {
     var sx = item.scaleX || 1,
@@ -14618,12 +14685,12 @@
 
   var trail$1 = markMultiItemPath('trail', trail, pickTrail);
 
-  var Marks = {
+  var marks = {
     arc:     arc$1,
-    area:    area$1,
+    area:    area$2,
     group:   group,
     image:   image,
-    line:    line$1,
+    line:    line$2,
     path:    path$2,
     rect:    rect,
     rule:    rule,
@@ -14634,7 +14701,7 @@
   };
 
   function boundItem(item, func, opt) {
-    var type = Marks[item.mark.marktype],
+    var type = marks[item.mark.marktype],
         bound = func || type.bound;
     if (type.nested) item = item.mark;
 
@@ -14644,7 +14711,7 @@
   var DUMMY = {mark: null};
 
   function boundMark(mark, bounds, opt) {
-    var type  = Marks[mark.marktype],
+    var type  = marks[mark.marktype],
         bound = type.bound,
         items = mark.items,
         hasItems = items && items.length,
@@ -14823,7 +14890,7 @@
     var mark = item && item.mark,
         mdef, p;
 
-    if (mark && (mdef = Marks[mark.marktype]).tip) {
+    if (mark && (mdef = marks[mark.marktype]).tip) {
       p = point$4(event, el);
       p[0] -= origin[0];
       p[1] -= origin[1];
@@ -15425,7 +15492,7 @@
   // gx, gy -- the relative coordinates within the current group
   prototype$L.pick = function(scene, x, y, gx, gy) {
     var g = this.context(),
-        mark = Marks[scene.marktype];
+        mark = marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   };
 
@@ -15570,9 +15637,15 @@
     return this;
   };
 
+<<<<<<< HEAD
   prototype$M.draw = function(ctx, scene, bounds) {
     var mark = Marks[scene.marktype];
     if (scene.clip) clip(ctx, scene);
+=======
+  prototype$I.draw = function(ctx, scene, bounds) {
+    var mark = marks[scene.marktype];
+    if (scene.clip) clip$1(ctx, scene);
+>>>>>>> update vega.js in docs
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
@@ -15953,7 +16026,7 @@
       if (mark.marktype !== type) {
         // memoize mark instance lookup
         type = mark.marktype;
-        mdef = Marks[type];
+        mdef = marks[type];
       }
 
       if (mark.zdirty && mark.dirty !== id) {
@@ -16011,7 +16084,7 @@
 
     var renderer = this,
         svg = this._svg,
-        mdef = Marks[scene.marktype],
+        mdef = marks[scene.marktype],
         events = scene.interactive === false ? 'none' : null,
         isGroup = mdef.tag === 'g',
         sibling = null,
@@ -16504,7 +16577,7 @@
 
   prototype$P.mark = function(scene) {
     var renderer = this,
-        mdef = Marks[scene.marktype],
+        mdef = marks[scene.marktype],
         tag  = mdef.tag,
         defs = this._defs,
         str = '',
@@ -16716,7 +16789,7 @@
           intersectGroup(items[i], box, filter, hits);
         }
       } else {
-        for (const test = Marks[type].isect; i<n; ++i) {
+        for (const test = marks[type].isect; i<n; ++i) {
           let item = items[i];
           if (intersectItem(item, box, test)) hits.push(item);
         }
@@ -16739,21 +16812,21 @@
     // test intersect against group
     // skip groups by default unless filter says otherwise
     if ((filter && filter(group.mark)) &&
-        intersectItem(group, box, Marks.group.isect)) {
+        intersectItem(group, box, marks.group.isect)) {
       hits.push(group);
     }
 
     // recursively test children marks
     // translate box to group coordinate space
-    const marks = group.items,
-          n = marks && marks.length;
+    const marks$1 = group.items,
+          n = marks$1 && marks$1.length;
 
     if (n) {
       const x = group.x || 0,
             y = group.y || 0;
       box.translate(-x, -y);
       for (let i=0; i<n; ++i) {
-        intersectMark(marks[i], box, filter, hits);
+        intersectMark(marks$1[i], box, filter, hits);
       }
       box.translate(x, y);
     }
@@ -16835,7 +16908,7 @@
     var view = pulse.dataflow,
         mark = _.mark,
         type = mark.marktype,
-        entry = Marks[type],
+        entry = marks[type],
         bound = entry.bound,
         markBounds = mark.bounds, rebound;
 
@@ -18997,7 +19070,7 @@
         c = new Array(nb),
         i;
 
-    for (i = 0; i < na; ++i) x[i] = interpolate(a[i], b[i]);
+    for (i = 0; i < na; ++i) x[i] = value(a[i], b[i]);
     for (; i < nb; ++i) c[i] = b[i];
 
     return function(t) {
@@ -19013,9 +19086,15 @@
     };
   }
 
+<<<<<<< HEAD
   function interpolateNumber(a, b) {
     return a = +a, b = +b, function(t) {
       return a * (1 - t) + b * t;
+=======
+  function number$2(a, b) {
+    return a = +a, b -= a, function(t) {
+      return a + b * t;
+>>>>>>> update vega.js in docs
     };
   }
 
@@ -19029,7 +19108,7 @@
 
     for (k in b) {
       if (k in a) {
-        i[k] = interpolate(a[k], b[k]);
+        i[k] = value(a[k], b[k]);
       } else {
         c[k] = b[k];
       }
@@ -19081,7 +19160,7 @@
         else s[++i] = bm;
       } else { // interpolate non-matching numbers
         s[++i] = null;
-        q.push({i: i, x: interpolateNumber(am, bm)});
+        q.push({i: i, x: number$2(am, bm)});
       }
       bi = reB.lastIndex;
     }
@@ -19104,17 +19183,22 @@
           });
   }
 
-  function interpolate(a, b) {
+  function value(a, b) {
     var t = typeof b, c;
+<<<<<<< HEAD
     return b == null || t === "boolean" ? constant$2(b)
         : (t === "number" ? interpolateNumber
+=======
+    return b == null || t === "boolean" ? constant$3(b)
+        : (t === "number" ? number$2
+>>>>>>> update vega.js in docs
         : t === "string" ? ((c = color$1(b)) ? (b = c, rgb$1) : string)
         : b instanceof color$1 ? rgb$1
         : b instanceof Date ? date
         : isNumberArray(b) ? numberArray
         : Array.isArray(b) ? genericArray
         : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object$2
-        : interpolateNumber)(a, b);
+        : number$2)(a, b);
   }
 
   function discrete(range) {
@@ -19198,7 +19282,7 @@
     function translate(xa, ya, xb, yb, s, q) {
       if (xa !== xb || ya !== yb) {
         var i = s.push("translate(", null, pxComma, null, pxParen);
-        q.push({i: i - 4, x: interpolateNumber(xa, xb)}, {i: i - 2, x: interpolateNumber(ya, yb)});
+        q.push({i: i - 4, x: number$2(xa, xb)}, {i: i - 2, x: number$2(ya, yb)});
       } else if (xb || yb) {
         s.push("translate(" + xb + pxComma + yb + pxParen);
       }
@@ -19207,7 +19291,7 @@
     function rotate(a, b, s, q) {
       if (a !== b) {
         if (a - b > 180) b += 360; else if (b - a > 180) a += 360; // shortest path
-        q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: interpolateNumber(a, b)});
+        q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: number$2(a, b)});
       } else if (b) {
         s.push(pop(s) + "rotate(" + b + degParen);
       }
@@ -19215,7 +19299,7 @@
 
     function skewX(a, b, s, q) {
       if (a !== b) {
-        q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: interpolateNumber(a, b)});
+        q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: number$2(a, b)});
       } else if (b) {
         s.push(pop(s) + "skewX(" + b + degParen);
       }
@@ -19224,7 +19308,7 @@
     function scale(xa, ya, xb, yb, s, q) {
       if (xa !== xb || ya !== yb) {
         var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-        q.push({i: i - 4, x: interpolateNumber(xa, xb)}, {i: i - 2, x: interpolateNumber(ya, yb)});
+        q.push({i: i - 4, x: number$2(xa, xb)}, {i: i - 2, x: number$2(ya, yb)});
       } else if (xb !== 1 || yb !== 1) {
         s.push(pop(s) + "scale(" + xb + "," + yb + ")");
       }
@@ -19412,16 +19496,24 @@
 
 
   var $$1 = /*#__PURE__*/Object.freeze({
+<<<<<<< HEAD
     __proto__: null,
     interpolate: interpolate,
+=======
+    interpolate: value,
+>>>>>>> update vega.js in docs
     interpolateArray: array$1,
     interpolateBasis: basis$1,
     interpolateBasisClosed: basisClosed,
     interpolateDate: date,
     interpolateDiscrete: discrete,
     interpolateHue: hue$1,
+<<<<<<< HEAD
     interpolateNumber: interpolateNumber,
     interpolateNumberArray: numberArray,
+=======
+    interpolateNumber: number$2,
+>>>>>>> update vega.js in docs
     interpolateObject: object$2,
     interpolateRound: interpolateRound,
     interpolateString: string,
@@ -19448,7 +19540,7 @@
     };
   }
 
-  function number$2(x) {
+  function number$3(x) {
     return +x;
   }
 
@@ -19514,7 +19606,7 @@
   function transformer() {
     var domain = unit,
         range = unit,
-        interpolate$1 = interpolate,
+        interpolate = value,
         transform,
         untransform,
         unknown,
@@ -19532,15 +19624,19 @@
     }
 
     function scale(x) {
-      return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate$1)))(transform(clamp(x)));
+      return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
     }
 
     scale.invert = function(y) {
-      return clamp(untransform((input || (input = piecewise(range, domain.map(transform), interpolateNumber)))(y)));
+      return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number$2)))(y)));
     };
 
     scale.domain = function(_) {
+<<<<<<< HEAD
       return arguments.length ? (domain = Array.from(_, number$2), rescale()) : domain.slice();
+=======
+      return arguments.length ? (domain = Array.from(_, number$3), clamp === identity$3 || (clamp = clamper(domain)), rescale()) : domain.slice();
+>>>>>>> update vega.js in docs
     };
 
     scale.range = function(_) {
@@ -19548,7 +19644,7 @@
     };
 
     scale.rangeRound = function(_) {
-      return range = Array.from(_), interpolate$1 = interpolateRound, rescale();
+      return range = Array.from(_), interpolate = interpolateRound, rescale();
     };
 
     scale.clamp = function(_) {
@@ -19556,7 +19652,7 @@
     };
 
     scale.interpolate = function(_) {
-      return arguments.length ? (interpolate$1 = _, rescale()) : interpolate$1;
+      return arguments.length ? (interpolate = _, rescale()) : interpolate;
     };
 
     scale.unknown = function(_) {
@@ -19895,7 +19991,7 @@
     return Math.max(0, exponent(max) - exponent(step)) + 1;
   }
 
-  function spanFormat(start, stop, count, specifier) {
+  function tickFormat(start, stop, count, specifier) {
     var step = tickStep(start, stop, count),
         precision;
     specifier = formatSpecifier(specifier == null ? ",f" : specifier);
@@ -19932,7 +20028,7 @@
 
     scale.tickFormat = function(count, specifier) {
       var d = domain();
-      return spanFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
+      return tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
     };
 
     scale.nice = function(count) {
@@ -20000,7 +20096,7 @@
     scale.invert = scale;
 
     scale.domain = scale.range = function(_) {
-      return arguments.length ? (domain = Array.from(_, number$2), scale) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number$3), scale) : domain.slice();
     };
 
     scale.unknown = function(_) {
@@ -20011,7 +20107,7 @@
       return identity$5(domain).unknown(unknown);
     };
 
-    domain = arguments.length ? Array.from(domain, number$2) : [0, 1];
+    domain = arguments.length ? Array.from(domain, number$3) : [0, 1];
 
     return linearish(scale);
   }
@@ -20412,7 +20508,7 @@
     return new Date(t);
   }
 
-  function number$3(t) {
+  function number$4(t) {
     return t instanceof Date ? +t : +new Date(+t);
   }
 
@@ -20493,7 +20589,7 @@
     };
 
     scale.domain = function(_) {
-      return arguments.length ? domain(Array.from(_, number$3)) : domain().map(date$1);
+      return arguments.length ? domain(Array.from(_, number$4)) : domain().map(date$1);
     };
 
     scale.ticks = function(interval) {
@@ -20734,7 +20830,7 @@
     var scale = ordinal().unknown(undefined),
         domain = scale.domain,
         ordinalRange = scale.range,
-        range = [0, 1],
+        range$1 = [0, 1],
         step,
         bandwidth,
         round = false,
@@ -20746,9 +20842,9 @@
 
     function rescale() {
       var n = domain().length,
-          reverse = range[1] < range[0],
-          start = range[reverse - 0],
-          stop = range[1 - reverse],
+          reverse = range$1[1] < range$1[0],
+          start = range$1[reverse - 0],
+          stop = range$1[1 - reverse],
           space = bandSpace(n, paddingInner, paddingOuter);
 
       step = (stop - start) / (space || 1);
@@ -20761,7 +20857,7 @@
         start = Math.round(start);
         bandwidth = Math.round(bandwidth);
       }
-      var values = sequence(n).map(function(i) { return start + step * i; });
+      var values = range(n).map(function(i) { return start + step * i; });
       return ordinalRange(reverse ? values.reverse() : values);
     }
 
@@ -20776,15 +20872,15 @@
 
     scale.range = function(_) {
       if (arguments.length) {
-        range = [+_[0], +_[1]];
+        range$1 = [+_[0], +_[1]];
         return rescale();
       } else {
-        return range.slice();
+        return range$1.slice();
       }
     };
 
     scale.rangeRound = function(_) {
-      range = [+_[0], +_[1]];
+      range$1 = [+_[0], +_[1]];
       round = true;
       return rescale();
     };
@@ -20849,7 +20945,7 @@
 
       var lo = +_[0],
           hi = +_[1],
-          reverse = range[1] < range[0],
+          reverse = range$1[1] < range$1[0],
           values = reverse ? ordinalRange().reverse() : ordinalRange(),
           n = values.length - 1, a, b, t;
 
@@ -20862,7 +20958,7 @@
         lo = hi;
         hi = t;
       }
-      if (hi < values[0] || lo > range[1-reverse]) return;
+      if (hi < values[0] || lo > range$1[1-reverse]) return;
 
       // binary search to index into scale range
       a = Math.max(0, bisectRight(values, lo) - 1);
@@ -20888,7 +20984,7 @@
     scale.copy = function() {
       return band()
           .domain(domain())
-          .range(range)
+          .range(range$1)
           .round(round)
           .paddingInner(paddingInner)
           .paddingOuter(paddingOuter)
@@ -20952,7 +21048,7 @@
     };
 
     scale.tickFormat = function(count, specifier) {
-      return spanFormat(domain[0], peek(domain), count == null ? 10 : count, specifier);
+      return tickFormat(domain[0], peek(domain), count == null ? 10 : count, specifier);
     };
 
     scale.copy = function() {
@@ -21076,7 +21172,7 @@
   }
 
   function interpolateColors(colors, type, gamma) {
-    return piecewise(interpolate$1(type || 'rgb', gamma), colors);
+    return piecewise(interpolate(type || 'rgb', gamma), colors);
   }
 
   function quantizeInterpolator(interpolator, count) {
@@ -21100,7 +21196,7 @@
     }
   }
 
-  function interpolate$1(type, gamma) {
+  function interpolate(type, gamma) {
     var interp = $$1[method(type)];
     return (gamma != null && interp && interp.gamma)
       ? interp.gamma(gamma)
@@ -21318,6 +21414,7 @@
    *   time multi-format specifier object.
    * @return {function(*):string} - The generated label formatter.
    */
+<<<<<<< HEAD
   function tickFormat(scale, count, specifier, formatType, noSkip) {
     var type = scale.type,
         format = (type === Time || formatType === Time) ? timeFormat$1(specifier)
@@ -21325,6 +21422,13 @@
           : scale.tickFormat ? scale.tickFormat(count, specifier)
           : specifier ? format$1(specifier)
           : String;
+=======
+  function tickFormat$1(scale, count, specifier, formatType) {
+    var format = scale.tickFormat ? scale.tickFormat(count, specifier)
+      : specifier && formatType === Time ? timeFormat(specifier)
+      : specifier ? format$1(specifier)
+      : String;
+>>>>>>> update vega.js in docs
 
     if (isLogarithmic(type)) {
       var logfmt = variablePrecision(specifier);
@@ -21413,7 +21517,11 @@
         scale = _.scale,
         tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
         count = tickCount(scale, tally, _.minstep),
+<<<<<<< HEAD
         format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values),
+=======
+        format = _.format || tickFormat$1(scale, count, _.formatSpecifier, _.formatType),
+>>>>>>> update vega.js in docs
         values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
     if (ticks) out.rem = ticks;
@@ -21658,7 +21766,7 @@
     }
 
     // 3 ticks times 10 for increased resolution
-    return spanFormat(0, d, 3 * 10, specifier);
+    return tickFormat(0, d, 3 * 10, specifier);
   }
 
   function thresholdValues(thresholds) {
@@ -21682,7 +21790,11 @@
   function labelFormat(scale, count, type, specifier, formatType, noSkip) {
     const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
       ? thresholdFormat(scale, specifier)
+<<<<<<< HEAD
       : tickFormat(scale, count, specifier, formatType, noSkip);
+=======
+      : tickFormat$1(scale, count, specifier, formatType);
+>>>>>>> update vega.js in docs
 
     return type === Symbols$1 && isDiscreteRange(scale) ? formatRange(format)
       : type === Discrete$1 ? formatDiscrete(format)
@@ -21866,7 +21978,7 @@
   };
 
   var Paths = fastmap({
-    'line': line$2,
+    'line': line$3,
     'line-radial': lineR,
     'arc': arc$2,
     'arc-radial': arcR,
@@ -21937,13 +22049,13 @@
 
   // -- Link Path Generation Methods -----
 
-  function line$2(sx, sy, tx, ty) {
+  function line$3(sx, sy, tx, ty) {
     return 'M' + sx + ',' + sy +
            'L' + tx + ',' + ty;
   }
 
   function lineR(sa, sr, ta, tr) {
-    return line$2(
+    return line$3(
       sr * Math.cos(sa), sr * Math.sin(sa),
       tr * Math.cos(ta), tr * Math.sin(ta)
     );
@@ -22074,7 +22186,7 @@
         n = values.length,
         a = start,
         k = (stop - start) / sum(values),
-        index = sequence(n),
+        index = range(n),
         i, t, v;
 
     if (_.sort) {
@@ -22282,9 +22394,13 @@
           step = bins.step;
 
       if (!step) error('Scale bins parameter missing step property.');
+<<<<<<< HEAD
       if (start < lo) start = step * Math.ceil(lo / step);
       if (stop > hi) stop = step * Math.floor(hi / step);
       bins = sequence(start, stop + step / 2, step);
+=======
+      bins = range(start, stop + step, step);
+>>>>>>> update vega.js in docs
     }
 
     if (bins) {
@@ -22342,11 +22458,11 @@
 
     // configure rounding / interpolation
     if (range && _.interpolate && scale.interpolate) {
-      scale.interpolate(interpolate$1(_.interpolate, _.interpolateGamma));
+      scale.interpolate(interpolate(_.interpolate, _.interpolateGamma));
     } else if (isFunction(scale.round)) {
       scale.round(round);
     } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? interpolateRound : interpolate);
+      scale.interpolate(round ? interpolateRound : value);
     }
 
     if (range) scale.range(flip(range, _.reverse));
@@ -22573,6 +22689,200 @@
     validTicks: validTicks
   });
 
+<<<<<<< HEAD
+=======
+  function ascending$1(a, b) {
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  function bisector$1(compare) {
+    if (compare.length === 1) compare = ascendingComparator$1(compare);
+    return {
+      left: function(a, x, lo, hi) {
+        if (lo == null) lo = 0;
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+          var mid = lo + hi >>> 1;
+          if (compare(a[mid], x) < 0) lo = mid + 1;
+          else hi = mid;
+        }
+        return lo;
+      },
+      right: function(a, x, lo, hi) {
+        if (lo == null) lo = 0;
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+          var mid = lo + hi >>> 1;
+          if (compare(a[mid], x) > 0) hi = mid;
+          else lo = mid + 1;
+        }
+        return lo;
+      }
+    };
+  }
+
+  function ascendingComparator$1(f) {
+    return function(d, x) {
+      return ascending$1(f(d), x);
+    };
+  }
+
+  var ascendingBisect$1 = bisector$1(ascending$1);
+
+  function extent$2(values, valueof) {
+    var n = values.length,
+        i = -1,
+        value,
+        min,
+        max;
+
+    if (valueof == null) {
+      while (++i < n) { // Find the first comparable value.
+        if ((value = values[i]) != null && value >= value) {
+          min = max = value;
+          while (++i < n) { // Compare the remaining values.
+            if ((value = values[i]) != null) {
+              if (min > value) min = value;
+              if (max < value) max = value;
+            }
+          }
+        }
+      }
+    }
+
+    else {
+      while (++i < n) { // Find the first comparable value.
+        if ((value = valueof(values[i], i, values)) != null && value >= value) {
+          min = max = value;
+          while (++i < n) { // Compare the remaining values.
+            if ((value = valueof(values[i], i, values)) != null) {
+              if (min > value) min = value;
+              if (max < value) max = value;
+            }
+          }
+        }
+      }
+    }
+
+    return [min, max];
+  }
+
+  function range$1(start, stop, step) {
+    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+    var i = -1,
+        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+        range = new Array(n);
+
+    while (++i < n) {
+      range[i] = start + i * step;
+    }
+
+    return range;
+  }
+
+  var e10$1 = Math.sqrt(50),
+      e5$1 = Math.sqrt(10),
+      e2$1 = Math.sqrt(2);
+
+  function tickStep$1(start, stop, count) {
+    var step0 = Math.abs(stop - start) / Math.max(0, count),
+        step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+        error = step0 / step1;
+    if (error >= e10$1) step1 *= 10;
+    else if (error >= e5$1) step1 *= 5;
+    else if (error >= e2$1) step1 *= 2;
+    return stop < start ? -step1 : step1;
+  }
+
+  function sturges(values) {
+    return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
+  }
+
+  function max$3(values, valueof) {
+    var n = values.length,
+        i = -1,
+        value,
+        max;
+
+    if (valueof == null) {
+      while (++i < n) { // Find the first comparable value.
+        if ((value = values[i]) != null && value >= value) {
+          max = value;
+          while (++i < n) { // Compare the remaining values.
+            if ((value = values[i]) != null && value > max) {
+              max = value;
+            }
+          }
+        }
+      }
+    }
+
+    else {
+      while (++i < n) { // Find the first comparable value.
+        if ((value = valueof(values[i], i, values)) != null && value >= value) {
+          max = value;
+          while (++i < n) { // Compare the remaining values.
+            if ((value = valueof(values[i], i, values)) != null && value > max) {
+              max = value;
+            }
+          }
+        }
+      }
+    }
+
+    return max;
+  }
+
+  var array$2 = Array.prototype;
+
+  var slice$1 = array$2.slice;
+
+  function ascending$2(a, b) {
+    return a - b;
+  }
+
+  function area$3(ring) {
+    var i = 0, n = ring.length, area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
+    while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
+    return area;
+  }
+
+  function constant$5(x) {
+    return function() {
+      return x;
+    };
+  }
+
+  function contains(ring, hole) {
+    var i = -1, n = hole.length, c;
+    while (++i < n) if (c = ringContains(ring, hole[i])) return c;
+    return 0;
+  }
+
+  function ringContains(ring, point) {
+    var x = point[0], y = point[1], contains = -1;
+    for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
+      var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j], xj = pj[0], yj = pj[1];
+      if (segmentContains(pi, pj, point)) return 0;
+      if (((yi > y) !== (yj > y)) && ((x < (xj - xi) * (y - yi) / (yj - yi) + xi))) contains = -contains;
+    }
+    return contains;
+  }
+
+  function segmentContains(a, b, c) {
+    var i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
+  }
+
+  function collinear(a, b, c) {
+    return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
+  }
+
+  function within(p, q, r) {
+    return p <= q && q <= r || r <= q && q <= p;
+  }
+
+>>>>>>> update vega.js in docs
   function noop$2() {}
 
   const cases = [
@@ -22598,10 +22908,31 @@
   function contours() {
     var dx = 1,
         dy = 1,
+<<<<<<< HEAD
         smooth = smoothLinear;
 
     function contours(values, tz) {
       return tz.map(value => contour(values, value));
+=======
+        threshold = sturges,
+        smooth = smoothLinear;
+
+    function contours(values) {
+      var tz = threshold(values);
+
+      // Convert number of thresholds into uniform thresholds.
+      if (!Array.isArray(tz)) {
+        var domain = extent$2(values), start = domain[0], stop = domain[1];
+        tz = tickStep$1(start, stop, tz);
+        tz = range$1(Math.floor(start / tz) * tz, Math.floor(stop / tz) * tz, tz);
+      } else {
+        tz = tz.slice().sort(ascending$2);
+      }
+
+      return tz.map(function(value) {
+        return contour(values, value);
+      });
+>>>>>>> update vega.js in docs
     }
 
     // Accumulate, smooth contour rings, assign holes to exterior rings.
@@ -22612,7 +22943,7 @@
 
       isorings(values, value, function(ring) {
         smooth(ring, values, value);
-        if (area$2(ring) > 0) polygons.push([ring]);
+        if (area$3(ring) > 0) polygons.push([ring]);
         else holes.push(ring);
       });
 
@@ -22850,7 +23181,17 @@
     ]
   };
 
+<<<<<<< HEAD
   var prototype$13 = inherits(Isocontour, Transform);
+=======
+      // Convert number of thresholds into uniform thresholds.
+      if (!Array.isArray(tz)) {
+        var stop = max$3(values0);
+        tz = tickStep$1(0, stop, tz);
+        tz = range$1(0, Math.floor(stop / tz) * tz, tz);
+        tz.shift();
+      }
+>>>>>>> update vega.js in docs
 
   prototype$13.transform = function(_, pulse) {
     if (this.value && !pulse.changed() && !_.modified()) {
@@ -23561,7 +23902,7 @@
     lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
   }
 
-  function area$3(object) {
+  function area$4(object) {
     areaSum.reset();
     geoStream(object, areaStream);
     return areaSum * 2;
@@ -23605,7 +23946,11 @@
       p0, // previous 3D point
       deltaSum = adder(),
       ranges,
+<<<<<<< HEAD
       range;
+=======
+      range$2;
+>>>>>>> update vega.js in docs
 
   var boundsStream = {
     point: boundsPoint,
@@ -23624,17 +23969,27 @@
       boundsStream.lineStart = boundsLineStart;
       boundsStream.lineEnd = boundsLineEnd;
       if (areaRingSum < 0) lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
+<<<<<<< HEAD
       else if (deltaSum > epsilon$3) phi1 = 90;
       else if (deltaSum < -epsilon$3) phi0 = -90;
       range[0] = lambda0$1, range[1] = lambda1;
     },
     sphere: function() {
       lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
+=======
+      else if (deltaSum > epsilon$2) phi1 = 90;
+      else if (deltaSum < -epsilon$2) phi0 = -90;
+      range$2[0] = lambda0$1, range$2[1] = lambda1;
+>>>>>>> update vega.js in docs
     }
   };
 
   function boundsPoint(lambda, phi) {
+<<<<<<< HEAD
     ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+=======
+    ranges.push(range$2 = [lambda0$1 = lambda, lambda1 = lambda]);
+>>>>>>> update vega.js in docs
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
   }
@@ -23681,7 +24036,11 @@
         }
       }
     } else {
+<<<<<<< HEAD
       ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
+=======
+      ranges.push(range$2 = [lambda0$1 = lambda, lambda1 = lambda]);
+>>>>>>> update vega.js in docs
     }
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
@@ -23693,7 +24052,11 @@
   }
 
   function boundsLineEnd() {
+<<<<<<< HEAD
     range[0] = lambda0$1, range[1] = lambda1;
+=======
+    range$2[0] = lambda0$1, range$2[1] = lambda1;
+>>>>>>> update vega.js in docs
     boundsStream.point = boundsPoint;
     p0 = null;
   }
@@ -23716,8 +24079,13 @@
   function boundsRingEnd() {
     boundsRingPoint(lambda00$1, phi00$1);
     areaStream.lineEnd();
+<<<<<<< HEAD
     if (abs$1(deltaSum) > epsilon$3) lambda0$1 = -(lambda1 = 180);
     range[0] = lambda0$1, range[1] = lambda1;
+=======
+    if (abs$1(deltaSum) > epsilon$2) lambda0$1 = -(lambda1 = 180);
+    range$2[0] = lambda0$1, range$2[1] = lambda1;
+>>>>>>> update vega.js in docs
     p0 = null;
   }
 
@@ -23766,7 +24134,11 @@
       }
     }
 
+<<<<<<< HEAD
     ranges = range = null;
+=======
+    ranges = range$2 = null;
+>>>>>>> update vega.js in docs
 
     return lambda0$1 === Infinity || phi0 === Infinity
         ? [[NaN, NaN], [NaN, NaN]]
@@ -24266,7 +24638,11 @@
 
   var ascendingBisect$1 = bisector$1(ascending$1);
 
+<<<<<<< HEAD
   function range$1(start, stop, step) {
+=======
+  function range$3(start, stop, step) {
+>>>>>>> update vega.js in docs
     start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
 
     var i = -1,
@@ -24919,12 +25295,20 @@
   }
 
   function graticuleX(y0, y1, dy) {
+<<<<<<< HEAD
     var y = range$1(y0, y1 - epsilon$3, dy).concat(y1);
+=======
+    var y = range$3(y0, y1 - epsilon$2, dy).concat(y1);
+>>>>>>> update vega.js in docs
     return function(x) { return y.map(function(y) { return [x, y]; }); };
   }
 
   function graticuleY(x0, x1, dx) {
+<<<<<<< HEAD
     var x = range$1(x0, x1 - epsilon$3, dx).concat(x1);
+=======
+    var x = range$3(x0, x1 - epsilon$2, dx).concat(x1);
+>>>>>>> update vega.js in docs
     return function(y) { return x.map(function(x) { return [x, y]; }); };
   }
 
@@ -24940,10 +25324,17 @@
     }
 
     function lines() {
+<<<<<<< HEAD
       return range$1(ceil(X0 / DX) * DX, X1, DX).map(X)
           .concat(range$1(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
           .concat(range$1(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$3; }).map(x))
           .concat(range$1(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$3; }).map(y));
+=======
+      return range$3(ceil(X0 / DX) * DX, X1, DX).map(X)
+          .concat(range$3(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+          .concat(range$3(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$2; }).map(x))
+          .concat(range$3(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$2; }).map(y));
+>>>>>>> update vega.js in docs
     }
 
     graticule.lines = function() {
@@ -25751,14 +26142,14 @@
     return project;
   }
 
-  function geoConicEqualArea() {
+  function conicEqualArea() {
     return conicProjection(conicEqualAreaRaw)
         .scale(155.424)
         .center([0, 33.6442]);
   }
 
-  function geoAlbers() {
-    return geoConicEqualArea()
+  function albers() {
+    return conicEqualArea()
         .parallels([29.5, 45.5])
         .scale(1070)
         .translate([480, 250])
@@ -25788,9 +26179,9 @@
   function geoAlbersUsa() {
     var cache,
         cacheStream,
-        lower48 = geoAlbers(), lower48Point,
-        alaska = geoConicEqualArea().rotate([154, 0]).center([-2, 58.5]).parallels([55, 65]), alaskaPoint, // EPSG:3338
-        hawaii = geoConicEqualArea().rotate([157, 0]).center([-3, 19.9]).parallels([8, 18]), hawaiiPoint, // ESRI:102007
+        lower48 = albers(), lower48Point,
+        alaska = conicEqualArea().rotate([154, 0]).center([-2, 58.5]).parallels([55, 65]), alaskaPoint, // EPSG:3338
+        hawaii = conicEqualArea().rotate([157, 0]).center([-3, 19.9]).parallels([8, 18]), hawaiiPoint, // ESRI:102007
         point, pointStream = {point: function(x, y) { point = [x, y]; }};
 
     function albersUsa(coordinates) {
@@ -26341,12 +26732,12 @@
 
   var projections = {
     // base d3-geo projection types
-    albers:               geoAlbers,
+    albers:               albers,
     albersusa:            geoAlbersUsa,
     azimuthalequalarea:   geoAzimuthalEqualArea,
     azimuthalequidistant: geoAzimuthalEquidistant,
     conicconformal:       geoConicConformal,
-    conicequalarea:       geoConicEqualArea,
+    conicequalarea:       conicEqualArea,
     conicequidistant:     geoConicEquidistant,
     equalEarth:           geoEqualEarth,
     equirectangular:      geoEquirectangular,
@@ -28847,7 +29238,7 @@
     return Math.sqrt(d.value);
   }
 
-  function pack() {
+  function pack$1() {
     var radius = null,
         dx = 1,
         dy = 1,
@@ -29360,7 +29751,7 @@
     return rows;
   }
 
-  var treemapSquarify = (function custom(ratio) {
+  var squarify = (function custom(ratio) {
 
     function squarify(parent, x0, y0, x1, y1) {
       squarifyRatio(ratio, parent, x0, y0, x1, y1);
@@ -29374,7 +29765,7 @@
   })(phi);
 
   function treemap() {
-    var tile = treemapSquarify,
+    var tile = squarify,
         round = false,
         dx = 1,
         dy = 1,
@@ -29757,7 +30148,11 @@
 
   var prototype$1g = inherits(Pack, HierarchyLayout);
 
+<<<<<<< HEAD
   prototype$1g.layout = pack;
+=======
+  prototype$19.layout = pack$1;
+>>>>>>> update vega.js in docs
 
   prototype$1g.params = ['radius', 'size', 'padding'];
 
@@ -29961,7 +30356,7 @@
     dice: treemapDice,
     slice: treemapSlice,
     slicedice: treemapSliceDice,
-    squarify: treemapSquarify,
+    squarify: squarify,
     resquarify: treemapResquarify
   };
 
@@ -34213,7 +34608,11 @@
       case 'checkbox': input = checkbox; break;
       case 'select':   input = select; break;
       case 'radio':    input = radio; break;
+<<<<<<< HEAD
       case 'range':    input = range$2; break;
+=======
+      case 'range':    input = range$4; break;
+>>>>>>> update vega.js in docs
     }
 
     input(bind, div, param, value);
@@ -34336,7 +34735,11 @@
   /**
    * Generates a slider input element.
    */
+<<<<<<< HEAD
   function range$2(bind, el, param, value) {
+=======
+  function range$4(bind, el, param, value) {
+>>>>>>> update vega.js in docs
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
     var max = param.max != null ? param.max : Math.max(100, +value) || 100,
@@ -36107,7 +36510,7 @@
     return expr;
   }
 
-  var constants = {
+  var Constants = {
     NaN:       'NaN',
     E:         'Math.E',
     LN2:       'Math.LN2',
@@ -36121,7 +36524,7 @@
     MAX_VALUE: 'Number.MAX_VALUE'
   };
 
-  function functions(codegen) {
+  function Functions(codegen) {
 
     function fncall(name, args, cast, type) {
       var obj = codegen(args[0]);
@@ -36245,8 +36648,8 @@
 
     var whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
         blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
-        constants$1 = opt.constants || constants,
-        functions$1 = (opt.functions || functions)(visit),
+        constants = opt.constants || Constants,
+        functions = (opt.functions || Functions)(visit),
         globalvar = opt.globalvar,
         fieldvar = opt.fieldvar,
         globals = {},
@@ -36275,9 +36678,15 @@
           return id;
         } else if (hasOwnProperty(blacklist, id)) {
           return error('Illegal identifier: ' + id);
+<<<<<<< HEAD
         } else if (hasOwnProperty(constants$1, id)) {
           return constants$1[id];
         } else if (hasOwnProperty(whitelist, id)) {
+=======
+        } else if (constants.hasOwnProperty(id)) {
+          return constants[id];
+        } else if (whitelist.hasOwnProperty(id)) {
+>>>>>>> update vega.js in docs
           return id;
         } else {
           globals[id] = 1;
@@ -36304,7 +36713,11 @@
           }
           var callee = n.callee.name;
           var args = n.arguments;
+<<<<<<< HEAD
           var fn = hasOwnProperty(functions$1, callee) && functions$1[callee];
+=======
+          var fn = functions.hasOwnProperty(callee) && functions[callee];
+>>>>>>> update vega.js in docs
           if (!fn) error('Unrecognized function: ' + callee);
           return isFunction(fn)
             ? fn(args)
@@ -36357,8 +36770,8 @@
       return result;
     }
 
-    codegen.functions = functions$1;
-    codegen.constants = constants$1;
+    codegen.functions = functions;
+    codegen.constants = constants;
 
     return codegen;
   }
@@ -36718,7 +37131,11 @@
       : undefined;
   }
 
+<<<<<<< HEAD
   function range$3(name, group) {
+=======
+  function range$5(name, group) {
+>>>>>>> update vega.js in docs
     const s = getScale(name, (group || this).context);
     return s && s.range ? s.range() : [];
   }
@@ -36767,7 +37184,7 @@
     };
   }
 
-  const geoArea = geoMethod('area', area$3);
+  const geoArea = geoMethod('area', area$4);
   const geoBounds = geoMethod('bounds', bounds$1);
   const geoCentroid = geoMethod('centroid', centroid);
 
@@ -37113,9 +37530,13 @@
     lab,
     hcl,
     hsl,
+<<<<<<< HEAD
     luminance,
     contrast,
     sequence,
+=======
+    sequence: range,
+>>>>>>> update vega.js in docs
     format: format$2,
     utcFormat: utcFormat$2,
     utcParse: utcParse$1,
@@ -37166,7 +37587,7 @@
 
   // Build expression function registry
   function buildFunctions(codegen) {
-    const fn = functions(codegen);
+    const fn = Functions(codegen);
     eventFunctions.forEach(name => fn[name] = eventPrefix + name);
     for (let name in functionContext) { fn[name] = thisPrefix + name; }
     return fn;
@@ -37194,7 +37615,11 @@
   expressionFunction('bandwidth', bandwidth, scaleVisitor);
   expressionFunction('copy', copy$2, scaleVisitor);
   expressionFunction('domain', domain, scaleVisitor);
+<<<<<<< HEAD
   expressionFunction('range', range$3, scaleVisitor);
+=======
+  expressionFunction('range', range$5, scaleVisitor);
+>>>>>>> update vega.js in docs
   expressionFunction('invert', invert, scaleVisitor);
   expressionFunction('scale', scale$3, scaleVisitor);
   expressionFunction('gradient', scaleGradient, scaleVisitor);
@@ -37218,7 +37643,7 @@
     fieldvar:   'datum',
     globalvar:  function(id) { return '_[' + $(SignalPrefix + id) + ']'; },
     functions:  buildFunctions,
-    constants:  constants,
+    constants:  Constants,
     visitors:   astVisitors
   };
 
@@ -37393,7 +37818,7 @@
   function getSubflow(_, ctx) {
     var spec = _.$subflow;
     return function(dataflow, key, parent) {
-      var subctx = parse$4(spec, ctx.fork()),
+      var subctx = parseDataflow(spec, ctx.fork()),
           op = subctx.get(spec.operators[0].id),
           p = subctx.signals.parent;
       if (p) p.set(parent);
@@ -37519,7 +37944,7 @@
   /**
    * Parse a serialized dataflow specification.
    */
-  function parse$4(spec, ctx) {
+  function parseDataflow(spec, ctx) {
     var operators = spec.operators || [];
 
     // parse background
@@ -37738,7 +38163,7 @@
 
   function runtime(view, spec, functions) {
     var fn = functions || functionContext;
-    return parse$4(spec, context$2(view, transforms, fn));
+    return parseDataflow(spec, context$2(view, transforms, fn));
   }
 
   function scale$4(name) {
@@ -38426,9 +38851,27 @@
     return isObject(spec) ? spec : {type: spec || 'pad'};
   }
 
+<<<<<<< HEAD
   const number$6 = _ => +_ || 0;
 
   const paddingObject$1 = _ => ({top: _, bottom: _, left: _, right: _});
+=======
+  function parsePadding(spec, config) {
+    spec = spec || config.padding;
+    return isObject(spec)
+      ? {
+          top:    number$5(spec.top),
+          bottom: number$5(spec.bottom),
+          left:   number$5(spec.left),
+          right:  number$5(spec.right)
+        }
+      : paddingObject(number$5(spec));
+  }
+
+  function number$5(_) {
+    return +_ || 0;
+  }
+>>>>>>> update vega.js in docs
 
   function parsePadding(spec) {
     return !isObject(spec) ? paddingObject$1(number$6(spec))
@@ -38466,7 +38909,7 @@
     }
   }
 
-  function parseExpression$1(expr, scope, preamble) {
+  function expression$1(expr, scope, preamble) {
     var params = {}, ast, gen;
 
     // parse the expression to an abstract syntax tree (ast)
@@ -38659,7 +39102,7 @@
       param.push('inScope(event.item)');
     }
     if (param.length) {
-      entry.filter = parseExpression$1('(' + param.join(')&&(') + ')').$expr;
+      entry.filter = expression$1('(' + param.join(')&&(') + ')').$expr;
     }
 
     if ((param = stream.throttle) != null) {
@@ -38932,8 +39375,8 @@
     }
 
     // resolve update value
-    entry.update = isString(update) ? parseExpression$1(update, scope, preamble)
-      : update.expr != null ? parseExpression$1(update.expr, scope, preamble)
+    entry.update = isString(update) ? expression$1(update, scope, preamble)
+      : update.expr != null ? expression$1(update.expr, scope, preamble)
       : update.value != null ? update.value
       : update.signal != null ? {
           $expr:   '_.value',
@@ -38980,7 +39423,7 @@
     }
 
     if (expr) {
-      expr = parseExpression$1(expr, scope);
+      expr = expression$1(expr, scope);
       op.update = expr.$expr;
       op.params = expr.$params;
     }
@@ -39456,8 +39899,8 @@
       : null;
   }
 
-  function expression$1(code, scope, params, fields) {
-    var expr = parseExpression$1(code, scope);
+  function expression$2(code, scope, params, fields) {
+    var expr = expression$1(code, scope);
     expr.$fields.forEach(function(name) { fields[name] = 1; });
     extend(params, expr.$params);
     return expr.$expr;
@@ -39472,7 +39915,7 @@
 
     if (ref.signal) {
       object = 'datum';
-      field = expression$1(ref.signal, scope, params, fields);
+      field = expression$2(ref.signal, scope, params, fields);
     } else if (ref.group || ref.parent) {
       level = Math.max(1, ref.level || 1);
       object = 'item';
@@ -39577,7 +40020,7 @@
       }
       scaleName = $(ScalePrefix) + '+'
         + (name.signal
-          ? '(' + expression$1(name.signal, scope, params, fields) + ')'
+          ? '(' + expression$2(name.signal, scope, params, fields) + ')'
           : field$1(name, scope, params, fields));
     }
 
@@ -39598,7 +40041,7 @@
       return gradient$1(enc, scope, params, fields);
     }
 
-    var value = enc.signal ? expression$1(enc.signal, scope, params, fields)
+    var value = enc.signal ? expression$2(enc.signal, scope, params, fields)
       : enc.color ? color$2(enc.color, scope, params, fields)
       : enc.field != null ? field$1(enc.field, scope, params, fields)
       : enc.value !== undefined ? $(enc.value)
@@ -39643,7 +40086,7 @@
     rules.forEach(function(rule) {
       var value = entry$1(channel, rule, scope, params, fields);
       code += rule.test
-        ? expression$1(rule.test, scope, params, fields) + '?' + value + ':'
+        ? expression$2(rule.test, scope, params, fields) + '?' + value + ':'
         : value;
     });
 
@@ -39832,7 +40275,11 @@
   }
 
   function lookup$5(spec, config) {
+<<<<<<< HEAD
     const _ = (name, dflt) => value$1(spec[name], value$1(config[name], dflt));
+=======
+    const _ = name => value$1(spec[name], config[name]);
+>>>>>>> update vega.js in docs
 
     _.isVertical = s => Vertical === value$1(
       spec.direction,
@@ -40315,7 +40762,7 @@
       : $(value);
   }
 
-  function getRole(spec) {
+  function role(spec) {
     var role = spec.role || '';
     return (!role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title'))
       ? role
@@ -40326,7 +40773,7 @@
     return {
       marktype:    spec.type,
       name:        spec.name || undefined,
-      role:        spec.role || getRole(spec),
+      role:        spec.role || role(spec),
       zindex:      +spec.zindex || undefined
     };
   }
@@ -40404,7 +40851,11 @@
       var expr = def.expr || isField(type);
       return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
            : expr && outerField(value) ? fieldRef(value.field, value.as)
+<<<<<<< HEAD
            : isExpr$1(type) ? parseExpression$1(value, scope)
+=======
+           : isExpr(type) ? expression$1(value, scope)
+>>>>>>> update vega.js in docs
            : isData(type) ? ref(scope.getData(value).values)
            : isField(type) ? fieldRef(value)
            : isCompare(type) ? scope.compareRef(value)
@@ -40775,17 +41226,17 @@
           .join(',')
       + '),0)';
 
-    expr = parseExpression$1(update, scope);
+    expr = expression$1(update, scope);
     op.update = expr.$expr;
     op.params = expr.$params;
   }
 
   function parseMark(spec, scope) {
-    var role = getRole(spec),
+    var role$1 = role(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
-        layout = spec.layout || role === ScopeRole$1 || role === FrameRole$1,
-        nested = role === MarkRole || layout || facet,
+        layout = spec.layout || role$1 === ScopeRole$1 || role$1 === FrameRole$1,
+        nested = role$1 === MarkRole || layout || facet,
         overlap = spec.overlap,
         ops, op, input, store, enc, bound, render, sieve, name,
         joinRef, markRef, encodeRef, layoutRef, boundRef;
@@ -40818,10 +41269,16 @@
     markRef = ref(op);
 
     // add visual encoders
+<<<<<<< HEAD
     op = enc = scope.add(Encode$1(encoders(
       spec.encode, spec.type, role, spec.style, scope,
       {mod: false, pulse: markRef}
     )));
+=======
+    op = scope.add(Encode$1(
+      encoders(spec.encode, spec.type, role$1, spec.style, scope, {pulse: markRef})
+    ));
+>>>>>>> update vega.js in docs
 
     // monitor parent marks to propagate changes
     op.params.parent = scope.encode();
@@ -41068,7 +41525,7 @@
         strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
         fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
-    return parseExpression$1(
+    return expression$1(
       `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
       scope
     );
@@ -42302,7 +42759,7 @@
     var code = Object.keys(this.lambdas);
     for (var i=0, n=code.length; i<n; ++i) {
       var s = code[i],
-          e = parseExpression$1(s, this),
+          e = expression$1(s, this),
           op = this.lambdas[s];
       op.params = e.$params;
       op.update = e.$expr;
@@ -42362,8 +42819,13 @@
     return code + '}';
   }
 
+<<<<<<< HEAD
   prototype$1u.exprRef = function(code, name) {
     var params = {expr: parseExpression$1(code, this)};
+=======
+  prototype$1m.exprRef = function(code, name) {
+    var params = {expr: expression$1(code, this)};
+>>>>>>> update vega.js in docs
     if (name) params.expr.$name = name;
     return ref(this.add(Expression$1(params)));
   };
@@ -42703,6 +43165,7 @@
     };
   }
 
+<<<<<<< HEAD
   function parse$5(spec, config) {
     if (!isObject(spec)) {
       error('Input Vega specification must be an object.');
@@ -42710,6 +43173,12 @@
 
     config = mergeConfig(defaults(), config, spec.config);
     return parseView(spec, new Scope$1(config)).toRuntime();
+=======
+  function parse$4(spec, config) {
+    if (!isObject(spec)) error('Input Vega specification must be an object.');
+    return parseView(spec, new Scope$1(defaults([config, spec.config])))
+      .toRuntime();
+>>>>>>> update vega.js in docs
   }
 
   // -- Transforms -----
@@ -42723,38 +43192,73 @@
   extend(transforms, tx, vtx, encode, geo, force, tree$1, voronoi$1, wordcloud, xf, label);
 >>>>>>> update documentation
 
-  exports.Bounds = Bounds;
-  exports.CanvasHandler = CanvasHandler;
-  exports.CanvasRenderer = CanvasRenderer;
+  exports.version = version;
   exports.Dataflow = Dataflow;
-  exports.Debug = Debug;
-  exports.Error = Error$1;
   exports.EventStream = EventStream;
-  exports.Gradient = Gradient;
-  exports.GroupItem = GroupItem;
-  exports.Handler = Handler;
-  exports.Info = Info;
-  exports.Item = Item;
-  exports.Marks = Marks;
-  exports.MultiPulse = MultiPulse;
-  exports.None = None;
-  exports.Operator = Operator;
   exports.Parameters = Parameters;
   exports.Pulse = Pulse;
-  exports.RenderType = RenderType;
-  exports.Renderer = Renderer;
-  exports.ResourceLoader = ResourceLoader;
-  exports.SVGHandler = SVGHandler;
-  exports.SVGRenderer = SVGRenderer;
-  exports.SVGStringRenderer = SVGStringRenderer;
-  exports.Scenegraph = Scenegraph;
+  exports.MultiPulse = MultiPulse;
+  exports.Operator = Operator;
   exports.Transform = Transform;
+  exports.changeset = changeset;
+  exports.ingest = ingest;
+  exports.isTuple = isTuple;
+  exports.definition = definition;
+  exports.transform = transform$1;
+  exports.transforms = transforms;
+  exports.tupleid = tupleid;
+  exports.scale = scale$1;
+  exports.scheme = scheme;
+  exports.interpolate = interpolate;
+  exports.interpolateColors = interpolateColors;
+  exports.interpolateRange = interpolateRange;
+  exports.timeInterval = timeInterval;
+  exports.quantizeInterpolator = quantizeInterpolator;
+  exports.projection = projection$1;
   exports.View = View;
-  exports.Warn = Warn;
+  exports.expressionFunction = expressionFunction;
+  exports.formatLocale = defaultLocale$1;
+  exports.timeFormatLocale = defaultLocale;
+  exports.parse = parse$4;
+  exports.runtime = parseDataflow;
+  exports.runtimeContext = context$2;
+  exports.bin = bin;
+  exports.bootstrapCI = bootstrapCI;
+  exports.quartiles = quartiles;
+  exports.setRandom = setRandom;
+  exports.randomLCG = lcg;
+  exports.randomInteger = integer;
+  exports.randomKDE = randomKDE;
+  exports.randomMixture = randomMixture;
+  exports.randomNormal = randomNormal;
+  exports.randomUniform = randomUniform;
   exports.accessor = accessor;
-  exports.accessorFields = accessorFields;
   exports.accessorName = accessorName;
+  exports.accessorFields = accessorFields;
+  exports.id = id;
+  exports.identity = identity;
+  exports.zero = zero;
+  exports.one = one;
+  exports.truthy = truthy;
+  exports.falsy = falsy;
+  exports.logger = logger;
+  exports.None = None;
+  exports.Error = Error$1;
+  exports.Warn = Warn;
+  exports.Info = Info;
+  exports.Debug = Debug;
+  exports.panLinear = panLinear;
+  exports.panLog = panLog;
+  exports.panPow = panPow;
+  exports.panSymlog = panSymlog;
+  exports.zoomLinear = zoomLinear;
+  exports.zoomLog = zoomLog;
+  exports.zoomPow = zoomPow;
+  exports.zoomSymlog = zoomSymlog;
+  exports.quarter = quarter;
+  exports.utcquarter = utcquarter;
   exports.array = array;
+<<<<<<< HEAD
   exports.bandwidthNRD = bandwidthNRD;
   exports.bin = bin;
   exports.bootstrapCI = bootstrapCI;
@@ -42764,14 +43268,16 @@
   exports.boundMark = boundMark;
   exports.boundStroke = boundStroke;
   exports.changeset = changeset;
+=======
+>>>>>>> update vega.js in docs
   exports.clampRange = clampRange;
-  exports.closeTag = closeTag;
   exports.compare = compare;
   exports.constant = constant;
   exports.cumulativeLogNormal = cumulativeLogNormal;
   exports.cumulativeNormal = cumulativeNormal;
   exports.cumulativeUniform = cumulativeUniform;
   exports.debounce = debounce;
+<<<<<<< HEAD
   exports.definition = definition;
   exports.densityLogNormal = densityLogNormal;
   exports.densityNormal = densityNormal;
@@ -42781,15 +43287,16 @@
   exports.domCreate = domCreate;
   exports.domFind = domFind;
   exports.dotbin = dotbin;
+=======
+>>>>>>> update vega.js in docs
   exports.error = error;
-  exports.expressionFunction = expressionFunction;
   exports.extend = extend;
   exports.extent = extent;
   exports.extentIndex = extentIndex;
-  exports.falsy = falsy;
   exports.fastmap = fastmap;
   exports.field = field;
   exports.flush = flush;
+<<<<<<< HEAD
   exports.font = font;
   exports.fontFamily = fontFamily;
   exports.fontSize = fontSize;
@@ -42802,16 +43309,10 @@
   exports.inferType = inferType;
   exports.inferTypes = inferTypes;
   exports.ingest = ingest;
+=======
+>>>>>>> update vega.js in docs
   exports.inherits = inherits;
   exports.inrange = inrange;
-  exports.interpolate = interpolate$1;
-  exports.interpolateColors = interpolateColors;
-  exports.interpolateRange = interpolateRange;
-  exports.intersect = intersect$1;
-  exports.intersectBoxLine = intersectBoxLine;
-  exports.intersectPath = intersectPath;
-  exports.intersectPoint = intersectPoint;
-  exports.intersectRule = intersectRule;
   exports.isArray = isArray;
   exports.isBoolean = isBoolean;
   exports.isDate = isDate;
@@ -42820,9 +43321,9 @@
   exports.isObject = isObject;
   exports.isRegExp = isRegExp;
   exports.isString = isString;
-  exports.isTuple = isTuple;
   exports.key = key;
   exports.lerp = lerp;
+<<<<<<< HEAD
   exports.lineHeight = lineHeight;
   exports.loader = loader;
   exports.logger = logger;
@@ -42832,20 +43333,12 @@
   exports.multiLineOffset = multiLineOffset;
   exports.one = one;
   exports.openTag = openTag;
+=======
+  exports.merge = merge;
+>>>>>>> update vega.js in docs
   exports.pad = pad;
-  exports.panLinear = panLinear;
-  exports.panLog = panLog;
-  exports.panPow = panPow;
-  exports.panSymlog = panSymlog;
-  exports.parse = parse$5;
-  exports.pathCurves = curves;
-  exports.pathEqual = pathEqual;
-  exports.pathParse = pathParse;
-  exports.pathRectangle = vg_rect;
-  exports.pathRender = pathRender;
-  exports.pathSymbols = symbols;
-  exports.pathTrail = vg_trail;
   exports.peek = peek;
+<<<<<<< HEAD
   exports.point = point$4;
   exports.projection = projection$1;
   exports.quantileLogNormal = quantileLogNormal;
@@ -42902,14 +43395,19 @@
   exports.timeSequence = timeSequence;
   exports.timeUnitSpecifier = timeUnitSpecifier;
   exports.timeUnits = timeUnits;
+=======
+  exports.repeat = repeat;
+  exports.span = span;
+  exports.splitAccessPath = splitAccessPath;
+  exports.stringValue = $;
+>>>>>>> update vega.js in docs
   exports.toBoolean = toBoolean;
   exports.toDate = toDate;
   exports.toNumber = toNumber;
-  exports.toSet = toSet;
   exports.toString = toString;
-  exports.transform = transform$1;
-  exports.transforms = transforms;
+  exports.toSet = toSet;
   exports.truncate = truncate;
+<<<<<<< HEAD
   exports.truthy = truthy;
   exports.tupleid = tupleid;
   exports.typeParsers = typeParsers;
@@ -42927,6 +43425,68 @@
   exports.zoomLog = zoomLog;
   exports.zoomPow = zoomPow;
   exports.zoomSymlog = zoomSymlog;
+=======
+  exports.visitArray = visitArray;
+  exports.loader = loader;
+  exports.read = read;
+  exports.inferType = inferType;
+  exports.inferTypes = inferTypes;
+  exports.typeParsers = typeParsers;
+  exports.format = format;
+  exports.formats = formats;
+  exports.responseType = responseType;
+  exports.Bounds = Bounds;
+  exports.Gradient = Gradient;
+  exports.GroupItem = GroupItem;
+  exports.ResourceLoader = ResourceLoader;
+  exports.Item = Item;
+  exports.Scenegraph = Scenegraph;
+  exports.Handler = Handler;
+  exports.Renderer = Renderer;
+  exports.CanvasHandler = CanvasHandler;
+  exports.CanvasRenderer = CanvasRenderer;
+  exports.SVGHandler = SVGHandler;
+  exports.SVGRenderer = SVGRenderer;
+  exports.SVGStringRenderer = SVGStringRenderer;
+  exports.RenderType = RenderType;
+  exports.renderModule = renderModule;
+  exports.intersect = intersect$1;
+  exports.Marks = marks;
+  exports.boundClip = boundClip;
+  exports.boundContext = context;
+  exports.boundStroke = boundStroke;
+  exports.boundItem = boundItem;
+  exports.boundMark = boundMark;
+  exports.pathCurves = curves;
+  exports.pathSymbols = symbols;
+  exports.pathRectangle = vg_rect;
+  exports.pathTrail = vg_trail;
+  exports.pathParse = pathParse;
+  exports.pathRender = pathRender;
+  exports.point = point$4;
+  exports.domCreate = domCreate;
+  exports.domFind = domFind;
+  exports.domChild = domChild;
+  exports.domClear = domClear;
+  exports.openTag = openTag;
+  exports.closeTag = closeTag;
+  exports.font = font;
+  exports.fontFamily = fontFamily;
+  exports.fontSize = fontSize;
+  exports.textMetrics = textMetrics;
+  exports.resetSVGClipId = resetSVGClipId;
+  exports.sceneEqual = sceneEqual;
+  exports.pathEqual = pathEqual;
+  exports.sceneToJSON = sceneToJSON;
+  exports.sceneFromJSON = sceneFromJSON;
+  exports.intersectPath = intersectPath;
+  exports.intersectPoint = intersectPoint;
+  exports.intersectRule = intersectRule;
+  exports.intersectBoxLine = intersectBoxLine;
+  exports.sceneZOrder = zorder;
+  exports.sceneVisit = visit;
+  exports.scenePickVisit = pickVisit;
+>>>>>>> update vega.js in docs
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
