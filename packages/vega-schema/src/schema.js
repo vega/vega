@@ -19,6 +19,7 @@ import scale from './scale';
 import scope from './scope';
 import selector from './selector';
 import signal from './signal';
+import source from './source';
 import stream from './stream';
 import title from './title';
 import transform from './transform';
@@ -80,6 +81,7 @@ export default function(definitions) {
     scope,
     selector,
     signal,
+    source,
     stream,
     title,
     transform(definitions)

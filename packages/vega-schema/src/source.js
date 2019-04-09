@@ -17,7 +17,7 @@ const sourceEncode = pattern({
   '^(?!interactive|name|style).+$': encodeEntryRef,
 });
 
-const title = oneOf(
+const source = oneOf(
   stringType,
   object({
     name: stringType,
@@ -46,6 +46,6 @@ const title = oneOf(
 
 export default {
   defs: {
-    title
+    source
   }
 };
