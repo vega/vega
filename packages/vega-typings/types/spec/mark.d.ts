@@ -1,4 +1,5 @@
 import * as Encode from './encode';
+import { ExprRef } from './expr';
 import { SortOrder, Scope, SignalRef, Transforms, OnMarkTrigger } from '.';
 
 export type Facet =
@@ -36,11 +37,11 @@ export type Clip =
     };
 export type Compare =
   | {
-      field: string | SignalRef;
+      field: string | ExprRef | SignalRef;
       order?: SortOrder;
     }
   | {
-      field: (string | SignalRef)[];
+      field: (string | ExprRef | SignalRef)[];
       order?: SortOrder[];
     };
 export interface BaseMark {

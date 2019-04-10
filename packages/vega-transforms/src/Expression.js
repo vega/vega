@@ -22,7 +22,7 @@ function update(_) {
   return this.value && !_.modified('expr')
     ? this.value
     : accessor(
-        function(datum) { return expr(datum, _); },
+        datum => expr(datum, _),
         accessorFields(expr),
         accessorName(expr)
       );

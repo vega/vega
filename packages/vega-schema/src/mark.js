@@ -6,15 +6,16 @@ import {
 // types defined elsewhere
 const sortOrderRef = ref('sortOrder');
 const marktypeRef = ref('marktype');
+const sortField = oneOf(ref('scaleField'), ref('expr'));
 
 const compareRef = ref('compare');
 const compare = oneOf(
   object({
-    field: stringOrSignal,
+    field: sortField,
     order: sortOrderRef
   }),
   object({
-    field: array(stringOrSignal),
+    field: array(sortField),
     order: array(sortOrderRef)
   })
 );
