@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
-  aggrField, Ascending, compareRef, Entry,
-  fieldRef, keyRef, tupleidRef, isSignal, operator, ref
+  aggrField, Ascending, compareRef, Entry, isExpr, isSignal,
+  fieldRef, keyRef, tupleidRef, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
 import {Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
@@ -211,6 +211,9 @@ prototype.compareRef = function(cmp, stable) {
     if (isSignal(_)) {
       signal = true;
       return scope.signalRef(_.signal);
+    } else if (isExpr(_)) {
+      signal = true;
+      return scope.exprRef(_.expr);
     } else {
       return _;
     }

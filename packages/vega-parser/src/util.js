@@ -74,6 +74,10 @@ export function isSignal(_) {
   return _ && _.signal;
 }
 
+export function isExpr(_) {
+  return _ && _.expr;
+}
+
 export function hasSignal(_) {
   if (isSignal(_)) return true;
   if (isObject(_)) for (var key in _) {
