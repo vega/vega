@@ -1,7 +1,9 @@
 import {
   array, def, orSignal, anyOf, enums, oneOf, object, type,
   anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 // types defined elsewhere
 const transformRef = def('transform');
@@ -78,6 +80,15 @@ const data = oneOf(
     ...dataProps
   })
 );
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(data, { description: ENGLISH })
+    break
+  default:
+    Object.assign(data, { description: ENGLISH })
+    break
+}
 
 export default {
   refs: {

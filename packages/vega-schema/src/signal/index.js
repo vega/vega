@@ -1,7 +1,9 @@
 import {
   def, enums, not, object, oneOf, orSignal, ref, type,
   anyType, arrayType, booleanType, numberType, stringType
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 // types defined elsewhere
 const exprStringRef = ref('exprString');
@@ -53,6 +55,15 @@ const signalDef = oneOf(
   signalNew,
   signalInit
 );
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(signal, { description: ENGLISH })
+    break
+  default:
+    Object.assign(signal, { description: ENGLISH })
+    break
+}
 
 export default {
   refs: {

@@ -1,0 +1,1 @@
+export const ENGLISH = "Configure defaults for visual encoding choices.";

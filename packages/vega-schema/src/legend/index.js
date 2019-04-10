@@ -1,4 +1,6 @@
-import {layoutAlign} from './layout';
+import {layoutAlign} from '../layout/index';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
@@ -6,7 +8,7 @@ import {
   fontWeightValue, numberValue, orientValue, stringValue,
   numberOrSignal, stringOrSignal, arrayOrSignal,
   formatType, numberType, stringType, orSignal
-} from './util';
+} from '../util';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
@@ -148,6 +150,15 @@ const legend = allOf(
     required('strokeWidth')
   )
 );
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(legend, { description: ENGLISH })
+    break
+  default:
+    Object.assign(legend, { description: ENGLISH })
+    break
+}
 
 export default {
   defs: {

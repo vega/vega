@@ -1,7 +1,9 @@
 import {
   allOf, array, def, enums, not, object, oneOf, ref,
   booleanType, stringType, booleanOrSignal, stringOrSignal
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 // types defined elsewhere
 const sortOrderRef = ref('sortOrder');
@@ -73,6 +75,15 @@ const mark = object({
   transform: array(def('transformMark')),
   on: def('onMarkTrigger')
 }, undefined);
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(mark, { description: ENGLISH })
+    break
+  default:
+    Object.assign(mark, { description: ENGLISH })
+    break
+}
 
 const markGroup = allOf(
   object({

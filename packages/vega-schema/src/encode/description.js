@@ -1,0 +1,1 @@
+export const ENGLISH = "Encoding directives for the visual properties of the top-level [group mark](https://vega.github.io/vega/docs/marks/group) representing a chart’s data rectangle. For example, this can be used to set a background fill color for the plotting area, rather than the entire view.";

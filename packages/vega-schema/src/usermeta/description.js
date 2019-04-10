@@ -1,0 +1,1 @@
+export const ENGLISH = "Optional metadata that will be passed to Vega.\nThis object is completely ignored by Vega and Vega-Lite and can be used for custom metadata.";

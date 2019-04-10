@@ -1,0 +1,1 @@
+export const ENGLISH = "Legends visualize scale mappings for visual values such as color, shape and size.";

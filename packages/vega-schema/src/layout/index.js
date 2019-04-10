@@ -2,7 +2,9 @@ import {
   enums, object, oneOf, orSignal,
   booleanType, nullType, numberType, signalRef,
   booleanOrSignal, numberOrSignal
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 const layoutAlignEnum = ['all', 'each', 'none'];
 
@@ -63,6 +65,15 @@ const layout = orSignal(object({
     object({row: layoutTitleAnchor, column: layoutTitleAnchor})
   )
 }));
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(layout, { description: ENGLISH })
+    break
+  default:
+    Object.assign(layout, { description: ENGLISH })
+    break
+}
 
 export default {
   defs: {

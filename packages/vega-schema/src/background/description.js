@@ -1,0 +1,1 @@
+export const ENGLISH = "CSS color property to use as the background of the entire view.\n\n__Default value:__ none (transparent)"

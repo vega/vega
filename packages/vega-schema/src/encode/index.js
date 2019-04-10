@@ -3,7 +3,9 @@ import {
   array, def, object, pattern, required, type,
   booleanType, nullType, numberType, stringType, signalRef,
   numberValue
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 export const fontWeightEnum = [
   null, 'normal', 'bold', 'lighter', 'bolder',
@@ -200,6 +202,15 @@ const encodeEntry = object({
 const encode = pattern({
   '^.+$': encodeEntryRef
 });
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(encode, { description: ENGLISH })
+    break
+  default:
+    Object.assign(encode, { description: ENGLISH })
+    break
+}
 
 export default {
   refs: {

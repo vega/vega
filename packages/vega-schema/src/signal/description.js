@@ -1,0 +1,1 @@
+export const ENGLISH = "Signals are dynamic variables that parameterize a visualization.";

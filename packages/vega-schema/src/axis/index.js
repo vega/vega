@@ -1,4 +1,4 @@
-import {timeIntervals} from './scale';
+import {timeIntervals} from '../scale/index';
 import {
   numberValue, stringValue, booleanValue, colorValue, alignValue,
   anchorValue, baselineValue, fontWeightValue, dashArrayValue,
@@ -6,7 +6,9 @@ import {
   booleanOrNumberOrSignal,
   def, enums, object, oneOf, orSignal, ref,
   booleanType, formatType, numberType, stringType, signalRef
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 // types defined elsewhere
 const guideEncodeRef = def('guideEncode');
@@ -128,6 +130,15 @@ const axis = object({
     domain: guideEncodeRef
   })
 });
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(axis, { description: ENGLISH })
+    break
+  default:
+    Object.assign(axis, { description: ENGLISH })
+    break
+}
 
 export default {
   refs: {

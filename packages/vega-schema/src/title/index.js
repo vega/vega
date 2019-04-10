@@ -3,7 +3,9 @@ import {
   alignValue, baselineValue, colorValue, fontWeightValue,
   def, enums, object, oneOf, pattern, ref,
   booleanType, numberType, stringType, orSignal
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
@@ -43,6 +45,15 @@ const title = oneOf(
     encode: titleEncode
   })
 );
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(title, { description: ENGLISH })
+    break
+  default:
+    Object.assign(title, { description: ENGLISH })
+    break
+}
 
 export default {
   defs: {

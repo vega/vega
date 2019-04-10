@@ -1,7 +1,9 @@
 import {
   array, object, oneOf, orSignal,
   arrayType, objectType, stringType, numberOrSignal, stringOrSignal
-} from './util';
+} from '../util';
+import { en } from '../consts';
+import { ENGLISH } from './description';
 
 const array2 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 2}));
 const array3 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 3}));
@@ -23,6 +25,15 @@ const projection = object({
   "extent": extent,
   "size": array2
 }, true);
+
+switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
+  case en:
+    Object.assign(projection, { description: ENGLISH })
+    break
+  default:
+    Object.assign(projection, { description: ENGLISH })
+    break
+}
 
 export default {
   defs: {

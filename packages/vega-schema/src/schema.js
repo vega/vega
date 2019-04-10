@@ -1,27 +1,31 @@
-import {def, ref, type, numberType, objectType, stringType} from './util';
+import {def, ref, type, stringType} from './util';
 
-import autosize from './autosize';
-import axis from './axis';
-import background from './background';
+import autosize from './autosize/index';
+import axis from './axis/index';
+import background from './background/index';
 import bind from './bind';
-import data from './data';
-import encode from './encode';
+import config from './config/index'
+import data from './data/index';
+import encode from './encode/index';
 import expr from './expr';
-import layout from './layout';
-import legend from './legend';
-import mark from './mark';
+import height from './height/index';
+import layout from './layout/index';
+import legend from './legend/index';
+import mark from './mark/index';
 import marktype from './marktype';
 import onEvents from './on-events';
 import onTrigger from './on-trigger';
-import padding from './padding';
-import projection from './projection';
-import scale from './scale';
+import padding from './padding/index';
+import projection from './projection/index';
+import scale from './scale/index';
 import scope from './scope';
 import selector from './selector';
-import signal from './signal';
+import signal from './signal/index';
 import stream from './stream';
-import title from './title';
+import title from './title/index';
 import transform from './transform';
+import usermeta from './usermeta/index'
+import width from './width/index';
 
 function extend(target, source) {
   for (var key in source) {
@@ -46,11 +50,11 @@ export default function(definitions) {
       {
         properties: {
           $schema: type('string', {format: 'uri'}),
-          usermeta: objectType,
-          config: objectType,
+          usermeta: def('usermeta'),
+          config: def('config'),
           description: stringType,
-          width: numberType,
-          height: numberType,
+          width: def('width'),
+          height: def('height'),
           padding: def('padding'),
           autosize: def('autosize'),
           background: def('background'),
@@ -65,9 +69,11 @@ export default function(definitions) {
     axis,
     background,
     bind,
+    config,
     data,
     encode,
     expr,
+    height,
     layout,
     legend,
     mark,
@@ -82,6 +88,8 @@ export default function(definitions) {
     signal,
     stream,
     title,
+    usermeta,
+    width,
     transform(definitions)
   ].forEach(function(module) {
     addModule(schema, module);
