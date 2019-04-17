@@ -1,4 +1,4 @@
-import { DataType, EncodeEntryName, Format, SignalValue, Spec, Scale } from '../spec';
+import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
 import { Renderers } from './renderer';
 
 // TODO
