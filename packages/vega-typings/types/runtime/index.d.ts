@@ -1,4 +1,4 @@
-import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
+import { DataType, EncodeEntryName, Format, SignalValue, Spec, Scale } from '../spec';
 import { Renderers } from './renderer';
 
 // TODO
@@ -54,6 +54,7 @@ export class View {
 
   signal(name: string, value: SignalValue): this;
   signal(name: string): SignalValue;
+  scale(scaleName: string): (value: any) => number | undefined;
   container(): HTMLElement | null;
   addEventListener(type: string, handler: EventListenerHandler): this;
   removeEventListener(type: string, handler: EventListenerHandler): this;
