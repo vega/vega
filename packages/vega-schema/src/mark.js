@@ -1,9 +1,7 @@
 import {
   allOf, array, def, enums, not, object, oneOf, ref,
   booleanType, stringType, booleanOrSignal, stringOrSignal
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 // types defined elsewhere
 const sortOrderRef = ref('sortOrder');
@@ -76,14 +74,9 @@ const mark = object({
   on: def('onMarkTrigger')
 }, undefined);
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(mark, { description: ENGLISH })
-    break
-  default:
-    Object.assign(mark, { description: ENGLISH })
-    break
-}
+const DESCRIPTION = "Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols.";
+
+Object.assign(mark, { description: DESCRIPTION });
 
 const markGroup = allOf(
   object({

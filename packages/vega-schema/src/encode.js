@@ -3,9 +3,7 @@ import {
   array, def, object, pattern, required, type,
   booleanType, nullType, numberType, stringType, signalRef,
   numberValue
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 export const fontWeightEnum = [
   null, 'normal', 'bold', 'lighter', 'bolder',
@@ -203,14 +201,9 @@ const encode = pattern({
   '^.+$': encodeEntryRef
 });
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(encode, { description: ENGLISH })
-    break
-  default:
-    Object.assign(encode, { description: ENGLISH })
-    break
-}
+const DESCRIPTION = "Encoding directives for the visual properties of the top-level [group mark](https://vega.github.io/vega/docs/marks/group) representing a chart’s data rectangle. For example, this can be used to set a background fill color for the plotting area, rather than the entire view.";
+
+Object.assign(encode, { description: DESCRIPTION });
 
 export default {
   refs: {

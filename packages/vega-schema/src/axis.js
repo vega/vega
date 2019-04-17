@@ -1,4 +1,4 @@
-import {timeIntervals} from '../scale/index';
+import {timeIntervals} from './scale';
 import {
   numberValue, stringValue, booleanValue, colorValue, alignValue,
   anchorValue, baselineValue, fontWeightValue, dashArrayValue,
@@ -6,9 +6,7 @@ import {
   booleanOrNumberOrSignal,
   def, enums, object, oneOf, orSignal, ref,
   booleanType, formatType, numberType, stringType, signalRef
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 // types defined elsewhere
 const guideEncodeRef = def('guideEncode');
@@ -131,14 +129,9 @@ const axis = object({
   })
 });
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(axis, { description: ENGLISH })
-    break
-  default:
-    Object.assign(axis, { description: ENGLISH })
-    break
-}
+const DESCRIPTION = "Axes visualize spatial scale mappings using ticks, grid lines and labels. Vega currently supports axes for Cartesian (rectangular) coordinates. Similar to scales, axes can be defined either at the top-level of the specification, or as part of a group mark.\n\n __Required__: `scale` and `orient`";
+
+Object.assign(axis, { description: DESCRIPTION });
 
 export default {
   refs: {

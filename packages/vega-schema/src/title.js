@@ -3,9 +3,7 @@ import {
   alignValue, baselineValue, colorValue, fontWeightValue,
   def, enums, object, oneOf, pattern, ref,
   booleanType, numberType, stringType, orSignal
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
@@ -45,15 +43,9 @@ const title = oneOf(
     encode: titleEncode
   })
 );
+const DESCRIPTION = "The title directive adds a descriptive title to a chart. Similar to scales, axes, and legends, a title can be defined at the top-level of a specification or as part of a [group mark](https://vega.github.io/vega/docs/marks/group).\n\n__Required__: `text`. The title text.";
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(title, { description: ENGLISH })
-    break
-  default:
-    Object.assign(title, { description: ENGLISH })
-    break
-}
+Object.assign(title, { description: DESCRIPTION })
 
 export default {
   defs: {

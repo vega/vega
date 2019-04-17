@@ -1,1 +1,0 @@
-export const ENGLISH = "Perform grid layout for a collection of group marks.";

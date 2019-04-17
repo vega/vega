@@ -2,9 +2,7 @@ import {
   array, enums, object, oneOf, orSignal, ref,
   arrayType, nullType, booleanType, numberType, stringType, signalRef,
   stringOrSignal, numberOrSignal, booleanOrSignal, booleanOrNumberOrSignal
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 import {
   Linear, Log, Pow, Sqrt, Symlog, Time, UTC, Sequential,
@@ -251,14 +249,9 @@ const scale = oneOf(
   })
 );
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(scale, { description: ENGLISH })
-    break
-  default:
-    Object.assign(scale, { description: ENGLISH })
-    break
-}
+const DESCRIPTION = "Scales map data values (numbers, dates, categories, etc) to visual values (pixels, colors, sizes).";
+
+Object.assign(scale, { description: DESCRIPTION})
 
 export default {
   refs: {

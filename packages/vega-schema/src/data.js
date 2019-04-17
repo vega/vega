@@ -1,9 +1,7 @@
 import {
   array, def, orSignal, anyOf, enums, oneOf, object, type,
   anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
-} from '../util';
-import { en } from '../consts';
-import { ENGLISH } from './description';
+} from './util';
 
 // types defined elsewhere
 const transformRef = def('transform');
@@ -81,14 +79,9 @@ const data = oneOf(
   })
 );
 
-switch(en) { // en is hardcoded currently. A language setting function will go here which will depend on the client side such window.navigator.language
-  case en:
-    Object.assign(data, { description: ENGLISH })
-    break
-  default:
-    Object.assign(data, { description: ENGLISH })
-    break
-}
+const DESCRIPTION = "Data set definitions and transforms define the data to load and how to process it. The basic data model used by Vega is tabular data, similar to a spreadsheet or database table. Individual data sets are assumed to contain a collection of records (or “rows”), which may contain any number of named data attributes (fields, or “columns”). Records are modeled using standard JavaScript objects. If the input data is simply an array of primitive values, Vega maps each value to the `data` property of a new object. For example `[5, 3, 8, 1]` is loaded as:\n`[ {\"data\": 5}, {\"data\": 3}, {\"data\": 8}, {\"data\": 1} ]`.\n\n__Required__:`name`. A unique name for dataset.";
+
+Object.assign(data, { description: DESCRIPTION });
 
 export default {
   refs: {

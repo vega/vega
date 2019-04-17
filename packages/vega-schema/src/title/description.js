@@ -1,1 +1,0 @@
-export const ENGLISH = "The title directive adds a descriptive title to a chart. Similar to scales, axes, and legends, a title can be defined at the top-level of a specification or as part of a [group mark](https://vega.github.io/vega/docs/marks/group).\n\n__Required__: `text`. The title text."

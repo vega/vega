@@ -1,1 +1,0 @@
-export const ENGLISH = "Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols.";

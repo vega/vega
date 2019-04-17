@@ -1,1 +1,0 @@
-export const ENGLISH = "Cartographic projections map (longitude, latitude) pairs to projected (x, y) coordinates.";

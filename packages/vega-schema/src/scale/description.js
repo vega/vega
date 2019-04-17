@@ -1,1 +1,0 @@
-export const ENGLISH = "Scales map data values (numbers, dates, categories, etc) to visual values (pixels, colors, sizes).";
