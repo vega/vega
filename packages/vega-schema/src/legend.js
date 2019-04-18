@@ -149,9 +149,7 @@ const legend = allOf(
   )
 );
 
-const DESCRIPTION = "Legends visualize scale mappings for visual values such as color, shape and size.";
-
-Object.assign(legend, { description: DESCRIPTION });
+Object.assign(legend, { description: "Legends visualize scale mappings for visual values such as color, shape and size." });
 
 export default {
   defs: {

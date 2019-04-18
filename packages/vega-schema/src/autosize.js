@@ -24,9 +24,7 @@ const autosize = oneOf(
   })
 );
 
-const DESCRIPTION = "Sets how the visualization size should be determined. If a string, should be one of `\"pad\"`, `\"fit\"` or `\"none\"`.\nObject values can additionally specify parameters for content sizing and automatic resizing.\n`\"fit\"` is only supported for single and layered views that don't use `rangeStep`.\n\n__Default value__: `pad`";
-
-Object.assign(autosize, { description: DESCRIPTION });
+Object.assign(autosize, { description: "Sets how the visualization size should be determined. If a string, should be one of `\"pad\"`, `\"fit\"` or `\"none\"`.\nObject values can additionally specify parameters for content sizing and automatic resizing.\n`\"fit\"` is only supported for single and layered views that don't use `rangeStep`.\n\n__Default value__: `pad`" });
 
 export default {
   defs: {

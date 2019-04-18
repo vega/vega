@@ -129,9 +129,7 @@ const axis = object({
   })
 });
 
-const DESCRIPTION = "Axes visualize spatial scale mappings using ticks, grid lines and labels. Vega currently supports axes for Cartesian (rectangular) coordinates. Similar to scales, axes can be defined either at the top-level of the specification, or as part of a group mark.\n\n __Required__: `scale` and `orient`";
-
-Object.assign(axis, { description: DESCRIPTION });
+Object.assign(axis, { description: "Axes visualize spatial scale mappings using ticks, grid lines and labels. Vega currently supports axes for Cartesian (rectangular) coordinates. Similar to scales, axes can be defined either at the top-level of the specification, or as part of a group mark.\n\n __Required__: `scale` and `orient`" });
 
 export default {
   refs: {

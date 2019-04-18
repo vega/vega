@@ -249,9 +249,7 @@ const scale = oneOf(
   })
 );
 
-const DESCRIPTION = "Scales map data values (numbers, dates, categories, etc) to visual values (pixels, colors, sizes).";
-
-Object.assign(scale, { description: DESCRIPTION})
+Object.assign(scale, { description: "Scales map data values (numbers, dates, categories, etc) to visual values (pixels, colors, sizes)." })
 
 export default {
   refs: {

@@ -24,9 +24,7 @@ const projection = object({
   "size": array2
 }, true);
 
-const DESCRIPTION = "Cartographic projections map (longitude, latitude) pairs to projected (x, y) coordinates.";
-
-Object.assign(projection, { description: DESCRIPTION });
+Object.assign(projection, { description: "Cartographic projections map (longitude, latitude) pairs to projected (x, y) coordinates." });
 
 export default {
   defs: {

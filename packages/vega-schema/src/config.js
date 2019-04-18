@@ -2,9 +2,7 @@ import { objectType } from './util';
 
 const config = objectType;
 
-const DESCRIPTION = "Configure defaults for visual encoding choices.";
-
-Object.assign(config, { description: DESCRIPTION });
+Object.assign(config, { description: "Configure defaults for visual encoding choices." });
 
 export default {
   defs: {

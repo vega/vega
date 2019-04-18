@@ -79,9 +79,7 @@ const data = oneOf(
   })
 );
 
-const DESCRIPTION = "Data set definitions and transforms define the data to load and how to process it. The basic data model used by Vega is tabular data, similar to a spreadsheet or database table. Individual data sets are assumed to contain a collection of records (or “rows”), which may contain any number of named data attributes (fields, or “columns”). Records are modeled using standard JavaScript objects. If the input data is simply an array of primitive values, Vega maps each value to the `data` property of a new object. For example `[5, 3, 8, 1]` is loaded as:\n`[ {\"data\": 5}, {\"data\": 3}, {\"data\": 8}, {\"data\": 1} ]`.\n\n__Required__:`name`. A unique name for dataset.";
-
-Object.assign(data, { description: DESCRIPTION });
+Object.assign(data, { description: "Data set definitions and transforms define the data to load and how to process it. The basic data model used by Vega is tabular data, similar to a spreadsheet or database table. Individual data sets are assumed to contain a collection of records (or “rows”), which may contain any number of named data attributes (fields, or “columns”). Records are modeled using standard JavaScript objects. If the input data is simply an array of primitive values, Vega maps each value to the `data` property of a new object. For example `[5, 3, 8, 1]` is loaded as:\n`[ {\"data\": 5}, {\"data\": 3}, {\"data\": 8}, {\"data\": 1} ]`.\n\n__Required__:`name`. A unique name for dataset." });
 
 export default {
   refs: {

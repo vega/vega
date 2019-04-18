@@ -54,9 +54,7 @@ const signalDef = oneOf(
   signalInit
 );
 
-const DESCRIPTION = "Signals are dynamic variables that parameterize a visualization.";
-
-Object.assign(signal, { description: DESCRIPTION })
+Object.assign(signal, { description: "Signals are dynamic variables that parameterize a visualization." })
 
 export default {
   refs: {

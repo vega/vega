@@ -64,9 +64,7 @@ const layout = orSignal(object({
   )
 }));
 
-const DESCRIPTION = "Perform grid layout for a collection of group marks.";
-
-Object.assign(layout, { description: DESCRIPTION });
+Object.assign(layout, { description: "Perform grid layout for a collection of group marks." });
 
 export default {
   defs: {

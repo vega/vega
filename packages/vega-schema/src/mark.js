@@ -74,9 +74,7 @@ const mark = object({
   on: def('onMarkTrigger')
 }, undefined);
 
-const DESCRIPTION = "Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols.";
-
-Object.assign(mark, { description: DESCRIPTION });
+Object.assign(mark, { description: "Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols." });
 
 const markGroup = allOf(
   object({
