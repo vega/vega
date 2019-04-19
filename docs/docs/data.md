@@ -65,11 +65,19 @@ Loads a JavaScript Object Notation (JSON) file. Assumes row-oriented data, where
 
 ### <a name="csv"></a>csv
 
-Load a comma-separated values (CSV) file. This format type does not support any additional properties.
+Load a comma-separated values (CSV) file.
+
+| Name          | Type                          | Description    |
+| :------------ | :---------------------------: | :------------- |
+| header        | {% include type t="String[]" %} | An array of field names to prepend to the data as a header row. A header should only be supplied if the input data does not already include one.|
 
 ### <a name="tsv"></a>tsv
 
-Load a tab-separated values (TSV) file. This format type does not support any additional properties.
+Load a tab-separated values (TSV) file.
+
+| Name          | Type                          | Description    |
+| :------------ | :---------------------------: | :------------- |
+| header        | {% include type t="String[]" %} | An array of field names to prepend to the data as a header row. A header should only be supplied if the input data does not already include one.|
 
 ### <a name="dsv"></a>dsv
 
@@ -78,6 +86,7 @@ Load a delimited text file with a custom delimiter.
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
 | delimiter     | {% include type t="String" %} | {% include required %} The delimiter between records. The delimiter must be a single character (i.e., a single 16-bit code unit); so, ASCII delimiters are fine, but emoji delimiters are not.|
+| header        | {% include type t="String[]" %} | An array of field names to prepend to the data as a header row. A header should only be supplied if the input data does not already include one.|
 
 ### <a name="topojson"></a>topojson
 
