@@ -34,11 +34,13 @@ const dataFormat = anyOf(
   }),
   object({
     _type_: enums(['csv', 'tsv']),
+    header: array(stringType),
     parse: parseDef
   }),
   object({
     _type_: enums(['dsv']),
     _delimiter_: stringType,
+    header: array(stringType),
     parse: parseDef
   }),
   oneOf(

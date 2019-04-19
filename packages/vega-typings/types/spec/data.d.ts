@@ -14,9 +14,13 @@ export interface FormatJSON {
 }
 export interface FormatSV {
   type: 'csv' | 'tsv';
+  header?: string[];
   parse?: Parse;
 }
-export interface FormatDSV extends FormatSV {
+export interface FormatDSV {
+  type: 'dsv';
+  header?: string[];
+  parse?: Parse;
   delimiter: string;
 }
 export type FormatTopoJSON = {
