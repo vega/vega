@@ -5,12 +5,10 @@ export interface BaseBinding {
   debounce?: number;
   name?: string;
 }
-export interface InputBinding {
+export interface InputBinding extends BaseBinding {
   input?: string;
-  type?: string;
-  element?: Element;
-  debounce?: number;
-  name?: string;
+  placeholder?: string;
+  autocomplete?: string;
 }
 export interface BindCheckbox extends BaseBinding {
   input: 'checkbox';
