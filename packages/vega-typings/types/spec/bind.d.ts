@@ -5,6 +5,13 @@ export interface BaseBinding {
   debounce?: number;
   name?: string;
 }
+export interface InputBinding {
+  input?: string;
+  type?: string;
+  element?: Element;
+  debounce?: number;
+  name?: string;
+}
 export interface BindCheckbox extends BaseBinding {
   input: 'checkbox';
 }
@@ -18,4 +25,4 @@ export interface BindRange extends BaseBinding {
   max?: number;
   step?: number;
 }
-export type Binding = BaseBinding | BindCheckbox | BindRadioSelect | BindRange;
+export type Binding = BindCheckbox | BindRadioSelect | BindRange | InputBinding;

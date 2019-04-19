@@ -47,7 +47,7 @@ export type SourceData = {
 } & BaseData;
 
 export type ValuesData = {
-  values: Datum[];
+  values: Datum[] | object;
 } & BaseData;
 
 export type UrlData = {
