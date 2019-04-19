@@ -63,7 +63,7 @@ export function collectGeoJSON(data) {
 function featurize(f) {
   return f.type === FeatureCollection
     ? f.features
-    : array(f).map(
+    : array(f).filter(d => d != null).map(
         d => d.type === Feature ? d : {type: Feature, geometry: d}
       );
 }
