@@ -11,7 +11,7 @@ const scope = object({
   legends:     array(def('legend')),
   title:       def('title'),
   marks:       array(oneOf(def('markGroup'), def('markVisual'))),
-  usermeta:    eobjectType
+  usermeta:    objectType
 }, undefined);
 
 export default {
