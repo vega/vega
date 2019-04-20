@@ -8,3 +8,4 @@ before_install:
   - brew install cairo pango
 script:
   - yarn test
+cache: yarn
