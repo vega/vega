@@ -1,0 +1,32 @@
+{
+  "name": "vega-crossfilter",
+  "version": "4.0.1",
+  "description": "Indexed cross-filtering for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "crossfilter"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-crossfilter.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -g d3-array:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-crossfilter.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-crossfilter.js -c -m -o build/vega-crossfilter.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "d3-array": "^2.0.3",
+    "vega-dataflow": "^5.1.1",
+    "vega-util": "^1.8.0"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
+  }
+}

@@ -1,0 +1,32 @@
+{% assign id = include.spec | replace:'/','-' %}
+<div class="embed">
+  <div id="{{id}}" class="view"></div>
+  <a href="{% if include.dir %}{{ include.dir }}{% else %}..{% endif %}/{{ include.spec }}.vg.json">View Source</a>
+  <a id="{{id}}-png" href="#">Export PNG</a>
+  <a id="{{id}}-svg" href="#">Export SVG</a>
+</div>
+<script>
+var spec = {% include_relative {{ include.spec }}.vg.json %};
+
+function image(view, type) {
+  return function(event) {
+    event.preventDefault();
+    view.toImageURL(type).then(function(url) {
+      var link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('download', '{{ id }}.' + type);
+      link.dispatchEvent(new MouseEvent('click'));
+    }).catch(function(error) { console.error(error); });
+  };
+}
+
+var view = new vega.View(vega.parse(spec), {
+  loader: vega.loader({baseURL: '{{ site.baseurl }}/'}),
+  logLevel: vega.Warn,
+  renderer: 'canvas'
+}).initialize('#{{id}}').hover().run();
+
+document.querySelector('#{{id}}-png').addEventListener('click', image(view, 'png'));
+document.querySelector('#{{id}}-svg').addEventListener('click', image(view, 'svg'));
+</script>

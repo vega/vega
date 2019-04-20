@@ -1,0 +1,32 @@
+{
+  "name": "vega-projection-extended",
+  "version": "1.0.1",
+  "description": "Extended projections for cartographic mapping.",
+  "keywords": [
+    "vega",
+    "geo",
+    "projection",
+    "extended"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-projections-core.js",
+  "module": "index",
+  "unpkg": "build/vega-projections.min.js",
+  "jsdelivr": "build/vega-projections.min.js",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "node rollup.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup && node rollup.js -e",
+    "postbuild": "terser build/vega-projections.js -c -m -o build/vega-projections.min.js && terser build/vega-projections-core.js -c -m -o build/vega-projections-core.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "eslint index.js",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "d3-geo-projection": "^2.6.0",
+    "vega-projection": "^1.2.1"
+  }
+}

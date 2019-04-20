@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="shortcut icon" href="https://vega.github.io/favicon.ico"/>
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/syntax.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/main.css">
+    <script src="{{ site.baseurl }}/assets/promise.min.js"></script>
+    <script src="{{ site.baseurl }}/assets/symbol.min.js"></script>
+    <script src="{{ site.baseurl }}/vega.js"></script>
+    {% seo %}
+  </head>
+  <body>
+    <div class="fill">
+      <header>
+        <nav class="page-centered">
+          <div class="dropdown">
+            <a class="vega-title" href="{{site.baseurl}}/">{{site.title}}</a>
+            <div class="dropdown-content">
+              <a href="https://vega.github.io/vega-lite/">Vega-Lite</a>
+              <a href="https://altair-viz.github.io/">Altair</a>
+            </div>
+          </div>
+          <div class="vega-links">
+            <div class="primary-links">
+              <a href="{{ site.baseurl }}/examples/" {% if page.menu == 'examples' or layout.menu == 'examples' %}class="active"{% endif %}>Examples</a>
+              <a href="{{ site.baseurl }}/tutorials/" {% if page.menu == 'tutorials' or layout.menu == 'tutorials' %}class="active"{% endif %}>Tutorials</a>
+              <a href="{{ site.baseurl }}/docs/" {% if page.menu == 'docs' or layout.menu == 'docs' %}class="active"{% endif %}>Documentation</a>
+              <a href="{{ site.baseurl }}/usage/" {% if page.menu == 'usage' or layout.menu == 'usage' %}class="active"{% endif %}>Usage</a>
+              <a href="{{ site.baseurl }}/about/" {% if page.menu == 'about' or layout.menu == 'about' %}class="active"{% endif %}>About</a>
+            </div>
+            <div class="secondary-links">
+              <a href="https://github.com/vega/vega">GitHub</a>
+              <a href="https://vega.github.io/editor/#/custom/vega">Try Online</a>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <section>
+        {{ content }}
+      </section>
+    </div>
+
+    <footer>
+      <div class="page-centered">
+        <span class="edit-page">
+          <a href="https://github.com/vega/vega/edit/master/docs/{{page.path}}">Edit this Page</a>
+        </span>
+        <span class="fill"></span>
+        <a href="http://idl.cs.washington.edu" title="UW Interactive Data Lab" class="logo">
+          <img src="{{ site.baseurl }}/assets/idl-logo.png"/>
+        </a>
+      </div>
+    </footer>
+  </body>
+  <script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-44428446-5', 'auto');
+  ga('send', 'pageview');
+  </script>
+</html>

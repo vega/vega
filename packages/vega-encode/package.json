@@ -1,0 +1,38 @@
+{
+  "name": "vega-encode",
+  "version": "4.2.2",
+  "description": "Visual encoding transforms for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "encode",
+    "axes",
+    "legends"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-encode.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -g d3-array:d3,d3-format:d3,d3-interpolate:d3,d3-time-format:d3,vega-dataflow:vega,vega-scale:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-encode.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-encode.js -c -m -o build/vega-encode.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "d3-array": "^2.0.3",
+    "d3-format": "^1.3.2",
+    "d3-interpolate": "^1.3.2",
+    "d3-time-format": "^2.1.3",
+    "vega-dataflow": "^5.1.1",
+    "vega-scale": "^4.1.0",
+    "vega-util": "^1.8.0"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
+  }
+}

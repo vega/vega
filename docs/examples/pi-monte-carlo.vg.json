@@ -1,0 +1,328 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "autosize": "pad",
+  "padding": 5,
+  "height": 380,
+
+  "data": [
+    {
+      "name": "random_data",
+      "transform": [
+        { "type": "sequence", "start": 1, "stop": 5001 },
+        { "type": "formula", "as": "x", "expr": "random()" },
+        { "type": "formula", "as": "y", "expr": "random()" },
+        { "type": "filter", "expr": "datum.data <= num_points" }
+      ]
+    },
+    {
+      "name": "pi_estimates",
+      "source": "random_data",
+      "transform": [
+        {
+          "type": "formula", "as": "is_inside",
+          "expr": "(datum.x * datum.x + datum.y * datum.y) < 1"
+        },
+        {
+          "type": "window",
+          "fields": ["is_inside"],
+          "ops": ["sum"],
+          "as": ["num_inside"]
+        },
+        {
+          "type": "formula", "as": "estimate",
+          "expr": "4 * datum.num_inside / datum.data"
+        }
+      ]
+    },
+    {
+      "name": "pi_estimate",
+      "source": "pi_estimates",
+      "transform": [
+        { "type": "filter", "expr": "datum.data == num_points" },
+        { "type": "formula", "as": "value", "expr": "datum.estimate" }
+      ]
+    },
+    {
+      "name": "pi",
+      "values": [{ "value": 3.141592653589793 }]
+    }
+  ],
+
+  "signals": [
+    {
+      "name": "num_points",
+      "value": 1000,
+      "bind": {"input": "range", "min": 10, "max": 5000, "step": 1, "debounce": 10}
+    }
+  ],
+
+  "layout": {
+    "padding": 10,
+    "offset": 20,
+    "bounds": "full",
+    "align": "all"
+  },
+
+  "marks": [
+    {
+      "type": "group",
+      "style": "cell",
+      "title": {
+        "text": "In Points and Out Points",
+        "frame": "group"
+      },
+
+      "encode": {
+        "update": {
+          "width": {"signal": "height"},
+          "height": {"signal": "height"}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "arc",
+          "encode": {
+            "enter": {
+              "stroke": {"value": "#888"},
+              "strokeWidth": {"value": 1},
+              "startAngle": {"signal": "1.570796"},
+              "endAngle": {"value": 0},
+              "x": {"value": 0.5},
+              "y": {"signal": "height + 0.5"},
+              "innerRadius": {"signal": "height"},
+              "outerRadius": {"signal": "height"}
+            }
+          }
+        },
+        {
+          "type": "symbol",
+          "style": ["circle"],
+          "from": {"data": "random_data"},
+          "encode": {
+            "update": {
+              "opacity": {"value": 0.6},
+              "fill": [
+                {
+                  "test": "sqrt(datum.x * datum.x + datum.y * datum.y) <= 1",
+                  "value": "#003f5c"
+                },
+                { "value": "#ffa600" }
+              ],
+              "x": {"scale": "x_scale", "field": "x"},
+              "y": {"scale": "y_scale", "field": "y"},
+              "shape": {"value": "circle"}
+            }
+          }
+        }
+      ],
+
+      "axes": [
+        {
+          "scale": "x_scale",
+          "orient": "bottom",
+          "title": "x",
+          "labelFlush": true,
+          "labelOverlap": true,
+          "zindex": 1
+        },
+        {
+          "scale": "x_scale",
+          "orient": "bottom",
+          "grid": true,
+          "gridScale": "y_scale",
+          "domain": false,
+          "labels": false,
+          "maxExtent": 0,
+          "minExtent": 0,
+          "ticks": false,
+          "zindex": 0
+        },
+        {
+          "scale": "y_scale",
+          "orient": "left",
+          "title": "y",
+          "labelOverlap": true,
+          "zindex": 1
+        },
+        {
+          "scale": "y_scale",
+          "orient": "left",
+          "grid": true,
+          "gridScale": "x_scale",
+          "domain": false,
+          "labels": false,
+          "maxExtent": 0,
+          "minExtent": 0,
+          "ticks": false,
+          "zindex": 0
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "name": "concat_1_group",
+      "style": "cell",
+      "title": {
+        "text": "π Estimate",
+        "frame": "group"
+      },
+
+      "encode": {
+        "update": {
+          "width": {"signal": "height"},
+          "height": {"signal": "height"}
+        }
+      },
+
+      "marks": [
+        {
+          "type": "symbol",
+          "style": ["circle"],
+          "from": {"data": "pi_estimates"},
+          "encode": {
+            "update": {
+              "opacity": {"value": 0.7},
+              "fill": {"value": "#4c78a8"},
+              "x": {"scale": "data_point_scale", "field": "data"},
+              "y": {"scale": "pi_scale", "field": "estimate"},
+              "size": {"value": 8},
+              "shape": {"value": "circle"}
+            }
+          }
+        },
+        {
+          "type": "rule",
+          "from": {"data": "pi"},
+          "encode": {
+            "update": {
+              "stroke": {"value": "darkgrey"},
+              "x": {"value": 0},
+              "y": {"scale": "pi_scale", "field": "value"},
+              "x2": {"field": {"group": "width"}}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "pi"},
+          "encode": {
+            "update": {
+              "align": {"value": "left"},
+              "x": {"value": 10},
+              "fill": {"value": "black"},
+              "y": {"scale": "pi_scale", "field": "value", "offset": -5},
+              "text": {"value": "Real PI: 3.1415..."}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "pi_estimate"},
+          "encode": {
+            "update": {
+              "align": {"value": "right"},
+              "x": {"signal": "height", "offset": -5},
+              "dy": {"value": -5},
+              "fill": {"value": "black"},
+              "y": {"scale": "pi_scale", "field": "value"},
+              "text": {"signal": "'Estimate: ' + format(datum.estimate, ',.3f')"}
+            }
+          }
+        }
+      ],
+
+      "axes": [
+        {
+          "scale": "data_point_scale",
+          "orient": "bottom",
+          "title": "Number of Points",
+          "labelFlush": true,
+          "labelOverlap": true,
+          "zindex": 1
+        },
+        {
+          "scale": "data_point_scale",
+          "orient": "bottom",
+          "grid": true,
+          "gridScale": "pi_scale",
+          "domain": false,
+          "labels": false,
+          "maxExtent": 0,
+          "minExtent": 0,
+          "ticks": false,
+          "zindex": 0
+        },
+        {
+          "scale": "pi_scale",
+          "orient": "left",
+          "title": "Estimated π Value",
+          "labelOverlap": true,
+          "zindex": 1
+        },
+        {
+          "scale": "pi_scale",
+          "orient": "left",
+          "grid": true,
+          "gridScale": "data_point_scale",
+          "domain": false,
+          "labels": false,
+          "maxExtent": 0,
+          "minExtent": 0,
+          "ticks": false,
+          "zindex": 0
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x_scale",
+      "type": "linear",
+      "domain": [0, 1],
+      "range": "height",
+      "reverse": true,
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y_scale",
+      "type": "linear",
+      "domain": [0, 1],
+      "range": "height",
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "data_point_scale",
+      "type": "linear",
+      "domain": {
+        "data": "pi_estimates",
+        "field": "data"
+      },
+      "range": "height",
+      "reverse": true,
+      "nice": false,
+      "zero": true
+    },
+    {
+      "name": "pi_scale",
+      "type": "linear",
+      "domain": {
+        "fields": [
+          [2, 4],
+          {"data": "pi", "field": "value"},
+          {"data": "pi_estimates", "field": "estimate"}
+        ]
+      },
+      "range": "height",
+      "nice": true,
+      "zero": false
+    }
+  ],
+
+  "config": {
+    "axisY": {"minExtent": 30}
+  }
+}

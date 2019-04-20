@@ -1,0 +1,32 @@
+{
+  "name": "vega-voronoi",
+  "version": "4.0.1",
+  "description": "Voronoi diagram transform for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "voronoi"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-voronoi.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -g d3-voronoi:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "d3-voronoi": "^1.1.4",
+    "vega-dataflow": "^5.1.1",
+    "vega-util": "^1.8.0"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
+  }
+}

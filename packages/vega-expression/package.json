@@ -1,0 +1,29 @@
+{
+  "name": "vega-expression",
+  "version": "2.6.0",
+  "description": "Vega expression parser and code generator.",
+  "keywords": [
+    "vega",
+    "expression",
+    "parser",
+    "codegen"
+  ],
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "license": "BSD-3-Clause",
+  "main": "build/vega-expression.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-expression.js -c -m -o build/vega-expression.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "vega-util": "^1.8.0"
+  }
+}

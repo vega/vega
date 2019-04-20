@@ -1,0 +1,154 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 250,
+  "height": 200,
+
+  "data": [
+    {
+      "name": "weather",
+      "url": "data/weather.json"
+    },
+    {
+      "name": "actual",
+      "source": "weather",
+      "transform": [{"type":"filter", "expr":"datum.actual"}]
+    },
+    {
+      "name": "forecast",
+      "source": "weather",
+      "transform": [{"type":"filter", "expr":"datum.forecast"}]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "band",
+      "range": "width",
+      "padding": 0.1, "round": true,
+      "domain": {"data": "weather", "field": "id"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "nice": true, "zero": false, "round": true,
+      "domain": {
+        "data": "weather",
+        "fields": ["record.low", "record.high"]
+      }
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "right",
+      "scale": "y",
+      "tickCount": 3,
+      "tickSize": 0,
+      "labelPadding": 0,
+      "grid": true,
+      "domain": false,
+      "zindex": 1,
+      "encode": {
+        "grid": {"enter": {"stroke": {"value": "white"}}}
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "text",
+      "from": {"data": "weather"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id"},
+          "dx": {"scale": "x", "band": 0.5},
+          "y": {"value": 0},
+          "fill": {"value": "#000"},
+          "text": {"field": "day"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "weather"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id"},
+          "width": {"scale": "x", "band": 1, "offset": -1},
+          "y": {"scale": "y", "field": "record.low"},
+          "y2": {"scale": "y", "field": "record.high"},
+          "fill": {"value": "#ccc"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "weather"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id"},
+          "width": {"scale": "x", "band": 1, "offset": -1},
+          "y": {"scale": "y", "field": "normal.low"},
+          "y2": {"scale": "y", "field": "normal.high"},
+          "fill": {"value": "#999"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "actual"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id", "offset": 4},
+          "width": {"scale": "x", "band": 1, "offset": -8},
+          "y": {"scale": "y", "field": "actual.low"},
+          "y2": {"scale": "y", "field": "actual.high"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "forecast"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id", "offset": 9},
+          "width": {"scale": "x", "band": 1, "offset": -18},
+          "y": {"scale": "y", "field": "forecast.low.low"},
+          "y2": {"scale": "y", "field": "forecast.high.high"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "forecast"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id", "offset": 4},
+          "width": {"scale": "x", "band": 1, "offset": -8},
+          "y": {"scale": "y", "field": "forecast.low.low"},
+          "y2": {"scale": "y", "field": "forecast.low.high"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "forecast"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "id", "offset": 4},
+          "width": {"scale": "x", "band": 1, "offset": -8},
+          "y": {"scale": "y", "field": "forecast.high.low"},
+          "y2": {"scale": "y", "field": "forecast.high.high"},
+          "fill": {"value": "#000"}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "height": 410,
+  "padding": 5,
+  "autosize": "fit",
+
+  "signals": [
+    {
+      "name": "k", "value": 20,
+      "bind": {"input": "range", "min": 10, "max": 30, "step": 1}
+    },
+    {
+      "name": "op", "value": "average",
+      "bind": {"input": "select", "options": ["average", "median", "sum"]}
+    },
+    {
+      "name": "label",
+      "value": {"average": "Average", "median": "Median", "sum": "Total"}
+    }
+  ],
+
+  "title": {
+    "text": {"signal": "'Top Directors by ' + label[op] + ' Worldwide Gross'"},
+    "anchor": "start",
+    "frame": "group"
+  },
+
+  "data": [
+    {
+      "name": "source",
+      "url": "data/movies.json",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Director != null && datum.Worldwide_Gross != null"
+        }
+      ]
+    },
+    {
+      "name": "ranks",
+      "source": "source",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["Director"],
+          "ops": [{"signal": "op"}],
+          "fields": ["Worldwide_Gross"],
+          "as": ["Gross"]
+        },
+        {
+          "type": "window",
+          "sort": {"field": "Gross", "order": "descending"},
+          "ops": ["row_number"], "as": ["rank"]
+        }
+      ]
+    },
+    {
+      "name": "directors",
+      "source": "source",
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "ranks",
+          "key": "Director",
+          "values": ["rank"],
+          "fields": ["Director"]
+        },
+        {
+          "type": "formula",
+          "as": "Category",
+          "expr": "datum.rank < k ? datum.Director : 'All Others'"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["Category"],
+          "ops": [{"signal": "op"}],
+          "fields": ["Worldwide_Gross"],
+          "as": ["Gross"]
+        }
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "directors"},
+      "encode": {
+        "update": {
+          "x": {"scale": "x", "value": 0},
+          "x2": {"scale": "x", "field": "Gross"},
+          "y": {"scale": "y", "field": "Category"},
+          "height": {"scale": "y", "band": 1}
+        }
+      }
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "directors", "field": "Gross"},
+      "range": "width",
+      "nice": true
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "directors", "field": "Category",
+        "sort": {"op": "max", "field": "Gross", "order": "descending"}
+      },
+      "range": "height",
+      "padding": 0.1
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "format": "$,d",
+      "tickCount": 5
+    },
+    {
+      "scale": "y",
+      "orient": "left"
+    }
+  ]
+}

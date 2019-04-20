@@ -1,0 +1,10 @@
+{% assign words = include.spec | split:'-' %}
+{% capture title %}{% for w in words %}{{ w | capitalize }} {% endfor %}{% endcapture %}
+<div class="preview">
+<a href="{{ include.spec }}/">
+  <div class="image" alt="{{ title | strip }}" style="background-image: url(img/{{ include.spec }}.png);"></div>
+  {{ title | strip }}
+</a>
+</div>
+
+

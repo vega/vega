@@ -1,0 +1,161 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 800,
+  "height": 600,
+  "padding": 5,
+
+  "signals": [
+    {
+      "name": "animate", "value": false,
+      "bind": {"input": "checkbox"}
+    },
+    {
+      "name": "interval", "value": 1000,
+      "bind": {"input": "select", "options": [500, 1000, 2000]}
+    },
+    {
+      "name": "count", "value": 0,
+      "on": [
+        {
+          "events": "timer{500}",
+          "update": "(count + 500) % 10000"
+        }
+      ]
+    },
+    {
+      "name": "step",
+      "update": "~~(count / interval)"
+    },
+    {
+      "name": "regions",
+      "value": {
+        "0": "South Asia",
+        "1": "Europe & Central Asia",
+        "2": "Sub-Saharan Africa",
+        "3": "America",
+        "4": "East Asia & Pacific",
+        "5": "Middle East & North Africa"
+      }
+    },
+    {
+      "name": "minYear",
+      "update": "extentYear[0]"
+    },
+    {
+      "name": "maxYear",
+      "update": "extentYear[1]"
+    },
+    {
+      "name": "year", "value": 1955,
+      "bind": {"input": "range", "min": 1955, "max": 2000, "step": 5},
+      "on": [
+        {
+          "events": {"signal": "~~(count / interval)"},
+          "update": "animate && year < maxYear ? year + 5 : year"
+        }
+      ]
+    }
+  ],
+
+  "title": {
+    "text": {"signal": "'World Development Trends in ' + year"},
+    "anchor": "start", "frame": "group",
+    "fontSize": 18
+  },
+
+  "data": [
+    {
+      "name": "gapminder",
+      "url": "data/gapminder.json",
+      "transform": [
+        { "type": "extent", "field": "year", "signal": "extentYear" },
+        { "type": "formula", "as": "region", "expr": "regions[datum.cluster]" }
+      ]
+    },
+    {
+      "name": "filtered",
+      "source": "gapminder",
+      "transform": [
+        { "type": "filter", "expr": "datum.year === year" }
+      ]
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "left",
+      "scale": "y",
+      "title": "Life Expentancy (Years)",
+      "titleColor": "#444",
+      "titleAlign": "right",
+      "titleAnchor": "end",
+      "titleBaseline": "top",
+      "titleX": 5
+    },
+    {
+      "orient": "bottom",
+      "scale": "x",
+      "title": "Fertility (# Children)",
+      "titleColor": "#444",
+      "titleAlign": "right",
+      "titleAnchor": "end",
+      "titleBaseline": "bottom",
+      "titleY": -5
+    }
+  ],
+
+  "legends": [
+    {
+      "orient": "bottom-left",
+      "fill": "color",
+      "title": "Region",
+      "offset": 10
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear", "nice": true,
+      "domain": {"data": "gapminder", "field": "fertility"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear", "nice": true, "zero": false,
+      "domain": {"data": "gapminder", "field": "life_expect"},
+      "range": "height"
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "gapminder", "field": "region"},
+      "range": "category"
+    },
+    {
+      "name": "size",
+      "domain": {"data": "gapminder", "field": "pop"},
+      "range": [100, 5000]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "filtered"},
+      "sort": {"field": "size", "order": "descending"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "region"},
+          "stroke": {"value": "#fff"},
+          "strokeWidth": {"value": 0.5}
+        },
+        "update": {
+          "x": {"scale": "x", "field": "fertility"},
+          "y": {"scale": "y", "field": "life_expect"},
+          "size": {"scale": "size", "field": "pop"}
+        }
+      }
+    }
+  ]
+}

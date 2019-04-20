@@ -1,0 +1,28 @@
+{
+  "name": "vega-projection",
+  "version": "1.2.1",
+  "description": "Projections for cartographic mapping.",
+  "keywords": [
+    "vega",
+    "geo",
+    "projection"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-projection.js",
+  "module": "index",
+  "repository": "vega/vega",
+  "scripts": {
+    "rollup": "rollup -g d3-geo:d3 -f umd -n vega -o build/vega-projection.js -- index.js",
+    "prebuild": "rimraf build && mkdir build",
+    "build": "yarn rollup",
+    "postbuild": "terser build/vega-projection.js -c -m -o build/vega-projection.min.js",
+    "pretest": "yarn prebuild && yarn rollup",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "prepublishOnly": "yarn test && yarn build",
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "d3-geo": "^1.11.3"
+  }
+}

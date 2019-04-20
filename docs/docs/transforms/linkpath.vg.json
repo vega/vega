@@ -1,0 +1,109 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 200,
+  "height": 200,
+  "autosize": "none",
+
+  "signals": [
+    {
+      "name": "orient", "value": "vertical",
+      "bind": {"input": "select", "options": ["vertical", "horizontal", "radial"]}
+    },
+    {
+      "name": "shape", "value": "diagonal",
+      "bind": {"input": "select", "options": ["line", "arc", "curve", "diagonal", "orthogonal"]}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "nodes",
+      "values": [
+        {"id": 2, "x":  0, "y":100},
+        {"id": 3, "x":-75, "y":175},
+        {"id": 5, "x": 75, "y":175},
+        {"id": 6, "x":-50, "y": 25},
+        {"id": 7, "x": 50, "y": 25}
+      ],
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "atan2(datum.y, datum.x)",
+          "as":   "angle"
+        },
+        {
+          "type": "formula",
+          "expr": "sqrt(datum.y * datum.y + datum.x * datum.x)",
+          "as":   "radius"
+        },
+        {
+          "type": "formula",
+          "expr": "orient === 'radial' ? datum.angle : datum.x",
+          "as":   "v0"
+        },
+        {
+          "type": "formula",
+          "expr": "orient === 'radial' ? datum.radius : datum.y",
+          "as":   "v1"
+        }
+      ]
+    },
+    {
+      "name": "edges",
+      "values": [
+        {"s":2, "t":3},
+        {"s":2, "t":5},
+        {"s":2, "t":6},
+        {"s":2, "t":7}
+      ],
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "nodes",
+          "key": "id",
+          "fields": ["s", "t"],
+          "as": ["source", "target"]
+        },
+        {
+          "type": "linkpath",
+          "sourceX": "source.v0",
+          "sourceY": "source.v1",
+          "targetX": "target.v0",
+          "targetY": "target.v1",
+          "orient": {"signal": "orient"},
+          "shape": {"signal": "shape"}
+        }
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "path",
+      "from": {"data": "edges"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#ccc"},
+          "strokeWidth": {"value": 2},
+          "x": {"value": 100},
+          "y": {"value": 0}
+        },
+        "update": {
+          "path": {"field": "path"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "nodes"},
+      "encode": {
+        "enter": {
+          "size": {"value": 200},
+          "fill": {"value": "steelblue"},
+          "x": {"field": "x", "offset": 100},
+          "y": {"field": "y", "offset": 0}
+        }
+      }
+    }
+  ]
+}

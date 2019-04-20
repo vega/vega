@@ -1,0 +1,169 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 900,
+  "height": 465,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "wheat",
+      "url": "data/wheat.json"
+    },
+    {
+      "name": "wheat-filtered",
+      "source": "wheat",
+      "transform": [
+        { "type": "filter", "expr": "!!datum.wages" }
+      ]
+    },
+    {
+      "name": "monarchs",
+      "url": "data/monarchs.json",
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "((!datum.commonwealth && datum.index % 2) ? -1: 1) * 2 + 95",
+          "as": "offset"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "range": "width",
+      "domain": [1565, 1825],
+      "zero": false
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "zero": true,
+      "domain": {"data": "wheat", "field": "wheat"}
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "range": ["black", "white"],
+      "domain": {"data": "monarchs", "field": "commonwealth"}
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "x",
+      "tickCount": 5,
+      "format": "04d",
+      "zindex": 1
+    },
+    {
+      "orient": "right",
+      "scale": "y",
+      "grid": true,
+      "domain": false,
+      "zindex": 1,
+      "tickCount": 5,
+      "offset": 5,
+      "tickSize": 0,
+      "gridColor": "#fff",
+      "gridWidth": 1,
+      "gridOpacity": 0.25,
+      "labelFontStyle": "italic"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "wheat"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "year"},
+          "width": {"value": 17},
+          "y": {"scale": "y", "field": "wheat"},
+          "y2": {"scale": "y", "value": 0},
+          "fill": {"value": "#aaa"},
+          "stroke": {"value": "#5d5d5d"},
+          "strokeWidth": {"value": 0.25}
+        }
+      }
+    },
+    {
+      "type": "area",
+      "from": {"data": "wheat-filtered"},
+      "encode": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "y2": {"scale": "y", "value": 0},
+          "fill": {"value": "#B3D9E6"},
+          "fillOpacity": {"value": 0.8}
+        }
+      }
+    },
+    {
+      "type": "line",
+      "from": {"data": "wheat-filtered"},
+      "encode": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "stroke": {"value": "#ff7e79"},
+          "strokeWidth": {"value": 3}
+        }
+      }
+    },
+    {
+      "type": "line",
+      "from": {"data": "wheat-filtered"},
+      "encode": {
+        "enter": {
+          "interpolate": {"value": "linear"},
+          "x": {"scale": "x", "field": "year"},
+          "y": {"scale": "y", "field": "wages"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "name" : "monarch_rects",
+      "type": "rect",
+      "from": {"data": "monarchs"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "start"},
+          "x2": {"scale": "x", "field": "end"},
+          "y": {"scale": "y", "value": 95},
+          "y2": {"scale": "y", "field": "offset"},
+          "fill": {"scale": "c", "field": "commonwealth"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "monarch_rects"},
+      "encode": {
+        "enter": {
+          "x": {"field": "x"},
+          "dx": {"field": "width", "mult": 0.5},
+          "y": {"field": "y2", "offset": 14},
+          "text": {"field": "datum.name"},
+          "align": {"value": "center"},
+          "fill": {"value": "black"},
+          "font": {"value": "Helvetica Neue, Arial"},
+          "fontSize": {"value": 10},
+          "fontStyle": {"value": "italic"}
+        }
+      }
+    }
+  ]
+}

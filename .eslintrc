@@ -1,0 +1,15 @@
+parserOptions:
+    sourceType: "module"
+    ecmaVersion: 2018
+
+env:
+    es6: true
+    browser: true
+    node: true
+
+extends:
+    "eslint:recommended"
+
+rules:
+    no-cond-assign: 0
+    no-fallthrough: ["error", { "commentPattern": "break omitted" }]

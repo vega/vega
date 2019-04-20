@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+// Render a Vega specification to SVG
+const {writeFile} = require('fs'),
+      render = require('../src/render');
+
+const svgHeader =
+  '<?xml version="1.0" encoding="utf-8"?>\n' +
+  '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" ' +
+  '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n';
+
+render('svg', function(body, arg) {
+  const svg = (arg.h ? svgHeader : '') + body,
+        file = arg._[1] || null;
+
+  if (file) {
+    // write to file
+    writeFile(file, svg, err => { if (err) throw err; });
+  } else {
+    // write to stdout
+    process.stdout.write(svg);
+  }
+});

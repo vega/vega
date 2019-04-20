@@ -1,0 +1,4162 @@
+[
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.102,
+    "total": 1837292,
+    "group": "<10000"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.072,
+    "total": 1837292,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.13,
+    "total": 1837292,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.115,
+    "total": 1837292,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.143,
+    "total": 1837292,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.108,
+    "total": 1837292,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.174,
+    "total": 1837292,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.1,
+    "total": 1837292,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.031,
+    "total": 1837292,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Alabama",
+    "region": "south",
+    "id": 1,
+    "pct": 0.025,
+    "total": 1837292,
+    "group": "200000+"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.037,
+    "total": 250875,
+    "group": "<10000"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.037,
+    "total": 250875,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.077,
+    "total": 250875,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.075,
+    "total": 250875,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.12,
+    "total": 250875,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.152,
+    "total": 250875,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.187,
+    "total": 250875,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.182,
+    "total": 250875,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.077,
+    "total": 250875,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Alaska",
+    "region": "west",
+    "id": 2,
+    "pct": 0.056,
+    "total": 250875,
+    "group": "200000+"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.079,
+    "total": 2381501,
+    "group": "<10000"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.055,
+    "total": 2381501,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.116,
+    "total": 2381501,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.113,
+    "total": 2381501,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.148,
+    "total": 2381501,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.115,
+    "total": 2381501,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.185,
+    "total": 2381501,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.115,
+    "total": 2381501,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.039,
+    "total": 2381501,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Arizona",
+    "region": "west",
+    "id": 4,
+    "pct": 0.034,
+    "total": 2381501,
+    "group": "200000+"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.097,
+    "total": 1130417,
+    "group": "<10000"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.078,
+    "total": 1130417,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.143,
+    "total": 1130417,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.124,
+    "total": 1130417,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.151,
+    "total": 1130417,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.098,
+    "total": 1130417,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.176,
+    "total": 1130417,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.088,
+    "total": 1130417,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.025,
+    "total": 1130417,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Arkansas",
+    "region": "south",
+    "id": 5,
+    "pct": 0.021,
+    "total": 1130417,
+    "group": "200000+"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.061,
+    "total": 12581722,
+    "group": "<10000"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.053,
+    "total": 12581722,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.099,
+    "total": 12581722,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.092,
+    "total": 12581722,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.124,
+    "total": 12581722,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.119,
+    "total": 12581722,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.169,
+    "total": 12581722,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.146,
+    "total": 12581722,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.065,
+    "total": 12581722,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "California",
+    "region": "west",
+    "id": 6,
+    "pct": 0.072,
+    "total": 12581722,
+    "group": "200000+"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.062,
+    "total": 1989371,
+    "group": "<10000"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.044,
+    "total": 1989371,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.096,
+    "total": 1989371,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.097,
+    "total": 1989371,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.134,
+    "total": 1989371,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.13,
+    "total": 1989371,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.185,
+    "total": 1989371,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.142,
+    "total": 1989371,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.057,
+    "total": 1989371,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Colorado",
+    "region": "west",
+    "id": 8,
+    "pct": 0.053,
+    "total": 1989371,
+    "group": "200000+"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.059,
+    "total": 1348275,
+    "group": "<10000"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.042,
+    "total": 1348275,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.085,
+    "total": 1348275,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.08,
+    "total": 1348275,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.109,
+    "total": 1348275,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.128,
+    "total": 1348275,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.166,
+    "total": 1348275,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.165,
+    "total": 1348275,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.076,
+    "total": 1348275,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Connecticut",
+    "region": "northeast",
+    "id": 9,
+    "pct": 0.09,
+    "total": 1348275,
+    "group": "200000+"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.057,
+    "total": 337245,
+    "group": "<10000"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.042,
+    "total": 337245,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.091,
+    "total": 337245,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.097,
+    "total": 337245,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.133,
+    "total": 337245,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.134,
+    "total": 337245,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.194,
+    "total": 337245,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.15,
+    "total": 337245,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.055,
+    "total": 337245,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Delaware",
+    "region": "south",
+    "id": 10,
+    "pct": 0.047,
+    "total": 337245,
+    "group": "200000+"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.106,
+    "total": 268015,
+    "group": "<10000"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.044,
+    "total": 268015,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.076,
+    "total": 268015,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.068,
+    "total": 268015,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.101,
+    "total": 268015,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.104,
+    "total": 268015,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.145,
+    "total": 268015,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.156,
+    "total": 268015,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.078,
+    "total": 268015,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "District of Columbia",
+    "region": "south",
+    "id": 11,
+    "pct": 0.121,
+    "total": 268015,
+    "group": "200000+"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.081,
+    "total": 7168502,
+    "group": "<10000"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.06,
+    "total": 7168502,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.125,
+    "total": 7168502,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.119,
+    "total": 7168502,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.151,
+    "total": 7168502,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.107,
+    "total": 7168502,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.181,
+    "total": 7168502,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.103,
+    "total": 7168502,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.035,
+    "total": 7168502,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Florida",
+    "region": "south",
+    "id": 12,
+    "pct": 0.037,
+    "total": 7168502,
+    "group": "200000+"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.092,
+    "total": 3522934,
+    "group": "<10000"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.059,
+    "total": 3522934,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.116,
+    "total": 3522934,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.109,
+    "total": 3522934,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.141,
+    "total": 3522934,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.111,
+    "total": 3522934,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.18,
+    "total": 3522934,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.113,
+    "total": 3522934,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.041,
+    "total": 3522934,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Georgia",
+    "region": "south",
+    "id": 13,
+    "pct": 0.039,
+    "total": 3522934,
+    "group": "200000+"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.06,
+    "total": 449296,
+    "group": "<10000"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.037,
+    "total": 449296,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.076,
+    "total": 449296,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.077,
+    "total": 449296,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.12,
+    "total": 449296,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.14,
+    "total": 449296,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.189,
+    "total": 449296,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.174,
+    "total": 449296,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.069,
+    "total": 449296,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Hawaii",
+    "region": "west",
+    "id": 15,
+    "pct": 0.058,
+    "total": 449296,
+    "group": "200000+"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.072,
+    "total": 583452,
+    "group": "<10000"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.057,
+    "total": 583452,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.123,
+    "total": 583452,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.126,
+    "total": 583452,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.161,
+    "total": 583452,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.116,
+    "total": 583452,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.201,
+    "total": 583452,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.096,
+    "total": 583452,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.027,
+    "total": 583452,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Idaho",
+    "region": "west",
+    "id": 16,
+    "pct": 0.022,
+    "total": 583452,
+    "group": "200000+"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.074,
+    "total": 4763457,
+    "group": "<10000"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.048,
+    "total": 4763457,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.102,
+    "total": 4763457,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.097,
+    "total": 4763457,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.13,
+    "total": 4763457,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.126,
+    "total": 4763457,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.18,
+    "total": 4763457,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.137,
+    "total": 4763457,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.052,
+    "total": 4763457,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Illinois",
+    "region": "midwest",
+    "id": 17,
+    "pct": 0.053,
+    "total": 4763457,
+    "group": "200000+"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.077,
+    "total": 2482558,
+    "group": "<10000"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.057,
+    "total": 2482558,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.117,
+    "total": 2482558,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.115,
+    "total": 2482558,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.154,
+    "total": 2482558,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.123,
+    "total": 2482558,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.193,
+    "total": 2482558,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.109,
+    "total": 2482558,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.03,
+    "total": 2482558,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Indiana",
+    "region": "midwest",
+    "id": 18,
+    "pct": 0.026,
+    "total": 2482558,
+    "group": "200000+"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.065,
+    "total": 1227201,
+    "group": "<10000"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.054,
+    "total": 1227201,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.107,
+    "total": 1227201,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.11,
+    "total": 1227201,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.148,
+    "total": 1227201,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.133,
+    "total": 1227201,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.201,
+    "total": 1227201,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.12,
+    "total": 1227201,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.033,
+    "total": 1227201,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Iowa",
+    "region": "midwest",
+    "id": 19,
+    "pct": 0.029,
+    "total": 1227201,
+    "group": "200000+"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.066,
+    "total": 1109747,
+    "group": "<10000"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.052,
+    "total": 1109747,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.11,
+    "total": 1109747,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.113,
+    "total": 1109747,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.151,
+    "total": 1109747,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.123,
+    "total": 1109747,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.193,
+    "total": 1109747,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.121,
+    "total": 1109747,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.038,
+    "total": 1109747,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Kansas",
+    "region": "midwest",
+    "id": 20,
+    "pct": 0.033,
+    "total": 1109747,
+    "group": "200000+"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.103,
+    "total": 1693399,
+    "group": "<10000"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.072,
+    "total": 1693399,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.13,
+    "total": 1693399,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.115,
+    "total": 1693399,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.146,
+    "total": 1693399,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.107,
+    "total": 1693399,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.177,
+    "total": 1693399,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.098,
+    "total": 1693399,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.026,
+    "total": 1693399,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Kentucky",
+    "region": "south",
+    "id": 21,
+    "pct": 0.025,
+    "total": 1693399,
+    "group": "200000+"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.104,
+    "total": 1715997,
+    "group": "<10000"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.073,
+    "total": 1715997,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.129,
+    "total": 1715997,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.11,
+    "total": 1715997,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.133,
+    "total": 1715997,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.109,
+    "total": 1715997,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.164,
+    "total": 1715997,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.11,
+    "total": 1715997,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.036,
+    "total": 1715997,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Louisiana",
+    "region": "south",
+    "id": 22,
+    "pct": 0.032,
+    "total": 1715997,
+    "group": "200000+"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.072,
+    "total": 552589,
+    "group": "<10000"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.066,
+    "total": 552589,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.122,
+    "total": 552589,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.119,
+    "total": 552589,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.144,
+    "total": 552589,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.123,
+    "total": 552589,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.19,
+    "total": 552589,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.106,
+    "total": 552589,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.03,
+    "total": 552589,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Maine",
+    "region": "northeast",
+    "id": 23,
+    "pct": 0.028,
+    "total": 552589,
+    "group": "200000+"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.054,
+    "total": 2149424,
+    "group": "<10000"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.035,
+    "total": 2149424,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.072,
+    "total": 2149424,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.073,
+    "total": 2149424,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.108,
+    "total": 2149424,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.133,
+    "total": 2149424,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.174,
+    "total": 2149424,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.18,
+    "total": 2149424,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.085,
+    "total": 2149424,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Maryland",
+    "region": "south",
+    "id": 24,
+    "pct": 0.086,
+    "total": 2149424,
+    "group": "200000+"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.065,
+    "total": 2528592,
+    "group": "<10000"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.052,
+    "total": 2528592,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.089,
+    "total": 2528592,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.079,
+    "total": 2528592,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.108,
+    "total": 2528592,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.125,
+    "total": 2528592,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.161,
+    "total": 2528592,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.164,
+    "total": 2528592,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.077,
+    "total": 2528592,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Massachusetts",
+    "region": "northeast",
+    "id": 25,
+    "pct": 0.08,
+    "total": 2528592,
+    "group": "200000+"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.084,
+    "total": 3815532,
+    "group": "<10000"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.058,
+    "total": 3815532,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.118,
+    "total": 3815532,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.112,
+    "total": 3815532,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.146,
+    "total": 3815532,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.117,
+    "total": 3815532,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.184,
+    "total": 3815532,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.113,
+    "total": 3815532,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.037,
+    "total": 3815532,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Michigan",
+    "region": "midwest",
+    "id": 26,
+    "pct": 0.031,
+    "total": 3815532,
+    "group": "200000+"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.058,
+    "total": 2109924,
+    "group": "<10000"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.045,
+    "total": 2109924,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.093,
+    "total": 2109924,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.092,
+    "total": 2109924,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.133,
+    "total": 2109924,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.14,
+    "total": 2109924,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.192,
+    "total": 2109924,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.149,
+    "total": 2109924,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.052,
+    "total": 2109924,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Minnesota",
+    "region": "midwest",
+    "id": 27,
+    "pct": 0.047,
+    "total": 2109924,
+    "group": "200000+"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.118,
+    "total": 1086898,
+    "group": "<10000"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.083,
+    "total": 1086898,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.143,
+    "total": 1086898,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.121,
+    "total": 1086898,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.145,
+    "total": 1086898,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.094,
+    "total": 1086898,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.171,
+    "total": 1086898,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.081,
+    "total": 1086898,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.024,
+    "total": 1086898,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Mississippi",
+    "region": "south",
+    "id": 28,
+    "pct": 0.02,
+    "total": 1086898,
+    "group": "200000+"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.081,
+    "total": 2353778,
+    "group": "<10000"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.061,
+    "total": 2353778,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.121,
+    "total": 2353778,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.115,
+    "total": 2353778,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.15,
+    "total": 2353778,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.115,
+    "total": 2353778,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.188,
+    "total": 2353778,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.105,
+    "total": 2353778,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.035,
+    "total": 2353778,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Missouri",
+    "region": "midwest",
+    "id": 29,
+    "pct": 0.029,
+    "total": 2353778,
+    "group": "200000+"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.073,
+    "total": 405504,
+    "group": "<10000"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.067,
+    "total": 405504,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.128,
+    "total": 405504,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.118,
+    "total": 405504,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.149,
+    "total": 405504,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.114,
+    "total": 405504,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.194,
+    "total": 405504,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.103,
+    "total": 405504,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.026,
+    "total": 405504,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Montana",
+    "region": "west",
+    "id": 30,
+    "pct": 0.026,
+    "total": 405504,
+    "group": "200000+"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.063,
+    "total": 729572,
+    "group": "<10000"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.054,
+    "total": 729572,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.11,
+    "total": 729572,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.11,
+    "total": 729572,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.149,
+    "total": 729572,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.129,
+    "total": 729572,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.2,
+    "total": 729572,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.119,
+    "total": 729572,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.035,
+    "total": 729572,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Nebraska",
+    "region": "midwest",
+    "id": 31,
+    "pct": 0.032,
+    "total": 729572,
+    "group": "200000+"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.068,
+    "total": 995980,
+    "group": "<10000"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.049,
+    "total": 995980,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.109,
+    "total": 995980,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.112,
+    "total": 995980,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.153,
+    "total": 995980,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.121,
+    "total": 995980,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.197,
+    "total": 995980,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.119,
+    "total": 995980,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.039,
+    "total": 995980,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Nevada",
+    "region": "west",
+    "id": 32,
+    "pct": 0.032,
+    "total": 995980,
+    "group": "200000+"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.045,
+    "total": 518088,
+    "group": "<10000"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.042,
+    "total": 518088,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.085,
+    "total": 518088,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.088,
+    "total": 518088,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.126,
+    "total": 518088,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.143,
+    "total": 518088,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.185,
+    "total": 518088,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.167,
+    "total": 518088,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.064,
+    "total": 518088,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "New Hampshire",
+    "region": "northeast",
+    "id": 33,
+    "pct": 0.054,
+    "total": 518088,
+    "group": "200000+"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.056,
+    "total": 3181152,
+    "group": "<10000"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.04,
+    "total": 3181152,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.083,
+    "total": 3181152,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.079,
+    "total": 3181152,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.108,
+    "total": 3181152,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.127,
+    "total": 3181152,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.162,
+    "total": 3181152,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.169,
+    "total": 3181152,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.083,
+    "total": 3181152,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "New Jersey",
+    "region": "northeast",
+    "id": 34,
+    "pct": 0.092,
+    "total": 3181152,
+    "group": "200000+"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.1,
+    "total": 760251,
+    "group": "<10000"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.068,
+    "total": 760251,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.13,
+    "total": 760251,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.114,
+    "total": 760251,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.142,
+    "total": 760251,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.11,
+    "total": 760251,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.168,
+    "total": 760251,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.103,
+    "total": 760251,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.037,
+    "total": 760251,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "New Mexico",
+    "region": "west",
+    "id": 35,
+    "pct": 0.028,
+    "total": 760251,
+    "group": "200000+"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.081,
+    "total": 7214163,
+    "group": "<10000"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.053,
+    "total": 7214163,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.101,
+    "total": 7214163,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.09,
+    "total": 7214163,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.119,
+    "total": 7214163,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.118,
+    "total": 7214163,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.166,
+    "total": 7214163,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.14,
+    "total": 7214163,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.061,
+    "total": 7214163,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "New York",
+    "region": "northeast",
+    "id": 36,
+    "pct": 0.07,
+    "total": 7214163,
+    "group": "200000+"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.085,
+    "total": 3721358,
+    "group": "<10000"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.064,
+    "total": 3721358,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.122,
+    "total": 3721358,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.119,
+    "total": 3721358,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.149,
+    "total": 3721358,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.11,
+    "total": 3721358,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.18,
+    "total": 3721358,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.103,
+    "total": 3721358,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.035,
+    "total": 3721358,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "North Carolina",
+    "region": "south",
+    "id": 37,
+    "pct": 0.033,
+    "total": 3721358,
+    "group": "200000+"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.068,
+    "total": 291468,
+    "group": "<10000"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.048,
+    "total": 291468,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.1,
+    "total": 291468,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.104,
+    "total": 291468,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.141,
+    "total": 291468,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.139,
+    "total": 291468,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.187,
+    "total": 291468,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.134,
+    "total": 291468,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.038,
+    "total": 291468,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "North Dakota",
+    "region": "midwest",
+    "id": 38,
+    "pct": 0.041,
+    "total": 291468,
+    "group": "200000+"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.084,
+    "total": 4551497,
+    "group": "<10000"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.059,
+    "total": 4551497,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.119,
+    "total": 4551497,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.112,
+    "total": 4551497,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.145,
+    "total": 4551497,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.117,
+    "total": 4551497,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.186,
+    "total": 4551497,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.111,
+    "total": 4551497,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.036,
+    "total": 4551497,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Ohio",
+    "region": "midwest",
+    "id": 39,
+    "pct": 0.031,
+    "total": 4551497,
+    "group": "200000+"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.083,
+    "total": 1445059,
+    "group": "<10000"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.065,
+    "total": 1445059,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.124,
+    "total": 1445059,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.119,
+    "total": 1445059,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.151,
+    "total": 1445059,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.112,
+    "total": 1445059,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.187,
+    "total": 1445059,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.101,
+    "total": 1445059,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.03,
+    "total": 1445059,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Oklahoma",
+    "region": "south",
+    "id": 40,
+    "pct": 0.028,
+    "total": 1445059,
+    "group": "200000+"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.078,
+    "total": 1516591,
+    "group": "<10000"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.056,
+    "total": 1516591,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.116,
+    "total": 1516591,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.108,
+    "total": 1516591,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.145,
+    "total": 1516591,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.123,
+    "total": 1516591,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.187,
+    "total": 1516591,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.117,
+    "total": 1516591,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.036,
+    "total": 1516591,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Oregon",
+    "region": "west",
+    "id": 41,
+    "pct": 0.033,
+    "total": 1516591,
+    "group": "200000+"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.071,
+    "total": 4945140,
+    "group": "<10000"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.057,
+    "total": 4945140,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.111,
+    "total": 4945140,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.105,
+    "total": 4945140,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.138,
+    "total": 4945140,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.123,
+    "total": 4945140,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.186,
+    "total": 4945140,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.125,
+    "total": 4945140,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.044,
+    "total": 4945140,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Pennsylvania",
+    "region": "northeast",
+    "id": 42,
+    "pct": 0.042,
+    "total": 4945140,
+    "group": "200000+"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.078,
+    "total": 410347,
+    "group": "<10000"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.056,
+    "total": 410347,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.103,
+    "total": 410347,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.091,
+    "total": 410347,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.126,
+    "total": 410347,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.125,
+    "total": 410347,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.173,
+    "total": 410347,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.143,
+    "total": 410347,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.058,
+    "total": 410347,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Rhode Island",
+    "region": "northeast",
+    "id": 44,
+    "pct": 0.047,
+    "total": 410347,
+    "group": "200000+"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.093,
+    "total": 1781957,
+    "group": "<10000"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.067,
+    "total": 1781957,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.127,
+    "total": 1781957,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.118,
+    "total": 1781957,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.147,
+    "total": 1781957,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.108,
+    "total": 1781957,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.181,
+    "total": 1781957,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.1,
+    "total": 1781957,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.031,
+    "total": 1781957,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "South Carolina",
+    "region": "south",
+    "id": 45,
+    "pct": 0.026,
+    "total": 1781957,
+    "group": "200000+"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.064,
+    "total": 326086,
+    "group": "<10000"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.058,
+    "total": 326086,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.111,
+    "total": 326086,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.114,
+    "total": 326086,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.16,
+    "total": 326086,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.133,
+    "total": 326086,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.199,
+    "total": 326086,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.104,
+    "total": 326086,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.028,
+    "total": 326086,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "South Dakota",
+    "region": "midwest",
+    "id": 46,
+    "pct": 0.03,
+    "total": 326086,
+    "group": "200000+"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.089,
+    "total": 2480467,
+    "group": "<10000"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.066,
+    "total": 2480467,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.13,
+    "total": 2480467,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.122,
+    "total": 2480467,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.149,
+    "total": 2480467,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.108,
+    "total": 2480467,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.18,
+    "total": 2480467,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.097,
+    "total": 2480467,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.03,
+    "total": 2480467,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Tennessee",
+    "region": "south",
+    "id": 47,
+    "pct": 0.029,
+    "total": 2480467,
+    "group": "200000+"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.076,
+    "total": 8965352,
+    "group": "<10000"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.054,
+    "total": 8965352,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.111,
+    "total": 8965352,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.107,
+    "total": 8965352,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.139,
+    "total": 8965352,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.115,
+    "total": 8965352,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.178,
+    "total": 8965352,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.126,
+    "total": 8965352,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.047,
+    "total": 8965352,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Texas",
+    "region": "south",
+    "id": 48,
+    "pct": 0.048,
+    "total": 8965352,
+    "group": "200000+"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.053,
+    "total": 891240,
+    "group": "<10000"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.041,
+    "total": 891240,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.091,
+    "total": 891240,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.093,
+    "total": 891240,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.144,
+    "total": 891240,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.145,
+    "total": 891240,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.213,
+    "total": 891240,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.14,
+    "total": 891240,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.043,
+    "total": 891240,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Utah",
+    "region": "west",
+    "id": 49,
+    "pct": 0.038,
+    "total": 891240,
+    "group": "200000+"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.057,
+    "total": 256563,
+    "group": "<10000"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.06,
+    "total": 256563,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.102,
+    "total": 256563,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.103,
+    "total": 256563,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.143,
+    "total": 256563,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.138,
+    "total": 256563,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.196,
+    "total": 256563,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.125,
+    "total": 256563,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.042,
+    "total": 256563,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Vermont",
+    "region": "northeast",
+    "id": 50,
+    "pct": 0.035,
+    "total": 256563,
+    "group": "200000+"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.059,
+    "total": 3026761,
+    "group": "<10000"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.042,
+    "total": 3026761,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.086,
+    "total": 3026761,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.088,
+    "total": 3026761,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.124,
+    "total": 3026761,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.126,
+    "total": 3026761,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.177,
+    "total": 3026761,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.152,
+    "total": 3026761,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.07,
+    "total": 3026761,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Virginia",
+    "region": "south",
+    "id": 51,
+    "pct": 0.076,
+    "total": 3026761,
+    "group": "200000+"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.064,
+    "total": 2634496,
+    "group": "<10000"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.044,
+    "total": 2634496,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.092,
+    "total": 2634496,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.094,
+    "total": 2634496,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.133,
+    "total": 2634496,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.132,
+    "total": 2634496,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.189,
+    "total": 2634496,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.147,
+    "total": 2634496,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.056,
+    "total": 2634496,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Washington",
+    "region": "west",
+    "id": 53,
+    "pct": 0.05,
+    "total": 2634496,
+    "group": "200000+"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.104,
+    "total": 739759,
+    "group": "<10000"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.073,
+    "total": 739759,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.144,
+    "total": 739759,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.119,
+    "total": 739759,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.146,
+    "total": 739759,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.107,
+    "total": 739759,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.174,
+    "total": 739759,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.088,
+    "total": 739759,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.025,
+    "total": 739759,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "West Virginia",
+    "region": "south",
+    "id": 54,
+    "pct": 0.02,
+    "total": 739759,
+    "group": "200000+"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.062,
+    "total": 2281781,
+    "group": "<10000"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.055,
+    "total": 2281781,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.111,
+    "total": 2281781,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.107,
+    "total": 2281781,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.147,
+    "total": 2281781,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.131,
+    "total": 2281781,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.199,
+    "total": 2281781,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.123,
+    "total": 2281781,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.035,
+    "total": 2281781,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Wisconsin",
+    "region": "midwest",
+    "id": 55,
+    "pct": 0.03,
+    "total": 2281781,
+    "group": "200000+"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.048,
+    "total": 222679,
+    "group": "<10000"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.05,
+    "total": 222679,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.098,
+    "total": 222679,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.103,
+    "total": 222679,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.139,
+    "total": 222679,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.142,
+    "total": 222679,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.196,
+    "total": 222679,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.151,
+    "total": 222679,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.044,
+    "total": 222679,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Wyoming",
+    "region": "west",
+    "id": 56,
+    "pct": 0.029,
+    "total": 222679,
+    "group": "200000+"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.289,
+    "total": 1254274,
+    "group": "<10000"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.118,
+    "total": 1254274,
+    "group": "10000 to 14999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.186,
+    "total": 1254274,
+    "group": "15000 to 24999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.123,
+    "total": 1254274,
+    "group": "25000 to 34999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.116,
+    "total": 1254274,
+    "group": "35000 to 49999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.035,
+    "total": 1254274,
+    "group": "75000 to 99999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.094,
+    "total": 1254274,
+    "group": "50000 to 74999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.024,
+    "total": 1254274,
+    "group": "100000 to 149999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.008,
+    "total": 1254274,
+    "group": "150000 to 199999"
+  },
+  {
+    "name": "Puerto Rico",
+    "region": "other",
+    "id": 72,
+    "pct": 0.006,
+    "total": 1254274,
+    "group": "200000+"
+  }
+]

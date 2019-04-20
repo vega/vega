@@ -1,0 +1,165 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "path",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "stroke": "#ccc",
+              "path": "M100,0L50,33.333333333333336"
+            },
+            {
+              "stroke": "#ccc",
+              "path": "M100,0L150,33.333333333333336"
+            },
+            {
+              "stroke": "#ccc",
+              "path": "M50,33.333333333333336L25,66.66666666666667"
+            },
+            {
+              "stroke": "#ccc",
+              "path": "M50,33.333333333333336L75,66.66666666666667"
+            },
+            {
+              "stroke": "#ccc",
+              "path": "M150,33.333333333333336L125.00000000000001,66.66666666666667"
+            },
+            {
+              "stroke": "#ccc",
+              "path": "M150,33.333333333333336L175,66.66666666666667"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "symbol",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 16.666666666666668,
+              "y": 100,
+              "fill": "#1f77b4",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 33.333333333333336,
+              "y": 100,
+              "fill": "#aec7e8",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 116.66666666666667,
+              "y": 100,
+              "fill": "#ff7f0e",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 133.33333333333334,
+              "y": 100,
+              "fill": "#ffbb78",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 66.66666666666667,
+              "y": 100,
+              "fill": "#2ca02c",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 83.33333333333334,
+              "y": 100,
+              "fill": "#98df8a",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 166.66666666666669,
+              "y": 100,
+              "fill": "#d62728",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 183.33333333333334,
+              "y": 100,
+              "fill": "#ff9896",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 100,
+              "y": 0,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 50,
+              "y": 33.333333333333336,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 150,
+              "y": 33.333333333333336,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 25,
+              "y": 66.66666666666667,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 75,
+              "y": 66.66666666666667,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 125.00000000000001,
+              "y": 66.66666666666667,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            },
+            {
+              "x": 175,
+              "y": 66.66666666666667,
+              "fill": "#9467bd",
+              "stroke": "white",
+              "size": 400
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 100
+    }
+  ],
+  "zindex": 0
+}

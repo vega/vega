@@ -1,110 +1,40 @@
 {
-  "name": "vega",
-  "version": "2.6.3",
-  "description": "The Vega visualization grammar.",
-  "keywords": [
-    "vega",
-    "visualization",
-    "interaction",
-    "dataflow",
-    "grammar",
-    "data",
-    "d3"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/vega/vega.git"
-  },
-  "author": {
-    "name": "Arvind Satyanarayan",
-    "url": "http://arvindsatya.com"
-  },
-  "contributors": [
-    {
-      "name": "Jeffrey Heer",
-      "url": "http://idl.cs.washington.edu"
-    },
-    {
-      "name": "Ryan Russell",
-      "url": "https://github.com/RussellSprouts"
-    },
-    {
-      "name": "Emily Gu",
-      "url": "https://github.com/emilygu"
-    }
-  ],
+  "private": true,
   "license": "BSD-3-Clause",
-  "main": "index.js",
-  "bin": {
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
-  },
-  "dependencies": {
-    "d3": "^3.5.9",
-    "d3-cloud": "^1.2.1",
-    "d3-geo-projection": "^0.2.15",
-    "datalib": "^1.7.1",
-    "topojson": "^1.6.19",
-    "vega-dataflow": "^1.4.0",
-    "vega-event-selector": "^1.0.0",
-    "vega-expression": "^1.2.0",
-    "vega-logging": "^1.0.1",
-    "vega-scenegraph": "^1.0.16",
-    "yargs": "^3.30.0"
-  },
-  "optionalDependencies": {
-    "canvas": "^1.3.4"
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
+  "repository": "vega/vega",
+  "scripts": {
+    "build": "lerna run build && yarn docsbuild",
+    "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
+    "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
+    "docs": "cd docs && bundle exec jekyll serve",
+    "docsbuild": "cd packages/vega/build && cp vega.js vega.min.js vega-core.js vega-core.min.js vega-schema.json ../../../docs/",
+    "license": "lerna exec -- cp ../../LICENSE .",
+    "release": "yarn license && lerna publish from-package",
+    "serve": "http-server packages/vega/ -c-1 -p8080 -o",
+    "test": "lerna run test",
+    "postinstall": "yarn data"
   },
   "devDependencies": {
-    "browserify": "^10.2.6",
-    "browserify-shim": "^3.8.9",
-    "browserify-versionify": "^1.0.4",
-    "chai": "^3.0.0",
-    "chai-spies": "^0.6.0",
-    "exorcist": "^0.4.0",
-    "istanbul": "latest",
-    "jsdom": "^7.2.2",
-    "jshint": "^2.8.0",
-    "jstransform": "^11.0.2",
-    "mocha": "^2.2.5",
-    "through": "^2.3.8",
-    "tv4": "^1.1.12",
-    "uglify-js": "^2.4.24",
-    "vega-datasets": "vega/vega-datasets#gh-pages",
-    "watchify": "^3.2.3",
-    "xmldom": "^0.1.19",
-    "xpath": "^0.0.9"
+    "@types/node": "^11.13.6",
+    "ajv": "^6.10.0",
+    "canvas": "^2.4.1",
+    "dtslint": "^0.6.2",
+    "eslint": "^5.16.0",
+    "http-server": "^0.11.1",
+    "jsdom": "^14.0.0",
+    "lerna": "^3.13.3",
+    "prettier": "^1.17.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.10.1",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "tape": "^4.10.1",
+    "terser": "^3.17.0",
+    "typescript": "^3.4.4",
+    "vega-datasets": "^1.25.0"
   },
-  "scripts": {
-    "deploy": "npm run lint && npm run test && scripts/deploy.sh",
-    "lint": "jshint src/",
-    "test": "mocha --timeout 30000 --recursive test/",
-    "cover": "istanbul cover _mocha -- --timeout 30000 --recursive test/",
-    "build": "browserify index.js -d -s vg | exorcist vega.js.map > vega.js",
-    "postbuild": "uglifyjs vega.js -cm > vega.min.js && npm run schema",
-    "schema": "node scripts/schema.js > vega-schema.json",
-    "watch": "watchify index.js -v -d -s vg -o 'exorcist vega.js.map > vega.js'"
-  },
-  "browser": {
-    "buffer": false,
-    "canvas": false,
-    "fs": false,
-    "http": false,
-    "request": false,
-    "sync-request": false,
-    "url": false
-  },
-  "browserify": {
-    "transform": [
-      "./scripts/strip-schema",
-      "browserify-shim",
-      "browserify-versionify"
-    ]
-  },
-  "browserify-shim": {
-    "d3": "global:d3",
-    "d3-cloud": "global:d3.layout.cloud",
-    "canvas": "global:canvas",
-    "topojson": "global:topojson"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -1,54 +1,28 @@
-Vega: A Visualization Grammar
-====
-[![Build Status](https://travis-ci.org/vega/vega.svg?branch=master)](https://travis-ci.org/vega/vega)
+# Vega: A Visualization Grammar <a href="https://vega.github.io/vega/"><img align="right" src="https://github.com/vega/logos/blob/master/assets/VG_Color@64.png?raw=true" height="38"></img></a>
 
-**Vega** is a _visualization grammar_, a declarative format for creating and
-saving interactive visualization designs. With Vega you can describe data 
-visualizations in a JSON format, and generate interactive views using either 
-HTML5 Canvas or SVG.
+<a href="https://vega.github.io/vega/examples">
+<img src="https://vega.github.io/vega/assets/banner.png" alt="Vega Examples" width="900"></img>
+</a>
 
-To learn more, [visit the wiki](https://github.com/vega/vega/wiki).
+**Vega** is a *visualization grammar*, a declarative format for creating, saving, and sharing interactive visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG.
 
-## The Vega Runtime
+For documentation, tutorials, and examples, see the [Vega website](https://vega.github.io/vega). For a description of changes between Vega 2 and later versions, please refer to the [Vega Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
 
-This repository contains the **vega-runtime** system, which parses Vega
-specifications to produce interactive visualizations which run in the
-browser using a scenegraph-based rendering system.
+## Build Instructions
 
-## Build Process
+For a basic setup allowing you to build Vega and run examples:
 
-To manually build Vega, you must have [npm](https://www.npmjs.com/) installed.
+- Clone `https://github.com/vega/vega`.
+- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install. We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
+- Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
+- After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
 
-1. Run `npm install` in the vega folder to install dependencies.
-2. Run `npm run build`. This will invoke [browserify](http://browserify.org/) to bundle the source files into vega.js, and then [uglify-js](http://lisperator.net/uglifyjs/) to create the minified vega.min.js.
+This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
 
-Vega visualization specifications can be validated against a [JSON Schema](http://json-schema.org/). To generate the vega-schema.json definition file, run `npm run schema`.
+## Contributions, Development, and Support
 
-Built files are available on [npm](https://www.npmjs.com/package/vega), and under [tagged releases](https://github.com/vega/vega/releases). The latest built versions can be found at [vega.min.js](http://vega.github.io/vega/vega.min.js) and [vega-schema.json](http://vega.github.io/vega/vega-schema.json).
+Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
 
-## Vega Server-Side and Command Line Tools
+Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack)! We also have examples available as [Observable notebooks](https://observablehq.com/@vega).
 
-Vega can also be run server-side using node.js. When running in "headless"
-mode, Vega can be used to render specifications directly to PNG or SVG. In
-addition to the summary below, [see the Headless Mode wiki
-documentation](https://github.com/vega/vega/wiki/Headless-Mode) for more
-information.
-
-### Command Line Tools
-
-Vega includes two command line tools for converting Vega JSON specifications
-to rendered PNG or SVG:
-
-* __vg2png__: `vg2png [-b basedir] vega_json_file [output_png_file]`
-* __vg2svg__: `vg2svg [-b basedir] [-h] vega_json_file [output_svg_file]`
-
-Within the Vega project directories, you can invoke these utilities using
-`./bin/vg2png` or `./bin/vg2svg`. If you import Vega using npm, these commands
-are accessible either locally (`node_modules/.bin/vg2png`) or globally
-(`vg2png`) depending on how you install the Vega package.
-
-### Using Vega in node.js Projects
-
-To include Vega in a node project, first install it from the command line
-using npm (`npm install vega`) or by including `"vega"` among the dependencies
-in your package.json file.
+If you're curious about system performance, see some [in-browser benchmarks](https://observablehq.com/@vega/vega-performance-tests). Read about future plans in [our roadmap](https://docs.google.com/document/d/1fscSxSJtfkd1m027r1ONCc7O8RdZp1oGABwca2pgV_E/edit#).

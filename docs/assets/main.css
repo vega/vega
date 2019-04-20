@@ -1,0 +1,630 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+body {
+  font: 16px/1.5em "Helvetica Neue", Helvetica, sans-serif;
+  box-sizing: border-box;
+  line-height: 1.5;
+  color: #373a3c;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  text-decoration-skip: ink;
+}
+header {
+  background-color: #325;
+}
+
+a {
+  color: #4682B4;
+}
+a:not(:hover) {
+  text-decoration: none;
+}
+footer {
+  border-top: 1px solid #eee;
+  padding: 1em 0 1em 0;
+  font-size: small;
+  color: #aaa;
+  /* for safari */
+  min-height: 40px;
+}
+footer > div {
+  display: flex;
+  align-items: center;
+}
+blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+  margin: 0;
+}
+dt {
+  font-weight: bold;
+  color: #777;
+}
+dd {
+  margin-bottom: 10px;
+}
+
+/* Table */
+table {
+  padding: 0;
+  border-collapse: collapse;
+}
+table tr {
+  border-top: 1px solid #cccccc;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+table tr th {
+  font-weight: bold;
+  border: 1px solid #cccccc;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+table tr td {
+  border: 1px solid #cccccc;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+table tr th:first-child, table tr td:first-child {
+  margin-top: 0;
+}
+table tr th:last-child, table tr td:last-child {
+  margin-bottom: 0;
+}
+
+/* Headers */
+
+h1, h2, h3, h4 {
+  margin-top: 1.3em;
+  margin-bottom: 0.6em;
+  text-rendering: optimizeLegibility;
+}
+h1 {
+  color: black;
+  font-weight: 300;
+  font-size: 2.5em;
+  margin: 0.7em 0 0.3em 0;
+}
+h2 {
+  font-size: 1.75em;
+  font-weight: 500;
+  border-bottom: 1px solid #cccccc;
+  color: black;
+  padding-bottom: 1px;
+}
+h3 {
+  font-size: 1.5em;
+}
+h4 {
+  font-size: 1.3em;
+  color: #333;
+}
+h5 {
+  font-size: 1.1em;
+}
+h6 {
+  color: #777;
+  font-size: 1.1em;
+}
+.anchor {
+  display: inline-block;
+  margin-left: -22px;
+  width: 22px;
+  color: black;
+  outline: 0;
+}
+h2 .octicon-link, h3 .octicon-link, h4 .octicon-link, h5 .octicon-link, h6 .octicon-link {
+  color: #000;
+  vertical-align: middle;
+  visibility: hidden;
+}
+h2:hover .anchor .octicon-link, h3:hover .anchor .octicon-link, h4:hover .anchor .octicon-link, h5:hover .anchor .octicon-link, h6:hover .anchor .octicon-link {
+  visibility: visible;
+}
+
+/* Code */
+code, tt {
+  margin: 0 2px;
+  padding: 0 4px;
+  white-space: nowrap;
+  background: #f6f6f6;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 0.8em;
+}
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+  font-family: monospace;
+}
+pre {
+  line-height: 1em;
+  background: #F9F9F9;
+  border: 1px solid #eee;
+  padding: 8px 10px;
+  overflow-x: scroll;
+  max-width: 978px;
+}
+
+/* Nav */
+nav {
+  display: flex;
+  align-items: baseline;
+  align-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  line-height: 54px;
+}
+nav a {
+  color: #eee;
+  padding-right: 2em;
+  display: inline-block;
+}
+nav a:last-child {
+  padding-right: 0px;
+}
+nav a.active {
+  font-weight: bold;
+  color: #fff;
+}
+nav a:hover {
+  color: #e5b928;
+  text-decoration: none;
+}
+
+/* Special classes */
+.page-centered {
+  max-width: 1000px;
+  min-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.page-main {
+  display: flex;
+  flex-direction: row;
+}
+.page-content {
+  padding-bottom: 3em;
+  flex: 1 1 auto;
+}
+.page-sidebar {
+  width: 160px;
+  flex: 0 0 auto;
+  margin-top: 2.25em;
+  padding-right: .2em;
+}
+
+.sidebar-nav {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav-item {
+  display: block;
+}
+.sidebar-nav-item a {
+  display: block;
+  padding: 0.25em 0;
+  color: #666;
+}
+.sidebar-nav-item a.active {
+  font-weight: bold;
+}
+.sidebar-nav-item a:hover {
+  color: #4682B4;
+}
+
+.sub-menu-nav {
+  padding: 0;
+}
+.sub-item {
+  padding-left: 1em;
+  border-left: 2px solid #eee;
+}
+.sub-item a {
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.title h1 {
+  margin-top: 0.3em;
+}
+
+nav > .dropdown {
+  flex: 0 0 auto;
+  margin: 0 20px 0px -20px;
+  cursor: pointer;
+}
+
+.vega-title {
+  padding: 0 54px 2px 20px;
+  font-weight: bold;
+  font-size: 1.4em;
+  color: #fff;
+  flex: 0 0 auto;
+  display: inline-block;
+}
+
+.vega-links {
+  flex: 1 0 auto;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.primary-links {
+  text-align: left;
+  display: inline-block;
+  flex: 1 0 auto;
+}
+
+.secondary-links {
+  float: right;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.lead {
+  font-size: 1.3em;
+  font-weight: 300;
+}
+.logo img {
+  height: 40px;
+}
+.vega-logo {
+  display: block;
+  float: right;
+  margin-top: 5px;
+}
+.vega-logo img {
+  border-radius: 10px;
+}
+.fill {
+  flex: 1 0 auto;
+}
+.float-right {
+  float: right;
+}
+.hidden {
+  display: none;
+}
+.lead-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.lead-columns > span:first-child {
+  margin-right: 60px;
+}
+.lead-buttons {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.lead-buttons a {
+  display: block;
+  width: 240px;
+  padding: 8px 16px;
+  margin: 0.4em 0;
+  text-align: center;
+  background-color: steelblue;
+  border: 1px solid #357ebd;
+  color: white;
+  border-radius: 4px;
+  font-size: 1.2em;
+}
+.lead-buttons a:hover {
+  text-decoration: none;
+  background-color: #285e8e;
+}
+.note-line {
+  font-size: 0.9em !important;
+  margin-top: 8px;
+  display: block;
+}
+
+.source {
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+a.citation {
+  color: black;
+}
+a.citation:hover {
+  color: #4682B4;
+}
+
+/* Column Lists */
+ul.column-list {
+  column-count: 3;
+  list-style: none;
+  padding-left: 0;
+}
+ul.column-set {
+  display: flex;
+  flex-direction: row;
+}
+ul.column-set > * {
+  flex: 1;
+}
+ul.column-set, .column-set ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Example Gallery */
+.preview {
+  display: inline-block;
+  padding: 0.5em 0;
+  padding-right: 0.5em;
+}
+.preview .image {
+  width: 180px;
+  height: 100px;
+  background-position: left top;
+  background-size: cover;
+  overflow: hidden;
+  transition: background-position 2s;
+  -webkit-transition: background-position 2s;
+}
+.preview:hover .image {
+  background-position: right bottom;
+}
+.preview a {
+  font-size: 0.9em;
+}
+
+/* Example Showcase */
+#showcase {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+#showcase:after,
+#showcase:before {
+  content: "";
+  display: block;
+  width: 100%;
+  position: absolute;
+  background: white;
+  height: 16px;
+  z-index: 2;
+}
+#showcase:before {
+  bottom: -16px;
+  box-shadow: 0px -8px 16px rgba(0,0,0,0.3);
+}
+#showcase:after {
+  top: -16px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+}
+#showcase .examples {
+  margin: 0 auto;
+  height: 300px;
+  width: 1440px;
+  line-height: 0;
+}
+#showcase .preview {
+  width: 180px;
+  height: 100px;
+  padding: 0;
+  outline: 1px solid #ddd;
+  background-position: left top;
+  background-size: cover;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  transition: background-position 2s;
+  -webkit-transition: background-position 2s;
+}
+#showcase .preview:hover {
+  background-position: right bottom;
+  outline: 2px solid #4682B4;
+  z-index: 1;
+}
+
+/* Embedded Vega examples. */
+.view > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.view .marks {
+  margin-right: 1em;
+}
+.view .vega-bindings {
+  font-size: 14px;
+  line-height: 20px;
+}
+.view .vega-bind-name {
+  display: inline-block;
+  width: 105px;
+}
+.view .vega-bind input[type="range"] {
+  padding: 0;
+  width: 100px;
+}
+.view .vega-bind select {
+  max-width: 200px;
+}
+.view .vega-bind label {
+  margin-left: 4px;
+}
+.view .vega-bind-radio label {
+  margin-left: 0;
+  margin-right: 4px;
+}
+.embed > a {
+  visibility: hidden;
+  font-size: 14px;
+  margin-right: 0.5em;
+}
+.embed:hover > a {
+  visibility: visible;
+}
+.example .embed > a {
+  display: none;
+}
+.example .view > * {
+  display: inline-block;
+  vertical-align: top;
+}
+.example .view .vega-bindings {
+  margin-top: 1em;
+}
+
+.editor-link {
+  margin-top: 1em;
+}
+
+/** Color Schemes. */
+.scheme {
+  margin-bottom: 1em;
+}
+.scheme .swatch div {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 1px solid white;
+}
+.scheme .swatch div[title] {
+  border: 1px solid #ddd;
+}
+.scheme .swatch strong {
+  font-weight: normal;
+  display: inline-block;
+  vertical-align: 50%;
+  margin-left: 12px;
+  width: 108px;
+}
+.scheme svg {
+  display: block;
+  width: 556px;
+  height: 28px;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  border: 1px solid #ddd;
+}
+.scheme.continuous {
+  width: 556px;
+}
+.scheme.continuous .toggle {
+  display: none;
+  float: right;
+  margin-top: 0.5em;
+  font-size: 0.7em;
+  color: black;
+}
+.scheme.continuous:hover .toggle {
+  display: block;
+}
+
+/* Dropdown */
+nav .dropdown-content {
+  position: absolute;
+  display: none;
+}
+
+nav .dropdown-content a {
+  display: block;
+  font-weight: 600;
+  font-size: 1.2em;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+nav > .dropdown:hover .dropdown-content {
+  display: block;
+  box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.2);
+}
+
+nav > .dropdown:hover a {
+  background-color: #e2e2e2;
+  color: #666;
+  position: relative;
+  z-index: 10;
+}
+
+nav > .dropdown:hover a:hover {
+  color: #000;
+}
+
+.tag {
+  font-size: 0.8em;
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: inline-block;
+  font-weight: 600;
+  line-height: 15px;
+  padding: 0.15em 0.3em;
+}
+
+.tag.version {
+  background-color: #0078a0;
+  color: #ffffff;
+}
+
+/* Media queries */
+@media (max-width:768px) {
+  body {
+    font-size: 12px;
+  }
+  nav {
+    line-height: 40px;
+  }
+  nav a {
+    padding-right: 1em;
+  }
+  h1 {
+    font-size: 2.0em;
+  }
+  .vega-title {
+    font-size: 1.2em;
+    line-height: 40px;
+  }
+  aside.page-sidebar {
+    display: none;
+  }
+  .page-main {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .page-centered, .page-content {
+    max-width: 100%;
+    min-width: 100px;
+  }
+  .lead-columns {
+    flex-direction: column;
+  }
+  .lead-columns span:first-child {
+    margin-right: 0px;
+  }
+  .lead-buttons a {
+    width: inherit;
+  }
+  .highlight {
+    overflow-x: auto;
+  }
+  .vega-title {
+    padding-right: 51px;
+  }
+}

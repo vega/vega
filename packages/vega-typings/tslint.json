@@ -1,0 +1,11 @@
+{
+  "extends": "dtslint/dtslint.json",
+  "rules": {
+    "array-type": false,
+    "object-literal-key-quotes": false,
+    "max-line-length": false,
+    "semicolon": false,
+    "whitespace": false,
+    "file-name-casing": false
+  }
+}

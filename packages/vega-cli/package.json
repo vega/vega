@@ -1,0 +1,27 @@
+{
+  "name": "vega-cli",
+  "version": "5.3.5",
+  "description": "Command line utilities for server-side Vega.",
+  "keywords": [
+    "vega",
+    "command line",
+    "server"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "index.js",
+  "bin": {
+    "vg2pdf": "./bin/vg2pdf",
+    "vg2png": "./bin/vg2png",
+    "vg2svg": "./bin/vg2svg"
+  },
+  "repository": "vega/vega",
+  "scripts": {
+    "postpublish": "git push && git push --tags"
+  },
+  "dependencies": {
+    "canvas": "^2.4.1",
+    "vega": "5.3.5",
+    "yargs": "13"
+  }
+}

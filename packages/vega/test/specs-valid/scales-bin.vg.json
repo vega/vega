@@ -1,0 +1,114 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 400,
+  "height": 300,
+  "padding": 5,
+  "autosize": {"type": "pad", "resize": true},
+
+  "signals": [
+    {
+      "name": "maxbins", "value": 10,
+      "bind": {"input": "select", "options": [5, 10, 20, 50]}
+    },
+    {
+      "name": "binDomain",
+      "update": "[bins.start, bins.stop]"
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"v": 28}, {"v": 55}, {"v": 43}, {"v": 91}, {"v": 34},
+        {"v": 81}, {"v": 53}, {"v": 19}, {"v": 87}, {"v": 38},
+        {"v": 52}, {"v": 48}, {"v": 24}, {"v": 49},
+        {"v": 87}, {"v": 66}, {"v": 17}, {"v": 27},
+        {"v": 68}, {"v": 12}, {"v": 49}, {"v":  4}
+      ],
+      "transform": [
+        {
+          "type": "extent", "field": "v",
+          "signal": "extent"
+        },
+        {
+          "type": "bin", "signal": "bins",
+          "field": "v", "extent": {"signal": "extent"},
+          "maxbins": {"signal": "maxbins"}
+        }
+      ]
+    },
+    {
+      "name": "counts",
+      "source": "table",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["bin0", "bin1"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "counts", "field": "count"}
+    },
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": "width",
+      "round": true,
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "bins"}
+    },
+    {
+      "name": "size",
+      "type": "linear",
+      "range": [10, 100],
+      "round": true,
+      "domain": {"signal": "binDomain"},
+      "bins": {"signal": "bins"}
+    },
+    {
+      "name": "color",
+      "type": "bin-ordinal",
+      "range": {"scheme": "purpleorange"},
+      "bins": {
+        "start": {"signal": "bins.start"},
+        "stop": {"signal": "bins.stop"},
+        "step": {"signal": "bins.step"}
+      }
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale", "tickCount": 20, "zindex": 1},
+    {"orient": "left", "scale": "yscale", "tickCount": 5, "zindex": 1}
+  ],
+
+  "legends": [
+    {"fill": "color", "size": "size", "title": "Bins"}
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "counts"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "bin0", "offset": 1},
+          "x2": {"scale": "xscale", "field": "bin1"},
+          "y": {"scale": "yscale", "field": "count"},
+          "y2": {"scale": "yscale", "value": 0}
+        },
+        "update": {
+          "fill": {"scale": "color", "field": "bin0"}
+        }
+      }
+    }
+  ]
+}

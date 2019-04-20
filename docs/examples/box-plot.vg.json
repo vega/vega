@@ -1,0 +1,140 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "padding": 5,
+
+  "config": {
+    "axisBand": {
+      "bandPosition": 1,
+      "tickExtra": true,
+      "tickOffset": 0
+    }
+  },
+
+  "signals": [
+    { "name": "fields",
+      "value": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"] },
+    { "name": "plotWidth", "value": 60 },
+    { "name": "height", "update": "(plotWidth + 10) * length(fields)"}
+  ],
+
+  "data": [
+    {
+      "name": "iris",
+      "url": "data/iris.json",
+      "transform": [
+        {
+          "type": "fold",
+          "fields": {"signal": "fields"},
+          "as": ["organ", "value"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "layout",
+      "type": "band",
+      "range": "height",
+      "domain": {"data": "iris", "field": "organ"}
+    },
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": "width", "round": true,
+      "domain": {"data": "iris", "field": "value"},
+      "zero": true, "nice": true
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale", "zindex": 1},
+    {"orient": "left", "scale": "layout", "tickCount": 5, "zindex": 1}
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "iris",
+          "name": "organs",
+          "groupby": "organ"
+        }
+      },
+
+      "encode": {
+        "enter": {
+          "yc": {"scale": "layout", "field": "organ", "band": 0.5},
+          "height": {"signal": "plotWidth"},
+          "width": {"signal": "width"}
+        }
+      },
+
+      "data": [
+        {
+          "name": "summary",
+          "source": "organs",
+          "transform": [
+            {
+              "type": "aggregate",
+              "fields": ["value", "value", "value", "value", "value"],
+              "ops": ["min", "q1", "median", "q3", "max"],
+              "as": ["min", "q1", "median", "q3", "max"]
+            }
+          ]
+        }
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "black"},
+              "height": {"value": 1}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2", "offset": -0.5},
+              "x": {"scale": "xscale", "field": "min"},
+              "x2": {"scale": "xscale", "field": "max"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "steelblue"},
+              "cornerRadius": {"value": 4}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2"},
+              "height": {"signal": "plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "q1"},
+              "x2": {"scale": "xscale", "field": "q3"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "aliceblue"},
+              "width": {"value": 2}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2"},
+              "height": {"signal": "plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "median"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
