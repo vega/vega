@@ -46,7 +46,6 @@ export default function(definitions) {
       {
         properties: {
           $schema: type('string', {format: 'uri'}),
-          usermeta: objectType,
           config: objectType,
           description: stringType,
           width: numberType,
