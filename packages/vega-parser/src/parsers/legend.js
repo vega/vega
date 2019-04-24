@@ -146,7 +146,9 @@ function buildLegendEncode(_, config) {
     fill:         _('fillColor'),
     stroke:       _('strokeColor'),
     strokeWidth:  config.strokeWidth,
-    strokeDash:   config.strokeDash
+    strokeDash:   config.strokeDash,
+    x:            _('legendX'),
+    y:            _('legendY'),
   });
 
   return encode;

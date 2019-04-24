@@ -183,6 +183,16 @@ export interface BaseLegend<
    */
   strokeColor?: C;
 
+  /**
+   * Custom x-position for legend with orient "none".
+   */
+  legendX?: N;
+
+  /**
+   * Custom y-position for legend with orient "none".
+   */
+  legendY?: N;
+
   // ---------- Title ----------
   /**
    * Horizontal text alignment for legend titles.
