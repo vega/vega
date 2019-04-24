@@ -52,7 +52,8 @@ const dataFormat = anyOf(
     object({
       _type_: enums(['topojson']),
       _mesh_: stringOrSignal,
-      property: stringOrSignal
+      property: stringOrSignal,
+      filter: enums(['interior', 'exterior', null])
     })
   )
 );

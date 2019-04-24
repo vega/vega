@@ -32,6 +32,7 @@ export type FormatTopoJSON = {
     }
   | {
       mesh: string;
+      filter: 'interior' | 'exterior' | null;
     });
 export type Format = FormatJSON | FormatSV | FormatDSV | FormatTopoJSON | { parse: Parse };
 
