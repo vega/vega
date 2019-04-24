@@ -295,6 +295,20 @@ tape('TopoJSON reader should read TopoJSON mesh', function(t) {
   t.end();
 });
 
+tape('TopoJSON reader should read TopoJSON mesh interior', function(t) {
+  var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'interior'});
+  var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a !== b);
+  t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
+  t.end();
+});
+
+tape('TopoJSON reader should read TopoJSON mesh exterior', function(t) {
+  var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'exterior'});
+  var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a === b);
+  t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
+  t.end();
+});
+
 tape('TopoJSON reader should read TopoJSON feature', function(t) {
   var feature = read(worldText, {type:'topojson', feature: 'countries'});
   var tj = topojson.feature(world, world.objects['countries']).features;
