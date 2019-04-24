@@ -68,6 +68,8 @@ const legendProps = object({
   offset: numberValue,
   padding: numberValue,
   strokeColor: colorValue,
+  legendX: numberValue,
+  legendY: numberValue,
 
   // LEGEND TITLE CONFIG
   title: stringOrSignal,

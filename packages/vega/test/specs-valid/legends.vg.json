@@ -83,6 +83,18 @@
       "orient": "right",
       "title": "Stops",
       "values": [-100, -35, 0, 35, 100]
+    },
+    {
+      "type": "symbol",
+      "fill": "stops",
+      "direction": "horizontal",
+      "orient": "none",
+      "title": "Orient None",
+      "titleOrient": "bottom",
+      "titleAnchor": "end",
+      "values": [-50, 0, 50],
+      "legendX": -100,
+      "legendY": 105
     }
   ]
 }
