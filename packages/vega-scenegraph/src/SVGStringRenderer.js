@@ -1,4 +1,5 @@
 import Renderer from './Renderer';
+import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
@@ -91,19 +92,52 @@ prototype._render = function(scene) {
 prototype.buildDefs = function() {
   var all = this._defs,
       defs = '',
-      i, id, def, stops;
+      i, id, def, tag, stops;
 
   for (id in all.gradient) {
     def = all.gradient[id];
     stops = def.stops;
 
-    defs += openTag('linearGradient', {
-      id: id,
-      x1: def.x1,
-      x2: def.x2,
-      y1: def.y1,
-      y2: def.y2
-    });
+    if (def.gradient === 'radial') {
+      // SVG radial gradients automatically transform to normalized bbox
+      // coordinates, in a way that is cumbersome to replicate in canvas.
+      // So we wrap the radial gradient in a pattern element, allowing us
+      // to mantain a circular gradient that matches what canvas provides.
+
+      defs += openTag(tag = 'pattern', {
+        id: patternPrefix + id,
+        viewBox: '0,0,1,1',
+        width: '100%',
+        height: '100%',
+        preserveAspectRatio: 'xMidYMid slice'
+      });
+
+      defs += openTag('rect', {
+        width: '1',
+        height: '1',
+        fill: 'url(#' + id + ')'
+      }) + closeTag('rect');
+
+      defs += closeTag(tag);
+
+      defs += openTag(tag = 'radialGradient', {
+        id: id,
+        fx: def.x1,
+        fy: def.y1,
+        fr: def.r1,
+        cx: def.x2,
+        cy: def.y2,
+         r: def.r2
+      });
+    } else {
+      defs += openTag(tag = 'linearGradient', {
+        id: id,
+        x1: def.x1,
+        x2: def.x2,
+        y1: def.y1,
+        y2: def.y2
+      });
+    }
 
     for (i=0; i<stops.length; ++i) {
       defs += openTag('stop', {
@@ -112,7 +146,7 @@ prototype.buildDefs = function() {
       }) + closeTag('stop');
     }
 
-    defs += closeTag('linearGradient');
+    defs += closeTag(tag);
   }
 
   for (id in all.clipping) {
@@ -263,10 +297,8 @@ function applyStyles(o, mark, tag, defs) {
       // transparent is not a legal SVG value, so map to none instead
       s += name + ': none; ';
     } else {
-      if (value.id) {
-        // ensure definition is included
-        defs.gradient[value.id] = value;
-        value = 'url(#' + value.id + ')';
+      if (isGradient(value)) {
+        value = gradientRef(value, defs.gradient, '');
       }
       s += name + ': ' + value + '; ';
     }

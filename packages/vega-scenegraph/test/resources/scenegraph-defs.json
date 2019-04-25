@@ -9,8 +9,8 @@
       "height": 100,
       "clip": true,
       "fill": {
+        "gradient": "linear",
         "id": "gradient_foo",
-        "type": "linear",
         "stops": [
           {"offset": 0.0, "color": "red"},
           {"offset": 0.5, "color": "green"},

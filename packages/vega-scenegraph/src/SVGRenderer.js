@@ -1,4 +1,5 @@
 import Renderer from './Renderer';
+import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
@@ -123,12 +124,12 @@ prototype.updateDefs = function() {
 
   for (id in defs.gradient) {
     if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
-    updateGradient(el, defs.gradient[id], index++);
+    index = updateGradient(el, defs.gradient[id], index);
   }
 
   for (id in defs.clipping) {
     if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
-    updateClipping(el, defs.clipping[id], index++);
+    index = updateClipping(el, defs.clipping[id], index);
   }
 
   // clean-up
@@ -145,12 +146,39 @@ prototype.updateDefs = function() {
 function updateGradient(el, grad, index) {
   var i, n, stop;
 
-  el = domChild(el, index, 'linearGradient', ns);
-  el.setAttribute('id', grad.id);
-  el.setAttribute('x1', grad.x1);
-  el.setAttribute('x2', grad.x2);
-  el.setAttribute('y1', grad.y1);
-  el.setAttribute('y2', grad.y2);
+  if (grad.gradient === 'radial') {
+    // SVG radial gradients automatically transform to normalized bbox
+    // coordinates, in a way that is cumbersome to replicate in canvas.
+    // So we wrap the radial gradient in a pattern element, allowing us
+    // to mantain a circular gradient that matches what canvas provides.
+    var pt = domChild(el, index++, 'pattern', ns);
+    pt.setAttribute('id', patternPrefix + grad.id);
+    pt.setAttribute('viewBox', '0,0,1,1');
+    pt.setAttribute('width', '100%');
+    pt.setAttribute('height', '100%');
+    pt.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+
+    pt = domChild(pt, 0, 'rect', ns);
+    pt.setAttribute('width', '1');
+    pt.setAttribute('height', '1');
+    pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
+
+    el = domChild(el, index++, 'radialGradient', ns);
+    el.setAttribute('id', grad.id);
+    el.setAttribute('fx', grad.x1);
+    el.setAttribute('fy', grad.y1);
+    el.setAttribute('fr', grad.r1);
+    el.setAttribute('cx', grad.x2);
+    el.setAttribute('cy', grad.y2);
+    el.setAttribute( 'r', grad.r2);
+  } else {
+    el = domChild(el, index++, 'linearGradient', ns);
+    el.setAttribute('id', grad.id);
+    el.setAttribute('x1', grad.x1);
+    el.setAttribute('x2', grad.x2);
+    el.setAttribute('y1', grad.y1);
+    el.setAttribute('y2', grad.y2);
+  }
 
   for (i=0, n=grad.stops.length; i<n; ++i) {
     stop = domChild(el, i, 'stop', ns);
@@ -158,6 +186,8 @@ function updateGradient(el, grad, index) {
     stop.setAttribute('stop-color', grad.stops[i].color);
   }
   domClear(el, i);
+
+  return index;
 }
 
 function updateClipping(el, clip, index) {
@@ -176,6 +206,8 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('width', clip.width);
     mask.setAttribute('height', clip.height);
   }
+
+  return index + 1;
 }
 
 prototype._resetDefs = function() {
@@ -485,10 +517,8 @@ prototype.style = function(el, o) {
         el.style.removeProperty(name);
       }
     } else {
-      if (value.id) {
-        // ensure definition is included
-        this._defs.gradient[value.id] = value;
-        value = 'url(' + href() + '#' + value.id + ')';
+      if (isGradient(value)) {
+        value = gradientRef(value, this._defs.gradient, href());
       }
       el.style.setProperty(name, value + '');
     }

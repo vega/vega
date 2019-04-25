@@ -83,7 +83,8 @@ var BASE = {
     "paint": {
       "oneOf": [
         { "$ref": "#/refs/color" },
-        { "$ref": "#/refs/linear-gradient" }
+        { "$ref": "#/refs/gradientLinear" },
+        { "$ref": "#/refs/gradientRadial" }
       ]
     },
     "color": {
@@ -110,27 +111,48 @@ var BASE = {
         }
       ]
     },
-    "linear-gradient": {
+    "gradientStop": {
       "type": "object",
       "properties": {
+        "offset": { "type": "number" },
+        "color": { "$ref": "#/refs/color" }
+      },
+      "required": ["offset", "color"]
+    },
+    "gradientLinear": {
+      "type": "object",
+      "properties": {
+        "gradient": { "enum": [ "linear" ] },
         "id": { "type": "string" },
-        "type": { "enum": [ "linear" ] },
         "x1": { "type": "number" },
         "y1": { "type": "number" },
         "x2": { "type": "number" },
         "y2": { "type": "number" },
         "stops": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "offset": { "type": "number" },
-              "color": { "$ref": "#/refs/color" }
-            }
-          }
+          "items": { "$ref": "#/refs/gradientStop" }
         }
       },
-      "required": ["id", "type", "x1", "y1", "x2", "y2", "stops"],
+      "required": ["gradient", "stops"],
+      "additionalProperties": false
+    },
+    "gradientRadial": {
+      "type": "object",
+      "properties": {
+        "gradient": { "enum": [ "radial" ] },
+        "id": { "type": "string" },
+        "x1": { "type": "number" },
+        "y1": { "type": "number" },
+        "r1": { "type": "number" },
+        "x2": { "type": "number" },
+        "y2": { "type": "number" },
+        "r2": { "type": "number" },
+        "stops": {
+          "type": "array",
+          "items": { "$ref": "#/refs/gradientStop" }
+        }
+      },
+      "required": ["gradient", "stops"],
       "additionalProperties": false
     }
   }
