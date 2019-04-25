@@ -79,8 +79,33 @@ export interface ColorHCL {
   c: NumericValueRef;
   l: NumericValueRef;
 }
+export interface GradientStop {
+  offset: number;
+  color: string;
+}
+export interface GradientLinear {
+  gradient: 'linear';
+  stops: GradientStop[];
+  id?: string;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+}
+export interface GradientRadial {
+  gradient: 'radial';
+  stops: GradientStop[];
+  id?: string;
+  x1?: number;
+  y1?: number;
+  r1?: number;
+  x2?: number;
+  y2?: number;
+  r2?: number;
+}
 export type ColorValueRef =
   | ScaledValueRef<string>
+  | { value: GradientLinear | GradientRadial }
   | {
       gradient: Field;
       start?: number[];

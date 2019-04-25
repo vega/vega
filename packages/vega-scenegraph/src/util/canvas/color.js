@@ -1,7 +1,8 @@
+import {isGradient} from '../../Gradient';
 import gradient from './gradient';
 
 export default function(context, item, value) {
-  return (value.id) ?
+  return isGradient(value) ?
     gradient(context, value, item.bounds) :
     value;
 }
