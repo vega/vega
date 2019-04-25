@@ -16,6 +16,7 @@ export {default as formula} from './src/Formula';
 export {default as generate} from './src/Generate';
 export {default as impute} from './src/Impute';
 export {default as joinaggregate} from './src/JoinAggregate';
+export {default as kde} from './src/KDE';
 export {default as key} from './src/Key';
 export {default as load} from './src/Load';
 export {default as lookup} from './src/Lookup';

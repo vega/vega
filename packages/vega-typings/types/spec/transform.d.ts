@@ -23,6 +23,7 @@ export type Transforms =
   | IdentifierTransform
   | ImputeTransform
   | JoinAggregateTransform
+  | KDETransform
   | _TODO_<'linkpath'>
   | LookupTransform
   | _TODO_<'nest'>
@@ -249,6 +250,17 @@ export interface JoinAggregateTransform {
   groupby?: (string | TransformField)[] | SignalRef;
   ops?: (AggregateOp | SignalRef)[];
   fields?: (string | TransformField | null)[] | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
+}
+
+export interface KDETransform {
+  type: 'kde';
+  field: string | TransformField | SignalRef;
+  groupby?: (string | TransformField)[] | SignalRef;
+  method?: 'pdf' | 'cdf' | SignalRef;
+  bandwidth?: number | SignalRef;
+  extent?: number[] | SignalRef;
+  steps?: number | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
 }
 

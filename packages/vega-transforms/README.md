@@ -17,6 +17,7 @@ This package provides the following Vega data transforms:
 - [**Formula**](https://vega.github.io/vega/docs/transforms/formula/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Formula.js "Source")
 - [**Impute**](https://vega.github.io/vega/docs/transforms/Impute/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/impute.js "Source")
 - [**JoinAggregate**](https://vega.github.io/vega/docs/transforms/joinaggregate/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/JoinAggregate.js "Source")
+- [**KDE**](https://vega.github.io/vega/docs/transforms/kde/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/KDE.js "Source")
 - [**Lookup**](https://vega.github.io/vega/docs/transforms/lookup/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Lookup.js "Source")
 - [**Pivot**](https://vega.github.io/vega/docs/transforms/pivot/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Pivot.js "Source")
 - [**Project**](https://vega.github.io/vega/docs/transforms/project/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Project.js "Source")
