@@ -284,6 +284,7 @@ export interface RegressionTransform {
   bandwidth?: number | SignalRef;
   order?: number | SignalRef;
   extent?: [number, number] | SignalRef;
+  params?: boolean | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 

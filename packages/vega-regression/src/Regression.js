@@ -21,6 +21,10 @@ const Methods = {
   'loess': regressionLoess
 };
 
+const Params = [
+  'a', 'b', 'c', 'coefficients', 'rSquared'
+];
+
 /**
  * Compute regression fits for one or more data groups.
  * @constructor
@@ -48,6 +52,7 @@ Regression.Definition = {
     { "name": "bandwidth", "type": "number", "default": 0.3 },
     { "name": "order", "type": "number", "default": 3 },
     { "name": "extent", "type": "number", "array": true, "length": 2 },
+    { "name": "params", "type": "boolean", "default": false },
     { "name": "as", "type": "string", "array": true }
   ]
 };
@@ -63,7 +68,8 @@ prototype.transform = function(_, pulse) {
           names = (_.groupby || []).map(accessorName),
           method = _.method || 'linear',
           as = _.as || [accessorName(_.x), accessorName(_.y)],
-          values = [];
+          params = [],
+          values = _.params ? params : [];
 
     if (!Methods.hasOwnProperty(method)) {
       error('Invalid regression method: ' + method);
@@ -80,17 +86,29 @@ prototype.transform = function(_, pulse) {
     }
 
     groups.forEach(g => {
-      fit(g).forEach(p => {
-        const t = {};
-        for (let i=0; i<names.length; ++i) {
-          t[names[i]] = g.dims[i];
-        }
-        t[as[0]] = p[0];
-        t[as[1]] = p[1];
-        values.push(ingest(t));
-      });
+      const model = fit(g);
+
+      params.push(
+        Params.reduce((p, k) => {
+          if (model.hasOwnProperty(k)) p[k] = model[k];
+          return p;
+        }, {keys: g.dims})
+      );
+
+      if (!_.params) {
+        model.forEach(p => {
+          const t = {};
+          for (let i=0; i<names.length; ++i) {
+            t[names[i]] = g.dims[i];
+          }
+          t[as[0]] = p[0];
+          t[as[1]] = p[1];
+          values.push(ingest(t));
+        });
+      }
     });
 
+    if (!_.params) values.params = params;
     if (this.value) out.rem = this.value;
     this.value = out.add = out.source = values;
   }
