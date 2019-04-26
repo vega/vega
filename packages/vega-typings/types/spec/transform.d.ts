@@ -140,10 +140,10 @@ export interface CollectTransform {
 export interface CountPatternTransform {
   type: 'countpattern';
   field: string | TransformField;
-  case?: string;
-  pattern?: string;
-  stopwords?: string;
-  as?: string[];
+  case?: string | SignalRef;
+  pattern?: string | SignalRef;
+  stopwords?: string | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export type ContourTransform = {
@@ -178,13 +178,13 @@ export interface FilterTransform {
 export interface FlattenTransform {
   type: 'flatten';
   fields: (string | TransformField)[] | SignalRef;
-  as?: string[];
+  as?: (string | SignalRef)[] | SignalRef;
 }
 
 export interface FoldTransform {
   type: 'fold';
   fields: (string | TransformField)[] | SignalRef;
-  as?: [string, string];
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface FormulaTransform {
@@ -259,9 +259,9 @@ export interface KDETransform {
   groupby?: (string | TransformField)[] | SignalRef;
   method?: 'pdf' | 'cdf' | SignalRef;
   bandwidth?: number | SignalRef;
-  extent?: number[] | SignalRef;
+  extent?: [number, number] | SignalRef;
   steps?: number | SignalRef;
-  as?: (string | SignalRef | null)[] | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface LookupTransform {
