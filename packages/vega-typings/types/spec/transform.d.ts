@@ -31,6 +31,7 @@ export type Transforms =
   | _TODO_<'partition'>
   | _TODO_<'pie'>
   | _TODO_<'project'>
+  | RegressionTransform
   | _TODO_<'resolvefilter'>
   | SampleTransform
   | _TODO_<'sequence'>
@@ -255,7 +256,7 @@ export interface JoinAggregateTransform {
 
 export interface KDETransform {
   type: 'kde';
-  field: string | TransformField | SignalRef;
+  field: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
   method?: 'pdf' | 'cdf' | SignalRef;
   bandwidth?: number | SignalRef;
@@ -272,6 +273,18 @@ export interface LookupTransform {
   values?: string[];
   as?: (string | SignalRef)[] | SignalRef;
   default?: any;
+}
+
+export interface RegressionTransform {
+  type: 'regression';
+  x: string | TransformField;
+  y: string | TransformField;
+  groupby?: (string | TransformField)[] | SignalRef;
+  method?: 'linear' | 'exp' | 'log' | 'quad' | 'poly' | 'pow' | 'loess' | SignalRef;
+  bandwidth?: number | SignalRef;
+  order?: number | SignalRef;
+  extent?: [number, number] | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface SampleTransform {
