@@ -10,9 +10,9 @@ import {extent, range} from 'd3-array';
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
  * @param {function(object): *} params.field - An accessor for the data field to estimate.
  * @param {number} [params.bandwidth=0] - The KDE bandwidth. If unspecified, the bandwidth is automatically determined.
- * @param {string} [params.method='pdf'] - The distribution method to sample.
- *   One of 'pdf' or 'cdf'.
-  * @param {number} [params.steps=100] - The number of sampling steps.
+ * @param {string} [params.method='pdf'] - The distribution method to sample. One of 'pdf' or 'cdf'.
+ * @param {Array<number>} [params.extent] - The domain extent over which to plot the density.
+ * @param {number} [params.steps=100] - The number of sampling steps.
  */
 export default function KDE(params) {
   Transform.call(this, null, params);
@@ -40,7 +40,7 @@ prototype.transform = function(_, pulse) {
   if (!this.value || pulse.changed() || _.modified()) {
     const source = pulse.materialize(pulse.SOURCE).source,
           groups = partition(source, _.groupby, _.field),
-          names = _.groupby.map(accessorName),
+          names = (_.groupby || []).map(accessorName),
           bandwidth = _.bandwidth,
           method = _.method || 'pdf',
           as = _.as || ['value', 'density'],
