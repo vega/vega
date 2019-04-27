@@ -25,6 +25,7 @@ export type Transforms =
   | ImputeTransform
   | JoinAggregateTransform
   | KDETransform
+  | _TODO_<'label'>
   | _TODO_<'linkpath'>
   | LookupTransform
   | _TODO_<'nest'>

@@ -39,6 +39,7 @@
     "vega-force": "^4.0.1",
     "vega-geo": "^4.0.2",
     "vega-hierarchy": "^4.0.1",
+    "vega-label": "^1.0.0",
     "vega-loader": "^4.0.0",
     "vega-parser": "^5.6.2",
     "vega-projection": "^1.2.1",
