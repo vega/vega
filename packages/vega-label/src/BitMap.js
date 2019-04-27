@@ -1,10 +1,11 @@
-import { Marks } from 'vega-scenegraph';
+import {canvas} from 'vega-canvas';
+import {Marks} from 'vega-scenegraph';
 
-const DIV = 0x5;
-const MOD = 0x1f;
-const SIZE = 0x20;
-const right0 = new Uint32Array(SIZE + 1);
-const right1 = new Uint32Array(SIZE + 1);
+const DIV = 0x5,
+      MOD = 0x1f,
+      SIZE = 0x20,
+      right0 = new Uint32Array(SIZE + 1),
+      right1 = new Uint32Array(SIZE + 1);
 
 right1[0] = 0x0;
 right0[0] = ~right1[0];
@@ -23,18 +24,10 @@ function applyUnmark(array, index, mask) {
 
 export default class BitMap {
   constructor(width, height, padding) {
-    this.pixelRatio = Math.sqrt((width * height) / 1000000.0);
-
-    // bound pixelRatio to be not less than 1
-    if (this.pixelRatio < 1) {
-      this.pixelRatio = 1;
-    }
-
+    this.pixelRatio = Math.max(1, Math.sqrt((width * height) / 1000000));
     this.padding = padding;
-
     this.width = ~~((width + 2 * padding + this.pixelRatio) / this.pixelRatio);
     this.height = ~~((height + 2 * padding + this.pixelRatio) / this.pixelRatio);
-
     this.array = new Uint32Array(~~((this.width * this.height + SIZE) / SIZE));
   }
 
@@ -168,7 +161,7 @@ export default class BitMap {
   }
 }
 
-// static function
+// static functions
 
 // bit mask for getting first 2 bytes of alpha value
 const ALPHA_MASK = 0xff000000;
@@ -235,27 +228,20 @@ export function prepareBitmap(data, size, marktype, avoidBaseMark, avoidMarks, l
  * @returns canvas context, to which all avoiding marks are drawn
  */
 function writeToCanvas(avoidMarks, width, height, labelInside) {
-  const m = avoidMarks.length;
-  // const c = document.getElementById('canvas-render'); // debugging canvas
-  const c = document.createElement('canvas');
-  const context = c.getContext('2d');
+  const context = canvas(width, height).getContext('2d'),
+        m = avoidMarks.length;
+
   let originalItems, itemsLen;
-  c.setAttribute('width', width);
-  c.setAttribute('height', height);
 
   // draw every avoiding marks into canvas
-  for (let i = 0; i < m; i++) {
+  for (let i=0; i<m; ++i) {
     originalItems = avoidMarks[i];
     itemsLen = originalItems.length;
-    if (!itemsLen) {
-      continue;
-    }
+    if (!itemsLen) continue;
 
-    if (originalItems[0].mark.marktype !== 'group') {
-      drawMark(context, originalItems, labelInside);
-    } else {
-      drawGroup(context, originalItems, labelInside);
-    }
+    originalItems[0].mark.marktype !== 'group'
+      ? drawMark(context, originalItems, labelInside)
+      : drawGroup(context, originalItems, labelInside);
   }
 
   return context;
@@ -350,7 +336,7 @@ function drawGroup(context, groups, labelInside) {
       if (g.marktype !== 'group') {
         drawMark(context, g.items, labelInside);
       } else {
-        // recursivly draw group of marks
+        // recursively draw group of marks
         drawGroup(context, g.items, labelInside);
       }
     }
@@ -379,42 +365,4 @@ function prepareMarkItem(originalItem) {
     item.strokeWidth = 2;
   }
   return item;
-}
-
-// debugging tools
-
-export function printBitMap(bitmap, id) {
-  if (!arguments.length) {
-    id = 'bitmap';
-  }
-
-  let x, y;
-  const canvas = document.getElementById(id);
-  if (!canvas) {
-    return;
-  }
-
-  canvas.setAttribute('width', bitmap.width);
-  canvas.setAttribute('height', bitmap.height);
-  const ctx = canvas.getContext('2d');
-  for (y = 0; y < bitmap.height; y++) {
-    for (x = 0; x < bitmap.width; x++) {
-      if (bitmap.getScaled(x, y)) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fillRect(x, y, 1, 1);
-      }
-    }
-  }
-}
-
-export function printBitMapContext(bitmap, ctx) {
-  let x, y;
-  for (y = 0; y < bitmap.height; y++) {
-    for (x = 0; x < bitmap.width; x++) {
-      if (bitmap.getScaled(x, y)) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fillRect(x, y, 1, 1);
-      }
-    }
-  }
 }

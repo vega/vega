@@ -1,44 +1,35 @@
 import labelLayout from './LabelLayout';
 import BitMap from './BitMap';
-import { labelWidth } from './LabelPlacers/Common';
-import { Transform } from 'vega-dataflow';
-import { inherits, isFunction } from 'vega-util';
+import {Transform} from 'vega-dataflow';
+import {array, error, inherits, isFunction} from 'vega-util';
 
-const Output = ['x', 'y', 'opacity', 'align', 'baseline', 'originalOpacity', 'transformed'];
-
+const Output = ['x', 'y', 'opacity', 'align', 'baseline'];
+const State = ['_opacity', '_transformed'];
 const Params = ['offset'];
-
-const defaultAnchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
+const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
 
 export default function Label(params) {
-  Transform.call(this, labelLayout(), params);
+  Transform.call(this, null, params);
 }
 
 Label.Definition = {
   type: 'Label',
   metadata: { modifies: true },
   params: [
-    { name: 'padding', type: 'number', expr: true, default: 0 },
-    { name: 'markIndex', type: 'number', default: 0 },
-    { name: 'lineAnchor', type: 'string', expr: true, values: ['begin', 'end'], default: 'end' },
-    { name: 'avoidBaseMark', type: 'boolean', default: true },
-    { name: 'size', type: 'number', array: true, length: [2] },
-    { name: 'offset', type: 'number', expr: true, default: [1] },
+    { name: 'size', type: 'number', array: true, length: 2, required: true },
     { name: 'sort', type: 'field' },
-    { name: 'anchor', type: 'string', expr: true, default: defaultAnchors },
+    { name: 'offset', type: 'number', array: true, default: [1] },
+    { name: 'anchor', type: 'string', array: true, default: Anchors },
+    { name: 'padding', type: 'number', default: 0 },
+    { name: 'markIndex', type: 'number', default: 0 },
+    { name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end' },
+    { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
-    {
-      name: 'as',
-      type: 'string',
-      array: true,
-      length: Output.length,
-      default: Output
-    }
+    { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
   ]
 };
 
 Label.BitMap = BitMap;
-Label.labelWidth = labelWidth;
 
 const prototype = inherits(Label, Transform);
 
@@ -50,43 +41,38 @@ prototype.transform = function (_, pulse) {
 
   const mod = _.modified();
   if (!(mod || pulse.changed(pulse.ADD_REM) || Params.some(modp))) return;
+  if (!_.size || _.size.length !== 2) {
+    error('Size of chart should be specified as a width, height array.');
+  }
 
-  const data = pulse.materialize(pulse.SOURCE).source;
-  const labelLayout = this.value;
   const as = _.as || Output;
-  const offset = Array.isArray(_.offset) ? _.offset : Number.isFinite(_.offset) ? [_.offset] : [1];
-  const anchor = Array.isArray(_.anchor) ? _.anchor : typeof _.anchor === 'string' ? [_.anchor] : defaultAnchors;
-  const numberPositions = Math.max(offset.length, anchor.length);
 
   // configure layout
-  const labels = labelLayout
-    .texts(data)
-    .sort(_.sort)
-    .offset(offset, numberPositions)
-    .anchor(anchor, numberPositions)
-    .avoidMarks(_.avoidMarks || [])
-    .size(_.size)
-    .avoidBaseMark(_.avoidBaseMark !== undefined ? _.avoidBaseMark : true)
-    .lineAnchor(_.lineAnchor || 'end')
-    .markIndex(_.markIndex || 0)
-    .padding(_.padding || 0)
-    .layout();
-  const n = data.length;
+  const labels = labelLayout(
+    pulse.materialize(pulse.SOURCE).source,
+    _.size,
+    _.sort,
+    array(_.offset || 1),
+    array(_.anchor || Anchors),
+    _.avoidMarks || [],
+    _.avoidBaseMark !== undefined ? _.avoidBaseMark : true,
+    _.lineAnchor || 'end',
+    _.markIndex || 0,
+    _.padding || 0,
+  );
 
   // fill the information of transformed labels back into data
-  let l, t;
-  for (let i = 0; i < n; i++) {
+  for (let i=0, n=labels.length, l, t; i<n; ++i) {
     l = labels[i];
     t = l.datum;
-
     t[as[0]] = l.x;
     t[as[1]] = l.y;
     t[as[2]] = l.opacity;
     t[as[3]] = l.align;
     t[as[4]] = l.baseline;
-    t[as[5]] = l.originalOpacity;
-    t[as[6]] = true;
+    t[State[0]] = l._opacity;
+    t[State[1]] = true;
   }
 
-  return pulse.reflow(mod).modifies(as);
+  return pulse.reflow(mod).modifies(as).modifies(State);
 };

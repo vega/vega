@@ -29,6 +29,7 @@
     "vega-force": "*",
     "vega-geo": "*",
     "vega-hierarchy": "*",
+    "vega-label": "*",
     "vega-regression": "*",
     "vega-transforms": "*",
     "vega-view-transforms": "*",
