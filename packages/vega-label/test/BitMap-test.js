@@ -1,5 +1,5 @@
 const tape = require('tape'),
-  BitMap = require('../').label.BitMap;
+      BitMap = require('../').label.BitMap;
 
 function createUnscaledBitMap() {
   return new BitMap(100, 100, 0);
