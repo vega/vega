@@ -167,7 +167,7 @@ An _expr_ reference provides an [expression](../expressions) string that should 
 }
 ```
 
-Unlike [signal references](#Signal) that are evaluated once per parameter, _expr_ references behave like [anonymous (or lambda) functions](https://en.wikipedia.org/wiki/Anonymous_function) that are evaluated once per data object.
+Unlike [signal references](#Signal) that are evaluated once per parameter, _expr_ references behave like [anonymous (or lambda) functions](https://en.wikipedia.org/wiki/Anonymous_function) that are evaluated independently per data object.  Note that both signal and _expr_ references will re-run if an upstream dependency changes.  
 
 Both _field_ and _expr_ references may include an `as` property that indicates the output field name to use.
 
