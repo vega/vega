@@ -1,11 +1,8 @@
 import labelLayout from './LabelLayout';
-import BitMap from './BitMap';
 import {Transform} from 'vega-dataflow';
 import {array, error, inherits, isFunction} from 'vega-util';
 
 const Output = ['x', 'y', 'opacity', 'align', 'baseline'];
-const State = ['_opacity', '_transformed'];
-const Params = ['offset'];
 const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
 
 export default function Label(params) {
@@ -17,7 +14,7 @@ Label.Definition = {
   metadata: { modifies: true },
   params: [
     { name: 'size', type: 'number', array: true, length: 2, required: true },
-    { name: 'sort', type: 'field' },
+    { name: 'sort', type: 'compare' },
     { name: 'offset', type: 'number', array: true, default: [1] },
     { name: 'anchor', type: 'string', array: true, default: Anchors },
     { name: 'padding', type: 'number', default: 0 },
@@ -29,8 +26,6 @@ Label.Definition = {
   ]
 };
 
-Label.BitMap = BitMap;
-
 const prototype = inherits(Label, Transform);
 
 prototype.transform = function (_, pulse) {
@@ -40,39 +35,34 @@ prototype.transform = function (_, pulse) {
   }
 
   const mod = _.modified();
-  if (!(mod || pulse.changed(pulse.ADD_REM) || Params.some(modp))) return;
+  if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
   if (!_.size || _.size.length !== 2) {
     error('Size of chart should be specified as a width, height array.');
   }
 
   const as = _.as || Output;
 
-  // configure layout
-  const labels = labelLayout(
+  // run label layout
+  labelLayout(
     pulse.materialize(pulse.SOURCE).source,
     _.size,
     _.sort,
     array(_.offset || 1),
     array(_.anchor || Anchors),
     _.avoidMarks || [],
-    _.avoidBaseMark !== undefined ? _.avoidBaseMark : true,
+    _.avoidBaseMark === false ? false : true,
     _.lineAnchor || 'end',
     _.markIndex || 0,
-    _.padding || 0,
-  );
-
-  // fill the information of transformed labels back into data
-  for (let i=0, n=labels.length, l, t; i<n; ++i) {
-    l = labels[i];
-    t = l.datum;
+    _.padding || 0
+  ).forEach(l => {
+    // write layout results to data stream
+    const t = l.datum;
     t[as[0]] = l.x;
     t[as[1]] = l.y;
     t[as[2]] = l.opacity;
     t[as[3]] = l.align;
     t[as[4]] = l.baseline;
-    t[State[0]] = l._opacity;
-    t[State[1]] = true;
-  }
+  });
 
-  return pulse.reflow(mod).modifies(as).modifies(State);
+  return pulse.reflow(mod).modifies(as);
 };
