@@ -25,7 +25,7 @@ export type Transforms =
   | ImputeTransform
   | JoinAggregateTransform
   | KDETransform
-  | _TODO_<'label'>
+  | LabelTransform
   | _TODO_<'linkpath'>
   | LoessTransform
   | LookupTransform
@@ -45,8 +45,7 @@ export type Transforms =
   | _TODO_<'treemap'>
   | _TODO_<'voronoi'>
   | WindowTransform
-  | WordcloudTransform
-  | LabelTransform;
+  | WordcloudTransform;
 
 export interface AggregateTransform {
   type: 'aggregate';
@@ -281,6 +280,20 @@ export interface LoessTransform {
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
+export interface LabelTransform {
+  type: 'label';
+  size: Vector2<number | SignalRef> | SignalRef;
+  sort?: Compare;
+  offset?: number[] | number | SignalRef;
+  anchor?: string[] | string | SignalRef;
+  padding?: number | SignalRef;
+  markIndex?: number;
+  lineAnchor?: 'begin' | 'end' | SignalRef;
+  avoidBaseMark?: boolean | SignalRef;
+  avoidMarks?: string[];
+  as?: Vector7<string | SignalRef> | SignalRef;
+}
+
 export interface LookupTransform {
   type: 'lookup';
   from: string;
@@ -358,19 +371,6 @@ export interface WordcloudTransform {
   text?: string | TransformField;
   spiral?: 'archimedian' | 'rectangular';
   padding?: number | TransformField;
-  as?: Vector7<string | SignalRef> | SignalRef;
-}
-
-export interface LabelTransform {
-  type: 'label';
-  padding?: number | TransformField;
-  markIndex?: number;
-  lineAnchor?: 'begin' | 'end';
-  avoidBaseMark?: boolean;
-  size?: Vector2<number>;
-  offset?: number[] | number;
-  anchor?: string[] | string;
-  avoidMark?: Data;
   as?: Vector7<string | SignalRef> | SignalRef;
 }
 

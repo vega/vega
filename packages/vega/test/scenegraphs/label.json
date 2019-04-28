@@ -16769,6 +16769,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Slam",
               "font": "sans-serif",
               "fontSize": 8
@@ -16821,6 +16822,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Ten Commandments",
               "font": "sans-serif",
               "fontSize": 8
@@ -16831,6 +16833,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": 1776,
               "font": "sans-serif",
               "fontSize": 8
@@ -16862,6 +16865,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "3 Ninjas Kick Back",
               "font": "sans-serif",
               "fontSize": 8
@@ -16879,6 +16883,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Four Rooms",
               "font": "sans-serif",
               "fontSize": 8
@@ -16959,6 +16964,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Alive",
               "font": "sans-serif",
               "fontSize": 8
@@ -17032,6 +17038,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Barbarella",
               "font": "sans-serif",
               "fontSize": 8
@@ -17049,6 +17056,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Babe",
               "font": "sans-serif",
               "fontSize": 8
@@ -17150,6 +17158,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Beauty and the Beast",
               "font": "sans-serif",
               "fontSize": 8
@@ -17349,6 +17358,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Black Rain",
               "font": "sans-serif",
               "fontSize": 8
@@ -17499,6 +17509,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Casino Royale",
               "font": "sans-serif",
               "fontSize": 8
@@ -17635,6 +17646,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Commando",
               "font": "sans-serif",
               "fontSize": 8
@@ -17652,6 +17664,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Cinderella",
               "font": "sans-serif",
               "fontSize": 8
@@ -17949,6 +17962,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Day of the Dead",
               "font": "sans-serif",
               "fontSize": 8
@@ -18169,6 +18183,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Fair Game",
               "font": "sans-serif",
               "fontSize": 8
@@ -18249,6 +18264,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Fog",
               "font": "sans-serif",
               "fontSize": 8
@@ -18259,6 +18275,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Forrest Gump",
               "font": "sans-serif",
               "fontSize": 8
@@ -18395,6 +18412,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Godfather",
               "font": "sans-serif",
               "fontSize": 8
@@ -18426,6 +18444,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Girl 6",
               "font": "sans-serif",
               "fontSize": 8
@@ -18646,6 +18665,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Henry V",
               "font": "sans-serif",
               "fontSize": 8
@@ -18733,6 +18753,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Hud",
               "font": "sans-serif",
               "fontSize": 8
@@ -18925,6 +18946,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Jaws",
               "font": "sans-serif",
               "fontSize": 8
@@ -18991,6 +19013,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Krrish",
               "font": "sans-serif",
               "fontSize": 8
@@ -19099,6 +19122,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Aliens",
               "font": "sans-serif",
               "fontSize": 8
@@ -19669,6 +19693,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Notorious",
               "font": "sans-serif",
               "fontSize": 8
@@ -19945,6 +19970,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Panic",
               "font": "sans-serif",
               "fontSize": 8
@@ -19969,6 +19995,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Popeye",
               "font": "sans-serif",
               "fontSize": 8
@@ -20098,6 +20125,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Quo Vadis?",
               "font": "sans-serif",
               "fontSize": 8
@@ -20262,6 +20290,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "The R.M.",
               "font": "sans-serif",
               "fontSize": 8
@@ -20328,6 +20357,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Raise the Titanic",
               "font": "sans-serif",
               "fontSize": 8
@@ -20499,6 +20529,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Sheena",
               "font": "sans-serif",
               "fontSize": 8
@@ -20600,6 +20631,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Sleeper",
               "font": "sans-serif",
               "fontSize": 8
@@ -20722,6 +20754,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Speed",
               "font": "sans-serif",
               "fontSize": 8
@@ -20774,6 +20807,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Superman",
               "font": "sans-serif",
               "fontSize": 8
@@ -20994,6 +21028,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Teen Wolf Too",
               "font": "sans-serif",
               "fontSize": 8
@@ -21074,6 +21109,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Time Bandits",
               "font": "sans-serif",
               "fontSize": 8
@@ -21182,6 +21218,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Tron",
               "font": "sans-serif",
               "fontSize": 8
@@ -21689,6 +21726,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": 300,
               "font": "sans-serif",
               "fontSize": 8
@@ -21783,6 +21821,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Seven Pounds",
               "font": "sans-serif",
               "fontSize": 8
@@ -21884,6 +21923,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Aeon Flux",
               "font": "sans-serif",
               "fontSize": 8
@@ -21908,6 +21948,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Air Bud",
               "font": "sans-serif",
               "fontSize": 8
@@ -22177,6 +22218,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Anaconda",
               "font": "sans-serif",
               "fontSize": 8
@@ -22320,6 +22362,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Aquamarine",
               "font": "sans-serif",
               "fontSize": 8
@@ -22442,6 +22485,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "ATL",
               "font": "sans-serif",
               "fontSize": 8
@@ -22515,6 +22559,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Avatar",
               "font": "sans-serif",
               "fontSize": 8
@@ -22588,6 +22633,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Baby Geniuses",
               "font": "sans-serif",
               "fontSize": 8
@@ -22752,6 +22798,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Blood Diamond",
               "font": "sans-serif",
               "fontSize": 8
@@ -22811,6 +22858,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Beloved",
               "font": "sans-serif",
               "fontSize": 8
@@ -23136,6 +23184,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Bones",
               "font": "sans-serif",
               "fontSize": 8
@@ -23286,6 +23335,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Brothers",
               "font": "sans-serif",
               "fontSize": 8
@@ -23478,6 +23528,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Country Bears",
               "font": "sans-serif",
               "fontSize": 8
@@ -23663,6 +23714,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Chairman of the Board",
               "font": "sans-serif",
               "fontSize": 8
@@ -24618,6 +24670,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Drumline",
               "font": "sans-serif",
               "fontSize": 8
@@ -24649,6 +24702,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Double Take",
               "font": "sans-serif",
               "fontSize": 8
@@ -24799,6 +24853,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Iris",
               "font": "sans-serif",
               "fontSize": 8
@@ -24865,6 +24920,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Empire",
               "font": "sans-serif",
               "fontSize": 8
@@ -25246,6 +25302,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Fight Club",
               "font": "sans-serif",
               "fontSize": 8
@@ -25277,6 +25334,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "From Justin to Kelly",
               "font": "sans-serif",
               "fontSize": 8
@@ -25679,6 +25737,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Ghost Town",
               "font": "sans-serif",
               "fontSize": 8
@@ -25710,6 +25769,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Glitter",
               "font": "sans-serif",
               "fontSize": 8
@@ -25748,6 +25808,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Gandhi, My Father",
               "font": "sans-serif",
               "fontSize": 8
@@ -25996,6 +26057,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Hamlet",
               "font": "sans-serif",
               "fontSize": 8
@@ -26097,6 +26159,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Heist",
               "font": "sans-serif",
               "fontSize": 8
@@ -26170,6 +26233,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "High School Musical 3: Senior Year",
               "font": "sans-serif",
               "fontSize": 8
@@ -26257,6 +26321,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Milk",
               "font": "sans-serif",
               "fontSize": 8
@@ -26470,6 +26535,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Hardball",
               "font": "sans-serif",
               "fontSize": 8
@@ -26704,6 +26770,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Inception",
               "font": "sans-serif",
               "fontSize": 8
@@ -27253,6 +27320,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "K-PAX",
               "font": "sans-serif",
               "fontSize": 8
@@ -27487,6 +27555,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Life of David Gale",
               "font": "sans-serif",
               "fontSize": 8
@@ -27504,6 +27573,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Like Mike",
               "font": "sans-serif",
               "fontSize": 8
@@ -27850,6 +27920,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Man on Fire",
               "font": "sans-serif",
               "fontSize": 8
@@ -27881,6 +27952,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Marci X",
               "font": "sans-serif",
               "fontSize": 8
@@ -27961,6 +28033,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Meet the Browns",
               "font": "sans-serif",
               "fontSize": 8
@@ -29070,6 +29143,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Out of Time",
               "font": "sans-serif",
               "fontSize": 8
@@ -29164,6 +29238,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Phat Girlz",
               "font": "sans-serif",
               "fontSize": 8
@@ -29328,6 +29403,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Pokemon 3: The Movie",
               "font": "sans-serif",
               "fontSize": 8
@@ -29492,6 +29568,7 @@
               "align": "right",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Prestige",
               "font": "sans-serif",
               "fontSize": 8
@@ -29516,6 +29593,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Psycho",
               "font": "sans-serif",
               "fontSize": 8
@@ -30002,6 +30080,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Real Cancun",
               "font": "sans-serif",
               "fontSize": 8
@@ -30152,6 +30231,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Saw",
               "font": "sans-serif",
               "fontSize": 8
@@ -30281,6 +30361,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Scream",
               "font": "sans-serif",
               "fontSize": 8
@@ -31796,6 +31877,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "Thomas and the Magic Railroad",
               "font": "sans-serif",
               "fontSize": 8
@@ -31827,6 +31909,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Ring",
               "font": "sans-serif",
               "fontSize": 8
@@ -31900,6 +31983,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Ta Ra Rum Pum",
               "font": "sans-serif",
               "fontSize": 8
@@ -32106,6 +32190,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": null,
               "font": "sans-serif",
               "fontSize": 8
@@ -32270,6 +32355,7 @@
               "align": "center",
               "baseline": "bottom",
               "fill": "#000",
+              "opacity": 1,
               "text": "Volver",
               "font": "sans-serif",
               "fontSize": 8
@@ -32280,6 +32366,7 @@
               "align": "left",
               "baseline": "middle",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Flintstones in Viva Rock Vegas",
               "font": "sans-serif",
               "fontSize": 8
@@ -32598,6 +32685,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "The Women",
               "font": "sans-serif",
               "fontSize": 8
@@ -32832,6 +32920,7 @@
               "align": "center",
               "baseline": "top",
               "fill": "#000",
+              "opacity": 1,
               "text": "Zoom",
               "font": "sans-serif",
               "fontSize": 8
