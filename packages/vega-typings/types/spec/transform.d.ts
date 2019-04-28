@@ -493,6 +493,20 @@ export interface LoessTransform {
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
+export interface LabelTransform {
+  type: 'label';
+  size: Vector2<number | SignalRef> | SignalRef;
+  sort?: Compare;
+  offset?: number[] | number | SignalRef;
+  anchor?: string[] | string | SignalRef;
+  padding?: number | SignalRef;
+  markIndex?: number;
+  lineAnchor?: 'begin' | 'end' | SignalRef;
+  avoidBaseMark?: boolean | SignalRef;
+  avoidMarks?: string[];
+  as?: Vector7<string | SignalRef> | SignalRef;
+}
+
 export interface LookupTransform {
   type: 'lookup';
   from: DataName;
