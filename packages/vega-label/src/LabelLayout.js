@@ -5,8 +5,8 @@ import placeMarkLabel from './util/placeMarkLabel';
 
 // 8-bit representation of anchors
 const TOP    = 0x0,
-      MIDDLE = 0x1 << 0x2,
-      BOTTOM = 0x2 << 0x2,
+      MIDDLE = 0x4,
+      BOTTOM = 0x8,
       LEFT   = 0x0,
       CENTER = 0x1,
       RIGHT  = 0x2;
@@ -73,8 +73,8 @@ export default function(texts, size, compare, offset, anchor,
 
   // generate label placement function
   const place = isGroupArea
-      ? placeAreaLabel($, bitmaps, avoidBaseMark)
-      : placeMarkLabel($, bitmaps, anchors, offsets);
+    ? placeAreaLabel($, bitmaps, avoidBaseMark)
+    : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels
   data.forEach(d => d.opacity = +place(d));
