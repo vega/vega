@@ -62,14 +62,14 @@ select.addEventListener('change', function() {
 
 const render = document.querySelector('#render');
 render.addEventListener('change', function() {
-  renderType = render.options[render.selectedIndex].value;
-  if (view) view.renderer(renderType).runAsync();
+  options.renderer = render.options[render.selectedIndex].value;
+  if (view) view.renderer(options.renderer).runAsync();
 });
 
 const level = document.querySelector('#level');
 level.addEventListener('change', function() {
-  logLevel = +level.options[level.selectedIndex].value;
-  if (view) view.logLevel(logLevel);
+  options.logLevel = +level.options[level.selectedIndex].value;
+  if (view) view.logLevel(options.logLevel);
 });
 
 async function init() {
