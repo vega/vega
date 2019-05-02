@@ -23,7 +23,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-regression": "1.1.1",
+    "d3-regression": "^1.2.0",
     "vega-dataflow": "^5.1.1",
     "vega-util": "^1.8.0"
   },
