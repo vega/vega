@@ -1,57 +1,55 @@
 import {error, zero} from 'vega-util';
 
 export function WindowOp(op, field, param, as) {
-  var fn = WindowOps[op](field, param);
+  let fn = WindowOps[op](field, param);
   return {
     init:   fn.init || zero,
     update: function(w, t) { t[as] = fn.next(w); }
   };
 }
 
-export var WindowOps = {
+export const WindowOps = {
   row_number: function() {
     return {
-      next: function(w) { return w.index + 1; }
+      next: w => w.index + 1
     };
   },
   rank: function() {
-    var rank;
+    let rank;
     return {
-      init: function() { rank = 1; },
-      next: function(w) {
-        var i = w.index,
+      init: () => rank = 1,
+      next: w => {
+        let i = w.index,
             data = w.data;
         return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
       }
     };
   },
   dense_rank: function() {
-    var drank;
+    let drank;
     return {
-      init: function() { drank = 1; },
-      next: function(w) {
-        var i = w.index,
+      init: () => drank = 1,
+      next: w => {
+        let i = w.index,
             d = w.data;
         return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
       }
     };
   },
   percent_rank: function() {
-    var rank = WindowOps.rank(),
+    let rank = WindowOps.rank(),
         next = rank.next;
     return {
       init: rank.init,
-      next: function(w) {
-        return (next(w) - 1) / (w.data.length - 1);
-      }
+      next: w => (next(w) - 1) / (w.data.length - 1)
     };
   },
   cume_dist: function() {
-    var cume;
+    let cume;
     return {
-      init: function() { cume = 0; },
-      next: function(w) {
-        var i = w.index,
+      init: () => cume = 0,
+      next: w => {
+        let i = w.index,
             d = w.data,
             c = w.compare;
         if (cume < i) {
@@ -65,19 +63,19 @@ export var WindowOps = {
   ntile: function(field, num) {
     num = +num;
     if (!(num > 0)) error('ntile num must be greater than zero.');
-    var cume = WindowOps.cume_dist(),
+    let cume = WindowOps.cume_dist(),
         next = cume.next;
     return {
       init: cume.init,
-      next: function(w) { return Math.ceil(num * next(w)); }
+      next: w => Math.ceil(num * next(w))
     };
   },
 
   lag: function(field, offset) {
     offset = +offset || 1;
     return {
-      next: function(w) {
-        var i = w.index - offset;
+      next: w => {
+        let i = w.index - offset;
         return i >= 0 ? field(w.data[i]) : null;
       }
     };
@@ -85,8 +83,8 @@ export var WindowOps = {
   lead: function(field, offset) {
     offset = +offset || 1;
     return {
-      next: function(w) {
-        var i = w.index + offset,
+      next: w => {
+        let i = w.index + offset,
             d = w.data;
         return i < d.length ? field(d[i]) : null;
       }
@@ -95,24 +93,56 @@ export var WindowOps = {
 
   first_value: function(field) {
     return {
-      next: function(w) { return field(w.data[w.i0]); }
+      next: w => field(w.data[w.i0])
     };
   },
   last_value: function(field) {
     return {
-      next: function(w) { return field(w.data[w.i1 - 1]); }
+      next: w => field(w.data[w.i1 - 1])
     }
   },
   nth_value: function(field, nth) {
     nth = +nth;
     if (!(nth > 0)) error('nth_value nth must be greater than zero.');
     return {
-      next: function(w) {
-        var i = w.i0 + (nth - 1);
+      next: w => {
+        let i = w.i0 + (nth - 1);
         return i < w.i1 ? field(w.data[i]) : null;
       }
     }
-  }
+  },
+
+  prev_value: function(field) {
+    let prev = null;
+    return {
+      next: w => {
+        let v = field(w.data[w.index]);
+        return v != null ? (prev = v) : prev;
+      }
+    }
+  },
+  next_value: function(field) {
+    let v = null,
+        i = -1;
+    return {
+      next: w => {
+        let d = w.data;
+        return w.index <= i ? v
+          : (i = find(field, d, w.index)) < 0
+            ? (i = d.length, v = null)
+            : (v = field(d[i]));
+      }
+    };
+  },
+
 };
+
+function find(field, data, index) {
+  for (let n = data.length; index < n; ++index) {
+    let v = field(data[index]);
+    if (v != null) return index;
+  }
+  return -1;
+}
 
 export var ValidWindowOps = Object.keys(WindowOps);
