@@ -39,17 +39,19 @@ prototype.transform = function(_, pulse) {
       update = encoders.update || falsy,
       enter = encoders.enter || falsy,
       exit = encoders.exit || falsy,
-      set = (encode && !reenter ? encoders[encode] : update) || falsy;
+      set = (encode && !reenter ? encoders[encode] : update) || falsy,
+      // if item (not datum) fields are modified, don't suppress mod output
+      fieldmod = pulse.fields
+              && Object.keys(pulse.fields).some(f => f !== 'datum');
 
   if (pulse.changed(pulse.ADD)) {
-    pulse.visit(pulse.ADD, function(t) {
-      enter(t, _);
-      update(t, _);
-      if (set !== falsy && set !== update) set(t, _);
-    });
+    pulse.visit(pulse.ADD, function(t) { enter(t, _); update(t, _); });
     out.modifies(enter.output);
     out.modifies(update.output);
-    if (set !== falsy && set !== update) out.modifies(set.output);
+    if (set !== falsy && set !== update) {
+      pulse.visit(pulse.ADD, function(t) { set(t, _); });
+      out.modifies(set.output);
+    }
   }
 
   if (pulse.changed(pulse.REM) && exit !== falsy) {
@@ -62,12 +64,12 @@ prototype.transform = function(_, pulse) {
     if (reenter) {
       pulse.visit(flag, function(t) {
         var mod = enter(t, _);
-        if (set(t, _) || mod) out.mod.push(t);
+        if (set(t, _) || mod || fieldmod) out.mod.push(t);
       });
       if (out.mod.length) out.modifies(enter.output);
     } else {
       pulse.visit(flag, function(t) {
-        if (set(t, _)) out.mod.push(t);
+        if (set(t, _) || fieldmod) out.mod.push(t);
       });
     }
     if (out.mod.length) out.modifies(set.output);

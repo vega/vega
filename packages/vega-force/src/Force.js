@@ -30,6 +30,7 @@ var Forces = 'forces',
  */
 export default function Force(params) {
   Transform.call(this, null, params);
+  this.modified(true);
 }
 
 Force.Definition = {
@@ -130,7 +131,7 @@ prototype.transform = function(_, pulse) {
 
   // run simulation
   if (params || change || _.modified(ForceConfig)
-      || (pulse.changed() && _.restart))
+      || (_.restart && (pulse.changed() || _.modified('restart'))))
   {
     sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
        .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
