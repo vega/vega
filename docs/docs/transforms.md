@@ -71,7 +71,6 @@ Transforms for calculating spatial coordinates to achieve various layouts.
 - [`pie`](pie) - Compute angular layout for pie and donut charts.
 - [`stack`](stack) - Compute stacked layouts for groups of values.
 - [`force`](force) - Compute a force-directed layout via physical simulation.
-- [`label`](label) - Compute texts layout for labeling chart.
 - [`voronoi`](voronoi) - Compute a Voronoi diagram for a set of points.
 - [`wordcloud`](wordcloud) - Compute a word cloud layout of text strings.
 
