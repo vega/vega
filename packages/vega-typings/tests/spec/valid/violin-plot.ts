@@ -18,7 +18,7 @@ export const spec: Spec = {
       "value": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"] },
     { "name": "plotWidth", "value": 60 },
     { "name": "width", "update": "(plotWidth + 10) * length(fields)"},
-    { "name": "bandwidth", "value": 0,
+    { "name": "bandwidth", "value": 0.3,
       "bind": {"input": "range", "min": 0, "max": 1.0, "step": 0.005} },
     { "name": "steps", "value": 100,
       "bind": {"input": "range", "min": 10, "max": 500, "step": 1} }
