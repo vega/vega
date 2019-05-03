@@ -314,7 +314,9 @@ export type WindowOnlyOp =
   | 'lead'
   | 'first_value'
   | 'last_value'
-  | 'nth_value';
+  | 'nth_value'
+  | 'prev_value'
+  | 'next_value';
 
 export interface WindowTransform {
   type: 'window';
