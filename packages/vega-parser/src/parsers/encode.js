@@ -6,7 +6,7 @@ import {isArray} from 'vega-util';
 
 export default function parseEncode(encode, marktype, params, scope) {
   var fields = {},
-      code = 'var o=item,datum=o.datum,$;',
+      code = 'var o=item,datum=o.datum,m=0,$;',
       channel, enc, value;
 
   for (channel in encode) {
@@ -20,7 +20,7 @@ export default function parseEncode(encode, marktype, params, scope) {
   }
 
   code += adjustSpatial(encode, marktype);
-  code += 'return 1;';
+  code += 'return m;';
 
   return {
     $expr:   code,

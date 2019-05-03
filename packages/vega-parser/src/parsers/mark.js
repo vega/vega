@@ -23,7 +23,7 @@ export default function(spec, scope) {
       layout = spec.layout || role === ScopeRole || role === FrameRole,
       nested = role === MarkRole || layout || facet,
       overlap = spec.overlap,
-      ops, op, input, store, bound, render, sieve, name,
+      ops, op, input, store, enc, bound, render, sieve, name,
       joinRef, markRef, encodeRef, layoutRef, boundRef;
 
   // resolve input data
@@ -54,9 +54,10 @@ export default function(spec, scope) {
   markRef = ref(op);
 
   // add visual encoders
-  op = scope.add(Encode(
-    encoders(spec.encode, spec.type, role, spec.style, scope, {pulse: markRef})
-  ));
+  op = enc = scope.add(Encode(encoders(
+    spec.encode, spec.type, role, spec.style, scope,
+    {mod: false, pulse: markRef}
+  )));
 
   // monitor parent marks to propagate changes
   op.params.parent = scope.encode();
@@ -64,10 +65,12 @@ export default function(spec, scope) {
   // add post-encoding transforms, if defined
   if (spec.transform) {
     spec.transform.forEach(function(_) {
-      var tx = parseTransform(_, scope);
-      if (tx.metadata.generates || tx.metadata.changes) {
+      const tx = parseTransform(_, scope),
+            md = tx.metadata;
+      if (md.generates || md.changes) {
         error('Mark transforms should not generate new data.');
       }
+      if (!md.nomod) enc.params.mod = true; // update encode mod handling
       tx.params.pulse = ref(op);
       scope.add(op = tx);
     });
