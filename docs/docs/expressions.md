@@ -10,7 +10,7 @@ The expression language is a restricted subset of JavaScript. All basic arithmet
 
 To keep the expression language simple, secure and free of unwanted side effects, the following elements are **not** allowed: assignment operators (`=`, `+=` etc), pre/postfix updates (`++`), `new` expressions, and most control flow statements (`for`, `while`, `switch`, etc). In addition, function calls involving nested properties (`foo.bar()`) are not allowed. Instead, the expression language supports a collection of functions defined in the top-level scope.
 
-This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; are maintained in the [vega-expression module](../../packages/vega-expression).
+This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; are maintained in the [vega-expression module](https://github.com/vega/vega/tree/master/packages/vega-expression).
 
 
 ## <a name="reference"></a>Expression Language Reference
