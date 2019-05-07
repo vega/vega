@@ -4,15 +4,15 @@ import {textMetrics} from 'vega-scenegraph';
 const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
 
-export default function($, bitmaps, avoidBaseMark) {
+export default function($, bitmaps, avoidBaseMark, markIndex) {
   let width = $.width,
       height = $.height,
-      bm0 = bitmaps[0],
-      bm1 = bitmaps[1],
-      bm2 = $.bitmap();
+      bm0 = bitmaps[0], // where labels have been placed
+      bm1 = bitmaps[1], // area outlines
+      bm2 = $.bitmap(); // flood-fill visitations
 
   return function(d) {
-    const items = d.datum.datum.items[0].items,
+    const items = d.datum.datum.items[markIndex].items,
           n = items.length,
           textHeight = d.datum.fontSize,
           textWidth = textMetrics.width(d.datum),

@@ -2,8 +2,24 @@ import labelLayout from './LabelLayout';
 import {Transform} from 'vega-dataflow';
 import {array, error, inherits, isFunction} from 'vega-util';
 
-const Output = ['x', 'y', 'opacity', 'align', 'baseline'];
-const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
+const Output = [
+  'x',
+  'y',
+  'opacity',
+  'align',
+  'baseline'
+];
+
+const Anchors = [
+  'top-left',
+  'left',
+  'bottom-left',
+  'top',
+  'bottom',
+  'top-right',
+  'right',
+  'bottom-right'
+];
 
 export default function Label(params) {
   Transform.call(this, null, params);
@@ -19,7 +35,7 @@ Label.Definition = {
     { name: 'anchor', type: 'string', array: true, default: Anchors },
     { name: 'padding', type: 'number', default: 0 },
     { name: 'markIndex', type: 'number', default: 0 },
-    { name: 'lineAnchor', type: 'string', values: ['begin', 'end'], default: 'end' },
+    { name: 'lineAnchor', type: 'string', values: ['start', 'end'], default: 'end' },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
     { name: 'as', type: 'string', array: true, length: Output.length, default: Output }

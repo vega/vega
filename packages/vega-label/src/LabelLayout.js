@@ -1,4 +1,4 @@
-import {markBitmaps} from './util/markBitmaps';
+import {markBitmaps, baseBitmaps} from './util/markBitmaps';
 import scaler from './util/scaler';
 import placeAreaLabel from './util/placeAreaLabel';
 import placeMarkLabel from './util/placeMarkLabel';
@@ -73,7 +73,7 @@ export default function(texts, size, compare, offset, anchor,
 
   // generate label placement function
   const place = isGroupArea
-    ? placeAreaLabel($, bitmaps, avoidBaseMark)
+    ? placeAreaLabel($, bitmaps, avoidBaseMark, markIndex)
     : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels
@@ -102,13 +102,6 @@ function markType(item) {
   return item && item.mark && item.mark.marktype;
 }
 
-function baseBitmaps($, data) {
-  const bitmap = $.bitmap();
-  // when there is no base mark but data points are to be avoided
-  (data || []).forEach(d => bitmap.set($(d.boundary[0]), $(d.boundary[3])));
-  return [bitmap, undefined];
-}
-
 /**
  * Factory function for function for getting base mark boundary, depending
  * on mark and group type. When mark type is undefined, line or area: boundary
@@ -131,8 +124,8 @@ function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
     return d => {
       const items = d.datum.items[markIndex].items;
       return xy(items.length
-        ? items[lineAnchor === 'begin' ? items.length - 1 : 0]
-        : {x: Number.MIN_SAFE_INTEGER, y: Number.MIN_SAFE_INTEGER});
+        ? items[lineAnchor === 'start' ? 0 : items.length - 1]
+        : {x: NaN, y: NaN});
     };
   }
 
