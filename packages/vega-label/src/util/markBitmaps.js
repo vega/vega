@@ -9,6 +9,13 @@ const ALPHA_MASK = 0xff000000;
 const INSIDE_OPACITY_IN_ALPHA = 0x10000000;
 const INSIDE_OPACITY = 0.0625;
 
+export function baseBitmaps($, data) {
+  const bitmap = $.bitmap();
+  // when there is no base mark but data points are to be avoided
+  (data || []).forEach(d => bitmap.set($(d.boundary[0]), $(d.boundary[3])));
+  return [bitmap, undefined];
+}
+
 export function markBitmaps($, avoidMarks, labelInside, isGroupArea) {
   // create canvas
   const width = $.width,
