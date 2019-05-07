@@ -202,7 +202,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
 | labelOpacity    | {% include type t="Number" %}   | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
-| labelSeparation | {% include type t="Number" %}  | {% include tag ver="5.0" %} The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.|
+| labelSeparation | {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | labelPadding    | {% include type t="Number" %}   | Padding in pixels between axis ticks and tick labels. |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
@@ -282,8 +282,10 @@ Properties defining default settings for legends. These properties are defined u
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
 | labelOpacity          | {% include type t="Number" %}   | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap          | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
-| labelSeparation       | {% include type t="Number" %}  | {% include tag ver="5.0" %} The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.|
-| layout                | [Layout](#legends-layout)      | {% include tag ver="5.0" %} An object specifying layout parameters for positioning a collection of legends with the same *orient* value.|
+| labelSeparation       | {% include type t="Number" %}   | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
+| layout                | [Layout](#legends-layout)       | An object specifying layout parameters for positioning a collection of legends with the same *orient* value. {% include tag ver="5.0" %} |
+| legendX               | {% include type t="Number" %}   | The pixel x-coordinate of the legend group. Only applied if the _orient_ value is `"none"`. {% include tag ver="5.4" %} |
+| legendY               | {% include type t="Number" %}   | The pixel y-coordinate of the legend group. Only applied if the _orient_ value is `"none"`. {% include tag ver="5.4" %} |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the legend from the chart body. If specified, this value will override any values specified in the [legend layout config](#legends-layout).|
 | orient                | {% include type t="String" %}   | Default legend orientation (e.g., `"right"` or `"left"`). |
 | padding               | {% include type t="Number" %}   | Padding in pixels between legend border and contents. |
@@ -297,8 +299,8 @@ Properties defining default settings for legends. These properties are defined u
 | symbolDashOffset      | {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
 | symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
-| symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
-| symbolOpacity | {% include type t="Number" %}   | Opacity of legend symbols. {% include tag ver="4.1" %} |
+| symbolOffset          | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
+| symbolOpacity         | {% include type t="Number" %}   | Opacity of legend symbols. {% include tag ver="4.1" %} |
 | symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
