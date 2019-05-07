@@ -10,7 +10,7 @@ The **kde** transform performs one-dimensional [kernel density estimation](https
 
 | Property            | Type                            | Description   |
 | :------------------ | :-----------------------------: | :------------ |
-| value               | {% include type t="Field" %}    | The data field for which to perform density estimation.|
+| value               | {% include type t="Field" %}    | {% include required %} The data field for which to perform density estimation.|
 | groupby             | {% include type t="Field[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used.|
 | method              | {% include type t="String" %}   | The type of distribution to estimate. One of `pdf` (default, for a probability distribution function) or `cdf` (for cumulative distribution function).|
 | counts              | {% include type t="Boolean" %}  | A boolean flag indicating if the output values should be probability estimates (`false`, default) or smoothed counts (`true`).|
