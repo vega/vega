@@ -127,6 +127,10 @@ Returns true if _value_ is a boolean (`true` or `false`), false otherwise.
 <b>isDate</b>(<i>value</i>)<br/>
 Returns true if _value_ is a Date object, false otherwise. This method will return false for timestamp numbers or date-formatted strings; it recognizes Date objects only.
 
+<a name="isDefined" href="#isDefined">#</a>
+<b>isDefined</b>(<i>value</i>) {% include tag ver="5.4" %}<br/>
+Returns true if _value_ is a defined value, false if the value equals `undefined`. This method will return true for `null` and `NaN` values.
+
 <a name="isNumber" href="#isNumber">#</a>
 <b>isNumber</b>(<i>value</i>)<br/>
 Returns true if _value_ is a number, false otherwise. `NaN` and `Infinity` are considered numbers.
@@ -142,6 +146,12 @@ Returns true if _value_ is a RegExp (regular expression) object, false otherwise
 <a name="isString" href="#isString">#</a>
 <b>isString</b>(<i>value</i>)<br/>
 Returns true if _value_ is a string, false otherwise.
+
+<a name="isValid" href="#isValid">#</a>
+<b>isValid</b>(<i>value</i>) {% include tag ver="5.4" %}<br/>
+Returns true if _value_ is not `null`, `undefined`, or `NaN`, false otherwise.
+
+[Back to Top](#reference)
 
 
 ## <a name="type-coercion-functions"></a>Type Coercion Functions
