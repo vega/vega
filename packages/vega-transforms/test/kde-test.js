@@ -38,3 +38,37 @@ tape('KDE computes kernel density estimates', function(t) {
 
   t.end();
 });
+
+tape('KDE computes unnormalized kernel density estimates', function(t) {
+  var data = [
+    {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:2}, {k:'a', v:3},
+    {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
+  ];
+
+  var key = util.field('k'),
+      val = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      kde = df.add(KDE, {
+        groupby: [key],
+        method: 'cdf',
+        counts: true,
+        steps: 10,
+        field: val,
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: kde});
+
+  // -- test adds
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, 22);
+  t.equal(d[10].k, 'a');
+  t.equal(d[10].value, 3);
+  t.ok(d[10].density > 4 * 0.8);
+  t.equal(d[21].k, 'b');
+  t.equal(d[21].value, 2);
+  t.ok(d[21].density > 3 * 0.8);
+
+  t.end();
+});

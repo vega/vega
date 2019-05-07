@@ -25,6 +25,7 @@ KDE.Definition = {
     { "name": "groupby", "type": "field", "array": true },
     { "name": "field", "type": "field", "required": true },
     { "name": "method", "type": "string", "default": "pdf", "values": ["pdf", "cdf"] },
+    { "name": "counts", "type": "boolean", "default": true },
     { "name": "bandwidth", "type": "number", "default": 0 },
     { "name": "extent", "type": "number", "array": true, "length": 2 },
     { "name": "steps", "type": "number", "default": 100 },
@@ -52,6 +53,7 @@ prototype.transform = function(_, pulse) {
 
     groups.forEach(g => {
       const dist = randomKDE(g, bandwidth),
+            scale = _.counts ? g.length : 1,
             domain = _.extent || extent(g),
             step = (domain[1] - domain[0]) / (_.steps || 100);
 
@@ -61,7 +63,7 @@ prototype.transform = function(_, pulse) {
           t[names[i]] = g.dims[i];
         }
         t[as[0]] = v;
-        t[as[1]] = dist[method](v);
+        t[as[1]] = dist[method](v) * scale;
         values.push(ingest(t));
       });
     });

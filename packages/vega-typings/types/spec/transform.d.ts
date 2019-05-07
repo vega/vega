@@ -259,6 +259,7 @@ export interface KDETransform {
   field: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
   method?: 'pdf' | 'cdf' | SignalRef;
+  counts?: boolean | SignalRef;
   bandwidth?: number | SignalRef;
   extent?: [number, number] | SignalRef;
   steps?: number | SignalRef;
