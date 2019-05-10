@@ -1033,6 +1033,12 @@
                             "tsv"
                           ]
                         },
+                        "header": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
                         "parse": {
                           "oneOf": [
                             {
@@ -1081,6 +1087,12 @@
                         },
                         "delimiter": {
                           "type": "string"
+                        },
+                        "header": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "parse": {
                           "oneOf": [
@@ -1157,6 +1169,13 @@
                             },
                             "property": {
                               "$ref": "#/refs/stringOrSignal"
+                            },
+                            "filter": {
+                              "enum": [
+                                "interior",
+                                "exterior",
+                                null
+                              ]
                             }
                           },
                           "required": [
@@ -1306,6 +1325,12 @@
                             "tsv"
                           ]
                         },
+                        "header": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
                         "parse": {
                           "oneOf": [
                             {
@@ -1354,6 +1379,12 @@
                         },
                         "delimiter": {
                           "type": "string"
+                        },
+                        "header": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         "parse": {
                           "oneOf": [
@@ -1430,6 +1461,13 @@
                             },
                             "property": {
                               "$ref": "#/refs/stringOrSignal"
+                            },
+                            "filter": {
+                              "enum": [
+                                "interior",
+                                "exterior",
+                                null
+                              ]
                             }
                           },
                           "required": [
@@ -2057,6 +2095,26 @@
                 },
                 {
                   "$ref": "#/refs/colorValue"
+                }
+              ]
+            },
+            "legendX": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
+            "legendY": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
                 }
               ]
             },
@@ -5529,6 +5587,9 @@
               }
             ]
           }
+        },
+        "usermeta": {
+          "type": "object"
         }
       }
     },
@@ -6014,6 +6075,12 @@
           "$ref": "#/defs/treemapTransform"
         },
         {
+          "$ref": "#/defs/loessTransform"
+        },
+        {
+          "$ref": "#/defs/regressionTransform"
+        },
+        {
           "$ref": "#/defs/aggregateTransform"
         },
         {
@@ -6051,6 +6118,9 @@
         },
         {
           "$ref": "#/defs/joinaggregateTransform"
+        },
+        {
+          "$ref": "#/defs/kdeTransform"
         },
         {
           "$ref": "#/defs/lookupTransform"
@@ -8173,6 +8243,247 @@
       ],
       "additionalProperties": false
     },
+    "loessTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "loess"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "x": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "y": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "groupby": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "bandwidth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": 0.3
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "regressionTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "regression"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "x": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "y": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "groupby": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "linear"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": 3
+        },
+        "extent": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "params": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
     "aggregateTransform": {
       "type": "object",
       "properties": {
@@ -8737,8 +9048,29 @@
             {
               "$ref": "#/refs/signal"
             }
+          ]
+        },
+        "minsteps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
           ],
-          "default": 100
+          "default": 25
+        },
+        "maxsteps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": 200
         },
         "method": {
           "anyOf": [
@@ -9406,6 +9738,168 @@
       ],
       "additionalProperties": false
     },
+    "kdeTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "kde"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "groupby": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "field": {
+          "oneOf": [
+            {
+              "$ref": "#/refs/scaleField"
+            },
+            {
+              "$ref": "#/refs/paramField"
+            },
+            {
+              "$ref": "#/refs/expr"
+            }
+          ]
+        },
+        "cumulative": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "counts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "bandwidth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "extent": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "minsteps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": 25
+        },
+        "maxsteps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": 200
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": [
+            "value",
+            "density"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "field"
+      ],
+      "additionalProperties": false
+    },
     "lookupTransform": {
       "type": "object",
       "properties": {
@@ -9843,6 +10337,8 @@
                       "first_value",
                       "last_value",
                       "nth_value",
+                      "prev_value",
+                      "next_value",
                       "values",
                       "count",
                       "__count__",
@@ -13132,6 +13628,30 @@
         {
           "type": "object",
           "properties": {
+            "value": {
+              "$ref": "#/refs/gradientLinear"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "#/refs/gradientRadial"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
             "gradient": {
               "$ref": "#/refs/scale"
             },
@@ -13187,6 +13707,97 @@
         }
       ]
     },
+    "gradientStops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "number"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "offset",
+          "color"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "gradientLinear": {
+      "type": "object",
+      "properties": {
+        "gradient": {
+          "enum": [
+            "linear"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "x1": {
+          "type": "number"
+        },
+        "y1": {
+          "type": "number"
+        },
+        "x2": {
+          "type": "number"
+        },
+        "y2": {
+          "type": "number"
+        },
+        "stops": {
+          "$ref": "#/refs/gradientStops"
+        }
+      },
+      "required": [
+        "gradient",
+        "stops"
+      ],
+      "additionalProperties": false
+    },
+    "gradientRadial": {
+      "type": "object",
+      "properties": {
+        "gradient": {
+          "enum": [
+            "radial"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "x1": {
+          "type": "number"
+        },
+        "y1": {
+          "type": "number"
+        },
+        "r1": {
+          "type": "number"
+        },
+        "x2": {
+          "type": "number"
+        },
+        "y2": {
+          "type": "number"
+        },
+        "r2": {
+          "type": "number"
+        },
+        "stops": {
+          "$ref": "#/refs/gradientStops"
+        }
+      },
+      "required": [
+        "gradient",
+        "stops"
+      ],
+      "additionalProperties": false
+    },
     "expr": {
       "type": "object",
       "properties": {
@@ -13210,7 +13821,14 @@
           "type": "object",
           "properties": {
             "field": {
-              "$ref": "#/refs/stringOrSignal"
+              "oneOf": [
+                {
+                  "$ref": "#/refs/scaleField"
+                },
+                {
+                  "$ref": "#/refs/expr"
+                }
+              ]
             },
             "order": {
               "$ref": "#/refs/sortOrder"
@@ -13224,7 +13842,14 @@
             "field": {
               "type": "array",
               "items": {
-                "$ref": "#/refs/stringOrSignal"
+                "oneOf": [
+                  {
+                    "$ref": "#/refs/scaleField"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  }
+                ]
               }
             },
             "order": {
@@ -13680,9 +14305,6 @@
         "$schema": {
           "type": "string",
           "format": "uri"
-        },
-        "usermeta": {
-          "type": "object"
         },
         "config": {
           "type": "object"
