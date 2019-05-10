@@ -23,7 +23,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-canvas": "^1.2.0",
+    "vega-canvas": "^1.2.1",
     "vega-dataflow": "^5.1.1",
     "vega-scale": "^4.0.0",
     "vega-statistics": "^1.2.5",

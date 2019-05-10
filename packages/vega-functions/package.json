@@ -1,6 +1,6 @@
 {
   "name": "vega-functions",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Custom functions for the Vega expression language.",
   "keywords": [
     "vega",
