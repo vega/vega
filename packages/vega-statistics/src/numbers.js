@@ -1,16 +1,16 @@
-export default function(array, f) {
-  var numbers = [],
-      n = array.length,
-      i = -1, a;
-
-  if (f == null) {
-    while (++i < n) if (!isNaN(a = number(array[i]))) numbers.push(a);
+export default function*(values, valueof) {
+  if (valueof === undefined) {
+    for (let value of values) {
+      if (value != null && (value = +value) >= value) {
+        yield value;
+      }
+    }
   } else {
-    while (++i < n) if (!isNaN(a = number(f(array[i], i, array)))) numbers.push(a);
+    let index = -1;
+    for (let value of values) {
+      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+        yield value;
+      }
+    }
   }
-  return numbers;
-}
-
-function number(x) {
-  return x === null ? NaN : +x;
 }

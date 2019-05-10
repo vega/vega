@@ -5,7 +5,7 @@ import {quantile, ascending} from 'd3-array';
 export default function(array, samples, alpha, f) {
   if (!array.length) return [undefined, undefined];
 
-  var values = numbers(array, f),
+  var values = Float64Array.from(numbers(array, f)),
       n = values.length,
       m = samples,
       a, i, j, mu;
