@@ -1,0 +1,98 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "padding": 5,
+  "width": 500,
+  "height": 500,
+  "autosize": "pad",
+
+  "signals": [
+    {
+      "name": "loessBandwidth", "value": 0.3,
+      "bind": {"input": "range", "min": 0.05, "max": 1}
+    },
+    {
+      "name": "groupby", "value": "none",
+      "bind": {"input": "select", "options": ["none", "genre"]}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "movies",
+      "url": "data/movies.json",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Rotten_Tomatoes_Rating != null && datum.IMDB_Rating != null"
+        }
+      ]
+    },
+    {
+      "name": "trend",
+      "source": "movies",
+      "transform": [
+        {
+          "type": "loess",
+          "groupby": [{"signal": "groupby === 'genre' ? 'Major_Genre' : 'foo'"}],
+          "bandwidth": {"signal": "loessBandwidth"},
+          "x": "Rotten_Tomatoes_Rating",
+          "y": "IMDB_Rating",
+          "as": ["u", "v"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "movies", "field": "Rotten_Tomatoes_Rating"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "movies", "field": "IMDB_Rating"},
+      "range": "height"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "movies"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "Rotten_Tomatoes_Rating"},
+          "y": {"scale": "y", "field": "IMDB_Rating"},
+          "fillOpacity": {"value": 0.5},
+          "size": {"value": 16}
+        }
+      }
+    },
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "trend",
+          "name": "curve",
+          "groupby": "Major_Genre"
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "curve"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "u"},
+              "y": {"scale": "y", "field": "v"},
+              "stroke": {"value": "firebrick"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -129,7 +129,7 @@ Returns true if _value_ is a Date object, false otherwise. This method will retu
 
 <a name="isDefined" href="#isDefined">#</a>
 <b>isDefined</b>(<i>value</i>) {% include tag ver="5.4" %}<br/>
-Returns true if _value_ is a defined value, false if the value equals `undefined`. This method will return true for `null` and `NaN` values.
+Returns true if _value_ is a defined value, false if _value_ equals `undefined`. This method will return true for `null` and `NaN` values.
 
 <a name="isNumber" href="#isNumber">#</a>
 <b>isNumber</b>(<i>value</i>)<br/>

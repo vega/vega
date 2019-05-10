@@ -36,7 +36,9 @@
         {"name": "binned-scatter-plot"},
         {"name": "contour-plot"},
         {"name": "wheat-plot"},
-        {"name": "hypothetical-outcome-plots"}
+        {"name": "hypothetical-outcome-plots"},
+        {"name": "regression"},
+        {"name": "loess-regression"}
     ],
     "Geographic Maps": [
         {"name": "county-unemployment"},
