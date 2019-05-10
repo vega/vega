@@ -18,7 +18,7 @@ tape('KDE computes kernel density estimates', function(t) {
       col = df.add(Collect),
       kde = df.add(KDE, {
         groupby: [key],
-        method: 'cdf',
+        cumulative: true,
         steps: 10,
         field: val,
         pulse: col
@@ -51,7 +51,7 @@ tape('KDE computes unnormalized kernel density estimates', function(t) {
       col = df.add(Collect),
       kde = df.add(KDE, {
         groupby: [key],
-        method: 'cdf',
+        cumulative: true,
         counts: true,
         steps: 10,
         field: val,
