@@ -19,9 +19,7 @@ export const spec: Spec = {
     { "name": "plotWidth", "value": 60 },
     { "name": "width", "update": "(plotWidth + 10) * length(fields)"},
     { "name": "bandwidth", "value": 0.3,
-      "bind": {"input": "range", "min": 0, "max": 1.0, "step": 0.005} },
-    { "name": "steps", "value": 100,
-      "bind": {"input": "range", "min": 10, "max": 500, "step": 1} }
+      "bind": {"input": "range", "min": 0, "max": 1.0, "step": 0.005} }
   ],
 
   "data": [
@@ -44,8 +42,7 @@ export const spec: Spec = {
           "type": "kde",
           "field": "value",
           "groupby": ["organ"],
-          "bandwidth": {"signal": "bandwidth"},
-          "steps": {"signal": "steps"}
+          "bandwidth": {"signal": "bandwidth"}
         }
       ]
     },

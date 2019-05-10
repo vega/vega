@@ -25,15 +25,11 @@ export const spec: Spec = {
     },
     {
       "name": "methods",
-      "values": [
-        "linear",
-        "exp",
-        "log",
-        "quad",
-        "poly",
-        "pow",
-        "loess"
-      ]
+      "values": ["linear", "log", "exp", "pow", "quad", "poly"]
+    },
+    {
+      "name": "bandwidths",
+      "values": [0.05, 0.3]
     }
   ],
 
@@ -79,6 +75,54 @@ export const spec: Spec = {
       ],
       "title": {
         "text": {"signal": "parent.data"}
+      },
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "movies"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "Rotten_Tomatoes_Rating"},
+              "y": {"scale": "y", "field": "IMDB_Rating"},
+              "fillOpacity": {"value": 0.5},
+              "size": {"value": 4}
+            }
+          }
+        },
+        {
+          "type": "line",
+          "from": {"data": "fit"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "u"},
+              "y": {"scale": "y", "field": "v"},
+              "stroke": {"value": "firebrick"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "from": {"data": "bandwidths"},
+
+      "data": [
+        {
+          "name": "fit",
+          "source": "movies",
+          "transform": [
+            {
+              "type": "loess",
+              "bandwidth": {"signal": "parent.data"},
+              "x": "Rotten_Tomatoes_Rating",
+              "y": "IMDB_Rating",
+              "as": ["u", "v"]
+            }
+          ]
+        }
+      ],
+      "title": {
+        "text": {"signal": "'loess, bandwidth ' + parent.data"}
       },
       "marks": [
         {
