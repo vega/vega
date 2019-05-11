@@ -25,9 +25,8 @@ All models are fit using [ordinary least squares](https://en.wikipedia.org/wiki/
 | y                   | {% include type t="Field" %}   | {% include required %} The data field for predicted (dependent) values, typically associated with the y-axis.|
 | groupby             | {% include type t="Field[]" %} | The data fields to group by. If not specified, a single group containing all data objects will be used.|
 | method              | {% include type t="String" %}  | The type of regression model to use. One of `linear` (default), `log`, `exp`, `pow`, `quad`, or `poly`.|
-| bandwidth           | {% include type t="Number" %}  | The bandwidth parameter for the `loess` method (default 0.3).|
 | order               | {% include type t="Number" %}  | The polynomial order (number of coefficients) for the `poly` method.|
-| extent              | {% include type t="Number[]" %}| A _[min, max]_ domain over the _x_ field specifying the starting and ending points of the generated trend line. This parameter is ignored if the `loess` method is used.|
+| extent              | {% include type t="Number[]" %}| A _[min, max]_ domain over the _x_ field specifying the starting and ending points of the generated trend line.|
 | params              | {% include type t="Boolean" %} | A boolean flag indicating if the transform should return the fit model parameters (one object per group), rather than trend line points. The resulting objects include a `coef` array of fitted coefficient values (starting with the intercept term and then including terms of increasing order) and an `rSquared` value (indicating the total variance explained by the model).|
 | as                  | {% include type t="String" %}  | The output fields for the predictor and predicted values for the line of best fit. If unspecified, the _x_ and _y_ parameter field names will be used.|
 
