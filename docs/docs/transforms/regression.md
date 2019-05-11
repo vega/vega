@@ -6,7 +6,7 @@ permalink: /docs/transforms/regression/index.html
 
 The **regression** transform {% include tag ver="5.4" %} fits two-dimensional [regression models](https://en.wikipedia.org/wiki/Regression_analysis) to smooth and predict data. This transform can fit multiple models for input data (one per group) and generates new data objects that represent points for summary trend lines. Alternatively, this transform can be used to generate a set of objects containing regression model parameters, one per group.
 
-This transform support parametric models for the following functional forms:
+This transform supports parametric models for the following functional forms:
 
 * linear (`linear`): _y = a + b * x_
 * logarithmic (`log`): _y = a + b * log(x)_
