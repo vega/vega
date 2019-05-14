@@ -147,7 +147,7 @@ Fit a polynomial regression model of specified _order_ with functional form _y =
 - _rSquared_: The R<sup>2</sup> [coefficient of determination](https://en.wikipedia.org/wiki/Coefficient_of_determination), indicating the amount of total variance of _y_ accounted for by the model.
 
 <a name="regressionLoess" href="#regressionLoess">#</a>
-vega.<b>regressionLoess/b>(<i>data</i>, <i>x</i>, <i>y</i>, <i>bandwidth</i>)
+vega.<b>regressionLoess</b>(<i>data</i>, <i>x</i>, <i>y</i>, <i>bandwidth</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/regression/loess.js "Source")
 
 Fit a smoothed, non-parametric trend line the input *data* array and corresponding *x* and *y* accessor functions using _loess_ (locally-estimated scatterplot smoothing). Loess performs a sequence of local weighted regressions over a sliding window of nearest-neighbor points. The _bandwidth_ argument determines the size of the sliding window, expressed as a [0, 1] fraction of the total number of data points included.
