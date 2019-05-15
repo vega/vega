@@ -28,7 +28,7 @@
     "rimraf": "^2.6.3",
     "rollup": "^1.11.3",
     "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-node-resolve": "^5.0.0",
     "tape": "^4.10.1",
     "terser": "^3.17.0",
     "typescript": "^3.4.5",
