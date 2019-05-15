@@ -17,8 +17,10 @@ export default function(array, samples, alpha, f) {
     mu[j] = a / n;
   }
 
+  mu.sort(ascending);
+
   return [
-    quantile(mu.sort(ascending), alpha/2),
+    quantile(mu, alpha/2),
     quantile(mu, 1-(alpha/2))
   ];
 }
