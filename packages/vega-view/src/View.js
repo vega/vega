@@ -58,6 +58,9 @@ export default function View(spec, options) {
   view._eventListeners = [];
   view._resizeListeners = [];
 
+  // initialize event configuration
+  view._eventConfig = initializeEventConfig(spec.eventConfig);
+
   // initialize dataflow graph
   var ctx = runtime(view, spec, options.functions);
   view._runtime = ctx;
@@ -79,9 +82,6 @@ export default function View(spec, options) {
 
   // initialize background color
   view._background = options.background || ctx.background || null;
-
-  // initialize event configuration
-  view._eventConfig = initializeEventConfig(ctx.eventConfig);
 
   // initialize view size
   view._width = view.width();
