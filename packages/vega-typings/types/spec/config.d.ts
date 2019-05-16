@@ -37,7 +37,12 @@ export interface Config
   background?: string;
   group?: any; // TODO
   events?: {
+    bind?: 'any' | 'container' | 'none';
     defaults?: DefaultsConfig;
+    selector?: boolean | string[];
+    timer?: boolean;
+    view?: boolean | string[];
+    window?: boolean | string[];
   };
   style?: any; // TODO
   legend?: LegendConfig;
