@@ -10,7 +10,7 @@ The **kde** transform {% include tag ver="5.4" %} performs one-dimensional [kern
 
 | Property            | Type                            | Description   |
 | :------------------ | :-----------------------------: | :------------ |
-| value               | {% include type t="Field" %}    | {% include required %} The data field for which to perform density estimation.|
+| field               | {% include type t="Field" %}    | {% include required %} The data field for which to perform density estimation.|
 | groupby             | {% include type t="Field[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used.|
 | cumulative          | {% include type t="Boolean" %}  | A boolean flag indicating whether to produce density estimates (`false`, default) or cumulative density estimates (`true`).
 | counts              | {% include type t="Boolean" %}  | A boolean flag indicating if the output values should be probability estimates (`false`, default) or smoothed counts (`true`).|
