@@ -1,4 +1,4 @@
-import { SignalRef, Compare, Vector2, ExprRef, FontWeight, FontStyle, Vector7 } from '.';
+import { Compare, ExprRef, FontStyle, FontWeight, SignalRef, Vector2, Vector7 } from '.';
 
 export type Transforms =
   | AggregateTransform
@@ -56,9 +56,8 @@ export interface AggregateTransform {
   cross?: boolean | SignalRef;
   key?: string | TransformField;
 }
-export type AggregateOp =
-  | 'argmax'
-  | 'argmin'
+
+export type NonArgAggregateOp =
   | 'average'
   | 'count'
   | 'distinct'
@@ -79,6 +78,8 @@ export type AggregateOp =
   | 'values'
   | 'variance'
   | 'variancep';
+
+export type AggregateOp = 'argmax' | 'argmin' | NonArgAggregateOp;
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
