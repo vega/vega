@@ -163,7 +163,7 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the bands should be centered within the range. A value of 0 or 1 may be used to shift the bands to one side, say to position them adjacent to an axis. For more, see [this explainer for D3 band align](https://observablehq.com/@d3/band-align). |
 | domainImplicit| {% include type t="Boolean" %} | A Boolean flag (default `false`) indicating if an ordinal domain should be implicitly extended with new values. If false, the scale will return `undefined` for values not explicitly included in the domain. If true, new values will be appended to the domain and the matching range value will be returned.|
 | padding       | {% include type t="Number" %} | Sets _paddingInner_ and _paddingOuter_ to the same padding value (default `0`). This value must lie in the range [0,1].|
 | paddingInner  | {% include type t="Number" %} | The inner padding (spacing) within each band step, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
@@ -180,7 +180,7 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the points should be centered within the range. A value of 0 or 1 may be used to shift the points to one side, say to position them adjacent to an axis.|
 | padding       | {% include type t="Number" %} | An alias for _paddingOuter_ (default `0`). This value must lie in the range [0,1].|
 | paddingOuter  | {% include type t="Number" %} | The outer padding (spacing) at the ends of the scale range, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
 
