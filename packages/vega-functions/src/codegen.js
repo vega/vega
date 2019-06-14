@@ -11,7 +11,8 @@ import {
 import {
   selectionTest,
   selectionResolve,
-  selectionVisitor
+  selectionVisitor,
+  comparisonTest
 } from 'vega-selections';
 
 import {
@@ -274,6 +275,7 @@ expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
 // register Vega-Lite selection functions
 expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
+expressionFunction('vlComparisonTest', comparisonTest, selectionVisitor);
 expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
 
 // Export code generator and parameters
