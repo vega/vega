@@ -27,6 +27,7 @@ export type Transforms =
   | KDETransform
   | LabelTransform
   | _TODO_<'linkpath'>
+  | LoessTransform
   | LookupTransform
   | _TODO_<'nest'>
   | _TODO_<'pack'>
@@ -260,10 +261,22 @@ export interface KDETransform {
   type: 'kde';
   field: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
-  method?: 'pdf' | 'cdf' | SignalRef;
+  cumulative?: boolean | SignalRef;
+  counts?: boolean | SignalRef;
   bandwidth?: number | SignalRef;
   extent?: [number, number] | SignalRef;
   steps?: number | SignalRef;
+  minsteps?: number | SignalRef;
+  maxsteps?: number | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
+}
+
+export interface LoessTransform {
+  type: 'loess';
+  x: string | TransformField;
+  y: string | TransformField;
+  groupby?: (string | TransformField)[] | SignalRef;
+  bandwidth?: number | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
@@ -296,8 +309,7 @@ export interface RegressionTransform {
   x: string | TransformField;
   y: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
-  method?: 'linear' | 'exp' | 'log' | 'quad' | 'poly' | 'pow' | 'loess' | SignalRef;
-  bandwidth?: number | SignalRef;
+  method?: 'linear' | 'exp' | 'log' | 'quad' | 'poly' | 'pow' | SignalRef;
   order?: number | SignalRef;
   extent?: [number, number] | SignalRef;
   params?: boolean | SignalRef;
@@ -330,7 +342,9 @@ export type WindowOnlyOp =
   | 'lead'
   | 'first_value'
   | 'last_value'
-  | 'nth_value';
+  | 'nth_value'
+  | 'prev_value'
+  | 'next_value';
 
 export interface WindowTransform {
   type: 'window';

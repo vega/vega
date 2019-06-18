@@ -49,6 +49,7 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 | title           | {% include type t="[Title](../title)" %} | Title text to describe a visualization.|
 | marks           | {% include array t="[Mark](../marks)" %} | Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols.|
 | encode          | [Encode](../marks/#encode) | Encoding directives for the visual properties of the top-level [group mark](../marks/group) representing a chart's data rectangle. For example, this can be used to set a background fill color for the plotting area, rather than the entire view.|
+| usermeta        | {% include type t="Object" %} | Optional metadata  that will be ignored by the Vega parser.|
 
 
 ## <a name="autosize"></a>Autosize

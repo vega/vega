@@ -40,11 +40,14 @@ Transforms for processing streams of data objects.
 - [`fold`](fold) - Collapse selected data fields into _key_ and _value_ properties.
 - [`formula`](formula) - Extend data objects with derived fields using a formula expression.
 - [`identifier`](identifier) - Assign unique key values to data objects.
+- [`kde`](kde) - Estimate smoothed densities for numeric values. {% include tag ver="5.4" %}
 - [`impute`](impute) - Perform imputation of missing values.
 - [`joinaggregate`](joinaggregate) - Extend data objects with calculated aggregate values.
+- [`loess`](loess) - Fit a smoothed trend line using local regression. {% include tag ver="5.4" %}
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
 - [`pivot`](pivot) - Pivot unique values to new aggregate fields. {% include tag ver="3.2" %}
 - [`project`](project) - Generate derived data objects with a selected set of fields.
+- [`regression`](regression) - Fit regression models to smooth and predict values. {% include tag ver="5.4" %}
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.

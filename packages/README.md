@@ -20,6 +20,7 @@ All Vega packages, by category:
   - [vega-force](/packages/vega-force): Dataflow transform for force-directed layout.
   - [vega-geo](/packages/vega-geo): Dataflow transforms for projection and visualization of geographic data.
   - [vega-hierarchy](/packages/vega-hierarchy): Dataflow transforms for generation and layout of hierarchical data.
+  - [vega-regression](/packages/vega-regression): Dataflow transforms for fitting regression models.
   - [vega-transforms](/packages/vega-transforms): Dataflow transforms for data processing, including binning, filtering, and aggregation.
   - [vega-view-transforms](/packages/vega-view-transforms): Dataflow transforms for view-related operations, including scenegraph binding and bounds calculation.
   - [vega-voronoi](/packages/vega-voronoi): Dataflow transform for computing Voronoi diagrams.
@@ -34,5 +35,5 @@ All Vega packages, by category:
   - [vega-projection](/packages/vega-projection): Cartographic projections for geographic data.
   - [vega-projection-extended](/packages/vega-projection-extended): Extended collection of cartographic projections.
   - [vega-scale](/packages/vega-scale): Scale functions (linear, log, ordinal) and related methods.
-  - [vega-statistics](/packages/vega-statistics): Probability distributions and statistical methods.
+  - [vega-statistics](/packages/vega-statistics): Probability distributions and statistical utilities.
   - [vega-util](/packages/vega-util): General utility methods.

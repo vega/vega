@@ -18,10 +18,8 @@ export const spec: Spec = {
       "value": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"] },
     { "name": "plotWidth", "value": 60 },
     { "name": "width", "update": "(plotWidth + 10) * length(fields)"},
-    { "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 0.5, "step": 0.005} },
-    { "name": "steps", "value": 100,
-      "bind": {"input": "range", "min": 10, "max": 500, "step": 1} }
+    { "name": "bandwidth", "value": 0.3,
+      "bind": {"input": "range", "min": 0, "max": 1.0, "step": 0.005} }
   ],
 
   "data": [
@@ -35,6 +33,31 @@ export const spec: Spec = {
           "as": ["organ", "value"]
         }
       ]
+    },
+    {
+      "name": "density",
+      "source": "iris",
+      "transform": [
+        {
+          "type": "kde",
+          "field": "value",
+          "groupby": ["organ"],
+          "bandwidth": {"signal": "bandwidth"}
+        }
+      ]
+    },
+    {
+      "name": "stats",
+      "source": "iris",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["organ"],
+          "fields": ["value", "value", "value"],
+          "ops": ["q1", "median", "q3"],
+          "as": ["q1", "median", "q3"]
+        }
+      ]
     }
   ],
 
@@ -44,6 +67,12 @@ export const spec: Spec = {
       "type": "band",
       "range": "width",
       "domain": {"data": "iris", "field": "organ"}
+    },
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": [0, {"signal": "plotWidth"}],
+      "domain": {"data": "density", "field": "density"}
     },
     {
       "name": "yscale",
@@ -69,8 +98,8 @@ export const spec: Spec = {
       "type": "group",
       "from": {
         "facet": {
-          "data": "iris",
-          "name": "organs",
+          "data": "density",
+          "name": "violin",
           "groupby": "organ"
         }
       },
@@ -85,54 +114,21 @@ export const spec: Spec = {
 
       "data": [
         {
-          "name": "density",
-          "transform": [
-            {
-              "type": "density",
-              "steps": {"signal": "steps"},
-              "distribution": {
-                "function": "kde",
-                "from": "organs",
-                "field": "value",
-                "bandwidth": {"signal": "bandwidth"}
-              }
-            },
-            {
-              "type": "stack",
-              "groupby": ["value"],
-              "field": "density",
-              "offset": "center",
-              "as": ["x0", "x1"]
-            }
-          ]
-        },
-        {
           "name": "summary",
-          "source": "organs",
+          "source": "stats",
           "transform": [
             {
-              "type": "aggregate",
-              "fields": ["value", "value", "value"],
-              "ops": ["q1", "median", "q3"],
-              "as": ["q1", "median", "q3"]
+              "type": "filter",
+              "expr": "datum.organ === parent.organ"
             }
           ]
-        }
-      ],
-
-      "scales": [
-        {
-          "name": "xscale",
-          "type": "linear",
-          "range": [0, {"signal": "plotWidth"}],
-          "domain": {"data": "density", "field": "density"}
         }
       ],
 
       "marks": [
         {
           "type": "area",
-          "from": {"data": "density"},
+          "from": {"data": "violin"},
           "encode": {
             "enter": {
               "orient": {"value": "horizontal"},
@@ -140,8 +136,8 @@ export const spec: Spec = {
             },
             "update": {
               "y": {"scale": "yscale", "field": "value"},
-              "x": {"scale": "xscale", "field": "x0"},
-              "x2": {"scale": "xscale", "field": "x1"}
+              "xc": {"signal": "plotWidth / 2"},
+              "width": {"scale": "xscale", "field": "density"}
             }
           }
         },

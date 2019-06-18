@@ -8,9 +8,7 @@ export const spec: Spec = {
   "signals": [
     { "name": "plotHeight", "value": 50 },
     { "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 1, "step": 0.01} },
-    { "name": "steps", "value": 100,
-      "bind": {"input": "range", "min": 10, "max": 500, "step": 1} }
+      "bind": {"input": "range", "min": 0, "max": 1, "step": 0.01} }
   ],
 
   "data": [
@@ -27,8 +25,6 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "kde",
-          "steps": {"signal": "steps"},
-          "method": "pdf",
           "groupby": ["k"],
           "field": "v",
           "bandwidth": {"signal": "bandwidth"}
@@ -41,8 +37,7 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "kde",
-          "steps": {"signal": "steps"},
-          "method": "cdf",
+          "cumulative": true,
           "groupby": ["k"],
           "field": "v",
           "bandwidth": {"signal": "bandwidth"}

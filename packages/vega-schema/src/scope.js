@@ -1,4 +1,4 @@
-import { array, def, object, oneOf } from './util';
+import { array, def, object, objectType, oneOf } from './util';
 
 const scope = object({
   encode:      def('encode'),
@@ -10,7 +10,8 @@ const scope = object({
   axes:        array(def('axis')),
   legends:     array(def('legend')),
   title:       def('title'),
-  marks:       array(oneOf(def('markGroup'), def('markVisual')))
+  marks:       array(oneOf(def('markGroup'), def('markVisual'))),
+  usermeta:    objectType
 }, undefined);
 
 export default {
