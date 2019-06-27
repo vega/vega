@@ -21,7 +21,9 @@ function formatter(type, method, specifier) {
 }
 
 export function format(_, specifier) {
-  return formatter('format', d3_format, specifier)(_);
+  return typeof specifier === 'function'
+    ? specifier
+    : formatter('format', d3_format, specifier)(_);
 }
 
 export function timeFormat(_, specifier) {
