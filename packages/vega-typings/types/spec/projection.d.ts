@@ -15,6 +15,7 @@ export type ProjectionType =
   | 'gnomonic'
   | 'identity'
   | 'mercator'
+  | 'naturalEarth1'
   | 'orthographic'
   | 'stereographic'
   | 'transverseMercator';
