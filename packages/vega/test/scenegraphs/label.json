@@ -16371,380 +16371,146 @@
               "strokeWidth": 2
             },
             {
-              "x": 20.375,
-              "y": 311.01446470404255,
+              "x": 39.68,
+              "y": 304.14159444809405,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 32.75,
-              "y": 306.5987746414551,
+              "x": 71.36,
+              "y": 293.0514563453038,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 45.125,
-              "y": 302.21881315416044,
+              "x": 103.03999999999999,
+              "y": 282.19546903355194,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 57.49999999999999,
-              "y": 297.87458024215846,
+              "x": 134.72,
+              "y": 271.5736325128385,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 69.875,
-              "y": 293.5660759054492,
+              "x": 166.4,
+              "y": 261.18594678316356,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 82.25,
-              "y": 289.2933001440327,
+              "x": 198.07999999999998,
+              "y": 251.03241184452702,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 94.625,
-              "y": 285.0562529579089,
+              "x": 229.76000000000002,
+              "y": 241.11302769692895,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 107,
-              "y": 280.85493434707786,
+              "x": 261.44,
+              "y": 231.42779434036913,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 119.37500000000001,
-              "y": 276.6893443115395,
+              "x": 293.12,
+              "y": 221.97671177484796,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 131.75,
-              "y": 272.5594828512939,
+              "x": 324.8,
+              "y": 212.75978000036508,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 144.125,
-              "y": 268.4653499663411,
+              "x": 356.48,
+              "y": 203.77699901692063,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 156.5,
-              "y": 264.40694565668093,
+              "x": 388.15999999999997,
+              "y": 195.0283688245147,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 168.875,
-              "y": 260.3842699223135,
+              "x": 419.84000000000003,
+              "y": 186.51388942314713,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 181.25,
-              "y": 256.39732276323883,
+              "x": 451.52,
+              "y": 178.23356081281798,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 193.625,
-              "y": 252.44610417945688,
+              "x": 483.2,
+              "y": 170.1873829935273,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 206,
-              "y": 248.53061417096762,
+              "x": 514.88,
+              "y": 162.37535596527493,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 218.375,
-              "y": 244.65085273777112,
+              "x": 546.5600000000001,
+              "y": 154.79747972806115,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 230.75,
-              "y": 240.80681987986736,
+              "x": 578.24,
+              "y": 147.45375428188572,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 243.125,
-              "y": 236.9985155972563,
+              "x": 609.92,
+              "y": 140.3441796267487,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 255.50000000000003,
-              "y": 233.225939889938,
+              "x": 641.6,
+              "y": 133.46875576265012,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 267.875,
-              "y": 229.48909275791243,
+              "x": 673.28,
+              "y": 126.82748268958994,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 280.25,
-              "y": 225.78797420117962,
+              "x": 704.96,
+              "y": 120.42036040756824,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 292.625,
-              "y": 222.1225842197394,
+              "x": 736.64,
+              "y": 114.2473889165849,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
             {
-              "x": 305,
-              "y": 218.49292281359203,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 317.375,
-              "y": 214.89898998273736,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 329.75,
-              "y": 211.34078572717544,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 342.125,
-              "y": 207.81831004690622,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 354.5,
-              "y": 204.33156294192975,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 366.875,
-              "y": 200.88054441224602,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 379.25,
-              "y": 197.46525445785494,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 391.625,
-              "y": 194.08569307875672,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 404,
-              "y": 190.74186027495114,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 416.375,
-              "y": 187.4337560464382,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 428.74999999999994,
-              "y": 184.16138039321817,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 441.125,
-              "y": 180.92473331529072,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 453.5,
-              "y": 177.7238148126562,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 465.87500000000006,
-              "y": 174.55862488531415,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 478.25,
-              "y": 171.42916353326495,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 490.625,
-              "y": 168.33543075650846,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 503,
-              "y": 165.2774265550447,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 515.375,
-              "y": 162.25515092887377,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 527.75,
-              "y": 159.26860387799542,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 540.125,
-              "y": 156.31778540240992,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 552.5,
-              "y": 153.40269550211713,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 564.875,
-              "y": 150.52333417711702,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 577.25,
-              "y": 147.6797014274096,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 589.625,
-              "y": 144.871797252995,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 602,
-              "y": 142.0996216538731,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 614.375,
-              "y": 139.36317463004394,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 626.75,
-              "y": 136.66245618150737,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 639.125,
-              "y": 133.99746630826377,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 651.5,
-              "y": 131.36820501031275,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 663.875,
-              "y": 128.77467228765443,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 676.25,
-              "y": 126.21686814028891,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 688.625,
-              "y": 123.69479256821614,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 701,
-              "y": 121.20844557143602,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 713.375,
-              "y": 118.7578271499487,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 725.75,
-              "y": 116.34293730375407,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 738.125,
-              "y": 113.96377603285208,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 750.5,
-              "y": 111.62034333724301,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 762.875,
-              "y": 109.31263921692647,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 775.25,
-              "y": 107.04066367190285,
-              "stroke": "firebrick",
-              "strokeWidth": 2
-            },
-            {
-              "x": 787.625,
-              "y": 104.80441670217186,
+              "x": 768.3199999999999,
+              "y": 108.30856821663997,
               "stroke": "firebrick",
               "strokeWidth": 2
             },
