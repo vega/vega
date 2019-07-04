@@ -240,7 +240,7 @@ export interface BaseLegend<
   titleFontWeight?: FW;
 
   /**
-   * Maximum allowed pixel width of axis titles.
+   * Maximum allowed pixel width of legend titles.
    *
    * __Default value:__ `180`.
    * @minimum 0
@@ -433,7 +433,7 @@ export interface BaseLegend<
   labelFontWeight?: FW;
 
   /**
-   * Maximum allowed pixel width of axis tick labels.
+   * Maximum allowed pixel width of legend tick labels.
    *
    * __Default value:__ `160`.
    */
