@@ -22,7 +22,7 @@ Voronoi.Definition = {
 
 var prototype = inherits(Voronoi, Transform);
 
-var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
+var defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
 prototype.transform = function(_, pulse) {
   var as = _.as || 'path',
@@ -31,7 +31,7 @@ prototype.transform = function(_, pulse) {
 
   // configure and construct voronoi diagram
   delaunay = Delaunay.from(data, _.x, _.y);
-  extent = _.size ? [0, 0 , _.size[0], _.size[1]] : _.extent || defaultExtent;
+  extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], _.extent[1][0]] : defaultExtent;
   this.value = (voronoi = delaunay.voronoi(extent))
 
   // map polygons to paths
