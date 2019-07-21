@@ -82,7 +82,7 @@ A linear gradient interpolates colors along a line, from a starting point to an 
 | y1            | {% include type t="Number" %} | The starting y-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 0).|
 | x2            | {% include type t="Number" %} | The ending x-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 1).|
 | y2            | {% include type t="Number" %} | The ending y-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 0).|
-| stops         | {% include array t="[Stop](#Stop)" %} | {% include required %} An array of gradient stops defining the gradient color sequence.|
+| stops         | {% include array t="[GradientStop](#GradientStop)" %} | {% include required %} An array of gradient stops defining the gradient color sequence.|
 
 <a name="RadialGradient" href="#RadialGradient">#</a>
 **Radial Gradient**
