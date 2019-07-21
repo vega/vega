@@ -1,6 +1,7 @@
 import { SignalRef } from '.';
 import { AnchorValue } from './values';
 import { TitleAnchor } from './title';
+import { Color } from './color';
 
 export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 
@@ -104,7 +105,7 @@ export interface GradientRadial {
   r2?: number;
 }
 export type ColorValueRef =
-  | ScaledValueRef<string>
+  | ScaledValueRef<Color>
   | { value: GradientLinear | GradientRadial }
   | {
       gradient: Field;

@@ -22,6 +22,7 @@ export * from './axis';
 export * from './background';
 export * from './bind';
 export * from './config';
+export * from './color';
 export * from './data';
 export * from './encode';
 export * from './expr';

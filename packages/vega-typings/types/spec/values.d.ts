@@ -19,6 +19,7 @@ import {
   TextBaselineValueRef,
 } from './encode';
 import { TitleAnchor } from './title';
+import { Color } from './color';
 
 export type NumberValue = number | NumericValueRef;
 
@@ -28,7 +29,7 @@ export type FontStyleValue = FontStyle | FontStyleValueRef;
 
 export type StringValue = string | StringValueRef;
 
-export type ColorValue = null | string | ColorValueRef;
+export type ColorValue = null | Color | ColorValueRef;
 
 export type AlignValue = Align | AlignValueRef;
 
