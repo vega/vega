@@ -98,7 +98,7 @@ A radial gradient interpolates colors between two circles, from an inner circle 
 | x2            | {% include type t="Number" %} | The x-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient (default 0.5).|
 | y2            | {% include type t="Number" %} | The y-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient (default 0.5).|
 | r2            | {% include type t="Number" %} | The radius length, in normalized [0, 1] coordinates, of the outer circle for the gradient (default 0.5).|
-| stops         | {% include array t="[GradientStop](#GradientStop)" %} | An array of gradient stops defining the gradient color sequence.|
+| stops         | {% include array t="[GradientStop](#GradientStop)" %} | {% include required %} An array of gradient stops defining the gradient color sequence.|
 
 <a name="GradientStop" href="#GradientStop">#</a>
 **Gradient Stop**
