@@ -80,28 +80,102 @@ export interface ColorHCL {
   c: NumericValueRef;
   l: NumericValueRef;
 }
+export interface GradientBase {
+  /**
+   * The type of gradient.
+   */
+  gradient: 'linear' | 'radial';
+}
 export interface GradientStop {
+  /**
+   * The offset fraction for the color stop, indicating its position within the gradient.
+   */
   offset: number;
-  color: string;
+  /**
+   * The color value at this point in the gradient.
+   */
+  color: Color;
 }
-export interface GradientLinear {
+export interface GradientLinear extends GradientBase {
+  /**
+   * The type of gradient. Use `"linear"` for a linear gradient.
+   */
   gradient: 'linear';
+  /**
+   * An array of gradient stops defining the gradient color sequence.
+   */
   stops: GradientStop[];
   id?: string;
+  /**
+   * The starting x-coordinate, in normalized [0, 1] coordinates, of the linear gradient.
+   *
+   * __Default value:__ `0`
+   */
   x1?: number;
+  /**
+   * The starting y-coordinate, in normalized [0, 1] coordinates, of the linear gradient.
+   *
+   * __Default value:__ `0`
+   */
   y1?: number;
+  /**
+   * The ending x-coordinate, in normalized [0, 1] coordinates, of the linear gradient.
+   *
+   * __Default value:__ `1`
+   */
   x2?: number;
+  /**
+   * The ending y-coordinate, in normalized [0, 1] coordinates, of the linear gradient.
+   *
+   * __Default value:__ `0`
+   */
   y2?: number;
 }
-export interface GradientRadial {
+export interface GradientRadial extends GradientBase {
+  /**
+   * The type of gradient. Use `"radial"` for a radial gradient.
+   */
   gradient: 'radial';
+  /**
+   * An array of gradient stops defining the gradient color sequence.
+   */
   stops: GradientStop[];
   id?: string;
+  /**
+   * The x-coordinate, in normalized [0, 1] coordinates, for the center of the inner circle for the gradient.
+   *
+   * __Default value:__ `0.5`
+   */
   x1?: number;
+  /**
+   * The y-coordinate, in normalized [0, 1] coordinates, for the center of the inner circle for the gradient.
+   *
+   * __Default value:__ `0.5`
+   */
   y1?: number;
+  /**
+   * The radius length, in normalized [0, 1] coordinates, of the inner circle for the gradient.
+   *
+   * __Default value:__ `0`
+   */
   r1?: number;
+  /**
+   * The x-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient.
+   *
+   * __Default value:__ `0.5`
+   */
   x2?: number;
+  /**
+   * The y-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient.
+   *
+   * __Default value:__ `0.5`
+   */
   y2?: number;
+  /**
+   * The radius length, in normalized [0, 1] coordinates, of the outer circle for the gradient.
+   *
+   * __Default value:__ `0.5`
+   */
   r2?: number;
 }
 export type ColorValueRef =
