@@ -80,7 +80,7 @@ export interface ColorHCL {
   c: NumericValueRef;
   l: NumericValueRef;
 }
-interface GradientBase {
+export interface GradientBase {
   /**
    * The type of gradient.
    */
