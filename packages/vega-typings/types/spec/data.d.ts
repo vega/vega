@@ -4,8 +4,8 @@ export type DataType = 'boolean' | 'number' | 'date' | 'string';
 export type Parse =
   | 'auto'
   | {
-    [f: string]: DataType | string;
-  };
+      [f: string]: DataType | string;
+    };
 export interface FormatJSON {
   type: 'json';
   parse?: Parse;
@@ -27,10 +27,10 @@ export type FormatTopoJSON = {
   type: 'topojson';
   property?: string;
 } & (
-    | {
+  | {
       feature: string;
     }
-    | {
+  | {
       mesh: string;
       filter: 'interior' | 'exterior' | null;
     });
