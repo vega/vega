@@ -80,7 +80,7 @@ export interface ColorHCL {
   c: NumericValueRef;
   l: NumericValueRef;
 }
-export interface GradientBase {
+export interface BaseGradient {
   /**
    * The type of gradient.
    */
@@ -96,7 +96,7 @@ export interface GradientStop {
    */
   color: Color;
 }
-export interface GradientLinear extends GradientBase {
+export interface LinearGradient extends BaseGradient {
   /**
    * The type of gradient. Use `"linear"` for a linear gradient.
    */
@@ -131,7 +131,7 @@ export interface GradientLinear extends GradientBase {
    */
   y2?: number;
 }
-export interface GradientRadial extends GradientBase {
+export interface RadialGradient extends BaseGradient {
   /**
    * The type of gradient. Use `"radial"` for a radial gradient.
    */
@@ -180,7 +180,7 @@ export interface GradientRadial extends GradientBase {
 }
 export type ColorValueRef =
   | ScaledValueRef<Color>
-  | { value: GradientLinear | GradientRadial }
+  | { value: LinearGradient | RadialGradient }
   | {
       gradient: Field;
       start?: number[];
