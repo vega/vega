@@ -48,7 +48,7 @@
     "vega-scenegraph": "^4.2.0",
     "vega-statistics": "^1.4.0",
     "vega-transforms": "^4.1.0",
-    "vega-typings": "^0.7.0",
+    "vega-typings": "^0.8.0",
     "vega-util": "^1.10.0",
     "vega-view": "^5.2.2",
     "vega-view-transforms": "^4.3.1",
