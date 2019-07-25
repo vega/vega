@@ -44,7 +44,7 @@ export interface BaseData {
 }
 
 export type SourceData = {
-  source: string;
+  source: string | string[];
 } & BaseData;
 
 export type ValuesData = {
