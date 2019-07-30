@@ -19,7 +19,7 @@ var Tiles = {
   resquarify: treemapResquarify
 };
 
-var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
 
 /**
  * Treemap layout.

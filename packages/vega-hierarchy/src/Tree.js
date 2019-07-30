@@ -7,7 +7,7 @@ var Layouts = {
   cluster: cluster
 };
 
-var Output = ['x', 'y', 'depth', 'children'];
+var Output = ['x', 'y', 'depth', 'value', 'children'];
 
 /**
  * Tree layout. Depending on the method parameter, performs either

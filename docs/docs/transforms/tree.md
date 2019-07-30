@@ -22,7 +22,7 @@ Internally, this transform processes a collection of special tree node objects g
 | separation          | {% include type t="Boolean" %}| {% include tag ver="4.3" %} A flag indicating if node separation logic should be applied. If `true` (the default), cousin nodes will be placed farther apart than sibling nodes. If `false`, nodes will be uniformly separated, as in a standard dendrogram.|
 | size                | {% include type t="Number[]" %}| The size of the layout, provided as a [width, height] array.|
 | nodeSize            | {% include type t="Number[]" %}| The size of each node, provided as a [width, height] array.|
-| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x", "y", "depth", "children"]`, where `x` and `y` are the layout coordinates, `depth` is the tree depth, and `children` is the count of a node's children in the tree.|
+| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x", "y", "depth", "value", "children"]`, where `x` and `y` are the layout coordinates, `depth` is the tree depth, `value` is the sum of values for a node and all its descendants, and `children` is the count of a node's children in the tree.|
 
 ## Usage
 

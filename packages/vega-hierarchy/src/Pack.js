@@ -2,7 +2,7 @@ import HierarchyLayout from './HierarchyLayout';
 import {inherits} from 'vega-util';
 import {pack} from 'd3-hierarchy';
 
-var Output = ['x', 'y', 'r', 'depth', 'children'];
+var Output = ['x', 'y', 'r', 'depth', 'value', 'children'];
 
 /**
  * Packed circle tree layout.

@@ -7736,13 +7736,14 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 5,
-          "minItems": 5,
+          "maxItems": 6,
+          "minItems": 6,
           "default": [
             "x",
             "y",
             "r",
             "depth",
+            "value",
             "children"
           ]
         }
@@ -7840,14 +7841,15 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 6,
-          "minItems": 6,
+          "maxItems": 7,
+          "minItems": 7,
           "default": [
             "x0",
             "y0",
             "x1",
             "y1",
             "depth",
+            "value",
             "children"
           ]
         }
@@ -8017,12 +8019,13 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 4,
-          "minItems": 4,
+          "maxItems": 5,
+          "minItems": 5,
           "default": [
             "x",
             "y",
             "depth",
+            "value",
             "children"
           ]
         }
@@ -8226,14 +8229,15 @@
               "$ref": "#/refs/signal"
             }
           ],
-          "maxItems": 6,
-          "minItems": 6,
+          "maxItems": 7,
+          "minItems": 7,
           "default": [
             "x0",
             "y0",
             "x1",
             "y1",
             "depth",
+            "value",
             "children"
           ]
         }
@@ -13629,7 +13633,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientLinear"
+              "$ref": "#/refs/linearGradient"
             }
           },
           "required": [
@@ -13641,7 +13645,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientRadial"
+              "$ref": "#/refs/radialGradient"
             }
           },
           "required": [
@@ -13726,7 +13730,7 @@
         "additionalProperties": false
       }
     },
-    "gradientLinear": {
+    "linearGradient": {
       "type": "object",
       "properties": {
         "gradient": {
@@ -13759,7 +13763,7 @@
       ],
       "additionalProperties": false
     },
-    "gradientRadial": {
+    "radialGradient": {
       "type": "object",
       "properties": {
         "gradient": {
