@@ -16418,7 +16418,7 @@
     return a.parent === b.parent ? 1 : 2;
   }
 
-  var Output = ['x', 'y', 'r', 'depth', 'children'];
+  var Output = ['x', 'y', 'r', 'depth', 'value', 'children'];
 
   /**
    * Packed circle tree layout.
@@ -16451,7 +16451,7 @@
 
   prototype$1a.fields = Output;
 
-  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
 
   /**
    * Partition tree layout.
@@ -16543,7 +16543,7 @@
     cluster: d3Hierarchy.cluster
   };
 
-  var Output$2 = ['x', 'y', 'depth', 'children'];
+  var Output$2 = ['x', 'y', 'depth', 'value', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -16653,7 +16653,7 @@
     resquarify: d3Hierarchy.treemapResquarify
   };
 
-  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
 
   /**
    * Treemap layout.
