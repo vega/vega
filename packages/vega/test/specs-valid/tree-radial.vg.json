@@ -50,7 +50,7 @@
           "type": "tree",
           "method": {"signal": "layout"},
           "size": [1, {"signal": "radius"}],
-          "as": ["alpha", "radius", "depth", "value", "children"]
+          "as": ["alpha", "radius", "depth", "children", "value"]
         },
         {
           "type": "formula",

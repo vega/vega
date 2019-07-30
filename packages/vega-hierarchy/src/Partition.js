@@ -2,7 +2,7 @@ import HierarchyLayout from './HierarchyLayout';
 import {inherits} from 'vega-util';
 import {partition} from 'd3-hierarchy';
 
-var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
+var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children', 'value'];
 
 /**
  * Partition tree layout.

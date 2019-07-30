@@ -52,7 +52,11 @@ export const spec: Spec = {
           "type": "tree",
           "method": {"signal": "layout"},
           "size": [1, {"signal": "radius"}],
+<<<<<<< HEAD
           "as": ["alpha", "radius", "depth", "value", "children"]
+=======
+          "as": ["alpha", "radius", "depth", "children", "value"]
+>>>>>>> ENH: expose aggregate sum value for hierarchy transforms, fixes #1380
         },
         {
           "type": "formula",

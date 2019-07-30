@@ -29,7 +29,7 @@ Internally, this transform processes a collection of special tree node objects g
 | ratio               | {% include type t="Number" %}  | The target aspect ratio for the `squarify` or `resquarify` methods. The default is the golden ratio, φ = (1 + sqrt(5)) / 2.|
 | round               | {% include type t="Boolean" %} | Indicates if node layout values should be rounded (default `false`).|
 | size                | {% include type t="Number[]" %}| The size of the layout, provided as a [width, height] array.|
-| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x0", "y0", "x1", "y1", "depth", "value", "children"]`, where `x0`, `y0`, `x1` and `y1` are the starting and ending layout coordinates for each segment, `depth` is the tree depth, `value` is the sum of values for a node and all its descendants, and `children` is the count of a node's children in the tree.|
+| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x0", "y0", "x1", "y1", "depth", "children", "value"]`, where `x0`, `y0`, `x1` and `y1` are the starting and ending layout coordinates for each segment, `depth` is the tree depth, `children` is the count of a node's children in the tree, and `value` is the sum of values for a node and all its descendants.|
 
 ## Usage
 

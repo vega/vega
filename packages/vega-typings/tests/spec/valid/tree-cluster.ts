@@ -43,7 +43,11 @@ export const spec: Spec = {
           "method": {"signal": "layout"},
           "size": [{"signal": "height"}, {"signal": "width - 100"}],
           "separation": {"signal": "separation"},
+<<<<<<< HEAD
           "as": ["y", "x", "depth", "value", "children"]
+=======
+          "as": ["y", "x", "depth", "children", "value"]
+>>>>>>> ENH: expose aggregate sum value for hierarchy transforms, fixes #1380
         }
       ]
     },
