@@ -5251,10 +5251,8 @@
       mu[j] = a / n;
     }
 
-    mu.sort(ascending);
-
     return [
-      quantile(mu, alpha/2),
+      quantile(mu.sort(ascending), alpha/2),
       quantile(mu, 1-(alpha/2))
     ];
   }
@@ -5262,12 +5260,8 @@
   function quartiles(array, f) {
     var values = Float64Array.from(numbers(array, f));
 
-    // don't depend on return value from typed array sort call
-    // protects against undefined sort results in Safari (vega/vega-lite#4964)
-    values.sort(ascending);
-
     return [
-      quantile(values, 0.25),
+      quantile(values.sort(ascending), 0.25),
       quantile(values, 0.50),
       quantile(values, 0.75)
     ];
@@ -6036,17 +6030,11 @@
         p1 = next[next.length - 1];
 
     while (p1) {
-      // midpoint for potential curve subdivision
       const pm = point((p0[0] + p1[0]) / 2);
 
       if (pm[0] - p0[0] >= stop && angleDelta(p0, pm, p1) > MIN_RADIANS) {
-        // maximum resolution has not yet been met, and
-        // subdivision midpoint sufficiently different from endpoint
-        // save subdivision, push midpoint onto the visitation stack
         next.push(pm);
       } else {
-        // subdivision midpoint sufficiently similar to endpoint
-        // skip subdivision, store endpoint, move to next point on the stack
         p0 = p1;
         prev.push(p1);
         next.pop();
@@ -27851,7 +27839,7 @@
     return a.parent === b.parent ? 1 : 2;
   }
 
-  var Output = ['x', 'y', 'r', 'depth', 'value', 'children'];
+  var Output = ['x', 'y', 'r', 'depth', 'children'];
 
   /**
    * Packed circle tree layout.
@@ -27884,7 +27872,7 @@
 
   prototype$1a.fields = Output;
 
-  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
+  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Partition tree layout.
@@ -27976,7 +27964,7 @@
     cluster: cluster
   };
 
-  var Output$2 = ['x', 'y', 'depth', 'value', 'children'];
+  var Output$2 = ['x', 'y', 'depth', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -28086,7 +28074,7 @@
     resquarify: treemapResquarify
   };
 
-  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'value', 'children'];
+  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Treemap layout.
