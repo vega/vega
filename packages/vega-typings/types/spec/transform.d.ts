@@ -299,7 +299,7 @@ export interface PackTransform {
 }
 
 export interface PartitionTransform {
-  type: 'pack';
+  type: 'partition';
   field?: string | TransformField;
   sort?: Compare;
   padding?: number | SignalRef;
