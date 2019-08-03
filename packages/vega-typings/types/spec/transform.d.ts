@@ -315,7 +315,7 @@ export interface TreeTransform {
   method?: 'tidy' | 'cluster' | SignalRef;
   separation?: boolean | SignalRef;
   size: Vector2<number | SignalRef> | SignalRef;
-  nodeSize: Vector2<number | SignalRef> | SignalRef;
+  nodeSize?: Vector2<number | SignalRef> | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
 }
 
