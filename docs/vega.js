@@ -1529,10 +1529,15 @@
 
   // Matches absolute URLs with optional protocol
   //   https://...    file://...    //...
-  var protocol_re = /^([A-Za-z]+:)?\/\//;
+  const protocol_re = /^([A-Za-z]+:)?\/\//;
+
+  // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
+  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+
 
   // Special treatment in node.js for the file: protocol
-  var fileProtocol = 'file://';
+  const fileProtocol = 'file://';
 
   /**
    * Factory for a loader constructor that provides methods for requesting
@@ -1593,13 +1598,15 @@
     const fileAccess = this.fileAccess,
           result = {href: null};
 
-    let isFile, hasProtocol, loadFile, base;
+    let isFile, loadFile, base;
 
-    if (uri == null || typeof uri !== 'string') {
+    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
+
+    if (uri == null || typeof uri !== 'string' || !isAllowed) {
       error('Sanitize failure, invalid URI: ' + $(uri));
     }
 
-    hasProtocol = protocol_re.test(uri);
+    const hasProtocol = protocol_re.test(uri);
 
     // if relative url (no protocol/host), prepend baseURL
     if ((base = options.baseURL) && !hasProtocol) {
@@ -1834,7 +1841,7 @@
         seconds = date.getUTCSeconds(),
         milliseconds = date.getUTCMilliseconds();
     return isNaN(date) ? "Invalid Date"
-        : formatYear(date.getUTCFullYear(), 4) + "-" + pad$1(date.getUTCMonth() + 1, 2) + "-" + pad$1(date.getUTCDate(), 2)
+        : formatYear(date.getUTCFullYear()) + "-" + pad$1(date.getUTCMonth() + 1, 2) + "-" + pad$1(date.getUTCDate(), 2)
         + (milliseconds ? "T" + pad$1(hours, 2) + ":" + pad$1(minutes, 2) + ":" + pad$1(seconds, 2) + "." + pad$1(milliseconds, 3) + "Z"
         : seconds ? "T" + pad$1(hours, 2) + ":" + pad$1(minutes, 2) + ":" + pad$1(seconds, 2) + "Z"
         : minutes || hours ? "T" + pad$1(hours, 2) + ":" + pad$1(minutes, 2) + "Z"
@@ -4595,8 +4602,6 @@
     return transforms.hasOwnProperty(type) ? transforms[type] : null;
   }
 
-  // Utilities
-
   function multikey(f) {
     return function(x) {
       var n = f.length,
@@ -4968,10 +4973,10 @@
     let min;
     let max;
     if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && value >= value) {
+      for (const value of values) {
+        if (value != null) {
           if (min === undefined) {
-            min = max = value;
+            if (value >= value) min = max = value;
           } else {
             if (min > value) min = value;
             if (max < value) max = value;
@@ -4981,9 +4986,9 @@
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && value >= value) {
+        if ((value = valueof(value, ++index, values)) != null) {
           if (min === undefined) {
-            min = max = value;
+            if (value >= value) min = max = value;
           } else {
             if (min > value) min = value;
             if (max < value) max = value;
@@ -5079,10 +5084,9 @@
   function max(values, valueof) {
     let max;
     if (valueof === undefined) {
-      for (let value of values) {
+      for (const value of values) {
         if (value != null
-            && value >= value
-            && (max === undefined || max < value)) {
+            && (max < value || (max === undefined && value >= value))) {
           max = value;
         }
       }
@@ -5090,8 +5094,7 @@
       let index = -1;
       for (let value of values) {
         if ((value = valueof(value, ++index, values)) != null
-            && value >= value
-            && (max === undefined || max < value)) {
+            && (max < value || (max === undefined && value >= value))) {
           max = value;
         }
       }
@@ -5192,10 +5195,9 @@
   function min(values, valueof) {
     let min;
     if (valueof === undefined) {
-      for (let value of values) {
+      for (const value of values) {
         if (value != null
-            && value >= value
-            && (min === undefined || min > value)) {
+            && (min > value || (min === undefined && value >= value))) {
           min = value;
         }
       }
@@ -5203,8 +5205,7 @@
       let index = -1;
       for (let value of values) {
         if ((value = valueof(value, ++index, values)) != null
-            && value >= value
-            && (min === undefined || min > value)) {
+            && (min > value || (min === undefined && value >= value))) {
           min = value;
         }
       }
@@ -5212,10 +5213,8 @@
     return min;
   }
 
-  function permute(array, indexes) {
-    var i = indexes.length, permutes = new Array(i);
-    while (i--) permutes[i] = array[indexes[i]];
-    return permutes;
+  function permute(source, keys) {
+    return Array.from(keys, key => source[key]);
   }
 
   function sum(values, valueof) {
@@ -5252,8 +5251,10 @@
       mu[j] = a / n;
     }
 
+    mu.sort(ascending);
+
     return [
-      quantile(mu.sort(ascending), alpha/2),
+      quantile(mu, alpha/2),
       quantile(mu, 1-(alpha/2))
     ];
   }
@@ -5261,8 +5262,12 @@
   function quartiles(array, f) {
     var values = Float64Array.from(numbers(array, f));
 
+    // don't depend on return value from typed array sort call
+    // protects against undefined sort results in Safari (vega/vega-lite#4964)
+    values.sort(ascending);
+
     return [
-      quantile(values.sort(ascending), 0.25),
+      quantile(values, 0.25),
       quantile(values, 0.50),
       quantile(values, 0.75)
     ];
@@ -6031,11 +6036,17 @@
         p1 = next[next.length - 1];
 
     while (p1) {
+      // midpoint for potential curve subdivision
       const pm = point((p0[0] + p1[0]) / 2);
 
       if (pm[0] - p0[0] >= stop && angleDelta(p0, pm, p1) > MIN_RADIANS) {
+        // maximum resolution has not yet been met, and
+        // subdivision midpoint sufficiently different from endpoint
+        // save subdivision, push midpoint onto the visitation stack
         next.push(pm);
       } else {
+        // subdivision midpoint sufficiently similar to endpoint
+        // skip subdivision, store endpoint, move to next point on the stack
         p0 = p1;
         prev.push(p1);
         next.pop();
@@ -9591,7 +9602,7 @@
       }
     },
     arc: function(x, y, r, a0, a1, ccw) {
-      x = +x, y = +y, r = +r;
+      x = +x, y = +y, r = +r, ccw = !!ccw;
       var dx = r * Math.cos(a0),
           dy = r * Math.sin(a0),
           x0 = x + dx,
@@ -17003,16 +17014,30 @@
   };
 
   define(Color, color$1, {
+    copy: function(channels) {
+      return Object.assign(new this.constructor, this, channels);
+    },
     displayable: function() {
       return this.rgb().displayable();
     },
-    hex: function() {
-      return this.rgb().hex();
-    },
-    toString: function() {
-      return this.rgb() + "";
-    }
+    hex: color_formatHex, // Deprecated! Use color.formatHex.
+    formatHex: color_formatHex,
+    formatHsl: color_formatHsl,
+    formatRgb: color_formatRgb,
+    toString: color_formatRgb
   });
+
+  function color_formatHex() {
+    return this.rgb().formatHex();
+  }
+
+  function color_formatHsl() {
+    return hslConvert(this).formatHsl();
+  }
+
+  function color_formatRgb() {
+    return this.rgb().formatRgb();
+  }
 
   function color$1(format) {
     var m;
@@ -17025,7 +17050,7 @@
         : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
         : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
         : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-        : named.hasOwnProperty(format) ? rgbn(named[format])
+        : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
         : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
         : null;
   }
@@ -17070,23 +17095,29 @@
       return this;
     },
     displayable: function() {
-      return (0 <= this.r && this.r <= 255)
-          && (0 <= this.g && this.g <= 255)
-          && (0 <= this.b && this.b <= 255)
+      return (-0.5 <= this.r && this.r < 255.5)
+          && (-0.5 <= this.g && this.g < 255.5)
+          && (-0.5 <= this.b && this.b < 255.5)
           && (0 <= this.opacity && this.opacity <= 1);
     },
-    hex: function() {
-      return "#" + hex(this.r) + hex(this.g) + hex(this.b);
-    },
-    toString: function() {
-      var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
-      return (a === 1 ? "rgb(" : "rgba(")
-          + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
-          + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
-          + Math.max(0, Math.min(255, Math.round(this.b) || 0))
-          + (a === 1 ? ")" : ", " + a + ")");
-    }
+    hex: rgb_formatHex, // Deprecated! Use color.formatHex.
+    formatHex: rgb_formatHex,
+    formatRgb: rgb_formatRgb,
+    toString: rgb_formatRgb
   }));
+
+  function rgb_formatHex() {
+    return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+  }
+
+  function rgb_formatRgb() {
+    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+    return (a === 1 ? "rgb(" : "rgba(")
+        + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
+        + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
+        + Math.max(0, Math.min(255, Math.round(this.b) || 0))
+        + (a === 1 ? ")" : ", " + a + ")");
+  }
 
   function hex(value) {
     value = Math.max(0, Math.min(255, Math.round(value) || 0));
@@ -17163,6 +17194,14 @@
       return (0 <= this.s && this.s <= 1 || isNaN(this.s))
           && (0 <= this.l && this.l <= 1)
           && (0 <= this.opacity && this.opacity <= 1);
+    },
+    formatHsl: function() {
+      var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+      return (a === 1 ? "hsl(" : "hsla(")
+          + (this.h || 0) + ", "
+          + (this.s || 0) * 100 + "%, "
+          + (this.l || 0) * 100 + "%"
+          + (a === 1 ? ")" : ", " + a + ")");
     }
   }));
 
@@ -17177,7 +17216,7 @@
   var deg2rad = Math.PI / 180;
   var rad2deg = 180 / Math.PI;
 
-  // https://beta.observablehq.com/@mbostock/lab-and-rgb
+  // https://observablehq.com/@mbostock/lab-and-rgb
   var K = 18,
       Xn = 0.96422,
       Yn = 1,
@@ -17189,11 +17228,7 @@
 
   function labConvert(o) {
     if (o instanceof Lab) return new Lab(o.l, o.a, o.b, o.opacity);
-    if (o instanceof Hcl) {
-      if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
-      var h = o.h * deg2rad;
-      return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-    }
+    if (o instanceof Hcl) return hcl2lab(o);
     if (!(o instanceof Rgb)) o = rgbConvert(o);
     var r = rgb2lrgb(o.r),
         g = rgb2lrgb(o.g),
@@ -17259,7 +17294,7 @@
   function hclConvert(o) {
     if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
     if (!(o instanceof Lab)) o = labConvert(o);
-    if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0, o.l, o.opacity);
+    if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
     var h = Math.atan2(o.b, o.a) * rad2deg;
     return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
   }
@@ -17275,6 +17310,12 @@
     this.opacity = +opacity;
   }
 
+  function hcl2lab(o) {
+    if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
+    var h = o.h * deg2rad;
+    return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
+  }
+
   define(Hcl, hcl, extend$1(Color, {
     brighter: function(k) {
       return new Hcl(this.h, this.c, this.l + K * (k == null ? 1 : k), this.opacity);
@@ -17283,7 +17324,7 @@
       return new Hcl(this.h, this.c, this.l - K * (k == null ? 1 : k), this.opacity);
     },
     rgb: function() {
-      return labConvert(this).rgb();
+      return hcl2lab(this).rgb();
     }
   }));
 
@@ -18910,7 +18951,7 @@
           : formatYear)(date);
     }
 
-    function tickInterval(interval, start, stop, step) {
+    function tickInterval(interval, start, stop) {
       if (interval == null) interval = 10;
 
       // If a desired tick count is specified, pick a reasonable tick interval
@@ -18918,7 +18959,8 @@
       // Otherwise, assume interval is already a time interval and use it.
       if (typeof interval === "number") {
         var target = Math.abs(stop - start) / interval,
-            i = bisector(function(i) { return i[2]; }).right(tickIntervals, target);
+            i = bisector(function(i) { return i[2]; }).right(tickIntervals, target),
+            step;
         if (i === tickIntervals.length) {
           step = tickStep(start / durationYear, stop / durationYear, interval);
           interval = year;
@@ -18930,9 +18972,10 @@
           step = Math.max(tickStep(start, stop, interval), 1);
           interval = millisecond;
         }
+        return interval.every(step);
       }
 
-      return step == null ? interval : interval.every(step);
+      return interval;
     }
 
     scale.invert = function(y) {
@@ -18943,14 +18986,14 @@
       return arguments.length ? domain(Array.from(_, number$2)) : domain().map(date$1);
     };
 
-    scale.ticks = function(interval, step) {
+    scale.ticks = function(interval) {
       var d = domain(),
           t0 = d[0],
           t1 = d[d.length - 1],
           r = t1 < t0,
           t;
       if (r) t = t0, t0 = t1, t1 = t;
-      t = tickInterval(interval, t0, t1, step);
+      t = tickInterval(interval, t0, t1);
       t = t ? t.range(t0, t1 + 1) : []; // inclusive stop
       return r ? t.reverse() : t;
     };
@@ -18959,9 +19002,9 @@
       return specifier == null ? tickFormat : format(specifier);
     };
 
-    scale.nice = function(interval, step) {
+    scale.nice = function(interval) {
       var d = domain();
-      return (interval = tickInterval(interval, d[0], d[d.length - 1], step))
+      return (interval = tickInterval(interval, d[0], d[d.length - 1]))
           ? domain(nice(d, interval))
           : scale;
     };
@@ -20149,7 +20192,7 @@
         scale = _.scale,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
         format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType),
-        values = _.values || labelValues(scale, count, type),
+        values = _.values || labelValues(scale, count),
         domain, fraction, size, offset;
 
     if (items) out.rem = items;
@@ -21929,6 +21972,9 @@
       else if (deltaSum > epsilon$3) phi1 = 90;
       else if (deltaSum < -epsilon$3) phi0 = -90;
       range$1[0] = lambda0$1, range$1[1] = lambda1;
+    },
+    sphere: function() {
+      lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
     }
   };
 
@@ -22453,8 +22499,15 @@
 
   var sum$1 = adder();
 
+  function longitude(point) {
+    if (abs$1(point[0]) <= pi$2)
+      return point[0];
+    else
+      return sign$1(point[0]) * ((abs$1(point[0]) + pi$2) % tau$2 - pi$2);
+  }
+
   function polygonContains(polygon, point) {
-    var lambda = point[0],
+    var lambda = longitude(point),
         phi = point[1],
         sinPhi = sin$1(phi),
         normal = [sin$1(lambda), -cos$1(lambda), 0],
@@ -22471,14 +22524,14 @@
       var ring,
           m,
           point0 = ring[m - 1],
-          lambda0 = point0[0],
+          lambda0 = longitude(point0),
           phi0 = point0[1] / 2 + quarterPi,
           sinPhi0 = sin$1(phi0),
           cosPhi0 = cos$1(phi0);
 
       for (var j = 0; j < m; ++j, lambda0 = lambda1, sinPhi0 = sinPhi1, cosPhi0 = cosPhi1, point0 = point1) {
         var point1 = ring[j],
-            lambda1 = point1[0],
+            lambda1 = longitude(point1),
             phi1 = point1[1] / 2 + quarterPi,
             sinPhi1 = sin$1(phi1),
             cosPhi1 = cos$1(phi1),
@@ -30618,7 +30671,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.4.0";
+  var version = "5.4.1";
 
   var Default = 'default';
 
@@ -32137,6 +32190,7 @@
 
     // First, detect invalid regular expressions.
     try {
+      new RegExp(tmp);
     } catch (e) {
       throwError({}, MessageInvalidRegExp);
     }

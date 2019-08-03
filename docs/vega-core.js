@@ -1529,10 +1529,15 @@
 
   // Matches absolute URLs with optional protocol
   //   https://...    file://...    //...
-  var protocol_re = /^([A-Za-z]+:)?\/\//;
+  const protocol_re = /^([A-Za-z]+:)?\/\//;
+
+  // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
+  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+
 
   // Special treatment in node.js for the file: protocol
-  var fileProtocol = 'file://';
+  const fileProtocol = 'file://';
 
   /**
    * Factory for a loader constructor that provides methods for requesting
@@ -1593,13 +1598,15 @@
     const fileAccess = this.fileAccess,
           result = {href: null};
 
-    let isFile, hasProtocol, loadFile, base;
+    let isFile, loadFile, base;
 
-    if (uri == null || typeof uri !== 'string') {
+    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
+
+    if (uri == null || typeof uri !== 'string' || !isAllowed) {
       error('Sanitize failure, invalid URI: ' + $(uri));
     }
 
-    hasProtocol = protocol_re.test(uri);
+    const hasProtocol = protocol_re.test(uri);
 
     // if relative url (no protocol/host), prepend baseURL
     if ((base = options.baseURL) && !hasProtocol) {
@@ -3265,8 +3272,6 @@
     return transforms.hasOwnProperty(type) ? transforms[type] : null;
   }
 
-  // Utilities
-
   function multikey(f) {
     return function(x) {
       var n = f.length,
@@ -3583,8 +3588,10 @@
       mu[j] = a / n;
     }
 
+    mu.sort(d3Array.ascending);
+
     return [
-      d3Array.quantile(mu.sort(d3Array.ascending), alpha/2),
+      d3Array.quantile(mu, alpha/2),
       d3Array.quantile(mu, 1-(alpha/2))
     ];
   }
@@ -3592,8 +3599,12 @@
   function quartiles(array, f) {
     var values = Float64Array.from(numbers(array, f));
 
+    // don't depend on return value from typed array sort call
+    // protects against undefined sort results in Safari (vega/vega-lite#4964)
+    values.sort(d3Array.ascending);
+
     return [
-      d3Array.quantile(values.sort(d3Array.ascending), 0.25),
+      d3Array.quantile(values, 0.25),
       d3Array.quantile(values, 0.50),
       d3Array.quantile(values, 0.75)
     ];
@@ -4362,11 +4373,17 @@
         p1 = next[next.length - 1];
 
     while (p1) {
+      // midpoint for potential curve subdivision
       const pm = point((p0[0] + p1[0]) / 2);
 
       if (pm[0] - p0[0] >= stop && angleDelta(p0, pm, p1) > MIN_RADIANS) {
+        // maximum resolution has not yet been met, and
+        // subdivision midpoint sufficiently different from endpoint
+        // save subdivision, push midpoint onto the visitation stack
         next.push(pm);
       } else {
+        // subdivision midpoint sufficiently similar to endpoint
+        // skip subdivision, store endpoint, move to next point on the stack
         p0 = p1;
         prev.push(p1);
         next.pop();
@@ -14610,7 +14627,7 @@
         scale = _.scale,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
         format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType),
-        values = _.values || labelValues(scale, count, type),
+        values = _.values || labelValues(scale, count),
         domain, fraction, size, offset;
 
     if (items) out.rem = items;
@@ -18234,7 +18251,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.4.0";
+  var version = "5.4.1";
 
   var Default = 'default';
 
@@ -19753,6 +19770,7 @@
 
     // First, detect invalid regular expressions.
     try {
+      new RegExp(tmp);
     } catch (e) {
       throwError({}, MessageInvalidRegExp);
     }

@@ -13629,7 +13629,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientLinear"
+              "$ref": "#/refs/linearGradient"
             }
           },
           "required": [
@@ -13641,7 +13641,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientRadial"
+              "$ref": "#/refs/radialGradient"
             }
           },
           "required": [
@@ -13726,7 +13726,7 @@
         "additionalProperties": false
       }
     },
-    "gradientLinear": {
+    "linearGradient": {
       "type": "object",
       "properties": {
         "gradient": {
@@ -13759,7 +13759,7 @@
       ],
       "additionalProperties": false
     },
-    "gradientRadial": {
+    "radialGradient": {
       "type": "object",
       "properties": {
         "gradient": {
