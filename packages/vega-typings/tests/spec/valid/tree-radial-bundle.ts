@@ -63,7 +63,7 @@ export const spec: Spec = {
           "type": "tree",
           "method": {"signal": "layout"},
           "size": [1, 1],
-          "as": ["alpha", "beta", "depth", "children"]
+          "as": ["alpha", "beta", "depth", "value", "children"]
         },
         {
           "type": "formula",

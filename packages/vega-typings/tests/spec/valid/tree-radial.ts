@@ -52,7 +52,7 @@ export const spec: Spec = {
           "type": "tree",
           "method": {"signal": "layout"},
           "size": [1, {"signal": "radius"}],
-          "as": ["alpha", "radius", "depth", "children"]
+          "as": ["alpha", "radius", "depth", "value", "children"]
         },
         {
           "type": "formula",

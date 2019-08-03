@@ -43,7 +43,7 @@ export const spec: Spec = {
           "method": {"signal": "layout"},
           "size": [{"signal": "height"}, {"signal": "width - 100"}],
           "separation": {"signal": "separation"},
-          "as": ["y", "x", "depth", "children"]
+          "as": ["y", "x", "depth", "value", "children"]
         }
       ]
     },
