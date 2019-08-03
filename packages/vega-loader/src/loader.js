@@ -2,10 +2,15 @@ import {extend, error, isFunction, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
-var protocol_re = /^([A-Za-z]+:)?\/\//;
+const protocol_re = /^([A-Za-z]+:)?\/\//;
+
+// Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
+const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+
 
 // Special treatment in node.js for the file: protocol
-var fileProtocol = 'file://';
+const fileProtocol = 'file://';
 
 /**
  * Factory for a loader constructor that provides methods for requesting
@@ -66,13 +71,15 @@ async function sanitize(uri, options) {
   const fileAccess = this.fileAccess,
         result = {href: null};
 
-  let isFile, hasProtocol, loadFile, base;
+  let isFile, loadFile, base;
 
-  if (uri == null || typeof uri !== 'string') {
+  const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
+
+  if (uri == null || typeof uri !== 'string' || !isAllowed) {
     error('Sanitize failure, invalid URI: ' + stringValue(uri));
   }
 
-  hasProtocol = protocol_re.test(uri);
+  const hasProtocol = protocol_re.test(uri);
 
   // if relative url (no protocol/host), prepend baseURL
   if ((base = options.baseURL) && !hasProtocol) {
