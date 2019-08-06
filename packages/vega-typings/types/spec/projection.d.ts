@@ -11,6 +11,7 @@ export type ProjectionType =
   | 'conicConformal'
   | 'conicEqualArea'
   | 'conicEquidistant'
+  | 'equalEarth'
   | 'equirectangular'
   | 'gnomonic'
   | 'identity'
