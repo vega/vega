@@ -28,8 +28,8 @@ export type Transforms =
   | LoessTransform
   | LookupTransform
   | _TODO_<'nest'>
-  | _TODO_<'pack'>
-  | _TODO_<'partition'>
+  | PackTransform
+  | PartitionTransform
   | _TODO_<'pie'>
   | _TODO_<'project'>
   | RegressionTransform
@@ -38,9 +38,9 @@ export type Transforms =
   | _TODO_<'sequence'>
   | StackTransform
   | _TODO_<'stratify'>
-  | _TODO_<'tree'>
+  | TreeTransform
   | _TODO_<'treelinks'>
-  | _TODO_<'treemap'>
+  | TreemapTransform
   | _TODO_<'voronoi'>
   | WindowTransform
   | WordcloudTransform;
@@ -286,6 +286,55 @@ export interface LookupTransform {
   values?: string[];
   as?: (string | SignalRef)[] | SignalRef;
   default?: any;
+}
+
+export interface PackTransform {
+  type: 'pack';
+  field?: string | TransformField;
+  sort?: Compare;
+  size: Vector2<number | SignalRef> | SignalRef;
+  radius?: string | TransformField;
+  padding?: number | SignalRef;
+  as?: (string | SignalRef)[] | SignalRef;
+}
+
+export interface PartitionTransform {
+  type: 'partition';
+  field?: string | TransformField;
+  sort?: Compare;
+  padding?: number | SignalRef;
+  round?: boolean | SignalRef;
+  size: Vector2<number | SignalRef> | SignalRef;
+  as?: (string | SignalRef)[] | SignalRef;
+}
+
+export interface TreeTransform {
+  type: 'tree';
+  field?: string | TransformField;
+  sort?: Compare;
+  method?: 'tidy' | 'cluster' | SignalRef;
+  separation?: boolean | SignalRef;
+  size: Vector2<number | SignalRef> | SignalRef;
+  nodeSize?: Vector2<number | SignalRef> | SignalRef;
+  as?: (string | SignalRef)[] | SignalRef;
+}
+
+export interface TreemapTransform {
+  type: 'treemap';
+  field?: string | TransformField;
+  sort?: Compare;
+  method?: 'squarify' | 'resquarify' | 'binary' | 'dice' | 'slice' | 'slicedice' | SignalRef;
+  padding?: number | SignalRef;
+  paddingInner?: number | SignalRef;
+  paddingOuter?: number | SignalRef;
+  paddingTop?: number | SignalRef;
+  paddingRight?: number | SignalRef;
+  paddingBottom?: number | SignalRef;
+  paddingLeft?: number | SignalRef;
+  ratio?: number | SignalRef;
+  round?: boolean | SignalRef;
+  size: Vector2<number | SignalRef> | SignalRef;
+  as?: (string | SignalRef)[] | SignalRef;
 }
 
 export interface RegressionTransform {
