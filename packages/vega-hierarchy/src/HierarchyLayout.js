@@ -53,8 +53,8 @@ function setFields(node, fields, as) {
   for (var i=0, n=fields.length-2; i<n; ++i) {
     t[as[i]] = node[fields[i]];
   }
-  t[as[n-1]] = node.children ? node.children.length : 0;
-  t[as[n]] = node.value;
+  t[as[n]] = node.children ? node.children.length : 0;
+  t[as[n+1]] = node.value;
 }
 
 function defaultSeparation(a, b) {
