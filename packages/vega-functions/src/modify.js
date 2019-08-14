@@ -1,9 +1,10 @@
 import {isTuple} from 'vega-dataflow';
-import {isArray, truthy} from 'vega-util';
+import {isArray, isObject, truthy} from 'vega-util';
 
 function equal(a, b) {
   return a === b || a !== a && b !== b ? true
     : isArray(a) && isArray(b) && a.length === b.length ? equalArray(a, b)
+    : isObject(a) && isObject(b) ? equalObject(a, b)
     : false;
 }
 
@@ -14,13 +15,15 @@ function equalArray(a, b) {
   return true;
 }
 
+function equalObject(a, b) {
+  for (let key in a) {
+    if (!equal(a[key], b[key])) return false;
+  }
+  return true;
+}
+
 function removePredicate(props) {
-  return function(_) {
-    for (let key in props) {
-      if (!equal(_[key], props[key])) return false;
-    }
-    return true;
-  };
+  return function(_) { return equalObject(props, _);  };
 }
 
 export default function(name, insert, remove, toggle, modify, values) {
