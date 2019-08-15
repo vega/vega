@@ -201,8 +201,8 @@ function radio(bind, el, param, value) {
 function range(bind, el, param, value) {
   value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
-  var min = param.min || Math.min(0, +value) || 0,
-      max = param.max || Math.max(100, +value) || 100,
+  var max = param.max !== undefined ? param.max : Math.max(100, +value) || 100,
+      min = param.min || Math.min(0, +value) || 0,
       step = param.step || tickStep(min, max, 100);
 
   var node = element('input', {
