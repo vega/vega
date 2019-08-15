@@ -790,9 +790,9 @@ agentkeepalive@^3.4.1:
     humanize-ms "^1.2.1"
 
 ajv@^6.10.0, ajv@^6.5.5, ajv@^6.9.1:
-  version "6.10.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.10.0.tgz#90d0d54439da587cd7e843bfb7045f50bd22bdf1"
-  integrity sha512-nffhOpkymDECQyR0mnsUtoCE8RlX38G0rYP+wgLWFyZuUyuuojSSvi/+euOiQBIn63whYwYVIIH1TvE3tu4OEg==
+  version "6.10.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52"
+  integrity sha512-TXtUUEYHuaTEbLZWIKUr5pmBuhDLy+8KYtPYdcV8qC+pOZL+NKqYwvWSRrVXHn+ZmRRAu8vJTAznH7Oag6RVRw==
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -5638,16 +5638,6 @@ vega-datasets@^1.25.0:
   version "1.25.0"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.25.0.tgz#daae04d3fd8f5a67dc1631d96391fe7bdcb9e39a"
   integrity sha512-tcxCTN6hIUxvWOfzZuQA9A5kppi0OD7qx/gpI2r6b1EAHhGKZM15DvwDPk1PS66TeYiyGJzx3E8VwGTMNRSxww==
-
-vega-regression@*, vega-regression@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vega-regression/-/vega-regression-1.0.0.tgz#4c029862edb192be8c0bbd5d19267271877524aa"
-  integrity sha512-jNK3aDfM4cHImNvcR5jZHkIpWNr0/HUpxq71xhtjQ98qgmGBoSeUptuRXC4emJd9pRGuyj3vwrkUP4NcbIIIQw==
-  dependencies:
-    d3-array "^2.0.3"
-    vega-dataflow "^5.2.1"
-    vega-statistics "^1.4.0"
-    vega-util "^1.10.0"
 
 vega@5.4.0:
   version "5.4.0"
