@@ -9,7 +9,7 @@ export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
   width?: number;
   height?: number;
-  config?: any;
+  config?: Config;
   description?: string;
   padding?: Padding;
   autosize?: AutoSize;
