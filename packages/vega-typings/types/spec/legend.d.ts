@@ -302,14 +302,6 @@ export interface BaseLegend<
    */
   gradientStrokeWidth?: N;
 
-  /**
-   * Deprecated, use gradientLength instead. If gradientLength is not defined, this value will be used instead.
-   *
-   * __Default value:__ `100`.
-   * @minimum 0
-   */
-  gradientWidth?: NS;
-
   // ---------- Symbol Layout ----------
   /**
    * The height in pixels to clip symbol legend entries and limit their size.
