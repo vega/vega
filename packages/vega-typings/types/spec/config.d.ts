@@ -32,7 +32,7 @@ import {
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
-    Partial<Record<AxisConfigKeys, AxisConfig>> {
+  Partial<Record<AxisConfigKeys, AxisConfig>> {
   autosize?: AutoSize;
   background?: string;
   group?: any; // TODO
@@ -284,42 +284,42 @@ export interface MarkConfig {
    * The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.
    */
   cursor?:
-    | 'auto'
-    | 'default'
-    | 'none'
-    | 'context-menu'
-    | 'help'
-    | 'pointer'
-    | 'progress'
-    | 'wait'
-    | 'cell'
-    | 'crosshair'
-    | 'text'
-    | 'vertical-text'
-    | 'alias'
-    | 'copy'
-    | 'move'
-    | 'no-drop'
-    | 'not-allowed'
-    | 'e-resize'
-    | 'n-resize'
-    | 'ne-resize'
-    | 'nw-resize'
-    | 's-resize'
-    | 'se-resize'
-    | 'sw-resize'
-    | 'w-resize'
-    | 'ew-resize'
-    | 'ns-resize'
-    | 'nesw-resize'
-    | 'nwse-resize'
-    | 'col-resize'
-    | 'row-resize'
-    | 'all-scroll'
-    | 'zoom-in'
-    | 'zoom-out'
-    | 'grab'
-    | 'grabbing';
+  | 'auto'
+  | 'default'
+  | 'none'
+  | 'context-menu'
+  | 'help'
+  | 'pointer'
+  | 'progress'
+  | 'wait'
+  | 'cell'
+  | 'crosshair'
+  | 'text'
+  | 'vertical-text'
+  | 'alias'
+  | 'copy'
+  | 'move'
+  | 'no-drop'
+  | 'not-allowed'
+  | 'e-resize'
+  | 'n-resize'
+  | 'ne-resize'
+  | 'nw-resize'
+  | 's-resize'
+  | 'se-resize'
+  | 'sw-resize'
+  | 'w-resize'
+  | 'ew-resize'
+  | 'ns-resize'
+  | 'nesw-resize'
+  | 'nwse-resize'
+  | 'col-resize'
+  | 'row-resize'
+  | 'all-scroll'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'grab'
+  | 'grabbing';
 }
 
 export type AxisConfigKeys =
@@ -353,7 +353,7 @@ export interface LegendConfig<
   O = OrientValue,
   AN = AnchorValue,
   LOR = LegendOrient | SignalRef
-> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN, LOR> {
+  > extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN, LOR> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -415,8 +415,8 @@ export interface BaseLegendLayout<
   BS = boolean | SignalRef,
   OS = Orientation | SignalRef,
   LB = LayoutBounds,
-  AN = TitleAnchor
-> {
+  AN = TitleAnchor | SignalRef
+  > {
   /**
    * The anchor point for legend orient group layout.
    */
