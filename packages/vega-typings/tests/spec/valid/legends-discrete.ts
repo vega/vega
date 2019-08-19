@@ -9,7 +9,7 @@ export const spec: Spec = {
       "offset": 5,
       "gradientDirection": "horizontal",
       "gradientLength": 300,
-      "gradientWidth": 15
+      "gradientThickness": 15
     }
   },
 
