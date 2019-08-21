@@ -420,7 +420,7 @@ export interface BaseLegendLayout<
   BS = boolean | SignalRef,
   OS = Orientation | SignalRef,
   LB = LayoutBounds,
-  AN = TitleAnchor
+  AN = TitleAnchor | SignalRef
 > {
   /**
    * The anchor point for legend orient group layout.
