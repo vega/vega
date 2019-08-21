@@ -31,7 +31,7 @@ prototype.transform = function(_, pulse) {
 
   // configure and construct voronoi diagram
   delaunay = Delaunay.from(data, _.x, _.y);
-  extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], _.extent[1][0]] : defaultExtent;
+  extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], ..._.extent[1]] : defaultExtent;
   this.value = (voronoi = delaunay.voronoi(extent))
 
   // map polygons to paths
