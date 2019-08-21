@@ -50,6 +50,7 @@ export {default as extentIndex} from './src/extentIndex';
 export {default as fastmap} from './src/fastmap';
 export {default as field} from './src/field';
 export {default as flush} from './src/flush';
+export {default as hasOwnProperty} from './src/hasOwnProperty';
 export {default as inherits} from './src/inherits';
 export {default as inrange} from './src/inrange';
 export {default as isArray} from './src/isArray';

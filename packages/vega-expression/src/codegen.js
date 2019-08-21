@@ -1,6 +1,6 @@
 import Constants from './constants';
 import Functions from './functions';
-import {error, isFunction, isString, toSet} from 'vega-util';
+import {error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
   var n = s && s.length - 1;
@@ -43,11 +43,11 @@ export default function(opt) {
       var id = n.name;
       if (memberDepth > 0) {
         return id;
-      } else if (blacklist.hasOwnProperty(id)) {
+      } else if (hasOwnProperty(blacklist, id)) {
         return error('Illegal identifier: ' + id);
-      } else if (constants.hasOwnProperty(id)) {
+      } else if (hasOwnProperty(constants, id)) {
         return constants[id];
-      } else if (whitelist.hasOwnProperty(id)) {
+      } else if (hasOwnProperty(whitelist, id)) {
         return id;
       } else {
         globals[id] = 1;
@@ -74,7 +74,7 @@ export default function(opt) {
         }
         var callee = n.callee.name;
         var args = n.arguments;
-        var fn = functions.hasOwnProperty(callee) && functions[callee];
+        var fn = hasOwnProperty(functions, callee) && functions[callee];
         if (!fn) error('Unrecognized function: ' + callee);
         return isFunction(fn)
           ? fn(args)

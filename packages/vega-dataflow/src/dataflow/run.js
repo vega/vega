@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 import {default as Pulse, StopPropagation} from '../Pulse';
 import MultiPulse from '../MultiPulse';
 import asyncCallback from '../util/asyncCallback';

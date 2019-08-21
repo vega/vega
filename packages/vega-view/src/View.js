@@ -17,7 +17,7 @@ import defaultTooltip from './tooltip';
 import trap from './trap';
 
 import {asyncCallback, Dataflow} from 'vega-dataflow';
-import {error, extend, inherits, stringValue} from 'vega-util';
+import {error, extend, inherits, hasOwnProperty, stringValue} from 'vega-util';
 import {
   CanvasHandler, Scenegraph,
   renderModule, RenderType
@@ -58,6 +58,9 @@ export default function View(spec, options) {
   view._eventListeners = [];
   view._resizeListeners = [];
 
+  // initialize event configuration
+  view._eventConfig = initializeEventConfig(spec.eventConfig);
+
   // initialize dataflow graph
   var ctx = runtime(view, spec, options.functions);
   view._runtime = ctx;
@@ -79,9 +82,6 @@ export default function View(spec, options) {
 
   // initialize background color
   view._background = options.background || ctx.background || null;
-
-  // initialize event configuration
-  view._eventConfig = initializeEventConfig(ctx.eventConfig);
 
   // initialize view size
   view._width = view.width();
@@ -153,7 +153,7 @@ prototype.origin = function() {
 };
 
 function lookupSignal(view, name) {
-  return view._signals.hasOwnProperty(name)
+  return hasOwnProperty(view._signals, name)
     ? view._signals[name]
     : error('Unrecognized signal name: ' + stringValue(name));
 }

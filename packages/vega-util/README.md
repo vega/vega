@@ -240,6 +240,12 @@ map.clean(); // invoke garbage collection, clears empty entries
 
 By using basic JavaScript objects to hash values and avoiding calls to the built-in JavaScript `delete` operator, fastmaps provide good performance. However, this speed comes at the cost of some object bloat, requiring periodic garbage collection in the case of many deletions. The fastmap object provides a *clean* method for requesting garbage collection of empty map entries. The *test* method is a getter/setter for providing an optional boolean-valued function that indicates additional objects (not just empty entries from deleted keys) that should be removed during garbage collection.
 
+<a name="hasOwnProperty" href="#hasOwnProperty">#</a>
+vega.<b>hasOwnProperty</b>(<i>object</i>, <i>property</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/hasOwnProperty.js "Source")
+
+Returns `true` if the input *object* has a named *property* defined on it, otherwise `false`. This method concerns the input object only, ignoring properties defined up the prototype chain. The method is equivalent to [`Object.hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty), but improves security by guarding against overridden Object prototype built-ins.
+
 ### Arrays
 
 Functions for manipulating JavaScript Array values.

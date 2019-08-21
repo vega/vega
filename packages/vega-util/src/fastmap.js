@@ -1,3 +1,5 @@
+import hasOwnProperty from './hasOwnProperty';
+
 var NULL = {};
 
 export default function(input) {
@@ -6,7 +8,7 @@ export default function(input) {
       test;
 
   function has(key) {
-    return obj.hasOwnProperty(key) && obj[key] !== NULL;
+    return hasOwnProperty(obj, key) && obj[key] !== NULL;
   }
 
   map = {

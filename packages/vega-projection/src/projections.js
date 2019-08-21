@@ -6,6 +6,7 @@ import {
   geoConicConformal,
   geoConicEqualArea,
   geoConicEquidistant,
+  geoEqualEarth,
   geoEquirectangular,
   geoGnomonic,
   geoIdentity,
@@ -58,7 +59,7 @@ function create(type, constructor) {
     p.copy = p.copy || function() {
       var c = projection();
       projectionProperties.forEach(function(prop) {
-        if (p.hasOwnProperty(prop)) c[prop](p[prop]());
+        if (p[prop]) c[prop](p[prop]());
       });
       c.path.pointRadius(p.path.pointRadius());
       return c;
@@ -77,7 +78,7 @@ export function projection(type, proj) {
     projections[type] = create(type, proj);
     return this;
   } else {
-    return projections.hasOwnProperty(type) ? projections[type] : null;
+    return projections[type] || null;
   }
 }
 
@@ -94,6 +95,7 @@ var projections = {
   conicconformal:       geoConicConformal,
   conicequalarea:       geoConicEqualArea,
   conicequidistant:     geoConicEquidistant,
+  equalEarth:           geoEqualEarth,
   equirectangular:      geoEquirectangular,
   gnomonic:             geoGnomonic,
   identity:             geoIdentity,

@@ -1,9 +1,9 @@
 import {changeset, isChangeSet} from 'vega-dataflow';
-import {error} from 'vega-util';
+import {error, hasOwnProperty} from 'vega-util';
 
 export function dataref(view, name) {
   var data = view._runtime.data;
-  if (!data.hasOwnProperty(name)) {
+  if (!hasOwnProperty(data, name)) {
     error('Unrecognized data set: ' + name);
   }
   return data[name];

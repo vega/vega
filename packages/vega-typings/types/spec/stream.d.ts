@@ -21,6 +21,10 @@ export type EventType =
   | 'touchmove'
   | 'touchstart'
   | 'wheel';
+export type WindowEventType =
+  | EventType
+  // TODO: change to `keyof HTMLBodyElementEventMap` after vega/ts-json-schema-generator#192
+  | string;
 export interface StreamParameters {
   between?: Stream[];
   marktype?: MarkType;
@@ -38,7 +42,7 @@ export type EventStream = StreamParameters &
       }
     | {
         source: 'window';
-        type: keyof HTMLBodyElementEventMap;
+        type: WindowEventType;
       });
 export interface DerivedStream extends StreamParameters {
   stream: Stream;
