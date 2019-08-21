@@ -20,14 +20,14 @@ Voronoi.Definition = {
   ]
 };
 
-var prototype = inherits(Voronoi, Transform);
+const prototype = inherits(Voronoi, Transform);
 
-var defaultExtent = [-1e5, -1e5, 1e5, 1e5];
+const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
 prototype.transform = function(_, pulse) {
-  var as = _.as || 'path',
-      data = pulse.source,
-      delaunay, extent, voronoi, polygon, i, n;
+  const as = _.as || 'path',
+      data = pulse.source;
+  let delaunay, extent, voronoi, polygon, i, n;
 
   // configure and construct voronoi diagram
   delaunay = Delaunay.from(data, _.x, _.y);
