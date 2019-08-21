@@ -1,8 +1,12 @@
 import {ref, keyFieldRef} from '../util';
-import {Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values} from '../transforms';
+import {
+  Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values
+} from '../transforms';
 
 import {isValidScaleType, isDiscrete, isQuantile} from 'vega-scale';
-import {error, extend, isArray, isObject, isString, stringValue} from 'vega-util';
+import {
+  error, extend, hasOwnProperty, isArray, isObject, isString, stringValue
+} from 'vega-util';
 
 var FIELD_REF_ID = 0;
 
@@ -42,7 +46,7 @@ export function parseScale(spec, scope) {
   }
 
   for (key in spec) {
-    if (params.hasOwnProperty(key) || key === 'name') continue;
+    if (hasOwnProperty(params, key) || key === 'name') continue;
     params[key] = parseLiteral(spec[key], scope);
   }
 }
@@ -231,7 +235,7 @@ function parseScaleRange(spec, scope, params) {
   if (range.signal) {
     return scope.signalRef(range.signal);
   } else if (isString(range)) {
-    if (config && config.hasOwnProperty(range)) {
+    if (config && hasOwnProperty(config, range)) {
       spec = extend({}, spec, {range: config[range]});
       return parseScaleRange(spec, scope, params);
     } else if (range === 'width') {

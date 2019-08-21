@@ -17,7 +17,7 @@ import defaultTooltip from './tooltip';
 import trap from './trap';
 
 import {asyncCallback, Dataflow} from 'vega-dataflow';
-import {error, extend, inherits, stringValue} from 'vega-util';
+import {error, extend, inherits, hasOwnProperty, stringValue} from 'vega-util';
 import {
   CanvasHandler, Scenegraph,
   renderModule, RenderType
@@ -153,7 +153,7 @@ prototype.origin = function() {
 };
 
 function lookupSignal(view, name) {
-  return view._signals.hasOwnProperty(name)
+  return hasOwnProperty(view._signals, name)
     ? view._signals[name]
     : error('Unrecognized signal name: ' + stringValue(name));
 }

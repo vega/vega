@@ -1,7 +1,7 @@
 import {createMeasure, compileMeasures, measureName} from './AggregateOps';
 import TupleStore from './TupleStore';
 import {WindowOp, WindowOps} from './WindowOps';
-import {accessorFields, accessorName, array, error} from 'vega-util';
+import {accessorFields, accessorName, array, error, hasOwnProperty} from 'vega-util';
 
 export default function WindowState(_) {
   let self = this,
@@ -31,7 +31,7 @@ export default function WindowState(_) {
     outputs.push(name);
 
     // Window operation
-    if (WindowOps.hasOwnProperty(op)) {
+    if (hasOwnProperty(WindowOps, op)) {
       windows.push(WindowOp(op, fields[i], params[i], name));
     }
 

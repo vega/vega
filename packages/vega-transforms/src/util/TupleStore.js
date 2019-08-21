@@ -1,6 +1,6 @@
 import {tupleid} from 'vega-dataflow';
 import {bootstrapCI, quartiles} from 'vega-statistics';
-import {extentIndex, field} from 'vega-util';
+import {extentIndex, field, hasOwnProperty} from 'vega-util';
 
 export default function TupleStore(key) {
   this._key = key ? field(key) : tupleid;
@@ -63,7 +63,7 @@ prototype.distinct = function(get) {
 
   while (--n >= 0) {
     s = get(v[n]) + '';
-    if (!map.hasOwnProperty(s)) {
+    if (!hasOwnProperty(map, s)) {
       map[s] = 1;
       ++count;
     }

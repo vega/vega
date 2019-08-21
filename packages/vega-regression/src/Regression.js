@@ -4,7 +4,7 @@ import {
   regressionLinear, regressionLog, regressionExp,
   regressionPow, regressionQuad, regressionPoly, sampleCurve
 } from 'vega-statistics';
-import {accessorName, error, extent, inherits} from 'vega-util';
+import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
 
 const Methods = {
   linear: regressionLinear,
@@ -67,7 +67,7 @@ prototype.transform = function(_, pulse) {
 
     let domain = _.extent;
 
-    if (!Methods.hasOwnProperty(method)) {
+    if (!hasOwnProperty(Methods, method)) {
       error('Invalid regression method: ' + method);
     }
 

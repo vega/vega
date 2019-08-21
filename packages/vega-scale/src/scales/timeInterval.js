@@ -1,3 +1,4 @@
+import {hasOwnProperty} from 'vega-util';
 import {UTC} from './types';
 
 import {
@@ -35,5 +36,5 @@ var utc = {
 
 export function timeInterval(unit, type) {
   const t = (type === UTC ? utc : time);
-  return t.hasOwnProperty(unit) && t[unit];
+  return hasOwnProperty(t, unit) && t[unit];
 }

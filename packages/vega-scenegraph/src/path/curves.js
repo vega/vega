@@ -1,3 +1,5 @@
+import {hasOwnProperty} from 'vega-util';
+
 import {
   curveBasis,
   curveBasisClosed,
@@ -89,7 +91,7 @@ var lookup = {
 };
 
 export default function curves(type, orientation, tension) {
-  var entry = lookup.hasOwnProperty(type) && lookup[type],
+  var entry = hasOwnProperty(lookup, type) && lookup[type],
       curve = null;
 
   if (entry) {
