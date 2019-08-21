@@ -1725,12 +1725,12 @@ d3-contour@^1.3.2:
   dependencies:
     d3-array "^1.1.1"
 
-d3-delaunay@^4.1.5:
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-4.1.5.tgz#4318c6d28b22988d88d11650eda440318afe419a"
-  integrity sha512-rBKVohmXT9+BrDicH8umAVUwtkfLIydVlWnpIEDUZ4l2e1vXCaKbypByF8tkN8TUUKnzJY0s8ldQEroeBRMO9Q==
+d3-delaunay@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-5.1.3.tgz#7b383da0c5d8565640b1e4fdec98c1d5755746fd"
+  integrity sha512-7CGeikb+VGHdX9NHLM4GOqJ64earIbuXgsKml/iQFTR7s3rZCzfVMSO6iH+nZnhkpgWuz3OWpN4M9cawe+sasQ==
   dependencies:
-    delaunator "^2.0.0"
+    delaunator "4"
 
 d3-dispatch@1:
   version "1.0.5"
@@ -1994,10 +1994,10 @@ definitelytyped-header-parser@1.2.0, definitelytyped-header-parser@^1.2.0:
     "@types/parsimmon" "^1.3.0"
     parsimmon "^1.2.0"
 
-delaunator@^2.0.0:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-2.0.5.tgz#c2a9ba2cf3d5aaab8fa0aa3ae82426d3fc0aeaf5"
-  integrity sha512-GSYmkITO56erpQzv5Pw+8Vg769kurM16IVUq/AcMb5ZCJCtV7Z2agx9lJ7EbbLno8L099iH2d+hvAK34ZnsvIQ==
+delaunator@4:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-4.0.0.tgz#3630f477b4923f472f534c62a028aeca6fe22d96"
+  integrity sha512-KzVgOHix5xaIVzZSfbv3Uzw9aI7mQNDet4Yd2p+tBNkfNHMFJbjbVa3q0nC7q7TjWZLX49QbzcT+pXazXX3Qmg==
 
 delayed-stream@~1.0.0:
   version "1.0.0"

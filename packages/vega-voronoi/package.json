@@ -22,7 +22,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-delaunay": "^4.1.5",
+    "d3-delaunay": "^5.1.3",
     "vega-dataflow": "^5.1.1",
     "vega-util": "^1.8.0"
   },
