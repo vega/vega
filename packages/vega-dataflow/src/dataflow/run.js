@@ -59,7 +59,7 @@ export async function evaluate(encode, prerun, postrun) {
   }
 
   // initialize priority queue, reset touched operators
-  df._touched.forEach(function(op) { df._enqueue(op, true); });
+  df._touched.forEach(op => df._enqueue(op, true));
   df._touched = UniqueList(id);
 
   try {
@@ -84,7 +84,6 @@ export async function evaluate(encode, prerun, postrun) {
 
       // propagate evaluation, enqueue dependent operators
       if (next !== StopPropagation) {
-        df._pulse = next;
         if (op._targets) op._targets.forEach(op => df._enqueue(op));
       }
 
@@ -92,11 +91,12 @@ export async function evaluate(encode, prerun, postrun) {
       ++count;
     }
   } catch (err) {
+    df._heap.clear();
     error = err;
   }
 
   // reset pulse map
-  df._pulses = {};
+  df._input = {};
   df._pulse = null;
 
   if (level >= Info) {
@@ -232,9 +232,9 @@ function reentrant(df) {
  *   dataflow graph is dynamically modified and the operator rank changes.
  */
 export function enqueue(op, force) {
-  var p = !this._pulses[op.id];
-  if (p) this._pulses[op.id] = this._pulse;
-  if (p || force) {
+  var q = op.stamp < this._clock;
+  if (q) op.stamp = this._clock;
+  if (q || force) {
     op.qrank = op.rank;
     this._heap.push(op);
   }
@@ -254,25 +254,21 @@ export function enqueue(op, force) {
  */
 export function getPulse(op, encode) {
   var s = op.source,
-      stamp = this._clock,
-      p;
+      stamp = this._clock;
 
-  if (s && isArray(s)) {
-    p = s.map(function(_) { return _.pulse; });
-    return new MultiPulse(this, stamp, p, encode);
+  return s && isArray(s)
+    ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)
+    : this._input[op.id] || singlePulse(this._pulse, s && s.pulse);
+}
+
+function singlePulse(p, s) {
+  if (s && s.stamp === p.stamp) {
+    return s;
   }
 
-  p = this._pulses[op.id];
-  if (s) {
-    s = s.pulse;
-    if (!s || s === StopPropagation) {
-      p.source = [];
-    } else if (s.stamp === stamp && p.target !== op) {
-      p = s;
-    } else {
-      p.source = s.source;
-    }
+  p = p.fork();
+  if (s && s !== StopPropagation) {
+    p.source = s.source;
   }
-
   return p;
 }

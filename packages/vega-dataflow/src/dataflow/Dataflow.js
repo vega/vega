@@ -29,7 +29,7 @@ export default function Dataflow() {
   }
 
   this._touched = UniqueList(id);
-  this._pulses = {};
+  this._input = {};
   this._pulse = null;
 
   this._heap = Heap((a, b) => a.qrank - b.qrank);
