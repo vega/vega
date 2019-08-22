@@ -1725,6 +1725,13 @@ d3-contour@^1.3.2:
   dependencies:
     d3-array "^1.1.1"
 
+d3-delaunay@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-5.1.3.tgz#7b383da0c5d8565640b1e4fdec98c1d5755746fd"
+  integrity sha512-7CGeikb+VGHdX9NHLM4GOqJ64earIbuXgsKml/iQFTR7s3rZCzfVMSO6iH+nZnhkpgWuz3OWpN4M9cawe+sasQ==
+  dependencies:
+    delaunator "4"
+
 d3-dispatch@1:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/d3-dispatch/-/d3-dispatch-1.0.5.tgz#e25c10a186517cd6c82dd19ea018f07e01e39015"
@@ -1826,11 +1833,6 @@ d3-timer@1, d3-timer@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/d3-timer/-/d3-timer-1.0.9.tgz#f7bb8c0d597d792ff7131e1c24a36dd471a471ba"
   integrity sha512-rT34J5HnQUHhcLvhSB9GjCkN0Ddd5Y8nCwDBG2u6wQEeYxT/Lf51fTFFkldeib/sE/J0clIe0pnCfs6g/lRbyg==
-
-d3-voronoi@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/d3-voronoi/-/d3-voronoi-1.1.4.tgz#dd3c78d7653d2bb359284ae478645d95944c8297"
-  integrity sha512-dArJ32hchFsrQ8uMiTBLq256MpnZjeuBtdHpaDlYuQyjU0CVzCJl/BVW+SkszaAeH95D/8gxqAhgx0ouAWAfRg==
 
 dargs@^4.0.1:
   version "4.1.0"
@@ -1991,6 +1993,11 @@ definitelytyped-header-parser@1.2.0, definitelytyped-header-parser@^1.2.0:
   dependencies:
     "@types/parsimmon" "^1.3.0"
     parsimmon "^1.2.0"
+
+delaunator@4:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-4.0.0.tgz#3630f477b4923f472f534c62a028aeca6fe22d96"
+  integrity sha512-KzVgOHix5xaIVzZSfbv3Uzw9aI7mQNDet4Yd2p+tBNkfNHMFJbjbVa3q0nC7q7TjWZLX49QbzcT+pXazXX3Qmg==
 
 delayed-stream@~1.0.0:
   version "1.0.0"
