@@ -21,7 +21,7 @@ Internally, this transform processes a collection of special tree node objects g
 | size                | {% include type t="Number[]" %}| The size of the layout, provided as a [width, height] array.|
 | radius              | {% include type t="Field" %}   | An explicit node radius to use. If `null` (the default), the radius of each leaf circle is derived from the _field_ value.|
 | padding             | {% include type t="Number" %}  | The approximate padding to include between packed circles (default `0`).|
-| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x", "y", "r", "depth", "value", "children"]`, where `x` and `y` are the layout coordinates, `r` is the node radius, `depth` is the tree depth, `value` is the sum of values for a node, and `value` is the sum of values for a node and all its descendants.|
+| as                  | {% include type t="String[]" %}| The output fields at which to write the layout results. The default is `["x", "y", "r", "depth", "children", "value"]`, where `x` and `y` are the layout coordinates, `r` is the node radius, `depth` is the tree depth, `children` is the count of a node's children in the tree, and `value` is the sum of values for a node and all its descendants.|
 
 ## Usage
 
