@@ -37,10 +37,19 @@ prototype.transform = function(_, pulse) {
   // map polygons to paths
   for (i=0, n=data.length; i<n; ++i) {
     polygon = voronoi.cellPolygon(i);
-    data[i][as] = polygon
-      ? 'M' + polygon.join('L') + 'Z'
-      : null;
+    data[i][as] = polygon ? toPathString(polygon) : null;
   }
 
   return pulse.reflow(_.modified()).modifies(as);
 };
+
+// suppress duplicated end point vertices
+function toPathString(p) {
+  const x = p[0][0],
+        y = p[0][1];
+
+  let n = p.length - 1;
+  for (; p[n][0] === x && p[n][1] === y; --n);
+
+  return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+}
