@@ -11,7 +11,11 @@ export function dataVisitor(name, args, scope, params) {
         dataName = DataPrefix + data;
 
   if (!hasOwnProperty(dataName, params)) {
-    params[dataName] = scope.getData(data).tuplesRef();
+    try {
+      params[dataName] = scope.getData(data).tuplesRef();
+    } catch (err) {
+      // if data set does not exist, there's nothing to track
+    }
   }
 }
 
