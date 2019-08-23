@@ -23,7 +23,7 @@ prototype.transform = function(_, pulse) {
       root = pulse.source.root,
       as = _.as || fields;
 
-  if (_.field) root.sum(_.field);
+  if (_.field) root.sum(_.field); else root.count();
   if (_.sort) root.sort(_.sort);
 
   setParams(layout, this.params, _);
