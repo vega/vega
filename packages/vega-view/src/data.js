@@ -1,9 +1,9 @@
 import {changeset, isChangeSet} from 'vega-dataflow';
-import {error} from 'vega-util';
+import {error, hasOwnProperty, truthy} from 'vega-util';
 
 export function dataref(view, name) {
   var data = view._runtime.data;
-  if (!data.hasOwnProperty(name)) {
+  if (!hasOwnProperty(data, name)) {
     error('Unrecognized data set: ' + name);
   }
   return data[name];
@@ -28,4 +28,8 @@ export function insert(name, _) {
 
 export function remove(name, _) {
   return change.call(this, name, changeset().remove(_));
+}
+
+export function replace(name, _) {
+  return change.call(this, name, changeset().remove(truthy).insert(_));
 }

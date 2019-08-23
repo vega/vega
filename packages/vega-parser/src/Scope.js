@@ -4,8 +4,13 @@ import {
   fieldRef, keyRef, tupleidRef, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
-import {Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
-import {array, error, extend, isArray, isString, isObject, peek, stringValue} from 'vega-util';
+import {
+  Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve
+} from './transforms';
+import {
+  array, error, extend, hasOwnProperty,
+  isArray, isString, isObject, peek, stringValue
+} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
@@ -286,7 +291,7 @@ prototype.event = function(source, type) {
 // ----
 
 prototype.addSignal = function(name, value) {
-  if (this.signals.hasOwnProperty(name)) {
+  if (hasOwnProperty(this.signals, name)) {
     error('Duplicate signal name: ' + stringValue(name));
   }
   var op = value instanceof Entry ? value : this.add(operator(value));
@@ -303,7 +308,7 @@ prototype.getSignal = function(name) {
 prototype.signalRef = function(s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
-  } else if (!this.lambdas.hasOwnProperty(s)) {
+  } else if (!hasOwnProperty(this.lambdas, s)) {
     this.lambdas[s] = this.add(operator(null));
   }
   return ref(this.lambdas[s]);
@@ -381,7 +386,7 @@ prototype.addBinding = function(name, bind) {
 // ----
 
 prototype.addScaleProj = function(name, transform) {
-  if (this.scales.hasOwnProperty(name)) {
+  if (hasOwnProperty(this.scales, name)) {
     error('Duplicate scale or projection name: ' + stringValue(name));
   }
   this.scales[name] = this.add(transform);
@@ -415,7 +420,7 @@ prototype.scaleType = function(name) {
 // ----
 
 prototype.addData = function(name, dataScope) {
-  if (this.data.hasOwnProperty(name)) {
+  if (hasOwnProperty(this.data, name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }
   return (this.data[name] = dataScope);
@@ -429,7 +434,7 @@ prototype.getData = function(name) {
 };
 
 prototype.addDataPipeline = function(name, entries) {
-  if (this.data.hasOwnProperty(name)) {
+  if (hasOwnProperty(this.data, name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }
   return this.addData(name, DataScope.fromEntries(this, entries));

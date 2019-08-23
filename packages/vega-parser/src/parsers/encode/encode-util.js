@@ -1,6 +1,6 @@
 import parseEncode from '../encode';
 import {FrameRole, MarkRole} from '../marks/roles';
-import {array, extend, isArray, isObject} from 'vega-util';
+import {array, extend, hasOwnProperty, isArray, isObject} from 'vega-util';
 
 export function encoder(_) {
   return isObject(_) ? extend({}, _) : {value: _};
@@ -30,7 +30,7 @@ export function addEncoders(object, enter, update) {
 
 export function extendEncode(encode, extra, skip) {
   for (var name in extra) {
-    if (skip && skip.hasOwnProperty(name)) continue;
+    if (skip && hasOwnProperty(skip, name)) continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }
   return encode;

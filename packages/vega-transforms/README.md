@@ -15,7 +15,7 @@ This package provides the following Vega data transforms:
 - [**Flatten**](https://vega.github.io/vega/docs/transforms/flatten/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Flatten.js "Source")
 - [**Fold**](https://vega.github.io/vega/docs/transforms/fold/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Fold.js "Source")
 - [**Formula**](https://vega.github.io/vega/docs/transforms/formula/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Formula.js "Source")
-- [**Impute**](https://vega.github.io/vega/docs/transforms/Impute/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/impute.js "Source")
+- [**Impute**](https://vega.github.io/vega/docs/transforms/Impute/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Impute.js "Source")
 - [**JoinAggregate**](https://vega.github.io/vega/docs/transforms/joinaggregate/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/JoinAggregate.js "Source")
 - [**KDE**](https://vega.github.io/vega/docs/transforms/kde/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/KDE.js "Source")
 - [**Lookup**](https://vega.github.io/vega/docs/transforms/lookup/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Lookup.js "Source")

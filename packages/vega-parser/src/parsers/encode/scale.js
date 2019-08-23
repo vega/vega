@@ -1,7 +1,7 @@
 import expression from './expression';
 import field from './field';
 import {ScalePrefix} from 'vega-functions';
-import {isString, stringValue} from 'vega-util';
+import {hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(enc, value, scope, params, fields) {
   var scale = getScale(enc.scale, scope, params, fields),
@@ -52,7 +52,7 @@ export function getScale(name, scope, params, fields) {
   if (isString(name)) {
     // direct scale lookup; add scale as parameter
     scaleName = ScalePrefix + name;
-    if (!params.hasOwnProperty(scaleName)) {
+    if (!hasOwnProperty(params, scaleName)) {
       params[scaleName] = scope.scaleRef(name);
     }
     scaleName = stringValue(scaleName);

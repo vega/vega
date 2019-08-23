@@ -5,7 +5,7 @@ import {
   randomUniform
 } from 'vega-statistics';
 
-import {error} from 'vega-util';
+import {error, hasOwnProperty} from 'vega-util';
 
 var Distributions = {
   kde:     randomKDE,
@@ -31,7 +31,7 @@ var DISTRIBUTIONS = 'distributions',
  */
 export default function parse(def, data) {
   var func = def[FUNCTION];
-  if (!Distributions.hasOwnProperty(func)) {
+  if (!hasOwnProperty(Distributions, func)) {
     error('Unknown distribution function: ' + func);
   }
 

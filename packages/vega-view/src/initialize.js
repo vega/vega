@@ -7,6 +7,7 @@ import {CanvasHandler, renderModule} from 'vega-scenegraph';
 export default function(el, elBind) {
   var view = this,
       type = view._renderType,
+      config = view._eventConfig.bind,
       module = renderModule(type),
       Handler, Renderer;
 
@@ -25,12 +26,12 @@ export default function(el, elBind) {
   view._redraw = true;
 
   // initialize signal bindings
-  if (el) {
+  if (el && config !== 'none') {
     elBind = elBind ? (view._elBind = lookup(view, elBind))
       : el.appendChild(element('div', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
-      if (_.param.element) {
+      if (_.param.element && config !== 'container') {
         _.element = lookup(view, _.param.element);
       }
     });

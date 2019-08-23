@@ -37,7 +37,12 @@ export interface Config
   background?: string;
   group?: any; // TODO
   events?: {
+    bind?: 'any' | 'container' | 'none';
     defaults?: DefaultsConfig;
+    selector?: boolean | string[];
+    timer?: boolean;
+    view?: boolean | string[];
+    window?: boolean | string[];
   };
   style?: any; // TODO
   legend?: LegendConfig;
@@ -415,7 +420,7 @@ export interface BaseLegendLayout<
   BS = boolean | SignalRef,
   OS = Orientation | SignalRef,
   LB = LayoutBounds,
-  AN = TitleAnchor
+  AN = TitleAnchor | SignalRef
 > {
   /**
    * The anchor point for legend orient group layout.

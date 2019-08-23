@@ -126,11 +126,13 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 
 The `vega-cli` package includes three node.js-based command line utilities &ndash; `vg2pdf`, `vg2png`, and `vg2svg` &ndash; for rendering static visualization images. These commands render to PDF, PNG, or SVG files, respectively.
 
-- **vg2pdf**: `vg2pdf [options] vega_json_file [output_pdf_file]`
-- **vg2png**: `vg2png [options] vega_json_file [output_png_file]`
-- **vg2svg**: `vg2svg [options] vega_json_file [output_svg_file]`
+- **vg2pdf**: `vg2pdf [options] [input_vega_json_file] [output_pdf_file]`
+- **vg2png**: `vg2png [options] [input_vega_json_file] [output_png_file]`
+- **vg2svg**: `vg2svg [options] [input_vega_json_file] [output_svg_file]`
 
-If no output file is given, the resulting PNG or SVG data will be written to standard output, and so can be piped into other applications. The programs also accept the following (optional) parameters:
+If no input Vega JSON file is given, the utilities will attempt to read the file from standard input. If no output file is given, the resulting PDF, PNG, or SVG data will be written to standard output, and so can be piped into other applications.
+
+The programs also accept the following (optional) parameters:
 
 * __-b__, __--base__ - [String] A base directory to use for data and image loading. For web retrieval, use `-b http://host/data/`. For files, use `-b data/` (relative path) or `-b file:///dir/data/` (absolute path).
 * __-h__, __--header__ - [Flag] Includes XML header and DOCTYPE in SVG output (vg2svg only).

@@ -40,7 +40,7 @@ module.exports = function(type, callback, opt) {
   if (arg.format) vega.formatLocale(load(arg.format));
 
   // load custom date/time format locale, if specified
-  if (arg.timeFormat) vega.formatTimeLocale(load(arg.timeFormat));
+  if (arg.timeFormat) vega.timeFormatLocale(load(arg.timeFormat));
 
   // instantiate view and invoke headless render method
   function render(spec) {
