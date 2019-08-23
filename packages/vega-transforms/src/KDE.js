@@ -77,7 +77,7 @@ prototype.transform = function(_, pulse) {
 
     if (_.resolve === 'shared') {
       if (!domain) domain = extent(source, _.field);
-      minsteps = maxsteps = _.steps || 200;
+      minsteps = maxsteps = _.steps || maxsteps;
     }
 
     groups.forEach(g => {
