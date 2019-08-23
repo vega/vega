@@ -1,4 +1,4 @@
-import {ref, keyFieldRef} from '../util';
+import {ref, keyFieldRef, aggrField} from '../util';
 import {
   Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values
 } from '../transforms';
@@ -9,6 +9,8 @@ import {
 } from 'vega-util';
 
 var FIELD_REF_ID = 0;
+
+var MULTIDOMAIN_SORT_OPS  = {min: 'min', max: 'max', count: 'sum'};
 
 export function initScale(spec, scope) {
   var type = spec.type || 'linear';
@@ -129,21 +131,26 @@ function fieldRef(data, scope) {
 }
 
 function ordinalMultipleDomain(domain, scope, fields) {
-  var counts, a, c, v;
+  var sort = parseSort(domain.sort, true),
+      counts, p, a, c, v;
 
   // get value counts for each domain field
   counts = fields.map(function(f) {
     var data = scope.getData(f.data);
     if (!data) dataLookupError(f.data);
-    return data.countsRef(scope, f.field);
+    return data.countsRef(scope, f.field, sort);
   });
 
-  // sum counts from all fields
-  a = scope.add(Aggregate({
-    groupby: keyFieldRef,
-    ops:['sum'], fields: [scope.fieldRef('count')], as:['count'],
-    pulse: counts
-  }));
+  // aggregate the results from each domain field
+  p = {groupby: keyFieldRef, pulse: counts};
+  if (sort) {
+    a = sort.op || 'count';
+    v = sort.field ? aggrField(a, sort.field) : 'count';
+    p.ops = [MULTIDOMAIN_SORT_OPS[a]];
+    p.fields = [scope.fieldRef(v)];
+    p.as = [v];
+  }
+  a = scope.add(Aggregate(p));
 
   // collect aggregate output
   c = scope.add(Collect({pulse: ref(a)}));
@@ -151,7 +158,7 @@ function ordinalMultipleDomain(domain, scope, fields) {
   // extract values for combined domain
   v = scope.add(Values({
     field: keyFieldRef,
-    sort:  scope.sortRef(parseSort(domain.sort, true)),
+    sort:  scope.sortRef(sort),
     pulse: ref(c)
   }));
 
@@ -166,9 +173,9 @@ function parseSort(sort, multidomain) {
     } else if (!sort.field && sort.op !== 'count') {
       error('No field provided for sort aggregate op: ' + sort.op);
     } else if (multidomain && sort.field) {
-      error('Multiple domain scales can not sort by field.');
-    } else if (multidomain && sort.op && sort.op !== 'count') {
-      error('Multiple domain scales support op count only.');
+      if (sort.op && !MULTIDOMAIN_SORT_OPS[sort.op]) {
+        error('Multiple domain scales can not be sorted using ' + sort.op);
+      }
     }
   }
   return sort;
