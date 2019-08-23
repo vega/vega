@@ -243,22 +243,29 @@ function configureBins(scale, _, count) {
 }
 
 function configureRange(scale, _, count) {
-  var round = _.round || false,
+  var type = scale.type,
+      round = _.round || false,
       range = _.range;
 
   // if range step specified, calculate full range extent
   if (_.rangeStep != null) {
-    range = configureRangeStep(scale.type, _, count);
+    range = configureRangeStep(type, _, count);
   }
 
   // else if a range scheme is defined, use that
   else if (_.scheme) {
-    range = configureScheme(scale.type, _, count);
-    if (isFunction(range)) return scale.interpolator(range);
+    range = configureScheme(type, _, count);
+    if (isFunction(range)) {
+      if (scale.interpolator) {
+        return scale.interpolator(range);
+      } else {
+        error(`Scale type ${type} does not support interpolating color schemes.`);
+      }
+    }
   }
 
   // given a range array for an interpolating scale, convert to interpolator
-  else if (range && isInterpolating(scale.type)) {
+  if (range && isInterpolating(type)) {
     return scale.interpolator(
       interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
     );
@@ -297,7 +304,7 @@ function configureScheme(type, _, count) {
   } else {
     name = _.scheme.toLowerCase();
     scheme = getScheme(name);
-    if (!scheme) error('Unrecognized scheme name: ' + _.scheme);
+    if (!scheme) error(`Unrecognized scheme name: ${_.scheme}`);
   }
 
   // determine size for potential discrete range
