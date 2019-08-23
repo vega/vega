@@ -3,7 +3,9 @@ import {isArray, isObject, truthy} from 'vega-util';
 
 function equal(a, b) {
   return a === b || a !== a && b !== b ? true
-    : isArray(a) && isArray(b) && a.length === b.length ? equalArray(a, b)
+    : isArray(a) ? (
+        isArray(b) && a.length === b.length ? equalArray(a, b) : false
+      )
     : isObject(a) && isObject(b) ? equalObject(a, b)
     : false;
 }
@@ -23,7 +25,7 @@ function equalObject(a, b) {
 }
 
 function removePredicate(props) {
-  return function(_) { return equalObject(props, _);  };
+  return _ => equalObject(props, _);
 }
 
 export default function(name, insert, remove, toggle, modify, values) {
