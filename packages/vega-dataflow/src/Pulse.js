@@ -279,12 +279,14 @@ prototype.modifies = function(_) {
  * Checks if one or more data fields have been modified during this pulse
  * propagation timestamp.
  * @param {string|Array<string>} _ - The field(s) to check for modified.
+ * @param {boolean} nomod - If true, will check the modified flag even if
+ *   no mod tuples exist. If false (default), mod tuples must be present.
  * @return {boolean} - Returns true if any of the provided fields has been
  *   marked as modified, false otherwise.
  */
-prototype.modified = function(_) {
+prototype.modified = function(_, nomod) {
   var fields = this.fields;
-  return !(this.mod.length && fields) ? false
+  return !((nomod || this.mod.length) && fields) ? false
     : !arguments.length ? !!fields
     : isArray(_) ? _.some(function(f) { return fields[f]; })
     : fields[_];
