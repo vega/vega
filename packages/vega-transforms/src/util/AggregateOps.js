@@ -1,4 +1,4 @@
-import {extend, identity} from 'vega-util';
+import {extend, identity, stringValue} from 'vega-util';
 
 export function measureName(op, field, as) {
   return as || (op + (!field ? '' : '_' + field));
@@ -189,7 +189,7 @@ export function compileMeasures(agg, field) {
     rem += a.rem;
   });
   agg.slice().sort(compareIndex).forEach(function(a) {
-    set += 't[\'' + a.out + '\']=' + a.set + ';';
+    set += 't[' + stringValue(a.out) + ']=' + a.set + ';';
   });
   set += 'return t;';
 
