@@ -37,6 +37,7 @@ export class View {
   change(name: string, changeset: Changeset): this;
   changeset(): any;
   data(name: string): any[];
+  data(name: string, tuples: any): this;
 
   width(): number;
   width(w: number): this;
