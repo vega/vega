@@ -9,8 +9,10 @@ export function dataref(view, name) {
   return data[name];
 }
 
-export function data(name) {
-  return dataref(this, name).values.value;
+export function data(name, values) {
+  return arguments.length < 1
+    ? dataref(this, name).values.value
+    : change.call(this, name, changeset().remove(truthy).insert(values));
 }
 
 export function change(name, changes) {
@@ -28,8 +30,4 @@ export function insert(name, _) {
 
 export function remove(name, _) {
   return change.call(this, name, changeset().remove(_));
-}
-
-export function replace(name, _) {
-  return change.call(this, name, changeset().remove(truthy).insert(_));
 }

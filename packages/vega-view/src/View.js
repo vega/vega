@@ -1,5 +1,5 @@
 import cursor from './cursor';
-import {data, dataref, change, insert, remove, replace} from './data';
+import {data, dataref, change, insert, remove} from './data';
 import {initializeEventConfig, events} from './events';
 import hover from './hover';
 import finalize from './finalize';
@@ -345,7 +345,6 @@ prototype.data = data;
 prototype.change = change;
 prototype.insert = insert;
 prototype.remove = remove;
-prototype.replace = replace;
 
 // -- SCALES --
 prototype.scale = scale;
