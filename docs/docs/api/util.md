@@ -221,6 +221,12 @@ vega.<b>extend</b>(<i>target</i>[, <i>source1</i>, <i>source2</i>, …])
 
 Extends a *target* object by copying (in order) all enumerable properties of the input *source* objects.
 
+<a name="hasOwnProperty" href="#hasOwnProperty">#</a>
+vega.<b>hasOwnProperty</b>(<i>object</i>, <i>property</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/hasOwnProperty.js "Source")
+
+Returns `true` if the input *object* has a named *property* defined on it, otherwise `false`. This method concerns the input object only, ignoring properties defined up the prototype chain. The method is equivalent to [`Object.hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty), but improves security by guarding against overridden Object prototype built-ins.
+
 <a name="inherits" href="#inherits">#</a>
 vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inherits.js "Source")
