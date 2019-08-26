@@ -41,6 +41,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 - [Legend Properties](#legends)
 - [Title Properties](#title)
 - [Scale Range Properties](#scale-range)
+- [Signals](#signals)
 {: .column-list }
 
 ## <a name="view"></a>View Properties
@@ -458,6 +459,28 @@ This example sets new default color palettes.
     ],
     "ordinal": {"scheme": "greens"},
     "ramp": {"scheme": "purples"}
+  }
+}
+```
+
+[Back to Top](#reference)
+
+
+## <a name="signals"></a>Signal Definitions
+
+Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
+
+### Usage
+
+To enable dynamic scaling of font sizes, one can define a signal that for a font size scale factor, then define other config entries relative to this value:
+
+```json
+{
+  "signals": [
+    {"name": "fontSizeScale", "value": 1}
+  ],
+  "text": {
+    "fontSize": {"signal": "11 * fontSizeScale"}
   }
 }
 ```
