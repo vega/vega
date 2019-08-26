@@ -73,11 +73,26 @@ Set default view background and chart plotting area background colors:
 
 Properties for event handling configuration, defined within an `"events"` property block.
 
-| Property      | Type                                 | Description    |
-| :------------ | :----------------------------------: | :------------- |
-| defaults      | {% include type t="Object" %}        | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+| Property      | Type                                  | Description    |
+| :------------ | :-----------------------------------: | :------------- |
+| bind          | {% include type t="String" %}         | Configuration control for binding input DOM elements to signals. The available options are `"any"` (default, all bindings are allowed), `"container"` (use only the view container DOM element for all bindings, suppressing per-binding selectors), and `"none"` (suppresses all input bindings). |
+| defaults      | {% include type t="Object" %}         | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+| selector      | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for external sources specified using a CSS selector. If a boolean value, `true` (default) permits selector event listeners, `false` disallows all selector events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
+| timer         | {% include type t="Boolean" %}        | Configuration control for event listeners for a `"timer"` source. One of `true` (default) to permit timer event listeners, or `false` to disallow timer events. |
+| view          | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the Vega `"view"` source. If a boolean value, `true` (default) permits view event listeners, `false` disallows all view events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
+| window        | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the browser `"window"` source. If a boolean value, `true` (default) permits window event listeners, `false` disallows all window events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
 
 ### Usage
+
+To disable event listeners on external DOM elements specified by a CSS selector and permit only `mousemove` and `mouseup` events on the browser `window` object:
+
+{: .suppress-error}
+```json
+"events": {
+  "selector": false,
+  "window": ["mousemove", "mouseup"]
+}
+```
 
 To prevent the default behavior for all events originating within a Vega view:
 
@@ -89,7 +104,6 @@ To prevent the default behavior for all events originating within a Vega view:
   }
 }
 ```
-
 
 To prevent the default behavior for all events originating within a Vega view, except for `wheel` events:
 
