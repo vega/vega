@@ -14,7 +14,7 @@ import {
 import { BaseAxis, LabelOverlap } from './axis';
 import { LayoutAlign, LayoutBounds } from './layout';
 import { BaseLegend, LegendOrient } from './legend';
-import { SignalRef } from './signal';
+import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 import {
   AlignValue,
@@ -55,6 +55,7 @@ export interface Config
     ramp?: RangeScheme | string[];
     symbol?: SymbolShape[];
   };
+  signals?: (InitSignal | NewSignal)[];
 }
 
 export type DefaultsConfig = Record<'prevent' | 'allow', boolean | EventType[]>;
