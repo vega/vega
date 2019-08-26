@@ -389,8 +389,7 @@ This example sorts a multi-field domain in descending order based on the counts 
 }
 ```
 
-**Note:** For domains drawn from multiple fields, the _sort.field_ property is not allowed and the only legal _op_ is `count`.
-
+**Note:** For multi-field domains, the sort _field_ values may not be undefined across all input data sets, and will exhibit duplicate values when drawing multiple domain values from the same data set. To avoid inaccurate sorting, the only allowed sort _op_ values for multi-domain scales are `count`, `min`, and `max`.
 
 ## <a name="range"></a>Scale Ranges
 
