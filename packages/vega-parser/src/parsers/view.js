@@ -14,7 +14,7 @@ var defined = toSet(['width', 'height', 'padding', 'autosize']);
 
 export default function parseView(spec, scope) {
   var config = scope.config,
-      op, input, encode, parent, root;
+      op, input, encode, parent, root, signals;
 
   scope.background = spec.background || config.background;
   scope.eventConfig = config.events;
@@ -25,9 +25,7 @@ export default function parseView(spec, scope) {
   scope.addSignal('autosize', parseAutosize(spec.autosize, config));
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
-  array(spec.signals).forEach(function(_) {
-    if (!defined[_.name]) parseSignal(_, scope);
-  });
+  signals = addSignals(scope, spec.signals, config.signals);
 
   // Store root group item
   input = scope.add(Collect());
@@ -54,7 +52,7 @@ export default function parseView(spec, scope) {
 
   // Parse remainder of specification
   scope.pushState(ref(encode), ref(parent), null);
-  parseSpec(spec, scope, true);
+  parseSpec(spec, scope, signals);
   scope.operators.push(parent);
 
   // Bound / render / sieve root item
@@ -66,4 +64,23 @@ export default function parseView(spec, scope) {
   scope.addData('root', new DataScope(scope, input, input, op));
 
   return scope;
+}
+
+function addSignals(scope, spec, config) {
+  const names = {}, out = [];
+
+  function add(_) {
+    const name = _.name;
+    if (!names[name]) {
+      names[name] = 1;
+      if (!defined[name]) parseSignal(_, scope);
+      out.push(_);
+    }
+  }
+
+  // signals defined in the spec take priority
+  // add config signals if not already defined
+  array(spec).forEach(add);
+  array(config).forEach(add);
+  return out;
 }

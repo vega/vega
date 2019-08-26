@@ -33,7 +33,7 @@ export default function(spec, scope, preprocessed) {
     parseScale(_, scope);
   });
 
-  signals.forEach(function(_) {
+  (preprocessed || signals).forEach(function(_) {
     parseSignalUpdates(_, scope);
   });
 
