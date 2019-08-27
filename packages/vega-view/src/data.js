@@ -10,7 +10,7 @@ export function dataref(view, name) {
 }
 
 export function data(name, values) {
-  return arguments.length < 1
+  return arguments.length < 2
     ? dataref(this, name).values.value
     : change.call(this, name, changeset().remove(truthy).insert(values));
 }
