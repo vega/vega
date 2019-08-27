@@ -30834,7 +30834,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.0";
+  var version = "5.5.1";
 
   var Default = 'default';
 
@@ -30891,7 +30891,7 @@
   }
 
   function data(name, values) {
-    return arguments.length < 1
+    return arguments.length < 2
       ? dataref(this, name).values.value
       : change.call(this, name, changeset().remove(truthy).insert(values));
   }
