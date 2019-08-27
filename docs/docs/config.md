@@ -76,12 +76,12 @@ Properties for event handling configuration, defined within an `"events"` proper
 
 | Property      | Type                                  | Description    |
 | :------------ | :-----------------------------------: | :------------- |
-| bind          | {% include type t="String" %}         | Configuration control for binding input DOM elements to signals. The available options are `"any"` (default, all bindings are allowed), `"container"` (use only the view container DOM element for all bindings, suppressing per-binding selectors), and `"none"` (suppresses all input bindings). |
+| bind          | {% include type t="String" %}         | Configuration control for binding input DOM elements to signals. The available options are `"any"` (default, all bindings are allowed), `"container"` (use only the view container DOM element for all bindings, suppressing per-binding selectors), and `"none"` (suppresses all input bindings). {% include tag ver="5.5" %}|
 | defaults      | {% include type t="Object" %}         | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
-| selector      | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for external sources specified using a CSS selector. If a boolean value, `true` (default) permits selector event listeners, `false` disallows all selector events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
-| timer         | {% include type t="Boolean" %}        | Configuration control for event listeners for a `"timer"` source. One of `true` (default) to permit timer event listeners, or `false` to disallow timer events. |
-| view          | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the Vega `"view"` source. If a boolean value, `true` (default) permits view event listeners, `false` disallows all view events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
-| window        | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the browser `"window"` source. If a boolean value, `true` (default) permits window event listeners, `false` disallows all window events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. |
+| selector      | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for external sources specified using a CSS selector. If a boolean value, `true` (default) permits selector event listeners, `false` disallows all selector events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
+| timer         | {% include type t="Boolean" %}        | Configuration control for event listeners for a `"timer"` source. One of `true` (default) to permit timer event listeners, or `false` to disallow timer events. {% include tag ver="5.5" %}|
+| view          | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the Vega `"view"` source. If a boolean value, `true` (default) permits view event listeners, `false` disallows all view events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
+| window        | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the browser `"window"` source. If a boolean value, `true` (default) permits window event listeners, `false` disallows all window events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
 
 ### Usage
 
@@ -466,7 +466,7 @@ This example sets new default color palettes.
 [Back to Top](#reference)
 
 
-## <a name="signals"></a>Signal Definitions
+## <a name="signals"></a>Signal Definitions {% include tag ver="5.5" %}
 
 Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
 

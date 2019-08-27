@@ -406,7 +406,7 @@ view.<b>data</b>(<i>name</i>[, <i>values</i>])
 
 If only one argument is provided, returns the data set with the given *name*. The returned array of data objects is a *live* array used by the underlying dataflow. Callers that wish to modify the returned array should first make a defensive copy, for example using `view.data('name').slice()`.
 
-If two arguments are provided, removes the current data and inserts the provied input *values*, which can be either a single data object or an array of data objects. This call is equivalent to:
+{% include tag ver="5.5" %} If two arguments are provided, removes the current data and inserts the input *values*, which can be either a single data object or an array of data objects. This call is equivalent to:
 
 ```js
 view.change(vega.changeset().remove(vega.truthy).insert(values));

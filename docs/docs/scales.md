@@ -362,7 +362,7 @@ The _sort_ property of a domain [data reference](#dataref) can accept, in additi
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | field         | {% include type t="Field" %}   | The data field to sort by. If unspecified, defaults to the field specified in the outer data reference.|
-| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops).|
+| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops), and also see below for limitations with multi-field domains.|
 | order         | {% include type t="String" %}  | The sort order. One of `ascending` (default) or `descending`.|
 
 This example sorts distinct `category` field values in descending order by the associated median of the `value` field:
@@ -389,7 +389,7 @@ This example sorts a multi-field domain in descending order based on the counts 
 }
 ```
 
-**Note:** For multi-field domains, the sort _field_ values may not be undefined across all input data sets, and will exhibit duplicate values when drawing multiple domain values from the same data set. To avoid inaccurate sorting, the only allowed sort _op_ values for multi-domain scales are `count`, `min`, and `max`.
+**Note:** For multi-field domains, the sort _field_ values may not be undefined across all input data sets, and will exhibit duplicate values when drawing multiple domain values from the same data set. To avoid inaccurate sorting, the only allowed sort _op_ values for multi-domain scales are `count`, `min`, and `max`. Support for `min` and `max` is available in versions {% include tag ver="5.5" %}.
 
 ## <a name="range"></a>Scale Ranges
 
