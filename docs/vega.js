@@ -128,8 +128,8 @@
   var falsy = accessor(function() { return false; }, empty, 'false');
 
   function log(method, level, input) {
-    var msg = [level].concat([].slice.call(input));
-    console[method](...msg); // eslint-disable-line no-console
+    var args = [level].concat([].slice.call(input));
+    console[method].apply(console, args); // eslint-disable-line no-console
   }
 
   var None  = 0;
@@ -484,6 +484,12 @@
     return [u, v];
   }
 
+  const hop = Object.prototype.hasOwnProperty;
+
+  function hasOwnProperty(object, property) {
+    return hop.call(object, property);
+  }
+
   var NULL = {};
 
   function fastmap(input) {
@@ -492,7 +498,7 @@
         test;
 
     function has(key) {
-      return obj.hasOwnProperty(key) && obj[key] !== NULL;
+      return hasOwnProperty(obj, key) && obj[key] !== NULL;
     }
 
     map = {
@@ -1293,7 +1299,7 @@
    * @return the output pulse for this operator (or StopPropagation)
    */
   prototype$1.run = function(pulse) {
-    if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+    if (pulse.stamp < this.stamp) return pulse.StopPropagation;
     var rv;
     if (this.skip()) {
       this.skip(false);
@@ -1301,7 +1307,6 @@
     } else {
       rv = this.evaluate(pulse);
     }
-    this.stamp = pulse.stamp;
     return (this.pulse = rv || pulse);
   };
 
@@ -2259,7 +2264,7 @@
       format[name] = reader;
       return this;
     } else {
-      return format.hasOwnProperty(name) ? format[name] : null;
+      return hasOwnProperty(format, name) ? format[name] : null;
     }
   }
 
@@ -3221,7 +3226,7 @@
     data = reader(data, schema);
     if (schema.parse) parse(data, schema.parse, dateParse);
 
-    if (data.hasOwnProperty('columns')) delete data.columns;
+    if (hasOwnProperty(data, 'columns')) delete data.columns;
     return data;
   }
 
@@ -3748,12 +3753,14 @@
    * Checks if one or more data fields have been modified during this pulse
    * propagation timestamp.
    * @param {string|Array<string>} _ - The field(s) to check for modified.
+   * @param {boolean} nomod - If true, will check the modified flag even if
+   *   no mod tuples exist. If false (default), mod tuples must be present.
    * @return {boolean} - Returns true if any of the provided fields has been
    *   marked as modified, false otherwise.
    */
-  prototype$3.modified = function(_) {
+  prototype$3.modified = function(_, nomod) {
     var fields = this.fields;
-    return !(this.mod.length && fields) ? false
+    return !((nomod || this.mod.length) && fields) ? false
       : !arguments.length ? !!fields
       : isArray(_) ? _.some(function(f) { return fields[f]; })
       : fields[_];
@@ -3964,6 +3971,8 @@
     return p;
   };
 
+  /* eslint-disable require-atomic-updates */
+
   /**
    * Evaluates the dataflow and returns a Promise that resolves when pulse
    * propagation completes. This method will increment the current timestamp
@@ -4018,7 +4027,7 @@
     }
 
     // initialize priority queue, reset touched operators
-    df._touched.forEach(function(op) { df._enqueue(op, true); });
+    df._touched.forEach(op => df._enqueue(op, true));
     df._touched = UniqueList(id);
 
     try {
@@ -4043,7 +4052,6 @@
 
         // propagate evaluation, enqueue dependent operators
         if (next !== StopPropagation) {
-          df._pulse = next;
           if (op._targets) op._targets.forEach(op => df._enqueue(op));
         }
 
@@ -4051,11 +4059,12 @@
         ++count;
       }
     } catch (err) {
+      df._heap.clear();
       error = err;
     }
 
     // reset pulse map
-    df._pulses = {};
+    df._input = {};
     df._pulse = null;
 
     if (level >= Info) {
@@ -4191,9 +4200,9 @@
    *   dataflow graph is dynamically modified and the operator rank changes.
    */
   function enqueue(op, force) {
-    var p = !this._pulses[op.id];
-    if (p) this._pulses[op.id] = this._pulse;
-    if (p || force) {
+    var q = op.stamp < this._clock;
+    if (q) op.stamp = this._clock;
+    if (q || force) {
       op.qrank = op.rank;
       this._heap.push(op);
     }
@@ -4213,26 +4222,22 @@
    */
   function getPulse(op, encode) {
     var s = op.source,
-        stamp = this._clock,
-        p;
+        stamp = this._clock;
 
-    if (s && isArray(s)) {
-      p = s.map(function(_) { return _.pulse; });
-      return new MultiPulse(this, stamp, p, encode);
+    return s && isArray(s)
+      ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)
+      : this._input[op.id] || singlePulse(this._pulse, s && s.pulse);
+  }
+
+  function singlePulse(p, s) {
+    if (s && s.stamp === p.stamp) {
+      return s;
     }
 
-    p = this._pulses[op.id];
-    if (s) {
-      s = s.pulse;
-      if (!s || s === StopPropagation) {
-        p.source = [];
-      } else if (s.stamp === stamp && p.target !== op) {
-        p = s;
-      } else {
-        p.source = s.source;
-      }
+    p = p.fork();
+    if (s && s !== StopPropagation) {
+      p.source = s.source;
     }
-
     return p;
   }
 
@@ -4301,8 +4306,9 @@
 
     var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
         t = op.pulse && op.pulse.source || [];
+
     p.target = op;
-    this._pulses[op.id] = changeset.pulse(p, t);
+    this._input[op.id] = changeset.pulse(p, t);
 
     return this;
   }
@@ -4310,6 +4316,7 @@
   function Heap(cmp) {
     var nodes = [];
     return {
+      clear: () => nodes = [],
       size: () => nodes.length,
       peek: () => nodes[0],
       push: x => {
@@ -4383,7 +4390,7 @@
     }
 
     this._touched = UniqueList(id);
-    this._pulses = {};
+    this._input = {};
     this._pulse = null;
 
     this._heap = Heap((a, b) => a.qrank - b.qrank);
@@ -4545,7 +4552,7 @@
    * @return the output pulse for this operator (or StopPropagation)
    */
   prototype$6.run = function(pulse) {
-    if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+    if (pulse.stamp < this.stamp) return pulse.StopPropagation;
 
     var rv;
     if (this.skip()) {
@@ -4554,8 +4561,6 @@
       rv = this.evaluate(pulse);
     }
     rv = rv || pulse;
-
-    this.stamp = pulse.stamp;
 
     if (rv.then) {
       rv = rv.then(_ => this.pulse =_);
@@ -4599,7 +4604,7 @@
 
   function transform$1(type) {
     type = type && type.toLowerCase();
-    return transforms.hasOwnProperty(type) ? transforms[type] : null;
+    return hasOwnProperty(transforms, type) ? transforms[type] : null;
   }
 
   function multikey(f) {
@@ -4811,7 +4816,7 @@
       rem += a.rem;
     });
     agg.slice().sort(compareIndex).forEach(function(a) {
-      set += 't[\'' + a.out + '\']=' + a.set + ';';
+      set += 't[' + $(a.out) + ']=' + a.set + ';';
     });
     set += 'return t;';
 
@@ -5069,7 +5074,28 @@
     return x === null ? NaN : +x;
   }
 
-  function quantile(values, p, valueof = number) {
+  function* numbers$1(values, valueof) {
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    }
+  }
+
+  function quantile(values, p, valueof) {
+    return quantileSorted(Float64Array.from(numbers$1(values, valueof)).sort(ascending), p);
+  }
+
+  function quantileSorted(values, p, valueof = number) {
     if (!(n = values.length)) return;
     if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
     if (p >= 1) return +valueof(values[n - 1], n - 1, values);
@@ -5163,23 +5189,6 @@
     const t = array[i];
     array[i] = array[j];
     array[j] = t;
-  }
-
-  function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    }
   }
 
   function median(values, valueof) {
@@ -6124,7 +6133,7 @@
 
     while (--n >= 0) {
       s = get(v[n]) + '';
-      if (!map.hasOwnProperty(s)) {
+      if (!hasOwnProperty(map, s)) {
         map[s] = 1;
         ++count;
       }
@@ -6251,22 +6260,22 @@
   prototype$8.transform = function(_, pulse) {
     var aggr = this,
         out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        mod;
+        mod = _.modified();
 
-    this.stamp = out.stamp;
+    aggr.stamp = out.stamp;
 
-    if (this.value && ((mod = _.modified()) || pulse.modified(this._inputs))) {
-      this._prev = this.value;
-      this.value = mod ? this.init(_) : {};
-      pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
+    if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
+      aggr._prev = aggr.value;
+      aggr.value = mod ? aggr.init(_) : {};
+      pulse.visit(pulse.SOURCE, t => aggr.add(t));
     } else {
-      this.value = this.value || this.init(_);
-      pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
-      pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+      aggr.value = aggr.value || aggr.init(_);
+      pulse.visit(pulse.REM, t => aggr.rem(t));
+      pulse.visit(pulse.ADD, t => aggr.add(t));
     }
 
     // Indicate output fields and return aggregate tuples.
-    out.modifies(this._outputs);
+    out.modifies(aggr._outputs);
 
     // Should empty cells be dropped?
     aggr._drop = _.drop !== false;
@@ -6275,7 +6284,7 @@
     // and ensure that empty cells are not dropped
     if (_.cross && aggr._dims.length > 1) {
       aggr._drop = false;
-      this.cross();
+      aggr.cross();
     }
 
     return aggr.changes(out);
@@ -6942,7 +6951,7 @@
    */
   function parse$2(def, data) {
     var func = def[FUNCTION];
-    if (!Distributions.hasOwnProperty(func)) {
+    if (!hasOwnProperty(Distributions, func)) {
       error('Unknown distribution function: ' + func);
     }
 
@@ -7160,7 +7169,10 @@
       }
     });
 
-    if (!isFinite(min) || !isFinite(max)) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) {
+      let name = accessorName(field);
+      if (name) name = ` for field "${name}"`;
+      pulse.dataflow.warn(`Infinite extent${name}: [${min}, ${max}]`);
       min = max = undefined;
     }
     this.value = [min, max];
@@ -7258,7 +7270,7 @@
 
   prototype$g.subflow = function(key, flow, pulse, parent) {
     var flows = this.value,
-        sf = flows.hasOwnProperty(key) && flows[key],
+        sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
 
     if (!sf) {
@@ -7802,7 +7814,7 @@
         cells;
 
     // process all input tuples to calculate aggregates
-    if (aggr.value && (mod || pulse.modified(aggr._inputs))) {
+    if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
       cells = aggr.value = mod ? aggr.init(_) : {};
       pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
     } else {
@@ -7848,12 +7860,17 @@
    *   to groupby.
    * @param {function(object): *} params.field - An accessor for the data field
    *   to estimate.
-   * @param {number} [params.bandwidth=0] - The KDE kernal bandwidth.
+   * @param {number} [params.bandwidth=0] - The KDE kernel bandwidth.
    *   If zero of unspecified, the bandwidth is automatically determined.
    * @param {string} [params.cumulative=false] - A boolean flag indicating if a
    *   density (false) or cumulative distribution (true) should be generated.
    * @param {Array<number>} [params.extent] - The domain extent over which to
    *   plot the density. If unspecified, the [min, max] data extent is used.
+   * @param {string} [params.resolve='independent'] - Indicates how parameters for
+   *   multiple densities should be resolved. If "independent" (the default), each
+   *   density may have its own domain extent and dynamic number of curve sample
+   *   steps. If "shared", the KDE transform will ensure that all densities are
+   *   defined over a shared domain and curve steps, enabling stacking.
    * @param {number} [params.minsteps=25] - The minimum number of curve samples
    *   for plotting the density.
    * @param {number} [params.maxsteps=200] - The maximum number of curve samples
@@ -7877,6 +7894,7 @@
       { "name": "counts", "type": "boolean", "default": false },
       { "name": "bandwidth", "type": "number", "default": 0 },
       { "name": "extent", "type": "number", "array": true, "length": 2 },
+      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
       { "name": "steps", "type": "number" },
       { "name": "minsteps", "type": "number", "default": 25 },
       { "name": "maxsteps", "type": "number", "default": 200 },
@@ -7895,21 +7913,28 @@
             names = (_.groupby || []).map(accessorName),
             bandwidth = _.bandwidth,
             method = _.cumulative ? 'cdf' : 'pdf',
-            minsteps = _.steps || _.minsteps || 25,
-            maxsteps = _.steps || _.maxsteps || 200,
             as = _.as || ['value', 'density'],
             values = [];
+
+      let domain = _.extent,
+          minsteps = _.steps || _.minsteps || 25,
+          maxsteps = _.steps || _.maxsteps || 200;
 
       if (method !== 'pdf' && method !== 'cdf') {
         error('Invalid density method: ' + method);
       }
 
+      if (_.resolve === 'shared') {
+        if (!domain) domain = extent(source, _.field);
+        minsteps = maxsteps = _.steps || maxsteps;
+      }
+
       groups.forEach(g => {
         const density = randomKDE(g, bandwidth)[method],
               scale = _.counts ? g.length : 1,
-              domain = _.extent || extent$1(g);
+              local = domain || extent(g);
 
-        sampleCurve(density, domain, minsteps, maxsteps).forEach(v => {
+        sampleCurve(density, local, minsteps, maxsteps).forEach(v => {
           const t = {};
           for (let i=0; i<names.length; ++i) {
             t[names[i]] = g.dims[i];
@@ -8202,10 +8227,14 @@
   // Then generate aggregate fields for each output pivot field.
   function aggregateParams(_, pulse) {
     var key    = _.field,
-    value  = _.value,
+        value  = _.value,
         op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
         fields = accessorFields(key).concat(accessorFields(value)),
         keys   = pivotKeys(key, _.limit || 0, pulse);
+
+    // if data stream content changes, pivot fields may change
+    // flag parameter modification to ensure re-initialization
+    if (pulse.changed()) _.set('__pivot__', null, null, true);
 
     return {
       key:      _.key,
@@ -8554,7 +8583,7 @@
 
   Sequence.Definition = {
     "type": "Sequence",
-    "metadata": {"changes": true},
+    "metadata": {"generates": true, "changes": true},
     "params": [
       { "name": "start", "type": "number", "required": true },
       { "name": "stop", "type": "number", "required": true },
@@ -8845,7 +8874,7 @@
       outputs.push(name);
 
       // Window operation
-      if (WindowOps.hasOwnProperty(op)) {
+      if (hasOwnProperty(WindowOps, op)) {
         windows.push(WindowOp(op, fields[i], params[i], name));
       }
 
@@ -11064,7 +11093,7 @@
   };
 
   function curves(type, orientation, tension) {
-    var entry = lookup.hasOwnProperty(type) && lookup[type],
+    var entry = hasOwnProperty(lookup, type) && lookup[type],
         curve = null;
 
     if (entry) {
@@ -11688,13 +11717,13 @@
   };
 
   function symbols(_) {
-    return builtins.hasOwnProperty(_) ? builtins[_] : customSymbol(_);
+    return hasOwnProperty(builtins, _) ? builtins[_] : customSymbol(_);
   }
 
   var custom = {};
 
   function customSymbol(path) {
-    if (!custom.hasOwnProperty(path)) {
+    if (!hasOwnProperty(custom, path)) {
       var parsed = pathParse(path);
       custom[path] = {
         draw: function(context, size) {
@@ -15444,7 +15473,7 @@
       mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1(_), _.index);
       mark.group.context = _.context;
       if (!_.context.group) _.context.group = mark.group;
-      mark.source = this;
+      mark.source = this.source; // point to upstream collector
       mark.clip = _.clip;
       mark.interactive = _.interactive;
       this.value = mark;
@@ -16522,6 +16551,11 @@
       viewBounds.union(titleLayout(view, title, width, height, viewBounds));
     }
 
+    // override aggregated view bounds if content is clipped
+    if (group.clip) {
+      viewBounds.set(0, 0, group.width || 0, group.height || 0);
+    }
+
     // perform size adjustment
     viewSizeLayout(view, group, viewBounds, _);
   }
@@ -16717,7 +16751,7 @@
 
   function timeInterval(unit, type) {
     const t = (type === UTC ? utc : time);
-    return t.hasOwnProperty(unit) && t[unit];
+    return hasOwnProperty(t, unit) && t[unit];
   }
 
   function invertRange(scale) {
@@ -19452,7 +19486,7 @@
       scales[type] = create(type, scale);
       return this;
     } else {
-      return scales.hasOwnProperty(type) ? scales[type] : undefined;
+      return hasOwnProperty(scales, type) ? scales[type] : undefined;
     }
   }
 
@@ -20707,22 +20741,29 @@
   }
 
   function configureRange(scale, _, count) {
-    var round = _.round || false,
+    var type = scale.type,
+        round = _.round || false,
         range = _.range;
 
     // if range step specified, calculate full range extent
     if (_.rangeStep != null) {
-      range = configureRangeStep(scale.type, _, count);
+      range = configureRangeStep(type, _, count);
     }
 
     // else if a range scheme is defined, use that
     else if (_.scheme) {
-      range = configureScheme(scale.type, _, count);
-      if (isFunction(range)) return scale.interpolator(range);
+      range = configureScheme(type, _, count);
+      if (isFunction(range)) {
+        if (scale.interpolator) {
+          return scale.interpolator(range);
+        } else {
+          error(`Scale type ${type} does not support interpolating color schemes.`);
+        }
+      }
     }
 
     // given a range array for an interpolating scale, convert to interpolator
-    else if (range && isInterpolating(scale.type)) {
+    if (range && isInterpolating(type)) {
       return scale.interpolator(
         interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
       );
@@ -20761,7 +20802,7 @@
     } else {
       name = _.scheme.toLowerCase();
       scheme$1 = scheme(name);
-      if (!scheme$1) error('Unrecognized scheme name: ' + _.scheme);
+      if (!scheme$1) error(`Unrecognized scheme name: ${_.scheme}`);
     }
 
     // determine size for potential discrete range
@@ -24391,6 +24432,40 @@
         .center([0, 13.9389]);
   }
 
+  var A1 = 1.340264,
+      A2 = -0.081106,
+      A3 = 0.000893,
+      A4 = 0.003796,
+      M = sqrt$2(3) / 2,
+      iterations = 12;
+
+  function equalEarthRaw(lambda, phi) {
+    var l = asin$1(M * sin$1(phi)), l2 = l * l, l6 = l2 * l2 * l2;
+    return [
+      lambda * cos$1(l) / (M * (A1 + 3 * A2 * l2 + l6 * (7 * A3 + 9 * A4 * l2))),
+      l * (A1 + A2 * l2 + l6 * (A3 + A4 * l2))
+    ];
+  }
+
+  equalEarthRaw.invert = function(x, y) {
+    var l = y, l2 = l * l, l6 = l2 * l2 * l2;
+    for (var i = 0, delta, fy, fpy; i < iterations; ++i) {
+      fy = l * (A1 + A2 * l2 + l6 * (A3 + A4 * l2)) - y;
+      fpy = A1 + 3 * A2 * l2 + l6 * (7 * A3 + 9 * A4 * l2);
+      l -= delta = fy / fpy, l2 = l * l, l6 = l2 * l2 * l2;
+      if (abs$1(delta) < epsilon2$1) break;
+    }
+    return [
+      M * x * (A1 + 3 * A2 * l2 + l6 * (7 * A3 + 9 * A4 * l2)) / cos$1(l),
+      asin$1(sin$1(l) / M)
+    ];
+  };
+
+  function geoEqualEarth() {
+    return projection(equalEarthRaw)
+        .scale(177.158);
+  }
+
   function gnomonicRaw(x, y) {
     var cy = cos$1(y), k = cos$1(x) * cy;
     return [cy * sin$1(x) / k, sin$1(y) / k];
@@ -24581,7 +24656,7 @@
       p.copy = p.copy || function() {
         var c = projection();
         projectionProperties.forEach(function(prop) {
-          if (p.hasOwnProperty(prop)) c[prop](p[prop]());
+          if (p[prop]) c[prop](p[prop]());
         });
         c.path.pointRadius(p.path.pointRadius());
         return c;
@@ -24600,7 +24675,7 @@
       projections[type] = create$1(type, proj);
       return this;
     } else {
-      return projections.hasOwnProperty(type) ? projections[type] : null;
+      return projections[type] || null;
     }
   }
 
@@ -24617,6 +24692,7 @@
     conicconformal:       geoConicConformal,
     conicequalarea:       geoConicEqualArea,
     conicequidistant:     geoConicEquidistant,
+    equalEarth:           geoEqualEarth,
     equirectangular:      geoEquirectangular,
     gnomonic:             geoGnomonic,
     identity:             geoIdentity,
@@ -24830,7 +24906,7 @@
 
   Graticule.Definition = {
     "type": "Graticule",
-    "metadata": {"changes": true},
+    "metadata": {"changes": true, "generates": true},
     "params": [
       { "name": "extent", "type": "array", "array": true, "length": 2,
         "content": {"type": "number", "array": true, "length": 2} },
@@ -26376,7 +26452,7 @@
   function getForce(_) {
     var f, p;
 
-    if (!ForceMap.hasOwnProperty(_.force)) {
+    if (!hasOwnProperty(ForceMap, _.force)) {
       error('Unrecognized force: ' + _.force);
     }
     f = ForceMap[_.force]();
@@ -26399,11 +26475,15 @@
   });
 
   // Build lookup table mapping tuple keys to tree node instances
+  // Also copy tupleid to tree node, to enable stable sorting
   function lookup$3(tree, key, filter) {
     var map = {};
     tree.each(function(node) {
       var t = node.data;
-      if (filter(t)) map[key(t)] = node;
+      if (filter(t)) {
+        map[key(t)] = node;
+        replace(t, node);
+      }
     });
     tree.lookup = map;
     return tree;
@@ -27710,7 +27790,7 @@
     if (!tree || mod || pulse.changed()) {
       // collect nodes to remove
       if (tree) {
-        tree.each(function(node) {
+        tree.each(node => {
           if (node.children && isTuple(node.data)) {
             out.rem.push(node.data);
           }
@@ -27720,13 +27800,13 @@
       // generate new tree structure
       this.value = tree = hierarchy({
         values: array(_.keys)
-                  .reduce(function(n, k) { n.key(k); return n; }, nest())
-                  .entries(out.source)
+          .reduce((n, k) => { n.key(k); return n; }, nest())
+          .entries(out.source)
       }, children);
 
       // collect nodes to add
       if (gen) {
-        tree.each(function(node) {
+        tree.each(node => {
           if (node.children) {
             node = ingest(node.data);
             out.add.push(node);
@@ -27787,8 +27867,8 @@
     }
 
     return nest = {
-      entries: function(array) { return entries(apply(array, 0), 0); },
-      key: function(d) { keys.push(d); return nest; }
+      entries: array => entries(apply(array, 0), 0),
+      key: d => { keys.push(d); return nest; }
     };
   }
 
@@ -27814,7 +27894,7 @@
         root = pulse.source.root,
         as = _.as || fields;
 
-    if (_.field) root.sum(_.field);
+    if (_.field) root.sum(_.field); else root.count();
     if (_.sort) root.sort(_.sort);
 
     setParams(layout, this.params, _);
@@ -27880,7 +27960,7 @@
 
   prototype$1a.layout = pack;
 
-  prototype$1a.params = ['size', 'padding'];
+  prototype$1a.params = ['radius', 'size', 'padding'];
 
   prototype$1a.fields = Output;
 
@@ -28009,7 +28089,7 @@
    */
   prototype$1d.layout = function(method) {
     var m = method || 'tidy';
-    if (Layouts.hasOwnProperty(m)) return Layouts[m]();
+    if (hasOwnProperty(Layouts, m)) return Layouts[m]();
     else error('Unrecognized Tree layout method: ' + m);
   };
 
@@ -28133,7 +28213,7 @@
       if (t.ratio) x.tile(t.ratio(_));
     };
     x.method = function(_) {
-      if (Tiles.hasOwnProperty(_)) x.tile(Tiles[_]);
+      if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
       else error('Unrecognized Treemap layout method: ' + _);
     };
     return x;
@@ -28302,7 +28382,7 @@
 
       let domain = _.extent;
 
-      if (!Methods$1.hasOwnProperty(method)) {
+      if (!hasOwnProperty(Methods$1, method)) {
         error('Invalid regression method: ' + method);
       }
 
@@ -28366,998 +28446,1074 @@
     regression: Regression
   });
 
-  function constant$8(x) {
-    return function() {
-      return x;
-    };
-  }
+  const EPSILON$1 = Math.pow(2, -52);
+  const EDGE_STACK = new Uint32Array(512);
 
-  function x$4(d) {
-    return d[0];
-  }
+  class Delaunator {
 
-  function y$4(d) {
-    return d[1];
-  }
+      static from(points, getX = defaultGetX, getY = defaultGetY) {
+          const n = points.length;
+          const coords = new Float64Array(n * 2);
 
-  function RedBlackTree() {
-    this._ = null; // root node
-  }
-
-  function RedBlackNode(node) {
-    node.U = // parent node
-    node.C = // color - true for red, false for black
-    node.L = // left node
-    node.R = // right node
-    node.P = // previous node
-    node.N = null; // next node
-  }
-
-  RedBlackTree.prototype = {
-    constructor: RedBlackTree,
-
-    insert: function(after, node) {
-      var parent, grandpa, uncle;
-
-      if (after) {
-        node.P = after;
-        node.N = after.N;
-        if (after.N) after.N.P = node;
-        after.N = node;
-        if (after.R) {
-          after = after.R;
-          while (after.L) after = after.L;
-          after.L = node;
-        } else {
-          after.R = node;
-        }
-        parent = after;
-      } else if (this._) {
-        after = RedBlackFirst(this._);
-        node.P = null;
-        node.N = after;
-        after.P = after.L = node;
-        parent = after;
-      } else {
-        node.P = node.N = null;
-        this._ = node;
-        parent = null;
-      }
-      node.L = node.R = null;
-      node.U = parent;
-      node.C = true;
-
-      after = node;
-      while (parent && parent.C) {
-        grandpa = parent.U;
-        if (parent === grandpa.L) {
-          uncle = grandpa.R;
-          if (uncle && uncle.C) {
-            parent.C = uncle.C = false;
-            grandpa.C = true;
-            after = grandpa;
-          } else {
-            if (after === parent.R) {
-              RedBlackRotateLeft(this, parent);
-              after = parent;
-              parent = after.U;
-            }
-            parent.C = false;
-            grandpa.C = true;
-            RedBlackRotateRight(this, grandpa);
+          for (let i = 0; i < n; i++) {
+              const p = points[i];
+              coords[2 * i] = getX(p);
+              coords[2 * i + 1] = getY(p);
           }
-        } else {
-          uncle = grandpa.L;
-          if (uncle && uncle.C) {
-            parent.C = uncle.C = false;
-            grandpa.C = true;
-            after = grandpa;
-          } else {
-            if (after === parent.L) {
-              RedBlackRotateRight(this, parent);
-              after = parent;
-              parent = after.U;
-            }
-            parent.C = false;
-            grandpa.C = true;
-            RedBlackRotateLeft(this, grandpa);
+
+          return new Delaunator(coords);
+      }
+
+      constructor(coords) {
+          const n = coords.length >> 1;
+          if (n > 0 && typeof coords[0] !== 'number') throw new Error('Expected coords to contain numbers.');
+
+          this.coords = coords;
+
+          // arrays that will store the triangulation graph
+          const maxTriangles = Math.max(2 * n - 5, 0);
+          this._triangles = new Uint32Array(maxTriangles * 3);
+          this._halfedges = new Int32Array(maxTriangles * 3);
+
+          // temporary arrays for tracking the edges of the advancing convex hull
+          this._hashSize = Math.ceil(Math.sqrt(n));
+          this._hullPrev = new Uint32Array(n); // edge to prev edge
+          this._hullNext = new Uint32Array(n); // edge to next edge
+          this._hullTri = new Uint32Array(n); // edge to adjacent triangle
+          this._hullHash = new Int32Array(this._hashSize).fill(-1); // angular edge hash
+
+          // temporary arrays for sorting points
+          this._ids = new Uint32Array(n);
+          this._dists = new Float64Array(n);
+
+          this.update();
+      }
+
+      update() {
+          const {coords, _hullPrev: hullPrev, _hullNext: hullNext, _hullTri: hullTri, _hullHash: hullHash} =  this;
+          const n = coords.length >> 1;
+
+          // populate an array of point indices; calculate input data bbox
+          let minX = Infinity;
+          let minY = Infinity;
+          let maxX = -Infinity;
+          let maxY = -Infinity;
+
+          for (let i = 0; i < n; i++) {
+              const x = coords[2 * i];
+              const y = coords[2 * i + 1];
+              if (x < minX) minX = x;
+              if (y < minY) minY = y;
+              if (x > maxX) maxX = x;
+              if (y > maxY) maxY = y;
+              this._ids[i] = i;
           }
-        }
-        parent = after.U;
+          const cx = (minX + maxX) / 2;
+          const cy = (minY + maxY) / 2;
+
+          let minDist = Infinity;
+          let i0, i1, i2;
+
+          // pick a seed point close to the center
+          for (let i = 0; i < n; i++) {
+              const d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
+              if (d < minDist) {
+                  i0 = i;
+                  minDist = d;
+              }
+          }
+          const i0x = coords[2 * i0];
+          const i0y = coords[2 * i0 + 1];
+
+          minDist = Infinity;
+
+          // find the point closest to the seed
+          for (let i = 0; i < n; i++) {
+              if (i === i0) continue;
+              const d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
+              if (d < minDist && d > 0) {
+                  i1 = i;
+                  minDist = d;
+              }
+          }
+          let i1x = coords[2 * i1];
+          let i1y = coords[2 * i1 + 1];
+
+          let minRadius = Infinity;
+
+          // find the third point which forms the smallest circumcircle with the first two
+          for (let i = 0; i < n; i++) {
+              if (i === i0 || i === i1) continue;
+              const r = circumradius(i0x, i0y, i1x, i1y, coords[2 * i], coords[2 * i + 1]);
+              if (r < minRadius) {
+                  i2 = i;
+                  minRadius = r;
+              }
+          }
+          let i2x = coords[2 * i2];
+          let i2y = coords[2 * i2 + 1];
+
+          if (minRadius === Infinity) {
+              // order collinear points by dx (or dy if all x are identical)
+              // and return the list as a hull
+              for (let i = 0; i < n; i++) {
+                  this._dists[i] = (coords[2 * i] - coords[0]) || (coords[2 * i + 1] - coords[1]);
+              }
+              quicksort(this._ids, this._dists, 0, n - 1);
+              const hull = new Uint32Array(n);
+              let j = 0;
+              for (let i = 0, d0 = -Infinity; i < n; i++) {
+                  const id = this._ids[i];
+                  if (this._dists[id] > d0) {
+                      hull[j++] = id;
+                      d0 = this._dists[id];
+                  }
+              }
+              this.hull = hull.subarray(0, j);
+              this.triangles = new Uint32Array(0);
+              this.halfedges = new Uint32Array(0);
+              return;
+          }
+
+          // swap the order of the seed points for counter-clockwise orientation
+          if (orient(i0x, i0y, i1x, i1y, i2x, i2y)) {
+              const i = i1;
+              const x = i1x;
+              const y = i1y;
+              i1 = i2;
+              i1x = i2x;
+              i1y = i2y;
+              i2 = i;
+              i2x = x;
+              i2y = y;
+          }
+
+          const center = circumcenter(i0x, i0y, i1x, i1y, i2x, i2y);
+          this._cx = center.x;
+          this._cy = center.y;
+
+          for (let i = 0; i < n; i++) {
+              this._dists[i] = dist(coords[2 * i], coords[2 * i + 1], center.x, center.y);
+          }
+
+          // sort the points by distance from the seed triangle circumcenter
+          quicksort(this._ids, this._dists, 0, n - 1);
+
+          // set up the seed triangle as the starting hull
+          this._hullStart = i0;
+          let hullSize = 3;
+
+          hullNext[i0] = hullPrev[i2] = i1;
+          hullNext[i1] = hullPrev[i0] = i2;
+          hullNext[i2] = hullPrev[i1] = i0;
+
+          hullTri[i0] = 0;
+          hullTri[i1] = 1;
+          hullTri[i2] = 2;
+
+          hullHash.fill(-1);
+          hullHash[this._hashKey(i0x, i0y)] = i0;
+          hullHash[this._hashKey(i1x, i1y)] = i1;
+          hullHash[this._hashKey(i2x, i2y)] = i2;
+
+          this.trianglesLen = 0;
+          this._addTriangle(i0, i1, i2, -1, -1, -1);
+
+          for (let k = 0, xp, yp; k < this._ids.length; k++) {
+              const i = this._ids[k];
+              const x = coords[2 * i];
+              const y = coords[2 * i + 1];
+
+              // skip near-duplicate points
+              if (k > 0 && Math.abs(x - xp) <= EPSILON$1 && Math.abs(y - yp) <= EPSILON$1) continue;
+              xp = x;
+              yp = y;
+
+              // skip seed triangle points
+              if (i === i0 || i === i1 || i === i2) continue;
+
+              // find a visible edge on the convex hull using edge hash
+              let start = 0;
+              for (let j = 0, key = this._hashKey(x, y); j < this._hashSize; j++) {
+                  start = hullHash[(key + j) % this._hashSize];
+                  if (start !== -1 && start !== hullNext[start]) break;
+              }
+
+              start = hullPrev[start];
+              let e = start, q;
+              while (q = hullNext[e], !orient(x, y, coords[2 * e], coords[2 * e + 1], coords[2 * q], coords[2 * q + 1])) {
+                  e = q;
+                  if (e === start) {
+                      e = -1;
+                      break;
+                  }
+              }
+              if (e === -1) continue; // likely a near-duplicate point; skip it
+
+              // add the first triangle from the point
+              let t = this._addTriangle(e, i, hullNext[e], -1, -1, hullTri[e]);
+
+              // recursively flip triangles from the point until they satisfy the Delaunay condition
+              hullTri[i] = this._legalize(t + 2);
+              hullTri[e] = t; // keep track of boundary triangles on the hull
+              hullSize++;
+
+              // walk forward through the hull, adding more triangles and flipping recursively
+              let n = hullNext[e];
+              while (q = hullNext[n], orient(x, y, coords[2 * n], coords[2 * n + 1], coords[2 * q], coords[2 * q + 1])) {
+                  t = this._addTriangle(n, i, q, hullTri[i], -1, hullTri[n]);
+                  hullTri[i] = this._legalize(t + 2);
+                  hullNext[n] = n; // mark as removed
+                  hullSize--;
+                  n = q;
+              }
+
+              // walk backward from the other side, adding more triangles and flipping
+              if (e === start) {
+                  while (q = hullPrev[e], orient(x, y, coords[2 * q], coords[2 * q + 1], coords[2 * e], coords[2 * e + 1])) {
+                      t = this._addTriangle(q, i, e, -1, hullTri[e], hullTri[q]);
+                      this._legalize(t + 2);
+                      hullTri[q] = t;
+                      hullNext[e] = e; // mark as removed
+                      hullSize--;
+                      e = q;
+                  }
+              }
+
+              // update the hull indices
+              this._hullStart = hullPrev[i] = e;
+              hullNext[e] = hullPrev[n] = i;
+              hullNext[i] = n;
+
+              // save the two new edges in the hash table
+              hullHash[this._hashKey(x, y)] = i;
+              hullHash[this._hashKey(coords[2 * e], coords[2 * e + 1])] = e;
+          }
+
+          this.hull = new Uint32Array(hullSize);
+          for (let i = 0, e = this._hullStart; i < hullSize; i++) {
+              this.hull[i] = e;
+              e = hullNext[e];
+          }
+
+          // trim typed triangle mesh arrays
+          this.triangles = this._triangles.subarray(0, this.trianglesLen);
+          this.halfedges = this._halfedges.subarray(0, this.trianglesLen);
       }
-      this._.C = false;
-    },
 
-    remove: function(node) {
-      if (node.N) node.N.P = node.P;
-      if (node.P) node.P.N = node.N;
-      node.N = node.P = null;
+      _hashKey(x, y) {
+          return Math.floor(pseudoAngle(x - this._cx, y - this._cy) * this._hashSize) % this._hashSize;
+      }
 
-      var parent = node.U,
-          sibling,
-          left = node.L,
-          right = node.R,
-          next,
-          red;
+      _legalize(a) {
+          const {_triangles: triangles, _halfedges: halfedges, coords} = this;
 
-      if (!left) next = right;
-      else if (!right) next = left;
-      else next = RedBlackFirst(right);
+          let i = 0;
+          let ar = 0;
 
-      if (parent) {
-        if (parent.L === node) parent.L = next;
-        else parent.R = next;
+          // recursion eliminated with a fixed-size stack
+          while (true) {
+              const b = halfedges[a];
+
+              /* if the pair of triangles doesn't satisfy the Delaunay condition
+               * (p1 is inside the circumcircle of [p0, pl, pr]), flip them,
+               * then do the same check/flip recursively for the new pair of triangles
+               *
+               *           pl                    pl
+               *          /||\                  /  \
+               *       al/ || \bl            al/    \a
+               *        /  ||  \              /      \
+               *       /  a||b  \    flip    /___ar___\
+               *     p0\   ||   /p1   =>   p0\---bl---/p1
+               *        \  ||  /              \      /
+               *       ar\ || /br             b\    /br
+               *          \||/                  \  /
+               *           pr                    pr
+               */
+              const a0 = a - a % 3;
+              ar = a0 + (a + 2) % 3;
+
+              if (b === -1) { // convex hull edge
+                  if (i === 0) break;
+                  a = EDGE_STACK[--i];
+                  continue;
+              }
+
+              const b0 = b - b % 3;
+              const al = a0 + (a + 1) % 3;
+              const bl = b0 + (b + 2) % 3;
+
+              const p0 = triangles[ar];
+              const pr = triangles[a];
+              const pl = triangles[al];
+              const p1 = triangles[bl];
+
+              const illegal = inCircle(
+                  coords[2 * p0], coords[2 * p0 + 1],
+                  coords[2 * pr], coords[2 * pr + 1],
+                  coords[2 * pl], coords[2 * pl + 1],
+                  coords[2 * p1], coords[2 * p1 + 1]);
+
+              if (illegal) {
+                  triangles[a] = p1;
+                  triangles[b] = p0;
+
+                  const hbl = halfedges[bl];
+
+                  // edge swapped on the other side of the hull (rare); fix the halfedge reference
+                  if (hbl === -1) {
+                      let e = this._hullStart;
+                      do {
+                          if (this._hullTri[e] === bl) {
+                              this._hullTri[e] = a;
+                              break;
+                          }
+                          e = this._hullPrev[e];
+                      } while (e !== this._hullStart);
+                  }
+                  this._link(a, hbl);
+                  this._link(b, halfedges[ar]);
+                  this._link(ar, bl);
+
+                  const br = b0 + (b + 1) % 3;
+
+                  // don't worry about hitting the cap: it can only happen on extremely degenerate input
+                  if (i < EDGE_STACK.length) {
+                      EDGE_STACK[i++] = br;
+                  }
+              } else {
+                  if (i === 0) break;
+                  a = EDGE_STACK[--i];
+              }
+          }
+
+          return ar;
+      }
+
+      _link(a, b) {
+          this._halfedges[a] = b;
+          if (b !== -1) this._halfedges[b] = a;
+      }
+
+      // add a new triangle given vertex indices and adjacent half-edge ids
+      _addTriangle(i0, i1, i2, a, b, c) {
+          const t = this.trianglesLen;
+
+          this._triangles[t] = i0;
+          this._triangles[t + 1] = i1;
+          this._triangles[t + 2] = i2;
+
+          this._link(t, a);
+          this._link(t + 1, b);
+          this._link(t + 2, c);
+
+          this.trianglesLen += 3;
+
+          return t;
+      }
+  }
+
+  // monotonically increases with real angle, but doesn't need expensive trigonometry
+  function pseudoAngle(dx, dy) {
+      const p = dx / (Math.abs(dx) + Math.abs(dy));
+      return (dy > 0 ? 3 - p : 1 + p) / 4; // [0..1]
+  }
+
+  function dist(ax, ay, bx, by) {
+      const dx = ax - bx;
+      const dy = ay - by;
+      return dx * dx + dy * dy;
+  }
+
+  function orient(px, py, qx, qy, rx, ry) {
+      return (qy - py) * (rx - qx) - (qx - px) * (ry - qy) < 0;
+  }
+
+  function inCircle(ax, ay, bx, by, cx, cy, px, py) {
+      const dx = ax - px;
+      const dy = ay - py;
+      const ex = bx - px;
+      const ey = by - py;
+      const fx = cx - px;
+      const fy = cy - py;
+
+      const ap = dx * dx + dy * dy;
+      const bp = ex * ex + ey * ey;
+      const cp = fx * fx + fy * fy;
+
+      return dx * (ey * cp - bp * fy) -
+             dy * (ex * cp - bp * fx) +
+             ap * (ex * fy - ey * fx) < 0;
+  }
+
+  function circumradius(ax, ay, bx, by, cx, cy) {
+      const dx = bx - ax;
+      const dy = by - ay;
+      const ex = cx - ax;
+      const ey = cy - ay;
+
+      const bl = dx * dx + dy * dy;
+      const cl = ex * ex + ey * ey;
+      const d = 0.5 / (dx * ey - dy * ex);
+
+      const x = (ey * bl - dy * cl) * d;
+      const y = (dx * cl - ex * bl) * d;
+
+      return x * x + y * y;
+  }
+
+  function circumcenter(ax, ay, bx, by, cx, cy) {
+      const dx = bx - ax;
+      const dy = by - ay;
+      const ex = cx - ax;
+      const ey = cy - ay;
+
+      const bl = dx * dx + dy * dy;
+      const cl = ex * ex + ey * ey;
+      const d = 0.5 / (dx * ey - dy * ex);
+
+      const x = ax + (ey * bl - dy * cl) * d;
+      const y = ay + (dx * cl - ex * bl) * d;
+
+      return {x, y};
+  }
+
+  function quicksort(ids, dists, left, right) {
+      if (right - left <= 20) {
+          for (let i = left + 1; i <= right; i++) {
+              const temp = ids[i];
+              const tempDist = dists[temp];
+              let j = i - 1;
+              while (j >= left && dists[ids[j]] > tempDist) ids[j + 1] = ids[j--];
+              ids[j + 1] = temp;
+          }
       } else {
-        this._ = next;
-      }
+          const median = (left + right) >> 1;
+          let i = left + 1;
+          let j = right;
+          swap$1(ids, median, i);
+          if (dists[ids[left]] > dists[ids[right]]) swap$1(ids, left, right);
+          if (dists[ids[i]] > dists[ids[right]]) swap$1(ids, i, right);
+          if (dists[ids[left]] > dists[ids[i]]) swap$1(ids, left, i);
 
-      if (left && right) {
-        red = next.C;
-        next.C = node.C;
-        next.L = left;
-        left.U = next;
-        if (next !== right) {
-          parent = next.U;
-          next.U = node.U;
-          node = next.R;
-          parent.L = node;
-          next.R = right;
-          right.U = next;
+          const temp = ids[i];
+          const tempDist = dists[temp];
+          while (true) {
+              do i++; while (dists[ids[i]] < tempDist);
+              do j--; while (dists[ids[j]] > tempDist);
+              if (j < i) break;
+              swap$1(ids, i, j);
+          }
+          ids[left + 1] = ids[j];
+          ids[j] = temp;
+
+          if (right - i + 1 >= j - left) {
+              quicksort(ids, dists, i, right);
+              quicksort(ids, dists, left, j - 1);
+          } else {
+              quicksort(ids, dists, left, j - 1);
+              quicksort(ids, dists, i, right);
+          }
+      }
+  }
+
+  function swap$1(arr, i, j) {
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+  }
+
+  function defaultGetX(p) {
+      return p[0];
+  }
+  function defaultGetY(p) {
+      return p[1];
+  }
+
+  const epsilon$4 = 1e-6;
+
+  class Path$1 {
+    constructor() {
+      this._x0 = this._y0 = // start of current subpath
+      this._x1 = this._y1 = null; // end of current subpath
+      this._ = "";
+    }
+    moveTo(x, y) {
+      this._ += `M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}`;
+    }
+    closePath() {
+      if (this._x1 !== null) {
+        this._x1 = this._x0, this._y1 = this._y0;
+        this._ += "Z";
+      }
+    }
+    lineTo(x, y) {
+      this._ += `L${this._x1 = +x},${this._y1 = +y}`;
+    }
+    arc(x, y, r) {
+      x = +x, y = +y, r = +r;
+      const x0 = x + r;
+      const y0 = y;
+      if (r < 0) throw new Error("negative radius");
+      if (this._x1 === null) this._ += `M${x0},${y0}`;
+      else if (Math.abs(this._x1 - x0) > epsilon$4 || Math.abs(this._y1 - y0) > epsilon$4) this._ += "L" + x0 + "," + y0;
+      if (!r) return;
+      this._ += `A${r},${r},0,1,1,${x - r},${y}A${r},${r},0,1,1,${this._x1 = x0},${this._y1 = y0}`;
+    }
+    rect(x, y, w, h) {
+      this._ += `M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}h${+w}v${+h}h${-w}Z`;
+    }
+    value() {
+      return this._ || null;
+    }
+  }
+
+  class Polygon {
+    constructor() {
+      this._ = [];
+    }
+    moveTo(x, y) {
+      this._.push([x, y]);
+    }
+    closePath() {
+      this._.push(this._[0].slice());
+    }
+    lineTo(x, y) {
+      this._.push([x, y]);
+    }
+    value() {
+      return this._.length ? this._ : null;
+    }
+  }
+
+  class Voronoi {
+    constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
+      if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
+      this.delaunay = delaunay;
+      this._circumcenters = new Float64Array(delaunay.points.length * 2);
+      this.vectors = new Float64Array(delaunay.points.length * 2);
+      this.xmax = xmax, this.xmin = xmin;
+      this.ymax = ymax, this.ymin = ymin;
+      this._init();
+    }
+    update() {
+      this.delaunay.update();
+      this._init();
+      return this;
+    }
+    _init() {
+      const {delaunay: {points, hull, triangles}, vectors} = this;
+
+      // Compute circumcenters.
+      const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
+      for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
+        const t1 = triangles[i] * 2;
+        const t2 = triangles[i + 1] * 2;
+        const t3 = triangles[i + 2] * 2;
+        const x1 = points[t1];
+        const y1 = points[t1 + 1];
+        const x2 = points[t2];
+        const y2 = points[t2 + 1];
+        const x3 = points[t3];
+        const y3 = points[t3 + 1];
+        const a2 = x1 - x2;
+        const a3 = x1 - x3;
+        const b2 = y1 - y2;
+        const b3 = y1 - y3;
+        const d1 = x1 * x1 + y1 * y1;
+        const d2 = d1 - x2 * x2 - y2 * y2;
+        const d3 = d1 - x3 * x3 - y3 * y3;
+        const ab = (a3 * b2 - a2 * b3) * 2;
+        // degenerate case (2 points)
+        if (!ab) {
+          circumcenters[j] = (x1 + x3) / 2 + 1e8 * b3;
+          circumcenters[j + 1] = (y1 + y3) / 2 - 1e8 * a3;
         } else {
-          next.U = parent;
-          parent = next;
-          node = next.R;
+          circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
+          circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
         }
-      } else {
-        red = node.C;
-        node = next;
       }
 
-      if (node) node.U = parent;
-      if (red) return;
-      if (node && node.C) { node.C = false; return; }
-
+      // Compute exterior cell rays.
+      let h = hull[hull.length - 1];
+      let p0, p1 = h * 4;
+      let x0, x1 = points[2 * h];
+      let y0, y1 = points[2 * h + 1];
+      vectors.fill(0);
+      for (let i = 0; i < hull.length; ++i) {
+        h = hull[i];
+        p0 = p1, x0 = x1, y0 = y1;
+        p1 = h * 4, x1 = points[2 * h], y1 = points[2 * h + 1];
+        vectors[p0 + 2] = vectors[p1] = y0 - y1;
+        vectors[p0 + 3] = vectors[p1 + 1] = x1 - x0;
+      }
+    }
+    render(context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const {delaunay: {halfedges, inedges, hull}, circumcenters, vectors} = this;
+      if (hull.length <= 1) return null;
+      for (let i = 0, n = halfedges.length; i < n; ++i) {
+        const j = halfedges[i];
+        if (j < i) continue;
+        const ti = Math.floor(i / 3) * 2;
+        const tj = Math.floor(j / 3) * 2;
+        const xi = circumcenters[ti];
+        const yi = circumcenters[ti + 1];
+        const xj = circumcenters[tj];
+        const yj = circumcenters[tj + 1];
+        this._renderSegment(xi, yi, xj, yj, context);
+      }
+      let h0, h1 = hull[hull.length - 1];
+      for (let i = 0; i < hull.length; ++i) {
+        h0 = h1, h1 = hull[i];
+        const t = Math.floor(inedges[h1] / 3) * 2;
+        const x = circumcenters[t];
+        const y = circumcenters[t + 1];
+        const v = h0 * 4;
+        const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
+        if (p) this._renderSegment(x, y, p[0], p[1], context);
+      }
+      return buffer && buffer.value();
+    }
+    renderBounds(context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
+      return buffer && buffer.value();
+    }
+    renderCell(i, context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const points = this._clip(i);
+      if (points === null) return;
+      context.moveTo(points[0], points[1]);
+      for (let i = 2, n = points.length; i < n; i += 2) {
+        if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
+          context.lineTo(points[i], points[i + 1]);
+      }
+      context.closePath();
+      return buffer && buffer.value();
+    }
+    *cellPolygons() {
+      const {delaunay: {points}} = this;
+      for (let i = 0, n = points.length / 2; i < n; ++i) {
+        const cell = this.cellPolygon(i);
+        if (cell) yield cell;
+      }
+    }
+    cellPolygon(i) {
+      const polygon = new Polygon;
+      this.renderCell(i, polygon);
+      return polygon.value();
+    }
+    _renderSegment(x0, y0, x1, y1, context) {
+      let S;
+      const c0 = this._regioncode(x0, y0);
+      const c1 = this._regioncode(x1, y1);
+      if (c0 === 0 && c1 === 0) {
+        context.moveTo(x0, y0);
+        context.lineTo(x1, y1);
+      } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
+        context.moveTo(S[0], S[1]);
+        context.lineTo(S[2], S[3]);
+      }
+    }
+    contains(i, x, y) {
+      if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
+      return this.delaunay._step(i, x, y) === i;
+    }
+    _cell(i) {
+      const {circumcenters, delaunay: {inedges, halfedges, triangles}} = this;
+      const e0 = inedges[i];
+      if (e0 === -1) return null; // coincident point
+      const points = [];
+      let e = e0;
       do {
-        if (node === this._) break;
-        if (node === parent.L) {
-          sibling = parent.R;
-          if (sibling.C) {
-            sibling.C = false;
-            parent.C = true;
-            RedBlackRotateLeft(this, parent);
-            sibling = parent.R;
-          }
-          if ((sibling.L && sibling.L.C)
-              || (sibling.R && sibling.R.C)) {
-            if (!sibling.R || !sibling.R.C) {
-              sibling.L.C = false;
-              sibling.C = true;
-              RedBlackRotateRight(this, sibling);
-              sibling = parent.R;
-            }
-            sibling.C = parent.C;
-            parent.C = sibling.R.C = false;
-            RedBlackRotateLeft(this, parent);
-            node = this._;
-            break;
-          }
+        const t = Math.floor(e / 3);
+        points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
+        e = e % 3 === 2 ? e - 2 : e + 1;
+        if (triangles[e] !== i) break; // bad triangulation
+        e = halfedges[e];
+      } while (e !== e0 && e !== -1);
+      return points;
+    }
+    _clip(i) {
+      // degenerate case (1 valid point: return the box)
+      if (i === 0 && this.delaunay.hull.length === 1) {
+        return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+      }
+      const points = this._cell(i);
+      if (points === null) return null;
+      const {vectors: V} = this;
+      const v = i * 4;
+      return V[v] || V[v + 1]
+          ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3])
+          : this._clipFinite(i, points);
+    }
+    _clipFinite(i, points) {
+      const n = points.length;
+      let P = null;
+      let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
+      let c0, c1 = this._regioncode(x1, y1);
+      let e0, e1;
+      for (let j = 0; j < n; j += 2) {
+        x0 = x1, y0 = y1, x1 = points[j], y1 = points[j + 1];
+        c0 = c1, c1 = this._regioncode(x1, y1);
+        if (c0 === 0 && c1 === 0) {
+          e0 = e1, e1 = 0;
+          if (P) P.push(x1, y1);
+          else P = [x1, y1];
         } else {
-          sibling = parent.L;
-          if (sibling.C) {
-            sibling.C = false;
-            parent.C = true;
-            RedBlackRotateRight(this, parent);
-            sibling = parent.L;
-          }
-          if ((sibling.L && sibling.L.C)
-            || (sibling.R && sibling.R.C)) {
-            if (!sibling.L || !sibling.L.C) {
-              sibling.R.C = false;
-              sibling.C = true;
-              RedBlackRotateLeft(this, sibling);
-              sibling = parent.L;
-            }
-            sibling.C = parent.C;
-            parent.C = sibling.L.C = false;
-            RedBlackRotateRight(this, parent);
-            node = this._;
-            break;
-          }
-        }
-        sibling.C = true;
-        node = parent;
-        parent = parent.U;
-      } while (!node.C);
-
-      if (node) node.C = false;
-    }
-  };
-
-  function RedBlackRotateLeft(tree, node) {
-    var p = node,
-        q = node.R,
-        parent = p.U;
-
-    if (parent) {
-      if (parent.L === p) parent.L = q;
-      else parent.R = q;
-    } else {
-      tree._ = q;
-    }
-
-    q.U = parent;
-    p.U = q;
-    p.R = q.L;
-    if (p.R) p.R.U = p;
-    q.L = p;
-  }
-
-  function RedBlackRotateRight(tree, node) {
-    var p = node,
-        q = node.L,
-        parent = p.U;
-
-    if (parent) {
-      if (parent.L === p) parent.L = q;
-      else parent.R = q;
-    } else {
-      tree._ = q;
-    }
-
-    q.U = parent;
-    p.U = q;
-    p.L = q.R;
-    if (p.L) p.L.U = p;
-    q.R = p;
-  }
-
-  function RedBlackFirst(node) {
-    while (node.L) node = node.L;
-    return node;
-  }
-
-  function createEdge(left, right, v0, v1) {
-    var edge = [null, null],
-        index = edges.push(edge) - 1;
-    edge.left = left;
-    edge.right = right;
-    if (v0) setEdgeEnd(edge, left, right, v0);
-    if (v1) setEdgeEnd(edge, right, left, v1);
-    cells[left.index].halfedges.push(index);
-    cells[right.index].halfedges.push(index);
-    return edge;
-  }
-
-  function createBorderEdge(left, v0, v1) {
-    var edge = [v0, v1];
-    edge.left = left;
-    return edge;
-  }
-
-  function setEdgeEnd(edge, left, right, vertex) {
-    if (!edge[0] && !edge[1]) {
-      edge[0] = vertex;
-      edge.left = left;
-      edge.right = right;
-    } else if (edge.left === right) {
-      edge[1] = vertex;
-    } else {
-      edge[0] = vertex;
-    }
-  }
-
-  // Liang–Barsky line clipping.
-  function clipEdge(edge, x0, y0, x1, y1) {
-    var a = edge[0],
-        b = edge[1],
-        ax = a[0],
-        ay = a[1],
-        bx = b[0],
-        by = b[1],
-        t0 = 0,
-        t1 = 1,
-        dx = bx - ax,
-        dy = by - ay,
-        r;
-
-    r = x0 - ax;
-    if (!dx && r > 0) return;
-    r /= dx;
-    if (dx < 0) {
-      if (r < t0) return;
-      if (r < t1) t1 = r;
-    } else if (dx > 0) {
-      if (r > t1) return;
-      if (r > t0) t0 = r;
-    }
-
-    r = x1 - ax;
-    if (!dx && r < 0) return;
-    r /= dx;
-    if (dx < 0) {
-      if (r > t1) return;
-      if (r > t0) t0 = r;
-    } else if (dx > 0) {
-      if (r < t0) return;
-      if (r < t1) t1 = r;
-    }
-
-    r = y0 - ay;
-    if (!dy && r > 0) return;
-    r /= dy;
-    if (dy < 0) {
-      if (r < t0) return;
-      if (r < t1) t1 = r;
-    } else if (dy > 0) {
-      if (r > t1) return;
-      if (r > t0) t0 = r;
-    }
-
-    r = y1 - ay;
-    if (!dy && r < 0) return;
-    r /= dy;
-    if (dy < 0) {
-      if (r > t1) return;
-      if (r > t0) t0 = r;
-    } else if (dy > 0) {
-      if (r < t0) return;
-      if (r < t1) t1 = r;
-    }
-
-    if (!(t0 > 0) && !(t1 < 1)) return true; // TODO Better check?
-
-    if (t0 > 0) edge[0] = [ax + t0 * dx, ay + t0 * dy];
-    if (t1 < 1) edge[1] = [ax + t1 * dx, ay + t1 * dy];
-    return true;
-  }
-
-  function connectEdge(edge, x0, y0, x1, y1) {
-    var v1 = edge[1];
-    if (v1) return true;
-
-    var v0 = edge[0],
-        left = edge.left,
-        right = edge.right,
-        lx = left[0],
-        ly = left[1],
-        rx = right[0],
-        ry = right[1],
-        fx = (lx + rx) / 2,
-        fy = (ly + ry) / 2,
-        fm,
-        fb;
-
-    if (ry === ly) {
-      if (fx < x0 || fx >= x1) return;
-      if (lx > rx) {
-        if (!v0) v0 = [fx, y0];
-        else if (v0[1] >= y1) return;
-        v1 = [fx, y1];
-      } else {
-        if (!v0) v0 = [fx, y1];
-        else if (v0[1] < y0) return;
-        v1 = [fx, y0];
-      }
-    } else {
-      fm = (lx - rx) / (ry - ly);
-      fb = fy - fm * fx;
-      if (fm < -1 || fm > 1) {
-        if (lx > rx) {
-          if (!v0) v0 = [(y0 - fb) / fm, y0];
-          else if (v0[1] >= y1) return;
-          v1 = [(y1 - fb) / fm, y1];
-        } else {
-          if (!v0) v0 = [(y1 - fb) / fm, y1];
-          else if (v0[1] < y0) return;
-          v1 = [(y0 - fb) / fm, y0];
-        }
-      } else {
-        if (ly < ry) {
-          if (!v0) v0 = [x0, fm * x0 + fb];
-          else if (v0[0] >= x1) return;
-          v1 = [x1, fm * x1 + fb];
-        } else {
-          if (!v0) v0 = [x1, fm * x1 + fb];
-          else if (v0[0] < x0) return;
-          v1 = [x0, fm * x0 + fb];
-        }
-      }
-    }
-
-    edge[0] = v0;
-    edge[1] = v1;
-    return true;
-  }
-
-  function clipEdges(x0, y0, x1, y1) {
-    var i = edges.length,
-        edge;
-
-    while (i--) {
-      if (!connectEdge(edge = edges[i], x0, y0, x1, y1)
-          || !clipEdge(edge, x0, y0, x1, y1)
-          || !(Math.abs(edge[0][0] - edge[1][0]) > epsilon$4
-              || Math.abs(edge[0][1] - edge[1][1]) > epsilon$4)) {
-        delete edges[i];
-      }
-    }
-  }
-
-  function createCell(site) {
-    return cells[site.index] = {
-      site: site,
-      halfedges: []
-    };
-  }
-
-  function cellHalfedgeAngle(cell, edge) {
-    var site = cell.site,
-        va = edge.left,
-        vb = edge.right;
-    if (site === vb) vb = va, va = site;
-    if (vb) return Math.atan2(vb[1] - va[1], vb[0] - va[0]);
-    if (site === va) va = edge[1], vb = edge[0];
-    else va = edge[0], vb = edge[1];
-    return Math.atan2(va[0] - vb[0], vb[1] - va[1]);
-  }
-
-  function cellHalfedgeStart(cell, edge) {
-    return edge[+(edge.left !== cell.site)];
-  }
-
-  function cellHalfedgeEnd(cell, edge) {
-    return edge[+(edge.left === cell.site)];
-  }
-
-  function sortCellHalfedges() {
-    for (var i = 0, n = cells.length, cell, halfedges, j, m; i < n; ++i) {
-      if ((cell = cells[i]) && (m = (halfedges = cell.halfedges).length)) {
-        var index = new Array(m),
-            array = new Array(m);
-        for (j = 0; j < m; ++j) index[j] = j, array[j] = cellHalfedgeAngle(cell, edges[halfedges[j]]);
-        index.sort(function(i, j) { return array[j] - array[i]; });
-        for (j = 0; j < m; ++j) array[j] = halfedges[index[j]];
-        for (j = 0; j < m; ++j) halfedges[j] = array[j];
-      }
-    }
-  }
-
-  function clipCells(x0, y0, x1, y1) {
-    var nCells = cells.length,
-        iCell,
-        cell,
-        site,
-        iHalfedge,
-        halfedges,
-        nHalfedges,
-        start,
-        startX,
-        startY,
-        end,
-        endX,
-        endY,
-        cover = true;
-
-    for (iCell = 0; iCell < nCells; ++iCell) {
-      if (cell = cells[iCell]) {
-        site = cell.site;
-        halfedges = cell.halfedges;
-        iHalfedge = halfedges.length;
-
-        // Remove any dangling clipped edges.
-        while (iHalfedge--) {
-          if (!edges[halfedges[iHalfedge]]) {
-            halfedges.splice(iHalfedge, 1);
-          }
-        }
-
-        // Insert any border edges as necessary.
-        iHalfedge = 0, nHalfedges = halfedges.length;
-        while (iHalfedge < nHalfedges) {
-          end = cellHalfedgeEnd(cell, edges[halfedges[iHalfedge]]), endX = end[0], endY = end[1];
-          start = cellHalfedgeStart(cell, edges[halfedges[++iHalfedge % nHalfedges]]), startX = start[0], startY = start[1];
-          if (Math.abs(endX - startX) > epsilon$4 || Math.abs(endY - startY) > epsilon$4) {
-            halfedges.splice(iHalfedge, 0, edges.push(createBorderEdge(site, end,
-                Math.abs(endX - x0) < epsilon$4 && y1 - endY > epsilon$4 ? [x0, Math.abs(startX - x0) < epsilon$4 ? startY : y1]
-                : Math.abs(endY - y1) < epsilon$4 && x1 - endX > epsilon$4 ? [Math.abs(startY - y1) < epsilon$4 ? startX : x1, y1]
-                : Math.abs(endX - x1) < epsilon$4 && endY - y0 > epsilon$4 ? [x1, Math.abs(startX - x1) < epsilon$4 ? startY : y0]
-                : Math.abs(endY - y0) < epsilon$4 && endX - x0 > epsilon$4 ? [Math.abs(startY - y0) < epsilon$4 ? startX : x0, y0]
-                : null)) - 1);
-            ++nHalfedges;
-          }
-        }
-
-        if (nHalfedges) cover = false;
-      }
-    }
-
-    // If there weren’t any edges, have the closest site cover the extent.
-    // It doesn’t matter which corner of the extent we measure!
-    if (cover) {
-      var dx, dy, d2, dc = Infinity;
-
-      for (iCell = 0, cover = null; iCell < nCells; ++iCell) {
-        if (cell = cells[iCell]) {
-          site = cell.site;
-          dx = site[0] - x0;
-          dy = site[1] - y0;
-          d2 = dx * dx + dy * dy;
-          if (d2 < dc) dc = d2, cover = cell;
-        }
-      }
-
-      if (cover) {
-        var v00 = [x0, y0], v01 = [x0, y1], v11 = [x1, y1], v10 = [x1, y0];
-        cover.halfedges.push(
-          edges.push(createBorderEdge(site = cover.site, v00, v01)) - 1,
-          edges.push(createBorderEdge(site, v01, v11)) - 1,
-          edges.push(createBorderEdge(site, v11, v10)) - 1,
-          edges.push(createBorderEdge(site, v10, v00)) - 1
-        );
-      }
-    }
-
-    // Lastly delete any cells with no edges; these were entirely clipped.
-    for (iCell = 0; iCell < nCells; ++iCell) {
-      if (cell = cells[iCell]) {
-        if (!cell.halfedges.length) {
-          delete cells[iCell];
-        }
-      }
-    }
-  }
-
-  var circlePool = [];
-
-  var firstCircle;
-
-  function Circle() {
-    RedBlackNode(this);
-    this.x =
-    this.y =
-    this.arc =
-    this.site =
-    this.cy = null;
-  }
-
-  function attachCircle(arc) {
-    var lArc = arc.P,
-        rArc = arc.N;
-
-    if (!lArc || !rArc) return;
-
-    var lSite = lArc.site,
-        cSite = arc.site,
-        rSite = rArc.site;
-
-    if (lSite === rSite) return;
-
-    var bx = cSite[0],
-        by = cSite[1],
-        ax = lSite[0] - bx,
-        ay = lSite[1] - by,
-        cx = rSite[0] - bx,
-        cy = rSite[1] - by;
-
-    var d = 2 * (ax * cy - ay * cx);
-    if (d >= -epsilon2$2) return;
-
-    var ha = ax * ax + ay * ay,
-        hc = cx * cx + cy * cy,
-        x = (cy * ha - ay * hc) / d,
-        y = (ax * hc - cx * ha) / d;
-
-    var circle = circlePool.pop() || new Circle;
-    circle.arc = arc;
-    circle.site = cSite;
-    circle.x = x + bx;
-    circle.y = (circle.cy = y + by) + Math.sqrt(x * x + y * y); // y bottom
-
-    arc.circle = circle;
-
-    var before = null,
-        node = circles._;
-
-    while (node) {
-      if (circle.y < node.y || (circle.y === node.y && circle.x <= node.x)) {
-        if (node.L) node = node.L;
-        else { before = node.P; break; }
-      } else {
-        if (node.R) node = node.R;
-        else { before = node; break; }
-      }
-    }
-
-    circles.insert(before, circle);
-    if (!before) firstCircle = circle;
-  }
-
-  function detachCircle(arc) {
-    var circle = arc.circle;
-    if (circle) {
-      if (!circle.P) firstCircle = circle.N;
-      circles.remove(circle);
-      circlePool.push(circle);
-      RedBlackNode(circle);
-      arc.circle = null;
-    }
-  }
-
-  var beachPool = [];
-
-  function Beach() {
-    RedBlackNode(this);
-    this.edge =
-    this.site =
-    this.circle = null;
-  }
-
-  function createBeach(site) {
-    var beach = beachPool.pop() || new Beach;
-    beach.site = site;
-    return beach;
-  }
-
-  function detachBeach(beach) {
-    detachCircle(beach);
-    beaches.remove(beach);
-    beachPool.push(beach);
-    RedBlackNode(beach);
-  }
-
-  function removeBeach(beach) {
-    var circle = beach.circle,
-        x = circle.x,
-        y = circle.cy,
-        vertex = [x, y],
-        previous = beach.P,
-        next = beach.N,
-        disappearing = [beach];
-
-    detachBeach(beach);
-
-    var lArc = previous;
-    while (lArc.circle
-        && Math.abs(x - lArc.circle.x) < epsilon$4
-        && Math.abs(y - lArc.circle.cy) < epsilon$4) {
-      previous = lArc.P;
-      disappearing.unshift(lArc);
-      detachBeach(lArc);
-      lArc = previous;
-    }
-
-    disappearing.unshift(lArc);
-    detachCircle(lArc);
-
-    var rArc = next;
-    while (rArc.circle
-        && Math.abs(x - rArc.circle.x) < epsilon$4
-        && Math.abs(y - rArc.circle.cy) < epsilon$4) {
-      next = rArc.N;
-      disappearing.push(rArc);
-      detachBeach(rArc);
-      rArc = next;
-    }
-
-    disappearing.push(rArc);
-    detachCircle(rArc);
-
-    var nArcs = disappearing.length,
-        iArc;
-    for (iArc = 1; iArc < nArcs; ++iArc) {
-      rArc = disappearing[iArc];
-      lArc = disappearing[iArc - 1];
-      setEdgeEnd(rArc.edge, lArc.site, rArc.site, vertex);
-    }
-
-    lArc = disappearing[0];
-    rArc = disappearing[nArcs - 1];
-    rArc.edge = createEdge(lArc.site, rArc.site, null, vertex);
-
-    attachCircle(lArc);
-    attachCircle(rArc);
-  }
-
-  function addBeach(site) {
-    var x = site[0],
-        directrix = site[1],
-        lArc,
-        rArc,
-        dxl,
-        dxr,
-        node = beaches._;
-
-    while (node) {
-      dxl = leftBreakPoint(node, directrix) - x;
-      if (dxl > epsilon$4) node = node.L; else {
-        dxr = x - rightBreakPoint(node, directrix);
-        if (dxr > epsilon$4) {
-          if (!node.R) {
-            lArc = node;
-            break;
-          }
-          node = node.R;
-        } else {
-          if (dxl > -epsilon$4) {
-            lArc = node.P;
-            rArc = node;
-          } else if (dxr > -epsilon$4) {
-            lArc = node;
-            rArc = node.N;
+          let S, sx0, sy0, sx1, sy1;
+          if (c0 === 0) {
+            if ((S = this._clipSegment(x0, y0, x1, y1, c0, c1)) === null) continue;
+            [sx0, sy0, sx1, sy1] = S;
           } else {
-            lArc = rArc = node;
+            if ((S = this._clipSegment(x1, y1, x0, y0, c1, c0)) === null) continue;
+            [sx1, sy1, sx0, sy0] = S;
+            e0 = e1, e1 = this._edgecode(sx0, sy0);
+            if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+            if (P) P.push(sx0, sy0);
+            else P = [sx0, sy0];
+          }
+          e0 = e1, e1 = this._edgecode(sx1, sy1);
+          if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+          if (P) P.push(sx1, sy1);
+          else P = [sx1, sy1];
+        }
+      }
+      if (P) {
+        e0 = e1, e1 = this._edgecode(P[0], P[1]);
+        if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+      } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+        return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+      }
+      return P;
+    }
+    _clipSegment(x0, y0, x1, y1, c0, c1) {
+      while (true) {
+        if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
+        if (c0 & c1) return null;
+        let x, y, c = c0 || c1;
+        if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
+        else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;
+        else if (c & 0b0010) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax;
+        else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin;
+        if (c0) x0 = x, y0 = y, c0 = this._regioncode(x0, y0);
+        else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
+      }
+    }
+    _clipInfinite(i, points, vx0, vy0, vxn, vyn) {
+      let P = Array.from(points), p;
+      if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
+      if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
+      if (P = this._clipFinite(i, P)) {
+        for (let j = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); j < n; j += 2) {
+          c0 = c1, c1 = this._edgecode(P[j], P[j + 1]);
+          if (c0 && c1) j = this._edge(i, c0, c1, P, j), n = P.length;
+        }
+      } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+        P = [this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax];
+      }
+      return P;
+    }
+    _edge(i, e0, e1, P, j) {
+      while (e0 !== e1) {
+        let x, y;
+        switch (e0) {
+          case 0b0101: e0 = 0b0100; continue; // top-left
+          case 0b0100: e0 = 0b0110, x = this.xmax, y = this.ymin; break; // top
+          case 0b0110: e0 = 0b0010; continue; // top-right
+          case 0b0010: e0 = 0b1010, x = this.xmax, y = this.ymax; break; // right
+          case 0b1010: e0 = 0b1000; continue; // bottom-right
+          case 0b1000: e0 = 0b1001, x = this.xmin, y = this.ymax; break; // bottom
+          case 0b1001: e0 = 0b0001; continue; // bottom-left
+          case 0b0001: e0 = 0b0101, x = this.xmin, y = this.ymin; break; // left
+        }
+        if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
+          P.splice(j, 0, x, y), j += 2;
+        }
+      }
+      return j;
+    }
+    _project(x0, y0, vx, vy) {
+      let t = Infinity, c, x, y;
+      if (vy < 0) { // top
+        if (y0 <= this.ymin) return null;
+        if ((c = (this.ymin - y0) / vy) < t) y = this.ymin, x = x0 + (t = c) * vx;
+      } else if (vy > 0) { // bottom
+        if (y0 >= this.ymax) return null;
+        if ((c = (this.ymax - y0) / vy) < t) y = this.ymax, x = x0 + (t = c) * vx;
+      }
+      if (vx > 0) { // right
+        if (x0 >= this.xmax) return null;
+        if ((c = (this.xmax - x0) / vx) < t) x = this.xmax, y = y0 + (t = c) * vy;
+      } else if (vx < 0) { // left
+        if (x0 <= this.xmin) return null;
+        if ((c = (this.xmin - x0) / vx) < t) x = this.xmin, y = y0 + (t = c) * vy;
+      }
+      return [x, y];
+    }
+    _edgecode(x, y) {
+      return (x === this.xmin ? 0b0001
+          : x === this.xmax ? 0b0010 : 0b0000)
+          | (y === this.ymin ? 0b0100
+          : y === this.ymax ? 0b1000 : 0b0000);
+    }
+    _regioncode(x, y) {
+      return (x < this.xmin ? 0b0001
+          : x > this.xmax ? 0b0010 : 0b0000)
+          | (y < this.ymin ? 0b0100
+          : y > this.ymax ? 0b1000 : 0b0000);
+    }
+  }
+
+  const tau$3 = 2 * Math.PI;
+
+  function pointX(p) {
+    return p[0];
+  }
+
+  function pointY(p) {
+    return p[1];
+  }
+
+  function area$4(hull, points) {
+    let n = hull.length, x0, y0,
+        x1 = points[2 * hull[n - 1]],
+        y1 = points[2 * hull[n - 1] + 1],
+        area = 0;
+
+    for (let i = 0; i < n; i ++) {
+      x0 = x1, y0 = y1;
+      x1 = points[2 * hull[i]];
+      y1 = points[2 * hull[i] + 1];
+      area += y0 * x1 - x0 * y1;
+    }
+
+    return area / 2;
+  }
+
+  function jitter(x, y, r) {
+    return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
+  }
+
+  class Delaunay {
+    constructor(points) {
+      this._delaunator = new Delaunator(points);
+      this.inedges = new Int32Array(points.length / 2);
+      this._hullIndex = new Int32Array(points.length / 2);
+      this.points = this._delaunator.coords;
+      this._init();
+    }
+    update() {
+      this._delaunator.update();
+      this._init();
+      return this;
+    }
+    _init() {
+      const d = this._delaunator, points = this.points;
+
+      // check for collinear
+      if (d.hull && d.hull.length > 2 && area$4(d.hull, points) < 1e-10) {
+        this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
+          .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
+        const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
+          bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
+          r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+        for (let i = 0, n = points.length / 2; i < n; ++i) {
+          const p = jitter(points[2 * i], points[2 * i + 1], r);
+          points[2 * i] = p[0];
+          points[2 * i + 1] = p[1];
+        }
+        this._delaunator = new Delaunator(points);
+      } else {
+        delete this.collinear;
+      }
+
+      const halfedges = this.halfedges = this._delaunator.halfedges;
+      const hull = this.hull = this._delaunator.hull;
+      const triangles = this.triangles = this._delaunator.triangles;
+      const inedges = this.inedges.fill(-1);
+      const hullIndex = this._hullIndex.fill(-1);
+
+      // Compute an index from each point to an (arbitrary) incoming halfedge
+      // Used to give the first neighbor of each point; for this reason,
+      // on the hull we give priority to exterior halfedges
+      for (let e = 0, n = halfedges.length; e < n; ++e) {
+        const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
+        if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
+      }
+      for (let i = 0, n = hull.length; i < n; ++i) {
+        hullIndex[hull[i]] = i;
+      }
+
+      // degenerate case: 1 or 2 (distinct) points
+      if (hull.length <= 2 && hull.length > 0) {
+        this.triangles = new Int32Array(3).fill(-1);
+        this.halfedges = new Int32Array(3).fill(-1);
+        this.triangles[0] = hull[0];
+        this.triangles[1] = hull[1];
+        this.triangles[2] = hull[1];
+        inedges[hull[0]] = 1;
+        if (hull.length === 2) inedges[hull[1]] = 0;
+      }
+    }
+    voronoi(bounds) {
+      return new Voronoi(this, bounds);
+    }
+    *neighbors(i) {
+      const {inedges, hull, _hullIndex, halfedges, triangles} = this;
+
+      // degenerate case with several collinear points
+      if (this.collinear) {
+        const l = this.collinear.indexOf(i);
+        if (l > 0) yield this.collinear[l - 1];
+        if (l < this.collinear.length - 1) yield this.collinear[l + 1];
+        return;
+      }
+
+      const e0 = inedges[i];
+      if (e0 === -1) return; // coincident point
+      let e = e0, p0 = -1;
+      do {
+        yield p0 = triangles[e];
+        e = e % 3 === 2 ? e - 2 : e + 1;
+        if (triangles[e] !== i) return; // bad triangulation
+        e = halfedges[e];
+        if (e === -1) {
+          const p = hull[(_hullIndex[i] + 1) % hull.length];
+          if (p !== p0) yield p;
+          return;
+        }
+      } while (e !== e0);
+    }
+    find(x, y, i = 0) {
+      if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+      const i0 = i;
+      let c;
+      while ((c = this._step(i, x, y)) >= 0 && c !== i && c !== i0) i = c;
+      return c;
+    }
+    _step(i, x, y) {
+      const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
+      if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
+      let c = i;
+      let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+      const e0 = inedges[i];
+      let e = e0;
+      do {
+        let t = triangles[e];
+        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+        if (dt < dc) dc = dt, c = t;
+        e = e % 3 === 2 ? e - 2 : e + 1;
+        if (triangles[e] !== i) break; // bad triangulation
+        e = halfedges[e];
+        if (e === -1) {
+          e = hull[(_hullIndex[i] + 1) % hull.length];
+          if (e !== t) {
+            if ((x - points[e * 2]) ** 2 + (y - points[e * 2 + 1]) ** 2 < dc) return e;
           }
           break;
         }
+      } while (e !== e0);
+      return c;
+    }
+    render(context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const {points, halfedges, triangles} = this;
+      for (let i = 0, n = halfedges.length; i < n; ++i) {
+        const j = halfedges[i];
+        if (j < i) continue;
+        const ti = triangles[i] * 2;
+        const tj = triangles[j] * 2;
+        context.moveTo(points[ti], points[ti + 1]);
+        context.lineTo(points[tj], points[tj + 1]);
+      }
+      this.renderHull(context);
+      return buffer && buffer.value();
+    }
+    renderPoints(context, r = 2) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const {points} = this;
+      for (let i = 0, n = points.length; i < n; i += 2) {
+        const x = points[i], y = points[i + 1];
+        context.moveTo(x + r, y);
+        context.arc(x, y, r, 0, tau$3);
+      }
+      return buffer && buffer.value();
+    }
+    renderHull(context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const {hull, points} = this;
+      const h = hull[0] * 2, n = hull.length;
+      context.moveTo(points[h], points[h + 1]);
+      for (let i = 1; i < n; ++i) {
+        const h = 2 * hull[i];
+        context.lineTo(points[h], points[h + 1]);
+      }
+      context.closePath();
+      return buffer && buffer.value();
+    }
+    hullPolygon() {
+      const polygon = new Polygon;
+      this.renderHull(polygon);
+      return polygon.value();
+    }
+    renderTriangle(i, context) {
+      const buffer = context == null ? context = new Path$1 : undefined;
+      const {points, triangles} = this;
+      const t0 = triangles[i *= 3] * 2;
+      const t1 = triangles[i + 1] * 2;
+      const t2 = triangles[i + 2] * 2;
+      context.moveTo(points[t0], points[t0 + 1]);
+      context.lineTo(points[t1], points[t1 + 1]);
+      context.lineTo(points[t2], points[t2 + 1]);
+      context.closePath();
+      return buffer && buffer.value();
+    }
+    *trianglePolygons() {
+      const {triangles} = this;
+      for (let i = 0, n = triangles.length / 3; i < n; ++i) {
+        yield this.trianglePolygon(i);
       }
     }
-
-    createCell(site);
-    var newArc = createBeach(site);
-    beaches.insert(lArc, newArc);
-
-    if (!lArc && !rArc) return;
-
-    if (lArc === rArc) {
-      detachCircle(lArc);
-      rArc = createBeach(lArc.site);
-      beaches.insert(newArc, rArc);
-      newArc.edge = rArc.edge = createEdge(lArc.site, newArc.site);
-      attachCircle(lArc);
-      attachCircle(rArc);
-      return;
+    trianglePolygon(i) {
+      const polygon = new Polygon;
+      this.renderTriangle(i, polygon);
+      return polygon.value();
     }
-
-    if (!rArc) { // && lArc
-      newArc.edge = createEdge(lArc.site, newArc.site);
-      return;
-    }
-
-    // else lArc !== rArc
-    detachCircle(lArc);
-    detachCircle(rArc);
-
-    var lSite = lArc.site,
-        ax = lSite[0],
-        ay = lSite[1],
-        bx = site[0] - ax,
-        by = site[1] - ay,
-        rSite = rArc.site,
-        cx = rSite[0] - ax,
-        cy = rSite[1] - ay,
-        d = 2 * (bx * cy - by * cx),
-        hb = bx * bx + by * by,
-        hc = cx * cx + cy * cy,
-        vertex = [(cy * hb - by * hc) / d + ax, (bx * hc - cx * hb) / d + ay];
-
-    setEdgeEnd(rArc.edge, lSite, rSite, vertex);
-    newArc.edge = createEdge(lSite, site, null, vertex);
-    rArc.edge = createEdge(site, rSite, null, vertex);
-    attachCircle(lArc);
-    attachCircle(rArc);
   }
 
-  function leftBreakPoint(arc, directrix) {
-    var site = arc.site,
-        rfocx = site[0],
-        rfocy = site[1],
-        pby2 = rfocy - directrix;
-
-    if (!pby2) return rfocx;
-
-    var lArc = arc.P;
-    if (!lArc) return -Infinity;
-
-    site = lArc.site;
-    var lfocx = site[0],
-        lfocy = site[1],
-        plby2 = lfocy - directrix;
-
-    if (!plby2) return lfocx;
-
-    var hl = lfocx - rfocx,
-        aby2 = 1 / pby2 - 1 / plby2,
-        b = hl / plby2;
-
-    if (aby2) return (-b + Math.sqrt(b * b - 2 * aby2 * (hl * hl / (-2 * plby2) - lfocy + plby2 / 2 + rfocy - pby2 / 2))) / aby2 + rfocx;
-
-    return (rfocx + lfocx) / 2;
-  }
-
-  function rightBreakPoint(arc, directrix) {
-    var rArc = arc.N;
-    if (rArc) return leftBreakPoint(rArc, directrix);
-    var site = arc.site;
-    return site[1] === directrix ? site[0] : Infinity;
-  }
-
-  var epsilon$4 = 1e-6;
-  var epsilon2$2 = 1e-12;
-  var beaches;
-  var cells;
-  var circles;
-  var edges;
-
-  function triangleArea(a, b, c) {
-    return (a[0] - c[0]) * (b[1] - a[1]) - (a[0] - b[0]) * (c[1] - a[1]);
-  }
-
-  function lexicographic(a, b) {
-    return b[1] - a[1]
-        || b[0] - a[0];
-  }
-
-  function Diagram(sites, extent) {
-    var site = sites.sort(lexicographic).pop(),
-        x,
-        y,
-        circle;
-
-    edges = [];
-    cells = new Array(sites.length);
-    beaches = new RedBlackTree;
-    circles = new RedBlackTree;
-
-    while (true) {
-      circle = firstCircle;
-      if (site && (!circle || site[1] < circle.y || (site[1] === circle.y && site[0] < circle.x))) {
-        if (site[0] !== x || site[1] !== y) {
-          addBeach(site);
-          x = site[0], y = site[1];
-        }
-        site = sites.pop();
-      } else if (circle) {
-        removeBeach(circle.arc);
-      } else {
-        break;
-      }
-    }
-
-    sortCellHalfedges();
-
-    if (extent) {
-      var x0 = +extent[0][0],
-          y0 = +extent[0][1],
-          x1 = +extent[1][0],
-          y1 = +extent[1][1];
-      clipEdges(x0, y0, x1, y1);
-      clipCells(x0, y0, x1, y1);
-    }
-
-    this.edges = edges;
-    this.cells = cells;
-
-    beaches =
-    circles =
-    edges =
-    cells = null;
-  }
-
-  Diagram.prototype = {
-    constructor: Diagram,
-
-    polygons: function() {
-      var edges = this.edges;
-
-      return this.cells.map(function(cell) {
-        var polygon = cell.halfedges.map(function(i) { return cellHalfedgeStart(cell, edges[i]); });
-        polygon.data = cell.site.data;
-        return polygon;
-      });
-    },
-
-    triangles: function() {
-      var triangles = [],
-          edges = this.edges;
-
-      this.cells.forEach(function(cell, i) {
-        if (!(m = (halfedges = cell.halfedges).length)) return;
-        var site = cell.site,
-            halfedges,
-            j = -1,
-            m,
-            s0,
-            e1 = edges[halfedges[m - 1]],
-            s1 = e1.left === site ? e1.right : e1.left;
-
-        while (++j < m) {
-          s0 = s1;
-          e1 = edges[halfedges[j]];
-          s1 = e1.left === site ? e1.right : e1.left;
-          if (s0 && s1 && i < s0.index && i < s1.index && triangleArea(site, s0, s1) < 0) {
-            triangles.push([site.data, s0.data, s1.data]);
-          }
-        }
-      });
-
-      return triangles;
-    },
-
-    links: function() {
-      return this.edges.filter(function(edge) {
-        return edge.right;
-      }).map(function(edge) {
-        return {
-          source: edge.left.data,
-          target: edge.right.data
-        };
-      });
-    },
-
-    find: function(x, y, radius) {
-      var that = this, i0, i1 = that._found || 0, n = that.cells.length, cell;
-
-      // Use the previously-found cell, or start with an arbitrary one.
-      while (!(cell = that.cells[i1])) if (++i1 >= n) return null;
-      var dx = x - cell.site[0], dy = y - cell.site[1], d2 = dx * dx + dy * dy;
-
-      // Traverse the half-edges to find a closer cell, if any.
-      do {
-        cell = that.cells[i0 = i1], i1 = null;
-        cell.halfedges.forEach(function(e) {
-          var edge = that.edges[e], v = edge.left;
-          if ((v === cell.site || !v) && !(v = edge.right)) return;
-          var vx = x - v[0], vy = y - v[1], v2 = vx * vx + vy * vy;
-          if (v2 < d2) d2 = v2, i1 = v.index;
-        });
-      } while (i1 !== null);
-
-      that._found = i0;
-
-      return radius == null || d2 <= radius * radius ? cell.site : null;
-    }
+  Delaunay.from = function(points, fx = pointX, fy = pointY, that) {
+    return new Delaunay("length" in points
+        ? flatArray(points, fx, fy, that)
+        : Float64Array.from(flatIterable(points, fx, fy, that)));
   };
 
-  function voronoi() {
-    var x = x$4,
-        y = y$4,
-        extent = null;
-
-    function voronoi(data) {
-      return new Diagram(data.map(function(d, i) {
-        var s = [Math.round(x(d, i, data) / epsilon$4) * epsilon$4, Math.round(y(d, i, data) / epsilon$4) * epsilon$4];
-        s.index = i;
-        s.data = d;
-        return s;
-      }), extent);
+  function flatArray(points, fx, fy, that) {
+    const n = points.length;
+    const array = new Float64Array(n * 2);
+    for (let i = 0; i < n; ++i) {
+      const p = points[i];
+      array[i * 2] = fx.call(that, p, i, points);
+      array[i * 2 + 1] = fy.call(that, p, i, points);
     }
-
-    voronoi.polygons = function(data) {
-      return voronoi(data).polygons();
-    };
-
-    voronoi.links = function(data) {
-      return voronoi(data).links();
-    };
-
-    voronoi.triangles = function(data) {
-      return voronoi(data).triangles();
-    };
-
-    voronoi.x = function(_) {
-      return arguments.length ? (x = typeof _ === "function" ? _ : constant$8(+_), voronoi) : x;
-    };
-
-    voronoi.y = function(_) {
-      return arguments.length ? (y = typeof _ === "function" ? _ : constant$8(+_), voronoi) : y;
-    };
-
-    voronoi.extent = function(_) {
-      return arguments.length ? (extent = _ == null ? null : [[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]], voronoi) : extent && [[extent[0][0], extent[0][1]], [extent[1][0], extent[1][1]]];
-    };
-
-    voronoi.size = function(_) {
-      return arguments.length ? (extent = _ == null ? null : [[0, 0], [+_[0], +_[1]]], voronoi) : extent && [extent[1][0] - extent[0][0], extent[1][1] - extent[0][1]];
-    };
-
-    return voronoi;
+    return array;
   }
 
-  function Voronoi(params) {
+  function* flatIterable(points, fx, fy, that) {
+    let i = 0;
+    for (const p of points) {
+      yield fx.call(that, p, i, points);
+      yield fy.call(that, p, i, points);
+      ++i;
+    }
+  }
+
+  function Voronoi$1(params) {
     Transform.call(this, null, params);
   }
 
-  Voronoi.Definition = {
+  Voronoi$1.Definition = {
     "type": "Voronoi",
     "metadata": {"modifies": true},
     "params": [
@@ -29371,37 +29527,44 @@
     ]
   };
 
-  var prototype$1i = inherits(Voronoi, Transform);
+  const prototype$1i = inherits(Voronoi$1, Transform);
 
-  var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
+  const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
   prototype$1i.transform = function(_, pulse) {
-    var as = _.as || 'path',
-        data = pulse.source,
-        diagram, polygons, i, n;
+    const as = _.as || 'path',
+        data = pulse.source;
+    let delaunay, extent, voronoi, polygon, i, n;
 
     // configure and construct voronoi diagram
-    diagram = voronoi().x(_.x).y(_.y);
-    if (_.size) diagram.size(_.size);
-    else diagram.extent(_.extent || defaultExtent);
-
-    this.value = (diagram = diagram(data));
+    delaunay = Delaunay.from(data, _.x, _.y);
+    extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], ..._.extent[1]] : defaultExtent;
+    this.value = (voronoi = delaunay.voronoi(extent));
 
     // map polygons to paths
-    polygons = diagram.polygons();
     for (i=0, n=data.length; i<n; ++i) {
-      data[i][as] = polygons[i]
-        ? 'M' + polygons[i].join('L') + 'Z'
-        : null;
+      polygon = voronoi.cellPolygon(i);
+      data[i][as] = polygon ? toPathString(polygon) : null;
     }
 
     return pulse.reflow(_.modified()).modifies(as);
   };
 
+  // suppress duplicated end point vertices
+  function toPathString(p) {
+    const x = p[0][0],
+          y = p[0][1];
+
+    let n = p.length - 1;
+    for (; p[n][0] === x && p[n][1] === y; --n);
+
+    return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+  }
 
 
-  var voronoi$1 = /*#__PURE__*/Object.freeze({
-    voronoi: Voronoi
+
+  var voronoi = /*#__PURE__*/Object.freeze({
+    voronoi: Voronoi$1
   });
 
   /*
@@ -30671,7 +30834,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.4.1";
+  var version = "5.5.0";
 
   var Default = 'default';
 
@@ -30721,14 +30884,16 @@
 
   function dataref(view, name) {
     var data = view._runtime.data;
-    if (!data.hasOwnProperty(name)) {
+    if (!hasOwnProperty(data, name)) {
       error('Unrecognized data set: ' + name);
     }
     return data[name];
   }
 
-  function data(name) {
-    return dataref(this, name).values.value;
+  function data(name, values) {
+    return arguments.length < 1
+      ? dataref(this, name).values.value
+      : change.call(this, name, changeset().remove(truthy).insert(values));
   }
 
   function change(name, changes) {
@@ -30866,10 +31031,10 @@
     };
   }
 
-  var VIEW = 'view',
-      TIMER = 'timer',
-      WINDOW = 'window',
-      NO_TRAP = {trap: false};
+  const VIEW = 'view',
+        TIMER = 'timer',
+        WINDOW = 'window',
+        NO_TRAP = {trap: false};
 
   /**
    * Initialize event handling configuration.
@@ -30877,31 +31042,41 @@
    * @return {object}
    */
   function initializeEventConfig(config) {
-    config = extend({}, config);
+    const events = extend({defaults: {}}, config);
 
-    var def = config.defaults;
-    if (def) {
-      if (isArray(def.prevent)) {
-        def.prevent = toSet(def.prevent);
-      }
-      if (isArray(def.allow)) {
-        def.allow = toSet(def.allow);
-      }
-    }
+    const unpack = (obj, keys) => {
+      keys.forEach(k => {
+        if (isArray(obj[k])) obj[k] = toSet(obj[k]);
+      });
+    };
 
-    return config;
+    unpack(events.defaults, ['prevent', 'allow']);
+    unpack(events, ['view', 'window', 'selector']);
+
+    return events;
   }
 
   function prevent(view, type) {
     var def = view._eventConfig.defaults,
-        prevent = def && def.prevent,
-        allow = def && def.allow;
+        prevent = def.prevent,
+        allow = def.allow;
 
     return prevent === false || allow === true ? false
       : prevent === true || allow === false ? true
       : prevent ? prevent[type]
       : allow ? !allow[type]
       : view.preventDefault();
+  }
+
+  function permit(view, key, type) {
+    const rule = view._eventConfig && view._eventConfig[key];
+
+    if (rule === false || (isObject(rule) && !rule[type])) {
+      view.warn(`Blocked ${key} ${type} event listener.`);
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -30925,19 +31100,27 @@
         sources;
 
     if (source === TIMER) {
-      view.timer(send, type);
+      if (permit(view, 'timer', type)) {
+        view.timer(send, type);
+      }
     }
 
     else if (source === VIEW) {
-      // send traps errors, so use {trap: false} option
-      view.addEventListener(type, send, NO_TRAP);
+      if (permit(view, 'view', type)) {
+        // send traps errors, so use {trap: false} option
+        view.addEventListener(type, send, NO_TRAP);
+      }
     }
 
     else {
       if (source === WINDOW) {
-        if (typeof window !== 'undefined') sources = [window];
+        if (permit(view, 'window', type) && typeof window !== 'undefined') {
+          sources = [window];
+        }
       } else if (typeof document !== 'undefined') {
-        sources = document.querySelectorAll(source);
+        if (permit(view, 'selector', type)) {
+          sources = document.querySelectorAll(source);
+        }
       }
 
       if (!sources) {
@@ -30964,8 +31147,7 @@
 
   function markTarget(event) {
     // grab upstream collector feeding the mark operator
-    var source = event.item.mark.source;
-    return source.source || source;
+    return event.item.mark.source;
   }
 
   function invoke(name) {
@@ -31236,8 +31418,8 @@
   function range$3(bind, el, param, value) {
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
-    var min = param.min || Math.min(0, +value) || 0,
-        max = param.max || Math.max(100, +value) || 100,
+    var max = param.max != null ? param.max : Math.max(100, +value) || 100,
+        min = param.min || Math.min(0, max, +value) || 0,
         step = param.step || tickStep(min, max, 100);
 
     var node = element$1('input', {
@@ -31310,6 +31492,7 @@
   function initialize$1(el, elBind) {
     var view = this,
         type = view._renderType,
+        config = view._eventConfig.bind,
         module = renderModule(type),
         Handler, Renderer;
 
@@ -31328,12 +31511,12 @@
     view._redraw = true;
 
     // initialize signal bindings
-    if (el) {
+    if (el && config !== 'none') {
       elBind = elBind ? (view._elBind = lookup$4(view, elBind))
         : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
 
       view._bind.forEach(function(_) {
-        if (_.param.element) {
+        if (_.param.element && config !== 'container') {
           _.element = lookup$4(view, _.param.element);
         }
       });
@@ -31579,8 +31762,9 @@
       DISABLED = 'Disabled.';
 
   // See also tools/generate-unicode-regex.py.
-    var RegexNonAsciiIdentifierStart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0800-\\u0815\\u081A\\u0824\\u0828\\u0840-\\u0858\\u08A0-\\u08B2\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971-\\u0980\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC-\\u0EDF\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1AA7\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BBA-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u1CF5\\u1CF6\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u209C\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CEE\\u2CF2\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005-\\u3007\\u3021-\\u3029\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA66E\\uA67F-\\uA69D\\uA6A0-\\uA6EF\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uA9CF\\uA9E0-\\uA9E4\\uA9E6-\\uA9EF\\uA9FA-\\uA9FE\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA76\\uAA7A\\uAA7E-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEA\\uAAF2-\\uAAF4\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABE2\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]"),
-        RegexNonAsciiIdentifierPart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0300-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u0483-\\u0487\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0610-\\u061A\\u0620-\\u0669\\u066E-\\u06D3\\u06D5-\\u06DC\\u06DF-\\u06E8\\u06EA-\\u06FC\\u06FF\\u0710-\\u074A\\u074D-\\u07B1\\u07C0-\\u07F5\\u07FA\\u0800-\\u082D\\u0840-\\u085B\\u08A0-\\u08B2\\u08E4-\\u0963\\u0966-\\u096F\\u0971-\\u0983\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BC-\\u09C4\\u09C7\\u09C8\\u09CB-\\u09CE\\u09D7\\u09DC\\u09DD\\u09DF-\\u09E3\\u09E6-\\u09F1\\u0A01-\\u0A03\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A3C\\u0A3E-\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A59-\\u0A5C\\u0A5E\\u0A66-\\u0A75\\u0A81-\\u0A83\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABC-\\u0AC5\\u0AC7-\\u0AC9\\u0ACB-\\u0ACD\\u0AD0\\u0AE0-\\u0AE3\\u0AE6-\\u0AEF\\u0B01-\\u0B03\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3C-\\u0B44\\u0B47\\u0B48\\u0B4B-\\u0B4D\\u0B56\\u0B57\\u0B5C\\u0B5D\\u0B5F-\\u0B63\\u0B66-\\u0B6F\\u0B71\\u0B82\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BBE-\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCD\\u0BD0\\u0BD7\\u0BE6-\\u0BEF\\u0C00-\\u0C03\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D-\\u0C44\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C58\\u0C59\\u0C60-\\u0C63\\u0C66-\\u0C6F\\u0C81-\\u0C83\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBC-\\u0CC4\\u0CC6-\\u0CC8\\u0CCA-\\u0CCD\\u0CD5\\u0CD6\\u0CDE\\u0CE0-\\u0CE3\\u0CE6-\\u0CEF\\u0CF1\\u0CF2\\u0D01-\\u0D03\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D-\\u0D44\\u0D46-\\u0D48\\u0D4A-\\u0D4E\\u0D57\\u0D60-\\u0D63\\u0D66-\\u0D6F\\u0D7A-\\u0D7F\\u0D82\\u0D83\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0DCA\\u0DCF-\\u0DD4\\u0DD6\\u0DD8-\\u0DDF\\u0DE6-\\u0DEF\\u0DF2\\u0DF3\\u0E01-\\u0E3A\\u0E40-\\u0E4E\\u0E50-\\u0E59\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB9\\u0EBB-\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EC8-\\u0ECD\\u0ED0-\\u0ED9\\u0EDC-\\u0EDF\\u0F00\\u0F18\\u0F19\\u0F20-\\u0F29\\u0F35\\u0F37\\u0F39\\u0F3E-\\u0F47\\u0F49-\\u0F6C\\u0F71-\\u0F84\\u0F86-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u1000-\\u1049\\u1050-\\u109D\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u135D-\\u135F\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1714\\u1720-\\u1734\\u1740-\\u1753\\u1760-\\u176C\\u176E-\\u1770\\u1772\\u1773\\u1780-\\u17D3\\u17D7\\u17DC\\u17DD\\u17E0-\\u17E9\\u180B-\\u180D\\u1810-\\u1819\\u1820-\\u1877\\u1880-\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1920-\\u192B\\u1930-\\u193B\\u1946-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19B0-\\u19C9\\u19D0-\\u19D9\\u1A00-\\u1A1B\\u1A20-\\u1A5E\\u1A60-\\u1A7C\\u1A7F-\\u1A89\\u1A90-\\u1A99\\u1AA7\\u1AB0-\\u1ABD\\u1B00-\\u1B4B\\u1B50-\\u1B59\\u1B6B-\\u1B73\\u1B80-\\u1BF3\\u1C00-\\u1C37\\u1C40-\\u1C49\\u1C4D-\\u1C7D\\u1CD0-\\u1CD2\\u1CD4-\\u1CF6\\u1CF8\\u1CF9\\u1D00-\\u1DF5\\u1DFC-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u200C\\u200D\\u203F\\u2040\\u2054\\u2071\\u207F\\u2090-\\u209C\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D7F-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2DE0-\\u2DFF\\u2E2F\\u3005-\\u3007\\u3021-\\u302F\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u3099\\u309A\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA62B\\uA640-\\uA66F\\uA674-\\uA67D\\uA67F-\\uA69D\\uA69F-\\uA6F1\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA827\\uA840-\\uA873\\uA880-\\uA8C4\\uA8D0-\\uA8D9\\uA8E0-\\uA8F7\\uA8FB\\uA900-\\uA92D\\uA930-\\uA953\\uA960-\\uA97C\\uA980-\\uA9C0\\uA9CF-\\uA9D9\\uA9E0-\\uA9FE\\uAA00-\\uAA36\\uAA40-\\uAA4D\\uAA50-\\uAA59\\uAA60-\\uAA76\\uAA7A-\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEF\\uAAF2-\\uAAF6\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABEA\\uABEC\\uABED\\uABF0-\\uABF9\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE00-\\uFE0F\\uFE20-\\uFE2D\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF10-\\uFF19\\uFF21-\\uFF3A\\uFF3F\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]");
+  var RegexNonAsciiIdentifierStart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0800-\\u0815\\u081A\\u0824\\u0828\\u0840-\\u0858\\u08A0-\\u08B2\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971-\\u0980\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC-\\u0EDF\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1AA7\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BBA-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u1CF5\\u1CF6\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u209C\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CEE\\u2CF2\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005-\\u3007\\u3021-\\u3029\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA66E\\uA67F-\\uA69D\\uA6A0-\\uA6EF\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uA9CF\\uA9E0-\\uA9E4\\uA9E6-\\uA9EF\\uA9FA-\\uA9FE\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA76\\uAA7A\\uAA7E-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEA\\uAAF2-\\uAAF4\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABE2\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]"),
+      // eslint-disable-next-line no-misleading-character-class
+      RegexNonAsciiIdentifierPart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0300-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u0483-\\u0487\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0610-\\u061A\\u0620-\\u0669\\u066E-\\u06D3\\u06D5-\\u06DC\\u06DF-\\u06E8\\u06EA-\\u06FC\\u06FF\\u0710-\\u074A\\u074D-\\u07B1\\u07C0-\\u07F5\\u07FA\\u0800-\\u082D\\u0840-\\u085B\\u08A0-\\u08B2\\u08E4-\\u0963\\u0966-\\u096F\\u0971-\\u0983\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BC-\\u09C4\\u09C7\\u09C8\\u09CB-\\u09CE\\u09D7\\u09DC\\u09DD\\u09DF-\\u09E3\\u09E6-\\u09F1\\u0A01-\\u0A03\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A3C\\u0A3E-\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A59-\\u0A5C\\u0A5E\\u0A66-\\u0A75\\u0A81-\\u0A83\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABC-\\u0AC5\\u0AC7-\\u0AC9\\u0ACB-\\u0ACD\\u0AD0\\u0AE0-\\u0AE3\\u0AE6-\\u0AEF\\u0B01-\\u0B03\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3C-\\u0B44\\u0B47\\u0B48\\u0B4B-\\u0B4D\\u0B56\\u0B57\\u0B5C\\u0B5D\\u0B5F-\\u0B63\\u0B66-\\u0B6F\\u0B71\\u0B82\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BBE-\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCD\\u0BD0\\u0BD7\\u0BE6-\\u0BEF\\u0C00-\\u0C03\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D-\\u0C44\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C58\\u0C59\\u0C60-\\u0C63\\u0C66-\\u0C6F\\u0C81-\\u0C83\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBC-\\u0CC4\\u0CC6-\\u0CC8\\u0CCA-\\u0CCD\\u0CD5\\u0CD6\\u0CDE\\u0CE0-\\u0CE3\\u0CE6-\\u0CEF\\u0CF1\\u0CF2\\u0D01-\\u0D03\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D-\\u0D44\\u0D46-\\u0D48\\u0D4A-\\u0D4E\\u0D57\\u0D60-\\u0D63\\u0D66-\\u0D6F\\u0D7A-\\u0D7F\\u0D82\\u0D83\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0DCA\\u0DCF-\\u0DD4\\u0DD6\\u0DD8-\\u0DDF\\u0DE6-\\u0DEF\\u0DF2\\u0DF3\\u0E01-\\u0E3A\\u0E40-\\u0E4E\\u0E50-\\u0E59\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB9\\u0EBB-\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EC8-\\u0ECD\\u0ED0-\\u0ED9\\u0EDC-\\u0EDF\\u0F00\\u0F18\\u0F19\\u0F20-\\u0F29\\u0F35\\u0F37\\u0F39\\u0F3E-\\u0F47\\u0F49-\\u0F6C\\u0F71-\\u0F84\\u0F86-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u1000-\\u1049\\u1050-\\u109D\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u135D-\\u135F\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1714\\u1720-\\u1734\\u1740-\\u1753\\u1760-\\u176C\\u176E-\\u1770\\u1772\\u1773\\u1780-\\u17D3\\u17D7\\u17DC\\u17DD\\u17E0-\\u17E9\\u180B-\\u180D\\u1810-\\u1819\\u1820-\\u1877\\u1880-\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1920-\\u192B\\u1930-\\u193B\\u1946-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19B0-\\u19C9\\u19D0-\\u19D9\\u1A00-\\u1A1B\\u1A20-\\u1A5E\\u1A60-\\u1A7C\\u1A7F-\\u1A89\\u1A90-\\u1A99\\u1AA7\\u1AB0-\\u1ABD\\u1B00-\\u1B4B\\u1B50-\\u1B59\\u1B6B-\\u1B73\\u1B80-\\u1BF3\\u1C00-\\u1C37\\u1C40-\\u1C49\\u1C4D-\\u1C7D\\u1CD0-\\u1CD2\\u1CD4-\\u1CF6\\u1CF8\\u1CF9\\u1D00-\\u1DF5\\u1DFC-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u200C\\u200D\\u203F\\u2040\\u2054\\u2071\\u207F\\u2090-\\u209C\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D7F-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2DE0-\\u2DFF\\u2E2F\\u3005-\\u3007\\u3021-\\u302F\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u3099\\u309A\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA62B\\uA640-\\uA66F\\uA674-\\uA67D\\uA67F-\\uA69D\\uA69F-\\uA6F1\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA827\\uA840-\\uA873\\uA880-\\uA8C4\\uA8D0-\\uA8D9\\uA8E0-\\uA8F7\\uA8FB\\uA900-\\uA92D\\uA930-\\uA953\\uA960-\\uA97C\\uA980-\\uA9C0\\uA9CF-\\uA9D9\\uA9E0-\\uA9FE\\uAA00-\\uAA36\\uAA40-\\uAA4D\\uAA50-\\uAA59\\uAA60-\\uAA76\\uAA7A-\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEF\\uAAF2-\\uAAF6\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABEA\\uABEC\\uABED\\uABF0-\\uABF9\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE00-\\uFE0F\\uFE20-\\uFE2D\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF10-\\uFF19\\uFF21-\\uFF3A\\uFF3F\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]");
 
   // Ensure the condition is true, otherwise throw an error.
   // This is only to have a better contract semantic, i.e. another safety net
@@ -31791,7 +31975,7 @@
     // Thus, it must be an identifier.
     if (id.length === 1) {
       type = TokenIdentifier;
-    } else if (keywords.hasOwnProperty(id)) {
+    } else if (keywords.hasOwnProperty(id)) { // eslint-disable-line no-prototype-builtins
       type = TokenKeyword;
     } else if (id === 'null') {
       type = TokenNullLiteral;
@@ -33154,11 +33338,11 @@
         var id = n.name;
         if (memberDepth > 0) {
           return id;
-        } else if (blacklist.hasOwnProperty(id)) {
+        } else if (hasOwnProperty(blacklist, id)) {
           return error('Illegal identifier: ' + id);
-        } else if (constants$1.hasOwnProperty(id)) {
+        } else if (hasOwnProperty(constants$1, id)) {
           return constants$1[id];
-        } else if (whitelist.hasOwnProperty(id)) {
+        } else if (hasOwnProperty(whitelist, id)) {
           return id;
         } else {
           globals[id] = 1;
@@ -33185,7 +33369,7 @@
           }
           var callee = n.callee.name;
           var args = n.arguments;
-          var fn = functions$1.hasOwnProperty(callee) && functions$1[callee];
+          var fn = hasOwnProperty(functions$1, callee) && functions$1[callee];
           if (!fn) error('Unrecognized function: ' + callee);
           return isFunction(fn)
             ? fn(args)
@@ -33451,11 +33635,13 @@
           indexName = IndexPrefix + field,
           dataName = DataPrefix + data;
 
-    if (op === Intersect && !params.hasOwnProperty(indexName)) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (op === Intersect && !hasOwnProperty(params, indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
 
-    if (!params.hasOwnProperty(dataName)) {
+    // eslint-disable-next-line no-prototype-builtins
+    if (!hasOwnProperty(params, dataName)) {
       params[dataName] = scope.getData(data).tuplesRef();
     }
   }
@@ -33523,6 +33709,7 @@
   var dateObj = new Date(2000, 0, 1);
 
   function time$2(month, day, specifier) {
+    if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
     dateObj.setMonth(month);
     dateObj.setDate(day);
     return timeFormat$1(dateObj, specifier);
@@ -33667,7 +33854,10 @@
 
   function equal(a, b) {
     return a === b || a !== a && b !== b ? true
-      : isArray(a) && isArray(b) && a.length === b.length ? equalArray(a, b)
+      : isArray(a) ? (
+          isArray(b) && a.length === b.length ? equalArray(a, b) : false
+        )
+      : isObject(a) && isObject(b) ? equalObject(a, b)
       : false;
   }
 
@@ -33678,13 +33868,15 @@
     return true;
   }
 
+  function equalObject(a, b) {
+    for (let key in a) {
+      if (!equal(a[key], b[key])) return false;
+    }
+    return true;
+  }
+
   function removePredicate(props) {
-    return function(_) {
-      for (let key in props) {
-        if (!equal(_[key], props[key])) return false;
-      }
-      return true;
-    };
+    return _ => equalObject(props, _);
   }
 
   function modify(name, insert, remove, toggle, modify, values) {
@@ -33854,8 +34046,12 @@
     const data = args[0].value,
           dataName = DataPrefix$1 + data;
 
-    if (!params.hasOwnProperty(dataName)) {
-      params[dataName] = scope.getData(data).tuplesRef();
+    if (!hasOwnProperty(dataName, params)) {
+      try {
+        params[dataName] = scope.getData(data).tuplesRef();
+      } catch (err) {
+        // if data set does not exist, there's nothing to track
+      }
     }
   }
 
@@ -33867,7 +34063,7 @@
           field = args[1].value,
           indexName = IndexPrefix$1 + field;
 
-    if (!params.hasOwnProperty(indexName)) {
+    if (!hasOwnProperty(indexName, params)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
   }
@@ -33887,7 +34083,7 @@
 
   function addScaleDependency(scope, params, name) {
     const scaleName = ScalePrefix + name;
-    if (!params.hasOwnProperty(scaleName)) {
+    if (!hasOwnProperty(params, scaleName)) {
       try {
         params[scaleName] = scope.scaleRef(name);
       } catch (err) {
@@ -34101,7 +34297,7 @@
 
     for (var i=0, n=PARSERS.length, p; i<n; ++i) {
       p = PARSERS[i];
-      if (spec.hasOwnProperty(p.key)) {
+      if (hasOwnProperty(spec, p.key)) {
         return p.parse(spec, ctx, params);
       }
     }
@@ -34546,7 +34742,7 @@
 
   function scale$3(name) {
     var scales = this._runtime.scales;
-    if (!scales.hasOwnProperty(name)) {
+    if (!hasOwnProperty(scales, name)) {
       error('Unrecognized scale or projection: ' + name);
     }
     return scales[name].value;
@@ -34772,6 +34968,9 @@
     view._eventListeners = [];
     view._resizeListeners = [];
 
+    // initialize event configuration
+    view._eventConfig = initializeEventConfig(spec.eventConfig);
+
     // initialize dataflow graph
     var ctx = runtime(view, spec, options.functions);
     view._runtime = ctx;
@@ -34793,9 +34992,6 @@
 
     // initialize background color
     view._background = options.background || ctx.background || null;
-
-    // initialize event configuration
-    view._eventConfig = initializeEventConfig(ctx.eventConfig);
 
     // initialize view size
     view._width = view.width();
@@ -34867,7 +35063,7 @@
   };
 
   function lookupSignal(view, name) {
-    return view._signals.hasOwnProperty(name)
+    return hasOwnProperty(view._signals, name)
       ? view._signals[name]
       : error('Unrecognized signal name: ' + $(name));
   }
@@ -35152,7 +35348,7 @@
     // collect signal dependencies
     gen.globals.forEach(function(name) {
       var signalName = SignalPrefix + name;
-      if (!params.hasOwnProperty(signalName) && scope.getSignal(name)) {
+      if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
         params[signalName] = scope.signalRef(name);
       }
     });
@@ -35390,7 +35586,7 @@
       };
 
   function isMarkType(type) {
-    return MARKS.hasOwnProperty(type);
+    return MARKS[type];
   }
 
   function find$2(s, i, endChar, pushChar, popChar) {
@@ -35695,6 +35891,8 @@
 
   var FIELD_REF_ID = 0;
 
+  var MULTIDOMAIN_SORT_OPS  = {min: 'min', max: 'max', count: 'sum'};
+
   function initScale(spec, scope) {
     var type = spec.type || 'linear';
 
@@ -35731,7 +35929,7 @@
     }
 
     for (key in spec) {
-      if (params.hasOwnProperty(key) || key === 'name') continue;
+      if (hasOwnProperty(params, key) || key === 'name') continue;
       params[key] = parseLiteral(spec[key], scope);
     }
   }
@@ -35814,21 +36012,26 @@
   }
 
   function ordinalMultipleDomain(domain, scope, fields) {
-    var counts, a, c, v;
+    var sort = parseSort(domain.sort, true),
+        counts, p, a, c, v;
 
     // get value counts for each domain field
     counts = fields.map(function(f) {
       var data = scope.getData(f.data);
       if (!data) dataLookupError(f.data);
-      return data.countsRef(scope, f.field);
+      return data.countsRef(scope, f.field, sort);
     });
 
-    // sum counts from all fields
-    a = scope.add(Aggregate$1({
-      groupby: keyFieldRef,
-      ops:['sum'], fields: [scope.fieldRef('count')], as:['count'],
-      pulse: counts
-    }));
+    // aggregate the results from each domain field
+    p = {groupby: keyFieldRef, pulse: counts};
+    if (sort) {
+      a = sort.op || 'count';
+      v = sort.field ? aggrField(a, sort.field) : 'count';
+      p.ops = [MULTIDOMAIN_SORT_OPS[a]];
+      p.fields = [scope.fieldRef(v)];
+      p.as = [v];
+    }
+    a = scope.add(Aggregate$1(p));
 
     // collect aggregate output
     c = scope.add(Collect$1({pulse: ref(a)}));
@@ -35836,7 +36039,7 @@
     // extract values for combined domain
     v = scope.add(Values$1({
       field: keyFieldRef,
-      sort:  scope.sortRef(parseSort(domain.sort, true)),
+      sort:  scope.sortRef(sort),
       pulse: ref(c)
     }));
 
@@ -35851,9 +36054,9 @@
       } else if (!sort.field && sort.op !== 'count') {
         error('No field provided for sort aggregate op: ' + sort.op);
       } else if (multidomain && sort.field) {
-        error('Multiple domain scales can not sort by field.');
-      } else if (multidomain && sort.op && sort.op !== 'count') {
-        error('Multiple domain scales support op count only.');
+        if (sort.op && !MULTIDOMAIN_SORT_OPS[sort.op]) {
+          error('Multiple domain scales can not be sorted using ' + sort.op);
+        }
       }
     }
     return sort;
@@ -35920,7 +36123,7 @@
     if (range.signal) {
       return scope.signalRef(range.signal);
     } else if (isString(range)) {
-      if (config && config.hasOwnProperty(range)) {
+      if (config && hasOwnProperty(config, range)) {
         spec = extend({}, spec, {range: config[range]});
         return parseScaleRange(spec, scope, params);
       } else if (range === 'width') {
@@ -36173,7 +36376,7 @@
     if (isString(name)) {
       // direct scale lookup; add scale as parameter
       scaleName = ScalePrefix + name;
-      if (!params.hasOwnProperty(scaleName)) {
+      if (!hasOwnProperty(params, scaleName)) {
         params[scaleName] = scope.scaleRef(name);
       }
       scaleName = $(scaleName);
@@ -36342,7 +36545,7 @@
 
   function extendEncode(encode, extra, skip) {
     for (var name in extra) {
-      if (skip && skip.hasOwnProperty(name)) continue;
+      if (skip && hasOwnProperty(skip, name)) continue;
       encode[name] = extend(encode[name] || {}, extra[name]);
     }
     return encode;
@@ -36363,7 +36566,7 @@
   }
 
   function applyDefaults(encode, type, role, style, config) {
-    var enter = {}, key, skip, props;
+    var defaults = {}, enter = {}, update, key, skip, props;
 
     // ignore legend and axis
     if (role == 'legend' || String(role).indexOf('axis') === 0) {
@@ -36381,7 +36584,7 @@
         || (key === 'fill' || key === 'stroke')
         && (has('fill', encode) || has('stroke', encode));
 
-      if (!skip) enter[key] = defaultEncode(props[key]);
+      if (!skip) applyDefault(defaults, key, props[key]);
     }
 
     // resolve styles, apply with increasing precedence
@@ -36389,19 +36592,29 @@
       var props = config.style && config.style[name];
       for (var key in props) {
         if (!has(key, encode)) {
-          enter[key] = defaultEncode(props[key]);
+          applyDefault(defaults, key, props[key]);
         }
       }
     });
 
     encode = extend({}, encode); // defensive copy
+    for (key in defaults) {
+      props = defaults[key];
+      if (props.signal) {
+        (update = update || {})[key] = props;
+      } else {
+        enter[key] = props;
+      }
+    }
+
     encode.enter = extend(enter, encode.enter);
+    if (update) encode.update = extend(update, encode.update);
 
     return encode;
   }
 
-  function defaultEncode(value) {
-    return value && value.signal
+  function applyDefault(defaults, key, value) {
+    defaults[key] = value && value.signal
       ? {signal: value.signal}
       : {value: value};
   }
@@ -36956,7 +37169,7 @@
     if (isSignal(value)) {
       return isExpr$1(type) ? error('Expression references can not be signals.')
            : isField(type) ? scope.fieldRef(value)
-           : isCompare(type) ? scope.compareRef(value)
+           : isCompare(type) ? scope.compareRef(value, true)
            : scope.signalRef(value.signal);
     } else {
       var expr = def.expr || isField(type);
@@ -36965,7 +37178,7 @@
            : isExpr$1(type) ? parseExpression$1(value, scope)
            : isData(type) ? ref(scope.getData(value).values)
            : isField(type) ? fieldRef(value)
-           : isCompare(type) ? scope.compareRef(value)
+           : isCompare(type) ? scope.compareRef(value, true)
            : value;
     }
   }
@@ -38226,7 +38439,7 @@
       parseScale(_, scope);
     });
 
-    signals.forEach(function(_) {
+    (preprocessed || signals).forEach(function(_) {
       parseSignalUpdates(_, scope);
     });
 
@@ -38254,7 +38467,7 @@
 
   function parseView(spec, scope) {
     var config = scope.config,
-        op, input, encode, parent, root;
+        op, input, encode, parent, root, signals;
 
     scope.background = spec.background || config.background;
     scope.eventConfig = config.events;
@@ -38265,9 +38478,7 @@
     scope.addSignal('autosize', parseAutosize(spec.autosize, config));
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
-    array(spec.signals).forEach(function(_) {
-      if (!defined[_.name]) parseSignal(_, scope);
-    });
+    signals = addSignals(scope, spec.signals, config.signals);
 
     // Store root group item
     input = scope.add(Collect$1());
@@ -38294,7 +38505,7 @@
 
     // Parse remainder of specification
     scope.pushState(ref(encode), ref(parent), null);
-    parseSpec(spec, scope, true);
+    parseSpec(spec, scope, signals);
     scope.operators.push(parent);
 
     // Bound / render / sieve root item
@@ -38306,6 +38517,25 @@
     scope.addData('root', new DataScope(scope, input, input, op));
 
     return scope;
+  }
+
+  function addSignals(scope, spec, config) {
+    const names = {}, out = [];
+
+    function add(_) {
+      const name = _.name;
+      if (!names[name]) {
+        names[name] = 1;
+        if (!defined[name]) parseSignal(_, scope);
+        out.push(_);
+      }
+    }
+
+    // signals defined in the spec take priority
+    // add config signals if not already defined
+    array(spec).forEach(add);
+    array(config).forEach(add);
+    return out;
   }
 
   function Scope$1(config) {
@@ -38587,7 +38817,7 @@
   // ----
 
   prototype$1o.addSignal = function(name, value) {
-    if (this.signals.hasOwnProperty(name)) {
+    if (hasOwnProperty(this.signals, name)) {
       error('Duplicate signal name: ' + $(name));
     }
     var op = value instanceof Entry ? value : this.add(operator(value));
@@ -38604,7 +38834,7 @@
   prototype$1o.signalRef = function(s) {
     if (this.signals[s]) {
       return ref(this.signals[s]);
-    } else if (!this.lambdas.hasOwnProperty(s)) {
+    } else if (!hasOwnProperty(this.lambdas, s)) {
       this.lambdas[s] = this.add(operator(null));
     }
     return ref(this.lambdas[s]);
@@ -38682,7 +38912,7 @@
   // ----
 
   prototype$1o.addScaleProj = function(name, transform) {
-    if (this.scales.hasOwnProperty(name)) {
+    if (hasOwnProperty(this.scales, name)) {
       error('Duplicate scale or projection name: ' + $(name));
     }
     this.scales[name] = this.add(transform);
@@ -38716,7 +38946,7 @@
   // ----
 
   prototype$1o.addData = function(name, dataScope) {
-    if (this.data.hasOwnProperty(name)) {
+    if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return (this.data[name] = dataScope);
@@ -38730,7 +38960,7 @@
   };
 
   prototype$1o.addDataPipeline = function(name, entries) {
-    if (this.data.hasOwnProperty(name)) {
+    if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return this.addData(name, DataScope.fromEntries(this, entries));
@@ -38739,9 +38969,13 @@
   function defaults(configs) {
     return (configs || []).reduce((out, config) => {
       for (var key in config) {
-        var r = key === 'legend' ? {'layout': 1}
-          : key === 'style' ? true : null;
-        copy$3(out, key, config[key], r);
+        if (key === 'signals') {
+          out.signals = mergeNamed(out.signals, config.signals);
+        } else {
+          var r = key === 'legend' ? {'layout': 1}
+            : key === 'style' ? true : null;
+          copy$3(out, key, config[key], r);
+        }
       }
       return out;
     }, defaults$1());
@@ -38761,6 +38995,23 @@
     } else {
       output[key] = value;
     }
+  }
+
+  function mergeNamed(a, b) {
+    if (a == null) return b;
+
+    const map = {}, out = [];
+
+    function add(_) {
+      if (!map[_.name]) {
+        map[_.name] = 1;
+        out.push(_);
+      }
+    }
+
+    b.forEach(add);
+    a.forEach(add);
+    return out;
   }
 
   var defaultFont = 'sans-serif',
@@ -38979,7 +39230,7 @@
   }
 
   // -- Transforms -----
-  extend(transforms, tx, vtx, encode, geo, force, tree$1, reg, voronoi$1, wordcloud, xf);
+  extend(transforms, tx, vtx, encode, geo, force, tree$1, reg, voronoi, wordcloud, xf);
 
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;
@@ -39046,6 +39297,7 @@
   exports.format = format;
   exports.formatLocale = defaultLocale$1;
   exports.formats = formats;
+  exports.hasOwnProperty = hasOwnProperty;
   exports.id = id;
   exports.identity = identity;
   exports.inferType = inferType;
