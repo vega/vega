@@ -3392,6 +3392,29 @@
                                 }
                               },
                               "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "field": {
+                                  "$ref": "#/refs/stringOrSignal"
+                                },
+                                "op": {
+                                  "enum": [
+                                    "count",
+                                    "min",
+                                    "max"
+                                  ]
+                                },
+                                "order": {
+                                  "$ref": "#/refs/sortOrder"
+                                }
+                              },
+                              "required": [
+                                "field",
+                                "op"
+                              ],
+                              "additionalProperties": false
                             }
                           ]
                         }
@@ -3465,6 +3488,29 @@
                                   "$ref": "#/refs/sortOrder"
                                 }
                               },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "field": {
+                                  "$ref": "#/refs/stringOrSignal"
+                                },
+                                "op": {
+                                  "enum": [
+                                    "count",
+                                    "min",
+                                    "max"
+                                  ]
+                                },
+                                "order": {
+                                  "$ref": "#/refs/sortOrder"
+                                }
+                              },
+                              "required": [
+                                "field",
+                                "op"
+                              ],
                               "additionalProperties": false
                             }
                           ]
@@ -9837,6 +9883,20 @@
           "maxItems": 2,
           "minItems": 2
         },
+        "resolve": {
+          "anyOf": [
+            {
+              "enum": [
+                "shared",
+                "independent"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "independent"
+        },
         "steps": {
           "anyOf": [
             {
@@ -14155,6 +14215,29 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "$ref": "#/refs/stringOrSignal"
+                    },
+                    "op": {
+                      "enum": [
+                        "count",
+                        "min",
+                        "max"
+                      ]
+                    },
+                    "order": {
+                      "$ref": "#/refs/sortOrder"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "op"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -14228,6 +14311,29 @@
                       "$ref": "#/refs/sortOrder"
                     }
                   },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "$ref": "#/refs/stringOrSignal"
+                    },
+                    "op": {
+                      "enum": [
+                        "count",
+                        "min",
+                        "max"
+                      ]
+                    },
+                    "order": {
+                      "$ref": "#/refs/sortOrder"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "op"
+                  ],
                   "additionalProperties": false
                 }
               ]
