@@ -25,6 +25,7 @@ export default function parseView(spec, scope) {
   scope.addSignal('autosize', parseAutosize(spec.autosize, config));
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
+  // parse signal definitions, including config entries
   signals = addSignals(scope, spec.signals, config.signals);
 
   // Store root group item
@@ -66,21 +67,22 @@ export default function parseView(spec, scope) {
   return scope;
 }
 
-function addSignals(scope, spec, config) {
-  const names = {}, out = [];
+function addSignals(scope, signals, config) {
+  // signals defined in the spec take priority
+  array(signals).forEach(_ => {
+    if (!defined[_.name]) parseSignal(_, scope)
+  });
 
-  function add(_) {
-    const name = _.name;
-    if (!names[name]) {
-      names[name] = 1;
-      if (!defined[name]) parseSignal(_, scope);
+  if (!config) return signals;
+  const out = signals.slice();
+
+  // add config signals if not already defined
+  array(config).forEach(_ => {
+    if (!scope.hasOwnSignal(_.name)) {
+      parseSignal(_, scope);
       out.push(_);
     }
-  }
+  });
 
-  // signals defined in the spec take priority
-  // add config signals if not already defined
-  array(spec).forEach(add);
-  array(config).forEach(add);
   return out;
 }
