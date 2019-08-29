@@ -26,17 +26,22 @@ const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
 prototype.transform = function(_, pulse) {
   const as = _.as || 'path',
-      data = pulse.source;
-  let delaunay, extent, voronoi, polygon, i, n;
+        data = pulse.source;
+
+  // nothing to do if no data
+  if (!data || !data.length) return pulse;
 
   // configure and construct voronoi diagram
-  delaunay = Delaunay.from(data, _.x, _.y);
-  extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], ..._.extent[1]] : defaultExtent;
-  this.value = (voronoi = delaunay.voronoi(extent))
+  let s = _.size;
+  s = s ? [0, 0, s[0], s[1]]
+    : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]]
+    : defaultExtent;
+
+  const voronoi = this.value = Delaunay.from(data, _.x, _.y).voronoi(s);
 
   // map polygons to paths
-  for (i=0, n=data.length; i<n; ++i) {
-    polygon = voronoi.cellPolygon(i);
+  for (let i=0, n=data.length; i<n; ++i) {
+    const polygon = voronoi.cellPolygon(i);
     data[i][as] = polygon ? toPathString(polygon) : null;
   }
 
