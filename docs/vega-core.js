@@ -16999,17 +16999,22 @@
 
   prototype$1i.transform = function(_, pulse) {
     const as = _.as || 'path',
-        data = pulse.source;
-    let delaunay, extent, voronoi, polygon, i, n;
+          data = pulse.source;
+
+    // nothing to do if no data
+    if (!data || !data.length) return pulse;
 
     // configure and construct voronoi diagram
-    delaunay = d3Delaunay.Delaunay.from(data, _.x, _.y);
-    extent = _.size ? [0, 0 , ..._.size] : _.extent ? [..._.extent[0], ..._.extent[1]] : defaultExtent;
-    this.value = (voronoi = delaunay.voronoi(extent));
+    let s = _.size;
+    s = s ? [0, 0, s[0], s[1]]
+      : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]]
+      : defaultExtent;
+
+    const voronoi = this.value = d3Delaunay.Delaunay.from(data, _.x, _.y).voronoi(s);
 
     // map polygons to paths
-    for (i=0, n=data.length; i<n; ++i) {
-      polygon = voronoi.cellPolygon(i);
+    for (let i=0, n=data.length; i<n; ++i) {
+      const polygon = voronoi.cellPolygon(i);
       data[i][as] = polygon ? toPathString(polygon) : null;
     }
 
@@ -18300,7 +18305,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.1";
+  var version = "5.5.2";
 
   var Default = 'default';
 
@@ -25885,47 +25890,39 @@
     var signals = array(spec.signals),
         scales = array(spec.scales);
 
-    if (!preprocessed) signals.forEach(function(_) {
-      parseSignal(_, scope);
-    });
+    // parse signal definitions, if not already preprocessed
+    if (!preprocessed) signals.forEach(_ => parseSignal(_, scope));
 
-    array(spec.projections).forEach(function(_) {
-      parseProjection(_, scope);
-    });
+    // parse cartographic projection definitions
+    array(spec.projections).forEach(_ => parseProjection(_, scope));
 
-    scales.forEach(function(_) {
-      initScale(_, scope);
-    });
+    // initialize scale references
+    scales.forEach(_ => initScale(_, scope));
 
-    array(spec.data).forEach(function(_) {
-      parseData$1(_, scope);
-    });
+    // parse data sources
+    array(spec.data).forEach(_ => parseData$1(_, scope));
 
-    scales.forEach(function(_) {
-      parseScale(_, scope);
-    });
+    // parse scale definitions
+    scales.forEach(_ => parseScale(_, scope));
 
-    (preprocessed || signals).forEach(function(_) {
-      parseSignalUpdates(_, scope);
-    });
+    // parse signal updates
+    (preprocessed || signals).forEach(_ => parseSignalUpdates(_, scope));
 
-    array(spec.axes).forEach(function(_) {
-      parseAxis(_, scope);
-    });
+    // parse axis definitions
+    array(spec.axes).forEach(_ => parseAxis(_, scope));
 
-    array(spec.marks).forEach(function(_) {
-      parseMark(_, scope);
-    });
+    // parse mark definitions
+    array(spec.marks).forEach(_ => parseMark(_, scope));
 
-    array(spec.legends).forEach(function(_) {
-      parseLegend(_, scope);
-    });
+    // parse legend definitions
+    array(spec.legends).forEach(_ => parseLegend(_, scope));
 
-    if (spec.title) {
-      parseTitle(spec.title, scope);
-    }
+    // parse title, if defined
+    if (spec.title) parseTitle(spec.title, scope);
 
+    // parse collected lambda (anonymous) expressions
     scope.parseLambdas();
+
     return scope;
   }
 
@@ -25944,6 +25941,7 @@
     scope.addSignal('autosize', parseAutosize(spec.autosize, config));
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
+    // parse signal definitions, including config entries
     signals = addSignals(scope, spec.signals, config.signals);
 
     // Store root group item
@@ -25985,22 +25983,23 @@
     return scope;
   }
 
-  function addSignals(scope, spec, config) {
-    const names = {}, out = [];
+  function addSignals(scope, signals, config) {
+    // signals defined in the spec take priority
+    array(signals).forEach(_ => {
+      if (!defined[_.name]) parseSignal(_, scope);
+    });
 
-    function add(_) {
-      const name = _.name;
-      if (!names[name]) {
-        names[name] = 1;
-        if (!defined[name]) parseSignal(_, scope);
+    if (!config) return signals;
+    const out = signals.slice();
+
+    // add config signals if not already defined
+    array(config).forEach(_ => {
+      if (!scope.hasOwnSignal(_.name)) {
+        parseSignal(_, scope);
         out.push(_);
       }
-    }
+    });
 
-    // signals defined in the spec take priority
-    // add config signals if not already defined
-    array(spec).forEach(add);
-    array(config).forEach(add);
     return out;
   }
 
@@ -26282,8 +26281,12 @@
 
   // ----
 
+  prototype$1o.hasOwnSignal = function(name) {
+    return hasOwnProperty(this.signals, name);
+  };
+
   prototype$1o.addSignal = function(name, value) {
-    if (hasOwnProperty(this.signals, name)) {
+    if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + $(name));
     }
     var op = value instanceof Entry ? value : this.add(operator(value));
