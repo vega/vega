@@ -290,8 +290,12 @@ prototype.event = function(source, type) {
 
 // ----
 
+prototype.hasOwnSignal = function(name) {
+  return hasOwnProperty(this.signals, name);
+};
+
 prototype.addSignal = function(name, value) {
-  if (hasOwnProperty(this.signals, name)) {
+  if (this.hasOwnSignal(name)) {
     error('Duplicate signal name: ' + stringValue(name));
   }
   var op = value instanceof Entry ? value : this.add(operator(value));
