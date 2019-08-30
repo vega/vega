@@ -1,4 +1,4 @@
-import {Transform} from 'vega-dataflow';
+import {stableCompare, Transform} from 'vega-dataflow';
 import {error, inherits, one} from 'vega-util';
 
 /**
@@ -24,7 +24,7 @@ prototype.transform = function(_, pulse) {
       as = _.as || fields;
 
   if (_.field) root.sum(_.field); else root.count();
-  if (_.sort) root.sort(_.sort);
+  if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
 
   setParams(layout, this.params, _);
   if (layout.separation) {
