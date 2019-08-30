@@ -91,6 +91,8 @@ function getField(_, ctx) {
  * Resolve a comparator function reference.
  */
 function getCompare(_, ctx) {
+  // As of Vega 5.5.3, $tupleid sort is no longer used.
+  // Keep here for now for backwards compatibility.
   var k = 'c:' + _.$compare + '_' + _.$order,
       c = array(_.$compare).map(function(_) {
         return (_ && _.$tupleid) ? tupleid : _;
