@@ -865,6 +865,19 @@
     return setid(d, tupleid(t));
   }
 
+  /**
+   * Generate an augmented comparator function that provides stable
+   * sorting by tuple id when the given comparator produces ties.
+   * @param {function} cmp - The comparator to augment.
+   * @param {function} [f] - Optional tuple accessor function.
+   * @return {function} An augmented comparator function.
+   */
+  function stableCompare(cmp, f) {
+    return !cmp ? null
+      : f ? (a, b) => cmp(a, b) || (tupleid(f(a)) - tupleid(f(b)))
+      : (a, b) => cmp(a, b) || (tupleid(a) - tupleid(b));
+  }
+
   function isChangeSet(v) {
     return v && v.constructor === changeset;
   }
@@ -6716,7 +6729,7 @@
     out.visit(out.REM, list.remove);
 
     this.modified(mod);
-    this.value = out.source = list.data(sort, mod);
+    this.value = out.source = list.data(stableCompare(sort), mod);
 
     // propagate tree root if defined
     if (pulse.source && pulse.source.root) {
@@ -8694,7 +8707,7 @@
 
     if (run) {
       this.value = (_.sort
-        ? pulse.source.slice().sort(_.sort)
+        ? pulse.source.slice().sort(stableCompare(_.sort))
         : pulse.source).map(_.field);
     }
   };
@@ -9031,6 +9044,7 @@
     var self = this,
         state = self.state,
         mod = _.modified(),
+        cmp = stableCompare(_.sort),
         i, n;
 
     this.stamp = pulse.stamp;
@@ -9055,7 +9069,7 @@
 
     // perform window calculations for each modified partition
     for (i=0, n=self._mlen; i<n; ++i) {
-      processPartition(self._mods[i], state, _);
+      processPartition(self._mods[i], state, cmp, _);
     }
     self._mlen = 0;
     self._mods = [];
@@ -9081,11 +9095,11 @@
     return group;
   };
 
-  function processPartition(list, state, _) {
+  function processPartition(list, state, cmp, _) {
     var sort = _.sort,
         range = sort && !_.ignorePeers,
         frame = _.frame || [null, 0],
-        data = list.data(sort),
+        data = list.data(cmp), // use cmp for stable sort
         n = data.length,
         i = 0,
         b = range ? bisector(sort) : null,
@@ -20846,7 +20860,7 @@
            || pulse.modified(_.sort.fields)
            || pulse.modified('datum');
 
-    if (mod) pulse.source.sort(_.sort);
+    if (mod) pulse.source.sort(stableCompare(_.sort));
 
     this.modified(mod);
     return pulse;
@@ -20888,6 +20902,7 @@
     var as = _.as || DefOutput,
         y0 = as[0],
         y1 = as[1],
+        sort = stableCompare(_.sort),
         field = _.field || one,
         stack = _.offset === Center ? stackCenter
               : _.offset === Normalize ? stackNormalize
@@ -20895,7 +20910,7 @@
         groups, i, n, max;
 
     // partition, sum, and sort the stack groups
-    groups = partition$2(pulse.source, _.groupby, _.sort, field);
+    groups = partition$2(pulse.source, _.groupby, sort, field);
 
     // compute stack layouts per group
     for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
@@ -26475,15 +26490,11 @@
   });
 
   // Build lookup table mapping tuple keys to tree node instances
-  // Also copy tupleid to tree node, to enable stable sorting
   function lookup$3(tree, key, filter) {
     var map = {};
     tree.each(function(node) {
       var t = node.data;
-      if (filter(t)) {
-        map[key(t)] = node;
-        replace(t, node);
-      }
+      if (filter(t)) map[key(t)] = node;
     });
     tree.lookup = map;
     return tree;
@@ -27895,7 +27906,7 @@
         as = _.as || fields;
 
     if (_.field) root.sum(_.field); else root.count();
-    if (_.sort) root.sort(_.sort);
+    if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
 
     setParams(layout, this.params, _);
     if (layout.separation) {
@@ -30839,7 +30850,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.2";
+  var version = "5.5.3";
 
   var Default = 'default';
 
@@ -34362,6 +34373,8 @@
    * Resolve a comparator function reference.
    */
   function getCompare(_, ctx) {
+    // As of Vega 5.5.3, $tupleid sort is no longer used.
+    // Keep here for now for backwards compatibility.
     var k = 'c:' + _.$compare + '_' + _.$order,
         c = array(_.$compare).map(function(_) {
           return (_ && _.$tupleid) ? tupleid : _;
@@ -35390,11 +35403,6 @@
     if (op.id < 0) (op.refs = op.refs || []).push(ref);
     return ref;
   }
-
-  var tupleidRef = {
-    $tupleid: 1,
-    toString: function() { return ':_tupleid_:'; }
-  };
 
   function fieldRef(field, name) {
     return name ? {$field: field, $name: name} : {$field: field};
@@ -37174,7 +37182,7 @@
     if (isSignal(value)) {
       return isExpr$1(type) ? error('Expression references can not be signals.')
            : isField(type) ? scope.fieldRef(value)
-           : isCompare(type) ? scope.compareRef(value, true)
+           : isCompare(type) ? scope.compareRef(value)
            : scope.signalRef(value.signal);
     } else {
       var expr = def.expr || isField(type);
@@ -37183,7 +37191,7 @@
            : isExpr$1(type) ? parseExpression$1(value, scope)
            : isData(type) ? ref(scope.getData(value).values)
            : isField(type) ? fieldRef(value)
-           : isCompare(type) ? scope.compareRef(value, true)
+           : isCompare(type) ? scope.compareRef(value)
            : value;
     }
   }
@@ -37589,7 +37597,7 @@
     // if item sort specified, perform post-encoding
     if (spec.sort) {
       op = scope.add(SortItems$1({
-        sort:  scope.compareRef(spec.sort, true), // stable sort
+        sort:  scope.compareRef(spec.sort),
         pulse: ref(op)
       }));
     }
@@ -38222,7 +38230,7 @@
     }
 
     offset = offset && flushOn && flushOffset
-      ? flushExpr(scale, flush, '-' + flushOffset, flushOffset, 0)
+      ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
       : null;
 
     encode = {
@@ -38736,7 +38744,7 @@
     return f;
   };
 
-  prototype$1o.compareRef = function(cmp, stable) {
+  prototype$1o.compareRef = function(cmp) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -38753,10 +38761,6 @@
         signal = false,
         fields = array(cmp.field).map(check),
         orders = array(cmp.order).map(check);
-
-    if (stable) {
-      fields.push(tupleidRef);
-    }
 
     return signal
       ? ref(this.add(Compare$1({fields: fields, orders: orders})))
@@ -38786,15 +38790,15 @@
     if (!sort) return sort;
 
     // including id ensures stable sorting
-    var a = [aggrField(sort.op, sort.field), tupleidRef],
+    var a = aggrField(sort.op, sort.field),
         o = sort.order || Ascending;
 
     return o.signal
       ? ref(this.add(Compare$1({
           fields: a,
-          orders: [o = this.signalRef(o.signal), o]
+          orders: this.signalRef(o.signal)
         })))
-      : compareRef(a, [o, o]);
+      : compareRef(a, o);
   };
 
   // ----
