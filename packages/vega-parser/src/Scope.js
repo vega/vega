@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
   aggrField, Ascending, compareRef, Entry, isExpr, isSignal,
-  fieldRef, keyRef, tupleidRef, operator, ref
+  fieldRef, keyRef, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
 import {
@@ -211,7 +211,7 @@ prototype.fieldRef = function(field, name) {
   return f;
 };
 
-prototype.compareRef = function(cmp, stable) {
+prototype.compareRef = function(cmp) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -228,10 +228,6 @@ prototype.compareRef = function(cmp, stable) {
       signal = false,
       fields = array(cmp.field).map(check),
       orders = array(cmp.order).map(check);
-
-  if (stable) {
-    fields.push(tupleidRef);
-  }
 
   return signal
     ? ref(this.add(Compare({fields: fields, orders: orders})))
@@ -261,15 +257,15 @@ prototype.sortRef = function(sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
-  var a = [aggrField(sort.op, sort.field), tupleidRef],
+  var a = aggrField(sort.op, sort.field),
       o = sort.order || Ascending;
 
   return o.signal
     ? ref(this.add(Compare({
         fields: a,
-        orders: [o = this.signalRef(o.signal), o]
+        orders: this.signalRef(o.signal)
       })))
-    : compareRef(a, [o, o]);
+    : compareRef(a, o);
 };
 
 // ----
