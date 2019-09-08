@@ -93,8 +93,11 @@ export function read(
 ): object[];
 
 export type TypeInference = DataType | 'integer';
-export function inferType(values: any[], field?: string): TypeInference;
-export function inferTypes(values: any[], fields: string[]): { [field: string]: TypeInference };
+export function inferType(values: readonly any[], field?: string): TypeInference;
+export function inferTypes(
+  values: readonly any[],
+  fields: readonly string[],
+): { [field: string]: TypeInference };
 
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: SignalValue) => void;
