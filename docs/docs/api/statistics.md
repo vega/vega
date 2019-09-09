@@ -176,10 +176,12 @@ vega.<b>bin</b>(<i>options</i>)
 Determine a quantitative binning scheme, for example to create a histogram. Based on the options provided given, this method will search over a space of possible bins, aligning step sizes with a given number base and applying constraints such as the maximum number of allowable bins. Given a set of options (see below), returns an object describing the binning scheme, in terms of `start`, `stop` and `step` properties.
 
 The supported options properties are:
-- _extent_: (required) A two-element (`[min, max]`) array indicating the range of desired bin values.
+
+- _extent_: (required) A two-element (`[min, max]`) array indicating the range over which the bin values are defined.
 - _base_: The number base to use for automatic bin determination (default base `10`).
 - _maxbins_: The maximum number of allowable bins (default `20`).
-- _step_: An exact step size to use between bins. If provided, the _maxbins_ and _steps_ options will be ignored.
+- _span_: The value span over which to generate bin boundaries. The default is `extent[1] - extent[0]`. This parameter allows automatic step size determination over custom spans (for example, a zoomed-in region) while retaining the overall _extent_.
+- _step_: An exact step size to use between bins. If provided, the _maxbins_, _span_, and _steps_ options will be ignored.
 - _steps_: An array of allowable step sizes to choose from. If provided, the _maxbins_ option will be ignored.
 - _minstep_: A minimum allowable step size (particularly useful for integer values, default `0`).
 - _divide_: An array of scale factors indicating allowable subdivisions. The default value is `[5, 2]`, which indicates that the method may consider dividing bin sizes by 5 and/or 2. For example, for an initial step size of 10, the method can check if bin sizes of 2 (= 10/5), 5 (= 10/2), or 1 (= 10/(5*2)) might also satisfy the given constraints.
