@@ -1724,9 +1724,9 @@ d3-contour@^1.3.2:
     d3-array "^1.1.1"
 
 d3-delaunay@^5.1.3:
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-5.1.4.tgz#ae4a706f73210ceee7b3069019ee832ca954a26f"
-  integrity sha512-I31cUy4zZ+lhj36z+y371P7WTeh9c090wGW9SfXHaNMUc5chrLaXtYyWIWrK9xoWSckrLDT6loLLEHLByiYPSw==
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/d3-delaunay/-/d3-delaunay-5.1.5.tgz#016aa06042a74b5c4d93e4c20e1925888f929976"
+  integrity sha512-GJujRwUA96JbIVw8E6zUbhUi8ueIZeiouUT9sG44BpbD9i/EpTkNgugvPe737gG9cVTXP4lZxx3UCsO9Yn/PTg==
   dependencies:
     delaunator "4"
 
