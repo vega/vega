@@ -21,6 +21,30 @@ const Anchors = [
   'bottom-right'
 ];
 
+/**
+ * Compute text label layout to annotate marks.
+ * @constructor
+ * @param {object} params - The parameters for this operator.
+ * @param {Array<number>} params.size - The size of the layout, provided as a [width, height] array.
+ * @param {function(*,*): number} [params.sort] - An optional
+ *   comparator function for sorting label data in priority order.
+ * @param {Array<string>} [params.anchor] - Label anchor points relative to the base mark bounding box.
+ *   The available options are 'top-left', 'left', 'bottom-left', 'top',
+ *   'bottom', 'top-right', 'right', 'bottom-right', 'middle'.
+ * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
+ *   This parameter  is parallel to the list of anchor points.
+ * @param {number} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
+ * @param {string} [params.lineAnchor='end'] - For line mark labels only, indicates the anchor
+ *   position for labels. One of 'start' or 'end'.
+ * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
+ *   which mark within the group should be labeled.
+ * @param {Array<number>} [params.avoidMarks] - A list of additional mark names for which the label
+ *   layout should avoid overlap.
+ * @param {boolean} [params.avoidBaseMark=true] - Boolean flag indicating if labels should avoid
+ *   overlap with the underlying base mark being labeled.
+ * @param {Array<string>} [params.as] - The output fields written by the transform.
+ *   The default is ['x', 'y', 'opacity', 'align', 'baseline'].
+ */
 export default function Label(params) {
   Transform.call(this, null, params);
 }
@@ -31,11 +55,11 @@ Label.Definition = {
   params: [
     { name: 'size', type: 'number', array: true, length: 2, required: true },
     { name: 'sort', type: 'compare' },
-    { name: 'offset', type: 'number', array: true, default: [1] },
     { name: 'anchor', type: 'string', array: true, default: Anchors },
+    { name: 'offset', type: 'number', array: true, default: [1] },
     { name: 'padding', type: 'number', default: 0 },
-    { name: 'markIndex', type: 'number', default: 0 },
     { name: 'lineAnchor', type: 'string', values: ['start', 'end'], default: 'end' },
+    { name: 'markIndex', type: 'number', default: 0 },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
     { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
@@ -53,7 +77,7 @@ prototype.transform = function (_, pulse) {
   const mod = _.modified();
   if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
   if (!_.size || _.size.length !== 2) {
-    error('Size of chart should be specified as a width, height array.');
+    error('Size parameter should be specified as a [width, height] array.');
   }
 
   const as = _.as || Output;

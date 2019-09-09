@@ -27,7 +27,9 @@ const anchorCode = {
 export default function(texts, size, compare, offset, anchor,
   avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding)
 {
+  // early exit for empty data
   if (!texts.length) return texts;
+
   const positions = Math.max(offset.length, anchor.length),
         offsets = getOffsets(offset, positions),
         anchors = getAnchors(anchor, positions),
@@ -48,6 +50,7 @@ export default function(texts, size, compare, offset, anchor,
     boundary: boundary(d)
   }));
 
+  // sort labels in priority order, if comparator is provided
   if (compare) {
     data.sort((a, b) => compare(a.datum, b.datum));
   }
@@ -57,7 +60,7 @@ export default function(texts, size, compare, offset, anchor,
   for (let i=0; i < anchors.length && !labelInside; ++i) {
     // label inside if anchor is at center
     // label inside if offset to be inside the mark bound
-    labelInside |= anchors[i] === 0x5 || offsets[i] < 0;
+    labelInside = anchors[i] === 0x5 || offsets[i] < 0;
   }
 
   // extract data information from base mark when base mark is to be avoided

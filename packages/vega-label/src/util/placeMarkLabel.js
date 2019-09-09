@@ -1,5 +1,4 @@
 import {textMetrics} from 'vega-scenegraph';
-import {isLabelPlaceable} from './util';
 
 const Aligns = ['right', 'center', 'left'],
       Baselines = ['bottom', 'middle', 'top'];
@@ -45,8 +44,8 @@ export default function($, bitmaps, anchors, offsets) {
 
       if (!textWidth) {
         // to avoid finding width of text label,
-        if (!isLabelPlaceable(_x1, _x1, _y1, _y2, bm0, bm1, x1, x1, y1, y2, boundary, isInside)) {
-          // skip this anchor/offset option if fail to place the label with 1px width
+        if (!test(_x1, _x1, _y1, _y2, bm0, bm1, x1, x1, y1, y2, boundary, isInside)) {
+          // skip this anchor/offset option if we fail to place a label with 1px width
           continue;
         } else {
           // Otherwise, find the label width
@@ -61,7 +60,7 @@ export default function($, bitmaps, anchors, offsets) {
       _x1 = $(x1);
       _x2 = $(x2);
 
-      if (isLabelPlaceable(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
+      if (test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
         // place label if the position is placeable
         d.x = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
         d.y = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
@@ -76,4 +75,19 @@ export default function($, bitmaps, anchors, offsets) {
 
     return false;
   }
+}
+
+// Test if a label with the given dimensions can be added without overlap
+function test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside) {
+  return !(
+    bm0.outOfBounds(_x1, _y1, _x2, _y2) ||
+    (isInside
+      ? bm1.getRange(_x1, _y1, _x2, _y2) || !isInMarkBound(x1, y1, x2, y2, boundary)
+      : bm0.getRange(_x1, _y1, _x2, _y2))
+  );
+}
+
+function isInMarkBound(x1, y1, x2, y2, boundary) {
+  return boundary[0] <= x1 && x2 <= boundary[2]
+      && boundary[3] <= y1 && y2 <= boundary[5];
 }

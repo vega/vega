@@ -1,7 +1,7 @@
 import Bitmap from './Bitmap';
 
 export default function(width, height, padding) {
-  const ratio = Math.max(1, Math.sqrt((width * height) / 1000000)),
+  const ratio = Math.max(1, Math.sqrt((width * height) / 1e6)),
         w = ~~((width + 2 * padding + ratio) / ratio),
         h = ~~((height + 2 * padding + ratio) / ratio),
         scale = _ => ~~((_ + padding) / ratio);
