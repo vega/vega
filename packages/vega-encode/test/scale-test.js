@@ -283,3 +283,50 @@ tape('Scale infers scale key from type, domain, and range', function(t) {
 
   t.end();
 });
+
+tape('Scale respects bins parameter', function(t) {
+  var bins = {start: 0, stop: 10, step: 2},
+      vals = [0, 2, 4, 6, 8, 10],
+      val6 = [0, 2, 4, 6],
+      s;
+
+  // generates bins array
+  s = scale({type: 'linear', domain: [0, 10], bins});
+  t.deepEqual(s.bins, vals);
+  t.deepEqual(s.domain(), [0, 10]);
+
+  // generates bins array clipped to domain
+  s = scale({type: 'linear', domain: [0, 6], bins});
+  t.deepEqual(s.bins, val6);
+  t.deepEqual(s.domain(), [0, 6]);
+
+  // infers start, stop from domain
+  s = scale({type: 'linear', domain: [0, 10], bins: {step: 2}});
+  t.deepEqual(s.bins, vals);
+  t.deepEqual(s.domain(), [0, 10]);
+
+  // accepts explicit bin boundaries
+  s = scale({type: 'linear', domain: [0, 10], bins: val6});
+  t.deepEqual(s.bins, val6);
+  t.deepEqual(s.domain(), [0, 10]);
+
+  // throws if no step parameter is defined
+  t.throws(() => scale({type: 'linear', bins: {}}));
+
+  // bin-ordinal scale copies domain to bins
+  s = scale({type: 'bin-ordinal', domain: [0, 5, 10]});
+  t.deepEqual(s.bins, [0, 5, 10]);
+  t.deepEqual(s.domain(), [0, 5, 10]);
+
+  // bin-ordinal scale copies bins to domain
+  s = scale({type: 'bin-ordinal', bins});
+  t.deepEqual(s.bins, vals);
+  t.deepEqual(s.domain(), vals);
+
+  // bin-ordinal scale copies bins to domain
+  s = scale({type: 'bin-ordinal', bins: vals});
+  t.deepEqual(s.bins, vals);
+  t.deepEqual(s.domain(), vals);
+
+  t.end();
+});

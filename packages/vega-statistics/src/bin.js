@@ -6,7 +6,7 @@ export default function(_) {
       div  = _.divide || [5, 2],
       min  = _.extent[0],
       max  = _.extent[1],
-      span = (max - min) || Math.abs(min) || 1,
+      span = _.span || (max - min) || Math.abs(min) || 1,
       step, level, minstep, precision, v, i, n, eps;
 
   if (_.step) {
