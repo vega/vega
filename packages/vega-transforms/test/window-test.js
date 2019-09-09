@@ -119,6 +119,50 @@ tape('Window processes single partition', function(t) {
   t.end();
 });
 
+tape('Window processes peers correctly', function(t) {
+  var data = [
+    {k:'a', v:1, key:0},
+    {k:'b', v:3, key:1},
+    {k:'a', v:2, key:2},
+    {k:'b', v:4, key:2},
+    {k:'a', v:3, key:3}
+  ];
+
+  var val = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Window, {
+        sort: util.compare('key'),
+        frame: [null, 0],
+        ignorePeers: false,
+        fields: [null, val],
+        ops: ['count', 'sum'],
+        as: ['count', 'sum'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {k: 'a', v: 1, count: 1, sum: 1});
+  match(t, d[1], {k: 'b', v: 3, count: 2, sum: 4});
+  match(t, d[2], {k: 'a', v: 2, count: 4, sum: 10});
+  match(t, d[3], {k: 'b', v: 4, count: 4, sum: 10});
+  match(t, d[4], {k: 'a', v: 3, count: 5, sum: 13});
+
+  // -- test rem
+  df.pulse(col, changeset().remove([data[1], data[3]])).run();
+  d = out.value;
+  t.equal(d.length, data.length - 2);
+  match(t, d[0], {k: 'a', v: 1, count: 1, sum: 1});
+  match(t, d[1], {k: 'a', v: 2, count: 2, sum: 3});
+  match(t, d[2], {k: 'a', v: 3, count: 3, sum: 6});
+
+  t.end();
+});
+
 tape('Window processes multiple partitions', function(t) {
   var data = [
     {k:'a', v:1, key:0},

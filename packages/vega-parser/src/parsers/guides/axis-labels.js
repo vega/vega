@@ -55,7 +55,7 @@ export default function(spec, config, userEncode, dataRef, size) {
   }
 
   offset = offset && flushOn && flushOffset
-    ? flushExpr(scale, flush, '-' + flushOffset, flushOffset, 0)
+    ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
     : null;
 
   encode = {

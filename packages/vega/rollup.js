@@ -25,7 +25,7 @@ const external = [].concat(!externals ? [] : [
   'd3-time',
   'd3-time-format',
   'd3-timer',
-  'd3-voronoi',
+  'd3-delaunay',
   'topojson-client'
 ]);
 

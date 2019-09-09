@@ -117,7 +117,7 @@ const gradientStops = array(
   })
 );
 
-const gradientLinear = object({
+const linearGradient = object({
   _gradient_: enums(['linear']),
   id: stringType,
   x1: numberType,
@@ -127,7 +127,7 @@ const gradientLinear = object({
   _stops_: ref('gradientStops')
 });
 
-const gradientRadial = object({
+const radialGradient = object({
   _gradient_: enums(['radial']),
   id: stringType,
   x1: numberType,
@@ -141,8 +141,8 @@ const gradientRadial = object({
 
 const colorValue = oneOf(
   ref('nullableStringValue'),
-  object({_value_: ref('gradientLinear')}),
-  object({_value_: ref('gradientRadial')}),
+  object({_value_: ref('linearGradient')}),
+  object({_value_: ref('radialGradient')}),
   object({
     _gradient_: scaleRef,
     start: array(numberType, {minItems: 2, maxItems: 2}),
@@ -259,8 +259,8 @@ export default {
     colorHCL,
     colorValue,
     gradientStops,
-    gradientLinear,
-    gradientRadial
+    linearGradient,
+    radialGradient
   },
   defs: {
     rule,

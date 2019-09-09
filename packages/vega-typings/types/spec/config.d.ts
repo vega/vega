@@ -14,7 +14,7 @@ import {
 import { BaseAxis, LabelOverlap } from './axis';
 import { LayoutAlign, LayoutBounds } from './layout';
 import { BaseLegend, LegendOrient } from './legend';
-import { SignalRef } from './signal';
+import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 import {
   AlignValue,
@@ -37,7 +37,12 @@ export interface Config
   background?: string;
   group?: any; // TODO
   events?: {
+    bind?: 'any' | 'container' | 'none';
     defaults?: DefaultsConfig;
+    selector?: boolean | string[];
+    timer?: boolean;
+    view?: boolean | string[];
+    window?: boolean | string[];
   };
   style?: any; // TODO
   legend?: LegendConfig;
@@ -50,6 +55,7 @@ export interface Config
     ramp?: RangeScheme | string[];
     symbol?: SymbolShape[];
   };
+  signals?: (InitSignal | NewSignal)[];
 }
 
 export type DefaultsConfig = Record<'prevent' | 'allow', boolean | EventType[]>;
@@ -415,7 +421,7 @@ export interface BaseLegendLayout<
   BS = boolean | SignalRef,
   OS = Orientation | SignalRef,
   LB = LayoutBounds,
-  AN = TitleAnchor
+  AN = TitleAnchor | SignalRef
 > {
   /**
    * The anchor point for legend orient group layout.

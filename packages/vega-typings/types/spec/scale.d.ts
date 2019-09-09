@@ -37,12 +37,17 @@ export type SortField =
     };
 
 /**
- * Unioned domains can only be sorted by count aggregate.
+ * Unioned domains can only be sorted by count, min, or max aggregates.
  */
 export type UnionSortField =
   | boolean
   | {
       op: 'count';
+      order?: SortOrder;
+    }
+  | {
+      field: ScaleField;
+      op: 'count' | 'min' | 'max';
       order?: SortOrder;
     };
 export type ScaleField = string | SignalRef;

@@ -45,7 +45,7 @@ prototype.transform = function(_, pulse) {
   if (!tree || mod || pulse.changed()) {
     // collect nodes to remove
     if (tree) {
-      tree.each(function(node) {
+      tree.each(node => {
         if (node.children && isTuple(node.data)) {
           out.rem.push(node.data);
         }
@@ -55,13 +55,13 @@ prototype.transform = function(_, pulse) {
     // generate new tree structure
     this.value = tree = hierarchy({
       values: array(_.keys)
-                .reduce(function(n, k) { n.key(k); return n; }, nest())
-                .entries(out.source)
+        .reduce((n, k) => { n.key(k); return n; }, nest())
+        .entries(out.source)
     }, children);
 
     // collect nodes to add
     if (gen) {
-      tree.each(function(node) {
+      tree.each(node => {
         if (node.children) {
           node = ingest(node.data);
           out.add.push(node);
@@ -122,7 +122,7 @@ function nest() {
   }
 
   return nest = {
-    entries: function(array) { return entries(apply(array, 0), 0); },
-    key: function(d) { keys.push(d); return nest; }
+    entries: array => entries(apply(array, 0), 0),
+    key: d => { keys.push(d); return nest; }
   };
 }

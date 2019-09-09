@@ -3392,6 +3392,29 @@
                                 }
                               },
                               "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "field": {
+                                  "$ref": "#/refs/stringOrSignal"
+                                },
+                                "op": {
+                                  "enum": [
+                                    "count",
+                                    "min",
+                                    "max"
+                                  ]
+                                },
+                                "order": {
+                                  "$ref": "#/refs/sortOrder"
+                                }
+                              },
+                              "required": [
+                                "field",
+                                "op"
+                              ],
+                              "additionalProperties": false
                             }
                           ]
                         }
@@ -3465,6 +3488,29 @@
                                   "$ref": "#/refs/sortOrder"
                                 }
                               },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "field": {
+                                  "$ref": "#/refs/stringOrSignal"
+                                },
+                                "op": {
+                                  "enum": [
+                                    "count",
+                                    "min",
+                                    "max"
+                                  ]
+                                },
+                                "order": {
+                                  "$ref": "#/refs/sortOrder"
+                                }
+                              },
+                              "required": [
+                                "field",
+                                "op"
+                              ],
                               "additionalProperties": false
                             }
                           ]
@@ -9837,6 +9883,20 @@
           "maxItems": 2,
           "minItems": 2
         },
+        "resolve": {
+          "anyOf": [
+            {
+              "enum": [
+                "shared",
+                "independent"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "independent"
+        },
         "steps": {
           "anyOf": [
             {
@@ -13629,7 +13689,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientLinear"
+              "$ref": "#/refs/linearGradient"
             }
           },
           "required": [
@@ -13641,7 +13701,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/refs/gradientRadial"
+              "$ref": "#/refs/radialGradient"
             }
           },
           "required": [
@@ -13726,7 +13786,7 @@
         "additionalProperties": false
       }
     },
-    "gradientLinear": {
+    "linearGradient": {
       "type": "object",
       "properties": {
         "gradient": {
@@ -13759,7 +13819,7 @@
       ],
       "additionalProperties": false
     },
-    "gradientRadial": {
+    "radialGradient": {
       "type": "object",
       "properties": {
         "gradient": {
@@ -14155,6 +14215,29 @@
                     }
                   },
                   "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "$ref": "#/refs/stringOrSignal"
+                    },
+                    "op": {
+                      "enum": [
+                        "count",
+                        "min",
+                        "max"
+                      ]
+                    },
+                    "order": {
+                      "$ref": "#/refs/sortOrder"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "op"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }
@@ -14228,6 +14311,29 @@
                       "$ref": "#/refs/sortOrder"
                     }
                   },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "$ref": "#/refs/stringOrSignal"
+                    },
+                    "op": {
+                      "enum": [
+                        "count",
+                        "min",
+                        "max"
+                      ]
+                    },
+                    "order": {
+                      "$ref": "#/refs/sortOrder"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "op"
+                  ],
                   "additionalProperties": false
                 }
               ]

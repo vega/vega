@@ -1,4 +1,4 @@
-import {Transform} from 'vega-dataflow';
+import {stableCompare, Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -20,7 +20,7 @@ prototype.transform = function(_, pulse) {
          || pulse.modified(_.sort.fields)
          || pulse.modified('datum');
 
-  if (mod) pulse.source.sort(_.sort);
+  if (mod) pulse.source.sort(stableCompare(_.sort));
 
   this.modified(mod);
   return pulse;

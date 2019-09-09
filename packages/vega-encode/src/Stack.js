@@ -1,4 +1,4 @@
-import {Transform} from 'vega-dataflow';
+import {stableCompare, Transform} from 'vega-dataflow';
 import {inherits, one} from 'vega-util';
 
 var Zero = 'zero',
@@ -37,6 +37,7 @@ prototype.transform = function(_, pulse) {
   var as = _.as || DefOutput,
       y0 = as[0],
       y1 = as[1],
+      sort = stableCompare(_.sort),
       field = _.field || one,
       stack = _.offset === Center ? stackCenter
             : _.offset === Normalize ? stackNormalize
@@ -44,7 +45,7 @@ prototype.transform = function(_, pulse) {
       groups, i, n, max;
 
   // partition, sum, and sort the stack groups
-  groups = partition(pulse.source, _.groupby, _.sort, field);
+  groups = partition(pulse.source, _.groupby, sort, field);
 
   // compute stack layouts per group
   for (i=0, n=groups.length, max=groups.max; i<n; ++i) {

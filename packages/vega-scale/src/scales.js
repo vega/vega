@@ -1,3 +1,4 @@
+import {hasOwnProperty} from 'vega-util';
 import invertRange from './scales/invertRange';
 import invertRangeExtent from './scales/invertRangeExtent';
 
@@ -43,7 +44,7 @@ export default function scale(type, scale) {
     scales[type] = create(type, scale);
     return this;
   } else {
-    return scales.hasOwnProperty(type) ? scales[type] : undefined;
+    return hasOwnProperty(scales, type) ? scales[type] : undefined;
   }
 }
 

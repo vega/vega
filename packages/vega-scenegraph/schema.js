@@ -83,8 +83,8 @@ var BASE = {
     "paint": {
       "oneOf": [
         { "$ref": "#/refs/color" },
-        { "$ref": "#/refs/gradientLinear" },
-        { "$ref": "#/refs/gradientRadial" }
+        { "$ref": "#/refs/linearGradient" },
+        { "$ref": "#/refs/radialGradient" }
       ]
     },
     "color": {
@@ -119,7 +119,7 @@ var BASE = {
       },
       "required": ["offset", "color"]
     },
-    "gradientLinear": {
+    "linearGradient": {
       "type": "object",
       "properties": {
         "gradient": { "enum": [ "linear" ] },
@@ -136,7 +136,7 @@ var BASE = {
       "required": ["gradient", "stops"],
       "additionalProperties": false
     },
-    "gradientRadial": {
+    "radialGradient": {
       "type": "object",
       "properties": {
         "gradient": { "enum": [ "radial" ] },

@@ -48,10 +48,14 @@ prototype.transform = function(_, pulse) {
 // Then generate aggregate fields for each output pivot field.
 function aggregateParams(_, pulse) {
   var key    = _.field,
-  value  = _.value,
+      value  = _.value,
       op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
       fields = accessorFields(key).concat(accessorFields(value)),
       keys   = pivotKeys(key, _.limit || 0, pulse);
+
+  // if data stream content changes, pivot fields may change
+  // flag parameter modification to ensure re-initialization
+  if (pulse.changed()) _.set('__pivot__', null, null, true);
 
   return {
     key:      _.key,

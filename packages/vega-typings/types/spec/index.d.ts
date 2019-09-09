@@ -1,7 +1,7 @@
 import { AutoSize } from './autosize';
 import { Background } from './background';
 import { Config } from './config';
-import { EncodeEntry, Encodable } from './encode';
+import { Encodable, EncodeEntry } from './encode';
 import { Padding } from './padding';
 import { Scope } from './scope';
 
@@ -9,7 +9,7 @@ export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
   width?: number;
   height?: number;
-  config?: any;
+  config?: Config;
   description?: string;
   padding?: Padding;
   autosize?: AutoSize;
@@ -21,6 +21,7 @@ export * from './autosize';
 export * from './axis';
 export * from './background';
 export * from './bind';
+export * from './color';
 export * from './config';
 export * from './data';
 export * from './encode';

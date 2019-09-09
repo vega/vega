@@ -223,7 +223,7 @@ prototype.evaluate = function(pulse) {
  * @return the output pulse for this operator (or StopPropagation)
  */
 prototype.run = function(pulse) {
-  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  if (pulse.stamp < this.stamp) return pulse.StopPropagation;
   var rv;
   if (this.skip()) {
     this.skip(false);
@@ -231,6 +231,5 @@ prototype.run = function(pulse) {
   } else {
     rv = this.evaluate(pulse);
   }
-  this.stamp = pulse.stamp;
   return (this.pulse = rv || pulse);
 };

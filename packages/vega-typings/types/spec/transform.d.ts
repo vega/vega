@@ -265,6 +265,7 @@ export interface KDETransform {
   counts?: boolean | SignalRef;
   bandwidth?: number | SignalRef;
   extent?: [number, number] | SignalRef;
+  resolve?: 'shared' | 'independent';
   steps?: number | SignalRef;
   minsteps?: number | SignalRef;
   maxsteps?: number | SignalRef;

@@ -43,6 +43,7 @@ export function utcParse(_, specifier) {
 var dateObj = new Date(2000, 0, 1);
 
 function time(month, day, specifier) {
+  if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
   dateObj.setMonth(month);
   dateObj.setDate(day);
   return timeFormat(dateObj, specifier);

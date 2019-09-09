@@ -11,10 +11,12 @@ export type ProjectionType =
   | 'conicConformal'
   | 'conicEqualArea'
   | 'conicEquidistant'
+  | 'equalEarth'
   | 'equirectangular'
   | 'gnomonic'
   | 'identity'
   | 'mercator'
+  | 'naturalEarth1'
   | 'orthographic'
   | 'stereographic'
   | 'transverseMercator';

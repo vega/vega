@@ -54,6 +54,8 @@ export function inherits<C extends object, P extends object>(
   parent: P
 ): C & P;
 
+export function hasOwnProperty(object: object, property: PropertyKey): boolean;
+
 export interface FastMap {
   size: number;
   empty: number;
