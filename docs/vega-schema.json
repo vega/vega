@@ -8799,6 +8799,16 @@
           "maxItems": 2,
           "minItems": 2
         },
+        "span": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
         "step": {
           "anyOf": [
             {

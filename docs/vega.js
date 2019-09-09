@@ -699,7 +699,7 @@
    * the last and first values.
    */
   function span(array) {
-    return (peek(array) - array[0]) || 0;
+    return array && (peek(array) - array[0]) || 0;
   }
 
   function toBoolean(_) {
@@ -4851,7 +4851,7 @@
         div  = _.divide || [5, 2],
         min  = _.extent[0],
         max  = _.extent[1],
-        span = (max - min) || Math.abs(min) || 1,
+        span = _.span || (max - min) || Math.abs(min) || 1,
         step, level, minstep, precision, v, i, n, eps;
 
     if (_.step) {
@@ -6588,6 +6588,7 @@
       { "name": "base", "type": "number", "default": 10 },
       { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
       { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+      { "name": "span", "type": "number" },
       { "name": "step", "type": "number" },
       { "name": "steps", "type": "number", "array": true },
       { "name": "minstep", "type": "number", "default": 0 },
@@ -18022,8 +18023,8 @@
         : constant$4(isNaN(b) ? NaN : 0.5);
   }
 
-  function clamper(domain) {
-    var a = domain[0], b = domain[domain.length - 1], t;
+  function clamper(a, b) {
+    var t;
     if (a > b) t = a, a = b, b = t;
     return function(x) { return Math.max(a, Math.min(b, x)); };
   }
@@ -18082,7 +18083,9 @@
         input;
 
     function rescale() {
-      piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
+      var n = Math.min(domain.length, range.length);
+      if (clamp !== identity$3) clamp = clamper(domain[0], domain[n - 1]);
+      piecewise = n > 2 ? polymap : bimap;
       output = input = null;
       return scale;
     }
@@ -18096,7 +18099,7 @@
     };
 
     scale.domain = function(_) {
-      return arguments.length ? (domain = Array.from(_, number$1), clamp === identity$3 || (clamp = clamper(domain)), rescale()) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number$1), rescale()) : domain.slice();
     };
 
     scale.range = function(_) {
@@ -18108,7 +18111,7 @@
     };
 
     scale.clamp = function(_) {
-      return arguments.length ? (clamp = _ ? clamper(domain) : identity$3, scale) : clamp !== identity$3;
+      return arguments.length ? (clamp = _ ? true : identity$3, rescale()) : clamp !== identity$3;
     };
 
     scale.interpolate = function(_) {
@@ -18125,8 +18128,8 @@
     };
   }
 
-  function continuous(transform, untransform) {
-    return transformer()(transform, untransform);
+  function continuous() {
+    return transformer()(identity$3, identity$3);
   }
 
   // Computes the decimal coefficient and exponent of the specified number x with
@@ -18179,24 +18182,35 @@
   var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 
   function formatSpecifier(specifier) {
-    return new FormatSpecifier(specifier);
+    if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+    var match;
+    return new FormatSpecifier({
+      fill: match[1],
+      align: match[2],
+      sign: match[3],
+      symbol: match[4],
+      zero: match[5],
+      width: match[6],
+      comma: match[7],
+      precision: match[8] && match[8].slice(1),
+      trim: match[9],
+      type: match[10]
+    });
   }
 
   formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
 
   function FormatSpecifier(specifier) {
-    if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-    var match;
-    this.fill = match[1] || " ";
-    this.align = match[2] || ">";
-    this.sign = match[3] || "-";
-    this.symbol = match[4] || "";
-    this.zero = !!match[5];
-    this.width = match[6] && +match[6];
-    this.comma = !!match[7];
-    this.precision = match[8] && +match[8].slice(1);
-    this.trim = !!match[9];
-    this.type = match[10] || "";
+    this.fill = specifier.fill === undefined ? " " : specifier.fill + "";
+    this.align = specifier.align === undefined ? ">" : specifier.align + "";
+    this.sign = specifier.sign === undefined ? "-" : specifier.sign + "";
+    this.symbol = specifier.symbol === undefined ? "" : specifier.symbol + "";
+    this.zero = !!specifier.zero;
+    this.width = specifier.width === undefined ? undefined : +specifier.width;
+    this.comma = !!specifier.comma;
+    this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
+    this.trim = !!specifier.trim;
+    this.type = specifier.type === undefined ? "" : specifier.type + "";
   }
 
   FormatSpecifier.prototype.toString = function() {
@@ -18205,9 +18219,9 @@
         + this.sign
         + this.symbol
         + (this.zero ? "0" : "")
-        + (this.width == null ? "" : Math.max(1, this.width | 0))
+        + (this.width === undefined ? "" : Math.max(1, this.width | 0))
         + (this.comma ? "," : "")
-        + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+        + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0))
         + (this.trim ? "~" : "")
         + this.type;
   };
@@ -18269,14 +18283,18 @@
     return x;
   }
 
-  var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
+  var map = Array.prototype.map,
+      prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
 
   function formatLocale$1(locale) {
-    var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$4,
-        currency = locale.currency,
-        decimal = locale.decimal,
-        numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$4,
-        percent = locale.percent || "%";
+    var group = locale.grouping === undefined || locale.thousands === undefined ? identity$4 : formatGroup(map.call(locale.grouping, Number), locale.thousands + ""),
+        currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
+        currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
+        decimal = locale.decimal === undefined ? "." : locale.decimal + "",
+        numerals = locale.numerals === undefined ? identity$4 : formatNumerals(map.call(locale.numerals, String)),
+        percent = locale.percent === undefined ? "%" : locale.percent + "",
+        minus = locale.minus === undefined ? "-" : locale.minus + "",
+        nan = locale.nan === undefined ? "NaN" : locale.nan + "";
 
     function newFormat(specifier) {
       specifier = formatSpecifier(specifier);
@@ -18296,15 +18314,15 @@
       if (type === "n") comma = true, type = "g";
 
       // The "" type, and any invalid type, is an alias for ".12~g".
-      else if (!formatTypes[type]) precision == null && (precision = 12), trim = true, type = "g";
+      else if (!formatTypes[type]) precision === undefined && (precision = 12), trim = true, type = "g";
 
       // If zero fill is specified, padding goes after sign and before digits.
       if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
 
       // Compute the prefix and suffix.
       // For SI-prefix, the suffix is lazily computed.
-      var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
-          suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? percent : "";
+      var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
+          suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "";
 
       // What format function should we use?
       // Is this an integer type?
@@ -18316,7 +18334,7 @@
       // or clamp the specified precision to the supported range.
       // For significant precision, it must be in [1, 21].
       // For fixed precision, it must be in [0, 20].
-      precision = precision == null ? 6
+      precision = precision === undefined ? 6
           : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
           : Math.max(0, Math.min(20, precision));
 
@@ -18333,7 +18351,7 @@
 
           // Perform the initial formatting.
           var valueNegative = value < 0;
-          value = formatType(Math.abs(value), precision);
+          value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
 
           // Trim insignificant zeros.
           if (trim) value = formatTrim(value);
@@ -18342,7 +18360,8 @@
           if (valueNegative && +value === 0) valueNegative = false;
 
           // Compute the prefix and suffix.
-          valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+          valuePrefix = (valueNegative ? (sign === "(" ? sign : minus) : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+
           valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
 
           // Break the formatted value into the integer “value” part that can be
@@ -18411,7 +18430,8 @@
     decimal: ".",
     thousands: ",",
     grouping: [3],
-    currency: ["$", ""]
+    currency: ["$", ""],
+    minus: "-"
   });
 
   function defaultLocale$1(definition) {
@@ -18518,7 +18538,7 @@
   }
 
   function linear$1() {
-    var scale = continuous(identity$3, identity$3);
+    var scale = continuous();
 
     scale.copy = function() {
       return copy(scale, linear$1());
@@ -18656,15 +18676,15 @@
           z = [];
 
       if (!(base % 1) && j - i < n) {
-        i = Math.round(i) - 1, j = Math.round(j) + 1;
-        if (u > 0) for (; i < j; ++i) {
+        i = Math.floor(i), j = Math.ceil(j);
+        if (u > 0) for (; i <= j; ++i) {
           for (k = 1, p = pows(i); k < base; ++k) {
             t = p * k;
             if (t < u) continue;
             if (t > v) break;
             z.push(t);
           }
-        } else for (; i < j; ++i) {
+        } else for (; i <= j; ++i) {
           for (k = base - 1, p = pows(i); k >= 1; --k) {
             t = p * k;
             if (t < u) continue;
@@ -18672,6 +18692,7 @@
             z.push(t);
           }
         }
+        if (!z.length) z = ticks(u, v, n);
       } else {
         z = ticks(i, j, Math.min(j - i, n)).map(pows);
       }
@@ -18955,7 +18976,7 @@
   }
 
   function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-    var scale = continuous(identity$3, identity$3),
+    var scale = continuous(),
         invert = scale.invert,
         domain = scale.domain;
 
@@ -19099,6 +19120,10 @@
       return arguments.length ? (interpolator = _, scale) : interpolator;
     };
 
+    scale.range = function() {
+      return [interpolator(0), interpolator(1)];
+    };
+
     scale.unknown = function(_) {
       return arguments.length ? (unknown = _, scale) : unknown;
     };
@@ -19165,6 +19190,7 @@
     var x0 = 0,
         x1 = 0.5,
         x2 = 1,
+        s = 1,
         t0,
         t1,
         t2,
@@ -19176,11 +19202,11 @@
         unknown;
 
     function scale(x) {
-      return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
+      return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (s * x < s * t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
     }
 
     scale.domain = function(_) {
-      return arguments.length ? ([x0, x1, x2] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), scale) : [x0, x1, x2];
+      return arguments.length ? ([x0, x1, x2] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale) : [x0, x1, x2];
     };
 
     scale.clamp = function(_) {
@@ -19191,12 +19217,16 @@
       return arguments.length ? (interpolator = _, scale) : interpolator;
     };
 
+    scale.range = function() {
+      return [interpolator(0), interpolator(0.5), interpolator(1)];
+    };
+
     scale.unknown = function(_) {
       return arguments.length ? (unknown = _, scale) : unknown;
     };
 
     return function(t) {
-      transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1);
+      transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1;
       return scale;
     };
   }
@@ -19430,10 +19460,10 @@
     return pointish(band().paddingInner(1));
   }
 
-  var map = Array.prototype.map;
+  var map$1 = Array.prototype.map;
 
   function numbers$2(_) {
-    return map.call(_, function(x) { return +x; });
+    return map$1.call(_, function(x) { return +x; });
   }
 
   var slice = Array.prototype.slice;
@@ -19773,24 +19803,9 @@
    * @return {Array<*>} - The generated tick values.
    */
   function tickValues(scale, count) {
-    return scale.bins ? validTicks(scale, binValues(scale.bins, count))
+    return scale.bins ? validTicks(scale, scale.bins)
       : scale.ticks ? scale.ticks(count)
       : scale.domain();
-  }
-
-  /**
-   * Generate tick values for an array of bin values.
-   * @param {Array<*>} bins - An array of bin boundaries.
-   * @param {Number} [count] - The approximate number of desired ticks.
-   * @return {Array<*>} - The generated tick values.
-   */
-  function binValues(bins, count) {
-    var n = bins.length,
-        stride = ~~(n / (count || n));
-
-    return stride < 2
-      ? bins.slice()
-      : bins.filter(function(x, i) { return !(i % stride); });
   }
 
   /**
@@ -20117,7 +20132,7 @@
   };
 
   function labelValues(scale, count) {
-    return scale.bins ? binValues$1(scale.bins)
+    return scale.bins ? binValues(scale.bins)
       : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
       : tickValues(scale, count);
   }
@@ -20142,7 +20157,7 @@
     return values;
   }
 
-  function binValues$1(bins) {
+  function binValues(bins) {
     const values = bins.slice(0, -1);
     values.max = peek(bins);
 
@@ -20721,13 +20736,17 @@
 
     if (bins && !isArray(bins)) {
       // generate bin boundary array
-      const domain = (bins.start == null || bins.stop == null) && scale.domain(),
-            start = bins.start == null ? domain[0] : bins.start,
-            stop = bins.stop == null ? peek(domain) : bins.stop,
-            step = bins.step;
+      let domain = scale.domain(),
+          lo = domain[0],
+          hi = peek(domain),
+          start = bins.start == null ? lo : bins.start,
+          stop = bins.stop == null ? hi : bins.stop,
+          step = bins.step;
 
       if (!step) error('Scale bins parameter missing step property.');
-      bins = sequence(start, stop + step, step);
+      if (start < lo) start = step * Math.ceil(lo / step);
+      if (stop > hi) stop = step * Math.floor(hi / step);
+      bins = sequence(start, stop + step / 2, step);
     }
 
     if (bins) {
@@ -28836,8 +28855,19 @@
       return dx * dx + dy * dy;
   }
 
-  function orient(px, py, qx, qy, rx, ry) {
-      return (qy - py) * (rx - qx) - (qx - px) * (ry - qy) < 0;
+  // return 2d orientation sign if we're confident in it through J. Shewchuk's error bound check
+  function orientIfSure(px, py, rx, ry, qx, qy) {
+      const l = (ry - py) * (qx - px);
+      const r = (rx - px) * (qy - py);
+      return Math.abs(l - r) >= 3.3306690738754716e-16 * Math.abs(l + r) ? l - r : 0;
+  }
+
+  // a more robust orientation test that's stable in a given triangle (to fix robustness issues)
+  function orient(rx, ry, qx, qy, px, py) {
+      const sign = orientIfSure(px, py, rx, ry, qx, qy) ||
+      orientIfSure(rx, ry, qx, qy, px, py) ||
+      orientIfSure(qx, qy, px, py, rx, ry);
+      return sign < 0;
   }
 
   function inCircle(ax, ay, bx, by, cx, cy, px, py) {
@@ -29017,7 +29047,7 @@
 
       // Compute circumcenters.
       const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
-      for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
+      for (let i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
         const t1 = triangles[i] * 2;
         const t2 = triangles[i + 1] * 2;
         const t3 = triangles[i + 2] * 2;
@@ -29027,22 +29057,31 @@
         const y2 = points[t2 + 1];
         const x3 = points[t3];
         const y3 = points[t3 + 1];
-        const a2 = x1 - x2;
-        const a3 = x1 - x3;
-        const b2 = y1 - y2;
-        const b3 = y1 - y3;
-        const d1 = x1 * x1 + y1 * y1;
-        const d2 = d1 - x2 * x2 - y2 * y2;
-        const d3 = d1 - x3 * x3 - y3 * y3;
-        const ab = (a3 * b2 - a2 * b3) * 2;
-        // degenerate case (2 points)
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const ex = x3 - x1;
+        const ey = y3 - y1;
+        const bl = dx * dx + dy * dy;
+        const cl = ex * ex + ey * ey;
+        const ab = (dx * ey - dy * ex) * 2;
+
         if (!ab) {
-          circumcenters[j] = (x1 + x3) / 2 + 1e8 * b3;
-          circumcenters[j + 1] = (y1 + y3) / 2 - 1e8 * a3;
-        } else {
-          circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
-          circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+          // degenerate case (collinear diagram)
+          x = (x1 + x3) / 2 - 1e8 * ey;
+          y = (y1 + y3) / 2 + 1e8 * ex;
         }
+        else if (Math.abs(ab) < 1e-8) {
+          // almost equal points (degenerate triangle)
+          x = (x1 + x3) / 2;
+          y = (y1 + y3) / 2;
+        } else {
+          const d = 1 / ab;
+          x = x1 + (ey * bl - dy * cl) * d;
+          y = y1 + (dx * cl - ex * bl) * d;
+        }
+        circumcenters[j] = x;
+        circumcenters[j + 1] = y;
       }
 
       // Compute exterior cell rays.
@@ -29096,7 +29135,9 @@
       const points = this._clip(i);
       if (points === null) return;
       context.moveTo(points[0], points[1]);
-      for (let i = 2, n = points.length; i < n; i += 2) {
+      let n = points.length;
+      while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
+      for (let i = 2; i < n; i += 2) {
         if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
           context.lineTo(points[i], points[i + 1]);
       }
@@ -29241,6 +29282,14 @@
         }
         if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
           P.splice(j, 0, x, y), j += 2;
+        }
+      }
+      if (P.length > 4) {
+        for (let i = 0; i < P.length; i+= 2) {
+          const j = (i + 2) % P.length, k = (i + 4) % P.length;
+          if (P[i] === P[j] && P[j] === P[k]
+          || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1])
+            P.splice(j, 2), i -= 2;
         }
       }
       return j;
@@ -30850,7 +30899,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.3";
+  var version = "5.6.0";
 
   var Default = 'default';
 
@@ -38532,7 +38581,7 @@
     });
 
     if (!config) return signals;
-    const out = signals.slice();
+    const out = array(signals).slice();
 
     // add config signals if not already defined
     array(config).forEach(_ => {
