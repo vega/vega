@@ -83,6 +83,7 @@ export type AggregateOp =
 export interface BinTransform extends BaseBin {
   type: 'bin';
   extent: Vector2<number | SignalRef> | SignalRef;
+  span?: number | SignalRef;
   field: string | TransformField;
   as?: Vector2<string | SignalRef> | SignalRef;
   signal?: string;

@@ -81,24 +81,9 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? validTicks(scale, binValues(scale.bins, count))
+  return scale.bins ? validTicks(scale, scale.bins)
     : scale.ticks ? scale.ticks(count)
     : scale.domain();
-}
-
-/**
- * Generate tick values for an array of bin values.
- * @param {Array<*>} bins - An array of bin boundaries.
- * @param {Number} [count] - The approximate number of desired ticks.
- * @return {Array<*>} - The generated tick values.
- */
-function binValues(bins, count) {
-  var n = bins.length,
-      stride = ~~(n / (count || n));
-
-  return stride < 2
-    ? bins.slice()
-    : bins.filter(function(x, i) { return !(i % stride); });
 }
 
 /**

@@ -26,6 +26,7 @@ Bin.Definition = {
     { "name": "base", "type": "number", "default": 10 },
     { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
     { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+    { "name": "span", "type": "number" },
     { "name": "step", "type": "number" },
     { "name": "steps", "type": "number", "array": true },
     { "name": "minstep", "type": "number", "default": 0 },
