@@ -173,7 +173,7 @@ The supported options properties are:
 - _extent_: (required) A two-element (`[min, max]`) array indicating the range over which the bin values are defined.
 - _base_: The number base to use for automatic bin determination (default base `10`).
 - _maxbins_: The maximum number of allowable bins (default `20`).
-- _span_: The value span over which to generate bin boundaries. This value defaults to `extent[1] - extent[0]`. Setting a custom value allows automatic step size determination over alternative spans, which can be useful for re-binning when zooming in, while still maintaining the same overall valid _extent_.
+- _span_: The value span over which to generate bin boundaries. The default is `extent[1] - extent[0]`. This parameter allows automatic step size determination over custom spans (for example, a zoomed-in region) while retaining the overall _extent_.
 - _step_: An exact step size to use between bins. If provided, the _maxbins_, _span_, and _steps_ options will be ignored.
 - _steps_: An array of allowable step sizes to choose from. If provided, the _maxbins_ option will be ignored.
 - _minstep_: A minimum allowable step size (particularly useful for integer values, default `0`).

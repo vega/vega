@@ -17,6 +17,7 @@ The **bin** transform discretizes numeric values into a set of bins. A common us
 | base                | {% include type t="Number" %}   | The number base to use for automatic bin determination (default `10`).|
 | step                | {% include type t="Number" %}   | An exact step size to use between bins. If provided, options such as _maxbins_ will be ignored.|
 | steps               | {% include type t="Number[]" %} | An array of allowable step sizes to choose from.|
+| span                | {% include type t="Number" %}   | The value span over which to generate bin boundaries. The default is `extent[1] - extent[0]`. This parameter allows automatic step size determination over custom spans (for example, a zoomed-in region) while retaining the overall _extent_. {% include tag ver="5.6" %}|
 | minstep             | {% include type t="Number" %}   | The minimum allowed bin step size (default `0`).|
 | divide              | {% include type t="Number[]" %} | Allowable bin step sub-divisions. The default value is `[5, 2]`, which indicates that for base 10 numbers (the default base) automatic bin determination can consider dividing bin step sizes by 5 and/or 2.|
 | nice                | {% include type t="Boolean" %}  | If `true` (the default), attempts to make the bin boundaries use human-friendly boundaries, such as multiples of ten.|
