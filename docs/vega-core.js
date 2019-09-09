@@ -699,7 +699,7 @@
    * the last and first values.
    */
   function span(array) {
-    return (peek(array) - array[0]) || 0;
+    return array && (peek(array) - array[0]) || 0;
   }
 
   function toBoolean(_) {
@@ -3521,7 +3521,7 @@
         div  = _.divide || [5, 2],
         min  = _.extent[0],
         max  = _.extent[1],
-        span = (max - min) || Math.abs(min) || 1,
+        span = _.span || (max - min) || Math.abs(min) || 1,
         step, level, minstep, precision, v, i, n, eps;
 
     if (_.step) {
@@ -4921,6 +4921,7 @@
       { "name": "base", "type": "number", "default": 10 },
       { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
       { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+      { "name": "span", "type": "number" },
       { "name": "step", "type": "number" },
       { "name": "steps", "type": "number", "array": true },
       { "name": "minstep", "type": "number", "default": 0 },
@@ -14204,24 +14205,9 @@
    * @return {Array<*>} - The generated tick values.
    */
   function tickValues(scale, count) {
-    return scale.bins ? validTicks(scale, binValues(scale.bins, count))
+    return scale.bins ? validTicks(scale, scale.bins)
       : scale.ticks ? scale.ticks(count)
       : scale.domain();
-  }
-
-  /**
-   * Generate tick values for an array of bin values.
-   * @param {Array<*>} bins - An array of bin boundaries.
-   * @param {Number} [count] - The approximate number of desired ticks.
-   * @return {Array<*>} - The generated tick values.
-   */
-  function binValues(bins, count) {
-    var n = bins.length,
-        stride = ~~(n / (count || n));
-
-    return stride < 2
-      ? bins.slice()
-      : bins.filter(function(x, i) { return !(i % stride); });
   }
 
   /**
@@ -14548,7 +14534,7 @@
   };
 
   function labelValues(scale, count) {
-    return scale.bins ? binValues$1(scale.bins)
+    return scale.bins ? binValues(scale.bins)
       : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
       : tickValues(scale, count);
   }
@@ -14573,7 +14559,7 @@
     return values;
   }
 
-  function binValues$1(bins) {
+  function binValues(bins) {
     const values = bins.slice(0, -1);
     values.max = peek(bins);
 
@@ -15152,13 +15138,17 @@
 
     if (bins && !isArray(bins)) {
       // generate bin boundary array
-      const domain = (bins.start == null || bins.stop == null) && scale.domain(),
-            start = bins.start == null ? domain[0] : bins.start,
-            stop = bins.stop == null ? peek(domain) : bins.stop,
-            step = bins.step;
+      let domain = scale.domain(),
+          lo = domain[0],
+          hi = peek(domain),
+          start = bins.start == null ? lo : bins.start,
+          stop = bins.stop == null ? hi : bins.stop,
+          step = bins.step;
 
       if (!step) error('Scale bins parameter missing step property.');
-      bins = d3Array.range(start, stop + step, step);
+      if (start < lo) start = step * Math.ceil(lo / step);
+      if (stop > hi) stop = step * Math.floor(hi / step);
+      bins = d3Array.range(start, stop + step / 2, step);
     }
 
     if (bins) {
@@ -18316,7 +18306,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.3";
+  var version = "5.6.0";
 
   var Default = 'default';
 
@@ -25998,7 +25988,7 @@
     });
 
     if (!config) return signals;
-    const out = signals.slice();
+    const out = array(signals).slice();
 
     // add config signals if not already defined
     array(config).forEach(_ => {
