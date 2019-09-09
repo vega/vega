@@ -17,8 +17,7 @@ function testPoint(datum, entry) {
 
   for (; i<n; ++i) {
     f = fields[i];
-    f.getter = field.getter || field(f.field);
-    dval = f.getter(datum);
+    dval = datum[f.field];  // Fields are flattened, so no accessor function needed.
 
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
