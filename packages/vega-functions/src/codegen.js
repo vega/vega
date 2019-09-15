@@ -64,6 +64,11 @@ import {
 } from 'd3-color';
 
 import {
+  luminance,
+  contrast
+} from './luminance';
+
+import {
   data,
   indata,
   setdata
@@ -185,6 +190,8 @@ export const functionContext = {
   lab,
   hcl,
   hsl,
+  luminance,
+  contrast,
   sequence,
   format,
   utcFormat,
