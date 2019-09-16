@@ -19,6 +19,16 @@ For a basic setup allowing you to build Vega and run examples:
 
 This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
 
+### Using Docker
+
+This repository includes a [Docker](https://www.docker.com/) setup with [Docker Compose](https://docs.docker.com/compose/). This setup ensures that all developers can use the same development environment.
+
+To use this setup, install Docker and Docker Compose. Now, build the Docker container with `docker-compose build`. Now, you can start the Docker container in the background with `docker-compose up -d`. The Docker container keep running until you run `docker-compose down`.
+
+As long as the container is running, you can execute commands. For example, to install the node dependencies, run `docker-compose exec vega yarn`. To execute the tests, run `docker-compose exec vega yarn test`. To enter the container, run `docker-compose exec vega bash`.
+
+Alternatively, you can install the [Visual Studio Code Remote Development Extension](https://aka.ms/vscode-remote/download/extension). As soon as you open this directory, the extension will prompt you to open Vega in the container. The extension takes care of running the steps above.
+
 ## Contributions, Development, and Support
 
 Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
