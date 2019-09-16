@@ -1,15 +1,8 @@
 language: node_js
+dist: bionic
 node_js:
   - "10"
   - "12"
 script:
   - yarn test
 cache: yarn
-addons:
-  apt:
-    update: true
-    packages:
-    - build-essential
-    - libcairo2-dev
-    - libpango1.0-dev
-    - librsvg2-dev
