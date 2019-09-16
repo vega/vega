@@ -5,8 +5,8 @@ export type Renderers = 'canvas' | 'svg' | 'none';
 
 export class Renderer {
   constructor(loader: Loader);
-  initialize(el: HTMLElement, width: number, height: number, origin: number[]): this;
-  resize(width: number, height: number, origin: number[]): this;
+  initialize(el: HTMLElement, width: number, height: number, origin: readonly number[]): this;
+  resize(width: number, height: number, origin: readonly number[]): this;
 }
 
 export interface RenderModule {
