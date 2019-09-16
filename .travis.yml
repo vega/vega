@@ -1,15 +1,8 @@
-language: node_js
-node_js:
-  - "10"
-  - "12"
+dist: bionic
+services:
+  - docker
 script:
-  - yarn test
-cache: yarn
-addons:
-  apt:
-    update: true
-    packages:
-    - build-essential
-    - libcairo2-dev
-    - libpango1.0-dev
-    - librsvg2-dev
+  - docker-compose build
+  - docker-compose up -d
+  - docker-compose exec vega yarn
+  - docker-compose exec vega yarn test
