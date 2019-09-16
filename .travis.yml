@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "10"
   - "12"
-dist: bionic
 services:
   - docker
 cache: yarn
@@ -10,5 +9,4 @@ script:
   - sed -i "1!b;s/node:12/node:$TRAVIS_NODE_VERSION/" .devcontainer/Dockerfile
   - docker-compose build
   - docker-compose up -d
-  - docker-compose exec vega yarn
   - docker-compose exec vega yarn test
