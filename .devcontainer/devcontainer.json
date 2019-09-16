@@ -1,0 +1,8 @@
+{
+  "name": "Vega",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "vega",
+  "workspaceFolder": "/home/node",
+  "shutdownAction": "stopCompose",
+  "extensions": ["dbaeumer.vscode-eslint"]
+}
