@@ -445,7 +445,7 @@
                       "y": 22.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.6,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -455,7 +455,7 @@
                       "y": 37.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.9,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -465,7 +465,7 @@
                       "y": 52.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.4,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -541,7 +541,7 @@
                       "y": 22.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.2,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -551,7 +551,7 @@
                       "y": 37.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 1.1,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -561,7 +561,7 @@
                       "y": 52.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.8,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -637,7 +637,7 @@
                       "y": 22.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.1,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -647,7 +647,7 @@
                       "y": 37.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.2,
                       "font": "sans-serif",
                       "fontSize": 11
@@ -657,7 +657,7 @@
                       "y": 52.5,
                       "align": "right",
                       "baseline": "middle",
-                      "fill": "white",
+                      "fill": "black",
                       "text": 0.7,
                       "font": "sans-serif",
                       "fontSize": 11
