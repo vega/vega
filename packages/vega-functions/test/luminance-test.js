@@ -1,5 +1,5 @@
 var tape = require('tape'),
-  { luminance, contrast } = require('../').functionContext;
+    {luminance, contrast} = require('../');
 
 tape('luminance calculation extremes', function(t) {
   t.equal(luminance('#000000'), 0);
