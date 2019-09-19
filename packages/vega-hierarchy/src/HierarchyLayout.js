@@ -50,10 +50,11 @@ function setParams(layout, params, _) {
 
 function setFields(node, fields, as) {
   var t = node.data;
-  for (var i=0, n=fields.length-1; i<n; ++i) {
+  for (var i=0, n=fields.length-2; i<n; ++i) {
     t[as[i]] = node[fields[i]];
   }
   t[as[n]] = node.children ? node.children.length : 0;
+  t[as[n+1]] = node.value;
 }
 
 function defaultSeparation(a, b) {
