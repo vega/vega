@@ -307,6 +307,7 @@ export interface SymbolEncodeEntry extends EncodeEntry {
   shape?: ProductionRule<ScaledValueRef<SymbolShape>>;
   angle?: ProductionRule<NumericValueRef>;
 }
+export type Text = string | string[];
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';
 export type FontWeight =
@@ -327,7 +328,7 @@ export type FontWeight =
 // see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
 export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
-  text?: ProductionRule<StringValueRef>;
+  text?: ProductionRule<ScaledValueRef<Text>>;
   angle?: ProductionRule<NumericValueRef>;
   baseline?: ProductionRule<ScaledValueRef<TextBaseline>>;
   dir?: ProductionRule<ScaledValueRef<TextDirection>>;
@@ -339,6 +340,7 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
   fontWeight?: ProductionRule<ScaledValueRef<FontWeight>>;
   fontStyle?: ProductionRule<ScaledValueRef<FontStyle>>;
   limit?: ProductionRule<NumericValueRef>;
+  lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
 }
 export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty {}

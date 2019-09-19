@@ -19,9 +19,17 @@ export const orientEnum = ['left', 'right', 'top', 'bottom'];
 export const directionEnum = ['horizontal', 'vertical'];
 export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
+export const textType = {
+  oneOf: [
+    stringType,
+    {type: 'array', items: stringType}
+  ]
+};
 
 export function valueSchema(type, nullable) {
-  type = Array.isArray(type) ? {enum: type} : {type: type};
+  type = Array.isArray(type) ? {enum: type}
+    : type && type.oneOf ? type
+    : {type: type};
 
   var modType = type.type === 'number' ? 'number' : 'string',
       valueType = nullable ? oneOf(type, nullType) : type;
@@ -85,6 +93,7 @@ const booleanValueRef = ref('booleanValue');
 const colorValueRef = ref('colorValue');
 const numberValueRef = ref('numberValue');
 const stringValueRef = ref('stringValue');
+const textValueRef = ref('textValue');
 
 const colorRGB = object({
   _r_: numberValueRef,
@@ -215,10 +224,11 @@ const encodeEntry = object({
   baseline: ref('baselineValue'),
 
   // Text-mark properties
-  text: stringValueRef,
+  text: textValueRef,
   dir: stringValueRef,
   ellipsis: stringValueRef,
   limit: numberValueRef,
+  lineHeight: numberValueRef,
   dx: numberValueRef,
   dy: numberValueRef,
   radius:numberValueRef,
@@ -242,6 +252,7 @@ export default {
     anyValue: valueSchema(undefined),
     numberValue: valueSchema('number'),
     stringValue: valueSchema('string'),
+    textValue: valueSchema(textType),
     booleanValue: valueSchema('boolean'),
     arrayValue: valueSchema('array'),
     nullableStringValue: valueSchema('string', true),

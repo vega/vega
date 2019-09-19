@@ -3,12 +3,12 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
-import {inherits} from 'vega-util';
+import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
 
@@ -426,12 +426,36 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    var value;
+    var key, value, doc, lh;
 
-    value = textValue(item);
-    if (value !== values.text) {
-      el.textContent = value;
-      values.text = value;
+    if (isArray(item.text)) {
+      // multi-line text
+      value = item.text.map(_ => textValue(item, _));
+      key = value.join('\n'); // content cache key
+
+      if (key !== values.text) {
+        domClear(el, 0);
+        doc = el.ownerDocument;
+        lh = lineHeight(item);
+        value.forEach((t, i) => {
+          const ts = domCreate(doc, 'tspan', ns);
+          ts.__data__ = item; // data binding
+          ts.textContent = t;
+          if (i) {
+            ts.setAttribute('x', 0);
+            ts.setAttribute('dy', lh);
+          }
+          el.appendChild(ts);
+        });
+        values.text = key;
+      }
+    } else {
+      // single-line text
+      value = textValue(item);
+      if (value !== values.text) {
+        el.textContent = value;
+        values.text = value;
+      }
     }
 
     setStyle(el, 'font-family', fontFamily(item));

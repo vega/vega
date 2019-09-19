@@ -144,7 +144,8 @@
       {"x":10, "y":200, "fill":"green", "opacity":0},
       {"x":10, "y":200, "stroke":"green", "strokeWidth":0},
       {"x":100, "y":200, "text":"hello", "dx":50, "angle":-45, "fill":"steelblue"},
-      {"x":10, "y":300, "text":"01234567890123456789", "fill":"black", "limit": 50}
+      {"x":10, "y":300, "text":"01234567890123456789", "fill":"black", "limit": 50},
+      {"x":200, "y":200, "text":["Multi","Line","Text"], "lineHeight": 14, "fill":"blue"}
     ]
   },
   "trail": {

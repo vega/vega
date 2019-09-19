@@ -13,9 +13,9 @@ export var textMetrics = {
 useCanvas(true);
 
 // make dumb, simple estimate if no canvas is available
-function estimateWidth(item) {
+function estimateWidth(item, text) {
   currFontHeight = fontSize(item);
-  return estimate(textValue(item));
+  return estimate(textValue(item, text));
 }
 
 function estimate(text) {
@@ -23,9 +23,9 @@ function estimate(text) {
 }
 
 // measure text width if canvas is available
-function measureWidth(item) {
+function measureWidth(item, text) {
   return fontSize(item) <= 0 ? 0
-    : (context.font = font(item), measure(textValue(item)));
+    : (context.font = font(item), measure(textValue(item, text)));
 }
 
 function measure(text) {
@@ -40,18 +40,18 @@ function useCanvas(use) {
   textMetrics.width = (use && context) ? measureWidth : estimateWidth;
 }
 
-export function textValue(item) {
-  var s = item.text;
-  if (s == null) {
-    return '';
-  } else {
-    return item.limit > 0 ? truncate(item) : s + '';
-  }
+export function lineHeight(item) {
+  return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
 }
 
-export function truncate(item) {
+export function textValue(item, text) {
+  var s = text || item.text;
+  return s == null ? '' : (item.limit > 0 ? truncate(item, s) : s + '');
+}
+
+export function truncate(item, line) {
   var limit = +item.limit,
-      text = item.text + '',
+      text = (line || item.text) + '',
       width;
 
   if (textMetrics.width === measureWidth) {
