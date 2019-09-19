@@ -60,13 +60,12 @@ function bound(bounds, item, mode) {
       y = p.y1,
       dx = item.dx || 0,
       dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
-      nl = 0, // num extra lines
       w;
 
   // get width
   if (isArray(item.text)) {
     // multi-line text
-    nl = item.text.length - 1;
+    h += lineHeight(item) * (item.text.length - 1);
     w = item.text.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
   } else {
     // single-line text
@@ -82,7 +81,7 @@ function bound(bounds, item, mode) {
     // left by default, do nothing
   }
 
-  bounds.set(dx+=x, dy+=y, dx+w, dy+h+(nl*lineHeight(item)));
+  bounds.set(dx+=x, dy+=y, dx+w, dy+h);
 
   if (item.angle && !mode) {
     bounds.rotate(item.angle * DegToRad, x, y);
