@@ -304,8 +304,14 @@ var MARKS = {
   },
   "text": {
     "properties": {
-      "text": { "type": "string" },
+      "text": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "array", "items": { "type": "string" } }
+        ]
+      },
       "limit": { "type": "number", "default": 0 },
+      "lineHeight": { "type": "number" },
       "dir": { "type": "string", "default": "ltr" },
       "ellipsis": { "type": "string", "default": '\u2026' },
       "align": {
