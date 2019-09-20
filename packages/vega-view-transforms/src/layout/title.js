@@ -2,11 +2,12 @@ import {Top, Bottom, Left, Right, Start, End, Group} from '../constants';
 import {set, tempBounds} from './util';
 
 export function titleLayout(view, title, width, height, viewBounds) {
-  var item = title.items[0],
-      frame = item.frame,
-      orient = item.orient,
-      anchor = item.anchor,
-      offset = item.offset,
+  var group = title.items[0],
+      frame = group.frame,
+      orient = group.orient,
+      anchor = group.anchor,
+      offset = group.offset,
+      item = group.items[0].items[0],
       bounds = item.bounds,
       vertical = (orient === Left || orient === Right),
       start = 0,
@@ -56,8 +57,10 @@ export function titleLayout(view, title, width, height, viewBounds) {
     view.dirty(item);
     item.bounds = bounds;
     view.dirty(item);
+    group.bounds.clear().union(bounds);
+    view.dirty(group);
   }
+  item.mark.bounds.clear().union(bounds);
 
-  // update bounds
   return title.bounds.clear().union(bounds);
 }

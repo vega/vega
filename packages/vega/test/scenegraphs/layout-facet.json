@@ -225,24 +225,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": -37,
-                      "y": 19.799999999999997,
-                      "align": "right",
-                      "baseline": "middle",
-                      "fill": "#000",
-                      "opacity": 1,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": -37,
+                              "y": 19.799999999999997,
+                              "align": "right",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": 0,
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "align": "center",
+                      "baseline": "bottom",
                       "orient": "left",
-                      "text": 0,
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
+                      "angle": -90
                     }
                   ],
                   "zindex": 0
@@ -313,24 +329,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": -37,
-                      "y": 7.800000000000001,
-                      "align": "right",
-                      "baseline": "middle",
-                      "fill": "#000",
-                      "opacity": 1,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": -37,
+                              "y": 7.800000000000001,
+                              "align": "right",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": 1,
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "align": "center",
+                      "baseline": "bottom",
                       "orient": "left",
-                      "text": 1,
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
+                      "angle": -90
                     }
                   ],
                   "zindex": 0
@@ -413,24 +445,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": -37,
-                      "y": 13.799999999999997,
-                      "align": "right",
-                      "baseline": "middle",
-                      "fill": "#000",
-                      "opacity": 1,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": -37,
+                              "y": 13.799999999999997,
+                              "align": "right",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": 2,
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "align": "center",
+                      "baseline": "bottom",
                       "orient": "left",
-                      "text": 2,
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
+                      "angle": -90
                     }
                   ],
                   "zindex": 0

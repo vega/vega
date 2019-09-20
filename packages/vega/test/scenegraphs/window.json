@@ -777,24 +777,40 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
-              "x": 230.5,
-              "y": 171,
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 230.5,
+                      "y": 171,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "sum(value) over sliding window: [-∞,0]",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 13,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "align": "center",
               "baseline": "top",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "bottom",
-              "text": "sum(value) over sliding window: [-∞,0]",
-              "angle": 0,
-              "font": "sans-serif",
-              "fontSize": 13,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

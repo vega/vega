@@ -30757,25 +30757,41 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
-              "x": -254.79937165986962,
-              "y": -1474.7235340397197,
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -254.79937165986962,
+                      "y": -1474.7235340397197,
+                      "align": "center",
+                      "baseline": "bottom",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Density of U.S. Airports, 2008",
+                      "angle": 0,
+                      "dy": 12,
+                      "font": "sans-serif",
+                      "fontSize": 13,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "align": "center",
               "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "Density of U.S. Airports, 2008",
-              "angle": 0,
-              "dy": 12,
-              "font": "sans-serif",
-              "fontSize": 13,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

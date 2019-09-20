@@ -62357,24 +62357,40 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
-              "x": -86,
-              "y": -20,
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -86,
+                      "y": -20,
+                      "align": "left",
+                      "baseline": "bottom",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Seattle Annual Temperatures",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "align": "left",
               "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "Seattle Annual Temperatures",
-              "angle": 0,
-              "font": "sans-serif",
-              "fontSize": 14,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

@@ -7,7 +7,7 @@ export const spec: Spec = {
   "config": {
     "title": {
       "frame": "group",
-      "limit": {"signal": "item.mark.group[item.orient==='left' || item.orient==='right' ? 'height': 'width']"}
+      "limit": {"signal": "item.orient==='left' || item.orient==='right' ? plotHeight : plotWidth"}
     }
   },
 

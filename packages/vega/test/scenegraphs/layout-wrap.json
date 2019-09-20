@@ -1671,24 +1671,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "University Farm",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "University Farm",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -2214,24 +2230,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Waseca",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Waseca",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -2757,24 +2789,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Morris",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Morris",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -3300,24 +3348,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Crookston",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Crookston",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -3843,24 +3907,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Grand Rapids",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Grand Rapids",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -4386,24 +4466,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 100,
-                      "y": -4,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 100,
+                              "y": -4,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Duluth",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Duluth",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0

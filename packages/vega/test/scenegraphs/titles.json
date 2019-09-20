@@ -949,24 +949,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 200,
-                      "y": -10,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 200,
+                              "y": -10,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "top",
-                      "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
@@ -1922,24 +1938,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": -51,
-                      "y": 50,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": -51,
+                              "y": 50,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
+                              "angle": -90,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "left",
-                      "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
-                      "angle": -90,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": -90
                     }
                   ],
                   "zindex": 0
@@ -2895,24 +2927,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 405,
-                      "y": 50,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 405,
+                              "y": 50,
+                              "align": "center",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
+                              "angle": 90,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "bottom",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "right",
-                      "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
-                      "angle": 90,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 90
                     }
                   ],
                   "zindex": 0
@@ -3868,24 +3916,40 @@
                   "zindex": 0
                 },
                 {
-                  "marktype": "text",
+                  "marktype": "group",
                   "role": "title",
                   "interactive": false,
                   "clip": false,
                   "items": [
                     {
-                      "x": 200,
-                      "y": 137,
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 200,
+                              "y": 137,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
                       "align": "center",
                       "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
                       "orient": "bottom",
-                      "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
+                      "angle": 0
                     }
                   ],
                   "zindex": 0

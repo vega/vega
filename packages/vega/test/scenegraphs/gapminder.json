@@ -1492,24 +1492,40 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
-              "x": 0,
-              "y": -9,
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": -9,
+                      "align": "left",
+                      "baseline": "bottom",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "World Development Trends in 1955",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 18,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "align": "left",
               "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "World Development Trends in 1955",
-              "angle": 0,
-              "font": "sans-serif",
-              "fontSize": 18,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

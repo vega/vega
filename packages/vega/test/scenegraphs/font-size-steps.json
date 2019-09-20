@@ -1087,25 +1087,41 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
-              "x": 0,
-              "y": -82,
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": -82,
+                      "align": "left",
+                      "baseline": "bottom",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Font Size Steps and Weber's Law?",
+                      "angle": 0,
+                      "dy": 30,
+                      "font": "sans-serif",
+                      "fontSize": 16,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "align": "left",
               "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "Font Size Steps and Weber's Law?",
-              "angle": 0,
-              "dy": 30,
-              "font": "sans-serif",
-              "fontSize": 16,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

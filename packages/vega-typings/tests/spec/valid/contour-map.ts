@@ -16,7 +16,7 @@ export const spec: Spec = {
 
   "title": {
     "text": "Density of U.S. Airports, 2008",
-    "encode": {"update": {"dy": {"value": 12}}}
+    "dy": 12
   },
 
   "data": [
