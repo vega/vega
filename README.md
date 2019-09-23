@@ -17,7 +17,7 @@ For a basic setup allowing you to build Vega and run examples:
 - Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
 - After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
 
-This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `yarn docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
 
 ## Contributions, Development, and Support
 
