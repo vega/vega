@@ -64,7 +64,7 @@ Properties for specifying a coordinate axis.
 | tickRound     | {% include type t="Boolean" %} | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize      | {% include type t="Number" %}  | The length in pixels of axis ticks.|
 | tickWidth     | {% include type t="Number" %}  | Width in pixels of axis ticks. |
-| title         | {% include type t="String" %}  | A title for the axis (none by default).|
+| title         | {% include type t="String|String[]" %}  | A title for the axis (none by default). For versions {% include tag ver="5.7" %}, a string array specifies a title with multiple lines of text.|
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing the axis title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
 | titleAngle    | {% include type t="Number" %}  | Angle in degrees of the axis title. |
