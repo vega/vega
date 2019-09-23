@@ -73,8 +73,6 @@ function groupEncode(_, userEncode) {
 }
 
 function buildTitle(spec, _, userEncode, dataRef) {
-  console.log(userEncode);
-
   var zero = {value: 0},
       text = spec.text,
       encode = {
