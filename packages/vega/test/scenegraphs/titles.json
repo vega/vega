@@ -207,6 +207,7 @@
                               "opacity": 1,
                               "text": "1",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -219,6 +220,7 @@
                               "opacity": 1,
                               "text": "2",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -231,6 +233,7 @@
                               "opacity": 1,
                               "text": "3",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -243,6 +246,7 @@
                               "opacity": 1,
                               "text": "4",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -255,6 +259,7 @@
                               "opacity": 1,
                               "text": "5",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -267,6 +272,7 @@
                               "opacity": 1,
                               "text": "6",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -279,6 +285,7 @@
                               "opacity": 1,
                               "text": "7",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -291,6 +298,7 @@
                               "opacity": 1,
                               "text": "8",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -303,6 +311,7 @@
                               "opacity": 1,
                               "text": "9",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -315,6 +324,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -327,6 +337,7 @@
                               "opacity": 1,
                               "text": "11",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -339,6 +350,7 @@
                               "opacity": 1,
                               "text": "12",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -351,6 +363,7 @@
                               "opacity": 1,
                               "text": "13",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -363,6 +376,7 @@
                               "opacity": 1,
                               "text": "14",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -375,6 +389,7 @@
                               "opacity": 1,
                               "text": "15",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -387,6 +402,7 @@
                               "opacity": 1,
                               "text": "16",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -399,6 +415,7 @@
                               "opacity": 1,
                               "text": "17",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -411,6 +428,7 @@
                               "opacity": 1,
                               "text": "18",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -423,6 +441,7 @@
                               "opacity": 1,
                               "text": "19",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -435,6 +454,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -607,6 +627,7 @@
                               "opacity": 1,
                               "text": "0",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -619,6 +640,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -631,6 +653,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -643,6 +666,7 @@
                               "opacity": 1,
                               "text": "30",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -655,6 +679,7 @@
                               "opacity": 1,
                               "text": "40",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -667,6 +692,7 @@
                               "opacity": 1,
                               "text": "50",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -679,6 +705,7 @@
                               "opacity": 1,
                               "text": "60",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -691,6 +718,7 @@
                               "opacity": 1,
                               "text": "70",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -703,6 +731,7 @@
                               "opacity": 1,
                               "text": "80",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -715,6 +744,7 @@
                               "opacity": 1,
                               "text": "90",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -727,6 +757,7 @@
                               "opacity": 1,
                               "text": "100",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -969,6 +1000,7 @@
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
                               "angle": 0,
+                              "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold"
@@ -991,6 +1023,7 @@
                               "opacity": 1,
                               "text": "A Subtle Subtitle",
                               "angle": 0,
+                              "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 12
                             }
@@ -1002,7 +1035,8 @@
                       "y": -36,
                       "align": "center",
                       "orient": "top",
-                      "angle": 0
+                      "angle": 0,
+                      "limit": 400
                     }
                   ],
                   "zindex": 0
@@ -1216,6 +1250,7 @@
                               "opacity": 1,
                               "text": "1",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1228,6 +1263,7 @@
                               "opacity": 1,
                               "text": "2",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1240,6 +1276,7 @@
                               "opacity": 1,
                               "text": "3",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1252,6 +1289,7 @@
                               "opacity": 1,
                               "text": "4",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1264,6 +1302,7 @@
                               "opacity": 1,
                               "text": "5",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1276,6 +1315,7 @@
                               "opacity": 1,
                               "text": "6",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1288,6 +1328,7 @@
                               "opacity": 1,
                               "text": "7",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1300,6 +1341,7 @@
                               "opacity": 1,
                               "text": "8",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1312,6 +1354,7 @@
                               "opacity": 1,
                               "text": "9",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1324,6 +1367,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1336,6 +1380,7 @@
                               "opacity": 1,
                               "text": "11",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1348,6 +1393,7 @@
                               "opacity": 1,
                               "text": "12",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1360,6 +1406,7 @@
                               "opacity": 1,
                               "text": "13",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1372,6 +1419,7 @@
                               "opacity": 1,
                               "text": "14",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1384,6 +1432,7 @@
                               "opacity": 1,
                               "text": "15",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1396,6 +1445,7 @@
                               "opacity": 1,
                               "text": "16",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1408,6 +1458,7 @@
                               "opacity": 1,
                               "text": "17",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1420,6 +1471,7 @@
                               "opacity": 1,
                               "text": "18",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1432,6 +1484,7 @@
                               "opacity": 1,
                               "text": "19",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1444,6 +1497,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1616,6 +1670,7 @@
                               "opacity": 1,
                               "text": "0",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1628,6 +1683,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1640,6 +1696,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1652,6 +1709,7 @@
                               "opacity": 1,
                               "text": "30",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1664,6 +1722,7 @@
                               "opacity": 1,
                               "text": "40",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1676,6 +1735,7 @@
                               "opacity": 1,
                               "text": "50",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1688,6 +1748,7 @@
                               "opacity": 1,
                               "text": "60",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1700,6 +1761,7 @@
                               "opacity": 1,
                               "text": "70",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1712,6 +1774,7 @@
                               "opacity": 1,
                               "text": "80",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1724,6 +1787,7 @@
                               "opacity": 1,
                               "text": "90",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1736,6 +1800,7 @@
                               "opacity": 1,
                               "text": "100",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1978,6 +2043,7 @@
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
                               "angle": -90,
+                              "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold"
@@ -2000,6 +2066,7 @@
                               "opacity": 1,
                               "text": "A Subtle Subtitle",
                               "angle": -90,
+                              "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 12
                             }
@@ -2011,7 +2078,8 @@
                       "y": 50,
                       "align": "center",
                       "orient": "left",
-                      "angle": -90
+                      "angle": -90,
+                      "limit": 100
                     }
                   ],
                   "zindex": 0
@@ -2225,6 +2293,7 @@
                               "opacity": 1,
                               "text": "1",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2237,6 +2306,7 @@
                               "opacity": 1,
                               "text": "2",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2249,6 +2319,7 @@
                               "opacity": 1,
                               "text": "3",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2261,6 +2332,7 @@
                               "opacity": 1,
                               "text": "4",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2273,6 +2345,7 @@
                               "opacity": 1,
                               "text": "5",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2285,6 +2358,7 @@
                               "opacity": 1,
                               "text": "6",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2297,6 +2371,7 @@
                               "opacity": 1,
                               "text": "7",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2309,6 +2384,7 @@
                               "opacity": 1,
                               "text": "8",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2321,6 +2397,7 @@
                               "opacity": 1,
                               "text": "9",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2333,6 +2410,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2345,6 +2423,7 @@
                               "opacity": 1,
                               "text": "11",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2357,6 +2436,7 @@
                               "opacity": 1,
                               "text": "12",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2369,6 +2449,7 @@
                               "opacity": 1,
                               "text": "13",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2381,6 +2462,7 @@
                               "opacity": 1,
                               "text": "14",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2393,6 +2475,7 @@
                               "opacity": 1,
                               "text": "15",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2405,6 +2488,7 @@
                               "opacity": 1,
                               "text": "16",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2417,6 +2501,7 @@
                               "opacity": 1,
                               "text": "17",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2429,6 +2514,7 @@
                               "opacity": 1,
                               "text": "18",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2441,6 +2527,7 @@
                               "opacity": 1,
                               "text": "19",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2453,6 +2540,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2625,6 +2713,7 @@
                               "opacity": 1,
                               "text": "0",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2637,6 +2726,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2649,6 +2739,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2661,6 +2752,7 @@
                               "opacity": 1,
                               "text": "30",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2673,6 +2765,7 @@
                               "opacity": 1,
                               "text": "40",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2685,6 +2778,7 @@
                               "opacity": 1,
                               "text": "50",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2697,6 +2791,7 @@
                               "opacity": 1,
                               "text": "60",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2709,6 +2804,7 @@
                               "opacity": 1,
                               "text": "70",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2721,6 +2817,7 @@
                               "opacity": 1,
                               "text": "80",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2733,6 +2830,7 @@
                               "opacity": 1,
                               "text": "90",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2745,6 +2843,7 @@
                               "opacity": 1,
                               "text": "100",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2987,6 +3086,7 @@
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
                               "angle": 90,
+                              "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold"
@@ -3009,6 +3109,7 @@
                               "opacity": 1,
                               "text": "A Subtle Subtitle",
                               "angle": 90,
+                              "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 12
                             }
@@ -3020,7 +3121,8 @@
                       "y": 50,
                       "align": "center",
                       "orient": "right",
-                      "angle": 90
+                      "angle": 90,
+                      "limit": 100
                     }
                   ],
                   "zindex": 0
@@ -3234,6 +3336,7 @@
                               "opacity": 1,
                               "text": "1",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3246,6 +3349,7 @@
                               "opacity": 1,
                               "text": "2",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3258,6 +3362,7 @@
                               "opacity": 1,
                               "text": "3",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3270,6 +3375,7 @@
                               "opacity": 1,
                               "text": "4",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3282,6 +3388,7 @@
                               "opacity": 1,
                               "text": "5",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3294,6 +3401,7 @@
                               "opacity": 1,
                               "text": "6",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3306,6 +3414,7 @@
                               "opacity": 1,
                               "text": "7",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3318,6 +3427,7 @@
                               "opacity": 1,
                               "text": "8",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3330,6 +3440,7 @@
                               "opacity": 1,
                               "text": "9",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3342,6 +3453,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3354,6 +3466,7 @@
                               "opacity": 1,
                               "text": "11",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3366,6 +3479,7 @@
                               "opacity": 1,
                               "text": "12",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3378,6 +3492,7 @@
                               "opacity": 1,
                               "text": "13",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3390,6 +3505,7 @@
                               "opacity": 1,
                               "text": "14",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3402,6 +3518,7 @@
                               "opacity": 1,
                               "text": "15",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3414,6 +3531,7 @@
                               "opacity": 1,
                               "text": "16",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3426,6 +3544,7 @@
                               "opacity": 1,
                               "text": "17",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3438,6 +3557,7 @@
                               "opacity": 1,
                               "text": "18",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3450,6 +3570,7 @@
                               "opacity": 1,
                               "text": "19",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3462,6 +3583,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -3634,6 +3756,7 @@
                               "opacity": 1,
                               "text": "0",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3646,6 +3769,7 @@
                               "opacity": 1,
                               "text": "10",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3658,6 +3782,7 @@
                               "opacity": 1,
                               "text": "20",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3670,6 +3795,7 @@
                               "opacity": 1,
                               "text": "30",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3682,6 +3808,7 @@
                               "opacity": 1,
                               "text": "40",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3694,6 +3821,7 @@
                               "opacity": 1,
                               "text": "50",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3706,6 +3834,7 @@
                               "opacity": 1,
                               "text": "60",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3718,6 +3847,7 @@
                               "opacity": 1,
                               "text": "70",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3730,6 +3860,7 @@
                               "opacity": 1,
                               "text": "80",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3742,6 +3873,7 @@
                               "opacity": 1,
                               "text": "90",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3754,6 +3886,7 @@
                               "opacity": 1,
                               "text": "100",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -3996,6 +4129,7 @@
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
                               "angle": 0,
+                              "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold"
@@ -4018,6 +4152,7 @@
                               "opacity": 1,
                               "text": "A Subtle Subtitle",
                               "angle": 0,
+                              "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 12
                             }
@@ -4029,7 +4164,8 @@
                       "y": 137,
                       "align": "center",
                       "orient": "bottom",
-                      "angle": 0
+                      "angle": 0,
+                      "limit": 400
                     }
                   ],
                   "zindex": 0
