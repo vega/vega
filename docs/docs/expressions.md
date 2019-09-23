@@ -589,6 +589,14 @@ Constructs a new [CIE LAB](https://en.wikipedia.org/wiki/Lab_color_space#CIELAB)
 <b>hcl</b>(<i>specifier</i>)<br/>
 Constructs a new [HCL](https://en.wikipedia.org/wiki/Lab_color_space#CIELAB) (hue, chroma, luminance) color. If _h_, _c_ and _l_ are specified, these represent the channel values of the returned color; an _opacity_ may also be specified. If a CSS Color Module Level 3 _specifier_ string is specified, it is parsed and then converted to the HCL color space. Uses [d3-color's hcl function](https://github.com/d3/d3-color#hcl).
 
+<a name="luminance" href="#luminance">#</a>
+<b>luminance</b>(specifier)<br/>
+Returns the luminance for the given color _specifier_ (a string compatible with d3-color). The luminance is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef).
+
+<a name="contrast" href="#contrast">#</a>
+<b>contrast</b>(specifier1, specifier2)<br/>
+Returns the contrast ratio between the input color specifiers as a float between 1 and 21. The contrast is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef).
+
 [Back to Top](#reference)
 
 
