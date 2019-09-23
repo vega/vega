@@ -344,8 +344,7 @@ Collections of legends with the same *orient* value are positioned together, eit
 | center                | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if legends should be centered within the respective layout area. For example, given a vertical direction, two legends will share a left edge by default. If *center* is true, the smaller legends will be centered in the space spanned by all the legends.|
 | direction             | {% include type t="String" %}   | The direction in which subsequent legends should be spatially positioned. One of `"horizontal"` or `"vertical"`.|
 | margin                | {% include type t="Number" %}   | Margin, in pixels, to place between consecutive legends with the same *orient* value. |
-| offset                | {% include type t="Number" %}   | Offset, in pixels, of the
-legend from the chart body. |
+| offset                | {% include type t="Number" %}   | Offset, in pixels, of the legend from the chart body. |
 
 In addition to these top-level properties, the legend layout may include sub-objects (containing the same properties listed above) for any of the legal [legend *orient* values](../legends/#orientation) other than `"none"`: `"left"`, `"right"`, `"top"`, `"bottom"`, `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`.
 
