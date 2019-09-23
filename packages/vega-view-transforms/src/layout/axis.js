@@ -45,28 +45,28 @@ export function axisLayout(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) s = axisTitleLayout(title, s, titlePadding, dl, 0, -1, bounds);
+      if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
       bounds.add(0, -s).add(range, 0);
       break;
     case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) s = axisTitleLayout(title, s, titlePadding, dl, 1, -1, bounds);
+      if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
       bounds.add(-s, 0).add(0, range);
       break;
     case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) s = axisTitleLayout(title, s, titlePadding, dl, 1, 1, bounds);
+      if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
       bounds.add(0, 0).add(s, range);
       break;
     case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) s = axisTitleLayout(title, s, titlePadding, 0, 0, 1, bounds);
+      if (title) s = axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
       bounds.add(0, 0).add(range, s);
       break;
     default:
@@ -87,18 +87,20 @@ export function axisLayout(view, axis, width, height) {
   return item.mark.bounds.clear().union(bounds);
 }
 
-function axisTitleLayout(title, offset, pad, dl, isYAxis, sign, bounds) {
+function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
   var b = title.bounds, dx = 0, dy = 0;
 
   if (title.auto) {
+    view.dirty(title);
+
     offset += pad;
 
     isYAxis
       ? dx = (title.x || 0) - (title.x = sign * (offset + dl))
       : dy = (title.y || 0) - (title.y = sign * (offset + dl));
 
-    b.translate(-dx, -dy);
-    title.mark.bounds.clear().union(b);
+    title.mark.bounds.clear().union(b.translate(-dx, -dy));
+    view.dirty(title);
 
     if (isYAxis) {
       bounds.add(0, b.y1).add(0, b.y2);
