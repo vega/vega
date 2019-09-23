@@ -131,6 +131,12 @@ function defaults() {
         fontSize: 13,
         fontWeight: 'bold'
       },
+      // chart subtitle
+      'group-subtitle': {
+        fill: black,
+        font: defaultFont,
+        fontSize: 12
+      },
       // defaults for styled point marks in Vega-Lite
       point: {
         size: defaultSymbolSize,
@@ -157,7 +163,8 @@ function defaults() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 4
+      offset: 4,
+      subtitlePadding: 3
     },
 
     // defaults for axes

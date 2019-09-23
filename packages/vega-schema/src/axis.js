@@ -3,7 +3,7 @@ import {
   numberValue, stringValue, booleanValue, colorValue, alignValue,
   anchorValue, baselineValue, fontWeightValue, dashArrayValue,
   booleanOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal,
-  booleanOrNumberOrSignal,
+  textOrSignal, booleanOrNumberOrSignal,
   def, enums, object, oneOf, orSignal, ref,
   booleanType, formatType, numberType, stringType, signalRef
 } from './util';
@@ -52,7 +52,7 @@ const axis = object({
   zindex: numberType,
 
   // TITLE CONFIG
-  title: stringOrSignal,
+  title: textOrSignal,
   titlePadding: numberValue,
   titleAlign: alignValue,
   titleAnchor: anchorValue,

@@ -135,6 +135,7 @@
                       "opacity": 1,
                       "text": "Jan",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -147,6 +148,7 @@
                       "opacity": 1,
                       "text": "Feb",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -159,6 +161,7 @@
                       "opacity": 1,
                       "text": "Mar",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -171,6 +174,7 @@
                       "opacity": 1,
                       "text": "Apr",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -183,6 +187,7 @@
                       "opacity": 1,
                       "text": "May",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -195,6 +200,7 @@
                       "opacity": 1,
                       "text": "Jun",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -207,6 +213,7 @@
                       "opacity": 1,
                       "text": "Jul",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -219,6 +226,7 @@
                       "opacity": 1,
                       "text": "Aug",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -231,6 +239,7 @@
                       "opacity": 1,
                       "text": "Sep",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -243,6 +252,7 @@
                       "opacity": 1,
                       "text": "Oct",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -255,6 +265,7 @@
                       "opacity": 1,
                       "text": "Nov",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -267,6 +278,7 @@
                       "opacity": 1,
                       "text": "Dec",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -526,6 +538,7 @@
                       "opacity": 1,
                       "text": "6:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -538,6 +551,7 @@
                       "opacity": 1,
                       "text": "7:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -550,6 +564,7 @@
                       "opacity": 1,
                       "text": "8:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -562,6 +577,7 @@
                       "opacity": 1,
                       "text": "9:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -574,6 +590,7 @@
                       "opacity": 1,
                       "text": "10:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -586,6 +603,7 @@
                       "opacity": 1,
                       "text": "11:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -598,6 +616,7 @@
                       "opacity": 1,
                       "text": "Noon",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -610,6 +629,7 @@
                       "opacity": 1,
                       "text": "1:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -622,6 +642,7 @@
                       "opacity": 1,
                       "text": "2:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -634,6 +655,7 @@
                       "opacity": 1,
                       "text": "3:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -646,6 +668,7 @@
                       "opacity": 1,
                       "text": "4:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -658,6 +681,7 @@
                       "opacity": 1,
                       "text": "5:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -670,6 +694,7 @@
                       "opacity": 1,
                       "text": "6:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -682,6 +707,7 @@
                       "opacity": 1,
                       "text": "7:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -694,6 +720,7 @@
                       "opacity": 1,
                       "text": "8:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -706,6 +733,7 @@
                       "opacity": 1,
                       "text": "9:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -718,6 +746,7 @@
                       "opacity": 1,
                       "text": "10:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -730,6 +759,7 @@
                       "opacity": 1,
                       "text": "11:00 PM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -742,6 +772,7 @@
                       "opacity": 1,
                       "text": "Midnight",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -754,6 +785,7 @@
                       "opacity": 1,
                       "text": "1:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -766,6 +798,7 @@
                       "opacity": 1,
                       "text": "2:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -778,6 +811,7 @@
                       "opacity": 1,
                       "text": "3:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -790,6 +824,7 @@
                       "opacity": 1,
                       "text": "4:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -802,6 +837,7 @@
                       "opacity": 1,
                       "text": "5:00 AM",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -62339,6 +62375,7 @@
                       "orient": "top",
                       "text": "Avg. Temp (°F)",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -62357,24 +62394,39 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Seattle Annual Temperatures",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "x": -86,
-              "y": -20,
+              "y": -34,
               "align": "left",
-              "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "Seattle Annual Temperatures",
-              "angle": 0,
-              "font": "sans-serif",
-              "fontSize": 14,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

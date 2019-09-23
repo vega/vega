@@ -13,7 +13,8 @@ var keys = [
   'path',                                                       // path
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
-  'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text
+  'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
+  'ellipsis', 'limit', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
 ];
 

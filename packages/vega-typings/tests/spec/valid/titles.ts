@@ -7,7 +7,7 @@ export const spec: Spec = {
   "config": {
     "title": {
       "frame": "group",
-      "limit": {"signal": "item.mark.group[item.orient==='left' || item.orient==='right' ? 'height': 'width']"}
+      "limit": {"signal": "item.orient==='left' || item.orient==='right' ? plotHeight : plotWidth"}
     }
   },
 
@@ -18,6 +18,11 @@ export const spec: Spec = {
       "bind": {"input": "text"}
     },
     {
+      "name": "subtitleText",
+      "value": "A Subtle Subtitle",
+      "bind": {"input": "text"}
+    },
+    {
       "name": "titleAnchor",
       "value": "middle",
       "bind": {"input": "select", "options": ["start", "middle", "end"]}
@@ -25,6 +30,11 @@ export const spec: Spec = {
     {
       "name": "titleOffset",
       "value": 5,
+      "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
+    },
+    {
+      "name": "subtitlePadding",
+      "value": 2,
       "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
     },
     {
@@ -98,10 +108,12 @@ export const spec: Spec = {
       ],
 
       "title": {
+        "orient": "top",
         "text": {"signal": "titleText"},
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
-        "orient": "top"
+        "subtitle": {"signal": "subtitleText"},
+        "subtitlePadding": {"signal": "subtitlePadding"}
       },
 
       "marks": [
@@ -146,10 +158,12 @@ export const spec: Spec = {
       ],
 
       "title": {
+        "orient": "left",
         "text": {"signal": "titleText"},
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
-        "orient": "left"
+        "subtitle": {"signal": "subtitleText"},
+        "subtitlePadding": {"signal": "subtitlePadding"}
       },
 
       "marks": [
@@ -194,10 +208,12 @@ export const spec: Spec = {
       ],
 
       "title": {
+        "orient": "right",
         "text": {"signal": "titleText"},
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
-        "orient": "right"
+        "subtitle": {"signal": "subtitleText"},
+        "subtitlePadding": {"signal": "subtitlePadding"}
       },
 
       "marks": [
@@ -242,10 +258,12 @@ export const spec: Spec = {
       ],
 
       "title": {
+        "orient": "bottom",
         "text": {"signal": "titleText"},
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
-        "orient": "bottom"
+        "subtitle": {"signal": "subtitleText"},
+        "subtitlePadding": {"signal": "subtitlePadding"}
       },
 
       "marks": [

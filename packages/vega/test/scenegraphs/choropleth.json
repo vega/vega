@@ -11092,6 +11092,7 @@
                       "orient": "top",
                       "text": "Unemployment",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

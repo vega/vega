@@ -160,6 +160,7 @@
                       "opacity": 1,
                       "text": "4,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -173,6 +174,7 @@
                       "opacity": 1,
                       "text": "5,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -186,6 +188,7 @@
                       "opacity": 1,
                       "text": "6,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -199,6 +202,7 @@
                       "opacity": 1,
                       "text": "7,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -212,6 +216,7 @@
                       "opacity": 1,
                       "text": "8,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -225,6 +230,7 @@
                       "opacity": 1,
                       "text": "9,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -238,6 +244,7 @@
                       "opacity": 1,
                       "text": "10,000",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -357,6 +364,7 @@
                       "opacity": 1,
                       "text": "$1.50",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -370,6 +378,7 @@
                       "opacity": 1,
                       "text": "$2.00",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -383,6 +392,7 @@
                       "opacity": 1,
                       "text": "$2.50",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"
@@ -396,6 +406,7 @@
                       "opacity": 1,
                       "text": "$3.00",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12,
                       "fontWeight": "bold"

@@ -1,4 +1,5 @@
 import {context} from './canvas/context';
+import {isArray} from 'vega-util';
 
 var currFontHeight;
 
@@ -42,6 +43,12 @@ function useCanvas(use) {
 
 export function lineHeight(item) {
   return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
+}
+
+export function multilineOffset(item) {
+  return isArray(item.text)
+    ? (item.text.length - 1) * lineHeight(item)
+    : 0;
 }
 
 export function textValue(item, text) {

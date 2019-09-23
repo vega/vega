@@ -1,9 +1,7 @@
 import {
-  allOf, anyOf, oneOf, ref,
-  array, def, object, pattern, required, type,
-  booleanType, nullType, numberType, stringType, signalRef,
-  numberValue,
-  enums
+  allOf, anyOf, oneOf, ref, array, def, object, pattern, required,
+  type, booleanType, nullType, numberType, stringType, textType,
+  signalRef, numberValue, enums
 } from './util';
 
 export const fontWeightEnum = [
@@ -19,12 +17,6 @@ export const orientEnum = ['left', 'right', 'top', 'bottom'];
 export const directionEnum = ['horizontal', 'vertical'];
 export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
-export const textType = {
-  oneOf: [
-    stringType,
-    {type: 'array', items: stringType}
-  ]
-};
 
 export function valueSchema(type, nullable) {
   type = Array.isArray(type) ? {enum: type}
