@@ -11101,10 +11101,8 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -76,
-                      "y": -4,
                       "align": "left",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "Unemployment",
@@ -11117,8 +11115,9 @@
                   "zindex": 0
                 }
               ],
+              "x": -76,
+              "y": -17,
               "align": "left",
-              "baseline": "bottom",
               "orient": "top",
               "angle": 0
             }

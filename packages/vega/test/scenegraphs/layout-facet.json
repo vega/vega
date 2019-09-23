@@ -239,8 +239,6 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -37,
-                              "y": 19.799999999999997,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -255,8 +253,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": -45,
+                      "y": 19.799999999999997,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "left",
                       "angle": -90
                     }
@@ -343,8 +342,6 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -37,
-                              "y": 7.800000000000001,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -359,8 +356,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": -45,
+                      "y": 7.800000000000001,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "left",
                       "angle": -90
                     }
@@ -459,8 +457,6 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -37,
-                              "y": 13.799999999999997,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -475,8 +471,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": -45,
+                      "y": 13.799999999999997,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "left",
                       "angle": -90
                     }
@@ -518,7 +515,7 @@
                   "zindex": 0
                 }
               ],
-              "x": -55,
+              "x": -63,
               "y": 42
             }
           ],

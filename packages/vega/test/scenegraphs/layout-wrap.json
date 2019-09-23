@@ -1685,10 +1685,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "University Farm",
@@ -1701,8 +1699,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -2244,10 +2243,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Waseca",
@@ -2260,8 +2257,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -2803,10 +2801,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Morris",
@@ -2819,8 +2815,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -3362,10 +3359,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Crookston",
@@ -3378,8 +3373,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -3921,10 +3917,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Grand Rapids",
@@ -3937,8 +3931,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -4480,10 +4475,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 100,
-                              "y": -4,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Duluth",
@@ -4496,8 +4489,9 @@
                           "zindex": 0
                         }
                       ],
+                      "x": 100,
+                      "y": -17,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }

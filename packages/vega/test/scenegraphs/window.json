@@ -791,8 +791,6 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 230.5,
-                      "y": 171,
                       "align": "center",
                       "baseline": "top",
                       "fill": "#000",
@@ -807,8 +805,9 @@
                   "zindex": 0
                 }
               ],
+              "x": 230.5,
+              "y": 171,
               "align": "center",
-              "baseline": "top",
               "orient": "bottom",
               "angle": 0
             }

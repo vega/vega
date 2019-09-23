@@ -4,7 +4,7 @@ import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
-  numberOrSignal, stringOrSignal, arrayOrSignal,
+  arrayOrSignal, numberOrSignal, stringOrSignal, textOrSignal,
   formatType, numberType, stringType, orSignal
 } from './util';
 
@@ -72,7 +72,7 @@ const legendProps = object({
   legendY: numberValue,
 
   // LEGEND TITLE CONFIG
-  title: stringOrSignal,
+  title: textOrSignal,
   titleAlign: alignValue,
   titleAnchor: anchorValue,
   titleBaseline: baselineValue,

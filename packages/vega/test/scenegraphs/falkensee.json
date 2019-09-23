@@ -1511,10 +1511,8 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 214.1193063937629,
-                      "y": -9,
                       "align": "center",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "Population of Falkensee from 1875 to 2014",
@@ -1527,8 +1525,9 @@
                   "zindex": 0
                 }
               ],
+              "x": 214.1193063937629,
+              "y": -25,
               "align": "center",
-              "baseline": "bottom",
               "orient": "top",
               "angle": 0
             }

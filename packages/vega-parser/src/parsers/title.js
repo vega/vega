@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, GroupSubtitleStyle, GroupTitleStyle} from './guides/constants';
+import {Left, Right, GroupSubtitleStyle, GroupTitleStyle} from './guides/constants';
 import guideGroup from './guides/guide-group';
 import guideMark from './guides/guide-mark';
 import {alignExpr, lookup} from './guides/guide-util';
@@ -10,14 +10,12 @@ import {ref, value} from '../util';
 import {Collect} from '../transforms';
 import {isString} from 'vega-util';
 
-const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`,
-      baselineExpr = `item.orient==="${Bottom}"?"${Top}":"${Bottom}"`;
+const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
 
-  var config = scope.config.title,
-      _ = lookup(spec, config),
+  var _ = lookup(spec, scope.config.title),
       encode = spec.encode || {},
       name = undefined,
       interactive = undefined,
@@ -53,10 +51,10 @@ function groupEncode(_) {
     anchor:     _('anchor'),
     align:      {signal: alignExpr},
     angle:      {signal: angleExpr},
-    baseline:   {signal: baselineExpr},
     limit:      _('limit'),
     frame:      _('frame'),
-    offset:     _('offset') || 0
+    offset:     _('offset') || 0,
+    padding:    _('subtitlePadding')
   });
 
   return encode;
@@ -75,8 +73,8 @@ function buildTitle(spec, _, userEncode, dataRef) {
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
-    baseline:   {signal: 'item.mark.group.baseline'},
     limit:      {signal: 'item.mark.group.limit'},
+    baseline:   'top',
     dx:         _('dx'),
     dy:         _('dy'),
     fill:       _('color'),
@@ -107,8 +105,8 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
-    baseline:   {signal: 'item.mark.group.baseline'},
     limit:      {signal: 'item.mark.group.limit'},
+    baseline:   'top',
     dx:         _('dx'),
     dy:         _('dy'),
     fill:       value(_('subtitleColor'), _('color')),

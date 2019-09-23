@@ -1506,10 +1506,8 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 0,
-                      "y": -9,
                       "align": "left",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "World Development Trends in 1955",
@@ -1522,8 +1520,9 @@
                   "zindex": 0
                 }
               ],
+              "x": 0,
+              "y": -27,
               "align": "left",
-              "baseline": "bottom",
               "orient": "top",
               "angle": 0
             }

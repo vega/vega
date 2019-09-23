@@ -57,6 +57,7 @@ export type AlignValueRef = ScaledValueRef<Align>;
 export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
 export type OrientValueRef = ScaledValueRef<Orient>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
+export type TextValueRef = ScaledValueRef<Text>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
 export type ArrayValueRef = ScaledValueRef<any[]>;
 export type ArbitraryValueRef = NumericValueRef | ColorValueRef | ScaledValueRef<any>;
@@ -328,17 +329,17 @@ export type FontWeight =
 // see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
 export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
-  text?: ProductionRule<ScaledValueRef<Text>>;
+  text?: ProductionRule<TextValueRef>;
   angle?: ProductionRule<NumericValueRef>;
-  baseline?: ProductionRule<ScaledValueRef<TextBaseline>>;
+  baseline?: ProductionRule<TextBaselineValueRef>;
   dir?: ProductionRule<ScaledValueRef<TextDirection>>;
   dx?: ProductionRule<NumericValueRef>;
   dy?: ProductionRule<NumericValueRef>;
   ellipsis?: ProductionRule<StringValueRef>;
   font?: ProductionRule<StringValueRef>;
   fontSize?: ProductionRule<NumericValueRef>;
-  fontWeight?: ProductionRule<ScaledValueRef<FontWeight>>;
-  fontStyle?: ProductionRule<ScaledValueRef<FontStyle>>;
+  fontWeight?: ProductionRule<FontWeightValueRef>;
+  fontStyle?: ProductionRule<FontStyleValueRef>;
   limit?: ProductionRule<NumericValueRef>;
   lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;

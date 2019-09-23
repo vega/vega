@@ -963,10 +963,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 200,
-                              "y": -10,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
@@ -977,10 +975,32 @@
                             }
                           ],
                           "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "title-subtitle",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 0,
+                              "y": 15,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "A Subtle Subtitle",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 12
+                            }
+                          ],
+                          "zindex": 0
                         }
                       ],
+                      "x": 200,
+                      "y": -36,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "top",
                       "angle": 0
                     }
@@ -1952,10 +1972,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -51,
-                              "y": 50,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
@@ -1966,10 +1984,32 @@
                             }
                           ],
                           "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "title-subtitle",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 15.000000000000007,
+                              "y": 0,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "A Subtle Subtitle",
+                              "angle": -90,
+                              "font": "sans-serif",
+                              "fontSize": 12
+                            }
+                          ],
+                          "zindex": 0
                         }
                       ],
+                      "x": -77.00000000000001,
+                      "y": 50,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "left",
                       "angle": -90
                     }
@@ -2941,10 +2981,8 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 405,
-                              "y": 50,
                               "align": "center",
-                              "baseline": "bottom",
+                              "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
@@ -2955,10 +2993,32 @@
                             }
                           ],
                           "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "title-subtitle",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": -15.000000000000007,
+                              "y": 0,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "A Subtle Subtitle",
+                              "angle": 90,
+                              "font": "sans-serif",
+                              "fontSize": 12
+                            }
+                          ],
+                          "zindex": 0
                         }
                       ],
+                      "x": 431,
+                      "y": 50,
                       "align": "center",
-                      "baseline": "bottom",
                       "orient": "right",
                       "angle": 90
                     }
@@ -3930,8 +3990,6 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 200,
-                              "y": 137,
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
@@ -3944,10 +4002,32 @@
                             }
                           ],
                           "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "title-subtitle",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 0,
+                              "y": 15,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "A Subtle Subtitle",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 12
+                            }
+                          ],
+                          "zindex": 0
                         }
                       ],
+                      "x": 200,
+                      "y": 137,
                       "align": "center",
-                      "baseline": "top",
                       "orient": "bottom",
                       "angle": 0
                     }

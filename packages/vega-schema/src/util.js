@@ -109,6 +109,13 @@ export const signalRef = ref('signal');
 
 export const formatType = enums(formatTypeEnum);
 
+export const textType = {
+  oneOf: [
+    stringType,
+    {type: 'array', items: stringType}
+  ]
+};
+
 export const alignValue = oneOf(
   enums(alignEnum),
   ref('alignValue')
@@ -165,3 +172,4 @@ export const booleanOrSignal = ref('booleanOrSignal');
 export const arrayOrSignal = ref('arrayOrSignal');
 export const numberOrSignal = ref('numberOrSignal');
 export const stringOrSignal = ref('stringOrSignal');
+export const textOrSignal = ref('textOrSignal');

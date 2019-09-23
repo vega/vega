@@ -6,6 +6,7 @@ import {
   TextEncodeEntry,
   TimeInterval,
 } from '.';
+import { Text } from './encode';
 import { LayoutAlign } from './layout';
 import {
   AlignValue,
@@ -59,7 +60,7 @@ export interface Axis extends BaseAxis {
   /**
    * A title for the axis (none by default).
    */
-  title?: StringValue;
+  title?: Text | SignalRef;
 
   /**
    * The orthogonal offset in pixels by which to displace the axis from its position along the edge of the chart.

@@ -7,6 +7,7 @@ import {
   TextEncodeEntry,
 } from '.';
 import { FormatType, LabelOverlap, TickCount } from './axis';
+import { Text } from './encode';
 import { LayoutAlign } from './layout';
 import {
   AlignValue,
@@ -86,7 +87,7 @@ export interface Legend extends BaseLegend {
   /**
    * The title for the legend.
    */
-  title?: string | SignalRef;
+  title?: Text | SignalRef;
 
   /**
    * The desired number of tick values for quantitative legends.

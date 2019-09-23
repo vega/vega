@@ -197,13 +197,16 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -31,
+                      "x": -44,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "Linear Font Size",
+                      "text": [
+                        "Font Size",
+                        "(Linear)"
+                      ],
                       "angle": -90,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -409,13 +412,16 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 31,
+                      "x": 44,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "Log-Transformed Font Size",
+                      "text": [
+                        "Font Size",
+                        "(Log-Transformed)"
+                      ],
                       "angle": 90,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -1101,10 +1107,8 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 0,
-                      "y": -82,
                       "align": "left",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "Font Size Steps and Weber's Law?",
@@ -1118,8 +1122,9 @@
                   "zindex": 0
                 }
               ],
+              "x": 0,
+              "y": -98,
               "align": "left",
-              "baseline": "bottom",
               "orient": "top",
               "angle": 0
             }

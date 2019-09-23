@@ -62381,10 +62381,8 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -81,
-                      "y": -4,
                       "align": "left",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "Seattle Annual Temperatures",
@@ -62397,8 +62395,9 @@
                   "zindex": 0
                 }
               ],
+              "x": -81,
+              "y": -18,
               "align": "left",
-              "baseline": "bottom",
               "orient": "top",
               "angle": 0
             }
