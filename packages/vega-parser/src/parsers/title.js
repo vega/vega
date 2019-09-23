@@ -1,14 +1,14 @@
-import {Left, Right, GroupSubtitleStyle, GroupTitleStyle} from './guides/constants';
+import {Left, Right, GroupSubtitleStyle, GroupTitleStyle, Skip} from './guides/constants';
 import guideGroup from './guides/guide-group';
 import guideMark from './guides/guide-mark';
 import {alignExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole, TitleTextRole, TitleSubtitleRole} from './marks/roles';
-import {addEncoders} from './encode/encode-util';
+import {addEncoders, extendEncode} from './encode/encode-util';
 import {ref, value} from '../util';
 import {Collect} from '../transforms';
-import {isString} from 'vega-util';
+import {extend, isString} from 'vega-util';
 
 const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 
@@ -17,9 +17,10 @@ export default function(spec, scope) {
 
   var _ = lookup(spec, scope.config.title),
       encode = spec.encode || {},
-      name = undefined,
-      interactive = undefined,
-      style = undefined,
+      userEncode = encode.group || {},
+      name = userEncode.name || undefined,
+      interactive = userEncode.interactive,
+      style = userEncode.style,
       children = [],
       dataRef, group;
 
@@ -27,7 +28,7 @@ export default function(spec, scope) {
   dataRef = ref(scope.add(Collect(null, [{}])));
 
   // include title text
-  children.push(buildTitle(spec, _, encode.title, dataRef));
+  children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
 
   // include subtitle text
   if (spec.subtitle) {
@@ -35,15 +36,26 @@ export default function(spec, scope) {
   }
 
   // build title specification
-  group = guideGroup(TitleRole, style, name, dataRef,
-                     interactive, groupEncode(_), children);
+  group = guideGroup(TitleRole, style, name, dataRef, interactive,
+                     groupEncode(_, userEncode), children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse title specification
   return parseMark(group, scope);
 }
 
-function groupEncode(_) {
+// provide backwards-compatibility for title custom encode;
+// the top-level encode block has been *deprecated*.
+function titleEncode(spec) {
+  const encode = spec.encode;
+  return (encode && encode.title) || extend({
+    name: spec.name,
+    interactive: spec.interactive,
+    style: spec.style
+  }, encode);
+}
+
+function groupEncode(_, userEncode) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
@@ -57,10 +69,12 @@ function groupEncode(_) {
     padding:    _('subtitlePadding')
   });
 
-  return encode;
+  return extendEncode(encode, userEncode, Skip);
 }
 
 function buildTitle(spec, _, userEncode, dataRef) {
+  console.log(userEncode);
+
   var zero = {value: 0},
       text = spec.text,
       encode = {

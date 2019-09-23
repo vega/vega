@@ -1,5 +1,5 @@
-import { Encodable, SignalRef, TextEncodeEntry } from '.';
-import { Text } from './encode';
+import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '.';
+import { Encode, Text } from './encode';
 import {
   AlignValue,
   AnchorValue,
@@ -15,7 +15,7 @@ export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = null | 'start' | 'middle' | 'end';
 export type TitleFrame = 'bounds' | 'group';
 
-export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
+export interface Title extends BaseTitle {
   /**
    * The title text.
    */
@@ -32,17 +32,17 @@ export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
   subtitlePadding?: number | SignalRef;
 
   /**
-   * A mark name property to apply to the title text mark. (Deprecated.)
+   * A mark name property to apply to the title text mark. (**Deprecated.**)
    */
   name?: string;
 
   /**
-   * A boolean flag indicating if the title element should respond to input events such as mouse hover. (Deprecated.)
+   * A boolean flag indicating if the title element should respond to input events such as mouse hover. (**Deprecated.**)
    */
   interactive?: boolean;
 
   /**
-   * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.
+   * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied. (**Deprecated**)
    */
   style?: string | string[];
 
@@ -55,6 +55,26 @@ export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
    * @minimum 0
    */
   zindex?: number;
+
+  /**
+   * Mark definitions for custom title encoding.
+   */
+  encode?: TitleEncode | Encode<TextEncodeEntry>; // second entry is **deprecated**
+}
+
+export interface TitleEncode {
+  /**
+   * Custom encoding for the title container group.
+   */
+  group?: GuideEncodeEntry<GroupEncodeEntry>;
+  /**
+   * Custom encoding for the title text.
+   */
+  title?: GuideEncodeEntry<TextEncodeEntry>;
+  /**
+   * Custom encoding for the subtitle text.
+   */
+  subtitle?: GuideEncodeEntry<TextEncodeEntry>;
 }
 
 export interface BaseTitle<

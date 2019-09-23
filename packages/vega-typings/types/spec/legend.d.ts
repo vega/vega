@@ -119,10 +119,10 @@ export interface Legend extends BaseLegend {
 }
 
 export interface LegendEncode {
-  title?: GuideEncodeEntry<GroupEncodeEntry>;
+  title?: GuideEncodeEntry<TextEncodeEntry>;
   labels?: GuideEncodeEntry<TextEncodeEntry>;
   legend?: GuideEncodeEntry<GroupEncodeEntry>;
-  entries?: GuideEncodeEntry<TextEncodeEntry>;
+  entries?: GuideEncodeEntry<GroupEncodeEntry>;
   symbols?: GuideEncodeEntry<SymbolEncodeEntry>;
   gradient?: GuideEncodeEntry<RectEncodeEntry>;
 }

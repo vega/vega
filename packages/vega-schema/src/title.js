@@ -26,7 +26,6 @@ const title = oneOf(
     frame: oneOf(enums(titleFrameEnum), stringValueRef),
     offset: numberValue,
     limit: numberValue,
-    style: styleRef,
     text: textOrSignal,
     subtitle: textOrSignal,
     zindex: numberType,
@@ -51,6 +50,7 @@ const title = oneOf(
     encode: oneOf(
       titleEncode,
       object({
+        group: guideEncodeRef,
         title: guideEncodeRef,
         subtitle: guideEncodeRef
       })
@@ -58,7 +58,8 @@ const title = oneOf(
 
     // deprecated
     name: stringType,
-    interactive: booleanType
+    interactive: booleanType,
+    style: styleRef
   })
 );
 
