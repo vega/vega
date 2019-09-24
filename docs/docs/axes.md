@@ -75,6 +75,7 @@ Properties for specifying a coordinate axis.
 | titleFontStyle  | {% include type t="String" %} | Font style of the axis title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of axis title. |
 | titleLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of the axis title. |
+| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of axis title. {% include tag ver="4.1" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding in pixels between the axis labels and axis title.|
 | titleX        | {% include type t="Number" %}  | Custom X position of the axis title relative to the axis group, overriding the standard layout. |

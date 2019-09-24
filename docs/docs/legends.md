@@ -76,6 +76,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | titleFontStyle  | {% include type t="String" %} | Font style of the legend title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of the legend title. |
 | titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of the legend title. |
+| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
 | titleOrient   | {% include type t="String" %}  | The orientation of the title legend, determining where it is placed relative to the legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|

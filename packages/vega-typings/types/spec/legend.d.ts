@@ -249,6 +249,11 @@ export interface BaseLegend<
   titleLimit?: N;
 
   /**
+   * Line height in pixels for multi-line title text.
+   */
+  titleLineHeight?: N;
+
+  /**
    * Opacity of the legend title.
    */
   titleOpacity?: N;

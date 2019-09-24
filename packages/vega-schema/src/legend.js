@@ -82,6 +82,7 @@ const legendProps = object({
   titleFontStyle: stringValue,
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
+  titleLineHeight: numberValue,
   titleOpacity: numberValue,
   titleOrient: orientValue,
   titlePadding: numberValue,

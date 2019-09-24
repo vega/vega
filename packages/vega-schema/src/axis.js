@@ -66,6 +66,7 @@ const axis = object({
   titleFontStyle: stringValue,
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
+  titleLineHeight: numberValue,
   titleOpacity: numberValue,
 
   // DOMAIN CONFIG

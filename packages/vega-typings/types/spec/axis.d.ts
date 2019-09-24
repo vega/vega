@@ -243,6 +243,11 @@ export interface BaseAxis<
   titleLimit?: N;
 
   /**
+   * Line height in pixels for multi-line title text.
+   */
+  titleLineHeight?: N;
+
+  /**
    * Opacity of the axis title.
    */
   titleOpacity?: N;

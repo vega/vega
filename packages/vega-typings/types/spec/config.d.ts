@@ -249,6 +249,11 @@ export interface MarkConfig {
   limit?: number;
 
   /**
+   * The line height in pixels (the spacing between subsequent lines of text) for multi-line text marks.
+   */
+  lineHeight?: number;
+
+  /**
    * Polar coordinate angle, in radians, of the text label from the origin determined by the `x` and `y` properties. Values for `theta` follow the same convention of `arc` mark `startAngle` and `endAngle` properties: angles are measured in radians, with `0` indicating "north".
    */
   theta?: number;
