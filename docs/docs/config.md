@@ -40,6 +40,7 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 - [Axis Properties](#axes)
 - [Legend Properties](#legends)
 - [Title Properties](#title)
+- [Projection Properties](#projection)
 - [Scale Range Properties](#scale-range)
 - [Signals](#signals)
 {: .column-list }
@@ -428,6 +429,26 @@ This example gives every title a 10 pixel offset and a font size of 18 pixels.
   }
 }
 ```
+
+[Back to Top](#reference)
+
+
+## <a name="projection"></a>Projection Properties
+
+Default properties to apply to [cartographic projections](../projections), if not explicitly included in the input JSON specification. Any legal projection property may be included. These properties are defined under the `"projection"` property in the config object. A common use for this property is to set a default projection type.
+
+### Usage
+
+This example sets the default projection type to be an `"equalEarth"` projection:
+
+```json
+{
+  "projection": {
+    "type": "equalEarth"
+  }
+}
+```
+
 
 [Back to Top](#reference)
 

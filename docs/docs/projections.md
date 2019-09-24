@@ -43,6 +43,8 @@ In addition to the shared properties above, the following properties are support
 [`spacing`](https://github.com/d3/d3-geo-projection#lagrange_spacing),
 [`tilt`](https://github.com/d3/d3-geo-projection#satellite_tilt).
 
+Alternative default values for any of the properties above can be set using a custom [config](../config/#projection) object.
+
 ## <a name="types"></a>Projection Types
 
 Vega includes all cartographic projections provided by the [d3-geo](https://github.com/d3/d3-geo#) library.
