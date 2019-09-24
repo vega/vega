@@ -350,6 +350,8 @@ Collections of legends with the same *orient* value are positioned together, eit
 
 In addition to these top-level properties, the legend layout may include sub-objects (containing the same properties listed above) for any of the legal [legend *orient* values](../legends/#orientation) other than `"none"`: `"left"`, `"right"`, `"top"`, `"bottom"`, `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`.
 
+**Note**: The [default configuration](https://github.com/vega/vega/blob/master/packages/vega-parser/src/config.js) includes legend layout entries for `"left"` and `"right"` orientations. If you add custom layout parameters at the top-level, these will _not_ override more specific configurations. If you want to modify the layout of `"left"`- or `"right"`-oriented legends, use a specific sub-object targeting those orientations.
+
 ### Usage
 
 This example gives every legend a 10 pixel padding and a light gray border:
