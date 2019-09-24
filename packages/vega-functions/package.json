@@ -1,6 +1,6 @@
 {
   "name": "vega-functions",
-  "version": "5.3.2",
+  "version": "5.4.0",
   "description": "Custom functions for the Vega expression language.",
   "keywords": [
     "vega",
@@ -34,6 +34,6 @@
     "vega-scenegraph": "^4.0.0",
     "vega-selections": "^5.0.1",
     "vega-statistics": "^1.3.0",
-    "vega-util": "^1.11.0"
+    "vega-util": "^1.11.2"
   }
 }

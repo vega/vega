@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "5.8.3",
+  "version": "5.9.0",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
@@ -27,8 +27,8 @@
     "vega-dataflow": "^5.4.0",
     "vega-event-selector": "^2.0.1",
     "vega-expression": "^2.6.1",
-    "vega-functions": "^5.3.1",
-    "vega-scale": "^4.1.1",
-    "vega-util": "^1.11.0"
+    "vega-functions": "^5.4.0",
+    "vega-scale": "^4.1.2",
+    "vega-util": "^1.11.2"
   }
 }
