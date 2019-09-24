@@ -27,11 +27,6 @@ export interface Title extends BaseTitle {
   subtitle?: Text | SignalRef;
 
   /**
-   * The padding in pixels between title and subtitle text.
-   */
-  subtitlePadding?: number | SignalRef;
-
-  /**
    * A mark name property to apply to the title text mark. (**Deprecated.**)
    */
   name?: string;
@@ -158,7 +153,12 @@ export interface BaseTitle<
   fontWeight?: FW;
 
   /**
-   * The maximum allowed length in pixels of title text.
+   * Line height in pixels for multi-line title text.
+   */
+  lineHeight?: N;
+
+  /**
+   * The maximum allowed length in pixels of title and subtitle text.
    *
    * @minimum 0
    */
@@ -196,4 +196,14 @@ export interface BaseTitle<
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
   subtitleFontWeight?: FW;
+
+  /**
+   * Line height in pixels for multi-line subtitle text.
+   */
+  subtitleLineHeight?: N;
+
+  /**
+   * The padding in pixels between title and subtitle text.
+   */
+  subtitlePadding?: N;
 }

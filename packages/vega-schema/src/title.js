@@ -39,16 +39,18 @@ const title = oneOf(
     fontSize: numberValue,
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
+    lineHeight: numberValue,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
     subtitleFontStyle: stringValue,
     subtitleFontWeight: fontWeightValue,
+    subtitleLineHeight: numberValue,
     subtitlePadding: numberOrSignal,
 
     // custom encoders
     encode: oneOf(
-      titleEncode,
+      titleEncode, // deprecated! (v5.7.0)
       object({
         group: guideEncodeRef,
         title: guideEncodeRef,
@@ -56,7 +58,7 @@ const title = oneOf(
       })
     ),
 
-    // deprecated
+    // deprecated! (v5.7.0)
     name: stringType,
     interactive: booleanType,
     style: styleRef

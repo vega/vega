@@ -29,17 +29,19 @@ Properties for specifying a title.
 | frame         | {% include type t="String" %}  | The reference frame for the anchor position, one of `"bounds"` (the default, to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
 | interactive   | {% include type t="Boolean" %} | A boolean flag indicating if the title element should respond to input events such as mouse hover. **Deprecated**: use a [custom _encode_ block](#custom) instead.|
 | limit         | {% include type t="Number" %}  | The maximum allowed length in pixels of title and subtitle text. |
+| lineHeight    | {% include type t="Number" %}  | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | name          | {% include type t="String" %}  | A [mark name](../marks) property to apply to the title text mark. **Deprecated**: use a [custom _encode_ block](#custom) instead.|
 | offset        | {% include type t="Number|Value" %} | The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.|
 | style         | {% include type t="String|String[]" %}  | A [mark style](../marks) property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied. **Deprecated**: use a [custom _encode_ block](#custom) instead.|
 | subtitle      | {% include type t="String|String[]" %}  | Optional subtitle text, placed beneath the primary text. A string array specifies multiple lines of text. {% include tag ver="5.7" %}|
-| subtitlePadding    | {% include type t="Number" %}  | Padding, in pixels, between title and subtitle text. {% include tag ver="5.7" %}|
-| subtitleColor      | {% include type t="Color" %}   | Text color of the subtitle text. If not specified, subtitles use the same color as the title text. {% include tag ver="5.7" %}|
-| subtitleFont       | {% include type t="String" %}  | Font name of the subtitle text. If not specified, subtitles use the same font as the title text. {% include tag ver="5.7" %}|
+| subtitleColor      | {% include type t="Color" %}   | Text color of the subtitle text. {% include tag ver="5.7" %}|
+| subtitleFont       | {% include type t="String" %}  | Font name of the subtitle text. {% include tag ver="5.7" %}|
 | subtitleFontSize   | {% include type t="Number" %}  | Font size in pixels of the subtitle text. {% include tag ver="5.7" %} |
 | subtitleFontStyle  | {% include type t="String" %}  | Font style of the subtitle text (e.g., `normal` or `italic`). {% include tag ver="5.7" %} |
 | subtitleFontWeight | {% include type t="String|Number" %}  | Font weight of the subtitle text. {% include tag ver="5.7" %} |
-| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the title group relative to other axis, mark and legend groups. The default value is `0`.|
+| subtitleLineHeight | {% include type t="Number" %}  | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
+| subtitlePadding    | {% include type t="Number" %}  | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
+| zindex             | {% include type t="Number" %}  | The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups. The default value is `0`.|
 
 To create themes, new default values for many title properties can be set using a [config](../config) object.
 

@@ -241,6 +241,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleFontStyle  | {% include type t="String" %} | Font style of axis titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
+| titleLineHeight | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity    | {% include type t="Number" %}   | Opacity of axis titles. {% include tag ver="4.1" %} |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
@@ -329,6 +330,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleFontStyle        | {% include type t="String" %}   | Font style of legend titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
+| titleLineHeight       | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
@@ -388,21 +390,29 @@ Properties defining default settings for titles. These properties are defined un
 
 | Property              | Type                            | Description    |
 | :-------------------- | :-----------------------------: | :------------- |
-| align                 | {% include type t="String" %}   | Horizontal text alignment of the title. If specified, this value overrides automatic alignment based on the _anchor_ value. |
-| anchor                | {% include type t="String" %}   | Title anchor position (`"start"`, `"middle"`, or `"end"`). |
-| angle                 | {% include type t="Number" %}   | Angle in degrees of the title text. |
-| baseline              | {% include type t="String" %}   | Vertical text baseline of the title. |
+| align                 | {% include type t="String" %}   | Horizontal text alignment of the title and subtitle. If specified, this value overrides automatic alignment based on the _anchor_ value. |
+| anchor                | {% include type t="String" %}   | Title and subtitle anchor position (`"start"`, `"middle"`, or `"end"`). |
+| angle                 | {% include type t="Number" %}   | Angle in degrees of the title and subtitle text. |
+| baseline              | {% include type t="String" %}   | Vertical text baseline of the title and subtitle. |
 | color                 | {% include type t="Color" %}    | Text color of the title text. |
-| dx                    | {% include type t="Number" %}   | Horizontal offset added to the title x-coordinate. {% include tag ver="5.2" %} |
-| dy                    | {% include type t="Number" %}   | Vertical offset added to the title y-coordinate. {% include tag ver="5.2" %} |
+| dx                    | {% include type t="Number" %}   | Horizontal offset added to the title and subtitle x-coordinate. {% include tag ver="5.2" %} |
+| dy                    | {% include type t="Number" %}   | Vertical offset added to the title and subtitle y-coordinate. {% include tag ver="5.2" %} |
 | font                  | {% include type t="String" %}   | Font name of the title text. |
 | fontSize              | {% include type t="Number" %}   | Font size in pixels of the title text. |
 | fontStyle             | {% include type t="String" %}   | Font style of the title text (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | fontWeight            | {% include type t="String|Number" %}   | Font weight for title text. |
 | frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
-| limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
+| limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of title and subtitle text. |
+| lineHeight            | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
 | orient                | {% include type t="String" %}   | Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`). |
+| subtitleColor         | {% include type t="Color" %}    | Text color of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFont          | {% include type t="String" %}   | Font name of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFontSize      | {% include type t="Number" %}   | Font size in pixels of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFontStyle     | {% include type t="String" %}   | Font style of the subtitle text (e.g., `normal` or `italic`). {% include tag ver="5.7" %} |
+| subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
+| subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
+| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
 
 ### Usage
 

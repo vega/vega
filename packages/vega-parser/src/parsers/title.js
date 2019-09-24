@@ -6,7 +6,7 @@ import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole, TitleTextRole, TitleSubtitleRole} from './marks/roles';
 import {addEncoders, extendEncode} from './encode/encode-util';
-import {ref, value} from '../util';
+import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString} from 'vega-util';
 
@@ -93,7 +93,8 @@ function buildTitle(spec, _, userEncode, dataRef) {
     font:       _('font'),
     fontSize:   _('fontSize'),
     fontStyle:  _('fontStyle'),
-    fontWeight: _('fontWeight')
+    fontWeight: _('fontWeight'),
+    lineHeight: _('lineHeight')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
@@ -121,11 +122,12 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     baseline:   'top',
     dx:         _('dx'),
     dy:         _('dy'),
-    fill:       value(_('subtitleColor'), _('color')),
-    font:       value(_('subtitleFont'), _('font')),
+    fill:       _('subtitleColor'),
+    font:       _('subtitleFont'),
     fontSize:   _('subtitleFontSize'),
     fontStyle:  _('subtitleFontStyle'),
-    fontWeight: _('subtitleFontWeight')
+    fontWeight: _('subtitleFontWeight'),
+    lineHeight: _('subtitleLineHeight')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
