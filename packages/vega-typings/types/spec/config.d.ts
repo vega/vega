@@ -14,6 +14,7 @@ import {
 import { BaseAxis, LabelOverlap } from './axis';
 import { LayoutAlign, LayoutBounds } from './layout';
 import { BaseLegend, LegendOrient } from './legend';
+import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 import {
@@ -47,6 +48,7 @@ export interface Config
   style?: any; // TODO
   legend?: LegendConfig;
   title?: TitleConfig;
+  projection?: ProjectionConfig;
   range?: {
     category?: RangeScheme | string[];
     diverging?: RangeScheme | string[];
@@ -471,3 +473,5 @@ export interface LegendLayout extends BaseLegendLayout {
 }
 
 export type TitleConfig = BaseTitle;
+
+export type ProjectionConfig = BaseProjection;

@@ -20,11 +20,7 @@ export type ProjectionType =
   | 'orthographic'
   | 'stereographic'
   | 'transverseMercator';
-export interface Projection {
-  /*
-   * The name of the projection.
-   */
-  name: string;
+export interface BaseProjection {
   /*
    * The type of the projection.
    */
@@ -80,4 +76,10 @@ export interface Projection {
   ratio?: number;
   spacing?: number;
   tilt?: number;
+}
+export interface Projection extends BaseProjection {
+  /*
+   * The name of the projection.
+   */
+  name: string;
 }

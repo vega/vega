@@ -196,6 +196,11 @@ function defaults() {
       tickOffset: -1
     },
 
+    // defaults for cartographic projection
+    projection: {
+      type: 'mercator'
+    },
+
     // defaults for legends
     legend: {
       orient: 'right',
