@@ -9,6 +9,7 @@ export type Transforms =
   | _TODO_<'cross'>
   | _TODO_<'crossfilter'>
   | _TODO_<'density'>
+  | DotBinTransform
   | ExtentTransform
   | FilterTransform
   | FlattenTransform
@@ -32,6 +33,7 @@ export type Transforms =
   | _TODO_<'partition'>
   | _TODO_<'pie'>
   | _TODO_<'project'>
+  | QuantileTransform
   | RegressionTransform
   | _TODO_<'resolvefilter'>
   | SampleTransform
@@ -167,10 +169,20 @@ export type ContourTransform = {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
 
+export interface DotBinTransform {
+  type: 'dotbin';
+  field: string | TransformField;
+  groupby?: (string | TransformField)[] | SignalRef;
+  step?: number | SignalRef;
+  smooth?: boolean | SignalRef;
+  as?: string | SignalRef;
+  signal?: string;
+}
+
 export interface ExtentTransform {
   type: 'extent';
   field: string | TransformField;
-  signal: string;
+  signal?: string;
 }
 
 export interface FilterTransform {
@@ -233,7 +245,7 @@ export interface GraticuleTransform {
 
 export interface IdentifierTransform {
   type: 'identifier';
-  as: string;
+  as: string | SignalRef;
 }
 
 export type ImputeMethod = 'value' | 'median' | 'max' | 'min' | 'mean';
@@ -290,6 +302,15 @@ export interface LookupTransform {
   default?: any;
 }
 
+export interface QuantileTransform {
+  type: 'quantile';
+  field: string | TransformField;
+  groupby?: (string | TransformField)[] | SignalRef;
+  step?: number | SignalRef;
+  quantiles?: number[] | SignalRef;
+  as?: (string | SignalRef)[] | SignalRef;
+}
+
 export interface RegressionTransform {
   type: 'regression';
   x: string | TransformField;
@@ -312,7 +333,7 @@ export interface StackTransform {
   field?: string | TransformField;
   groupby?: (string | TransformField)[];
   sort?: Compare;
-  offset?: StackOffset;
+  offset?: StackOffset | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
