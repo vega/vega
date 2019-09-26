@@ -40,6 +40,13 @@ var distributions = [
     ]
   },
   {
+    "key": {"function": "lognormal"},
+    "params": [
+      { "name": "mean", "type": "number", "default": 0 },
+      { "name": "stdev", "type": "number", "default": 1 }
+    ]
+  },
+  {
     "key": {"function": "uniform"},
     "params": [
       { "name": "min", "type": "number", "default": 0 },
