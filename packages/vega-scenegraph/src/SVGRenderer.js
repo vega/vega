@@ -3,7 +3,7 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, lineHeight, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
@@ -426,11 +426,12 @@ var mark_extras = {
     }
   },
   text: function(mdef, el, item) {
-    var key, value, doc, lh;
+    var tl = textLines(item),
+        key, value, doc, lh;
 
-    if (isArray(item.text)) {
+    if (isArray(tl)) {
       // multi-line text
-      value = item.text.map(_ => textValue(item, _));
+      value = tl.map(_ => textValue(item, _));
       key = value.join('\n'); // content cache key
 
       if (key !== values.text) {
@@ -451,7 +452,7 @@ var mark_extras = {
       }
     } else {
       // single-line text
-      value = textValue(item);
+      value = textValue(item, tl);
       if (value !== values.text) {
         el.textContent = value;
         values.text = value;

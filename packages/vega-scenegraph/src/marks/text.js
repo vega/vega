@@ -1,6 +1,6 @@
 import Bounds from '../Bounds';
 import {DegToRad, HalfPi} from '../util/constants';
-import {font, lineHeight, offset, textMetrics, textValue} from '../util/text';
+import {font, lineHeight, offset, textLines, textMetrics, textValue} from '../util/text';
 import {intersectBoxLine} from '../util/intersect';
 import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
@@ -60,16 +60,17 @@ function bound(bounds, item, mode) {
       y = p.y1,
       dx = item.dx || 0,
       dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
+      tl = textLines(item),
       w;
 
-  // get width
-  if (isArray(item.text)) {
+  // get dimensions
+  if (isArray(tl)) {
     // multi-line text
-    h += lineHeight(item) * (item.text.length - 1);
-    w = item.text.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
+    h += lineHeight(item) * (tl.length - 1);
+    w = tl.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
   } else {
     // single-line text
-    w = textMetrics.width(item);
+    w = textMetrics.width(item, tl);
   }
 
   // horizontal alignment
@@ -93,7 +94,7 @@ function bound(bounds, item, mode) {
 
 function draw(context, scene, bounds) {
   visit(scene, function(item) {
-    var opacity, p, x, y, i, lh, str;
+    var opacity, p, x, y, i, lh, tl, str;
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     if (!item.text) return; // TODO calculate truncated value?
 
@@ -116,10 +117,11 @@ function draw(context, scene, bounds) {
     x += (item.dx || 0);
     y += (item.dy || 0) + offset(item);
 
-    if (isArray(item.text)) {
+    tl = textLines(item);
+    if (isArray(tl)) {
       lh = lineHeight(item);
-      for (i=0; i<item.text.length; ++i) {
-        str = textValue(item, item.text[i]);
+      for (i=0; i<tl.length; ++i) {
+        str = textValue(item, tl[i]);
         if (item.fill && fill(context, item, opacity)) {
           context.fillText(str, x, y);
         }
@@ -129,7 +131,7 @@ function draw(context, scene, bounds) {
         y += lh;
       }
     } else {
-      str = textValue(item);
+      str = textValue(item, tl);
       if (item.fill && fill(context, item, opacity)) {
         context.fillText(str, x, y);
       }

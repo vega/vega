@@ -1,6 +1,6 @@
 import {Top, Bottom, Left, Right} from '../constants';
 import {set, tempBounds} from './util';
-import {boundStroke, multilineOffset} from 'vega-scenegraph';
+import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 const AxisOffset = 0.5;
 
@@ -31,7 +31,7 @@ export function axisLayout(view, axis, width, height) {
       title = datum.title && item.items[indices[2]].items[0],
       titlePadding = item.titlePadding,
       bounds = item.bounds,
-      dl = title && multilineOffset(title),
+      dl = title && multiLineOffset(title),
       x = 0, y = 0, i, s;
 
   tempBounds.clear().union(bounds);
