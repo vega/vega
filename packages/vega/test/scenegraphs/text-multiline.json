@@ -43,12 +43,10 @@
                       "align": "left",
                       "baseline": "top",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -89,12 +87,10 @@
                       "align": "center",
                       "baseline": "top",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -135,12 +131,10 @@
                       "align": "right",
                       "baseline": "top",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -181,12 +175,10 @@
                       "align": "left",
                       "baseline": "middle",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -227,12 +219,10 @@
                       "align": "center",
                       "baseline": "middle",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -273,12 +263,10 @@
                       "align": "right",
                       "baseline": "middle",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -319,12 +307,10 @@
                       "align": "left",
                       "baseline": "alphabetic",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -365,12 +351,10 @@
                       "align": "center",
                       "baseline": "alphabetic",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -411,12 +395,10 @@
                       "align": "right",
                       "baseline": "alphabetic",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -457,12 +439,10 @@
                       "align": "left",
                       "baseline": "bottom",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -503,12 +483,10 @@
                       "align": "center",
                       "baseline": "bottom",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
@@ -549,12 +527,10 @@
                       "align": "right",
                       "baseline": "bottom",
                       "fill": "black",
-                      "text": [
-                        "Longer text",
-                        "Short"
-                      ],
+                      "text": "Longer text|Short",
                       "angle": 0,
                       "limit": 100,
+                      "lineBreak": "|",
                       "font": "sans-serif",
                       "fontSize": 12
                     }
