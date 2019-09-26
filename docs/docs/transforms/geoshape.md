@@ -16,7 +16,7 @@ This transform uses the [d3-geo](https://github.com/d3/d3-geo) library.
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| projection          | {% include type t="String" %}  | {% include required %} The name of the projection to use.|
+| projection          | {% include type t="String" %}  | The name of the projection to use. If unspecified, the GeoJSON data will not be projected. |
 | field               | {% include type t="Field" %}   | The data field containing GeoJSON data. If unspecified, the full input data object will be used.|
 | pointRadius         | {% include type t="Number|Expr" %} | Sets the default radius (in pixels) to use when drawing GeoJSON `Point` and `MultiPoint` geometries. An expression value can be used to set the point radius as a function of properties of the input GeoJSON. {% include tag ver="3.1" %} |
 | as                  | {% include type t="String" %}  | The output field at which to write the generated shape instance. The default is `"shape"`.|
