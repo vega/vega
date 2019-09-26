@@ -1,23 +1,25 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 400,
+  "height": 90,
   "padding": 5,
 
   "signals": [
     {
-      "name": "numDots", "value": 50,
+      "name": "quantiles", "value": 20,
       "bind": {"input": "range", "min": 10, "max": 200, "step": 1}
     },
-    {"name": "step", "update": "1.25 * sqrt(20 / numDots)"},
+    {"name": "mean", "update": "log(11.4)"},
+    {"name": "sd", "value": 0.2},
+    {"name": "step", "update": "1.25 * sqrt(20 / quantiles)"},
     {"name": "size", "update": "scale('x', step) - scale('x', 0)"},
     {"name": "area", "update": "size * size"},
-    {"name": "height", "update": "(span(ext) + 1) * size"},
     {
-      "name": "select", "value": 0,
+      "name": "select", "init": "quantileLogNormal(0.05, mean, sd)",
       "on": [
         {
           "events": "click, [mousedown, window:mouseup] > mousemove",
-          "update": "clamp(invert('x', x()), 0, 30)"
+          "update": "clamp(invert('x', x()), 0.0001, 30)"
         },
         {
           "events": "dblclick",
@@ -33,13 +35,13 @@
       "transform": [
         {
           "type": "sequence", "as": "p",
-          "start": {"signal": "0.5 / numDots"},
-          "step": {"signal": "1 / numDots"},
+          "start": {"signal": "0.5 / quantiles"},
+          "step": {"signal": "1 / quantiles"},
           "stop": 1
         },
         {
           "type": "formula", "as": "value",
-          "expr": "quantileLogNormal(datum.p, log(11.4), 0.2)"
+          "expr": "quantileLogNormal(datum.p, mean, sd)"
         },
         {
           "type": "dotbin",
@@ -100,6 +102,22 @@
           "y": {"value": 0},
           "y2": {"signal": "height"},
           "stroke": {"signal": "select ? '#ccc': 'transparent'"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "baseline": {"value": "top"},
+          "dx": {"value": 3},
+          "y": {"value": 2}
+        },
+        "update": {
+          "x": {"scale": "x", "signal": "select"},
+          "text": {"signal": "format(cumulativeLogNormal(select, mean, sd), '.1%')"},
+          "fill": {"signal": "select ? '#000': 'transparent'"}
         }
       }
     }

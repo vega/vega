@@ -7,6 +7,12 @@ export const spec: Spec = {
   "padding": 30,
   "autosize": "none",
 
+  "config": {
+    "text": {
+      "lineBreak": "|"
+    }
+  },
+
   "signals": [
     {
       "name": "angle", "value": 0,
@@ -23,13 +29,6 @@ export const spec: Spec = {
       "name": "table",
       "values": [
         {"text": "Longer text|Short"}
-      ],
-      "transform": [
-        {
-          "type": "formula",
-          "expr": "split(datum.text, '|')",
-          "as": "lines"
-        }
       ]
     },
     {
@@ -98,7 +97,7 @@ export const spec: Spec = {
             "enter": {
               "x": {"value": 0},
               "y": {"value": 0},
-              "text": {"field": "lines"},
+              "text": {"field": "text"},
               "align": {"signal": "parent.align"},
               "baseline": {"signal": "parent.baseline"},
               "fontSize": {"value": 12},
