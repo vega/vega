@@ -251,6 +251,11 @@ export interface MarkConfig {
   limit?: number;
 
   /**
+   * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property is ignored if the text is array-valued.
+   */
+  lineBreak?: string;
+
+  /**
    * The line height in pixels (the spacing between subsequent lines of text) for multi-line text marks.
    */
   lineHeight?: number;

@@ -25,6 +25,7 @@ permalink: /docs/marks/text/index.html
 | fontSize            | {% include type t="Number" %}  | The font size in pixels.|
 | fontWeight          | {% include type t="String|Number" %}  | The font weight (e.g., `normal` or `bold`).|
 | fontStyle           | {% include type t="String" %}  | The font style (e.g., `normal` or `italic`).|
+| lineBreak           | {% include type t="String" %}  | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property will be ignored if the *text* property is array-valued. {% include tag ver="5.7" %} |
 | lineHeight          | {% include type t="Number" %}  | The height, in pixels, of each line of text in a multi-line text mark. {% include tag ver="5.7" %} |
 | limit               | {% include type t="Number" %}  | The maximum length of the text mark in pixels (default `0`, indicating no limit). The _text_ value will be automatically truncated if the rendered size exceeds the limit.|
 | radius              | {% include type t="Number" %}  | Polar coordinate radial offset in pixels, relative to the origin determined by the _x_ and _y_ properties (default `0`).|
