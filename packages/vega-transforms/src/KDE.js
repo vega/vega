@@ -1,3 +1,4 @@
+import {partition} from './util/util';
 import {randomKDE} from 'vega-statistics';
 import {ingest, Transform} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';
@@ -102,28 +103,3 @@ prototype.transform = function(_, pulse) {
 
   return out;
 };
-
-function partition(data, groupby, field) {
-  var groups = [],
-      get = function(f) { return f(t); },
-      map, i, n, t, k, g;
-
-  // partition data points into stack groups
-  if (groupby == null) {
-    groups.push(data.map(field));
-  } else {
-    for (map={}, i=0, n=data.length; i<n; ++i) {
-      t = data[i];
-      k = groupby.map(get);
-      g = map[k];
-      if (!g) {
-        map[k] = (g = []);
-        g.dims = k;
-        groups.push(g);
-      }
-      g.push(field(t));
-    }
-  }
-
-  return groups;
-}
