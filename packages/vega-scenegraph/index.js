@@ -38,7 +38,7 @@ export {
   fontFamily,
   fontSize,
   lineHeight,
-  multilineOffset,
+  multiLineOffset,
   textMetrics
 } from './src/util/text';
 export {resetSVGClipId} from './src/util/svg/clip';

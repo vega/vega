@@ -3,7 +3,7 @@ import {
   TopLeft, TopRight, BottomLeft, BottomRight, None,
   Each, Flush
 } from '../constants';
-import {boundStroke, multilineOffset} from 'vega-scenegraph';
+import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 // utility for looking up legend layout configuration
 function lookup(config, orient) {
@@ -189,7 +189,7 @@ function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
         s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
         u = vgrad && lr ? s : 0,
         v = vgrad && lr ? 0 : s,
-        o = y <= 0 ? 0 : multilineOffset(title);
+        o = y <= 0 ? 0 : multiLineOffset(title);
 
   return Math.round(anchor === Start ? u
     : anchor === End ? (v - o)

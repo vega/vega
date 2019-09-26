@@ -45,20 +45,32 @@ export function lineHeight(item) {
   return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
 }
 
-export function multilineOffset(item) {
-  return isArray(item.text)
-    ? (item.text.length - 1) * lineHeight(item)
-    : 0;
+function lineArray(_) {
+  return isArray(_) ? _.length > 1 ? _ : _[0] : _;
 }
 
-export function textValue(item, text) {
-  var s = text || item.text;
-  return s == null ? '' : (item.limit > 0 ? truncate(item, s) : s + '');
+export function textLines(item) {
+  return lineArray(
+    item.lineBreak && item.text && !isArray(item.text)
+      ? item.text.split(item.lineBreak)
+      : item.text
+  );
 }
 
-export function truncate(item, line) {
+export function multiLineOffset(item) {
+  const tl = textLines(item);
+  return (isArray(tl) ? (tl.length - 1) : 0) * lineHeight(item);
+}
+
+export function textValue(item, line) {
+  return line == null ? ''
+    : item.limit > 0 ? truncate(item, line)
+    : line + '';
+}
+
+function truncate(item, line) {
   var limit = +item.limit,
-      text = (line || item.text) + '',
+      text = line + '',
       width;
 
   if (textMetrics.width === measureWidth) {
