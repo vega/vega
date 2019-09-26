@@ -2292,10 +2292,12 @@
   function newInterval(floori, offseti, count, field) {
 
     function interval(date) {
-      return floori(date = new Date(+date)), date;
+      return floori(date = arguments.length === 0 ? new Date : new Date(+date)), date;
     }
 
-    interval.floor = interval;
+    interval.floor = function(date) {
+      return floori(date = new Date(+date)), date;
+    };
 
     interval.ceil = function(date) {
       return floori(date = new Date(date - 1)), offseti(date, 1), floori(date), date;
@@ -5281,18 +5283,82 @@
     ];
   }
 
-  function quartiles(array, f) {
+  // Dot density binning for dot plot construction.
+  // Based on Leland Wilkinson, Dot Plots, The American Statistician, 1999.
+  // https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf
+  function dotbin(array, step, smooth, f) {
+    f = f || (_ => _);
+
+    let i = 0, j = 1,
+        n = array.length,
+        v = new Float64Array(n),
+        a = f(array[0]),
+        b = a,
+        w = a + step,
+        x;
+
+    for (; j<n; ++j) {
+      x = f(array[j]);
+      if (x >= w) {
+        b = (a + b) / 2;
+        for (; i<j; ++i) v[i] = b;
+        w = x + step;
+        a = x;
+      }
+      b = x;
+    }
+
+    b = (a + b) / 2;
+    for (; i<j; ++i) v[i] = b;
+
+    return smooth ? smoothing(v, step + step / 4) : v;
+  }
+
+  // perform smoothing to reduce variance
+  // swap points between "adjacent" stacks
+  // Wilkinson defines adjacent as within step/4 units
+  function smoothing(v, thresh) {
+    let n = v.length,
+        a = 0,
+        b = 1,
+        c, d;
+
+    // get left stack
+    while (v[a] === v[b]) ++b;
+
+    while (b < n) {
+      // get right stack
+      c = b + 1;
+      while (v[b] === v[c]) ++c;
+
+      // are stacks adjacent?
+      // if so, compare sizes and swap as needed
+      if (v[b] - v[b-1] < thresh) {
+        d = b + ((a + c - b - b) >> 1);
+        while (d < b) v[d++] = v[b];
+        while (d > b) v[d--] = v[a];
+      }
+
+      // update left stack indices
+      a = b;
+      b = c;
+    }
+
+    return v;
+  }
+
+  function quantiles(array, p, f) {
     var values = Float64Array.from(numbers(array, f));
 
     // don't depend on return value from typed array sort call
     // protects against undefined sort results in Safari (vega/vega-lite#4964)
     values.sort(ascending);
 
-    return [
-      quantile(values, 0.25),
-      quantile(values, 0.50),
-      quantile(values, 0.75)
-    ];
+    return p.map(_ => quantileSorted(values, _));
+  }
+
+  function quartiles(array, f) {
+    return quantiles(array, [0.25, 0.50, 0.75], f);
   }
 
   function lcg(seed) {
@@ -5353,102 +5419,193 @@
     return dist.min(min).max(max);
   }
 
-  function randomNormal(mean, stdev) {
-    var mu,
-        sigma,
-        next = NaN,
-        dist = {};
+  const SQRT2PI = Math.sqrt(2 * Math.PI);
+  const SQRT2 = Math.SQRT2;
 
-    dist.mean = function(_) {
-      if (arguments.length) {
-        mu = _ || 0;
-        next = NaN;
-        return dist;
-      } else {
-        return mu;
-      }
-    };
+  let nextSample = NaN;
 
-    dist.stdev = function(_) {
-      if (arguments.length) {
-        sigma = _ == null ? 1 : _;
-        next = NaN;
-        return dist;
-      } else {
-        return sigma;
-      }
-    };
+  function sampleNormal(mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
 
-    dist.sample = function() {
-      var x = 0, y = 0, rds, c;
-      if (next === next) {
-        x = next;
-        next = NaN;
-        return x;
-      }
+    let x = 0, y = 0, rds, c;
+    if (nextSample === nextSample) {
+      x = nextSample;
+      nextSample = NaN;
+    } else {
       do {
         x = exports.random() * 2 - 1;
         y = exports.random() * 2 - 1;
         rds = x * x + y * y;
       } while (rds === 0 || rds > 1);
       c = Math.sqrt(-2 * Math.log(rds) / rds); // Box-Muller transform
-      next = mu + y * c * sigma;
-      return mu + x * c * sigma;
-    };
+      x *= c;
+      nextSample = y * c;
+    }
+    return mean + x * stdev;
+  }
 
-    dist.pdf = function(x) {
-      var exp = Math.exp(Math.pow(x-mu, 2) / (-2 * Math.pow(sigma, 2)));
-      return (1 / (sigma * Math.sqrt(2*Math.PI))) * exp;
-    };
+  function densityNormal(value, mean, stdev) {
+    stdev = stdev == null ? 1 : stdev;
+    const z = (value - (mean || 0)) / stdev;
+    return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
+  }
 
-    // Approximation from West (2009)
-    // Better Approximations to Cumulative Normal Functions
-    dist.cdf = function(x) {
-      var cd,
-          z = (x - mu) / sigma,
-          Z = Math.abs(z);
-      if (Z > 37) {
-        cd = 0;
+  // Approximation from West (2009)
+  // Better Approximations to Cumulative Normal Functions
+  function cumulativeNormal(value, mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+
+    let cd,
+        z = (value - mean) / stdev,
+        Z = Math.abs(z);
+
+    if (Z > 37) {
+      cd = 0;
+    } else {
+      let sum, exp = Math.exp(-Z * Z / 2);
+      if (Z < 7.07106781186547) {
+        sum = 3.52624965998911e-02 * Z + 0.700383064443688;
+        sum = sum * Z + 6.37396220353165;
+        sum = sum * Z + 33.912866078383;
+        sum = sum * Z + 112.079291497871;
+        sum = sum * Z + 221.213596169931;
+        sum = sum * Z + 220.206867912376;
+        cd = exp * sum;
+        sum = 8.83883476483184e-02 * Z + 1.75566716318264;
+        sum = sum * Z + 16.064177579207;
+        sum = sum * Z + 86.7807322029461;
+        sum = sum * Z + 296.564248779674;
+        sum = sum * Z + 637.333633378831;
+        sum = sum * Z + 793.826512519948;
+        sum = sum * Z + 440.413735824752;
+        cd = cd / sum;
       } else {
-        var sum, exp = Math.exp(-Z*Z/2);
-        if (Z < 7.07106781186547) {
-          sum = 3.52624965998911e-02 * Z + 0.700383064443688;
-          sum = sum * Z + 6.37396220353165;
-          sum = sum * Z + 33.912866078383;
-          sum = sum * Z + 112.079291497871;
-          sum = sum * Z + 221.213596169931;
-          sum = sum * Z + 220.206867912376;
-          cd = exp * sum;
-          sum = 8.83883476483184e-02 * Z + 1.75566716318264;
-          sum = sum * Z + 16.064177579207;
-          sum = sum * Z + 86.7807322029461;
-          sum = sum * Z + 296.564248779674;
-          sum = sum * Z + 637.333633378831;
-          sum = sum * Z + 793.826512519948;
-          sum = sum * Z + 440.413735824752;
-          cd = cd / sum;
-        } else {
-          sum = Z + 0.65;
-          sum = Z + 4 / sum;
-          sum = Z + 3 / sum;
-          sum = Z + 2 / sum;
-          sum = Z + 1 / sum;
-          cd = exp / sum / 2.506628274631;
-        }
+        sum = Z + 0.65;
+        sum = Z + 4 / sum;
+        sum = Z + 3 / sum;
+        sum = Z + 2 / sum;
+        sum = Z + 1 / sum;
+        cd = exp / sum / 2.506628274631;
       }
-      return z > 0 ? 1 - cd : cd;
-    };
+    }
+    return z > 0 ? 1 - cd : cd;
+  }
 
-    // Approximation of Probit function using inverse error function.
-    dist.icdf = function(p) {
-      if (p <= 0 || p >= 1) return NaN;
-      var x = 2*p - 1,
-          v = (8 * (Math.PI - 3)) / (3 * Math.PI * (4-Math.PI)),
-          a = (2 / (Math.PI*v)) + (Math.log(1 - Math.pow(x,2)) / 2),
-          b = Math.log(1 - (x*x)) / v,
-          s = (x > 0 ? 1 : -1) * Math.sqrt(Math.sqrt((a*a) - b) - a);
-      return mu + sigma * Math.SQRT2 * s;
-    };
+  // Approximation of Probit function using inverse error function.
+  function quantileNormal(p, mean, stdev) {
+    if (p < 0 || p > 1) return NaN;
+    return (mean || 0) + (stdev == null ? 1 : stdev) * SQRT2 * erfinv(2 * p - 1);
+  }
+
+  // Approximate inverse error function. Implementation from "Approximating
+  // the erfinv function" by Mike Giles, GPU Computing Gems, volume 2, 2010.
+  // Ported from Apache Commons Math, http://www.apache.org/licenses/LICENSE-2.0
+  function erfinv(x) {
+    // beware that the logarithm argument must be
+    // commputed as (1.0 - x) * (1.0 + x),
+    // it must NOT be simplified as 1.0 - x * x as this
+    // would induce rounding errors near the boundaries +/-1
+    let w = - Math.log((1 - x) * (1 + x)), p;
+
+    if (w < 6.25) {
+        w -= 3.125;
+        p =  -3.6444120640178196996e-21;
+        p =   -1.685059138182016589e-19 + p * w;
+        p =   1.2858480715256400167e-18 + p * w;
+        p =    1.115787767802518096e-17 + p * w;
+        p =   -1.333171662854620906e-16 + p * w;
+        p =   2.0972767875968561637e-17 + p * w;
+        p =   6.6376381343583238325e-15 + p * w;
+        p =  -4.0545662729752068639e-14 + p * w;
+        p =  -8.1519341976054721522e-14 + p * w;
+        p =   2.6335093153082322977e-12 + p * w;
+        p =  -1.2975133253453532498e-11 + p * w;
+        p =  -5.4154120542946279317e-11 + p * w;
+        p =    1.051212273321532285e-09 + p * w;
+        p =  -4.1126339803469836976e-09 + p * w;
+        p =  -2.9070369957882005086e-08 + p * w;
+        p =   4.2347877827932403518e-07 + p * w;
+        p =  -1.3654692000834678645e-06 + p * w;
+        p =  -1.3882523362786468719e-05 + p * w;
+        p =    0.0001867342080340571352 + p * w;
+        p =  -0.00074070253416626697512 + p * w;
+        p =   -0.0060336708714301490533 + p * w;
+        p =      0.24015818242558961693 + p * w;
+        p =       1.6536545626831027356 + p * w;
+    } else if (w < 16.0) {
+        w = Math.sqrt(w) - 3.25;
+        p =   2.2137376921775787049e-09;
+        p =   9.0756561938885390979e-08 + p * w;
+        p =  -2.7517406297064545428e-07 + p * w;
+        p =   1.8239629214389227755e-08 + p * w;
+        p =   1.5027403968909827627e-06 + p * w;
+        p =   -4.013867526981545969e-06 + p * w;
+        p =   2.9234449089955446044e-06 + p * w;
+        p =   1.2475304481671778723e-05 + p * w;
+        p =  -4.7318229009055733981e-05 + p * w;
+        p =   6.8284851459573175448e-05 + p * w;
+        p =   2.4031110387097893999e-05 + p * w;
+        p =   -0.0003550375203628474796 + p * w;
+        p =   0.00095328937973738049703 + p * w;
+        p =   -0.0016882755560235047313 + p * w;
+        p =    0.0024914420961078508066 + p * w;
+        p =   -0.0037512085075692412107 + p * w;
+        p =     0.005370914553590063617 + p * w;
+        p =       1.0052589676941592334 + p * w;
+        p =       3.0838856104922207635 + p * w;
+    } else if (Number.isFinite(w)) {
+        w = Math.sqrt(w) - 5.0;
+        p =  -2.7109920616438573243e-11;
+        p =  -2.5556418169965252055e-10 + p * w;
+        p =   1.5076572693500548083e-09 + p * w;
+        p =  -3.7894654401267369937e-09 + p * w;
+        p =   7.6157012080783393804e-09 + p * w;
+        p =  -1.4960026627149240478e-08 + p * w;
+        p =   2.9147953450901080826e-08 + p * w;
+        p =  -6.7711997758452339498e-08 + p * w;
+        p =   2.2900482228026654717e-07 + p * w;
+        p =  -9.9298272942317002539e-07 + p * w;
+        p =   4.5260625972231537039e-06 + p * w;
+        p =  -1.9681778105531670567e-05 + p * w;
+        p =   7.5995277030017761139e-05 + p * w;
+        p =  -0.00021503011930044477347 + p * w;
+        p =  -0.00013871931833623122026 + p * w;
+        p =       1.0103004648645343977 + p * w;
+        p =       4.8499064014085844221 + p * w;
+    } else {
+        p = Infinity;
+    }
+
+    return p * x;
+  }
+
+  function randomNormal(mean, stdev) {
+    var mu,
+        sigma,
+        dist = {
+          mean: function(_) {
+            if (arguments.length) {
+              mu = _ || 0;
+              return dist;
+            } else {
+              return mu;
+            }
+          },
+          stdev: function(_) {
+            if (arguments.length) {
+              sigma = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return sigma;
+            }
+          },
+          sample: () => sampleNormal(mu, sigma),
+          pdf: value => densityNormal(value, mu, sigma),
+          cdf: value => cumulativeNormal(value, mu, sigma),
+          icdf: p => quantileNormal(p, mu, sigma)
+        };
 
     return dist.mean(mean).stdev(stdev);
   }
@@ -5508,6 +5665,57 @@
         q = quartiles(array),
         h = (q[2] - q[0]) / 1.34;
     return 1.06 * Math.min(Math.sqrt(variance(array)), h) * Math.pow(n, -0.2);
+  }
+
+  function sampleLogNormal(mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+    return Math.exp(mean + sampleNormal() * stdev);
+  }
+
+  function densityLogNormal(value, mean, stdev) {
+    if (value <= 0) return 0;
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+    const z = (Math.log(value) - mean) / stdev;
+    return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI * value);
+  }
+
+  function cumulativeLogNormal(value, mean, stdev) {
+    return cumulativeNormal(Math.log(value), mean, stdev);
+  }
+
+  function quantileLogNormal(p, mean, stdev) {
+    return Math.exp(quantileNormal(p, mean, stdev));
+  }
+
+  function randomLogNormal(mean, stdev) {
+    var mu,
+        sigma,
+        dist = {
+          mean: function(_) {
+            if (arguments.length) {
+              mu = _ || 0;
+              return dist;
+            } else {
+              return mu;
+            }
+          },
+          stdev: function(_) {
+            if (arguments.length) {
+              sigma = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return sigma;
+            }
+          },
+          sample: () => sampleLogNormal(mu, sigma),
+          pdf: value => densityLogNormal(value, mu, sigma),
+          cdf: value => cumulativeLogNormal(value, mu, sigma),
+          icdf: p => quantileLogNormal(p, mu, sigma)
+        };
+
+    return dist.mean(mean).stdev(stdev);
   }
 
   function randomMixture(dists, weights) {
@@ -5577,51 +5785,67 @@
     return dist.distributions(dists).weights(weights);
   }
 
-  function randomUniform(min, max) {
+  function sampleUniform(min, max) {
     if (max == null) {
       max = (min == null ? 1 : min);
       min = 0;
     }
+    return min + (max - min) * exports.random();
+  }
 
-    var dist = {},
-        a, b, d;
+  function densityUniform(value, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return (value >= min && value <= max) ? 1 / (max - min) : 0;
+  }
 
-    dist.min = function(_) {
-      if (arguments.length) {
-        a = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return a;
-      }
-    };
+  function cumulativeUniform(value, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return value < min ? 0 : value > max ? 1 : (value - min) / (max - min);
+  }
 
-    dist.max = function(_) {
-      if (arguments.length) {
-        b = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return b;
-      }
-    };
+  function quantileUniform(p, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return (p >= 0 && p <= 1) ? min + p * (max - min) : NaN;
+  }
 
-    dist.sample = function() {
-      return a + d * exports.random();
-    };
+  function randomUniform(min, max) {
+    var a, b,
+        dist = {
+          min: function(_) {
+            if (arguments.length) {
+              a = _ || 0;
+              return dist;
+            } else {
+              return a;
+            }
+          },
+          max: function(_) {
+            if (arguments.length) {
+              b = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return b;
+            }
+          },
+          sample: () => sampleUniform(a, b),
+          pdf: value => densityUniform(value, a, b),
+          cdf: value => cumulativeUniform(value, a, b),
+          icdf: p => quantileUniform(p, a, b)
+        };
 
-    dist.pdf = function(x) {
-      return (x >= a && x <= b) ? 1 / d : 0;
-    };
-
-    dist.cdf = function(x) {
-      return x < a ? 0 : x > b ? 1 : (x - a) / d;
-    };
-
-    dist.icdf = function(p) {
-      return (p >= 0 && p <= 1) ? a + p * d : NaN;
-    };
-
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
     return dist.min(min).max(max);
   }
 
@@ -6942,10 +7166,11 @@
   }
 
   var Distributions = {
-    kde:     randomKDE,
-    mixture: randomMixture,
-    normal:  randomNormal,
-    uniform: randomUniform
+    kde:       randomKDE,
+    mixture:   randomMixture,
+    normal:    randomNormal,
+    lognormal: randomLogNormal,
+    uniform:   randomUniform
   };
 
   var DISTRIBUTIONS = 'distributions',
@@ -7022,6 +7247,13 @@
   var distributions = [
     {
       "key": {"function": "normal"},
+      "params": [
+        { "name": "mean", "type": "number", "default": 0 },
+        { "name": "stdev", "type": "number", "default": 1 }
+      ]
+    },
+    {
+      "key": {"function": "lognormal"},
       "params": [
         { "name": "mean", "type": "number", "default": 0 },
         { "name": "stdev", "type": "number", "default": 1 }
@@ -7109,6 +7341,110 @@
     return function() { return pulse.materialize(pulse.SOURCE).source; };
   }
 
+  // use either provided alias or accessor field name
+  function fieldNames(fields, as) {
+    if (!fields) return null;
+    return fields.map(function(f, i) {
+      return as[i] || accessorName(f);
+    });
+  }
+
+  function partition(data, groupby, field) {
+    var groups = [],
+        get = function(f) { return f(t); },
+        map, i, n, t, k, g;
+
+    // partition data points into groups
+    if (groupby == null) {
+      groups.push(data.map(field));
+    } else {
+      for (map={}, i=0, n=data.length; i<n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = (g = []);
+          g.dims = k;
+          groups.push(g);
+        }
+        g.push(field(t));
+      }
+    }
+
+    return groups;
+  }
+
+  const Output = 'bin';
+
+  /**
+   * Dot density binning for dot plot construction.
+   * Based on Leland Wilkinson, Dot Plots, The American Statistician, 1999.
+   * https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to bin.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+   * @param {number} [params.step] - The step size (bin width) within which dots should be
+   *   stacked. Defaults to 1/30 of the extent of the data *field*.
+   * @param {boolean} [params.smooth=false] - A boolean flag indicating if dot density
+   *   stacks should be smoothed to reduce variance.
+   */
+  function DotBin(params) {
+    Transform.call(this, null, params);
+  }
+
+  DotBin.Definition = {
+    "type": "DotBin",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "field", "type": "field", "required": true },
+      { "name": "groupby", "type": "field", "array": true },
+      { "name": "step", "type": "number" },
+      { "name": "smooth", "type": "boolean", "default": false },
+      { "name": "as", "type": "string", "default": Output }
+    ]
+  };
+
+  const prototype$e = inherits(DotBin, Transform);
+
+  prototype$e.transform = function(_, pulse) {
+    if (this.value && !(_.modified() || pulse.changed())) {
+      return pulse; // early exit
+    }
+
+    const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(pulse.source, _.groupby, identity),
+          smooth = _.smooth || false,
+          field = _.field,
+          step = _.step || autostep(source, field),
+          sort = stableCompare((a, b) => field(a) - field(b)),
+          as = _.as || Output,
+          n = groups.length;
+
+    // compute dotplot bins per group
+    let min = Infinity, max = -Infinity, i = 0, j;
+    for (; i<n; ++i) {
+      const g = groups[i].sort(sort);
+      j = -1;
+      for (const v of dotbin(g, step, smooth, field)) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        g[++j][as] = v;
+      }
+    }
+
+    this.value = {
+      start: min,
+      stop: max,
+      step: step
+    };
+    return pulse.reflow(true).modifies(as);
+  };
+
+  function autostep(data, field) {
+    return span(extent(data, field)) / 30;
+  }
+
   /**
    * Wraps an expression function with access to external parameters.
    * @constructor
@@ -7154,9 +7490,9 @@
     ]
   };
 
-  var prototype$e = inherits(Extent, Transform);
+  var prototype$f = inherits(Extent, Transform);
 
-  prototype$e.transform = function(_, pulse) {
+  prototype$f.transform = function(_, pulse) {
     var extent = this.value,
         field = _.field,
         min = extent[0],
@@ -7205,9 +7541,9 @@
     this.parent = parent;
   }
 
-  var prototype$f = inherits(Subflow, Operator);
+  var prototype$g = inherits(Subflow, Operator);
 
-  prototype$f.connect = function(target) {
+  prototype$g.connect = function(target) {
     this.targets().add(target);
     return (target.source = this);
   };
@@ -7216,7 +7552,7 @@
    * Add an 'add' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being added.
    */
-  prototype$f.add = function(t) {
+  prototype$g.add = function(t) {
     this.value.add.push(t);
   };
 
@@ -7224,7 +7560,7 @@
    * Add a 'rem' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being removed.
    */
-  prototype$f.rem = function(t) {
+  prototype$g.rem = function(t) {
     this.value.rem.push(t);
   };
 
@@ -7232,7 +7568,7 @@
    * Add a 'mod' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being modified.
    */
-  prototype$f.mod = function(t) {
+  prototype$g.mod = function(t) {
     this.value.mod.push(t);
   };
 
@@ -7241,7 +7577,7 @@
    * @param {Pulse} pulse - The pulse to copy from.
    * @see Pulse.init
    */
-  prototype$f.init = function(pulse) {
+  prototype$g.init = function(pulse) {
     this.value.init(pulse, pulse.NO_SOURCE);
   };
 
@@ -7250,7 +7586,7 @@
    * default behavior to simply return the contained pulse value.
    * @return {Pulse}
    */
-  prototype$f.evaluate = function() {
+  prototype$g.evaluate = function() {
     // assert: this.value.stamp === pulse.stamp
     return this.value;
   };
@@ -7276,13 +7612,13 @@
     };
   }
 
-  var prototype$g = inherits(Facet, Transform);
+  var prototype$h = inherits(Facet, Transform);
 
-  prototype$g.activate = function(flow) {
+  prototype$h.activate = function(flow) {
     this._targets[this._targets.active++] = flow;
   };
 
-  prototype$g.subflow = function(key, flow, pulse, parent) {
+  prototype$h.subflow = function(key, flow, pulse, parent) {
     var flows = this.value,
         sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
@@ -7302,7 +7638,7 @@
     return sf;
   };
 
-  prototype$g.transform = function(_, pulse) {
+  prototype$h.transform = function(_, pulse) {
     var df = pulse.dataflow,
         self = this,
         key = _.key,
@@ -7408,9 +7744,9 @@
     ]
   };
 
-  var prototype$h = inherits(Filter, Transform);
+  var prototype$i = inherits(Filter, Transform);
 
-  prototype$h.transform = function(_, pulse) {
+  prototype$i.transform = function(_, pulse) {
     var df = pulse.dataflow,
         cache = this.value, // cache ids of filtered tuples
         output = pulse.fork(),
@@ -7457,14 +7793,6 @@
     return output;
   };
 
-  // use either provided alias or accessor field name
-  function fieldNames(fields, as) {
-    if (!fields) return null;
-    return fields.map(function(f, i) {
-      return as[i] || accessorName(f);
-    });
-  }
-
   /**
    * Flattens array-typed field values into new data objects.
    * If multiple fields are specified, they are treated as parallel arrays,
@@ -7490,9 +7818,9 @@
     ]
   };
 
-  var prototype$i = inherits(Flatten, Transform);
+  var prototype$j = inherits(Flatten, Transform);
 
-  prototype$i.transform = function(_, pulse) {
+  prototype$j.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         fields = _.fields,
         as = fieldNames(fields, _.as || []),
@@ -7543,9 +7871,9 @@
     ]
   };
 
-  var prototype$j = inherits(Fold, Transform);
+  var prototype$k = inherits(Fold, Transform);
 
-  prototype$j.transform = function(_, pulse) {
+  prototype$k.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         fields = _.fields,
         fnames = fields.map(accessorName),
@@ -7592,9 +7920,9 @@
     ]
   };
 
-  var prototype$k = inherits(Formula, Transform);
+  var prototype$l = inherits(Formula, Transform);
 
-  prototype$k.transform = function(_, pulse) {
+  prototype$l.transform = function(_, pulse) {
     var func = _.expr,
         as = _.as,
         mod = _.modified(),
@@ -7633,9 +7961,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$l = inherits(Generate, Transform);
+  var prototype$m = inherits(Generate, Transform);
 
-  prototype$l.transform = function(_, pulse) {
+  prototype$m.transform = function(_, pulse) {
     var data = this.value,
         out = pulse.fork(pulse.ALL),
         num = _.size - data.length,
@@ -7711,7 +8039,7 @@
     ]
   };
 
-  var prototype$m = inherits(Impute, Transform);
+  var prototype$n = inherits(Impute, Transform);
 
   function getValue(_) {
     var m = _.method || Methods.value, v;
@@ -7731,14 +8059,14 @@
     return function(t) { return t ? f(t) : NaN; };
   }
 
-  prototype$m.transform = function(_, pulse) {
+  prototype$n.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         impute = getValue(_),
         field = getField(_),
         fName = accessorName(_.field),
         kName = accessorName(_.key),
         gNames = (_.groupby || []).map(accessorName),
-        groups = partition(pulse.source, _.groupby, _.key, _.keyvals),
+        groups = partition$1(pulse.source, _.groupby, _.key, _.keyvals),
         curr = [],
         prev = this.value,
         m = groups.domain.length,
@@ -7771,7 +8099,7 @@
     return out;
   };
 
-  function partition(data, groupby, key, keyvals) {
+  function partition$1(data, groupby, key, keyvals) {
     var get = function(f) { return f(t); },
         groups = [],
         domain = keyvals ? keyvals.slice() : [],
@@ -7820,9 +8148,9 @@
     ]
   };
 
-  var prototype$n = inherits(JoinAggregate, Aggregate);
+  var prototype$o = inherits(JoinAggregate, Aggregate);
 
-  prototype$n.transform = function(_, pulse) {
+  prototype$o.transform = function(_, pulse) {
     var aggr = this,
         mod = _.modified(),
         cells;
@@ -7848,7 +8176,7 @@
     return pulse.reflow(mod).modifies(this._outputs);
   };
 
-  prototype$n.changes = function() {
+  prototype$o.changes = function() {
     var adds = this._adds,
         mods = this._mods,
         i, n;
@@ -7916,14 +8244,14 @@
     ]
   };
 
-  var prototype$o = inherits(KDE, Transform);
+  var prototype$p = inherits(KDE, Transform);
 
-  prototype$o.transform = function(_, pulse) {
+  prototype$p.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
       const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$1(source, _.groupby, _.field),
+            groups = partition(source, _.groupby, _.field),
             names = (_.groupby || []).map(accessorName),
             bandwidth = _.bandwidth,
             method = _.cumulative ? 'cdf' : 'pdf',
@@ -7966,31 +8294,6 @@
     return out;
   };
 
-  function partition$1(data, groupby, field) {
-    var groups = [],
-        get = function(f) { return f(t); },
-        map, i, n, t, k, g;
-
-    // partition data points into stack groups
-    if (groupby == null) {
-      groups.push(data.map(field));
-    } else {
-      for (map={}, i=0, n=data.length; i<n; ++i) {
-        t = data[i];
-        k = groupby.map(get);
-        g = map[k];
-        if (!g) {
-          map[k] = (g = []);
-          g.dims = k;
-          groups.push(g);
-        }
-        g.push(field(t));
-      }
-    }
-
-    return groups;
-  }
-
   /**
    * Generates a key function.
    * @constructor
@@ -8022,9 +8325,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$p = inherits(Load, Transform);
+  var prototype$q = inherits(Load, Transform);
 
-  prototype$p.transform = function(_, pulse) {
+  prototype$q.transform = function(_, pulse) {
     const df = pulse.dataflow;
 
     if (_.values) {
@@ -8033,7 +8336,7 @@
     } else {
       // return promise for async loading
       return df.request(_.url, _.format)
-        .then(res => output$1(this, pulse, res.data || []));
+        .then(res => output$1(this, pulse, array(res.data)));
     }
   };
 
@@ -8073,9 +8376,9 @@
     ]
   };
 
-  var prototype$q = inherits(Lookup, Transform);
+  var prototype$r = inherits(Lookup, Transform);
 
-  prototype$q.transform = function(_, pulse) {
+  prototype$r.transform = function(_, pulse) {
     var out = pulse,
         as = _.as,
         keys = _.fields,
@@ -8228,11 +8531,11 @@
     ]
   };
 
-  var prototype$r = inherits(Pivot, Aggregate);
+  var prototype$s = inherits(Pivot, Aggregate);
 
-  prototype$r._transform = prototype$r.transform;
+  prototype$s._transform = prototype$s.transform;
 
-  prototype$r.transform = function(_, pulse) {
+  prototype$s.transform = function(_, pulse) {
     return this._transform(aggregateParams(_, pulse), pulse);
   };
 
@@ -8307,9 +8610,9 @@
     Facet.call(this, params);
   }
 
-  var prototype$s = inherits(PreFacet, Facet);
+  var prototype$t = inherits(PreFacet, Facet);
 
-  prototype$s.transform = function(_, pulse) {
+  prototype$t.transform = function(_, pulse) {
     var self = this,
         flow = _.subflow,
         field = _.field;
@@ -8363,9 +8666,9 @@
     ]
   };
 
-  var prototype$t = inherits(Project, Transform);
+  var prototype$u = inherits(Project, Transform);
 
-  prototype$t.transform = function(_, pulse) {
+  prototype$u.transform = function(_, pulse) {
     var fields = _.fields,
         as = fieldNames(_.fields, _.as || []),
         derive = fields
@@ -8419,13 +8722,86 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$u = inherits(Proxy, Transform);
+  var prototype$v = inherits(Proxy, Transform);
 
-  prototype$u.transform = function(_, pulse) {
+  prototype$v.transform = function(_, pulse) {
     this.value = _.value;
     return _.modified('value')
       ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
       : pulse.StopPropagation;
+  };
+
+  /**
+   * Generates sample quantile values from an input data stream.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - An accessor for the data field
+   *   over which to calculate quantile values.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors
+   *   to groupby.
+   * @param {Array<number>} [params.quantiles] - An array of probabilities in
+   *   the range (0, 1) for which to compute quantile values. If not specified,
+   *   the *step* parameter will be used.
+   * @param {Array<number>} [params.step=0.01] - A probability step size for
+   *   sampling quantile values. All values from one-half the step size up to
+   *   1 (exclusive) will be sampled. This parameter is only used if the
+   *   *quantiles* parameter is not provided.
+   */
+  function Quantile(params) {
+    Transform.call(this, null, params);
+  }
+
+  Quantile.Definition = {
+    "type": "Quantile",
+    "metadata": {"generates": true, "changes": true},
+    "params": [
+      { "name": "groupby", "type": "field", "array": true },
+      { "name": "field", "type": "field", "required": true },
+      { "name": "quantiles", "type": "number", "array": true },
+      { "name": "step", "type": "number", "default": 0.01 },
+      { "name": "as", "type": "string", "array": true, "default": ["prob", "value"] }
+    ]
+  };
+
+  var prototype$w = inherits(Quantile, Transform);
+
+  var EPSILON$1 = 1e-14;
+
+  prototype$w.transform = function(_, pulse) {
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        as = _.as || ['prob', 'value'];
+
+    if (this.value && !_.modified() && !pulse.changed()) {
+      out.source = this.value;
+      return out;
+    }
+
+    const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(source, _.groupby, _.field),
+          names = (_.groupby || []).map(accessorName),
+          values = [],
+          step = _.step || 0.01,
+          p = _.quantiles || sequence(step/2, 1 - EPSILON$1, step),
+          n = p.length;
+
+    groups.forEach(g => {
+      const q = quantiles(g, p);
+
+      for (let i=0; i<n; ++i) {
+        const t = {};
+        for (let i=0; i<names.length; ++i) {
+          t[names[i]] = g.dims[i];
+        }
+        t[as[0]] = p[i];
+        t[as[1]] = q[i];
+        values.push(ingest(t));
+      }
+    });
+
+    if (this.value) out.rem = this.value;
+    this.value = out.add = out.source = values;
+
+    return out;
   };
 
   /**
@@ -8442,9 +8818,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$v = inherits(Relay, Transform);
+  var prototype$x = inherits(Relay, Transform);
 
-  prototype$v.transform = function(_, pulse) {
+  prototype$x.transform = function(_, pulse) {
     var out, lut;
 
     if (this.value) {
@@ -8497,9 +8873,9 @@
     ]
   };
 
-  var prototype$w = inherits(Sample, Transform);
+  var prototype$y = inherits(Sample, Transform);
 
-  prototype$w.transform = function(_, pulse) {
+  prototype$y.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         mod = _.modified('size'),
         num = _.size,
@@ -8606,9 +8982,9 @@
     ]
   };
 
-  var prototype$x = inherits(Sequence, Transform);
+  var prototype$z = inherits(Sequence, Transform);
 
-  prototype$x.transform = function(_, pulse) {
+  prototype$z.transform = function(_, pulse) {
     if (this.value && !_.modified()) return;
 
     var out = pulse.materialize().fork(pulse.MOD),
@@ -8638,9 +9014,9 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$y = inherits(Sieve, Transform);
+  var prototype$A = inherits(Sieve, Transform);
 
-  prototype$y.transform = function(_, pulse) {
+  prototype$A.transform = function(_, pulse) {
     this.value = pulse.source;
     return pulse.changed()
       ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
@@ -8658,9 +9034,9 @@
     Transform.call(this, fastmap(), params);
   }
 
-  var prototype$z = inherits(TupleIndex, Transform);
+  var prototype$B = inherits(TupleIndex, Transform);
 
-  prototype$z.transform = function(_, pulse) {
+  prototype$B.transform = function(_, pulse) {
     var df = pulse.dataflow,
         field = _.field,
         index = this.value,
@@ -8697,9 +9073,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$A = inherits(Values, Transform);
+  var prototype$C = inherits(Values, Transform);
 
-  prototype$A.transform = function(_, pulse) {
+  prototype$C.transform = function(_, pulse) {
     var run = !this.value
       || _.modified('field')
       || _.modified('sort')
@@ -8920,14 +9296,14 @@
     self.inputs = Object.keys(inputs);
   }
 
-  const prototype$B = WindowState.prototype;
+  const prototype$D = WindowState.prototype;
 
-  prototype$B.init = function() {
+  prototype$D.init = function() {
     this.windows.forEach(_ => _.init());
     if (this.cell) this.cell.init();
   };
 
-  prototype$B.update = function(w, t) {
+  prototype$D.update = function(w, t) {
     let self = this,
         cell = self.cell,
         wind = self.windows,
@@ -9039,9 +9415,9 @@
     ]
   };
 
-  var prototype$C = inherits(Window, Transform);
+  var prototype$E = inherits(Window, Transform);
 
-  prototype$C.transform = function(_, pulse) {
+  prototype$E.transform = function(_, pulse) {
     var self = this,
         state = self.state,
         mod = _.modified(),
@@ -9079,7 +9455,7 @@
     return pulse.reflow(mod).modifies(state.outputs);
   };
 
-  prototype$C.group = function(key) {
+  prototype$E.group = function(key) {
     var self = this,
         group = self.value[key];
 
@@ -9146,6 +9522,7 @@
     countpattern: CountPattern,
     cross: Cross,
     density: Density,
+    dotbin: DotBin,
     expression: Expression,
     extent: Extent,
     facet: Facet,
@@ -9168,6 +9545,7 @@
     prefacet: PreFacet,
     project: Project,
     proxy: Proxy,
+    quantile: Quantile,
     relay: Relay,
     sample: Sample,
     sequence: Sequence,
@@ -9232,13 +9610,13 @@
     if (b) this.union(b);
   }
 
-  var prototype$D = Bounds.prototype;
+  var prototype$F = Bounds.prototype;
 
-  prototype$D.clone = function() {
+  prototype$F.clone = function() {
     return new Bounds(this);
   };
 
-  prototype$D.clear = function() {
+  prototype$F.clear = function() {
     this.x1 = +Number.MAX_VALUE;
     this.y1 = +Number.MAX_VALUE;
     this.x2 = -Number.MAX_VALUE;
@@ -9246,7 +9624,7 @@
     return this;
   };
 
-  prototype$D.empty = function() {
+  prototype$F.empty = function() {
     return (
       this.x1 === +Number.MAX_VALUE &&
       this.y1 === +Number.MAX_VALUE &&
@@ -9255,7 +9633,7 @@
     );
   };
 
-  prototype$D.equals = function(b) {
+  prototype$F.equals = function(b) {
     return (
       this.x1 === b.x1 &&
       this.y1 === b.y1 &&
@@ -9264,7 +9642,7 @@
     );
   };
 
-  prototype$D.set = function(x1, y1, x2, y2) {
+  prototype$F.set = function(x1, y1, x2, y2) {
     if (x2 < x1) {
       this.x2 = x1;
       this.x1 = x2;
@@ -9282,7 +9660,7 @@
     return this;
   };
 
-  prototype$D.add = function(x, y) {
+  prototype$F.add = function(x, y) {
     if (x < this.x1) this.x1 = x;
     if (y < this.y1) this.y1 = y;
     if (x > this.x2) this.x2 = x;
@@ -9290,7 +9668,7 @@
     return this;
   };
 
-  prototype$D.expand = function(d) {
+  prototype$F.expand = function(d) {
     this.x1 -= d;
     this.y1 -= d;
     this.x2 += d;
@@ -9298,7 +9676,7 @@
     return this;
   };
 
-  prototype$D.round = function() {
+  prototype$F.round = function() {
     this.x1 = Math.floor(this.x1);
     this.y1 = Math.floor(this.y1);
     this.x2 = Math.ceil(this.x2);
@@ -9306,7 +9684,7 @@
     return this;
   };
 
-  prototype$D.translate = function(dx, dy) {
+  prototype$F.translate = function(dx, dy) {
     this.x1 += dx;
     this.x2 += dx;
     this.y1 += dy;
@@ -9314,7 +9692,7 @@
     return this;
   };
 
-  prototype$D.rotate = function(angle, x, y) {
+  prototype$F.rotate = function(angle, x, y) {
     const p = this.rotatedPoints(angle, x, y);
     return this.clear()
       .add(p[0], p[1])
@@ -9323,7 +9701,7 @@
       .add(p[6], p[7]);
   };
 
-  prototype$D.rotatedPoints = function(angle, x, y) {
+  prototype$F.rotatedPoints = function(angle, x, y) {
     var {x1, y1, x2, y2} = this,
         cos = Math.cos(angle),
         sin = Math.sin(angle),
@@ -9338,7 +9716,7 @@
     ];
   };
 
-  prototype$D.union = function(b) {
+  prototype$F.union = function(b) {
     if (b.x1 < this.x1) this.x1 = b.x1;
     if (b.y1 < this.y1) this.y1 = b.y1;
     if (b.x2 > this.x2) this.x2 = b.x2;
@@ -9346,7 +9724,7 @@
     return this;
   };
 
-  prototype$D.intersect = function(b) {
+  prototype$F.intersect = function(b) {
     if (b.x1 > this.x1) this.x1 = b.x1;
     if (b.y1 > this.y1) this.y1 = b.y1;
     if (b.x2 < this.x2) this.x2 = b.x2;
@@ -9354,7 +9732,7 @@
     return this;
   };
 
-  prototype$D.encloses = function(b) {
+  prototype$F.encloses = function(b) {
     return b && (
       this.x1 <= b.x1 &&
       this.x2 >= b.x2 &&
@@ -9363,7 +9741,7 @@
     );
   };
 
-  prototype$D.alignsWith = function(b) {
+  prototype$F.alignsWith = function(b) {
     return b && (
       this.x1 == b.x1 ||
       this.x2 == b.x2 ||
@@ -9372,7 +9750,7 @@
     );
   };
 
-  prototype$D.intersects = function(b) {
+  prototype$F.intersects = function(b) {
     return b && !(
       this.x2 < b.x1 ||
       this.x1 > b.x2 ||
@@ -9381,7 +9759,7 @@
     );
   };
 
-  prototype$D.contains = function(x, y) {
+  prototype$F.contains = function(x, y) {
     return !(
       x < this.x1 ||
       x > this.x2 ||
@@ -9390,11 +9768,11 @@
     );
   };
 
-  prototype$D.width = function() {
+  prototype$F.width = function() {
     return this.x2 - this.x1;
   };
 
-  prototype$D.height = function() {
+  prototype$F.height = function() {
     return this.y2 - this.y1;
   };
 
@@ -9490,9 +9868,9 @@
     this._loader = customLoader || loader();
   }
 
-  var prototype$E = ResourceLoader.prototype;
+  var prototype$G = ResourceLoader.prototype;
 
-  prototype$E.pending = function() {
+  prototype$G.pending = function() {
     return this._pending;
   };
 
@@ -9504,7 +9882,7 @@
     loader._pending -= 1;
   }
 
-  prototype$E.sanitizeURL = function(uri) {
+  prototype$G.sanitizeURL = function(uri) {
     var loader = this;
     increment(loader);
 
@@ -9519,7 +9897,7 @@
       });
   };
 
-  prototype$E.loadImage = function(uri) {
+  prototype$G.loadImage = function(uri) {
     var loader = this,
         Image = domImage();
     increment(loader);
@@ -9551,7 +9929,7 @@
       });
   };
 
-  prototype$E.ready = function() {
+  prototype$G.ready = function() {
     var loader = this;
     return new Promise(function(accept) {
       function poll(value) {
@@ -13006,9 +13384,9 @@
   useCanvas(true);
 
   // make dumb, simple estimate if no canvas is available
-  function estimateWidth(item) {
+  function estimateWidth(item, text) {
     currFontHeight = fontSize(item);
-    return estimate(textValue(item));
+    return estimate(textValue(item, text));
   }
 
   function estimate(text) {
@@ -13016,9 +13394,9 @@
   }
 
   // measure text width if canvas is available
-  function measureWidth(item) {
+  function measureWidth(item, text) {
     return fontSize(item) <= 0 ? 0
-      : (context$1.font = font(item), measure$1(textValue(item)));
+      : (context$1.font = font(item), measure$1(textValue(item, text)));
   }
 
   function measure$1(text) {
@@ -13033,18 +13411,36 @@
     textMetrics.width = (use && context$1) ? measureWidth : estimateWidth;
   }
 
-  function textValue(item) {
-    var s = item.text;
-    if (s == null) {
-      return '';
-    } else {
-      return item.limit > 0 ? truncate$1(item) : s + '';
-    }
+  function lineHeight(item) {
+    return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
   }
 
-  function truncate$1(item) {
+  function lineArray(_) {
+    return isArray(_) ? _.length > 1 ? _ : _[0] : _;
+  }
+
+  function textLines(item) {
+    return lineArray(
+      item.lineBreak && item.text && !isArray(item.text)
+        ? item.text.split(item.lineBreak)
+        : item.text
+    );
+  }
+
+  function multiLineOffset(item) {
+    const tl = textLines(item);
+    return (isArray(tl) ? (tl.length - 1) : 0) * lineHeight(item);
+  }
+
+  function textValue(item, line) {
+    return line == null ? ''
+      : item.limit > 0 ? truncate$1(item, line)
+      : line + '';
+  }
+
+  function truncate$1(item, line) {
     var limit = +item.limit,
-        text = item.text + '',
+        text = line + '',
         width;
 
     if (textMetrics.width === measureWidth) {
@@ -13162,10 +13558,20 @@
         y = p.y1,
         dx = item.dx || 0,
         dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
+        tl = textLines(item),
         w;
 
+    // get dimensions
+    if (isArray(tl)) {
+      // multi-line text
+      h += lineHeight(item) * (tl.length - 1);
+      w = tl.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
+    } else {
+      // single-line text
+      w = textMetrics.width(item, tl);
+    }
+
     // horizontal alignment
-    w = textMetrics.width(item);
     if (a === 'center') {
       dx -= (w / 2);
     } else if (a === 'right') {
@@ -13173,6 +13579,7 @@
     }
 
     bounds.set(dx+=x, dy+=y, dx+w, dy+h);
+
     if (item.angle && !mode) {
       bounds.rotate(item.angle * DegToRad, x, y);
     } else if (mode === 2) {
@@ -13183,9 +13590,9 @@
 
   function draw$4(context, scene, bounds) {
     visit(scene, function(item) {
-      var opacity, p, x, y, str;
+      var opacity, p, x, y, i, lh, tl, str;
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-      if (!(str = textValue(item))) return; // get text string
+      if (!item.text) return; // TODO calculate truncated value?
 
       opacity = item.opacity == null ? 1 : item.opacity;
       if (opacity === 0 || item.fontSize <= 0) return;
@@ -13206,12 +13613,29 @@
       x += (item.dx || 0);
       y += (item.dy || 0) + offset(item);
 
-      if (item.fill && fill(context, item, opacity)) {
-        context.fillText(str, x, y);
+      tl = textLines(item);
+      if (isArray(tl)) {
+        lh = lineHeight(item);
+        for (i=0; i<tl.length; ++i) {
+          str = textValue(item, tl[i]);
+          if (item.fill && fill(context, item, opacity)) {
+            context.fillText(str, x, y);
+          }
+          if (item.stroke && stroke(context, item, opacity)) {
+            context.strokeText(str, x, y);
+          }
+          y += lh;
+        }
+      } else {
+        str = textValue(item, tl);
+        if (item.fill && fill(context, item, opacity)) {
+          context.fillText(str, x, y);
+        }
+        if (item.stroke && stroke(context, item, opacity)) {
+          context.strokeText(str, x, y);
+        }
       }
-      if (item.stroke && stroke(context, item, opacity)) {
-        context.strokeText(str, x, y);
-      }
+
       if (item.angle) context.restore();
     });
   }
@@ -13326,7 +13750,8 @@
     'path',                                                       // path
     'x2', 'y2',                                                   // rule
     'size', 'shape',                                              // symbol
-    'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text
+    'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
+    'ellipsis', 'limit', 'lineBreak', 'lineHeight',
     'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
   ];
 
@@ -13370,13 +13795,13 @@
     }
   }
 
-  var prototype$F = Scenegraph.prototype;
+  var prototype$H = Scenegraph.prototype;
 
-  prototype$F.toJSON = function(indent) {
+  prototype$H.toJSON = function(indent) {
     return sceneToJSON(this.root, indent || 0);
   };
 
-  prototype$F.mark = function(markdef, group, index) {
+  prototype$H.mark = function(markdef, group, index) {
     group = group || this.root.items[0];
     var mark = createMark(markdef, group);
     group.items[index] = mark;
@@ -13492,7 +13917,7 @@
     handler.element().setAttribute('title', value || '');
   }
 
-  var prototype$G = Handler.prototype;
+  var prototype$I = Handler.prototype;
 
   /**
    * Initialize a new Handler instance.
@@ -13503,7 +13928,7 @@
    *   the "this" context for event callbacks.
    * @return {Handler} - This handler instance.
    */
-  prototype$G.initialize = function(el, origin, obj) {
+  prototype$I.initialize = function(el, origin, obj) {
     this._el = el;
     this._obj = obj || null;
     return this.origin(origin);
@@ -13513,7 +13938,7 @@
    * Returns the parent container element for a visualization.
    * @return {DOMElement} - The containing DOM element.
    */
-  prototype$G.element = function() {
+  prototype$I.element = function() {
     return this._el;
   };
 
@@ -13522,14 +13947,14 @@
    * Subclasses must override if the first child is not the scene element.
    * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
    */
-  prototype$G.canvas = function() {
+  prototype$I.canvas = function() {
     return this._el && this._el.firstChild;
   };
 
   /**
    * Get / set the origin coordinates of the visualization.
    */
-  prototype$G.origin = function(origin) {
+  prototype$I.origin = function(origin) {
     if (arguments.length) {
       this._origin = origin || [0, 0];
       return this;
@@ -13541,7 +13966,7 @@
   /**
    * Get / set the scenegraph root.
    */
-  prototype$G.scene = function(scene) {
+  prototype$I.scene = function(scene) {
     if (!arguments.length) return this._scene;
     this._scene = scene;
     return this;
@@ -13550,12 +13975,12 @@
   /**
    * Add an event handler. Subclasses should override this method.
    */
-  prototype$G.on = function(/*type, handler*/) {};
+  prototype$I.on = function(/*type, handler*/) {};
 
   /**
    * Remove an event handler. Subclasses should override this method.
    */
-  prototype$G.off = function(/*type, handler*/) {};
+  prototype$I.off = function(/*type, handler*/) {};
 
   /**
    * Utility method for finding the array index of an event handler.
@@ -13564,7 +13989,7 @@
    * @param {function} handler - The event handler instance to find.
    * @return {number} - The handler's array index or -1 if not registered.
    */
-  prototype$G._handlerIndex = function(h, type, handler) {
+  prototype$I._handlerIndex = function(h, type, handler) {
     for (var i = h ? h.length : 0; --i>=0;) {
       if (h[i].type === type && (!handler || h[i].handler === handler)) {
         return i;
@@ -13581,7 +14006,7 @@
    *   null or unspecified, this method returns handlers for all types.
    * @return {Array} - A new array containing all registered event handlers.
    */
-  prototype$G.handlers = function(type) {
+  prototype$I.handlers = function(type) {
     var h = this._handlers, a = [], k;
     if (type) {
       a.push.apply(a, h[this.eventName(type)]);
@@ -13597,7 +14022,7 @@
    * @param {string} name - The input event type string.
    * @return {string} - A string with the event type only.
    */
-  prototype$G.eventName = function(name) {
+  prototype$I.eventName = function(name) {
     var i = name.indexOf('.');
     return i < 0 ? name : name.slice(0,i);
   };
@@ -13608,7 +14033,7 @@
    * @param {Item} item - The scenegraph item.
    * @param {string} href - The URL to navigate to.
    */
-  prototype$G.handleHref = function(event, item, href) {
+  prototype$I.handleHref = function(event, item, href) {
     this._loader
       .sanitize(href, {context:'href'})
       .then(function(opt) {
@@ -13627,7 +14052,7 @@
    * @param {boolean} show - A boolean flag indicating whether
    *   to show or hide a tooltip for the given item.
    */
-  prototype$G.handleTooltip = function(event, item, show) {
+  prototype$I.handleTooltip = function(event, item, show) {
     if (item && item.tooltip != null) {
       item = resolveItem(item, event, this.canvas(), this._origin);
       var value = (show && item && item.tooltip) || null;
@@ -13643,7 +14068,7 @@
    *   DOMRect type) consisting of x, y, width, heigh, top, left,
    *   right, and bottom properties.
    */
-  prototype$G.getItemBoundingClientRect = function(item) {
+  prototype$I.getItemBoundingClientRect = function(item) {
     if (!(el = this.canvas())) return;
 
     var el, rect = el.getBoundingClientRect(),
@@ -13686,7 +14111,7 @@
     this._loader = new ResourceLoader(loader);
   }
 
-  var prototype$H = Renderer.prototype;
+  var prototype$J = Renderer.prototype;
 
   /**
    * Initialize a new Renderer instance.
@@ -13699,7 +14124,7 @@
    *   the width and height to determine the final pixel size.
    * @return {Renderer} - This renderer instance.
    */
-  prototype$H.initialize = function(el, width, height, origin, scaleFactor) {
+  prototype$J.initialize = function(el, width, height, origin, scaleFactor) {
     this._el = el;
     return this.resize(width, height, origin, scaleFactor);
   };
@@ -13708,7 +14133,7 @@
    * Returns the parent container element for a visualization.
    * @return {DOMElement} - The containing DOM element.
    */
-  prototype$H.element = function() {
+  prototype$J.element = function() {
     return this._el;
   };
 
@@ -13717,14 +14142,14 @@
    * Subclasses must override if the first child is not the scene element.
    * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
    */
-  prototype$H.canvas = function() {
+  prototype$J.canvas = function() {
     return this._el && this._el.firstChild;
   };
 
   /**
    * Get / set the background color.
    */
-  prototype$H.background = function(bgcolor) {
+  prototype$J.background = function(bgcolor) {
     if (arguments.length === 0) return this._bgcolor;
     this._bgcolor = bgcolor;
     return this;
@@ -13740,7 +14165,7 @@
    *   the width and height to determine the final pixel size.
    * @return {Renderer} - This renderer instance;
    */
-  prototype$H.resize = function(width, height, origin, scaleFactor) {
+  prototype$J.resize = function(width, height, origin, scaleFactor) {
     this._width = width;
     this._height = height;
     this._origin = origin || [0, 0];
@@ -13754,7 +14179,7 @@
    * incremental should implement this method.
    * @param {Item} item - The dirty item whose bounds should be redrawn.
    */
-  prototype$H.dirty = function(/*item*/) {
+  prototype$J.dirty = function(/*item*/) {
   };
 
   /**
@@ -13767,7 +14192,7 @@
    * @param {object} scene - The root mark of a scenegraph to render.
    * @return {Renderer} - This renderer instance.
    */
-  prototype$H.render = function(scene) {
+  prototype$J.render = function(scene) {
     var r = this;
 
     // bind arguments into a render call, and cache it
@@ -13789,7 +14214,7 @@
    * method to actually perform rendering.
    * @param {object} scene - The root mark of a scenegraph to render.
    */
-  prototype$H._render = function(/*scene*/) {
+  prototype$J._render = function(/*scene*/) {
     // subclasses to override
   };
 
@@ -13801,7 +14226,7 @@
    * @param {object} scene - The root mark of a scenegraph to render.
    * @return {Promise} - A Promise that resolves when rendering is complete.
    */
-  prototype$H.renderAsync = function(scene) {
+  prototype$J.renderAsync = function(scene) {
     var r = this.render(scene);
     return this._ready
       ? this._ready.then(function() { return r; })
@@ -13816,7 +14241,7 @@
    * @param {string} uri - The URI for the requested resource.
    * @return {Promise} - A Promise that resolves to the requested resource.
    */
-  prototype$H._load = function(method, uri) {
+  prototype$J._load = function(method, uri) {
     var r = this,
         p = r._loader[method](uri);
 
@@ -13840,7 +14265,7 @@
    * @param {string} uri - The URI string to sanitize.
    * @return {Promise} - A Promise that resolves to the sanitized URL.
    */
-  prototype$H.sanitizeURL = function(uri) {
+  prototype$J.sanitizeURL = function(uri) {
     return this._load('sanitizeURL', uri);
   };
 
@@ -13851,7 +14276,7 @@
    * @param {string} uri - The URI string of the image.
    * @return {Promise} - A Promise that resolves to the loaded Image.
    */
-  prototype$H.loadImage = function(uri) {
+  prototype$J.loadImage = function(uri) {
     return this._load('loadImage', uri);
   };
 
@@ -13889,17 +14314,17 @@
     this._first = true;
   }
 
-  var prototype$I = inherits(CanvasHandler, Handler);
+  var prototype$K = inherits(CanvasHandler, Handler);
 
-  prototype$I.initialize = function(el, origin, obj) {
+  prototype$K.initialize = function(el, origin, obj) {
     // add event listeners
     var canvas = this._canvas = el && domFind(el, 'canvas');
     if (canvas) {
       var that = this;
       this.events.forEach(function(type) {
         canvas.addEventListener(type, function(evt) {
-          if (prototype$I[type]) {
-            prototype$I[type].call(that, evt);
+          if (prototype$K[type]) {
+            prototype$K[type].call(that, evt);
           } else {
             that.fire(type, evt);
           }
@@ -13911,20 +14336,20 @@
   };
 
   // return the backing canvas instance
-  prototype$I.canvas = function() {
+  prototype$K.canvas = function() {
     return this._canvas;
   };
 
   // retrieve the current canvas context
-  prototype$I.context = function() {
+  prototype$K.context = function() {
     return this._canvas.getContext('2d');
   };
 
   // supported events
-  prototype$I.events = Events;
+  prototype$K.events = Events;
 
   // to keep old versions of firefox happy
-  prototype$I.DOMMouseScroll = function(evt) {
+  prototype$K.DOMMouseScroll = function(evt) {
     this.fire('mousewheel', evt);
   };
 
@@ -13957,25 +14382,25 @@
     };
   }
 
-  prototype$I.mousemove = move('mousemove', 'mouseover', 'mouseout');
-  prototype$I.dragover  = move('dragover', 'dragenter', 'dragleave');
+  prototype$K.mousemove = move('mousemove', 'mouseover', 'mouseout');
+  prototype$K.dragover  = move('dragover', 'dragenter', 'dragleave');
 
-  prototype$I.mouseout  = inactive('mouseout');
-  prototype$I.dragleave = inactive('dragleave');
+  prototype$K.mouseout  = inactive('mouseout');
+  prototype$K.dragleave = inactive('dragleave');
 
-  prototype$I.mousedown = function(evt) {
+  prototype$K.mousedown = function(evt) {
     this._down = this._active;
     this.fire('mousedown', evt);
   };
 
-  prototype$I.click = function(evt) {
+  prototype$K.click = function(evt) {
     if (this._down === this._active) {
       this.fire('click', evt);
       this._down = null;
     }
   };
 
-  prototype$I.touchstart = function(evt) {
+  prototype$K.touchstart = function(evt) {
     this._touch = this.pickEvent(evt.changedTouches[0]);
 
     if (this._first) {
@@ -13986,17 +14411,17 @@
     this.fire('touchstart', evt, true);
   };
 
-  prototype$I.touchmove = function(evt) {
+  prototype$K.touchmove = function(evt) {
     this.fire('touchmove', evt, true);
   };
 
-  prototype$I.touchend = function(evt) {
+  prototype$K.touchend = function(evt) {
     this.fire('touchend', evt, true);
     this._touch = null;
   };
 
   // fire an event
-  prototype$I.fire = function(type, evt, touch) {
+  prototype$K.fire = function(type, evt, touch) {
     var a = touch ? this._touch : this._active,
         h = this._handlers[type], i, len;
 
@@ -14019,7 +14444,7 @@
   };
 
   // add an event handler
-  prototype$I.on = function(type, handler) {
+  prototype$K.on = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers,
         i = this._handlerIndex(h[name], type, handler);
@@ -14035,7 +14460,7 @@
   };
 
   // remove an event handler
-  prototype$I.off = function(type, handler) {
+  prototype$K.off = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers[name],
         i = this._handlerIndex(h, type, handler);
@@ -14047,7 +14472,7 @@
     return this;
   };
 
-  prototype$I.pickEvent = function(evt) {
+  prototype$K.pickEvent = function(evt) {
     var p = point$4(evt, this._canvas),
         o = this._origin;
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
@@ -14056,7 +14481,7 @@
   // find the scenegraph item at the current mouse position
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
-  prototype$I.pick = function(scene, x, y, gx, gy) {
+  prototype$K.pick = function(scene, x, y, gx, gy) {
     var g = this.context(),
         mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
@@ -14121,11 +14546,11 @@
     this._dirty = new Bounds();
   }
 
-  var prototype$J = inherits(CanvasRenderer, Renderer),
+  var prototype$L = inherits(CanvasRenderer, Renderer),
       base = Renderer.prototype,
       tempBounds$1 = new Bounds();
 
-  prototype$J.initialize = function(el, width, height, origin, scaleFactor, options) {
+  prototype$L.initialize = function(el, width, height, origin, scaleFactor, options) {
     this._options = options;
     this._canvas = domCanvas(1, 1, options && options.type); // instantiate a small canvas
 
@@ -14137,7 +14562,7 @@
     return base.initialize.call(this, el, width, height, origin, scaleFactor);
   };
 
-  prototype$J.resize = function(width, height, origin, scaleFactor) {
+  prototype$L.resize = function(width, height, origin, scaleFactor) {
     base.resize.call(this, width, height, origin, scaleFactor);
     resize(this._canvas, this._width, this._height,
       this._origin, this._scale, this._options && this._options.context);
@@ -14145,15 +14570,15 @@
     return this;
   };
 
-  prototype$J.canvas = function() {
+  prototype$L.canvas = function() {
     return this._canvas;
   };
 
-  prototype$J.context = function() {
+  prototype$L.context = function() {
     return this._canvas ? this._canvas.getContext('2d') : null;
   };
 
-  prototype$J.dirty = function(item) {
+  prototype$L.dirty = function(item) {
     var b = translate$1(item.bounds, item.mark.group);
     this._dirty.union(b);
   };
@@ -14182,7 +14607,7 @@
     return b;
   }
 
-  prototype$J._render = function(scene) {
+  prototype$L._render = function(scene) {
     var g = this.context(),
         o = this._origin,
         w = this._width,
@@ -14210,14 +14635,14 @@
     return this;
   };
 
-  prototype$J.draw = function(ctx, scene, bounds) {
+  prototype$L.draw = function(ctx, scene, bounds) {
     var mark = Marks[scene.marktype];
     if (scene.clip) clip$1(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
 
-  prototype$J.clear = function(x, y, w, h) {
+  prototype$L.clear = function(x, y, w, h) {
     var g = this.context();
     g.clearRect(x, y, w, h);
     if (this._bgcolor != null) {
@@ -14237,9 +14662,9 @@
     });
   }
 
-  var prototype$K = inherits(SVGHandler, Handler);
+  var prototype$M = inherits(SVGHandler, Handler);
 
-  prototype$K.initialize = function(el, origin, obj) {
+  prototype$M.initialize = function(el, origin, obj) {
     var svg = this._svg;
     if (svg) {
       svg.removeEventListener(HrefEvent, this._hrefHandler);
@@ -14255,7 +14680,7 @@
     return Handler.prototype.initialize.call(this, el, origin, obj);
   };
 
-  prototype$K.canvas = function() {
+  prototype$M.canvas = function() {
     return this._svg;
   };
 
@@ -14271,7 +14696,7 @@
   }
 
   // add an event handler
-  prototype$K.on = function(type, handler) {
+  prototype$M.on = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers,
         i = this._handlerIndex(h[name], type, handler);
@@ -14293,7 +14718,7 @@
   };
 
   // remove an event handler
-  prototype$K.off = function(type, handler) {
+  prototype$M.off = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers[name],
         i = this._handlerIndex(h, type, handler);
@@ -14365,10 +14790,10 @@
     this._defs = null;
   }
 
-  var prototype$L = inherits(SVGRenderer, Renderer);
+  var prototype$N = inherits(SVGRenderer, Renderer);
   var base$1 = Renderer.prototype;
 
-  prototype$L.initialize = function(el, width, height, padding) {
+  prototype$N.initialize = function(el, width, height, padding) {
     if (el) {
       this._svg = domChild(el, 0, 'svg', ns);
       this._svg.setAttribute('class', 'marks');
@@ -14390,14 +14815,14 @@
     return base$1.initialize.call(this, el, width, height, padding);
   };
 
-  prototype$L.background = function(bgcolor) {
+  prototype$N.background = function(bgcolor) {
     if (arguments.length && this._svg) {
       this._svg.style.setProperty('background-color', bgcolor);
     }
     return base$1.background.apply(this, arguments);
   };
 
-  prototype$L.resize = function(width, height, origin, scaleFactor) {
+  prototype$N.resize = function(width, height, origin, scaleFactor) {
     base$1.resize.call(this, width, height, origin, scaleFactor);
 
     if (this._svg) {
@@ -14412,11 +14837,11 @@
     return this;
   };
 
-  prototype$L.canvas = function() {
+  prototype$N.canvas = function() {
     return this._svg;
   };
 
-  prototype$L.svg = function() {
+  prototype$N.svg = function() {
     if (!this._svg) return null;
 
     var attr = {
@@ -14442,7 +14867,7 @@
 
   // -- Render entry point --
 
-  prototype$L._render = function(scene) {
+  prototype$N._render = function(scene) {
     // perform spot updates and re-render markup
     if (this._dirtyCheck()) {
       if (this._dirtyAll) this._resetDefs();
@@ -14460,7 +14885,7 @@
 
   // -- Manage SVG definitions ('defs') block --
 
-  prototype$L.updateDefs = function() {
+  prototype$N.updateDefs = function() {
     var svg = this._svg,
         defs = this._defs,
         el = defs.el,
@@ -14554,7 +14979,7 @@
     return index + 1;
   }
 
-  prototype$L._resetDefs = function() {
+  prototype$N._resetDefs = function() {
     var def = this._defs;
     def.gradient = {};
     def.clipping = {};
@@ -14563,20 +14988,20 @@
 
   // -- Manage rendering of items marked as dirty --
 
-  prototype$L.dirty = function(item) {
+  prototype$N.dirty = function(item) {
     if (item.dirty !== this._dirtyID) {
       item.dirty = this._dirtyID;
       this._dirty.push(item);
     }
   };
 
-  prototype$L.isDirty = function(item) {
+  prototype$N.isDirty = function(item) {
     return this._dirtyAll
       || !item._svg
       || item.dirty === this._dirtyID;
   };
 
-  prototype$L._dirtyCheck = function() {
+  prototype$N._dirtyCheck = function() {
     this._dirtyAll = true;
     var items = this._dirty;
     if (!items.length) return true;
@@ -14644,7 +15069,7 @@
   // -- Construct & maintain scenegraph to SVG mapping ---
 
   // Draw a mark container.
-  prototype$L.draw = function(el, scene, prev) {
+  prototype$N.draw = function(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
     var renderer = this,
@@ -14770,12 +15195,37 @@
       }
     },
     text: function(mdef, el, item) {
-      var value;
+      var tl = textLines(item),
+          key, value, doc, lh;
 
-      value = textValue(item);
-      if (value !== values.text) {
-        el.textContent = value;
-        values.text = value;
+      if (isArray(tl)) {
+        // multi-line text
+        value = tl.map(_ => textValue(item, _));
+        key = value.join('\n'); // content cache key
+
+        if (key !== values.text) {
+          domClear(el, 0);
+          doc = el.ownerDocument;
+          lh = lineHeight(item);
+          value.forEach((t, i) => {
+            const ts = domCreate(doc, 'tspan', ns);
+            ts.__data__ = item; // data binding
+            ts.textContent = t;
+            if (i) {
+              ts.setAttribute('x', 0);
+              ts.setAttribute('dy', lh);
+            }
+            el.appendChild(ts);
+          });
+          values.text = key;
+        }
+      } else {
+        // single-line text
+        value = textValue(item, tl);
+        if (value !== values.text) {
+          el.textContent = value;
+          values.text = value;
+        }
       }
 
       setStyle(el, 'font-family', fontFamily(item));
@@ -14797,7 +15247,7 @@
     }
   }
 
-  prototype$L._update = function(mdef, el, item) {
+  prototype$N._update = function(mdef, el, item) {
     // set dom element and values cache
     // provides access to emit method
     element = el;
@@ -14839,7 +15289,7 @@
     values[name] = value;
   }
 
-  prototype$L.style = function(el, o) {
+  prototype$N.style = function(el, o) {
     if (o == null) return;
     var i, n, prop, name, value;
 
@@ -14896,10 +15346,10 @@
     };
   }
 
-  var prototype$M = inherits(SVGStringRenderer, Renderer);
+  var prototype$O = inherits(SVGStringRenderer, Renderer);
   var base$2 = Renderer.prototype;
 
-  prototype$M.resize = function(width, height, origin, scaleFactor) {
+  prototype$O.resize = function(width, height, origin, scaleFactor) {
     base$2.resize.call(this, width, height, origin, scaleFactor);
     var o = this._origin,
         t = this._text;
@@ -14938,7 +15388,7 @@
     return this;
   };
 
-  prototype$M.background = function() {
+  prototype$O.background = function() {
     var rv = base$2.background.apply(this, arguments);
     if (arguments.length && this._text.head) {
       this.resize(this._width, this._height, this._origin, this._scale);
@@ -14946,18 +15396,18 @@
     return rv;
   };
 
-  prototype$M.svg = function() {
+  prototype$O.svg = function() {
     var t = this._text;
     return t.head + t.bg + t.defs + t.root + t.body + t.foot;
   };
 
-  prototype$M._render = function(scene) {
+  prototype$O._render = function(scene) {
     this._text.body = this.mark(scene);
     this._text.defs = this.buildDefs();
     return this;
   };
 
-  prototype$M.buildDefs = function() {
+  prototype$O.buildDefs = function() {
     var all = this._defs,
         defs = '',
         i, id, def, tag, stops;
@@ -15047,13 +15497,13 @@
     object$1[prefixed || name] = value;
   }
 
-  prototype$M.attributes = function(attr, item) {
+  prototype$O.attributes = function(attr, item) {
     object$1 = {};
     attr(emit$1, item, this);
     return object$1;
   };
 
-  prototype$M.href = function(item) {
+  prototype$O.href = function(item) {
     var that = this,
         href = item.href,
         attr;
@@ -15074,7 +15524,7 @@
     return null;
   };
 
-  prototype$M.mark = function(scene) {
+  prototype$O.mark = function(scene) {
     var renderer = this,
         mdef = Marks[scene.marktype],
         tag  = mdef.tag,
@@ -15101,7 +15551,19 @@
       str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
       if (tag === 'text') {
-        str += escape_text(textValue(item));
+        const tl = textLines(item);
+        if (isArray(tl)) {
+          // multi-line text
+          const attrs = {x: 0, dy: lineHeight(item)};
+          for (let i=0; i<tl.length; ++i) {
+            str += openTag('tspan', i ? attrs: null)
+              + escape_text(textValue(item, tl[i]))
+              + closeTag('tspan');
+          }
+        } else {
+          // single-line text
+          str += escape_text(textValue(item, tl));
+        }
       } else if (tag === 'g') {
         str += openTag('path', renderer.attributes(mdef.background, item),
           applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
@@ -15125,7 +15587,7 @@
     return str + closeTag('g');
   };
 
-  prototype$M.markGroup = function(scene) {
+  prototype$O.markGroup = function(scene) {
     var renderer = this,
         str = '';
 
@@ -15355,9 +15817,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$N = inherits(Bound, Transform);
+  var prototype$P = inherits(Bound, Transform);
 
-  prototype$N.transform = function(_, pulse) {
+  prototype$P.transform = function(_, pulse) {
     var view = pulse.dataflow,
         mark = _.mark,
         type = mark.marktype,
@@ -15383,9 +15845,13 @@
         markBounds.union(boundItem$1(item, bound));
       });
 
-      // force reflow for legends to propagate any layout changes
-      // suppress other types to prevent overall layout jumpiness
-      if (mark.role === LegendRole) pulse.reflow();
+      // force reflow for axes/legends/titles to propagate any layout changes
+      switch (mark.role) {
+        case AxisRole:
+        case LegendRole:
+        case TitleRole:
+          pulse.reflow();
+      }
     }
 
     else {
@@ -15443,9 +15909,9 @@
     ]
   };
 
-  var prototype$O = inherits(Identifier, Transform);
+  var prototype$Q = inherits(Identifier, Transform);
 
-  prototype$O.transform = function(_, pulse) {
+  prototype$Q.transform = function(_, pulse) {
     var counter = getCounter(pulse.dataflow),
         id = counter.value,
         as = _.as;
@@ -15478,9 +15944,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$P = inherits(Mark, Transform);
+  var prototype$R = inherits(Mark, Transform);
 
-  prototype$P.transform = function(_, pulse) {
+  prototype$R.transform = function(_, pulse) {
     var mark = this.value;
 
     // acquire mark on first invocation, bind context and group
@@ -15545,7 +16011,7 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$Q = inherits(Overlap, Transform);
+  var prototype$S = inherits(Overlap, Transform);
 
   var methods = {
     parity: function(items) {
@@ -15612,7 +16078,7 @@
     return pulse.reflow(_.modified()).modifies('opacity');
   }
 
-  prototype$Q.transform = function(_, pulse) {
+  prototype$S.transform = function(_, pulse) {
     var reduce = methods[_.method] || methods.parity,
         source = pulse.materialize(pulse.SOURCE).source,
         sep = _.separation || 0,
@@ -15674,9 +16140,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$R = inherits(Render, Transform);
+  var prototype$T = inherits(Render, Transform);
 
-  prototype$R.transform = function(_, pulse) {
+  prototype$T.transform = function(_, pulse) {
     var view = pulse.dataflow;
 
     pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
@@ -15724,6 +16190,7 @@
         title = datum.title && item.items[indices[2]].items[0],
         titlePadding = item.titlePadding,
         bounds = item.bounds,
+        dl = title && multiLineOffset(title),
         x = 0, y = 0, i, s;
 
     tempBounds$2.clear().union(bounds);
@@ -15737,28 +16204,28 @@
         x = position || 0;
         y = -offset;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 0, -1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
         bounds.add(0, -s).add(range, 0);
         break;
       case Left:
         x = -offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 1, -1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
         bounds.add(-s, 0).add(0, range);
         break;
       case Right:
         x = width + offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 1, 1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
         bounds.add(0, 0).add(s, range);
         break;
       case Bottom:
         x = position || 0;
         y = height + offset;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 0, 1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
         bounds.add(0, 0).add(range, s);
         break;
       default:
@@ -15779,18 +16246,20 @@
     return item.mark.bounds.clear().union(bounds);
   }
 
-  function axisTitleLayout(title, offset, pad, isYAxis, sign, bounds) {
+  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
     var b = title.bounds, dx = 0, dy = 0;
 
     if (title.auto) {
+      view.dirty(title);
+
       offset += pad;
 
       isYAxis
-        ? dx = (title.x || 0) - (title.x = sign * offset)
-        : dy = (title.y || 0) - (title.y = sign * offset);
+        ? dx = (title.x || 0) - (title.x = sign * (offset + dl))
+        : dy = (title.y || 0) - (title.y = sign * (offset + dl));
 
-      b.translate(-dx, -dy);
-      title.mark.bounds.set(b.x1, b.y1, b.x2, b.y2);
+      title.mark.bounds.clear().union(b.translate(-dx, -dy));
+      view.dirty(title);
 
       if (isYAxis) {
         bounds.add(0, b.y1).add(0, b.y2);
@@ -16324,24 +16793,24 @@
         case Bottom:
           break;
         default:
-          ey += title.fontSize + tpad;
+          ey += title.bounds.height() + tpad;
       }
       if (ex || ey) translate$2(view, entry, ex, ey);
 
       switch (title.orient) {
         case Left:
-          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
           break;
         case Right:
-          tx += legendTitleOffset(item, entry, title, End, 1, 0) + tpad;
-          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          tx += legendTitleOffset(item, entry, title, End, 0, 0) + tpad;
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
           break;
         case Bottom:
-          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
-          ty += legendTitleOffset(item, entry, title, End, 0, 0, 1) + tpad;
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+          ty += legendTitleOffset(item, entry, title, End, -1, 0, 1) + tpad;
           break;
         default:
-          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
       }
       if (tx || ty) translate$2(view, title, tx, ty);
 
@@ -16353,15 +16822,18 @@
     }
   }
 
-  function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
+  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
     const grad = item.datum.type !== 'symbol',
           vgrad = title.datum.vgrad,
           e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
-          s = e.bounds[x ? 'x2' : 'y2'] - item.padding,
+          s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
           u = vgrad && lr ? s : 0,
-          v = vgrad && lr ? 0 : s;
+          v = vgrad && lr ? 0 : s,
+          o = y <= 0 ? 0 : multiLineOffset(title);
 
-    return Math.round(anchor === Start ? u : anchor === End ? v : 0.5 * s);
+    return Math.round(anchor === Start ? u
+      : anchor === End ? (v - o)
+      : 0.5 * (s - o));
   }
 
   function translate$2(view, item, dx, dy) {
@@ -16386,17 +16858,17 @@
     });
   }
 
-  function titleLayout(view, title, width, height, viewBounds) {
-    var item = title.items[0],
-        frame = item.frame,
-        orient = item.orient,
-        anchor = item.anchor,
-        offset = item.offset,
-        bounds = item.bounds,
-        vertical = (orient === Left || orient === Right),
-        start = 0,
-        end = vertical ? height : width,
-        x = 0, y = 0, pos;
+  function titleLayout(view, mark, width, height, viewBounds) {
+    var group = mark.items[0],
+        frame = group.frame,
+        orient = group.orient,
+        anchor = group.anchor,
+        offset = group.offset,
+        padding = group.padding,
+        title = group.items[0].items[0],
+        subtitle = group.items[1] && group.items[1].items[0],
+        end = (orient === Left || orient === Right) ? height : width,
+        start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
 
     if (frame !== Group) {
       orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
@@ -16410,20 +16882,48 @@
       : (anchor === End) ? end
       : (start + end) / 2;
 
-    tempBounds$2.clear().union(bounds);
+    if (subtitle && subtitle.text) {
+      // position subtitle
+      switch (orient) {
+        case Top:
+        case Bottom:
+          sy = title.bounds.height() + padding;
+          break;
+        case Left:
+          sx = title.bounds.width() + padding;
+          break;
+        case Right:
+          sx = -title.bounds.width() - padding;
+          break;
+      }
 
-    // position title text
+      tempBounds$2.clear().union(subtitle.bounds);
+      tempBounds$2.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+      if (set(subtitle, 'x', sx) | set(subtitle, 'y', sy)) {
+        view.dirty(subtitle);
+        subtitle.bounds.clear().union(tempBounds$2);
+        subtitle.mark.bounds.clear().union(tempBounds$2);
+        view.dirty(subtitle);
+      }
+
+      tempBounds$2.clear().union(subtitle.bounds);
+    } else {
+      tempBounds$2.clear();
+    }
+    tempBounds$2.union(title.bounds);
+
+    // position title group
     switch (orient) {
       case Top:
         x = pos;
-        y = viewBounds.y1 - offset;
+        y = viewBounds.y1 - tempBounds$2.height() - offset;
         break;
       case Left:
-        x = viewBounds.x1 - offset;
+        x = viewBounds.x1 - tempBounds$2.width() - offset;
         y = pos;
         break;
       case Right:
-        x = viewBounds.x2 + offset;
+        x = viewBounds.x2 + tempBounds$2.width() + offset;
         y = pos;
         break;
       case Bottom:
@@ -16431,20 +16931,18 @@
         y = viewBounds.y2 + offset;
         break;
       default:
-        x = item.x;
-        y = item.y;
+        x = group.x;
+        y = group.y;
     }
 
-    bounds.translate(x - (item.x || 0), y - (item.y || 0));
-    if (set(item, 'x', x) | set(item, 'y', y)) {
-      item.bounds = tempBounds$2;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
+    if (set(group, 'x', x) | set(group, 'y', y)) {
+      tempBounds$2.translate(x, y);
+      view.dirty(group);
+      group.bounds.clear().union(tempBounds$2);
+      mark.bounds.clear().union(tempBounds$2);
+      view.dirty(group);
     }
-
-    // update bounds
-    return title.bounds.clear().union(bounds);
+    return group.bounds;
   }
 
   /**
@@ -16458,9 +16956,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$S = inherits(ViewLayout, Transform);
+  var prototype$U = inherits(ViewLayout, Transform);
 
-  prototype$S.transform = function(_, pulse) {
+  prototype$U.transform = function(_, pulse) {
     // TODO incremental update, output?
     var view = pulse.dataflow;
     _.mark.items.forEach(function(group) {
@@ -16661,7 +17159,7 @@
   const Sequential = 'sequential';
   const Diverging = 'diverging';
 
-  const Quantile = 'quantile';
+  const Quantile$1 = 'quantile';
   const Quantize = 'quantize';
   const Threshold = 'threshold';
 
@@ -16681,7 +17179,7 @@
       case Time:
       case UTC:
       case Sequential:
-      case Quantile:
+      case Quantile$1:
       case Quantize:
       case Threshold:
       case Ordinal:
@@ -16694,7 +17192,7 @@
   }
 
   function isQuantile(key) {
-    return key === Quantile;
+    return key === Quantile$1;
   }
 
   function isSequential(key) {
@@ -16737,7 +17235,7 @@
 
   function isDiscretizing(key) {
     return key === BinOrdinal
-      || key === Quantile
+      || key === Quantile$1
       || key === Quantize
       || key === Threshold;
   }
@@ -16902,8 +17400,7 @@
   var reI = "\\s*([+-]?\\d+)\\s*",
       reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
       reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-      reHex3 = /^#([0-9a-f]{3})$/,
-      reHex6 = /^#([0-9a-f]{6})$/,
+      reHex = /^#([0-9a-f]{3,8})$/,
       reRgbInteger = new RegExp("^rgb\\(" + [reI, reI, reI] + "\\)$"),
       reRgbPercent = new RegExp("^rgb\\(" + [reP, reP, reP] + "\\)$"),
       reRgbaInteger = new RegExp("^rgba\\(" + [reI, reI, reI, reN] + "\\)$"),
@@ -17089,10 +17586,13 @@
   }
 
   function color$1(format) {
-    var m;
+    var m, l;
     format = (format + "").trim().toLowerCase();
-    return (m = reHex3.exec(format)) ? (m = parseInt(m[1], 16), new Rgb((m >> 8 & 0xf) | (m >> 4 & 0x0f0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1)) // #f00
-        : (m = reHex6.exec(format)) ? rgbn(parseInt(m[1], 16)) // #ff0000
+    return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
+        : l === 3 ? new Rgb((m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1) // #f00
+        : l === 8 ? new Rgb(m >> 24 & 0xff, m >> 16 & 0xff, m >> 8 & 0xff, (m & 0xff) / 0xff) // #ff000000
+        : l === 4 ? new Rgb((m >> 12 & 0xf) | (m >> 8 & 0xf0), (m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), (((m & 0xf) << 4) | (m & 0xf)) / 0xff) // #f000
+        : null) // invalid hex
         : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
         : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
         : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
@@ -19563,7 +20063,7 @@
     [Diverging+'-'+Symlog]:   divergingSymlog,
 
     // discretizing scales
-    [Quantile]:      quantile$1,
+    [Quantile$1]:      quantile$1,
     [Quantize]:      quantize$1,
     [Threshold]:     threshold,
 
@@ -19905,9 +20405,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$T = inherits(AxisTicks, Transform);
+  var prototype$V = inherits(AxisTicks, Transform);
 
-  prototype$T.transform = function(_, pulse) {
+  prototype$V.transform = function(_, pulse) {
     if (this.value && !_.modified()) {
       return pulse.StopPropagation;
     }
@@ -19958,7 +20458,7 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$U = inherits(DataJoin, Transform);
+  var prototype$W = inherits(DataJoin, Transform);
 
   function defaultItemCreate() {
     return ingest({});
@@ -19968,7 +20468,7 @@
     return t.exit;
   }
 
-  prototype$U.transform = function(_, pulse) {
+  prototype$W.transform = function(_, pulse) {
     var df = pulse.dataflow,
         out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         item = _.item || defaultItemCreate,
@@ -20055,9 +20555,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$V = inherits(Encode, Transform);
+  var prototype$X = inherits(Encode, Transform);
 
-  prototype$V.transform = function(_, pulse) {
+  prototype$X.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ADD_REM),
         fmod = _.mod || false,
         encoders = _.encoders,
@@ -20121,13 +20621,13 @@
   var Gradient$1 = 'gradient';
 
   const symbols$1 = {
-    [Quantile]:  'quantiles',
+    [Quantile$1]:  'quantiles',
     [Quantize]:  'thresholds',
     [Threshold]: 'domain'
   };
 
   const formats$1 = {
-    [Quantile]:  'quantiles',
+    [Quantile$1]:  'quantiles',
     [Quantize]:  'domain'
   };
 
@@ -20242,9 +20742,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$W = inherits(LegendEntries, Transform);
+  var prototype$Y = inherits(LegendEntries, Transform);
 
-  prototype$W.transform = function(_, pulse) {
+  prototype$Y.transform = function(_, pulse) {
     if (this.value != null && !_.modified()) {
       return pulse.StopPropagation;
     }
@@ -20373,9 +20873,9 @@
     ]
   };
 
-  var prototype$X = inherits(LinkPath, Transform);
+  var prototype$Z = inherits(LinkPath, Transform);
 
-  prototype$X.transform = function(_, pulse) {
+  prototype$Z.transform = function(_, pulse) {
     var sx = _.sourceX || sourceX,
         sy = _.sourceY || sourceY,
         tx = _.targetX || targetX,
@@ -20522,9 +21022,9 @@
     ]
   };
 
-  var prototype$Y = inherits(Pie, Transform);
+  var prototype$_ = inherits(Pie, Transform);
 
-  prototype$Y.transform = function(_, pulse) {
+  prototype$_.transform = function(_, pulse) {
     var as = _.as || ['startAngle', 'endAngle'],
         startAngle = as[0],
         endAngle = as[1],
@@ -20586,9 +21086,9 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$Z = inherits(Scale, Transform);
+  var prototype$$ = inherits(Scale, Transform);
 
-  prototype$Z.transform = function(_, pulse) {
+  prototype$$.transform = function(_, pulse) {
     var df = pulse.dataflow,
         scale = this.value,
         key = scaleKey(_);
@@ -20841,7 +21341,7 @@
     // determine size for potential discrete range
     count = (type === Threshold) ? count + 1
       : (type === BinOrdinal) ? count - 1
-      : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
+      : (type === Quantile$1 || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
       : count;
 
     // adjust and/or quantize scheme as appropriate
@@ -20871,9 +21371,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$_ = inherits(SortItems, Transform);
+  var prototype$10 = inherits(SortItems, Transform);
 
-  prototype$_.transform = function(_, pulse) {
+  prototype$10.transform = function(_, pulse) {
     var mod = _.modified('sort')
            || pulse.changed(pulse.ADD)
            || pulse.modified(_.sort.fields)
@@ -20897,7 +21397,7 @@
    * @param {function(object): *} params.field - The value field to stack.
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
-   * @param {string} [offset='zero'] - One of 'zero', 'center', 'normalize'.
+   * @param {string} [offset='zero'] - Stack baseline offset. One of 'zero', 'center', 'normalize'.
    */
   function Stack(params) {
     Transform.call(this, null, params);
@@ -20915,9 +21415,9 @@
     ]
   };
 
-  var prototype$$ = inherits(Stack, Transform);
+  var prototype$11 = inherits(Stack, Transform);
 
-  prototype$$.transform = function(_, pulse) {
+  prototype$11.transform = function(_, pulse) {
     var as = _.as || DefOutput,
         y0 = as[0],
         y1 = as[1],
@@ -21647,9 +22147,9 @@
     ]
   };
 
-  var prototype$10 = inherits(Contour, Transform);
+  var prototype$12 = inherits(Contour, Transform);
 
-  prototype$10.transform = function(_, pulse) {
+  prototype$12.transform = function(_, pulse) {
     if (this.value && !pulse.changed() && !_.modified())
       return pulse.StopPropagation;
 
@@ -21720,15 +22220,15 @@
     ]
   };
 
-  var prototype$11 = inherits(GeoJSON, Transform);
+  var prototype$13 = inherits(GeoJSON, Transform);
 
-  prototype$11.transform = function(_, pulse) {
+  prototype$13.transform = function(_, pulse) {
     var features = this._features,
         points = this._points,
         fields = _.fields,
         lon = fields && fields[0],
         lat = fields && fields[1],
-        geojson = _.geojson,
+        geojson = _.geojson || (!fields && identity),
         flag = pulse.ADD,
         mod;
 
@@ -24767,9 +25267,9 @@
     ]
   };
 
-  var prototype$12 = inherits(GeoPath, Transform);
+  var prototype$14 = inherits(GeoPath, Transform);
 
-  prototype$12.transform = function(_, pulse) {
+  prototype$14.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         path = this.value,
         field = _.field || identity,
@@ -24829,9 +25329,9 @@
     ]
   };
 
-  var prototype$13 = inherits(GeoPoint, Transform);
+  var prototype$15 = inherits(GeoPoint, Transform);
 
-  prototype$13.transform = function(_, pulse) {
+  prototype$15.transform = function(_, pulse) {
     var proj = _.projection,
         lon = _.fields[0],
         lat = _.fields[1],
@@ -24888,9 +25388,9 @@
     ]
   };
 
-  var prototype$14 = inherits(GeoShape, Transform);
+  var prototype$16 = inherits(GeoShape, Transform);
 
-  prototype$14.transform = function(_, pulse) {
+  prototype$16.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         shape = this.value,
         as = _.as || 'shape',
@@ -24955,9 +25455,9 @@
     ]
   };
 
-  var prototype$15 = inherits(Graticule, Transform);
+  var prototype$17 = inherits(Graticule, Transform);
 
-  prototype$15.transform = function(_, pulse) {
+  prototype$17.transform = function(_, pulse) {
     var src = this.value,
         gen = this.generator, t;
 
@@ -24990,9 +25490,9 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$16 = inherits(Projection, Transform);
+  var prototype$18 = inherits(Projection, Transform);
 
-  prototype$16.transform = function(_, pulse) {
+  prototype$18.transform = function(_, pulse) {
     var proj = this.value;
 
     if (!proj || _.modified('type')) {
@@ -26359,9 +26859,9 @@
     ]
   };
 
-  var prototype$17 = inherits(Force, Transform);
+  var prototype$19 = inherits(Force, Transform);
 
-  prototype$17.transform = function(_, pulse) {
+  prototype$19.transform = function(_, pulse) {
     var sim = this.value,
         change = pulse.changed(pulse.ADD_REM),
         params = _.modified(ForceParams),
@@ -26404,7 +26904,7 @@
     return this.finish(_, pulse);
   };
 
-  prototype$17.finish = function(_, pulse) {
+  prototype$19.finish = function(_, pulse) {
     var dataflow = pulse.dataflow;
 
     // inspect dependencies, touch link source data
@@ -27801,13 +28301,13 @@
     ]
   };
 
-  var prototype$18 = inherits(Nest, Transform);
+  var prototype$1a = inherits(Nest, Transform);
 
   function children(n) {
     return n.values;
   }
 
-  prototype$18.transform = function(_, pulse) {
+  prototype$1a.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Nest transform requires an upstream data source.');
     }
@@ -27911,9 +28411,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$19 = inherits(HierarchyLayout, Transform);
+  var prototype$1b = inherits(HierarchyLayout, Transform);
 
-  prototype$19.transform = function(_, pulse) {
+  prototype$1b.transform = function(_, pulse) {
     if (!pulse.source || !pulse.source.root) {
       error(this.constructor.name
         + ' transform requires a backing tree data source.');
@@ -27961,7 +28461,7 @@
     return a.parent === b.parent ? 1 : 2;
   }
 
-  var Output = ['x', 'y', 'r', 'depth', 'children'];
+  var Output$1 = ['x', 'y', 'r', 'depth', 'children'];
 
   /**
    * Packed circle tree layout.
@@ -27982,19 +28482,19 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "radius", "type": "field", "default": null },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
+      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
     ]
   };
 
-  var prototype$1a = inherits(Pack, HierarchyLayout);
+  var prototype$1c = inherits(Pack, HierarchyLayout);
 
-  prototype$1a.layout = pack;
+  prototype$1c.layout = pack;
 
-  prototype$1a.params = ['radius', 'size', 'padding'];
+  prototype$1c.params = ['radius', 'size', 'padding'];
 
-  prototype$1a.fields = Output;
+  prototype$1c.fields = Output$1;
 
-  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Partition tree layout.
@@ -28015,17 +28515,17 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
+      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
     ]
   };
 
-  var prototype$1b = inherits(Partition, HierarchyLayout);
+  var prototype$1d = inherits(Partition, HierarchyLayout);
 
-  prototype$1b.layout = partition$3;
+  prototype$1d.layout = partition$3;
 
-  prototype$1b.params = ['size', 'round', 'padding'];
+  prototype$1d.params = ['size', 'round', 'padding'];
 
-  prototype$1b.fields = Output$1;
+  prototype$1d.fields = Output$2;
 
   /**
     * Stratify a collection of tuples into a tree structure based on
@@ -28048,9 +28548,9 @@
     ]
   };
 
-  var prototype$1c = inherits(Stratify, Transform);
+  var prototype$1e = inherits(Stratify, Transform);
 
-  prototype$1c.transform = function(_, pulse) {
+  prototype$1e.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Stratify transform requires an upstream data source.');
     }
@@ -28086,7 +28586,7 @@
     cluster: cluster
   };
 
-  var Output$2 = ['x', 'y', 'depth', 'children'];
+  var Output$3 = ['x', 'y', 'depth', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -28108,24 +28608,24 @@
       { "name": "size", "type": "number", "array": true, "length": 2 },
       { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
       { "name": "separation", "type": "boolean", "default": true },
-      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
+      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
     ]
   };
 
-  var prototype$1d = inherits(Tree, HierarchyLayout);
+  var prototype$1f = inherits(Tree, HierarchyLayout);
 
   /**
    * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
    */
-  prototype$1d.layout = function(method) {
+  prototype$1f.layout = function(method) {
     var m = method || 'tidy';
     if (hasOwnProperty(Layouts, m)) return Layouts[m]();
     else error('Unrecognized Tree layout method: ' + m);
   };
 
-  prototype$1d.params = ['size', 'nodeSize'];
+  prototype$1f.params = ['size', 'nodeSize'];
 
-  prototype$1d.fields = Output$2;
+  prototype$1f.fields = Output$3;
 
   /**
     * Generate tuples representing links between tree nodes.
@@ -28144,9 +28644,9 @@
     "params": []
   };
 
-  var prototype$1e = inherits(TreeLinks, Transform);
+  var prototype$1g = inherits(TreeLinks, Transform);
 
-  prototype$1e.transform = function(_, pulse) {
+  prototype$1g.transform = function(_, pulse) {
     var links = this.value,
         tree = pulse.source && pulse.source.root,
         out = pulse.fork(pulse.NO_SOURCE),
@@ -28196,7 +28696,7 @@
     resquarify: treemapResquarify
   };
 
-  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Treemap layout.
@@ -28226,17 +28726,17 @@
       { "name": "ratio", "type": "number", "default": 1.618033988749895 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
+      { "name": "as", "type": "string", "array": true, "length": Output$4.length, "default": Output$4 }
     ]
   };
 
-  var prototype$1f = inherits(Treemap, HierarchyLayout);
+  var prototype$1h = inherits(Treemap, HierarchyLayout);
 
   /**
    * Treemap layout generator. Adds 'method' and 'ratio' parameters
    * to configure the underlying tile method.
    */
-  prototype$1f.layout = function() {
+  prototype$1h.layout = function() {
     var x = treemap();
     x.ratio = function(_) {
       var t = x.tile();
@@ -28249,13 +28749,13 @@
     return x;
   };
 
-  prototype$1f.params = [
+  prototype$1h.params = [
     'method', 'ratio', 'size', 'round',
     'padding', 'paddingInner', 'paddingOuter',
     'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
   ];
 
-  prototype$1f.fields = Output$3;
+  prototype$1h.fields = Output$4;
 
 
 
@@ -28319,9 +28819,9 @@
     ]
   };
 
-  var prototype$1g = inherits(Loess, Transform);
+  var prototype$1i = inherits(Loess, Transform);
 
-  prototype$1g.transform = function(_, pulse) {
+  prototype$1i.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
@@ -28394,9 +28894,9 @@
     ]
   };
 
-  var prototype$1h = inherits(Regression, Transform);
+  var prototype$1j = inherits(Regression, Transform);
 
-  prototype$1h.transform = function(_, pulse) {
+  prototype$1j.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
@@ -28476,7 +28976,7 @@
     regression: Regression
   });
 
-  const EPSILON$1 = Math.pow(2, -52);
+  const EPSILON$2 = Math.pow(2, -52);
   const EDGE_STACK = new Uint32Array(512);
 
   class Delaunator {
@@ -28655,7 +29155,7 @@
               const y = coords[2 * i + 1];
 
               // skip near-duplicate points
-              if (k > 0 && Math.abs(x - xp) <= EPSILON$1 && Math.abs(y - yp) <= EPSILON$1) continue;
+              if (k > 0 && Math.abs(x - xp) <= EPSILON$2 && Math.abs(y - yp) <= EPSILON$2) continue;
               xp = x;
               yp = y;
 
@@ -29587,11 +30087,11 @@
     ]
   };
 
-  const prototype$1i = inherits(Voronoi$1, Transform);
+  const prototype$1k = inherits(Voronoi$1, Transform);
 
   const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
-  prototype$1i.transform = function(_, pulse) {
+  prototype$1k.transform = function(_, pulse) {
     const as = _.as || 'path',
           data = pulse.source;
 
@@ -30062,7 +30562,7 @@
     rectangular: rectangularSpiral
   };
 
-  var Output$4 = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+  var Output$5 = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
 
   var Params$1 = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
@@ -30084,13 +30584,13 @@
       { "name": "text", "type": "field" },
       { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
       { "name": "padding", "type": "number", "expr": true },
-      { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$4 }
+      { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$5 }
     ]
   };
 
-  var prototype$1j = inherits(Wordcloud, Transform);
+  var prototype$1l = inherits(Wordcloud, Transform);
 
-  prototype$1j.transform = function(_, pulse) {
+  prototype$1l.transform = function(_, pulse) {
     if (_.size && !(_.size[0] && _.size[1])) {
       error('Wordcloud size dimensions must be non-zero.');
     }
@@ -30105,7 +30605,7 @@
 
     var data = pulse.materialize(pulse.SOURCE).source,
         layout = this.value,
-        as = _.as || Output$4,
+        as = _.as || Output$5,
         fontSize = _.fontSize || 14,
         range;
 
@@ -30464,9 +30964,9 @@
     ]
   };
 
-  var prototype$1k = inherits(CrossFilter, Transform);
+  var prototype$1m = inherits(CrossFilter, Transform);
 
-  prototype$1k.transform = function(_, pulse) {
+  prototype$1m.transform = function(_, pulse) {
     if (!this._dims) {
       return this.init(_, pulse);
     } else {
@@ -30479,7 +30979,7 @@
     }
   };
 
-  prototype$1k.init = function(_, pulse) {
+  prototype$1m.init = function(_, pulse) {
     var fields = _.fields,
         query = _.query,
         indices = this._indices = {},
@@ -30497,7 +30997,7 @@
     return this.eval(_, pulse);
   };
 
-  prototype$1k.reinit = function(_, pulse) {
+  prototype$1m.reinit = function(_, pulse) {
     var output = pulse.materialize().fork(),
         fields = _.fields,
         query = _.query,
@@ -30564,7 +31064,7 @@
     return output;
   };
 
-  prototype$1k.eval = function(_, pulse) {
+  prototype$1m.eval = function(_, pulse) {
     var output = pulse.materialize().fork(),
         m = this._dims.length,
         mask = 0;
@@ -30592,7 +31092,7 @@
     return output;
   };
 
-  prototype$1k.insert = function(_, pulse, output) {
+  prototype$1m.insert = function(_, pulse, output) {
     var tuples = pulse.add,
         bits = this.value,
         dims = this._dims,
@@ -30626,7 +31126,7 @@
     }
   };
 
-  prototype$1k.modify = function(pulse, output) {
+  prototype$1m.modify = function(pulse, output) {
     var out = output.mod,
         bits = this.value,
         curr = bits.curr(),
@@ -30640,7 +31140,7 @@
     }
   };
 
-  prototype$1k.remove = function(_, pulse, output) {
+  prototype$1m.remove = function(_, pulse, output) {
     var indices = this._indices,
         bits = this.value,
         curr = bits.curr(),
@@ -30670,7 +31170,7 @@
   };
 
   // reindex filters and indices after propagation completes
-  prototype$1k.reindex = function(pulse, num, map) {
+  prototype$1m.reindex = function(pulse, num, map) {
     var indices = this._indices,
         bits = this.value;
 
@@ -30680,7 +31180,7 @@
     });
   };
 
-  prototype$1k.update = function(_, pulse, output) {
+  prototype$1m.update = function(_, pulse, output) {
     var dims = this._dims,
         query = _.query,
         stamp = pulse.stamp,
@@ -30710,7 +31210,7 @@
     return mask;
   };
 
-  prototype$1k.incrementAll = function(dim, query, stamp, out) {
+  prototype$1m.incrementAll = function(dim, query, stamp, out) {
     var bits = this.value,
         seen = bits.seen(),
         curr = bits.curr(),
@@ -30774,7 +31274,7 @@
     dim.range = query.slice();
   };
 
-  prototype$1k.incrementOne = function(dim, query, add, rem) {
+  prototype$1m.incrementOne = function(dim, query, add, rem) {
     var bits = this.value,
         curr = bits.curr(),
         index = dim.index(),
@@ -30844,9 +31344,9 @@
     ]
   };
 
-  var prototype$1l = inherits(ResolveFilter, Transform);
+  var prototype$1n = inherits(ResolveFilter, Transform);
 
-  prototype$1l.transform = function(_, pulse) {
+  prototype$1n.transform = function(_, pulse) {
     var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
         bitmap = _.filter,
         mask = bitmap.mask;
@@ -30899,7 +31399,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.6.0";
+  var version = "5.7.0";
 
   var Default = 'default';
 
@@ -33711,6 +34211,32 @@
     }
   }
 
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  function channel_luminance_value(channelValue) {
+    const val = channelValue / 255;
+    if (val <= 0.03928) {
+      return val / 12.92;
+    }
+    return Math.pow((val + 0.055) / 1.055, 2.4);
+  }
+
+  function luminance(color) {
+    const c = rgb(color),
+          r = channel_luminance_value(c.r),
+          g = channel_luminance_value(c.g),
+          b = channel_luminance_value(c.b);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  function contrast(color1, color2) {
+    const lum1 = luminance(color1),
+          lum2 = luminance(color2),
+          lumL = Math.max(lum1, lum2),
+          lumD = Math.min(lum1, lum2);
+    return (lumL + 0.05) / (lumD + 0.05);
+  }
+
   function data$1(name) {
     const data = this.context.data[name];
     return data ? data.values.value : [];
@@ -34160,6 +34686,18 @@
   // Expression function context object
   const functionContext = {
     random: function() { return exports.random(); }, // override default
+    cumulativeNormal,
+    cumulativeLogNormal,
+    cumulativeUniform,
+    densityNormal,
+    densityLogNormal,
+    densityUniform,
+    quantileNormal,
+    quantileLogNormal,
+    quantileUniform,
+    sampleNormal,
+    sampleLogNormal,
+    sampleUniform,
     isArray,
     isBoolean,
     isDate,
@@ -34186,6 +34724,8 @@
     lab,
     hcl,
     hsl,
+    luminance,
+    contrast,
     sequence,
     format: format$2,
     utcFormat: utcFormat$1,
@@ -35080,11 +35620,11 @@
     if (options.container) view.initialize(options.container, options.bind);
   }
 
-  var prototype$1m = inherits(View, Dataflow);
+  var prototype$1o = inherits(View, Dataflow);
 
   // -- DATAFLOW / RENDERING ----
 
-  prototype$1m.evaluate = async function(encode, prerun, postrun) {
+  prototype$1o.evaluate = async function(encode, prerun, postrun) {
     // evaluate dataflow and prerun
     await Dataflow.prototype.evaluate.call(this, encode, prerun);
 
@@ -35110,22 +35650,22 @@
     return this;
   };
 
-  prototype$1m.dirty = function(item) {
+  prototype$1o.dirty = function(item) {
     this._redraw = true;
     this._renderer && this._renderer.dirty(item);
   };
 
   // -- GET / SET ----
 
-  prototype$1m.container = function() {
+  prototype$1o.container = function() {
     return this._el;
   };
 
-  prototype$1m.scenegraph = function() {
+  prototype$1o.scenegraph = function() {
     return this._scenegraph;
   };
 
-  prototype$1m.origin = function() {
+  prototype$1o.origin = function() {
     return this._origin.slice();
   };
 
@@ -35135,14 +35675,14 @@
       : error('Unrecognized signal name: ' + $(name));
   }
 
-  prototype$1m.signal = function(name, value, options) {
+  prototype$1o.signal = function(name, value, options) {
     var op = lookupSignal(this, name);
     return arguments.length === 1
       ? op.value
       : this.update(op, value, options);
   };
 
-  prototype$1m.background = function(_) {
+  prototype$1o.background = function(_) {
     if (arguments.length) {
       this._background = _;
       this._resize = 1;
@@ -35152,23 +35692,23 @@
     }
   };
 
-  prototype$1m.width = function(_) {
+  prototype$1o.width = function(_) {
     return arguments.length ? this.signal('width', _) : this.signal('width');
   };
 
-  prototype$1m.height = function(_) {
+  prototype$1o.height = function(_) {
     return arguments.length ? this.signal('height', _) : this.signal('height');
   };
 
-  prototype$1m.padding = function(_) {
+  prototype$1o.padding = function(_) {
     return arguments.length ? this.signal('padding', _) : this.signal('padding');
   };
 
-  prototype$1m.autosize = function(_) {
+  prototype$1o.autosize = function(_) {
     return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
   };
 
-  prototype$1m.renderer = function(type) {
+  prototype$1o.renderer = function(type) {
     if (!arguments.length) return this._renderType;
     if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
     if (type !== this._renderType) {
@@ -35178,7 +35718,7 @@
     return this;
   };
 
-  prototype$1m.tooltip = function(handler) {
+  prototype$1o.tooltip = function(handler) {
     if (!arguments.length) return this._tooltip;
     if (handler !== this._tooltip) {
       this._tooltip = handler;
@@ -35187,7 +35727,7 @@
     return this;
   };
 
-  prototype$1m.loader = function(loader) {
+  prototype$1o.loader = function(loader) {
     if (!arguments.length) return this._loader;
     if (loader !== this._loader) {
       Dataflow.prototype.loader.call(this, loader);
@@ -35196,14 +35736,14 @@
     return this;
   };
 
-  prototype$1m.resize = function() {
+  prototype$1o.resize = function() {
     // set flag to perform autosize
     this._autosize = 1;
     // touch autosize signal to ensure top-level ViewLayout runs
     return this.touch(lookupSignal(this, 'autosize'));
   };
 
-  prototype$1m._resetRenderer = function() {
+  prototype$1o._resetRenderer = function() {
     if (this._renderer) {
       this._renderer = null;
       this.initialize(this._el, this._elBind);
@@ -35211,11 +35751,11 @@
   };
 
   // -- SIZING ----
-  prototype$1m._resizeView = resizeView;
+  prototype$1o._resizeView = resizeView;
 
   // -- EVENT HANDLING ----
 
-  prototype$1m.addEventListener = function(type, handler, options) {
+  prototype$1o.addEventListener = function(type, handler, options) {
     var callback = handler;
     if (!(options && options.trap === false)) {
       // wrap callback in error handler
@@ -35226,7 +35766,7 @@
     return this;
   };
 
-  prototype$1m.removeEventListener = function(type, handler) {
+  prototype$1o.removeEventListener = function(type, handler) {
     var handlers = this._handler.handlers(type),
         i = handlers.length, h, t;
 
@@ -35242,7 +35782,7 @@
     return this;
   };
 
-  prototype$1m.addResizeListener = function(handler) {
+  prototype$1o.addResizeListener = function(handler) {
     var l = this._resizeListeners;
     if (l.indexOf(handler) < 0) {
       // add handler if it isn't already registered
@@ -35253,7 +35793,7 @@
     return this;
   };
 
-  prototype$1m.removeResizeListener = function(handler) {
+  prototype$1o.removeResizeListener = function(handler) {
     var l = this._resizeListeners,
         i = l.indexOf(handler);
     if (i >= 0) {
@@ -35287,23 +35827,23 @@
     return view;
   }
 
-  prototype$1m.addSignalListener = function(name, handler) {
+  prototype$1o.addSignalListener = function(name, handler) {
     return addOperatorListener(this, name, lookupSignal(this, name), handler);
   };
 
-  prototype$1m.removeSignalListener = function(name, handler) {
+  prototype$1o.removeSignalListener = function(name, handler) {
     return removeOperatorListener(this, lookupSignal(this, name), handler);
   };
 
-  prototype$1m.addDataListener = function(name, handler) {
+  prototype$1o.addDataListener = function(name, handler) {
     return addOperatorListener(this, name, dataref(this, name).values, handler);
   };
 
-  prototype$1m.removeDataListener = function(name, handler) {
+  prototype$1o.removeDataListener = function(name, handler) {
     return removeOperatorListener(this, dataref(this, name).values, handler);
   };
 
-  prototype$1m.preventDefault = function(_) {
+  prototype$1o.preventDefault = function(_) {
     if (arguments.length) {
       this._preventDefault = _;
       return this;
@@ -35312,31 +35852,31 @@
     }
   };
 
-  prototype$1m.timer = timer$1;
-  prototype$1m.events = events$1;
-  prototype$1m.finalize = finalize;
-  prototype$1m.hover = hover;
+  prototype$1o.timer = timer$1;
+  prototype$1o.events = events$1;
+  prototype$1o.finalize = finalize;
+  prototype$1o.hover = hover;
 
   // -- DATA ----
-  prototype$1m.data = data;
-  prototype$1m.change = change;
-  prototype$1m.insert = insert;
-  prototype$1m.remove = remove;
+  prototype$1o.data = data;
+  prototype$1o.change = change;
+  prototype$1o.insert = insert;
+  prototype$1o.remove = remove;
 
   // -- SCALES --
-  prototype$1m.scale = scale$3;
+  prototype$1o.scale = scale$3;
 
   // -- INITIALIZATION ----
-  prototype$1m.initialize = initialize$1;
+  prototype$1o.initialize = initialize$1;
 
   // -- HEADLESS RENDERING ----
-  prototype$1m.toImageURL = renderToImageURL;
-  prototype$1m.toCanvas = renderToCanvas;
-  prototype$1m.toSVG = renderToSVG;
+  prototype$1o.toImageURL = renderToImageURL;
+  prototype$1o.toCanvas = renderToCanvas;
+  prototype$1o.toSVG = renderToSVG;
 
   // -- SAVE / RESTORE STATE ----
-  prototype$1m.getState = getState$1;
-  prototype$1m.setState = setState$1;
+  prototype$1o.getState = getState$1;
+  prototype$1o.setState = setState$1;
 
   function parseAutosize(spec, config) {
     spec = spec || config.autosize;
@@ -36217,11 +36757,19 @@
   }
 
   function parseProjection(proj, scope) {
-    var params = {};
+    var config = scope.config.projection || {},
+        params = {};
 
     for (var name in proj) {
       if (name === 'name') continue;
       params[name] = parseParameter$1(proj[name], name, scope);
+    }
+
+    // apply projection defaults from config
+    for (name in config) {
+      if (params[name] == null) {
+        params[name] = parseParameter$1(config[name], name, scope);
+      }
     }
 
     scope.addProjection(proj.name, params);
@@ -36258,6 +36806,7 @@
   const GuideLabelStyle = 'guide-label';
   const GuideTitleStyle = 'guide-title';
   const GroupTitleStyle = 'group-title';
+  const GroupSubtitleStyle = 'group-subtitle';
 
   const Symbols$2 = 'symbol';
   const Gradient$2 = 'gradient';
@@ -36277,6 +36826,7 @@
 
   const Skip$1 = {
     name: 1,
+    style: 1,
     interactive: 1
   };
 
@@ -36578,9 +37128,11 @@
   var LegendTitleRole = 'legend-title';
 
   var TitleRole$1 = 'title';
+  var TitleTextRole = 'title-text';
+  var TitleSubtitleRole = 'title-subtitle';
 
   function encoder(_) {
-    return isObject(_) ? extend({}, _) : {value: _};
+    return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
   }
 
   function addEncode(object, name, value, set) {
@@ -37115,7 +37667,8 @@
       fontSize:    _('titleFontSize'),
       fontStyle:   _('titleFontStyle'),
       fontWeight:  _('titleFontWeight'),
-      limit:       _('titleLimit')
+      limit:       _('titleLimit'),
+      lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign'),
       baseline:    _('titleBaseline'),
@@ -37150,7 +37703,7 @@
 
   function getRole(spec) {
     var role = spec.role || '';
-    return (!role.indexOf('axis') || !role.indexOf('legend'))
+    return (!role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title'))
       ? role
       : spec.type === GroupMark ? ScopeRole$1 : (role || MarkRole);
   }
@@ -37408,9 +37961,9 @@
     return new DataScope(scope, input, output, values, aggr);
   };
 
-  var prototype$1n = DataScope.prototype;
+  var prototype$1p = DataScope.prototype;
 
-  prototype$1n.countsRef = function(scope, field, sort) {
+  prototype$1p.countsRef = function(scope, field, sort) {
     var ds = this,
         cache = ds.counts || (ds.counts = {}),
         k = fieldKey(field), v, a, p;
@@ -37484,27 +38037,27 @@
     return v;
   }
 
-  prototype$1n.tuplesRef = function() {
+  prototype$1p.tuplesRef = function() {
     return ref(this.values);
   };
 
-  prototype$1n.extentRef = function(scope, field) {
+  prototype$1p.extentRef = function(scope, field) {
     return cache(scope, this, 'extent', 'extent', field, false);
   };
 
-  prototype$1n.domainRef = function(scope, field) {
+  prototype$1p.domainRef = function(scope, field) {
     return cache(scope, this, 'domain', 'values', field, false);
   };
 
-  prototype$1n.valuesRef = function(scope, field, sort) {
+  prototype$1p.valuesRef = function(scope, field, sort) {
     return cache(scope, this, 'vals', 'values', field, sort || true);
   };
 
-  prototype$1n.lookupRef = function(scope, field) {
+  prototype$1p.lookupRef = function(scope, field) {
     return cache(scope, this, 'lookup', 'tupleindex', field, false);
   };
 
-  prototype$1n.indataRef = function(scope, field) {
+  prototype$1p.indataRef = function(scope, field) {
     return cache(scope, this, 'indata', 'tupleindex', field, true, true);
   };
 
@@ -37886,48 +38439,83 @@
     return getEncoding('fontSize', encode) || getStyle('fontSize', scope, style);
   }
 
-  const angleExpr = `item.orient==="${Left$1}"?-90:item.orient==="${Right$1}"?90:0`,
-        baselineExpr$1 = `item.orient==="${Bottom$1}"?"${Top$1}":"${Bottom$1}"`;
+  const angleExpr = `item.orient==="${Left$1}"?-90:item.orient==="${Right$1}"?90:0`;
 
   function parseTitle(spec, scope) {
     spec = isString(spec) ? {text: spec} : spec;
 
-    var config = scope.config.title,
-        encode = extend({}, spec.encode),
-        dataRef, title;
+    var _ = lookup$5(spec, scope.config.title),
+        encode = spec.encode || {},
+        userEncode = encode.group || {},
+        name = userEncode.name || undefined,
+        interactive = userEncode.interactive,
+        style = userEncode.style,
+        children = [],
+        dataRef, group;
 
     // single-element data source for group title
     dataRef = ref(scope.add(Collect$1(null, [{}])));
 
+    // include title text
+    children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
+
+    // include subtitle text
+    if (spec.subtitle) {
+      children.push(buildSubTitle(spec, _, encode.subtitle, dataRef));
+    }
+
     // build title specification
-    encode.name = spec.name;
-    encode.interactive = spec.interactive;
-    title = buildTitle(spec, config, encode, dataRef);
-    if (spec.zindex) title.zindex = spec.zindex;
+    group = guideGroup(TitleRole$1, style, name, dataRef, interactive,
+                       groupEncode(_, userEncode), children);
+    if (spec.zindex) group.zindex = spec.zindex;
 
     // parse title specification
-    return parseMark(title, scope);
+    return parseMark(group, scope);
   }
 
-  function buildTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
-        zero = {value: 0},
-        title = spec.text,
-        encode;
+  // provide backwards-compatibility for title custom encode;
+  // the top-level encode block has been *deprecated*.
+  function titleEncode(spec) {
+    const encode = spec.encode;
+    return (encode && encode.title) || extend({
+      name: spec.name,
+      interactive: spec.interactive,
+      style: spec.style
+    }, encode);
+  }
 
-    encode = {
-      enter: {opacity: zero},
-      update: {opacity: {value: 1}},
-      exit: {opacity: zero}
-    };
+  function groupEncode(_, userEncode) {
+    var encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
-      text:       title,
       orient:     _('orient'),
       anchor:     _('anchor'),
       align:      {signal: alignExpr},
       angle:      {signal: angleExpr},
-      baseline:   {signal: baselineExpr$1},
+      limit:      _('limit'),
+      frame:      _('frame'),
+      offset:     _('offset') || 0,
+      padding:    _('subtitlePadding')
+    });
+
+    return extendEncode(encode, userEncode, Skip$1);
+  }
+
+  function buildTitle(spec, _, userEncode, dataRef) {
+    var zero = {value: 0},
+        text = spec.text,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
+
+    addEncoders(encode, {
+      text:       text,
+      align:      {signal: 'item.mark.group.align'},
+      angle:      {signal: 'item.mark.group.angle'},
+      limit:      {signal: 'item.mark.group.limit'},
+      baseline:   'top',
       dx:         _('dx'),
       dy:         _('dy'),
       fill:       _('color'),
@@ -37935,16 +38523,47 @@
       fontSize:   _('fontSize'),
       fontStyle:  _('fontStyle'),
       fontWeight: _('fontWeight'),
-      frame:      _('frame'),
-      limit:      _('limit'),
-      offset:     _('offset') || 0
+      lineHeight: _('lineHeight')
     }, { // update
       align:      _('align'),
       angle:      _('angle'),
       baseline:   _('baseline')
     });
 
-    return guideMark(TextMark, TitleRole$1, spec.style || GroupTitleStyle,
+    return guideMark(TextMark, TitleTextRole, GroupTitleStyle,
+                     null, dataRef, encode, userEncode);
+  }
+
+  function buildSubTitle(spec, _, userEncode, dataRef) {
+    var zero = {value: 0},
+        text = spec.subtitle,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
+
+    addEncoders(encode, {
+      text:       text,
+      align:      {signal: 'item.mark.group.align'},
+      angle:      {signal: 'item.mark.group.angle'},
+      limit:      {signal: 'item.mark.group.limit'},
+      baseline:   'top',
+      dx:         _('dx'),
+      dy:         _('dy'),
+      fill:       _('subtitleColor'),
+      font:       _('subtitleFont'),
+      fontSize:   _('subtitleFontSize'),
+      fontStyle:  _('subtitleFontStyle'),
+      fontWeight: _('subtitleFontWeight'),
+      lineHeight: _('subtitleLineHeight')
+    }, { // update
+      align:      _('align'),
+      angle:      _('angle'),
+      baseline:   _('baseline')
+    });
+
+    return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle,
                      null, dataRef, encode, userEncode);
   }
 
@@ -38379,7 +38998,8 @@
       fontSize:    _('titleFontSize'),
       fontStyle:   _('titleFontStyle'),
       fontWeight:  _('titleFontWeight'),
-      limit:       _('titleLimit')
+      limit:       _('titleLimit'),
+      lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign')
     });
@@ -38646,19 +39266,19 @@
     this._markpath = scope._markpath;
   }
 
-  var prototype$1o = Scope$1.prototype = Subscope.prototype;
+  var prototype$1q = Scope$1.prototype = Subscope.prototype;
 
   // ----
 
-  prototype$1o.fork = function() {
+  prototype$1q.fork = function() {
     return new Subscope(this);
   };
 
-  prototype$1o.isSubscope = function() {
+  prototype$1q.isSubscope = function() {
     return this._subid > 0;
   };
 
-  prototype$1o.toRuntime = function() {
+  prototype$1q.toRuntime = function() {
     this.finish();
     return {
       background:  this.background,
@@ -38670,11 +39290,11 @@
     };
   };
 
-  prototype$1o.id = function() {
+  prototype$1q.id = function() {
     return (this._subid ? this._subid + ':' : 0) + this._id++;
   };
 
-  prototype$1o.add = function(op) {
+  prototype$1q.add = function(op) {
     this.operators.push(op);
     op.id = this.id();
     // if pre-registration references exist, resolve them now
@@ -38685,24 +39305,24 @@
     return op;
   };
 
-  prototype$1o.proxy = function(op) {
+  prototype$1q.proxy = function(op) {
     var vref = op instanceof Entry ? ref(op) : op;
     return this.add(Proxy$1({value: vref}));
   };
 
-  prototype$1o.addStream = function(stream) {
+  prototype$1q.addStream = function(stream) {
     this.streams.push(stream);
     stream.id = this.id();
     return stream;
   };
 
-  prototype$1o.addUpdate = function(update) {
+  prototype$1q.addUpdate = function(update) {
     this.updates.push(update);
     return update;
   };
 
   // Apply metadata
-  prototype$1o.finish = function() {
+  prototype$1q.finish = function() {
     var name, ds;
 
     // annotate root
@@ -38742,40 +39362,40 @@
 
   // ----
 
-  prototype$1o.pushState = function(encode, parent, lookup) {
+  prototype$1q.pushState = function(encode, parent, lookup) {
     this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
     this._parent.push(parent);
     this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
     this._markpath.push(-1);
   };
 
-  prototype$1o.popState = function() {
+  prototype$1q.popState = function() {
     this._encode.pop();
     this._parent.pop();
     this._lookup.pop();
     this._markpath.pop();
   };
 
-  prototype$1o.parent = function() {
+  prototype$1q.parent = function() {
     return peek(this._parent);
   };
 
-  prototype$1o.encode = function() {
+  prototype$1q.encode = function() {
     return peek(this._encode);
   };
 
-  prototype$1o.lookup = function() {
+  prototype$1q.lookup = function() {
     return peek(this._lookup);
   };
 
-  prototype$1o.markpath = function() {
+  prototype$1q.markpath = function() {
     var p = this._markpath;
     return ++p[p.length-1];
   };
 
   // ----
 
-  prototype$1o.fieldRef = function(field, name) {
+  prototype$1q.fieldRef = function(field, name) {
     if (isString(field)) return fieldRef(field, name);
     if (!field.signal) {
       error('Unsupported field reference: ' + $(field));
@@ -38793,7 +39413,7 @@
     return f;
   };
 
-  prototype$1o.compareRef = function(cmp) {
+  prototype$1q.compareRef = function(cmp) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -38816,7 +39436,7 @@
       : compareRef(fields, orders);
   };
 
-  prototype$1o.keyRef = function(fields, flat) {
+  prototype$1q.keyRef = function(fields, flat) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -38835,7 +39455,7 @@
       : keyRef(fields, flat);
   };
 
-  prototype$1o.sortRef = function(sort) {
+  prototype$1q.sortRef = function(sort) {
     if (!sort) return sort;
 
     // including id ensures stable sorting
@@ -38852,7 +39472,7 @@
 
   // ----
 
-  prototype$1o.event = function(source, type) {
+  prototype$1q.event = function(source, type) {
     var key = source + ':' + type;
     if (!this.events[key]) {
       var id = this.id();
@@ -38868,11 +39488,11 @@
 
   // ----
 
-  prototype$1o.hasOwnSignal = function(name) {
+  prototype$1q.hasOwnSignal = function(name) {
     return hasOwnProperty(this.signals, name);
   };
 
-  prototype$1o.addSignal = function(name, value) {
+  prototype$1q.addSignal = function(name, value) {
     if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + $(name));
     }
@@ -38880,14 +39500,14 @@
     return this.signals[name] = op;
   };
 
-  prototype$1o.getSignal = function(name) {
+  prototype$1q.getSignal = function(name) {
     if (!this.signals[name]) {
       error('Unrecognized signal name: ' + $(name));
     }
     return this.signals[name];
   };
 
-  prototype$1o.signalRef = function(s) {
+  prototype$1q.signalRef = function(s) {
     if (this.signals[s]) {
       return ref(this.signals[s]);
     } else if (!hasOwnProperty(this.lambdas, s)) {
@@ -38896,7 +39516,7 @@
     return ref(this.lambdas[s]);
   };
 
-  prototype$1o.parseLambdas = function() {
+  prototype$1q.parseLambdas = function() {
     var code = Object.keys(this.lambdas);
     for (var i=0, n=code.length; i<n; ++i) {
       var s = code[i],
@@ -38907,11 +39527,11 @@
     }
   };
 
-  prototype$1o.property = function(spec) {
+  prototype$1q.property = function(spec) {
     return spec && spec.signal ? this.signalRef(spec.signal) : spec;
   };
 
-  prototype$1o.objectProperty = function(spec) {
+  prototype$1q.objectProperty = function(spec) {
     return (!spec || !isObject(spec)) ? spec
       : this.signalRef(spec.signal || propertyLambda(spec));
   };
@@ -38952,13 +39572,13 @@
     return code + '}';
   }
 
-  prototype$1o.exprRef = function(code, name) {
+  prototype$1q.exprRef = function(code, name) {
     var params = {expr: parseExpression$1(code, this)};
     if (name) params.expr.$name = name;
     return ref(this.add(Expression$1(params)));
   };
 
-  prototype$1o.addBinding = function(name, bind) {
+  prototype$1q.addBinding = function(name, bind) {
     if (!this.bindings) {
       error('Nested signals do not support binding: ' + $(name));
     }
@@ -38967,55 +39587,55 @@
 
   // ----
 
-  prototype$1o.addScaleProj = function(name, transform) {
+  prototype$1q.addScaleProj = function(name, transform) {
     if (hasOwnProperty(this.scales, name)) {
       error('Duplicate scale or projection name: ' + $(name));
     }
     this.scales[name] = this.add(transform);
   };
 
-  prototype$1o.addScale = function(name, params) {
+  prototype$1q.addScale = function(name, params) {
     this.addScaleProj(name, Scale$1(params));
   };
 
-  prototype$1o.addProjection = function(name, params) {
+  prototype$1q.addProjection = function(name, params) {
     this.addScaleProj(name, Projection$1(params));
   };
 
-  prototype$1o.getScale = function(name) {
+  prototype$1q.getScale = function(name) {
     if (!this.scales[name]) {
       error('Unrecognized scale name: ' + $(name));
     }
     return this.scales[name];
   };
 
-  prototype$1o.projectionRef =
-  prototype$1o.scaleRef = function(name) {
+  prototype$1q.projectionRef =
+  prototype$1q.scaleRef = function(name) {
     return ref(this.getScale(name));
   };
 
-  prototype$1o.projectionType =
-  prototype$1o.scaleType = function(name) {
+  prototype$1q.projectionType =
+  prototype$1q.scaleType = function(name) {
     return this.getScale(name).params.type;
   };
 
   // ----
 
-  prototype$1o.addData = function(name, dataScope) {
+  prototype$1q.addData = function(name, dataScope) {
     if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return (this.data[name] = dataScope);
   };
 
-  prototype$1o.getData = function(name) {
+  prototype$1q.getData = function(name) {
     if (!this.data[name]) {
       error('Undefined data set name: ' + $(name));
     }
     return this.data[name];
   };
 
-  prototype$1o.addDataPipeline = function(name, entries) {
+  prototype$1q.addDataPipeline = function(name, entries) {
     if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
@@ -39153,6 +39773,12 @@
           fontSize: 13,
           fontWeight: 'bold'
         },
+        // chart subtitle
+        'group-subtitle': {
+          fill: black,
+          font: defaultFont,
+          fontSize: 12
+        },
         // defaults for styled point marks in Vega-Lite
         point: {
           size: defaultSymbolSize,
@@ -39179,7 +39805,8 @@
       title: {
         orient: 'top',
         anchor: 'middle',
-        offset: 4
+        offset: 4,
+        subtitlePadding: 3
       },
 
       // defaults for axes
@@ -39209,6 +39836,11 @@
       // correction for centering bias
       axisBand: {
         tickOffset: -1
+      },
+
+      // defaults for cartographic projection
+      projection: {
+        type: 'mercator'
       },
 
       // defaults for legends
@@ -39332,12 +39964,19 @@
   exports.closeTag = closeTag;
   exports.compare = compare;
   exports.constant = constant;
+  exports.cumulativeLogNormal = cumulativeLogNormal;
+  exports.cumulativeNormal = cumulativeNormal;
+  exports.cumulativeUniform = cumulativeUniform;
   exports.debounce = debounce;
   exports.definition = definition;
+  exports.densityLogNormal = densityLogNormal;
+  exports.densityNormal = densityNormal;
+  exports.densityUniform = densityUniform;
   exports.domChild = domChild;
   exports.domClear = domClear;
   exports.domCreate = domCreate;
   exports.domFind = domFind;
+  exports.dotbin = dotbin;
   exports.error = error;
   exports.expressionFunction = expressionFunction;
   exports.extend = extend;
@@ -39380,9 +40019,11 @@
   exports.isTuple = isTuple;
   exports.key = key;
   exports.lerp = lerp;
+  exports.lineHeight = lineHeight;
   exports.loader = loader;
   exports.logger = logger;
   exports.merge = merge;
+  exports.multiLineOffset = multiLineOffset;
   exports.one = one;
   exports.openTag = openTag;
   exports.pad = pad;
@@ -39401,12 +40042,17 @@
   exports.peek = peek;
   exports.point = point$4;
   exports.projection = projection$1;
+  exports.quantileLogNormal = quantileLogNormal;
+  exports.quantileNormal = quantileNormal;
+  exports.quantileUniform = quantileUniform;
+  exports.quantiles = quantiles;
   exports.quantizeInterpolator = quantizeInterpolator;
   exports.quarter = quarter;
   exports.quartiles = quartiles;
   exports.randomInteger = integer;
   exports.randomKDE = randomKDE;
   exports.randomLCG = lcg;
+  exports.randomLogNormal = randomLogNormal;
   exports.randomMixture = randomMixture;
   exports.randomNormal = randomNormal;
   exports.randomUniform = randomUniform;
@@ -39425,6 +40071,9 @@
   exports.runtime = parse$4;
   exports.runtimeContext = context$2;
   exports.sampleCurve = sampleCurve;
+  exports.sampleLogNormal = sampleLogNormal;
+  exports.sampleNormal = sampleNormal;
+  exports.sampleUniform = sampleUniform;
   exports.scale = scale$1;
   exports.sceneEqual = sceneEqual;
   exports.sceneFromJSON = sceneFromJSON;
