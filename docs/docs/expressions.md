@@ -10,7 +10,7 @@ The expression language is a restricted subset of JavaScript. All basic arithmet
 
 To keep the expression language simple, secure and free of unwanted side effects, the following elements are **not** allowed: assignment operators (`=`, `+=` etc), pre/postfix updates (`++`), `new` expressions, and most control flow statements (`for`, `while`, `switch`, etc). In addition, function calls involving nested properties (`foo.bar()`) are not allowed. Instead, the expression language supports a collection of functions defined in the top-level scope.
 
-This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; are maintained in the [vega-expression module](https://github.com/vega/vega/tree/master/packages/vega-expression).
+This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; is provided by the [vega-expression module](https://github.com/vega/vega/tree/master/packages/vega-expression).
 
 
 ## <a name="reference"></a>Expression Language Reference
@@ -21,6 +21,7 @@ This page documents the expression language. If you are interested in implementa
 - [Type Coercion Functions](#type-coercion-functions)
 - [Control Flow Functions](#control-flow-functions)
 - [Math Functions](#math-functions)
+- [Statistical Functions](#statistical-functions)
 - [Date/Time Functions](#datetime-functions)
 - [Array Functions](#array-functions)
 - [String Functions](#string-functions)
@@ -271,6 +272,61 @@ Square root function. Same as JavaScript's `Math.sqrt`.
 <a name="tan" href="#tan">#</a>
 <b>tan</b>(<i>value</i>)<br/>
 Trigonometric tangent. Same as JavaScript's `Math.tan`.
+
+[Back to Top](#reference)
+
+
+## <a name="statistical-functions"></a>Statistical Functions
+
+Methods for sampling and calculating values for probability distributions.
+
+<a name="sampleNormal" href="#sampleNormal">#</a>
+<b>sampleNormal</b>([<i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [normal (Gaussian) probability distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="cumulativeNormal" href="#cumulativeNormal">#</a>
+<b>cumulativeNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="densityNormal" href="#densityNormal">#</a>
+<b>densityNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_, for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="quantileNormal" href="#quantileNormal">#</a>
+<b>quantileNormal</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_, for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="sampleLogNormal" href="#sampleLogNormal">#</a>
+<b>sampleLogNormal</b>([<i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [log-normal probability distribution](https://en.wikipedia.org/wiki/Log-normal_distribution) with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="cumulativeLogNormal" href="#cumulativeNormal">#</a>
+<b>cumulativeLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="densityLogNormal" href="#densityLogNormal">#</a>
+<b>densityLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_, for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="quantileLogNormal" href="#quantileLogNormal">#</a>
+<b>quantileLogNormal</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_, for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="sampleUniform" href="#sampleUniform">#</a>
+<b>sampleUniform</b>([<i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="cumulativeUniform" href="#cumulativeUniform">#</a>
+<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="densityUniform" href="#densityUniform">#</a>
+<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="quantileUniform" href="#quantileUniform">#</a>
+<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 [Back to Top](#reference)
 
@@ -591,7 +647,7 @@ Constructs a new [HCL](https://en.wikipedia.org/wiki/Lab_color_space#CIELAB) (hu
 
 <a name="luminance" href="#luminance">#</a>
 <b>luminance</b>(specifier) {% include tag ver="5.7" %}<br/>
-Returns the luminance for the given color _specifier_ (a string compatible with d3-color). The luminance is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef).
+Returns the luminance for the given color _specifier_ (compatible with [d3-color's rgb function](https://github.com/d3/d3-color#rgb)). The luminance is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef).
 
 <a name="contrast" href="#contrast">#</a>
 <b>contrast</b>(specifier1, specifier2) {% include tag ver="5.7" %}<br/>

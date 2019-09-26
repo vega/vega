@@ -9,6 +9,8 @@ Vega includes **statistics** functions for to model probability distributions an
 ## Statistics API Reference
 
 - [Random Number Generation](#random-number-generation)
+- [Distribution Methods](#distribution-methods)
+- [Distribution Objects](#distribution-objects)
 - [Probability Distributions](#distributions)
 - [Regression](#regression)
 - [Statistics Routines](#statistics)
@@ -35,7 +37,84 @@ vega.<b>randomLCG</b>(<i>seed</i>)
  Returns a new random number generator with the given random _seed_. The returned function takes zero arguments and generates random values in the domain [0, 1) using a [linear congruential generator (LCG)](https://en.wikipedia.org/wiki/Linear_congruential_generator). This method is helpful in conjunction with [setRandom](#setRandom) to provide seeded random numbers for stable outputs and testing.
 
 
-## <a name="distributions"></a>Probability Distributions
+## <a name="distribution-methods"></a>Distribution Methods
+
+Methods for sampling and calculating values for probability distributions.
+
+<a name="sampleNormal" href="#sampleNormal">#</a>
+vega.<b>sampleNormal</b>([<i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
+
+Returns a sample from a univariate [normal (Gaussian) probability distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="cumulativeNormal" href="#cumulativeNormal">#</a>
+vega.<b>cumulativeNormal</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
+
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a normal distribution with specified *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="densityNormal" href="#densityNormal">#</a>
+vega.<b>densityNormal</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
+
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*, for a normal distribution with specified *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="quantileNormal" href="#quantileNormal">#</a>
+vega.<b>quantileNormal</b>(probability[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
+
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*, for a normal distribution with specified *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="sampleLogNormal" href="#sampleLogNormal">#</a>
+vega.<b>sampleLogNormal</b>([<i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Returns a sample from a univariate [log-normal probability distribution](https://en.wikipedia.org/wiki/Log-normal_distribution) with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="cumulativeLogNormal" href="#cumulativeNormal">#</a>
+vega.<b>cumulativeLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a log-normal distribution with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="densityLogNormal" href="#densityLogNormal">#</a>
+vega.<b>densityLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*, for a log-normal distribution with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="quantileLogNormal" href="#quantileLogNormal">#</a>
+vega.<b>quantileLogNormal</b>(probability[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*, for a log-normal distribution with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="sampleUniform" href="#sampleUniform">#</a>
+vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
+[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+
+<a name="cumulativeUniform" href="#cumulativeUniform">#</a>
+vega.<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
+
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+
+<a name="densityUniform" href="#densityUniform">#</a>
+vega.<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
+
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+
+<a name="quantileUniform" href="#quantileUniform">#</a>
+vega.<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
+
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+
+
+## <a name="distribution-objects"></a>Distribution Objects
 
 Methods for sampling and calculating probability distributions. Each method takes a set of distributional parameters and returns a distribution object representing a random variable.
 
@@ -50,6 +129,14 @@ vega.<b>randomNormal</b>([<i>mean</i>, <i>stdev</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/normal.js "Source")
 
 Creates a distribution object representing a [normal (Gaussian) probability distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified *mean* and standard deviation *stdev*. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+Once created, *mean* and *stdev* values can be accessed or modified using the `mean` and `stdev` getter/setter methods.
+
+<a name="randomLogNormal" href="#randomLogNormal">#</a>
+vega.<b>randomLogNormal</b>([<i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Creates a distribution object representing a [log-normal probability distribution](https://en.wikipedia.org/wiki/Log-normal_distribution) with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
 
 Once created, *mean* and *stdev* values can be accessed or modified using the `mean` and `stdev` getter/setter methods.
 
@@ -199,8 +286,20 @@ vega.<b>bootstrapCI</b>(<i>array</i>, <i>samples</i>, <i>alpha</i>[, <i>accessor
 
 Calculates a [bootstrapped](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval) for an input *array* of values, based on a given number of *samples* iterations and a target *alpha* value. For example, an *alpha* value of `0.05` corresponds to a 95% confidence interval An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
 
+<a name="dotbin" href="#dotbin">#</a>
+vega.<b>dotbin</b>(<i>sortedArray</i>, <i>step</i>[, <i>smooth</i>, <i>accessor</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/dotbin.js "Source")
+
+Calculates [dot plot](https://en.wikipedia.org/wiki/Dot_plot_%28statistics%29) bin locations for an input *sortedArray* of numerical values, and returns an array of bin locations with indices matching the input *sortedArray*. This method implements the ["dot density" algorithm of Wilkinson, 1999](https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf). The *step* parameter determines the bin width: points within *step* values of an anchor point will be assigned the same bin location. The optional *smooth* parameter is a boolean value indicating if the bin locations should additionally be smoothed to reduce variance. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. Any null, undefined, or NaN values should be removed prior to calling this method.
+
+<a name="quantiles" href="#quartiles">#</a>
+vega.<b>quantiles</b>(<i>array</i>, <i>p</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/quartiles.js "Source")
+
+Given an *array* of numeric values and array *p* of probability thresholds in the range [0, 1], returns an array of p-[quantiles](https://en.wikipedia.org/wiki/Quantile). The return value is a array the same length as the input *p*. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
+
 <a name="quartiles" href="#quartiles">#</a>
 vega.<b>quartiles</b>(<i>array</i>[, <i>accessor</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/quartiles.js "Source")
 
-Given an *array* of numeric values, returns an array of [quartile](https://en.wikipedia.org/wiki/Quartile) boundaries. The return value is a 3-element array consisting of the first, second (median), and third quartile boundaries. An optional *accessor* function can be used to  first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
+Given an *array* of numeric values, returns an array of [quartile](https://en.wikipedia.org/wiki/Quartile) boundaries. The return value is a 3-element array consisting of the first, second (median), and third quartile boundaries. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.

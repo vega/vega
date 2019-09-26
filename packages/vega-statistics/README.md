@@ -92,19 +92,19 @@ Returns a sample from a univariate [continuous uniform probability distribution]
 vega.<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
-Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a uniform distribution over the interval [*min, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="densityUniform" href="#densityUniform">#</a>
 vega.<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
-Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*,  for a uniform distribution over the interval [*min, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="quantileUniform" href="#quantileUniform">#</a>
 vega.<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
-Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*,  for a uniform distribution over the interval [*min, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 ### Distribution Objects
 
@@ -281,7 +281,7 @@ Calculates a [bootstrapped](https://en.wikipedia.org/wiki/Bootstrapping_(statist
 vega.<b>dotbin</b>(<i>sortedArray</i>, <i>step</i>[, <i>smooth</i>, <i>accessor</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/dotbin.js "Source")
 
-Calculates [dot plot](https://en.wikipedia.org/wiki/Dot_plot_(statistics)) bin locations for an input *sortedArray* of numerical values, and returns an array of bin locations with indices matching the input *sortedArray*. This method implements the ["dot density" algorithm of Wilkinson 1999](https://doi.org/10.2307%2F2686111). The *step* parameter determines the bin width: points within *step* values of an anchor point will be assigned the same bin location. The optional *smooth* parameter is a boolean value indicating if the bin locations should additionally be smoothed to reduce variance. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. Any null, undefined, or NaN values should be removed prior to calling this method.
+Calculates [dot plot](https://en.wikipedia.org/wiki/Dot_plot_%28statistics%29) bin locations for an input *sortedArray* of numerical values, and returns an array of bin locations with indices matching the input *sortedArray*. This method implements the ["dot density" algorithm of Wilkinson, 1999](https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf). The *step* parameter determines the bin width: points within *step* values of an anchor point will be assigned the same bin location. The optional *smooth* parameter is a boolean value indicating if the bin locations should additionally be smoothed to reduce variance. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. Any null, undefined, or NaN values should be removed prior to calling this method.
 
 <a name="quantiles" href="#quartiles">#</a>
 vega.<b>quantiles</b>(<i>array</i>, <i>p</i>[, <i>accessor</i>])
