@@ -220,6 +220,7 @@ const encodeEntry = object({
   dir: stringValueRef,
   ellipsis: stringValueRef,
   limit: numberValueRef,
+  lineBreak: stringValueRef,
   lineHeight: numberValueRef,
   dx: numberValueRef,
   dy: numberValueRef,

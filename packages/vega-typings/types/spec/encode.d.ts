@@ -341,6 +341,7 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
   fontWeight?: ProductionRule<FontWeightValueRef>;
   fontStyle?: ProductionRule<FontStyleValueRef>;
   limit?: ProductionRule<NumericValueRef>;
+  lineBreak?: ProductionRule<StringValueRef>;
   lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
 }
