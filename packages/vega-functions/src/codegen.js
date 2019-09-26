@@ -15,7 +15,19 @@ import {
 } from 'vega-selections';
 
 import {
-  random
+  random,
+  cumulativeNormal,
+  cumulativeLogNormal,
+  cumulativeUniform,
+  densityNormal,
+  densityLogNormal,
+  densityUniform,
+  quantileNormal,
+  quantileLogNormal,
+  quantileUniform,
+  sampleNormal,
+  sampleLogNormal,
+  sampleUniform
 } from 'vega-statistics';
 
 import {
@@ -164,6 +176,18 @@ import {SignalPrefix} from './prefix';
 // Expression function context object
 export const functionContext = {
   random: function() { return random(); }, // override default
+  cumulativeNormal,
+  cumulativeLogNormal,
+  cumulativeUniform,
+  densityNormal,
+  densityLogNormal,
+  densityUniform,
+  quantileNormal,
+  quantileLogNormal,
+  quantileUniform,
+  sampleNormal,
+  sampleLogNormal,
+  sampleUniform,
   isArray,
   isBoolean,
   isDate,
