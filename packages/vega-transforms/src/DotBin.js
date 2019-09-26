@@ -11,7 +11,7 @@ const Output = 'bin';
  * https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf
  * @constructor
  * @param {object} params - The parameters for this operator.
- * @param {function(object): *} params.field - The value field to layout.
+ * @param {function(object): *} params.field - The value field to bin.
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
  * @param {number} [params.step] - The step size (bin width) within which dots should be
  *   stacked. Defaults to 1/30 of the extent of the data *field*.

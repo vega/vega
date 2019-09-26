@@ -6,7 +6,6 @@ import {range} from 'd3-array';
 
 /**
  * Generates sample quantile values from an input data stream.
- * TODO: support groupby as well? multiple fields?
  * @constructor
  * @param {object} params - The parameters for this operator.
  * @param {function(object): *} params.field - An accessor for the data field
@@ -17,9 +16,9 @@ import {range} from 'd3-array';
  *   the range (0, 1) for which to compute quantile values. If not specified,
  *   the *step* parameter will be used.
  * @param {Array<number>} [params.step=0.01] - A probability step size for
- *   sampling quantile values. All values from the step size up to (1 - step)
- *   will be sampled. This parameter is only used if the *probabilities*
- *   parameter is not provided.
+ *   sampling quantile values. All values from one-half the step size up to
+ *   1 (exclusive) will be sampled. This parameter is only used if the
+ *   *quantiles* parameter is not provided.
  */
 export default function Quantile(params) {
   Transform.call(this, null, params);

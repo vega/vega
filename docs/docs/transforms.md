@@ -34,6 +34,7 @@ Transforms for processing streams of data objects.
 - [`countpattern`](countpattern) - Count the frequency of patterns in text strings.
 - [`cross`](cross) - Perform a cross-product of a data stream with itself.
 - [`density`](density) - Generate values drawn from a probability distribution.
+- [`dotbin`](dotbin) - Perform density binning for dot plot construction. {% include tag ver="5.7" %}
 - [`extent`](extent) - Compute minimum and maximum values over a data stream.
 - [`filter`](filter) - Filter a data stream using a predicate expression.
 - [`flatten`](flatten) - Map array-typed fields to data objects, one per array entry. {% include tag ver="3.1" %}
@@ -47,6 +48,7 @@ Transforms for processing streams of data objects.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
 - [`pivot`](pivot) - Pivot unique values to new aggregate fields. {% include tag ver="3.2" %}
 - [`project`](project) - Generate derived data objects with a selected set of fields.
+- [`quantile`](quantile) - Calculate sample quantile values over an input data stream. {% include tag ver="5.7" %}
 - [`regression`](regression) - Fit regression models to smooth and predict values. {% include tag ver="5.4" %}
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
