@@ -125,6 +125,14 @@ Creates a distribution object representing a [normal (Gaussian) probability dist
 
 Once created, *mean* and *stdev* values can be accessed or modified using the `mean` and `stdev` getter/setter methods.
 
+<a name="randomLogNormal" href="#randomLogNormal">#</a>
+vega.<b>randomLogNormal</b>([<i>mean</i>, <i>stdev</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/lognormal.js "Source")
+
+Creates a distribution object representing a [log-normal probability distribution](https://en.wikipedia.org/wiki/Log-normal_distribution) with specified log *mean* and log standard deviation *stdev*. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+Once created, *mean* and *stdev* values can be accessed or modified using the `mean` and `stdev` getter/setter methods.
+
 <a name="randomUniform" href="#randomUniform">#</a>
 vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
