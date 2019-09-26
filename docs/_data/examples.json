@@ -18,27 +18,30 @@
         {"name": "donut-chart"},
         {"name": "radial-plot"}
     ],
-    "Dot & Scatter Plots": [
+    "Scatter Plots": [
         {"name": "scatter-plot"},
         {"name": "scatter-plot-null-values"},
         {"name": "connected-scatter-plot"},
         {"name": "error-bars"},
-        {"name": "barley-trellis-plot"}
+        {"name": "barley-trellis-plot"},
+        {"name": "regression"},
+        {"name": "loess-regression"}
     ],
     "Distributions": [
+        {"name": "top-k-plot"},
+        {"name": "top-k-plot-with-others"},
         {"name": "histogram"},
         {"name": "histogram-null-values"},
+        {"name": "dot-plot"},
         {"name": "probability-density"},
         {"name": "box-plot"},
         {"name": "violin-plot"},
-        {"name": "top-k-plot"},
-        {"name": "top-k-plot-with-others"},
         {"name": "binned-scatter-plot"},
         {"name": "contour-plot"},
         {"name": "wheat-plot"},
-        {"name": "hypothetical-outcome-plots"},
-        {"name": "regression"},
-        {"name": "loess-regression"}
+        {"name": "quantile-quantile-plot"},
+        {"name": "quantile-dot-plot"},
+        {"name": "hypothetical-outcome-plots"}
     ],
     "Geographic Maps": [
         {"name": "county-unemployment"},
