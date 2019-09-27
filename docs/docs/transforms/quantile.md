@@ -12,8 +12,8 @@ The **quantile** transform {% include tag ver="5.7" %} calculates empirical [qua
 | :------------------ | :-----------------------------: | :------------ |
 | field               | {% include type t="Field" %}    | {% include required %} The data field for which to perform quantile estimation.|
 | groupby             | {% include type t="Field[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used.|
-| quantiles           | {% include type t="Number[]" %} | An array of probabilities in the range (0, 1) for which to compute quantile values. If not specified, the *step* parameter will be used. |
-| step                | {% include type t="Number" %}   | A probability step size (default 0.01) for sampling quantile values. All values from one-half the step size up to 1 (exclusive) will be sampled. This parameter is only used if the *quantiles* parameter is not provided. |
+| probs               | {% include type t="Number[]" %} | An array of probabilities in the range (0, 1) for which to compute quantile values. If not specified, the *step* parameter will be used. |
+| step                | {% include type t="Number" %}   | A probability step size (default 0.01) for sampling quantile values. All values from one-half the step size up to 1 (exclusive) will be sampled. This parameter is only used if the *probs* parameter is not provided. |
 | as                  | {% include type t="String[]" %} | The output fields for the probability and quantile value. The default is `["prob", "value"]`.|
 
 ## Usage

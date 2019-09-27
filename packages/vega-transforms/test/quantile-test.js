@@ -13,7 +13,7 @@ tape('Quantile transform calculates empirical quantiles', function(t) {
   var v = util.field('v'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
-      q = df.add(Quantile, {field: v, quantiles: prob, pulse:c}),
+      q = df.add(Quantile, {field: v, probs: prob, pulse:c}),
       p;
 
   // test initial insert
