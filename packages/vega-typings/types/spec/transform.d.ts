@@ -307,7 +307,7 @@ export interface QuantileTransform {
   field: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
   step?: number | SignalRef;
-  quantiles?: number[] | SignalRef;
+  probs?: number[] | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
 }
 

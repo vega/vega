@@ -12,7 +12,7 @@ import {range} from 'd3-array';
  *   over which to calculate quantile values.
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors
  *   to groupby.
- * @param {Array<number>} [params.quantiles] - An array of probabilities in
+ * @param {Array<number>} [params.probs] - An array of probabilities in
  *   the range (0, 1) for which to compute quantile values. If not specified,
  *   the *step* parameter will be used.
  * @param {Array<number>} [params.step=0.01] - A probability step size for
@@ -30,7 +30,7 @@ Quantile.Definition = {
   "params": [
     { "name": "groupby", "type": "field", "array": true },
     { "name": "field", "type": "field", "required": true },
-    { "name": "quantiles", "type": "number", "array": true },
+    { "name": "probs", "type": "number", "array": true },
     { "name": "step", "type": "number", "default": 0.01 },
     { "name": "as", "type": "string", "array": true, "default": ["prob", "value"] }
   ]
@@ -54,7 +54,7 @@ prototype.transform = function(_, pulse) {
         names = (_.groupby || []).map(accessorName),
         values = [],
         step = _.step || 0.01,
-        p = _.quantiles || range(step/2, 1 - EPSILON, step),
+        p = _.probs || range(step/2, 1 - EPSILON, step),
         n = p.length;
 
   groups.forEach(g => {
