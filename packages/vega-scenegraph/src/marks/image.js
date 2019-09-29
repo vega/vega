@@ -15,6 +15,20 @@ function getImage(item, renderer) {
   return image;
 }
 
+function imageWidth(item, image) {
+  return item.width != null ? item.width
+    : !image || !image.width ? 0
+    : item.aspect !== false && item.height ? item.height * image.width / image.height
+    : image.width;
+}
+
+function imageHeight(item, image) {
+  return item.height != null ? item.height
+    : !image || !image.height ? 0
+    : item.aspect !== false && item.width ? item.width * image.height / image.width
+    : image.height;
+}
+
 function imageXOffset(align, w) {
   return align === 'center' ? w / 2 : align === 'right' ? w : 0;
 }
@@ -27,8 +41,8 @@ function attr(emit, item, renderer) {
   var image = getImage(item, renderer),
       x = item.x || 0,
       y = item.y || 0,
-      w = (item.width != null ? item.width : image.width) || 0,
-      h = (item.height != null ? item.height : image.height) || 0,
+      w = imageWidth(item, image),
+      h = imageHeight(item, image),
       a = item.aspect === false ? 'none' : 'xMidYMid';
 
   x -= imageXOffset(item.align, w);
@@ -45,8 +59,8 @@ function bound(bounds, item) {
   var image = item.image,
       x = item.x || 0,
       y = item.y || 0,
-      w = (item.width != null ? item.width : (image && image.width)) || 0,
-      h = (item.height != null ? item.height : (image && image.height)) || 0;
+      w = imageWidth(item, image),
+      h = imageHeight(item, image);
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
@@ -63,8 +77,8 @@ function draw(context, scene, bounds) {
     var image = getImage(item, renderer),
         x = item.x || 0,
         y = item.y || 0,
-        w = (item.width != null ? item.width : image.width) || 0,
-        h = (item.height != null ? item.height : image.height) || 0,
+        w = imageWidth(item, image),
+        h = imageHeight(item, image),
         opacity, ar0, ar1, t;
 
     x -= imageXOffset(item.align, w);
