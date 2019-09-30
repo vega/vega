@@ -16,8 +16,13 @@ import {
 export function tickCount(scale, count, minStep) {
   var step;
 
-  if (isNumber(count) && minStep != null) {
-    count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+  if (isNumber(count)) {
+    if (scale.bins) {
+      count = Math.max(count, scale.bins.length);
+    }
+    if (minStep != null) {
+      count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+    }
   }
 
   if (isObject(count)) {
