@@ -90,11 +90,6 @@ export interface Legend extends BaseLegend {
   title?: Text | SignalRef;
 
   /**
-   * The desired number of tick values for quantitative legends.
-   */
-  tickCount?: TickCount;
-
-  /**
    * The minimum desired step between tick values for quantitative legends, in terms of scale domain values. For example, a value of `1` indicates that ticks should not be less than 1 unit apart. If `tickMinStep` is specified, the `tickCount` value will be adjusted, if necessary, to enforce the minimum step value.
    */
   tickMinStep?: number | SignalRef;
@@ -153,6 +148,16 @@ export interface BaseLegend<
    * __Default value:__ `"right"`
    */
   orient?: LOR;
+
+  /**
+   * The maximum number of allowed entries for a symbol legend. Additional entries will be dropped.
+   */
+  symbolLimit?: N;
+
+  /**
+   * The desired number of tick values for quantitative legends.
+   */
+  tickCount?: TickCount;
 
   // ---------- Legend Group ----------
   /**

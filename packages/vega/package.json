@@ -32,7 +32,7 @@
   "dependencies": {
     "vega-crossfilter": "^4.0.1",
     "vega-dataflow": "^5.4.0",
-    "vega-encode": "^4.3.3",
+    "vega-encode": "^4.4.0",
     "vega-event-selector": "^2.0.1",
     "vega-expression": "^2.6.1",
     "vega-functions": "^5.4.0",

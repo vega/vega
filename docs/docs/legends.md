@@ -58,6 +58,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | symbolDash      | {% include type t="Number[]" %} | Stroke dash of symbol outlines (or `[]` for solid lines). {% include tag ver="5.0" %} |
 | symbolDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolFillColor | {% include type t="Color" %}  | Fill color for legend symbols. |
+| symbolLimit     | {% include type t="Number" %} | The maximum number of allowed entries for a symbol legend. If the number of entries exceeds the limit, entries will be dropped and replaced with an ellipsis. {% include tag ver="5.7" %} |
 | symbolOffset  | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
 | symbolOpacity | {% include type t="Number" %}  | Opacity of legend symbols. {% include tag ver="4.1" %} |
 | symbolSize    | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |

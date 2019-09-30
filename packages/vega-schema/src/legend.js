@@ -59,6 +59,7 @@ const legendProps = object({
   // LEGEND CONFIG
   tickCount: tickCountRef,
   tickMinStep: numberOrSignal,
+  symbolLimit: numberOrSignal,
   values: arrayOrSignal,
   zindex: numberType,
 

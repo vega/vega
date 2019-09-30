@@ -220,6 +220,7 @@ function defaults() {
       labelLimit: 160,
       labelOffset: 4,
       labelOverlap: true,
+      symbolLimit: 30,
       symbolType: 'circle',
       symbolSize: 100,
       symbolOffset: 0,
