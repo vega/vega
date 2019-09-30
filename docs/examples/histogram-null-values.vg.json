@@ -99,7 +99,7 @@
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickMinStep": 1},
+    {"orient": "bottom", "scale": "xscale", "tickMinStep": 0.5},
     {"orient": "bottom", "scale": "xscale-null"},
     {"orient": "left", "scale": "yscale", "tickCount": 5, "offset": 5}
   ],
