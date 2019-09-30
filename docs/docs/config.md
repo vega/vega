@@ -316,12 +316,14 @@ Properties defining default settings for legends. These properties are defined u
 | symbolDashOffset      | {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
 | symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
+| symbolLimit           | {% include type t="Number" %}   | The maximum number of allowed entries for a symbol legend. If the number of entries exceeds the limit, entries will be dropped and replaced with an ellipsis. {% include tag ver="5.7" %} |
 | symbolOffset          | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
 | symbolOpacity         | {% include type t="Number" %}   | Opacity of legend symbols. {% include tag ver="4.1" %} |
 | symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 | symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
+| tickCount             | {% include type t="Number|String|Object" %} | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary. {% include tag ver="5.7" %} |
 | titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
 | titleAnchor           | {% include type t="String" %}   | The anchor position for placing legend titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
 | titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |

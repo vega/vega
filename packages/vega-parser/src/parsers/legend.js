@@ -57,7 +57,8 @@ export default function(spec, scope) {
   entryRef = ref(scope.add(LegendEntries(params = {
     type:    type,
     scale:   scope.scaleRef(scale),
-    count:   scope.objectProperty(spec.tickCount),
+    count:   scope.objectProperty(_('tickCount')),
+    limit:   scope.property(_('symbolLimit')),
     values:  scope.objectProperty(spec.values),
     minstep: scope.property(spec.tickMinStep),
     formatType: scope.property(spec.formatType),

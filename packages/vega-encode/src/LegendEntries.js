@@ -12,6 +12,8 @@ import {constant, inherits, isFunction, peek} from 'vega-util';
  * @param {Scale} params.scale - The scale to generate items for.
  * @param {*} [params.count=5] - The approximate number of items, or
  *   desired tick interval, to use.
+ * @param {*} [params.limit] - The maximum number of entries to
+ *   include in a symbol legend.
  * @param {Array<*>} [params.values] - The exact tick values to use.
  *   These must be legal domain values for the provided scale.
  *   If provided, the count argument is ignored.
@@ -36,28 +38,37 @@ prototype.transform = function(_, pulse) {
       items = this.value,
       type  = _.type || Symbols,
       scale = _.scale,
+      limit = +_.limit,
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
       format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType),
       values = _.values || labelValues(scale, count, type),
-      domain, fraction, size, offset;
+      domain, fraction, size, offset, ellipsis;
 
   if (items) out.rem = items;
 
   if (type === Symbols) {
+    if (limit && values.length > limit) {
+      pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
+      items = values.slice(0, limit - 1);
+      ellipsis = true;
+    } else {
+      items = values;
+    }
+
     if (isFunction(size = _.size)) {
       // if first value maps to size zero, remove from list (vega#717)
-      if (!_.values && scale(values[0]) === 0) {
-        values = values.slice(1);
+      if (!_.values && scale(items[0]) === 0) {
+        items = items.slice(1);
       }
       // compute size offset for legend entries
-      offset = values.reduce(function(max, value) {
+      offset = items.reduce(function(max, value) {
         return Math.max(max, size(value, _));
       }, 0);
     } else {
       size = constant(offset = size || 8);
     }
 
-    items = values.map(function(value, index) {
+    items = items.map(function(value, index) {
       return ingest({
         index:  index,
         label:  format(value, index, values),
@@ -66,6 +77,17 @@ prototype.transform = function(_, pulse) {
         size:   size(value, _)
       });
     });
+
+    if (ellipsis) {
+      ellipsis = values[items.length];
+      items.push(ingest({
+        index:    items.length,
+        label:    `\u2026${values.length-items.length} entries`,
+        value:    ellipsis,
+        offset:   offset,
+        size:     size(ellipsis, _)
+      }));
+    }
   }
 
   else if (type === Gradient) {
