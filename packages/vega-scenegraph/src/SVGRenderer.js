@@ -390,14 +390,18 @@ function bind(item, el, sibling, tag, svg) {
   }
 
   // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+  if (node.ownerSVGElement !== svg || hasSiblings(node, item) && node.previousSibling !== sibling) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
 }
 
-function hasSiblings(item) {
+function hasSiblings(node, item) {
+  if (node && node.parentNode) {
+    return node.parentNode.childNodes.length > 1;
+  }
+
   var parent = item.mark || item.group;
   return parent && parent.items.length > 1;
 }
