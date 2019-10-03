@@ -18,7 +18,7 @@ export const directionEnum = ['horizontal', 'vertical'];
 export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
-export function valueSchema(type, nullable) {
+export function baseValueSchema(type, nullable) {
   type = Array.isArray(type) ? {enum: type}
     : type && type.oneOf ? type
     : {type: type};
@@ -41,6 +41,11 @@ export function valueSchema(type, nullable) {
     )
   );
 
+  return valueRef;
+}
+
+export function valueSchema(type, nullable) {
+  var valueRef = baseValueSchema(type, nullable);
   return oneOf(
     array(allOf(ruleRef, valueRef)),
     valueRef
@@ -113,8 +118,8 @@ const colorHCL = object({
 
 const gradientStops = array(
   object({
-  _offset_: numberType,
-  _color_: stringType
+    _offset_: numberType,
+    _color_: stringType
   })
 );
 
@@ -140,8 +145,8 @@ const radialGradient = object({
   _stops_: ref('gradientStops')
 });
 
-const colorValue = oneOf(
-  ref('nullableStringValue'),
+const baseColorValue = oneOf(
+  baseValueSchema('string', true),
   object({_value_: ref('linearGradient')}),
   object({_value_: ref('radialGradient')}),
   object({
@@ -158,6 +163,11 @@ const colorValue = oneOf(
       ref('colorHCL')
     )
   })
+);
+
+const colorValue = oneOf(
+  array(allOf(ruleRef, ref('baseColorValue'))),
+  ref('baseColorValue')
 );
 
 const encodeEntryRef = def('encodeEntry');
@@ -248,7 +258,6 @@ export default {
     textValue: valueSchema(textType),
     booleanValue: valueSchema('boolean'),
     arrayValue: valueSchema('array'),
-    nullableStringValue: valueSchema('string', true),
     fontWeightValue: valueSchema(fontWeightEnum),
     anchorValue: valueSchema(anchorEnum),
     alignValue: valueSchema(alignEnum),
@@ -257,6 +266,7 @@ export default {
     orientValue: valueSchema(orientEnum),
     strokeCapValue: valueSchema(strokeCapEnum),
     strokeJoinValue: valueSchema(strokeJoinEnum),
+    baseColorValue,
     colorRGB,
     colorHSL,
     colorLAB,
