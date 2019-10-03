@@ -14,7 +14,7 @@ var ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
-  this._dirtyID = 1;
+  this._dirtyID = 0;
   this._dirty = [];
   this._svg = null;
   this._root = null;
@@ -235,7 +235,7 @@ prototype.isDirty = function(item) {
 prototype._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
-  if (!items.length) return true;
+  if (!items.length || !this._dirtyID) return true;
 
   var id = ++this._dirtyID,
       item, mark, type, mdef, i, n, o;
