@@ -64,6 +64,8 @@ export {default as isString} from './src/isString';
 export {default as key} from './src/key';
 export {default as lerp} from './src/lerp';
 export {default as merge} from './src/merge';
+export {default as mergeDeep} from './src/mergeDeep';
+export {default as mergeConfig} from './src/mergeConfig';
 export {default as pad} from './src/pad';
 export {default as peek} from './src/peek';
 export {default as repeat} from './src/repeat';

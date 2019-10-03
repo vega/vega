@@ -68,6 +68,14 @@ export interface FastMap {
 }
 export function fastmap(_?: object): FastMap;
 
+/**
+ * Like TS Partial but applies recursively to all properties.
+ */
+export type DeepPartial<T> = {[P in keyof T]?: DeepPartial<T[P]>}
+export function mergeDeep<T>(dest: T, ...src: DeepPartial<T>[]): T;
+
+export function mergeConfig<C extends object>(c1: C, c2: C): C;
+
 // Arrays
 
 export function array<T>(v: T | T[]): T[];

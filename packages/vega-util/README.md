@@ -307,6 +307,18 @@ vega.<b>merge</b>(<i>compare</i>, <i>array1</i>, <i>array2</i>[, <i>output</i>])
 
 Merge two sorted arrays into a single sorted array. The input *compare* function is a comparator for sorting elements and should correspond to the pre-sorted orders of the *array1* and *array2* source arrays. The merged array contents are written to the *output* array, if provided. If *output* is not specified, a new array is generated and returned.
 
+<a name="mergeDeep" href="#mergeDeep">#</a>
+vega.<b>mergeDeep</b>(<i>dest</i>, ...<i>src</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeDeep.js "Source")
+
+Recursively merge one or more source objects into a single destination object. Arrays are treated as values and not merged.
+
+<a name="mergeConfig" href="#mergeConfig">#</a>
+vega.<b>mergeConfig</b>(<i>config1</i>, <i>config2</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Merges two Vega configurations. The function uses [mergeDeep](#mergeDeep) for all properties except `signals`. The array of signals is merged so that there is only one signal of the same name.
+
 <a name="panLinear" href="#panLinear">#</a>
 vega.<b>panLinear</b>(<i>domain</i>, <i>delta</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
