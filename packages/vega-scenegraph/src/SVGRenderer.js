@@ -14,7 +14,7 @@ var ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
-  this._dirtyID = 1;
+  this._dirtyID = 0;
   this._dirty = [];
   this._svg = null;
   this._root = null;
@@ -235,7 +235,7 @@ prototype.isDirty = function(item) {
 prototype._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
-  if (!items.length) return true;
+  if (!items.length || !this._dirtyID) return true;
 
   var id = ++this._dirtyID,
       item, mark, type, mdef, i, n, o;
@@ -390,16 +390,17 @@ function bind(item, el, sibling, tag, svg) {
   }
 
   // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+  if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
 }
 
-function hasSiblings(item) {
-  var parent = item.mark || item.group;
-  return parent && parent.items.length > 1;
+function siblingCheck(node, sibling) {
+  return node.parentNode
+    && node.parentNode.childNodes.length > 1
+    && node.previousSibling != sibling; // treat null/undefined the same
 }
 
 

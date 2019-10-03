@@ -94,12 +94,12 @@ function bound(bounds, item, mode) {
 
 function draw(context, scene, bounds) {
   visit(scene, function(item) {
-    var opacity, p, x, y, i, lh, tl, str;
-    if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-    if (!item.text) return; // TODO calculate truncated value?
+    var opacity = item.opacity == null ? 1 : item.opacity,
+        p, x, y, i, lh, tl, str;
 
-    opacity = item.opacity == null ? 1 : item.opacity;
-    if (opacity === 0 || item.fontSize <= 0) return;
+    if (bounds && !bounds.intersects(item.bounds) || // bounds check
+        opacity === 0 || item.fontSize <= 0 ||
+        item.text == null || item.text.length === 0) return;
 
     context.font = font(item);
     context.textAlign = item.align || 'left';
