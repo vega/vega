@@ -30,21 +30,28 @@ prototype.transform = function(_, pulse) {
   if (_.derive) {
     out = pulse.fork(pulse.NO_SOURCE);
 
-    pulse.visit(pulse.REM, function(t) {
+    pulse.visit(pulse.REM, t => {
       var id = tupleid(t);
       out.rem.push(lut[id]);
       lut[id] = null;
     });
 
-    pulse.visit(pulse.ADD, function(t) {
+    pulse.visit(pulse.ADD, t => {
       var dt = derive(t);
       lut[tupleid(t)] = dt;
       out.add.push(dt);
     });
 
-    pulse.visit(pulse.MOD, function(t) {
+    pulse.visit(pulse.MOD, t => {
       out.mod.push(rederive(t, lut[tupleid(t)]));
     });
+
+    if (pulse.mod.length) {
+      // down stream writes may overwrite re-derived tuples
+      // conservatively mark all source fields as modified
+      pulse.materialize(pulse.MOD);
+      out.modifies(Object.keys(pulse.mod[0]));
+    }
   }
 
   return out;
