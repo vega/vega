@@ -246,6 +246,12 @@ vega.<b>hasOwnProperty</b>(<i>object</i>, <i>property</i>)
 
 Returns `true` if the input *object* has a named *property* defined on it, otherwise `false`. This method concerns the input object only, ignoring properties defined up the prototype chain. The method is equivalent to [`Object.hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty), but improves security by guarding against overridden Object prototype built-ins.
 
+<a name="mergeConfig" href="#mergeConfig">#</a>
+vega.<b>mergeConfig</b>(<i>configArray</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+ Merges an array of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
+
 ### Arrays
 
 Functions for manipulating JavaScript Array values.
