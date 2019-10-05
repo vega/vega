@@ -166,6 +166,6 @@ tape('pathRender should translate paths', function(t) {
 tape('pathRender should scale paths', function(t) {
   var ctx = context();
   pathRender(ctx, pathParse(paths[1]), 0, 0, 2, 0.5);
-  t.equal(ctx+'', 'M20,5L40,20');
+  t.equal(ctx+'', 'M20,5L40,15');
   t.end();
 });
