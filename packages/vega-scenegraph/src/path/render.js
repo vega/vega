@@ -2,25 +2,32 @@ import {bezier, segments} from './arc';
 
 var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 
-function scale(current, s) {
+function scale(current, sX, sY) {
   var c = (temp[0] = current[0]);
   if (c === 'a' || c === 'A') {
-    temp[1] = s * current[1];
-    temp[2] = s * current[2];
+    temp[1] = sX * current[1];
+    temp[2] = sY * current[2];
     temp[3] = current[3];
     temp[4] = current[4];
     temp[5] = current[5];
-    temp[6] = s * current[6];
-    temp[7] = s * current[7];
-  } else {
+    temp[6] = sX * current[6];
+    temp[7] = sY * current[7];
+  }
+  else if(c === 'h' || c === 'H'){
+    temp[1] = sX * current[1];
+  }
+  else if(c === 'v' || c === 'V'){
+    temp[1] = sY * current[1];
+  }
+   else {
     for (var i=1, n=current.length; i<n; ++i) {
-      temp[i] = s * current[i];
+      temp[i] = (i % 2 == 1 ? sX : sY) * current[i];
     }
   }
   return temp;
 }
 
-export default function(context, path, l, t, s) {
+export default function(context, path, l, t, sX, sY) {
   var current, // current instruction
       previous = null,
       x = 0, // current x
@@ -34,13 +41,14 @@ export default function(context, path, l, t, s) {
 
   if (l == null) l = 0;
   if (t == null) t = 0;
-  if (s == null) s = 1;
+  if (sX == null) sX = 1;
+  if (sY == null) sY = sX;
 
   if (context.beginPath) context.beginPath();
 
   for (var i=0, len=path.length; i<len; ++i) {
     current = path[i];
-    if (s !== 1) current = scale(current, s);
+    if (sX !== 1 || sY !== 1) current = scale(current, sX, sY);
 
     switch (current[0]) { // first letter
 
