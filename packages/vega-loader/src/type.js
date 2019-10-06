@@ -64,11 +64,11 @@ function isBoolean(_) {
 }
 
 function isDate(_) {
-  return !isNaN(Date.parse(_));
+  return !Number.isNaN(Date.parse(_));
 }
 
 function isNumber(_) {
-  return !isNaN(+_) && !(_ instanceof Date);
+  return !Number.isNaN(+_) && !(_ instanceof Date);
 }
 
 function isInteger(_) {

@@ -90,7 +90,7 @@ function formatPoint(format) {
 }
 
 function formatValue(value, format) {
-  return isFinite(value) ? format(value) : null;
+  return Number.isFinite(value) ? format(value) : null;
 }
 
 export function labelFraction(scale) {
