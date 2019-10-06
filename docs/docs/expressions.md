@@ -191,35 +191,35 @@ Basic mathematical functions.
 
 <a name="isNaN" href="#isNaN">#</a>
 <b>isNaN</b>(<i>value</i>)<br/>
-Returns true if _value_ is not a number. Same as JavaScript's `isNaN`.
+Returns true if _value_ is not a number. Same as JavaScript's [`Number.isNaN`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNan).
 
 <a name="isFinite" href="#isFinite">#</a>
 <b>isFinite</b>(<i>value</i>)<br/>
-Returns true if _value_ is a finite number. Same as JavaScript's `isFinite`.
+Returns true if _value_ is a finite number. Same as JavaScript's [`Number.isFinite`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite).
 
 <a name="abs" href="#abs">#</a>
 <b>abs</b>(<i>value</i>)<br/>
-Returns the absolute value of _value_. Same as JavaScript's `Math.abs`.
+Returns the absolute value of _value_. Same as JavaScript's [`Math.abs`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs).
 
 <a name="acos" href="#acos">#</a>
 <b>acos</b>(<i>value</i>)<br/>
-Trigonometric arccosine. Same as JavaScript's `Math.acos`.
+Trigonometric arccosine. Same as JavaScript's [`Math.acos`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acos).
 
 <a name="asin" href="#asin">#</a>
 <b>asin</b>(<i>value</i>)<br/>
-Trigonometric arcsine. Same as JavaScript's `Math.asin`.
+Trigonometric arcsine. Same as JavaScript's [`Math.asin`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asin).
 
 <a name="atan" href="#atan">#</a>
 <b>atan</b>(<i>value</i>)<br/>
-Trigonometric arctangent. Same as JavaScript's `Math.atan`.
+Trigonometric arctangent. Same as JavaScript's [`Math.atan`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan).
 
 <a name="atan2" href="#atan2">#</a>
 <b>atan2</b>(<i>dy</i>, <i>dx</i>)<br/>
-Returns the arctangent of _dy / dx_. Same as JavaScript's `Math.atan2`.
+Returns the arctangent of _dy / dx_. Same as JavaScript's [`Math.atan2`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2).
 
 <a name="ceil" href="#ceil">#</a>
 <b>ceil</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's `Math.ceil`.
+Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's [`Math.ceil`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil).
 
 <a name="clamp" href="#clamp">#</a>
 <b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
@@ -227,51 +227,51 @@ Restricts _value_ to be between the specified _min_ and _max_.
 
 <a name="cos" href="#cos">#</a>
 <b>cos</b>(<i>value</i>)<br/>
-Trigonometric cosine. Same as JavaScript's `Math.cos`.
+Trigonometric cosine. Same as JavaScript's [`Math.cos`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos).
 
 <a name="exp" href="#exp">#</a>
 <b>exp</b>(<i>exponent</i>)<br/>
-Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's `Math.exp`.
+Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's [`Math.exp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp).
 
 <a name="floor" href="#floor">#</a>
 <b>floor</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's `Math.floor`.
+Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's [`Math.floor`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
 <a name="log" href="#log">#</a>
 <b>log</b>(<i>value</i>)<br/>
-Returns the natural logarithm of _value_. Same as JavaScript's `Math.log`.
+Returns the natural logarithm of _value_. Same as JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
 
 <a name="max" href="#max">#</a>
 <b>max</b>(<i>value1</i>, <i>value2</i>, ...)<br/>
-Returns the maximum argument value. Same as JavaScript's `Math.max`.
+Returns the maximum argument value. Same as JavaScript's [`Math.max`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max).
 
 <a name="min" href="#min">#</a>
 <b>min</b>(<i>value1</i>, <i>value2</i>, ...)<br/>
-Returns the minimum argument value. Same as JavaScript's `Math.min`.
+Returns the minimum argument value. Same as JavaScript's [`Math.min`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min).
 
 <a name="pow" href="#pow">#</a>
 <b>pow</b>(<i>value</i>, <i>exponent</i>)<br/>
-Returns _value_ raised to the given _exponent_. Same as JavaScript's `Math.pow`.
+Returns _value_ raised to the given _exponent_. Same as JavaScript's [`Math.pow`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow).
 
 <a name="random" href="#random">#</a>
 <b>random</b>()<br/>
-Returns a pseudo-random number in the range [0,1). Same as JavaScript's `Math.random`.
+Returns a pseudo-random number in the range [0,1). Same as JavaScript's [`Math.random`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random).
 
 <a name="round" href="#round">#</a>
 <b>round</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer. Same as JavaScript's `Math.round`.
+Rounds _value_ to the nearest integer. Same as JavaScript's [`Math.round`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round).
 
 <a name="sin" href="#sin">#</a>
 <b>sin</b>(<i>value</i>)<br/>
-Trigonometric sine. Same as JavaScript's `Math.sin`.
+Trigonometric sine. Same as JavaScript's [`Math.sin`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin).
 
 <a name="sqrt" href="#sqrt">#</a>
 <b>sqrt</b>(<i>value</i>)<br/>
-Square root function. Same as JavaScript's `Math.sqrt`.
+Square root function. Same as JavaScript's [`Math.sqrt`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt).
 
 <a name="tan" href="#tan">#</a>
 <b>tan</b>(<i>value</i>)<br/>
-Trigonometric tangent. Same as JavaScript's `Math.tan`.
+Trigonometric tangent. Same as JavaScript's [`Math.tan`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan).
 
 [Back to Top](#reference)
 
