@@ -30,7 +30,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.3.1",
+    "d3-array": "^2.3.2",
     "vega-dataflow": "^5.4.0",
     "vega-statistics": "^1.6.0",
     "vega-util": "^1.11.2"
