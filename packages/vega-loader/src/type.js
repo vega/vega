@@ -71,4 +71,6 @@ function isNumber(_) {
   return !Number.isNaN(+_) && !(_ instanceof Date);
 }
 
-const isInteger = Number.isInteger;
+function isInteger(_) {
+  return isNumber(_) && Number.isInteger(+_);
+}
