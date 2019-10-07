@@ -1,7 +1,7 @@
 import isArray from './isArray';
 import isObject from './isObject';
 
-export default function(...configs) {
+export function mergeConfig(...configs) {
   return configs.reduce((out, source) => {
     for (var key in source) {
       if (key === 'signals') {
@@ -17,20 +17,20 @@ export default function(...configs) {
         var r = key === 'legend' ? {'layout': 1}
           : key === 'style' ? true
           : null;
-        copy(out, key, source[key], r);
+        writeConfig(out, key, source[key], r);
       }
     }
     return out;
   }, {});
 }
 
-function copy(output, key, value, recurse) {
+export function writeConfig(output, key, value, recurse) {
   var k, o;
   if (isObject(value) && !isArray(value)) {
     o = isObject(output[key]) ? output[key] : (output[key] = {});
     for (k in value) {
       if (recurse && (recurse === true || recurse[k])) {
-        copy(o, k, value[k]);
+        writeConfig(o, k, value[k]);
       } else {
         o[k] = value[k];
       }

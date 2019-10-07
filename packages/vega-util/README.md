@@ -252,6 +252,12 @@ vega.<b>mergeConfig</b>(<i>configArray</i>)
 
  Merges an array of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
 
+ <a name="writeConfig" href="#writeConfig">#</a>
+vega.<b>writeConfig</b>(<i>config</i>, <i>key</i>, <i>value</i>[, <i>recurse</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Writes a value to a Vega configuration object. Given a *config* object and a configuration property *key* and *value*, appropriately assign the value to the config object. The *recurse* parameter controls if recursive merging (as opposed to overwriting) is performed: if `false` or undefined, no recursion is performed; if `true` one level of recursive merge is performed; if *recurse* is object-valued, one level of recursive merge is performed for keys that the *recurse* object maps to a truthy value. This method is a helper method used within *mergeConfig*.
+
 ### Arrays
 
 Functions for manipulating JavaScript Array values.
