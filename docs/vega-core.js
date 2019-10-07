@@ -168,6 +168,62 @@
     }
   }
 
+  function mergeConfig(...configs) {
+    return configs.reduce((out, source) => {
+      for (var key in source) {
+        if (key === 'signals') {
+          // for signals, we merge the signals arrays
+          // source signals take precedence over
+          // existing signals with the same name
+          out.signals = mergeNamed(out.signals, source.signals);
+        } else {
+          // otherwise, merge objects subject to recursion constraints
+          // for legend block, recurse for the layout entry only
+          // for style block, recurse for all properties
+          // otherwise, no recursion: objects overwrite, no merging
+          var r = key === 'legend' ? {'layout': 1}
+            : key === 'style' ? true
+            : null;
+          writeConfig(out, key, source[key], r);
+        }
+      }
+      return out;
+    }, {});
+  }
+
+  function writeConfig(output, key, value, recurse) {
+    var k, o;
+    if (isObject(value) && !isArray(value)) {
+      o = isObject(output[key]) ? output[key] : (output[key] = {});
+      for (k in value) {
+        if (recurse && (recurse === true || recurse[k])) {
+          writeConfig(o, k, value[k]);
+        } else {
+          o[k] = value[k];
+        }
+      }
+    } else {
+      output[key] = value;
+    }
+  }
+
+  function mergeNamed(a, b) {
+    if (a == null) return b;
+
+    const map = {}, out = [];
+
+    function add(_) {
+      if (!map[_.name]) {
+        map[_.name] = 1;
+        out.push(_);
+      }
+    }
+
+    b.forEach(add);
+    a.forEach(add);
+    return out;
+  }
+
   function peek(array) {
     return array[array.length - 1];
   }
@@ -1796,15 +1852,15 @@
   }
 
   function isDate$1(_) {
-    return !isNaN(Date.parse(_));
+    return !Number.isNaN(Date.parse(_));
   }
 
   function isNumber$1(_) {
-    return !isNaN(+_) && !(_ instanceof Date);
+    return !Number.isNaN(+_) && !(_ instanceof Date);
   }
 
   function isInteger(_) {
-    return isNumber$1(_) && (_=+_) === ~~_;
+    return isNumber$1(_) && Number.isInteger(+_);
   }
 
   function delimitedFormat(delimiter) {
@@ -3434,7 +3490,7 @@
       init: 'this.min = undefined;',
       add:  'if (v < this.min || this.min === undefined) this.min = v;',
       rem:  'if (v <= this.min) this.min = NaN;',
-      set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
+      set:  'this.min = (Number.isNaN(this.min) ? cell.data.min(this.get) : this.min)',
       str:  ['values'], idx: 4
     }),
     'max': measure({
@@ -3442,7 +3498,7 @@
       init: 'this.max = undefined;',
       add:  'if (v > this.max || this.max === undefined) this.max = v;',
       rem:  'if (v >= this.max) this.max = NaN;',
-      set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
+      set:  'this.max = (Number.isNaN(this.max) ? cell.data.max(this.get) : this.max)',
       str:  ['values'], idx: 4
     })
   };
@@ -6259,12 +6315,8 @@
         mod = _.modified(),
         flag = _.initonly ? pulse.ADD
           : mod ? pulse.SOURCE
-          : pulse.modified(func.fields) ? pulse.ADD_MOD
+          : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
           : pulse.ADD;
-
-    function set(t) {
-      t[as] = func(t, _);
-    }
 
     if (mod) {
       // parameters updated, need to reflow
@@ -6275,7 +6327,7 @@
       pulse.modifies(as);
     }
 
-    return pulse.visit(flag, set);
+    return pulse.visit(flag, t => t[as] = func(t, _));
   };
 
   /**
@@ -6416,7 +6468,7 @@
         t = {_impute: true};
         for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
         t[kName] = kVal;
-        t[fName] = isNaN(value) ? (value = impute(group, field)) : value;
+        t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
 
         curr.push(ingest(t));
       }
@@ -7164,21 +7216,28 @@
     if (_.derive) {
       out = pulse.fork(pulse.NO_SOURCE);
 
-      pulse.visit(pulse.REM, function(t) {
+      pulse.visit(pulse.REM, t => {
         var id = tupleid(t);
         out.rem.push(lut[id]);
         lut[id] = null;
       });
 
-      pulse.visit(pulse.ADD, function(t) {
+      pulse.visit(pulse.ADD, t => {
         var dt = derive(t);
         lut[tupleid(t)] = dt;
         out.add.push(dt);
       });
 
-      pulse.visit(pulse.MOD, function(t) {
+      pulse.visit(pulse.MOD, t => {
         out.mod.push(rederive(t, lut[tupleid(t)]));
       });
+
+      if (pulse.mod.length) {
+        // down stream writes may overwrite re-derived tuples
+        // conservatively mark all source fields as modified
+        pulse.materialize(pulse.MOD);
+        out.modifies(Object.keys(pulse.mod[0]));
+      }
     }
 
     return out;
@@ -9457,18 +9516,18 @@
 
     const canvasGradient = gradient.gradient === 'radial'
       ? context.createRadialGradient(
-          bounds.x1 + (gradient.x1 || 0.5) * w,
-          bounds.y1 + (gradient.y1 || 0.5) * h,
-          Math.max(w, h) * (gradient.r1 || 0),
-          bounds.x1 + (gradient.x2 || 0.5) * w,
-          bounds.y1 + (gradient.y2 || 0.5) * h,
-          Math.max(w, h) * (gradient.r2 || 0.5)
+          bounds.x1 + v(gradient.x1, 0.5) * w,
+          bounds.y1 + v(gradient.y1, 0.5) * h,
+          Math.max(w, h) * v(gradient.r1, 0),
+          bounds.x1 + v(gradient.x2, 0.5) * w,
+          bounds.y1 + v(gradient.y2, 0.5) * h,
+          Math.max(w, h) * v(gradient.r2, 0.5)
         )
       : context.createLinearGradient(
-          bounds.x1 + (gradient.x1 || 0) * w,
-          bounds.y1 + (gradient.y1 || 0) * h,
-          bounds.x1 + (gradient.x2 || 1) * w,
-          bounds.y1 + (gradient.y2 || 0) * h
+          bounds.x1 + v(gradient.x1, 0) * w,
+          bounds.y1 + v(gradient.y1, 0) * h,
+          bounds.x1 + v(gradient.x2, 1) * w,
+          bounds.y1 + v(gradient.y2, 0) * h
         );
 
     for (let i=0; i<n; ++i) {
@@ -9476,6 +9535,10 @@
     }
 
     return canvasGradient;
+  }
+
+  function v(value, dflt) {
+    return value == null ? dflt : value;
   }
 
   function color(context, item, value) {
@@ -10460,12 +10523,12 @@
 
   function draw$4(context, scene, bounds) {
     visit(scene, function(item) {
-      var opacity, p, x, y, i, lh, tl, str;
-      if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-      if (!item.text) return; // TODO calculate truncated value?
+      var opacity = item.opacity == null ? 1 : item.opacity,
+          p, x, y, i, lh, tl, str;
 
-      opacity = item.opacity == null ? 1 : item.opacity;
-      if (opacity === 0 || item.fontSize <= 0) return;
+      if (bounds && !bounds.intersects(item.bounds) || // bounds check
+          opacity === 0 || item.fontSize <= 0 ||
+          item.text == null || item.text.length === 0) return;
 
       context.font = font(item);
       context.textAlign = item.align || 'left';
@@ -11653,7 +11716,7 @@
 
   function SVGRenderer(loader) {
     Renderer.call(this, loader);
-    this._dirtyID = 1;
+    this._dirtyID = 0;
     this._dirty = [];
     this._svg = null;
     this._root = null;
@@ -11874,7 +11937,7 @@
   prototype$N._dirtyCheck = function() {
     this._dirtyAll = true;
     var items = this._dirty;
-    if (!items.length) return true;
+    if (!items.length || !this._dirtyID) return true;
 
     var id = ++this._dirtyID,
         item, mark, type, mdef, i, n, o;
@@ -12029,16 +12092,17 @@
     }
 
     // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-    if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+    if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
       el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
     }
 
     return node;
   }
 
-  function hasSiblings(item) {
-    var parent = item.mark || item.group;
-    return parent && parent.items.length > 1;
+  function siblingCheck(node, sibling) {
+    return node.parentNode
+      && node.parentNode.childNodes.length > 1
+      && node.previousSibling != sibling; // treat null/undefined the same
   }
 
 
@@ -13168,6 +13232,7 @@
         switch (mark.role) {
           case AxisRole:
           case LegendRole:
+          case TitleRole:
             break;
           case RowHeader: views.rowheaders.push(...items); break;
           case RowFooter: views.rowfooters.push(...items); break;
@@ -14514,7 +14579,7 @@
   function scaleFraction(scale, min, max) {
     var delta = max - min, i, t, s;
 
-    if (!delta || !isFinite(delta)) {
+    if (!delta || !Number.isFinite(delta)) {
       return constant(0.5);
     } else {
       i = (t = scale.type).indexOf('-');
@@ -14834,7 +14899,7 @@
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         ticks = this.value,
         scale = _.scale,
-        tally = _.count != null ? _.count : (_.values ? _.values.length : 10),
+        tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
         count = tickCount(scale, tally, _.minstep),
         format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType),
         values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
@@ -15119,7 +15184,7 @@
   }
 
   function formatValue(value, format) {
-    return isFinite(value) ? format(value) : null;
+    return Number.isFinite(value) ? format(value) : null;
   }
 
   function labelFraction(scale) {
@@ -18853,7 +18918,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.7.0";
+  var version = "5.7.1";
 
   var Default = 'default';
 
@@ -21230,8 +21295,8 @@
 
     return {
       // MATH functions
-      isNaN:    'isNaN',
-      isFinite: 'isFinite',
+      isNaN:    'Number.isNaN',
+      isFinite: 'Number.isFinite',
       abs:      'Math.abs',
       acos:     'Math.acos',
       asin:     'Math.asin',
@@ -27097,54 +27162,6 @@
     return this.addData(name, DataScope.fromEntries(this, entries));
   };
 
-  function defaults(configs) {
-    return (configs || []).reduce((out, config) => {
-      for (var key in config) {
-        if (key === 'signals') {
-          out.signals = mergeNamed(out.signals, config.signals);
-        } else {
-          var r = key === 'legend' ? {'layout': 1}
-            : key === 'style' ? true : null;
-          copy$1(out, key, config[key], r);
-        }
-      }
-      return out;
-    }, defaults$1());
-  }
-
-  function copy$1(output, key, value, recurse) {
-    var k, o;
-    if (isObject(value) && !isArray(value)) {
-      o = isObject(output[key]) ? output[key] : (output[key] = {});
-      for (k in value) {
-        if (recurse && (recurse === true || recurse[k])) {
-          copy$1(o, k, value[k]);
-        } else {
-          o[k] = value[k];
-        }
-      }
-    } else {
-      output[key] = value;
-    }
-  }
-
-  function mergeNamed(a, b) {
-    if (a == null) return b;
-
-    const map = {}, out = [];
-
-    function add(_) {
-      if (!map[_.name]) {
-        map[_.name] = 1;
-        out.push(_);
-      }
-    }
-
-    b.forEach(add);
-    a.forEach(add);
-    return out;
-  }
-
   var defaultFont = 'sans-serif',
       defaultSymbolSize = 30,
       defaultStrokeWidth = 2,
@@ -27158,7 +27175,7 @@
    * Users can provide their own (sub-)set of these default values
    * by passing in a config object to the top-level parse method.
    */
-  function defaults$1() {
+  function defaults() {
     return {
       // default padding around visualization
       padding: 0,
@@ -27368,9 +27385,12 @@
   }
 
   function parse$5(spec, config) {
-    if (!isObject(spec)) error('Input Vega specification must be an object.');
-    return parseView(spec, new Scope$1(defaults([config, spec.config])))
-      .toRuntime();
+    if (!isObject(spec)) {
+      error('Input Vega specification must be an object.');
+    }
+
+    config = mergeConfig(defaults(), config, spec.config);
+    return parseView(spec, new Scope$1(config)).toRuntime();
   }
 
   // -- Transforms -----
@@ -27490,6 +27510,7 @@
   exports.loader = loader;
   exports.logger = logger;
   exports.merge = merge;
+  exports.mergeConfig = mergeConfig;
   exports.multiLineOffset = multiLineOffset;
   exports.one = one;
   exports.openTag = openTag;
@@ -27569,6 +27590,7 @@
   exports.utcquarter = utcquarter;
   exports.version = version;
   exports.visitArray = visitArray;
+  exports.writeConfig = writeConfig;
   exports.zero = zero;
   exports.zoomLinear = zoomLinear;
   exports.zoomLog = zoomLog;
