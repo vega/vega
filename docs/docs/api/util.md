@@ -254,6 +254,18 @@ map.clean(); // invoke garbage collection, clears empty entries
 
 By using basic JavaScript objects to hash values and avoiding calls to the built-in JavaScript `delete` operator, fastmaps provide good performance. However, this speed comes at the cost of some object bloat, requiring periodic garbage collection in the case of many deletions. The fastmap object provides a *clean* method for requesting garbage collection of empty map entries. The *test* method is a getter/setter for providing an optional boolean-valued function that indicates additional objects (not just empty entries from deleted keys) that should be removed during garbage collection.
 
+<a name="mergeConfig" href="#mergeConfig">#</a>
+vega.<b>mergeConfig</b>(<i>...config</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Merges a collection of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
+
+<a name="writeConfig" href="#writeConfig">#</a>
+vega.<b>writeConfig</b>(<i>config</i>, <i>key</i>, <i>value</i>[, <i>recurse</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Writes a value to a Vega configuration object. Given a *config* object and a configuration property *key* and *value*, appropriately assign the value to the config object. The *recurse* parameter controls if recursive merging (as opposed to overwriting) is performed: if `false` or undefined, no recursion is performed; if `true` one level of recursive merge is performed; if *recurse* is object-valued, one level of recursive merge is performed for keys that the *recurse* object maps to a truthy value. This method is a helper method used within *mergeConfig*.
+
 
 ## <a name="arrays"></a>Arrays
 
