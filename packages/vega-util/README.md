@@ -250,9 +250,9 @@ Returns `true` if the input *object* has a named *property* defined on it, other
 vega.<b>mergeConfig</b>(<i>configArray</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
 
- Merges an array of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
+Merges a collection of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
 
- <a name="writeConfig" href="#writeConfig">#</a>
+<a name="writeConfig" href="#writeConfig">#</a>
 vega.<b>writeConfig</b>(<i>config</i>, <i>key</i>, <i>value</i>[, <i>recurse</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
 
