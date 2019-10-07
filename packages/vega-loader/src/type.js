@@ -72,5 +72,5 @@ function isNumber(_) {
 }
 
 function isInteger(_) {
-  return isNumber(_) && (_=+_) === ~~_;
+  return isNumber(_) && Number.isInteger(+_);
 }
