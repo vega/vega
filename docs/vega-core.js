@@ -2482,9 +2482,12 @@
    * @return {Pulse} - This pulse instance.
    */
   prototype$3.modifies = function(_) {
-    var fields = array(_),
-        hash = this.fields || (this.fields = {});
-    fields.forEach(function(f) { hash[f] = true; });
+    var hash = this.fields || (this.fields = {});
+    if (isArray(_)) {
+      _.forEach(f => hash[f] = true);
+    } else {
+      hash[_] = true;
+    }
     return this;
   };
 
@@ -7229,15 +7232,15 @@
       });
 
       pulse.visit(pulse.MOD, t => {
-        out.mod.push(rederive(t, lut[tupleid(t)]));
+        var dt = lut[tupleid(t)], k;
+        for (k in t) {
+          dt[k] = t[k];
+          // down stream writes may overwrite re-derived tuples
+          // conservatively mark all source fields as modified
+          out.modifies(k);
+        }
+        out.mod.push(dt);
       });
-
-      if (pulse.mod.length) {
-        // down stream writes may overwrite re-derived tuples
-        // conservatively mark all source fields as modified
-        pulse.materialize(pulse.MOD);
-        out.modifies(Object.keys(pulse.mod[0]));
-      }
     }
 
     return out;
@@ -18918,7 +18921,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.7.1";
+  var version = "5.7.2";
 
   var Default = 'default';
 
