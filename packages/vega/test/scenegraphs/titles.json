@@ -2039,7 +2039,7 @@
                             {
                               "align": "center",
                               "baseline": "top",
-                              "fill": "#000",
+                              "fill": "purple",
                               "opacity": 1,
                               "text": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
                               "angle": -90,
@@ -3089,7 +3089,8 @@
                               "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "fontStyle": "italic"
                             }
                           ],
                           "zindex": 0
@@ -4140,7 +4141,7 @@
                         {
                           "marktype": "text",
                           "role": "title-subtitle",
-                          "interactive": false,
+                          "interactive": true,
                           "clip": false,
                           "items": [
                             {
@@ -4154,7 +4155,8 @@
                               "angle": 0,
                               "limit": 400,
                               "font": "sans-serif",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontStyle": "italic"
                             }
                           ],
                           "zindex": 0

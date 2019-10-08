@@ -1,7 +1,7 @@
 import {
   numberValue, stringValue, textOrSignal, anchorValue,
   alignValue, baselineValue, colorValue, fontWeightValue,
-  def, enums, object, oneOf, pattern, ref,
+  def, enums, object, anyOf, oneOf, pattern, ref,
   booleanType, numberType, stringType, orSignal, numberOrSignal
 } from './util';
 
@@ -49,7 +49,7 @@ const title = oneOf(
     subtitlePadding: numberOrSignal,
 
     // custom encoders
-    encode: oneOf(
+    encode: anyOf(
       titleEncode, // deprecated! (v5.7.0)
       object({
         group: guideEncodeRef,
