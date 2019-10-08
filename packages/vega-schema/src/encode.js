@@ -170,11 +170,6 @@ const colorValue = oneOf(
   ref('baseColorValue')
 );
 
-const pathScaleValue = object({
-  _x_: numberType,
-  _y_: numberType
-});
-
 const encodeEntryRef = def('encodeEntry');
 const encodeEntry = object({
   // Common Properties
@@ -213,7 +208,8 @@ const encodeEntry = object({
 
   // Path-mark properties
   path: stringValueRef,
-  scale: ref('pathScaleValue'),
+  scaleX: numberValueRef,
+  scaleY: numberValueRef,
 
   // Arc-mark properties
   innerRadius: numberValueRef,
@@ -280,8 +276,7 @@ export default {
     colorValue,
     gradientStops,
     linearGradient,
-    radialGradient,
-    pathScaleValue,
+    radialGradient
   },
   defs: {
     rule,

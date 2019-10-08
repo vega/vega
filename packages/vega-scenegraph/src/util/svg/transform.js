@@ -17,5 +17,5 @@ export function translateItem(item) {
 export function transformItem(item) {
   return translate(item.x || 0, item.y || 0)
     + (item.angle ? ' ' + rotate(item.angle) : '')
-    + (item.scale ? ' ' + scale(item.scale.x || 1, item.scale.y || 1) : '');   
+    + (item.scaleX || item.scaleY ? ' ' + scale(item.scaleX || 1, item.scaleY || 1) : '');   
 }

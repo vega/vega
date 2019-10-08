@@ -16,8 +16,8 @@ function attr(emit, item) {
 function path(context, item) {
   var path = item.path;
   if (path == null) return true;
-  var scaleX = item.scale == null ? 1 : item.scale.x || 1;
-  var scaleY = item.scale == null ? 1 : item.scale.y || 1;
+  var scaleX = item.scaleX || 1;
+  var scaleY = item.scaleY || 1;
   var hasRotate = context.rotate;
   var hasTranslate = context.translate;
   var a = (item.angle || 0) * DegToRad;

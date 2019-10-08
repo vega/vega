@@ -26,7 +26,6 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [ColorValue](#ColorValue)
 - [FieldValue](#FieldValue)
 - [GradientValue](#GradientValue)
-- [PathScale](#PathScale)
 {: .column-list }
 
 ## Literal Values
@@ -362,28 +361,3 @@ Defines a linear gradient based on a scale range to determine colors for a `fill
 
 [Back to top](#reference)
 
-<br/><a name="PathScale" href="#PathScale">#</a>
-**PathScale**
-
-Defines a scale factor that will apply to a path.
-
-| Property      | Type            | Description    |
-| :------------ | :-------------: | :------------- |
-| x             | {% include type t="Number" %}    | The width scale factor for the path.|
-| y             | {% include type t="Number" %}    | The height scale factor for the path.|
-
-<b>Example</b>
-
-{: .suppress-error}
-```json
-{
-  "encode": {
-    "scale": {
-      "x":0.5,
-      "y":0.5
-    }
-  }
-}
-```
-
-[Back to top](#reference)
