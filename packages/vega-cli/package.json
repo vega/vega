@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "canvas": "^2.6.0",
-    "vega": "5.7.1",
+    "vega": "5.7.2",
     "yargs": "14"
   }
 }
