@@ -6171,7 +6171,7 @@
               "$ref": "#/refs/numberOrSignal"
             },
             "encode": {
-              "oneOf": [
+              "anyOf": [
                 {
                   "type": "object",
                   "additionalProperties": false,
