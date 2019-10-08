@@ -163,7 +163,12 @@ export const spec: Spec = {
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"}
+        "subtitlePadding": {"signal": "subtitlePadding"},
+        "encode": {
+          "enter": {
+            "fill": {"value": "purple"}
+          }
+        }
       },
 
       "marks": [
@@ -213,7 +218,14 @@ export const spec: Spec = {
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"}
+        "subtitlePadding": {"signal": "subtitlePadding"},
+        "encode": {
+          "title": {
+            "enter": {
+              "fontStyle": {"value": "italic"}
+            }
+          }
+        }
       },
 
       "marks": [
@@ -263,7 +275,18 @@ export const spec: Spec = {
         "anchor": {"signal": "titleAnchor"},
         "offset": {"signal": "titleOffset"},
         "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"}
+        "subtitlePadding": {"signal": "subtitlePadding"},
+        "encode": {
+          "subtitle": {
+            "interactive": true,
+            "update": {
+              "fontStyle": {"value": "italic"}
+            },
+            "hover": {
+              "fontStyle": {"value": "normal"}
+            }
+          }
+        }
       },
 
       "marks": [
