@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "5.7.1",
+  "version": "5.7.2",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "vega-crossfilter": "^4.0.1",
-    "vega-dataflow": "^5.4.0",
+    "vega-dataflow": "^5.4.1",
     "vega-encode": "^4.4.1",
     "vega-event-selector": "^2.0.1",
     "vega-expression": "^2.6.2",
@@ -47,7 +47,7 @@
     "vega-scale": "^4.1.3",
     "vega-scenegraph": "^4.3.1",
     "vega-statistics": "^1.6.0",
-    "vega-transforms": "^4.4.1",
+    "vega-transforms": "^4.4.2",
     "vega-typings": "^0.10.0",
     "vega-util": "^1.12.0",
     "vega-view": "^5.3.1",
