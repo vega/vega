@@ -61,26 +61,24 @@ The following example shows how to set custom color and font properties for titl
 
 {: .suppress-error}
 ```json
-"title": [
-  {
-    "text": "Title Text",
-    "subtitle": "Subtitle Text",
-    "encode": {
-      "title": {
-        "enter": {
-          "fill": {"value": "purple"}
-        }
+"title": {
+  "text": "Title Text",
+  "subtitle": "Subtitle Text",
+  "encode": {
+    "title": {
+      "enter": {
+        "fill": {"value": "purple"}
+      }
+    },
+    "subtitle": {
+      "interactive": true,
+      "update": {
+        "fontStyle": {"value": "italic"}
       },
-      "subtitle": {
-        "interactive": true,
-        "update": {
-          "fontStyle": {"value": "italic"}
-        },
-        "hover": {
-          "fontStyle": {"value": "normal"}
-        }
+      "hover": {
+        "fontStyle": {"value": "normal"}
       }
     }
   }
-]
+}
 ```
