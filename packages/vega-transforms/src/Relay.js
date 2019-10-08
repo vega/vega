@@ -1,4 +1,4 @@
-import {derive, rederive, Transform, tupleid} from 'vega-dataflow';
+import {derive, Transform, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -43,15 +43,15 @@ prototype.transform = function(_, pulse) {
     });
 
     pulse.visit(pulse.MOD, t => {
-      out.mod.push(rederive(t, lut[tupleid(t)]));
+      var dt = lut[tupleid(t)], k;
+      for (k in t) {
+        dt[k] = t[k];
+        // down stream writes may overwrite re-derived tuples
+        // conservatively mark all source fields as modified
+        out.modifies(k);
+      }
+      out.mod.push(dt);
     });
-
-    if (pulse.mod.length) {
-      // down stream writes may overwrite re-derived tuples
-      // conservatively mark all source fields as modified
-      pulse.materialize(pulse.MOD);
-      out.modifies(Object.keys(pulse.mod[0]));
-    }
   }
 
   return out;
