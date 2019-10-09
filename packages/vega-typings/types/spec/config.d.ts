@@ -355,23 +355,7 @@ export type AxisConfig = BaseAxis;
 /**
  * Legend Config without signals so we can use it in Vega-Lite.
  */
-export interface LegendConfig<
-  N = NumberValue,
-  NS = number | SignalRef,
-  S = StringValue,
-  C = ColorValue,
-  FW = FontWeightValue,
-  FS = FontStyleValue,
-  A = AlignValue,
-  TB = TextBaselineValue,
-  LA = LayoutAlign | SignalRef,
-  LO = LabelOverlap | SignalRef,
-  SY = SymbolShapeValue,
-  DA = DashArrayValue,
-  O = OrientValue,
-  AN = AnchorValue,
-  LOR = LegendOrient | SignalRef
-> extends BaseLegend<N, NS, S, C, FW, FS, A, TB, LA, LO, SY, DA, O, AN, LOR> {
+export interface LegendConfig extends BaseLegend {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
@@ -382,28 +366,28 @@ export interface LegendConfig<
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
    */
-  gradientLabelLimit?: N;
+  gradientLabelLimit?: NumberValue;
 
   /**
    * Vertical offset in pixels for color ramp gradient labels.
    *
    * __Default value:__ `2`.
    */
-  gradientLabelOffset?: N;
+  gradientLabelOffset?: NumberValue;
 
   /**
    * Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"transparent"`.
    */
-  symbolBaseFillColor?: C;
+  symbolBaseFillColor?: ColorValue;
 
   /**
    * Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"gray"`.
    */
-  symbolBaseStrokeColor?: C;
+  symbolBaseStrokeColor?: ColorValue;
 
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for symbol legends.
@@ -420,7 +404,7 @@ export interface LegendConfig<
   /**
    * Border stroke width for the full legend.
    */
-  strokeWidth?: N;
+  strokeWidth?: NumberValue;
 
   /**
    * Legend orient group layout parameters.
