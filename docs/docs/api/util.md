@@ -258,7 +258,7 @@ By using basic JavaScript objects to hash values and avoiding calls to the built
 vega.<b>mergeConfig</b>(<i>...config</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
 
-Merges a collection of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the array have higher precedence, and so may override settings provided by earlier objects.
+Merges a collection of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the arguments list have higher precedence, and so may override settings provided by earlier objects.
 
 <a name="writeConfig" href="#writeConfig">#</a>
 vega.<b>writeConfig</b>(<i>config</i>, <i>key</i>, <i>value</i>[, <i>recurse</i>])
@@ -346,6 +346,12 @@ vega.<b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that translates the domain by a _delta_ using a power scale transform parameterized by the provided _exponent_. The _delta_ value is expressed as a fraction of the current domain span, and may be positive or negative to indicate the translation direction. The return value is a two-element array indicating the starting and ending value of the translated (panned) domain.
 
+<a name="panSymlog" href="#panSymlog">#</a>
+vega.<b>panSymlog</b>(<i>domain</i>, <i>delta</i>, <i>constant</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that translates the domain by a _delta_ using a symlog (symmetric log) scale transform parameterized by the provided _constant_. The _delta_ value is expressed as a fraction of the current domain span, and may be positive or negative to indicate the translation direction. The return value is a two-element array indicating the starting and ending value of the translated (panned) domain.
+
 <a name="peek" href="#peek">#</a>
 vega.<b>peek</b>(<i>array</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/peek.js "Source")
@@ -398,6 +404,12 @@ vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a power scale transform parameterized by the provided _exponent_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
+
+<a name="zoomSymlog" href="#zoomSymlog">#</a>
+vega.<b>zoomSymlog</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>constant</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a symlog (symmetric log) scale transform parameterized by the provided _constant_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
 
 ## <a name="dates"></a>Dates
 
