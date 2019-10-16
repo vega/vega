@@ -33,7 +33,7 @@
     "vega-scale": "^4.0.0",
     "vega-scenegraph": "^4.0.0",
     "vega-selections": "^5.0.1",
-    "vega-statistics": "^1.3.0",
+    "vega-statistics": "^1.6.0",
     "vega-util": "^1.11.2"
   }
 }
