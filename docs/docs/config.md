@@ -504,6 +504,23 @@ This example sets new default color palettes.
 
 Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
 
+Vega defines a set of default colors as signals that may be used within custom configurations and specifications. The predefined colors are
+<span class="no-br"><span class="color-swatch" title="#4c78a8" style="background: rgb(76, 120, 168);"></span>`blue`</span>,
+<span class="no-br"><span class="color-swatch" title="#f58518" style="background: rgb(245, 133, 24);"></span>`orange`</span>,
+<span class="no-br"><span class="color-swatch" title="#e45756" style="background: rgb(228, 87, 86);"></span>`red`</span>,
+<span class="no-br"><span class="color-swatch" title="#72b7b2" style="background: rgb(114, 183, 178);"></span>`teal`</span>,
+<span class="no-br"><span class="color-swatch" title="#54a24b" style="background: rgb(84, 162, 75);"></span>`green`</span>,
+<span class="no-br"><span class="color-swatch" title="#eeca3b" style="background: rgb(238, 202, 59);"></span>`yellow`</span>,
+<span class="no-br"><span class="color-swatch" title="#b279a2" style="background: rgb(178, 121, 162);"></span>`purple`</span>,
+<span class="no-br"><span class="color-swatch" title="#ff9da6" style="background: rgb(255, 157, 166);"></span>`pink`</span>,
+<span class="no-br"><span class="color-swatch" title="#9d755d" style="background: rgb(157, 117, 93);"></span>`brown`</span>,
+<span class="no-br"><span class="color-swatch" title="black" style="background: black;"></span>`black`</span>,
+<span class="no-br"><span class="color-swatch" title="darkgray" style="background: darkgray;"></span>`darkgray`</span>,
+<span class="no-br"><span class="color-swatch" title="gray" style="background: gray;"></span>`gray`</span>,
+<span class="no-br"><span class="color-swatch" title="silver" style="background: silver;"></span>`silver`</span>,
+<span class="no-br"><span class="color-swatch" title="lightgray" style="background: lightgray;"></span>`lightgray`</span>, and
+<span class="no-br"><span class="color-swatch" title="white" style="background: white;"></span>`white`</span>. These colors can be overridden in a  custom configuration.
+
 ### Usage
 
 To enable dynamic scaling of font sizes, one can define a signal that for a font size scale factor, then define other config entries relative to this value:

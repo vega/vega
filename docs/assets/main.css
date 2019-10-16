@@ -538,6 +538,18 @@ ul.column-set, .column-set ul {
   display: block;
 }
 
+/* Config */
+.color-swatch {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-bottom: -0.2em;
+}
+
+.no-br {
+  white-space: nowrap;
+}
+
 /* Dropdown */
 nav .dropdown-content {
   position: absolute;

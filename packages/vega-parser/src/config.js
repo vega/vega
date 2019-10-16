@@ -1,10 +1,9 @@
-var defaultFont = 'sans-serif',
+import {scheme} from 'vega-scale'
+
+const tab10 = scheme('tableau10');
+const defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
-    defaultStrokeWidth = 2,
-    defaultColor = '#4c78a8',
-    black = '#000',
-    gray = '#888',
-    lightGray = '#ddd';
+    defaultStrokeWidth = 2
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -38,23 +37,23 @@ export default function() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
+    arc: { fill: {signal: 'blue'} },
+    area: { fill: {signal: 'blue'} },
     image: null,
     line: {
-      stroke: defaultColor,
+      stroke: {signal: 'blue'},
       strokeWidth: defaultStrokeWidth
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: { stroke: {signal: 'blue'} },
+    rect: { fill: {signal: 'blue'} },
+    rule: { stroke: {signal: 'black'} },
+    shape: { stroke: {signal: 'blue'} },
     symbol: {
-      fill: defaultColor,
+      fill: {signal: 'blue'},
       size: 64
     },
     text: {
-      fill: black,
+      fill: {signal: 'black'},
       font: defaultFont,
       fontSize: 11
     },
@@ -63,27 +62,27 @@ export default function() {
     style: {
       // axis & legend labels
       'guide-label': {
-        fill: black,
+        fill: {signal: 'black'},
         font: defaultFont,
         fontSize: 10
       },
       // axis & legend titles
       'guide-title': {
-        fill: black,
+        fill: {signal: 'black'},
         font: defaultFont,
         fontSize: 11,
         fontWeight: 'bold'
       },
       // headers, including chart title
       'group-title': {
-        fill: black,
+        fill: {signal: 'black'},
         font: defaultFont,
         fontSize: 13,
         fontWeight: 'bold'
       },
       // chart subtitle
       'group-subtitle': {
-        fill: black,
+        fill: {signal: 'black'},
         font: defaultFont,
         fontSize: 12
       },
@@ -105,7 +104,7 @@ export default function() {
       // defaults for styled group marks in Vega-Lite
       cell: {
         fill: 'transparent',
-        stroke: lightGray
+        stroke: {signal: 'lightgray'}
       }
     },
 
@@ -124,16 +123,16 @@ export default function() {
       bandPosition: 0.5,
       domain: true,
       domainWidth: 1,
-      domainColor: gray,
+      domainColor: {signal: 'gray'},
       grid: false,
       gridWidth: 1,
-      gridColor: lightGray,
+      gridColor: {signal: 'lightgray'},
       labels: true,
       labelAngle: 0,
       labelLimit: 180,
       labelPadding: 2,
       ticks: true,
-      tickColor: gray,
+      tickColor: {signal: 'gray'},
       tickOffset: 0,
       tickRound: true,
       tickSize: 5,
@@ -162,7 +161,7 @@ export default function() {
       gradientDirection: 'vertical',
       gradientLength: 200,
       gradientThickness: 16,
-      gradientStrokeColor: lightGray,
+      gradientStrokeColor: {signal: 'lightgray'},
       gradientStrokeWidth: 0,
       gradientLabelOffset: 2,
       labelAlign: 'left',
@@ -176,7 +175,7 @@ export default function() {
       symbolOffset: 0,
       symbolStrokeWidth: 1.5,
       symbolBaseFillColor: 'transparent',
-      symbolBaseStrokeColor: gray,
+      symbolBaseStrokeColor: {signal: 'gray'},
       titleLimit: 180,
       titleOrient: 'top',
       titlePadding: 5,
@@ -216,6 +215,53 @@ export default function() {
         'triangle-down',
         'triangle-left'
       ]
-    }
+    },
+
+    signals: [{
+      name: 'blue',
+      value: tab10[0]
+    }, {
+      name: 'orange',
+      value: tab10[1]
+    }, {
+      name: 'red',
+      value: tab10[2]
+    }, {
+      name: 'teal',
+      value: tab10[3]
+    }, {
+      name: 'green',
+      value: tab10[4]
+    }, {
+      name: 'yellow',
+      value: tab10[5]
+    }, {
+      name: 'purple',
+      value: tab10[6]
+    }, {
+      name: 'pink',
+      value: tab10[7]
+    }, {
+      name: 'brown',
+      value: tab10[8]
+    }, {
+      name: 'black',
+      value: 'black'
+    }, {
+      name: 'darkgray',
+      value: 'darkgrey'
+    }, {
+      name: 'gray',
+      value: 'grey'
+    }, {
+      name: 'silver',
+      value: 'silver'
+    }, {
+      name: 'lightgray',
+      value: 'lightgrey'
+    }, {
+      name: 'white',
+      value: 'white'
+    }]
   };
 }
