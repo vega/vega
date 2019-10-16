@@ -4053,8 +4053,9 @@
   function estimateBandwidth(array) {
     var n = array.length,
         q = quartiles(array),
-        h = (q[2] - q[0]) / 1.34;
-    return 1.06 * Math.min(Math.sqrt(d3Array.variance(array)), h) * Math.pow(n, -0.2);
+        h = ((q[2] - q[0]) / 1.34),
+        v = h ? Math.min(d3Array.deviation(array), h) : (v || Math.abs(array[0]) || 1);
+    return 1.06 * v * Math.pow(n, -0.2);
   }
 
   function sampleLogNormal(mean, stdev) {
@@ -18921,7 +18922,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.7.2";
+  var version = "5.7.3";
 
   var Default = 'default';
 

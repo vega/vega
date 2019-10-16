@@ -5048,6 +5048,11 @@
     if (count > 1) return sum / (count - 1);
   }
 
+  function deviation(values, valueof) {
+    const v = variance(values, valueof);
+    return v ? Math.sqrt(v) : v;
+  }
+
   function extent$1(values, valueof) {
     let min;
     let max;
@@ -5724,8 +5729,9 @@
   function estimateBandwidth(array) {
     var n = array.length,
         q = quartiles(array),
-        h = (q[2] - q[0]) / 1.34;
-    return 1.06 * Math.min(Math.sqrt(variance(array)), h) * Math.pow(n, -0.2);
+        h = ((q[2] - q[0]) / 1.34),
+        v = h ? Math.min(deviation(array), h) : (v || Math.abs(array[0]) || 1);
+    return 1.06 * v * Math.pow(n, -0.2);
   }
 
   function sampleLogNormal(mean, stdev) {
@@ -31519,7 +31525,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.7.2";
+  var version = "5.7.3";
 
   var Default = 'default';
 
