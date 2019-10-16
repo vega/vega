@@ -1,7 +1,7 @@
 import gaussian from './normal';
 import quartiles from './quartiles';
 import {random} from './random';
-import {variance} from 'd3-array';
+import {deviation} from 'd3-array';
 
 // TODO: support for additional kernels?
 export default function(support, bandwidth) {
@@ -56,6 +56,7 @@ export default function(support, bandwidth) {
 function estimateBandwidth(array) {
   var n = array.length,
       q = quartiles(array),
-      h = (q[2] - q[0]) / 1.34;
-  return 1.06 * Math.min(Math.sqrt(variance(array)), h) * Math.pow(n, -0.2);
+      h = ((q[2] - q[0]) / 1.34),
+      v = h ? Math.min(deviation(array), h) : (v || Math.abs(array[0]) || 1);
+  return 1.06 * v * Math.pow(n, -0.2);
 }
