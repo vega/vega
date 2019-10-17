@@ -1,9 +1,20 @@
-import {scheme} from 'vega-scale'
+import {scheme} from 'vega-scale';
+import {scaleLinear} from 'd3-scale';
+import {range} from 'd3-array';
+import {interpolateLab} from 'd3-interpolate';
 
 const tab10 = scheme('tableau10');
 const defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
-    defaultStrokeWidth = 2
+    defaultStrokeWidth = 2,
+    blue = {signal: 'colors.blue'},
+    lightgray = {signal: 'colors.gray8'},
+    gray = {signal: 'colors.gray5'},
+    black = {signal: 'colors.gray0'};
+
+const grays = range(11).map(scaleLinear()
+  .range(["black", "white"]).domain([0,10])
+  .interpolate(interpolateLab))
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -37,23 +48,23 @@ export default function() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: {signal: 'blue'} },
-    area: { fill: {signal: 'blue'} },
+    arc: { fill: blue },
+    area: { fill: blue },
     image: null,
     line: {
-      stroke: {signal: 'blue'},
+      stroke: blue,
       strokeWidth: defaultStrokeWidth
     },
-    path: { stroke: {signal: 'blue'} },
-    rect: { fill: {signal: 'blue'} },
-    rule: { stroke: {signal: 'black'} },
-    shape: { stroke: {signal: 'blue'} },
+    path: { stroke: blue },
+    rect: { fill: blue },
+    rule: { stroke: black },
+    shape: { stroke: blue },
     symbol: {
-      fill: {signal: 'blue'},
+      fill: blue,
       size: 64
     },
     text: {
-      fill: {signal: 'black'},
+      fill: black,
       font: defaultFont,
       fontSize: 11
     },
@@ -62,27 +73,27 @@ export default function() {
     style: {
       // axis & legend labels
       'guide-label': {
-        fill: {signal: 'black'},
+        fill: black,
         font: defaultFont,
         fontSize: 10
       },
       // axis & legend titles
       'guide-title': {
-        fill: {signal: 'black'},
+        fill: black,
         font: defaultFont,
         fontSize: 11,
         fontWeight: 'bold'
       },
       // headers, including chart title
       'group-title': {
-        fill: {signal: 'black'},
+        fill: black,
         font: defaultFont,
         fontSize: 13,
         fontWeight: 'bold'
       },
       // chart subtitle
       'group-subtitle': {
-        fill: {signal: 'black'},
+        fill: black,
         font: defaultFont,
         fontSize: 12
       },
@@ -104,7 +115,7 @@ export default function() {
       // defaults for styled group marks in Vega-Lite
       cell: {
         fill: 'transparent',
-        stroke: {signal: 'lightgray'}
+        stroke: lightgray
       }
     },
 
@@ -123,16 +134,16 @@ export default function() {
       bandPosition: 0.5,
       domain: true,
       domainWidth: 1,
-      domainColor: {signal: 'gray'},
+      domainColor: gray,
       grid: false,
       gridWidth: 1,
-      gridColor: {signal: 'lightgray'},
+      gridColor: lightgray,
       labels: true,
       labelAngle: 0,
       labelLimit: 180,
       labelPadding: 2,
       ticks: true,
-      tickColor: {signal: 'gray'},
+      tickColor: gray,
       tickOffset: 0,
       tickRound: true,
       tickSize: 5,
@@ -161,7 +172,7 @@ export default function() {
       gradientDirection: 'vertical',
       gradientLength: 200,
       gradientThickness: 16,
-      gradientStrokeColor: {signal: 'lightgray'},
+      gradientStrokeColor: lightgray,
       gradientStrokeWidth: 0,
       gradientLabelOffset: 2,
       labelAlign: 'left',
@@ -175,7 +186,7 @@ export default function() {
       symbolOffset: 0,
       symbolStrokeWidth: 1.5,
       symbolBaseFillColor: 'transparent',
-      symbolBaseStrokeColor: {signal: 'gray'},
+      symbolBaseStrokeColor: gray,
       titleLimit: 180,
       titleOrient: 'top',
       titlePadding: 5,
@@ -218,50 +229,29 @@ export default function() {
     },
 
     signals: [{
-      name: 'blue',
-      value: tab10[0]
-    }, {
-      name: 'orange',
-      value: tab10[1]
-    }, {
-      name: 'red',
-      value: tab10[2]
-    }, {
-      name: 'teal',
-      value: tab10[3]
-    }, {
-      name: 'green',
-      value: tab10[4]
-    }, {
-      name: 'yellow',
-      value: tab10[5]
-    }, {
-      name: 'purple',
-      value: tab10[6]
-    }, {
-      name: 'pink',
-      value: tab10[7]
-    }, {
-      name: 'brown',
-      value: tab10[8]
-    }, {
-      name: 'black',
-      value: 'black'
-    }, {
-      name: 'darkgray',
-      value: 'darkgrey'
-    }, {
-      name: 'gray',
-      value: 'grey'
-    }, {
-      name: 'silver',
-      value: 'silver'
-    }, {
-      name: 'lightgray',
-      value: 'lightgrey'
-    }, {
-      name: 'white',
-      value: 'white'
+      name: 'colors',
+      value: {
+        blue: tab10[0],
+        orange: tab10[1],
+        red: tab10[2],
+        teal: tab10[3],
+        green: tab10[4],
+        yellow: tab10[5],
+        purple: tab10[6],
+        pink: tab10[7],
+        brown: tab10[8],
+        gray0: grays[0],
+        gray1: grays[1],
+        gray2: grays[2],
+        gray3: grays[3],
+        gray4: grays[4],
+        gray5: grays[5],
+        gray6: grays[6],
+        gray7: grays[7],
+        gray8: grays[8],
+        gray9: grays[9],
+        gray10: grays[10]
+      }
     }]
   };
 }

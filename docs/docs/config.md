@@ -504,22 +504,27 @@ This example sets new default color palettes.
 
 Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
 
-Vega defines a set of default colors as signals that may be used within custom configurations and specifications. The predefined colors are
-<span class="no-br"><span class="color-swatch" title="#4c78a8" style="background: rgb(76, 120, 168);"></span>`blue`</span>,
-<span class="no-br"><span class="color-swatch" title="#f58518" style="background: rgb(245, 133, 24);"></span>`orange`</span>,
-<span class="no-br"><span class="color-swatch" title="#e45756" style="background: rgb(228, 87, 86);"></span>`red`</span>,
-<span class="no-br"><span class="color-swatch" title="#72b7b2" style="background: rgb(114, 183, 178);"></span>`teal`</span>,
-<span class="no-br"><span class="color-swatch" title="#54a24b" style="background: rgb(84, 162, 75);"></span>`green`</span>,
-<span class="no-br"><span class="color-swatch" title="#eeca3b" style="background: rgb(238, 202, 59);"></span>`yellow`</span>,
-<span class="no-br"><span class="color-swatch" title="#b279a2" style="background: rgb(178, 121, 162);"></span>`purple`</span>,
-<span class="no-br"><span class="color-swatch" title="#ff9da6" style="background: rgb(255, 157, 166);"></span>`pink`</span>,
-<span class="no-br"><span class="color-swatch" title="#9d755d" style="background: rgb(157, 117, 93);"></span>`brown`</span>,
-<span class="no-br"><span class="color-swatch" title="black" style="background: black;"></span>`black`</span>,
-<span class="no-br"><span class="color-swatch" title="darkgray" style="background: darkgray;"></span>`darkgray`</span>,
-<span class="no-br"><span class="color-swatch" title="gray" style="background: gray;"></span>`gray`</span>,
-<span class="no-br"><span class="color-swatch" title="silver" style="background: silver;"></span>`silver`</span>,
-<span class="no-br"><span class="color-swatch" title="lightgray" style="background: lightgray;"></span>`lightgray`</span>, and
-<span class="no-br"><span class="color-swatch" title="white" style="background: white;"></span>`white`</span>. These colors can be overridden in a  custom configuration.
+Vega defines a signal `colors` of default system colors that may be used within custom configurations and specifications. The predefined colors are
+<span class="no-br"><span class="color-swatch" title="#4c78a8" style="background: rgb(76, 120, 168);"></span>`colors.blue`</span>,
+<span class="no-br"><span class="color-swatch" title="#f58518" style="background: rgb(245, 133, 24);"></span>`colors.orange`</span>,
+<span class="no-br"><span class="color-swatch" title="#e45756" style="background: rgb(228, 87, 86);"></span>`colors.red`</span>,
+<span class="no-br"><span class="color-swatch" title="#72b7b2" style="background: rgb(114, 183, 178);"></span>`colors.teal`</span>,
+<span class="no-br"><span class="color-swatch" title="#54a24b" style="background: rgb(84, 162, 75);"></span>`colors.green`</span>,
+<span class="no-br"><span class="color-swatch" title="#eeca3b" style="background: rgb(238, 202, 59);"></span>`colors.yellow`</span>,
+<span class="no-br"><span class="color-swatch" title="#b279a2" style="background: rgb(178, 121, 162);"></span>`colors.purple`</span>,
+<span class="no-br"><span class="color-swatch" title="#ff9da6" style="background: rgb(255, 157, 166);"></span>`colors.pink`</span>,
+<span class="no-br"><span class="color-swatch" title="#9d755d" style="background: rgb(157, 117, 93);"></span>`colors.brown`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(0, 0, 0)" style="background: rgb(0, 0, 0);"></span>`colors.gray0`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(27, 27, 27)" style="background: rgb(27, 27, 27);"></span>`colors.gray1`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(48, 48, 48)" style="background: rgb(48, 48, 48);"></span>`colors.gray2`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(71, 71, 71)" style="background: rgb(71, 71, 71);"></span>`colors.gray3`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(94, 94, 94)" style="background: rgb(94, 94, 94);"></span>`colors.gray4`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(119, 119, 119)" style="background: rgb(119, 119, 119);"></span>`colors.gray5`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(145, 145, 145)" style="background: rgb(145, 145, 145);"></span>`colors.gray6`</span>
+<span class="no-br"><span class="color-swatch" title="rgb(171, 171, 171)" style="background: rgb(171, 171, 171);"></span>`colors.gray7`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(198, 198, 198)" style="background: rgb(198, 198, 198);"></span>`colors.gray8`</span>,
+<span class="no-br"><span class="color-swatch" title="rgb(226, 226, 226)" style="background: rgb(226, 226, 226);"></span>`colors.gray9`</span>, and
+<span class="no-br"><span class="color-swatch" title="rgb(255, 255, 255)" style="background: rgb(255, 255, 255);"></span>`colors.gray10`</span>. These colors can be overridden in a  custom configuration such as a dark theme.
 
 ### Usage
 
