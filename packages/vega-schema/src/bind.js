@@ -21,7 +21,13 @@ const bind = oneOf(
   object({
     _input_: enums([Radio, Select]),
     element: elementRef,
-    _options_: arrayType,
+    _options_: oneOf(
+      arrayType,
+      object({
+        data: stringType,
+        field: stringType
+      })
+    ),
     debounce: numberType,
     name: stringType
   }),
