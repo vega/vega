@@ -45,7 +45,7 @@ export default function(view, el, binding) {
     }
   }
 
-  generate(bind, el, param, view.signal(param.signal));
+  generate(bind, el, param, view.signal(param.signal), view);
 
   if (!bind.active) {
     view.on(view._signals[param.signal], null, function() {
@@ -62,7 +62,7 @@ export default function(view, el, binding) {
 /**
  * Generate an HTML input form element and bind it to a signal.
  */
-function generate(bind, el, param, value) {
+function generate(bind, el, param, value, view) {
   var div = element('div', {'class': BindClass});
 
   div.appendChild(element('span',
@@ -80,7 +80,7 @@ function generate(bind, el, param, value) {
     case 'range':    input = range; break;
   }
 
-  input(bind, div, param, value);
+  input(bind, div, param, value, view);
 }
 
 /**
@@ -129,29 +129,44 @@ function checkbox(bind, el, param, value) {
 /**
  * Generates a selection list input element.
  */
-function select(bind, el, param, value) {
+function select(bind, el, param, value, view) {
   var node = element('select', {name: param.signal});
-
-  param.options.forEach(function(option) {
-    var attr = {value: option};
-    if (valuesEqual(option, value)) attr.selected = true;
-    node.appendChild(element('option', attr, option+''));
-  });
-
   el.appendChild(node);
 
-  node.addEventListener('change', function() {
-    bind.update(param.options[node.selectedIndex]);
-  });
-
   bind.elements = [node];
-  bind.set = function(value) {
-    for (var i=0, n=param.options.length; i<n; ++i) {
-      if (valuesEqual(param.options[i], value)) {
-        node.selectedIndex = i; return;
-      }
+
+  const handler = (name, options) => {
+    while (node.firstChild) {
+      node.firstChild.remove();
     }
+
+    node.addEventListener('change', function() {
+      bind.update(options[node.selectedIndex]);
+    });
+
+    options.forEach(function(option) {
+      var attr = {value: option};
+      if (valuesEqual(option, value)) attr.selected = true;
+      node.appendChild(element('option', attr, option+''));
+    });
+
+    bind.set = function(value) {
+      for (var i=0, n=options.length; i<n; ++i) {
+        if (valuesEqual(options[i], value)) {
+          node.selectedIndex = i; return;
+        }
+      }
+    };
   };
+
+  if (param.options && param.options.data && param.options.field) {
+    view.addDataListener(param.options.data, (name, value) => {
+      handler(name, (value || []).map(x => x[param.options.field]));
+    });
+    bind.set = function () {};
+  } else {
+    handler('', param.options);
+  }
 }
 
 /**
