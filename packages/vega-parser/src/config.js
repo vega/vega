@@ -1,20 +1,13 @@
 import {scheme} from 'vega-scale';
-import {scaleLinear} from 'd3-scale';
-import {range} from 'd3-array';
-import {interpolateLab} from 'd3-interpolate';
 
 const tab10 = scheme('tableau10');
 const defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
     blue = {signal: 'colors.blue'},
-    lightgray = {signal: 'colors.gray8'},
-    gray = {signal: 'colors.gray5'},
+    lightgray = {signal: 'colors.gray13'},
+    gray = {signal: 'colors.gray8'},
     black = {signal: 'colors.gray0'};
-
-const grays = range(11).map(scaleLinear()
-  .range(["black", "white"]).domain([0,10])
-  .interpolate(interpolateLab))
 
 /**
  * Standard configuration defaults for Vega specification parsing.
@@ -201,7 +194,27 @@ export default function() {
     // defaults for scale ranges
     range: {
       category: {
-        scheme: 'tableau10'
+        scheme: [{
+          signal: 'colors.blue'
+        }, {
+          signal: 'colors.orange'
+        }, {
+          signal: 'colors.red'
+        }, {
+          signal: 'colors.teal'
+        }, {
+          signal: 'colors.green'
+        }, {
+          signal: 'colors.yellow'
+        }, {
+          signal: 'colors.purple'
+        }, {
+          signal: 'colors.ping'
+        }, {
+          signal: 'colors.brown'
+        }, {
+          signal: 'colors.gray6'
+        }]
       },
       ordinal: {
         scheme: 'blues'
@@ -240,17 +253,22 @@ export default function() {
         purple: tab10[6],
         pink: tab10[7],
         brown: tab10[8],
-        gray0: grays[0],
-        gray1: grays[1],
-        gray2: grays[2],
-        gray3: grays[3],
-        gray4: grays[4],
-        gray5: grays[5],
-        gray6: grays[6],
-        gray7: grays[7],
-        gray8: grays[8],
-        gray9: grays[9],
-        gray10: grays[10]
+        gray0: '#000',
+        gray1: '#111',
+        gray2: '#222',
+        gray3: '#333',
+        gray4: '#444',
+        gray5: '#555',
+        gray6: '#666',
+        gray7: '#777',
+        gray8: '#888',
+        gray9: '#999',
+        gray10: '#aaa',
+        gray11: '#bbb',
+        gray12: '#ccc',
+        gray13: '#ddd',
+        gray14: '#eee',
+        gray15: '#fff',
       }
     }]
   };
