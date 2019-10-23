@@ -464,7 +464,7 @@ Object-valued properties must be legal [scale range](../scales/#range) definitio
 {% capture scheme %}[Scheme](../schemes){% include or %}{% include type t="Color[]" %}{% endcapture %}
 | Property  | Type         | Description    |
 | :-------- | :----------: | :------------- |
-| category  | {{ scheme }} | Default [color scheme](../schemes) for categorical data. |
+| category  | {{ scheme }} | Default [color scheme](../schemes) for categorical data. The default colors are derived from the [colors defined in the config](#colors). |
 | diverging | {{ scheme }} | Default [color scheme](../schemes) for diverging quantitative ramps. |
 | heatmap   | {{ scheme }} | Default [color scheme](../schemes) for quantitative heatmaps. |
 | ordinal   | {{ scheme }} | Default [color scheme](../schemes) for rank-ordered data. |
@@ -504,6 +504,8 @@ This example sets new default color palettes.
 
 Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
 
+### <a name="colors"></a>Default Colors {% include tag ver="5.8" %}
+
 Vega defines a signal `colors` of default system colors that may be used within custom configurations and specifications. The predefined colors are
 <span class="no-br"><span class="color-swatch" title="#4c78a8" style="background: rgb(76, 120, 168);"></span>`colors.blue`</span>,
 <span class="no-br"><span class="color-swatch" title="#f58518" style="background: rgb(245, 133, 24);"></span>`colors.orange`</span>,
@@ -514,17 +516,22 @@ Vega defines a signal `colors` of default system colors that may be used within 
 <span class="no-br"><span class="color-swatch" title="#b279a2" style="background: rgb(178, 121, 162);"></span>`colors.purple`</span>,
 <span class="no-br"><span class="color-swatch" title="#ff9da6" style="background: rgb(255, 157, 166);"></span>`colors.pink`</span>,
 <span class="no-br"><span class="color-swatch" title="#9d755d" style="background: rgb(157, 117, 93);"></span>`colors.brown`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(0, 0, 0)" style="background: rgb(0, 0, 0);"></span>`colors.gray0`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(27, 27, 27)" style="background: rgb(27, 27, 27);"></span>`colors.gray1`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(48, 48, 48)" style="background: rgb(48, 48, 48);"></span>`colors.gray2`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(71, 71, 71)" style="background: rgb(71, 71, 71);"></span>`colors.gray3`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(94, 94, 94)" style="background: rgb(94, 94, 94);"></span>`colors.gray4`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(119, 119, 119)" style="background: rgb(119, 119, 119);"></span>`colors.gray5`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(145, 145, 145)" style="background: rgb(145, 145, 145);"></span>`colors.gray6`</span>
-<span class="no-br"><span class="color-swatch" title="rgb(171, 171, 171)" style="background: rgb(171, 171, 171);"></span>`colors.gray7`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(198, 198, 198)" style="background: rgb(198, 198, 198);"></span>`colors.gray8`</span>,
-<span class="no-br"><span class="color-swatch" title="rgb(226, 226, 226)" style="background: rgb(226, 226, 226);"></span>`colors.gray9`</span>, and
-<span class="no-br"><span class="color-swatch" title="rgb(255, 255, 255)" style="background: rgb(255, 255, 255);"></span>`colors.gray10`</span>. These colors can be overridden in a  custom configuration such as a dark theme.
+<span class="no-br"><span class="color-swatch" title="#000" style="background: #000;"></span>`colors.gray0`</span>,
+<span class="no-br"><span class="color-swatch" title="#111" style="background: #111;"></span>`colors.gray1`</span>,
+<span class="no-br"><span class="color-swatch" title="#222" style="background: #222;"></span>`colors.gray2`</span>,
+<span class="no-br"><span class="color-swatch" title="#333" style="background: #333;"></span>`colors.gray3`</span>,
+<span class="no-br"><span class="color-swatch" title="#444" style="background: #444;"></span>`colors.gray4`</span>,
+<span class="no-br"><span class="color-swatch" title="#555" style="background: #555;"></span>`colors.gray5`</span>,
+<span class="no-br"><span class="color-swatch" title="#666" style="background: #666;"></span>`colors.gray6`</span>
+<span class="no-br"><span class="color-swatch" title="#777" style="background: #777;"></span>`colors.gray7`</span>,
+<span class="no-br"><span class="color-swatch" title="#888" style="background: #888;"></span>`colors.gray8`</span>,
+<span class="no-br"><span class="color-swatch" title="#999" style="background: #999;"></span>`colors.gray9`</span>,
+<span class="no-br"><span class="color-swatch" title="#aaa" style="background: #aaa;"></span>`colors.gray10`</span>
+<span class="no-br"><span class="color-swatch" title="#bbb" style="background: #bbb;"></span>`colors.gray11`</span>,
+<span class="no-br"><span class="color-swatch" title="#ccc" style="background: #ccc;"></span>`colors.gray12`</span>,
+<span class="no-br"><span class="color-swatch" title="#ddd" style="background: #ddd;"></span>`colors.gray13`</span>,
+<span class="no-br"><span class="color-swatch" title="#eee" style="background: #eee;"></span>`colors.gray14`</span>, and
+<span class="no-br"><span class="color-swatch" title="#fff" style="background: #fff;"></span>`colors.gray15`</span>. These colors can be overridden in a custom configuration such as a dark theme.
 
 ### Usage
 

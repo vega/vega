@@ -409,10 +409,10 @@ Scale ranges can also accept string literals that map to default values. Default
 | Value         | Description    |
 | :------------ | :------------- |
 | `"width"`     | A spatial range determined by the value of the `width` signal. |
-| `"height"`    | A spatial range determined by the value of the `height` signal. The direction of the range (top-to-bottom or bottom-to-top) is automatically determined according to the scale type.|
-| `"symbol"`    | The default plotting symbol set to use for shape encodings.|
-| `"category"`  | The default [categorical color scheme](../schemes/#categorical) to use for nominal data.|
-| `"diverging"` | The default [diverging color scheme](../schemes/#diverging) to use for quantitative data.|
-| `"ordinal"`   | The default [sequential color scheme](../schemes/#seq-single-hue) to use for ordinal data.|
-| `"ramp"`      | The default [sequential color scheme](../schemes/#seq-single-hue) to use for quantitative data.|
-| `"heatmap"`   | The default [sequential color scheme](../schemes/#seq-multi-hue) to use for quantitative heatmaps.|
+| `"height"`    | A spatial range determined by the value of the `height` signal. The direction of the range (top-to-bottom or bottom-to-top) is automatically determined according to the scale type. |
+| `"symbol"`    | The default plotting symbol set to use for shape encodings. |
+| `"category"`  | The default [categorical color scheme](../schemes/#categorical) to use for nominal data. |
+| `"diverging"` | The default [diverging color scheme](../schemes/#diverging) to use for quantitative data. |
+| `"ordinal"`   | The default [sequential color scheme](../schemes/#seq-single-hue) to use for ordinal data. |
+| `"ramp"`      | The default [sequential color scheme](../schemes/#seq-single-hue) to use for quantitative data. |
+| `"heatmap"`   | The default [sequential color scheme](../schemes/#seq-multi-hue) to use for quantitative heatmaps. |
