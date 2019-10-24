@@ -1,4 +1,5 @@
-import {isLogarithmic, timeInterval, Time} from 'vega-scale';
+import {isLogarithmic, Time, UTC} from 'vega-scale';
+import {timeInterval, utcInterval} from 'vega-time';
 import {error, isNumber, isObject, isString, peek, span} from 'vega-util';
 import {timeFormat} from 'd3-time-format';
 import {
@@ -31,8 +32,9 @@ export function tickCount(scale, count, minStep) {
   }
 
   if (isString(count)) {
-    count = timeInterval(count, scale.type)
-          || error('Only time and utc scales accept interval strings.');
+    count = scale.type === Time ? timeInterval(count)
+      : scale.type == UTC ? utcInterval(count)
+      : error('Only time and utc scales accept interval strings.');
     if (step) count = count.every(step);
   }
 
