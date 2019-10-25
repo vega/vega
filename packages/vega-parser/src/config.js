@@ -5,7 +5,7 @@ const defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
     blue = {signal: 'colors.blue'},
-    lightgray = {signal: 'colors.gray13'},
+    lightGray = {signal: 'colors.gray13'},
     gray = {signal: 'colors.gray8'},
     black = {signal: 'colors.gray0'};
 
@@ -108,7 +108,7 @@ export default function() {
       // defaults for styled group marks in Vega-Lite
       cell: {
         fill: 'transparent',
-        stroke: lightgray
+        stroke: lightGray
       }
     },
 
@@ -130,7 +130,7 @@ export default function() {
       domainColor: gray,
       grid: false,
       gridWidth: 1,
-      gridColor: lightgray,
+      gridColor: lightGray,
       labels: true,
       labelAngle: 0,
       labelLimit: 180,
@@ -165,7 +165,7 @@ export default function() {
       gradientDirection: 'vertical',
       gradientLength: 200,
       gradientThickness: 16,
-      gradientStrokeColor: lightgray,
+      gradientStrokeColor: lightGray,
       gradientStrokeWidth: 0,
       gradientLabelOffset: 2,
       labelAlign: 'left',
