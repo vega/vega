@@ -92,7 +92,7 @@ tape('TimeUnit truncates dates to time units', function(t) {
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
-      s = df.add(TimeUnit, {unit:units, field:date, pulse:c});
+      s = df.add(TimeUnit, {units:units, field:date, pulse:c});
 
   df.pulse(c, changeset().insert(data));
 
@@ -123,7 +123,7 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
-      s = df.add(TimeUnit, {unit:units, timezone:'utc', field:date, pulse:c});
+      s = df.add(TimeUnit, {units:units, timezone:'utc', field:date, pulse:c});
 
   df.pulse(c, changeset().insert(data));
 
@@ -141,7 +141,7 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports stepped units', function(t) {
+tape('TimeUnit supports unit steps', function(t) {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -155,7 +155,7 @@ tape('TimeUnit supports stepped units', function(t) {
       units = df.add(['year', 'month']),
       step = df.add(1),
       c = df.add(Collect),
-      s = df.add(TimeUnit, {unit:units, step:step, field:date, pulse:c});
+      s = df.add(TimeUnit, {units:units, step:step, field:date, pulse:c});
 
   df.pulse(c, changeset().insert(data)).run();
   t.equal(s.pulse.add.length, 4);
@@ -170,6 +170,45 @@ tape('TimeUnit supports stepped units', function(t) {
   t.equal(s.pulse.mod.length, 4);
   t.equal(s.value.step, 3);
   testDates(t, data, 'year-quarter', localDate);
+
+  t.end();
+});
+
+tape('TimeUnit supports unit inference', function(t) {
+  var data = [
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+  ];
+  data.forEach(o => o.date = new Date(o.y, o.m, o.d));
+
+  var df = new vega.Dataflow(),
+      date = field('date'),
+      bins = df.add(20),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {field:date, pulse:c, maxbins:bins});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(s.pulse.add.length, 4);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 0);
+  t.equal(s.value.step, 1);
+  testDates(t, data, 'year-month', localDate);
+
+  df.update(bins, 2).run();
+  t.equal(s.pulse.add.length, 0);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 4);
+  t.equal(s.value.step, 1);
+  testDates(t, data, 'year', localDate);
+
+  df.update(bins, 366).run();
+  t.equal(s.pulse.add.length, 0);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 4);
+  t.equal(s.value.step, 1);
+  testDates(t, data, 'year-month-date', localDate);
 
   t.end();
 });

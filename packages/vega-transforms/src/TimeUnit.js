@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
-import {timeUnits, timeFloor, utcFloor, timeInterval, utcInterval} from 'vega-time';
-import {accessorFields, inherits, peek} from 'vega-util';
+import {timeBin, timeUnits, timeFloor, utcFloor, timeInterval, utcInterval} from 'vega-time';
+import {accessorFields, extent, inherits, peek} from 'vega-util';
 
 /**
  * Discretize dates to specific time units.
@@ -19,7 +19,7 @@ TimeUnit.Definition = {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
-    { "name": "unit", "type": "string" },
+    { "name": "units", "type": "string", "array": true },
     { "name": "step", "type": "number", "default": 1 },
     { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
@@ -31,14 +31,14 @@ var prototype = inherits(TimeUnit, Transform);
 prototype.transform = function(_, pulse) {
   var field = _.field,
       utc = _.timezone === 'utc',
-      step = _.step || 1,
-      floor = this._floor(_.unit, step, utc),
+      floor = this._floor(_, pulse),
       offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
       as = _.as || OUTPUT,
       u0 = as[0],
       u1 = as[1],
       min = floor.start || Infinity,
       max = floor.stop || -Infinity,
+      step = floor.step,
       flag = pulse.ADD;
 
   if (_.modified() || pulse.modified(accessorFields(_.field))) {
@@ -67,7 +67,18 @@ prototype.transform = function(_, pulse) {
   return pulse.modifies(as);
 };
 
-prototype._floor = function(units, step, utc) {
+prototype._floor = function(_, pulse) {
+  const utc = _.timezone === 'utc';
+
+  // get parameters
+  let {units, step} = _.units
+    ? {units: _.units, step: _.step || 1}
+    : timeBin({
+      extent:  extent(pulse.materialize(pulse.SOURCE).source, _.field),
+      maxbins: _.maxbins
+    });
+
+  // check / standardize time units
   units = timeUnits(units);
 
   const prev = this.value || {},
