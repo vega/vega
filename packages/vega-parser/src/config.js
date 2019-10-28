@@ -1,10 +1,10 @@
 var defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
-    defaultColor = '#4c78a8',
-    black = '#000',
-    gray = '#888',
-    lightGray = '#ddd';
+    defaultColor = {signal: '"#4c78a8"'},
+    black = {signal: '"#000"'},
+    gray = {signal: '"#888"'},
+    lightGray = {signal: '"#ddd"'};
 
 /**
  * Standard configuration defaults for Vega specification parsing.
