@@ -524,7 +524,7 @@
                       "x": 0,
                       "y": 200,
                       "height": -35,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 165
@@ -533,7 +533,7 @@
                       "x": 55.55555555555556,
                       "y": 200,
                       "height": -53.75,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 146.25
@@ -542,7 +542,7 @@
                       "x": 111.11111111111111,
                       "y": 200,
                       "height": -101.25,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 98.75
@@ -551,7 +551,7 @@
                       "x": 166.66666666666669,
                       "y": 200,
                       "height": -23.75,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 176.25
@@ -560,7 +560,7 @@
                       "x": 222.22222222222223,
                       "y": 200,
                       "height": -65,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 135
@@ -569,7 +569,7 @@
                       "x": 277.77777777777777,
                       "y": 200,
                       "height": -30,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 170
@@ -578,7 +578,7 @@
                       "x": 333.33333333333337,
                       "y": 200,
                       "height": -108.74999999999999,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 91.25000000000001
@@ -587,7 +587,7 @@
                       "x": 388.8888888888889,
                       "y": 200,
                       "height": -21.25,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 178.75
@@ -596,7 +596,7 @@
                       "x": 444.44444444444446,
                       "y": 200,
                       "height": -85,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 115
@@ -605,7 +605,7 @@
                       "x": 500,
                       "y": 200,
                       "height": -61.25,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(114, 183, 178)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 138.75
@@ -627,7 +627,7 @@
                       "x": 0,
                       "y": 165,
                       "height": -68.75000000000001,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 96.24999999999999
@@ -636,7 +636,7 @@
                       "x": 55.55555555555556,
                       "y": 146.25,
                       "height": -113.75,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 32.5
@@ -645,7 +645,7 @@
                       "x": 111.11111111111111,
                       "y": 98.75,
                       "height": -66.25,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 32.5
@@ -654,7 +654,7 @@
                       "x": 166.66666666666669,
                       "y": 176.25,
                       "height": -108.75,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 67.5
@@ -663,7 +663,7 @@
                       "x": 222.22222222222223,
                       "y": 135,
                       "height": -60,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 75
@@ -672,7 +672,7 @@
                       "x": 277.77777777777777,
                       "y": 170,
                       "height": -61.25,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 108.75
@@ -681,7 +681,7 @@
                       "x": 333.33333333333337,
                       "y": 91.25000000000001,
                       "height": -82.50000000000001,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 8.75
@@ -690,7 +690,7 @@
                       "x": 388.8888888888889,
                       "y": 178.75,
                       "height": -33.75,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 145
@@ -699,7 +699,7 @@
                       "x": 444.44444444444446,
                       "y": 115,
                       "height": -20,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 95
@@ -708,7 +708,7 @@
                       "x": 500,
                       "y": 138.75,
                       "height": -18.75,
-                      "fill": "#f58518",
+                      "fill": "rgb(178, 121, 162)",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
                       "y2": 120

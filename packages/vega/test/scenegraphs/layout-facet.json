@@ -28,7 +28,7 @@
                       "y": 4,
                       "width": 225,
                       "height": 10,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 225
@@ -39,7 +39,7 @@
                       "y": 15,
                       "width": 291,
                       "height": 10,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 291
@@ -50,7 +50,7 @@
                       "y": 26,
                       "width": 219,
                       "height": 10,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 219
@@ -78,7 +78,7 @@
                       "y": 2,
                       "width": 189,
                       "height": 11,
-                      "fill": "#f58518",
+                      "fill": "rgb(161, 182, 67)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 189
@@ -106,7 +106,7 @@
                       "y": 2,
                       "width": 150,
                       "height": 11,
-                      "fill": "#e45756",
+                      "fill": "rgb(178, 121, 162)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 150
@@ -117,7 +117,7 @@
                       "y": 14,
                       "width": 266,
                       "height": 11,
-                      "fill": "#e45756",
+                      "fill": "rgb(178, 121, 162)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 266

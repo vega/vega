@@ -1153,7 +1153,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#4c78a8",
+                                      "stroke": "rgb(240, 120, 42)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "circle"
@@ -1202,7 +1202,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#f58518",
+                                      "stroke": "rgb(163, 142, 139)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "square"
@@ -1251,7 +1251,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#e45756",
+                                      "stroke": "rgb(88, 165, 90)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "cross"
@@ -1300,7 +1300,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#72b7b2",
+                                      "stroke": "rgb(229, 190, 74)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "diamond"
@@ -1349,7 +1349,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#54a24b",
+                                      "stroke": "rgb(178, 121, 162)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "triangle-up"
@@ -1398,7 +1398,7 @@
                                       "y": 6,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "#eeca3b",
+                                      "stroke": "rgb(157, 117, 93)",
                                       "strokeWidth": 1.5,
                                       "size": 100,
                                       "shape": "triangle-down"

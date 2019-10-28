@@ -40,7 +40,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#4c78a8",
+                                      "fill": "rgb(148, 126, 106)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -88,7 +88,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#f58518",
+                                      "fill": "rgb(221, 131, 45)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -136,7 +136,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#e45756",
+                                      "fill": "rgb(240, 120, 42)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -184,7 +184,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#72b7b2",
+                                      "fill": "rgb(233, 100, 68)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -232,7 +232,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#54a24b",
+                                      "fill": "rgb(212, 101, 99)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -280,7 +280,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#eeca3b",
+                                      "fill": "rgb(163, 142, 139)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -328,7 +328,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#b279a2",
+                                      "fill": "rgb(114, 183, 178)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -376,7 +376,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#ff9da6",
+                                      "fill": "rgb(101, 174, 134)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -424,7 +424,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#9d755d",
+                                      "fill": "rgb(88, 165, 90)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -472,7 +472,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#bab0ac",
+                                      "fill": "rgb(128, 173, 70)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -520,7 +520,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#4c78a8",
+                                      "fill": "rgb(194, 191, 64)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -568,7 +568,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#f58518",
+                                      "fill": "rgb(229, 190, 74)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -616,7 +616,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#e45756",
+                                      "fill": "rgb(204, 156, 118)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -664,7 +664,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#72b7b2",
+                                      "fill": "rgb(178, 121, 162)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -712,7 +712,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#54a24b",
+                                      "fill": "rgb(178, 121, 162)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -760,7 +760,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#eeca3b",
+                                      "fill": "rgb(178, 121, 162)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -808,7 +808,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#b279a2",
+                                      "fill": "rgb(157, 117, 93)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -856,7 +856,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#ff9da6",
+                                      "fill": "rgb(157, 117, 93)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -904,7 +904,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#9d755d",
+                                      "fill": "rgb(149, 115, 94)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,
@@ -952,7 +952,7 @@
                                     {
                                       "x": 8,
                                       "y": 8,
-                                      "fill": "#bab0ac",
+                                      "fill": "rgb(126, 108, 98)",
                                       "opacity": 1,
                                       "strokeWidth": 1.5,
                                       "size": 200,

@@ -455,7 +455,7 @@
                       "y": 4,
                       "width": 225,
                       "height": 18,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 225
@@ -466,7 +466,7 @@
                       "y": 24,
                       "width": 291,
                       "height": 18,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 291
@@ -477,7 +477,7 @@
                       "y": 44,
                       "width": 219,
                       "height": 18,
-                      "fill": "#4c78a8",
+                      "fill": "rgb(200, 111, 109)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 219
@@ -543,7 +543,7 @@
                       "y": 4,
                       "width": 189,
                       "height": 18,
-                      "fill": "#f58518",
+                      "fill": "rgb(161, 182, 67)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 189
@@ -622,7 +622,7 @@
                       "y": 4,
                       "width": 150,
                       "height": 18,
-                      "fill": "#e45756",
+                      "fill": "rgb(178, 121, 162)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 150
@@ -633,7 +633,7 @@
                       "y": 24,
                       "width": 266,
                       "height": 18,
-                      "fill": "#e45756",
+                      "fill": "rgb(178, 121, 162)",
                       "stroke": null,
                       "strokeWidth": 2,
                       "x2": 266
