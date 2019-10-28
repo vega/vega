@@ -25,7 +25,7 @@
                       "x": 34,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -34,7 +34,7 @@
                       "x": 102,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -43,7 +43,7 @@
                       "x": 171,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -52,7 +52,7 @@
                       "x": 239,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -61,7 +61,7 @@
                       "x": 307,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -70,7 +70,7 @@
                       "x": 376,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -79,7 +79,7 @@
                       "x": 444,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -88,7 +88,7 @@
                       "x": 512,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -97,7 +97,7 @@
                       "x": 580,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -106,7 +106,7 @@
                       "x": 649,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "y2": -400
@@ -367,7 +367,7 @@
                       "x": 0,
                       "y": 90,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "x2": -700
@@ -376,7 +376,7 @@
                       "x": 0,
                       "y": 177,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "x2": -700
@@ -385,7 +385,7 @@
                       "x": 0,
                       "y": 264,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "x2": -700
@@ -394,7 +394,7 @@
                       "x": 0,
                       "y": 351,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeOpacity": 0.75,
                       "strokeWidth": 1,
                       "x2": -700

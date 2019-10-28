@@ -411,7 +411,7 @@
                       "x": 0,
                       "y": 500,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -419,7 +419,7 @@
                       "x": 0,
                       "y": 450,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -427,7 +427,7 @@
                       "x": 0,
                       "y": 400,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -435,7 +435,7 @@
                       "x": 0,
                       "y": 350,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -443,7 +443,7 @@
                       "x": 0,
                       "y": 300,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -451,7 +451,7 @@
                       "x": 0,
                       "y": 250,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -459,7 +459,7 @@
                       "x": 0,
                       "y": 200,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -467,7 +467,7 @@
                       "x": 0,
                       "y": 150,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -475,7 +475,7 @@
                       "x": 0,
                       "y": 100,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -483,7 +483,7 @@
                       "x": 0,
                       "y": 50,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     },
@@ -491,7 +491,7 @@
                       "x": 0,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -800
                     }
@@ -508,7 +508,7 @@
                       "x": 0,
                       "y": 500,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -516,7 +516,7 @@
                       "x": 0,
                       "y": 450,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -524,7 +524,7 @@
                       "x": 0,
                       "y": 400,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -532,7 +532,7 @@
                       "x": 0,
                       "y": 350,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -540,7 +540,7 @@
                       "x": 0,
                       "y": 300,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -548,7 +548,7 @@
                       "x": 0,
                       "y": 250,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -556,7 +556,7 @@
                       "x": 0,
                       "y": 200,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -564,7 +564,7 @@
                       "x": 0,
                       "y": 150,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -572,7 +572,7 @@
                       "x": 0,
                       "y": 100,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -580,7 +580,7 @@
                       "x": 0,
                       "y": 50,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     },
@@ -588,7 +588,7 @@
                       "x": 0,
                       "y": 0,
                       "opacity": 1,
-                      "stroke": "#ccc",
+                      "stroke": "#888",
                       "strokeWidth": 1,
                       "x2": 12
                     }

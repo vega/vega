@@ -1,4 +1,4 @@
-var GENERATE_SCENES = false, // flag to generate test scenes
+var GENERATE_SCENES = true, // flag to generate test scenes
     OUTPUT_FAILURES = false, // flag to write scenes upon test failure
     specdir = process.cwd() + '/test/specs-valid/',
     testdir = process.cwd() + '/test/scenegraphs/',

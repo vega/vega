@@ -25,7 +25,7 @@
                       "x": 0,
                       "y": 182,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -250
                     },
@@ -33,7 +33,7 @@
                       "x": 0,
                       "y": 109,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -250
                     },
@@ -41,7 +41,7 @@
                       "x": 0,
                       "y": 36,
                       "opacity": 1,
-                      "stroke": "white",
+                      "stroke": "#ddd",
                       "strokeWidth": 1,
                       "x2": -250
                     }

@@ -1010,7 +1010,7 @@
                                       "y": 9,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "steelblue",
+                                      "stroke": "#888",
                                       "strokeWidth": 1.5,
                                       "strokeDash": [
                                         3,
@@ -1063,7 +1063,7 @@
                                       "y": 9,
                                       "fill": "transparent",
                                       "opacity": 1,
-                                      "stroke": "steelblue",
+                                      "stroke": "#888",
                                       "strokeWidth": 1.5,
                                       "strokeDash": [],
                                       "size": 250,
