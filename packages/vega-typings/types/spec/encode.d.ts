@@ -195,17 +195,10 @@ export type CornerRadius =
   | number
   | {
       all?: number;
-      top?: number;
-      bottom?: number;
-      topLeft?: number;
-      topRight?: number;
-      bottomLeft?: number;
-      bottomRight?: number;
-    }
-  | {
-      all?: number;
       left?: number;
       right?: number;
+      top?: number;
+      bottom?: number;
       topLeft?: number;
       topRight?: number;
       bottomLeft?: number;

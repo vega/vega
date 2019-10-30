@@ -164,16 +164,6 @@ var BASE = {
             "all": { "type": "number" },
             "left": { "type": "number" },
             "right": { "type": "number" },
-            "topLeft": { "type": "number" },
-            "topRight": { "type": "number" },
-            "bottomLeft": { "type": "number" },
-            "bottomRight": { "type": "number" }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "all": { "type": "number" },
             "top": { "type": "number" },
             "bottom": { "type": "number" },
             "topLeft": { "type": "number" },
