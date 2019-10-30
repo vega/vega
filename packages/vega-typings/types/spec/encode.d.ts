@@ -191,6 +191,29 @@ export type ColorValueRef =
   | {
       color: ColorRGB | ColorHSL | ColorLAB | ColorHCL;
     };
+export type CornerRadius =
+  | number
+  | {
+      top?: number;
+      bottom?: number;
+      topLeft?: number;
+      topRight?: number;
+      bottomLeft?: number;
+      bottomRight?: number;
+    }
+  | {
+      left?: number;
+      right?: number;
+      topLeft?: number;
+      topRight?: number;
+      bottomLeft?: number;
+      bottomRight?: number;
+    };
+export type CornerRadiusValueRef =
+  | NumericValueRef
+  | {
+      value: CornerRadius;
+    };
 export type ProductionRule<T> =
   | T
   | ({
@@ -283,7 +306,7 @@ export interface PathEncodeEntry extends EncodeEntry {
   path?: ProductionRule<StringValueRef>;
 }
 export interface RectEncodeEntry extends EncodeEntry {
-  cornerRadius?: ProductionRule<NumericValueRef>;
+  cornerRadius?: ProductionRule<CornerRadiusValueRef>;
 }
 export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {

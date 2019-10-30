@@ -154,6 +154,33 @@ var BASE = {
       },
       "required": ["gradient", "stops"],
       "additionalProperties": false
+    },
+    "cornerRadius": {
+      "oneOf": [
+        { "type": "number" },
+        {
+          "type": "object",
+          "properties": {
+            "left": { "type": "number" },
+            "right": { "type": "number" },
+            "topLeft": { "type": "number" },
+            "topRight": { "type": "number" },
+            "bottomLeft": { "type": "number" },
+            "bottomRight": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "top": { "type": "number" },
+            "bottom": { "type": "number" },
+            "topLeft": { "type": "number" },
+            "topRight": { "type": "number" },
+            "bottomLeft": { "type": "number" },
+            "bottomRight": { "type": "number" }
+          }
+        }
+      ]
     }
   }
 };
@@ -286,7 +313,7 @@ var MARKS = {
   },
   "rect": {
     "properties": {
-      "cornerRadius": { "type": "number" }
+      "cornerRadius": { "$ref": "#/refs/cornerRadius" }
     }
   },
   "rule": {

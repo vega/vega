@@ -5149,45 +5149,6 @@
     return stop < start ? -step1 : step1;
   }
 
-  function number(x) {
-    return x === null ? NaN : +x;
-  }
-
-  function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    }
-  }
-
-  function quantile(values, p, valueof) {
-    values = Float64Array.from(numbers$1(values, valueof));
-    values.sort(ascending);
-    return quantileSorted(values, p);
-  }
-
-  function quantileSorted(values, p, valueof = number) {
-    if (!(n = values.length)) return;
-    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = +valueof(values[i0], i0, values),
-        value1 = +valueof(values[i0 + 1], i0 + 1, values);
-    return value0 + (value1 - value0) * (i - i0);
-  }
-
   function max(values, valueof) {
     let max;
     if (valueof === undefined) {
@@ -5209,24 +5170,25 @@
     return max;
   }
 
-  function mean(values, valueof) {
-    let count = 0;
-    let sum = 0;
+  function min(values, valueof) {
+    let min;
     if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          ++count, sum += value;
+      for (const value of values) {
+        if (value != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          ++count, sum += value;
+        if ((value = valueof(value, ++index, values)) != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
         }
       }
     }
-    if (count) return sum / count;
+    return min;
   }
 
   // Based on https://github.com/mourner/quickselect
@@ -5272,35 +5234,74 @@
     array[j] = t;
   }
 
-  function median(values, valueof) {
-    values = Float64Array.from(numbers$1(values, valueof));
-    if (!values.length) return;
-    const n = values.length;
-    const i = n >> 1;
-    quickselect(values, i - 1, 0);
-    if ((n & 1) === 0) quickselect(values, i, i);
-    return quantile(values, 0.5);
+  function number(x) {
+    return x === null ? NaN : +x;
   }
 
-  function min(values, valueof) {
-    let min;
+  function* numbers$1(values, valueof) {
     if (valueof === undefined) {
-      for (const value of values) {
-        if (value != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          yield value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          yield value;
         }
       }
     }
-    return min;
+  }
+
+  function quantile(values, p, valueof) {
+    values = Float64Array.from(numbers$1(values, valueof));
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return min(values);
+    if (p >= 1) return max(values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = max(quickselect(values, i0).subarray(0, i0 + 1)),
+        value1 = min(values.subarray(i0 + 1));
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function quantileSorted(values, p, valueof = number) {
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = +valueof(values[i0], i0, values),
+        value1 = +valueof(values[i0 + 1], i0 + 1, values);
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function mean(values, valueof) {
+    let count = 0;
+    let sum = 0;
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    }
+    if (count) return sum / count;
+  }
+
+  function median(values, valueof) {
+    return quantile(values, 0.5, valueof);
   }
 
   function permute(source, keys) {
@@ -12232,24 +12233,65 @@
           y1 = y0 != null ? y0 : +y.call(this, _),
           w  = +width.call(this, _),
           h  = +height.call(this, _),
-          cr = +cornerRadius.call(this, _);
+          cr = cornerRadius.call(this, _);
 
       if (!context) context = buffer = path();
 
-      if (cr <= 0) {
+      var crTL, crTR, crBL, crBR;
+      if(typeof(cr) !== 'object') {
+        crTL = crTR = crBL = crBR = Math.max(0, +cr);
+      } else {
+        crTL = crTR = crBL = crBR = 0;
+        // The schema should prevent specify top/bottom and left/right together
+        if(cr.left !== undefined) crTL = crBL = Math.max(0, +cr.left);
+        if(cr.right !== undefined) crTR = crBR = Math.max(0, +cr.right);
+        if(cr.top !== undefined) crTL = crTR = Math.max(0, +cr.top);
+        if(cr.bottom !== undefined) crBL = crBR = Math.max(0, +cr.bottom);
+        // Individual corners takes higher priority
+        if(cr.topLeft !== undefined) crTL = Math.max(0, +cr.topLeft);
+        if(cr.topRight !== undefined) crTR = Math.max(0, +cr.topRight);
+        if(cr.bottomLeft !== undefined) crBL = Math.max(0, +cr.bottomLeft);
+        if(cr.bottomRight !== undefined) crBR = Math.max(0, +cr.bottomRight);
+      }
+
+      if (crTL <= 0 && crTR <= 0 && crBL <= 0 && crBR <= 0) {
         context.rect(x1, y1, w, h);
       } else {
+        // Make sure corner radiuses doesn't exceed their minimum / maximum.
+        // If exceed, scale all of them proportionally.
+        var scaler;
+        if(crTL + crTR > 0 && crTL + crTR >= Math.abs(w)) {
+          scaler = Math.abs(w) / (crTL + crTR);
+          crTL *= scaler;
+          crTR *= scaler;
+        }
+        if(crBL + crBR > 0 && crBL + crBR >= Math.abs(w)) {
+          scaler = Math.abs(w) / (crBL + crBR);
+          crBL *= scaler;
+          crBR *= scaler;
+        }
+        if(crTL + crBL > 0 && crTL + crBL >= Math.abs(h)) {
+          scaler = Math.abs(h) / (crTL + crBL);
+          crTL *= scaler;
+          crBL *= scaler;
+        }
+        if(crTR + crBR > 0 && crTR + crBR >= Math.abs(h)) {
+          scaler = Math.abs(h) / (crTR + crBR);
+          crTR *= scaler;
+          crBR *= scaler;
+        }
+
         var x2 = x1 + w,
             y2 = y1 + h;
-        context.moveTo(x1 + cr, y1);
-        context.lineTo(x2 - cr, y1);
-        context.quadraticCurveTo(x2, y1, x2, y1 + cr);
-        context.lineTo(x2, y2 - cr);
-        context.quadraticCurveTo(x2, y2, x2 - cr, y2);
-        context.lineTo(x1 + cr, y2);
-        context.quadraticCurveTo(x1, y2, x1, y2 - cr);
-        context.lineTo(x1, y1 + cr);
-        context.quadraticCurveTo(x1, y1, x1 + cr, y1);
+        context.moveTo(x1 + crTL, y1);
+        context.lineTo(x2 - crTR, y1);
+        context.quadraticCurveTo(x2, y1, x2, y1 + crTR);
+        context.lineTo(x2, y2 - crBR);
+        context.quadraticCurveTo(x2, y2, x2 - crBR, y2);
+        context.lineTo(x1 + crBL, y2);
+        context.quadraticCurveTo(x1, y2, x1, y2 - crBL);
+        context.lineTo(x1, y1 + crTL);
+        context.quadraticCurveTo(x1, y1, x1 + crTL, y1);
         context.closePath();
       }
 
@@ -12297,7 +12339,7 @@
 
     rectangle.cornerRadius = function(_) {
       if (arguments.length) {
-        cornerRadius = typeof _ === 'function' ? _ : constant$2(+_);
+        cornerRadius = typeof _ === 'function' ? _ : constant$2(_);
         return rectangle;
       } else {
         return cornerRadius;
@@ -33747,9 +33789,6 @@
       case '%':
         prec = 11;
         break;
-
-      default:
-        break;
     }
 
     return prec;
@@ -34427,6 +34466,7 @@
 
   function time$2(month, day, specifier) {
     if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
+    dateObj.setYear(2000);
     dateObj.setMonth(month);
     dateObj.setDate(day);
     return timeFormat$1(dateObj, specifier);

@@ -17,6 +17,7 @@
   "contour-map",
   "contour-scatter",
   "contour-volcano",
+  "corner-radius",
   "crossfilter",
   "crossfilter-multi",
   "density",
