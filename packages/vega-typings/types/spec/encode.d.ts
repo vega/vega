@@ -194,6 +194,7 @@ export type ColorValueRef =
 export type CornerRadius =
   | number
   | {
+      all?: number;
       top?: number;
       bottom?: number;
       topLeft?: number;
@@ -202,6 +203,7 @@ export type CornerRadius =
       bottomRight?: number;
     }
   | {
+      all?: number;
       left?: number;
       right?: number;
       topLeft?: number;

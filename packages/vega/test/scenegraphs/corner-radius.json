@@ -17,7 +17,7 @@
               "x": 0,
               "y": 0,
               "width": 50,
-              "height": 300,
+              "height": 400,
               "fill": "#1f77b4",
               "cornerRadius": 10
             }
@@ -34,7 +34,7 @@
               "x": 60,
               "y": 0,
               "width": 50,
-              "height": 300,
+              "height": 400,
               "fill": "#1f77b4",
               "cornerRadius": {}
             }
@@ -51,7 +51,7 @@
               "x": 120,
               "y": 0,
               "width": 50,
-              "height": 300,
+              "height": 400,
               "fill": "#1f77b4",
               "cornerRadius": {}
             }
@@ -68,7 +68,24 @@
               "x": 180,
               "y": 0,
               "width": 100,
-              "height": 300,
+              "height": 400,
+              "fill": "#1f77b4",
+              "cornerRadius": {}
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 290,
+              "y": 0,
+              "width": 110,
+              "height": 400,
               "fill": "#1f77b4",
               "cornerRadius": {}
             }
@@ -79,7 +96,7 @@
       "x": 0,
       "y": 0,
       "width": 300,
-      "height": 300
+      "height": 400
     }
   ],
   "zindex": 0

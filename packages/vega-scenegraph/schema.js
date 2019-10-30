@@ -161,6 +161,7 @@ var BASE = {
         {
           "type": "object",
           "properties": {
+            "all": { "type": "number" },
             "left": { "type": "number" },
             "right": { "type": "number" },
             "topLeft": { "type": "number" },
@@ -172,6 +173,7 @@ var BASE = {
         {
           "type": "object",
           "properties": {
+            "all": { "type": "number" },
             "top": { "type": "number" },
             "bottom": { "type": "number" },
             "topLeft": { "type": "number" },

@@ -12241,7 +12241,7 @@
       if(typeof(cr) !== 'object') {
         crTL = crTR = crBL = crBR = Math.max(0, +cr);
       } else {
-        crTL = crTR = crBL = crBR = 0;
+        crTL = crTR = crBL = crBR = cr.all !== undefined ? +cr.all : 0;
         // The schema should prevent specify top/bottom and left/right together
         if(cr.left !== undefined) crTL = crBL = Math.max(0, +cr.left);
         if(cr.right !== undefined) crTR = crBR = Math.max(0, +cr.right);
