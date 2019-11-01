@@ -19,6 +19,7 @@ TimeUnit.Definition = {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
+    { "name": "interval", "type": "boolean", "default": true },
     { "name": "units", "type": "string", "array": true },
     { "name": "step", "type": "number", "default": 1 },
     { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
@@ -30,6 +31,7 @@ var prototype = inherits(TimeUnit, Transform);
 
 prototype.transform = function(_, pulse) {
   var field = _.field,
+      band = _.interval !== false,
       utc = _.timezone === 'utc',
       floor = this._floor(_, pulse),
       offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
@@ -52,10 +54,10 @@ prototype.transform = function(_, pulse) {
     var v = field(t), a, b;
     if (v == null) {
       t[u0] = null;
-      t[u1] = null;
+      if (band) t[u1] = null;
     } else {
-      t[u0] = a = floor(v);
-      t[u1] = b = offset(a, step);
+      t[u0] = a = b = floor(v);
+      if (band) t[u1] = b = offset(a, step);
       if (a < min) min = a;
       if (b > max) max = b;
     }
@@ -64,7 +66,7 @@ prototype.transform = function(_, pulse) {
   floor.start = min;
   floor.stop = max;
 
-  return pulse.modifies(as);
+  return pulse.modifies(band ? as : u0);
 };
 
 prototype._floor = function(_, pulse) {
@@ -85,6 +87,7 @@ prototype._floor = function(_, pulse) {
         floor = (utc ? utcFloor : timeFloor)(units, step);
 
   floor.unit = peek(units);
+  floor.units = units;
   floor.step = step;
   floor.start = prev.start;
   floor.stop = prev.stop;

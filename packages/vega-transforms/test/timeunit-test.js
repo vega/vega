@@ -70,9 +70,9 @@ function utcDate(y, m, d, H, M, S, L) {
   return new Date(Date.UTC(y, m, d, H||0, M||0, S||0, L||0));
 }
 
-function testDates(t, data, unit, date) {
+function testDates(t, data, unit, step, date) {
   const f = floor(unit, date),
-        i = increment(unit);
+        i = increment(unit, step);
   data.forEach(d => {
     t.equal(+d.unit0, +f(d));
     t.equal(+d.unit1, +f(i(d)));
@@ -102,7 +102,7 @@ tape('TimeUnit truncates dates to time units', function(t) {
     t.equal(s.pulse.rem.length, 0);
     t.equal(s.pulse.add.length, i ? 0 : 4);
     t.equal(s.pulse.mod.length, i ? 4 : 0);
-    testDates(t, s.pulse.source, u, localDate);
+    testDates(t, s.pulse.source, u, 1, localDate);
     t.equal(s.value.unit, a[a.length-1]);
     t.equal(s.value.step, 1);
   });
@@ -133,7 +133,7 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
     t.equal(s.pulse.rem.length, 0);
     t.equal(s.pulse.add.length, i ? 0 : 4);
     t.equal(s.pulse.mod.length, i ? 4 : 0);
-    testDates(t, s.pulse.source, u, utcDate);
+    testDates(t, s.pulse.source, u, 1, utcDate);
     t.equal(s.value.unit, a[a.length-1]);
     t.equal(s.value.step, 1);
   });
@@ -162,14 +162,14 @@ tape('TimeUnit supports unit steps', function(t) {
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 0);
   t.equal(s.value.step, 1);
-  testDates(t, data, 'year-month', localDate);
+  testDates(t, data, 'year-month', 1, localDate);
 
   df.update(step, 3).run();
   t.equal(s.pulse.add.length, 0);
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 4);
   t.equal(s.value.step, 3);
-  testDates(t, data, 'year-quarter', localDate);
+  testDates(t, data, 'year-quarter', 1, localDate);
 
   t.end();
 });
@@ -185,7 +185,7 @@ tape('TimeUnit supports unit inference', function(t) {
 
   var df = new vega.Dataflow(),
       date = field('date'),
-      bins = df.add(20),
+      bins = df.add(12),
       c = df.add(Collect),
       s = df.add(TimeUnit, {field:date, pulse:c, maxbins:bins});
 
@@ -194,21 +194,51 @@ tape('TimeUnit supports unit inference', function(t) {
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 0);
   t.equal(s.value.step, 1);
-  testDates(t, data, 'year-month', localDate);
+  t.deepEqual(s.value.units, ['year', 'month']);
+  testDates(t, data, 'year-month', 1, localDate);
 
-  df.update(bins, 2).run();
+  df.update(bins, 1).run();
   t.equal(s.pulse.add.length, 0);
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 4);
   t.equal(s.value.step, 1);
-  testDates(t, data, 'year', localDate);
+  t.deepEqual(s.value.units, ['year']);
+  testDates(t, data, 'year', 1, localDate);
+
+  df.update(bins, 4).run();
+  t.equal(s.pulse.add.length, 0);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 4);
+  t.equal(s.value.step, 3);
+  t.deepEqual(s.value.units, ['year', 'month']);
+  testDates(t, data, 'month', 3, localDate);
 
   df.update(bins, 366).run();
   t.equal(s.pulse.add.length, 0);
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 4);
   t.equal(s.value.step, 1);
-  testDates(t, data, 'year-month-date', localDate);
+  t.deepEqual(s.value.units, ['year', 'month', 'date']);
+  testDates(t, data, 'year-month-date', 1, localDate);
+
+  t.end();
+});
+
+tape('TimeUnit supports point output', function(t) {
+  var data = [{date: new Date(2012, 0, 1)}];
+
+  var df = new vega.Dataflow(),
+      date = field('date'),
+      units = df.add(['year']),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {units:units, interval:false, field:date, pulse:c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.add.length, 1);
+  t.equal(s.pulse.mod.length, 0);
+  t.ok(s.pulse.add[0].unit0);
+  t.equal(s.pulse.add[0].unit1, undefined);
 
   t.end();
 });
