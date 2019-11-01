@@ -317,15 +317,15 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
-<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+<b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
 Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 <a name="densityUniform" href="#densityUniform">#</a>
-<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+<b>densityUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
 Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 <a name="quantileUniform" href="#quantileUniform">#</a>
-<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+<b>quantileUniform</b>(probability[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
 Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 [Back to Top](#reference)

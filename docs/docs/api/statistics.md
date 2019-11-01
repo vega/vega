@@ -96,19 +96,19 @@ vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
 Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
-vega.<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+vega.<b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="densityUniform" href="#densityUniform">#</a>
-vega.<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+vega.<b>densityUniform</b>(value[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="quantileUniform" href="#quantileUniform">#</a>
-vega.<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>])
+vega.<b>quantileUniform</b>(probability[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
