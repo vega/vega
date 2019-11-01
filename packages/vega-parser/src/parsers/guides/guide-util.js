@@ -3,7 +3,7 @@ import {value} from '../../util';
 import {stringValue} from 'vega-util';
 
 export function lookup(spec, config) {
-  const _ = name => value(spec[name], config[name]);
+  const _ = (name, dflt) => value(spec[name], value(config[name], dflt));
 
   _.isVertical = s => Vertical === value(
     spec.direction,
