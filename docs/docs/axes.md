@@ -80,7 +80,7 @@ Properties for specifying a coordinate axis.
 | titlePadding  | {% include type t="Number|Value" %} | The padding in pixels between the axis labels and axis title.|
 | titleX        | {% include type t="Number" %}  | Custom X position of the axis title relative to the axis group, overriding the standard layout. |
 | titleY        | {% include type t="Number" %}  | Custom Y position of the axis title relative to the axis group, overriding the standard layout. |
-| values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values.|
+| values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values. The array entries should be legal values in the backing scale domain.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
 
 To create themes, new default values for many axis properties can be set using a [config](../config) object.
