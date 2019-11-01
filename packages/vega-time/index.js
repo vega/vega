@@ -8,6 +8,12 @@ export {
 } from './src/floor';
 
 export {
+  timeUnitSpecifier,
+  timeFormat,
+  utcFormat
+} from './src/format';
+
+export {
   timeInterval,
   timeOffset,
   timeSequence,
