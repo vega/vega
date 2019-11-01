@@ -94,3 +94,48 @@ tape('Flatten flattens parallel arrays', function(t) {
 
   t.end();
 });
+
+
+tape('Flatten with index', function(t) {
+  var data = [
+    { k: 'a', v: [ 1, 2 ] },
+    { k: 'b', v: [ 3, 4, 5 ] }
+  ];
+
+  var v = util.field('v'),
+      df = new vega.Dataflow(),
+      c0 = df.add(Collect),
+      fl = df.add(Flatten, {fields: [v], pulse:c0, index: 'foo'}),
+      out = df.add(Collect, {pulse: fl}),
+      d;
+
+  // -- process adds
+  df.pulse(c0, changeset().insert(data)).run();
+  d = out.value;
+  t.equal(d.length, 5);
+  t.equal(d[0].k, 'a'); t.equal(d[0].foo, 0);
+  t.equal(d[1].k, 'a'); t.equal(d[1].foo, 1);
+  t.equal(d[2].k, 'b'); t.equal(d[2].foo, 0);
+  t.equal(d[3].k, 'b'); t.equal(d[3].foo, 1);
+  t.equal(d[4].k, 'b'); t.equal(d[4].foo, 2);
+
+  // -- process mods
+  df.pulse(c0, changeset().modify(data[0], 'v', [1, 9])).run();
+  d = out.value;
+  t.equal(d.length, 5);
+  t.equal(d[0].k, 'a'); t.equal(d[0].foo, 0);
+  t.equal(d[1].k, 'a'); t.equal(d[1].foo, 1);
+  t.equal(d[2].k, 'b'); t.equal(d[2].foo, 0);
+  t.equal(d[3].k, 'b'); t.equal(d[3].foo, 1);
+  t.equal(d[4].k, 'b'); t.equal(d[4].foo, 2);
+
+  // -- process rems
+  df.pulse(c0, changeset().remove(data[0])).run();
+  d = out.value;
+  t.equal(d.length, 3);
+  t.equal(d[0].k, 'b'); t.equal(d[0].foo, 0);
+  t.equal(d[1].k, 'b'); t.equal(d[1].foo, 1);
+  t.equal(d[2].k, 'b'); t.equal(d[2].foo, 2);
+
+  t.end();
+});

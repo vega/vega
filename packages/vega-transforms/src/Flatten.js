@@ -13,6 +13,7 @@ import {inherits} from 'vega-util';
  * @param {Array<string>} [params.as] - Output field names for flattened
  *   array fields. Any unspecified fields will use the field name provided
  *   by the fields accessors.
+ * @param {string} [params.index] - Optional output field name for index value.
  */
 export default function Flatten(params) {
   Transform.call(this, [], params);
