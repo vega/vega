@@ -31,6 +31,14 @@ import {
 } from 'vega-statistics';
 
 import {
+  timeOffset,
+  timeSequence,
+  timeUnitSpecifier,
+  utcOffset,
+  utcSequence
+} from 'vega-time';
+
+import {
   isArray,
   isBoolean,
   isDate,
@@ -220,8 +228,13 @@ export const functionContext = {
   format,
   utcFormat,
   utcParse,
+  utcOffset,
+  utcSequence,
   timeFormat,
   timeParse,
+  timeOffset,
+  timeSequence,
+  timeUnitSpecifier,
   monthFormat,
   monthAbbrevFormat,
   dayFormat,
