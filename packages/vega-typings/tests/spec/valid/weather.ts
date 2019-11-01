@@ -52,9 +52,7 @@ export const spec: Spec = {
       "grid": true,
       "domain": false,
       "zindex": 1,
-      "encode": {
-        "grid": {"enter": {"stroke": {"value": "white"}}}
-      }
+      "gridColor": "white"
     }
   ],
 
