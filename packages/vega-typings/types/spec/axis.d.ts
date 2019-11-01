@@ -27,7 +27,7 @@ export type LabelOverlap = boolean | 'parity' | 'greedy';
 
 export type TickCount = number | TimeInterval | SignalRef;
 
-export type FormatType = 'number' | 'time';
+export type FormatType = 'number' | 'time' | 'utc';
 
 export interface Axis extends BaseAxis {
   /**
@@ -48,12 +48,12 @@ export interface Axis extends BaseAxis {
   gridScale?: string;
 
   /**
-   * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
+   * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or multi-format object.
    */
-  format?: string | SignalRef;
+  format?: string | object | SignalRef;
 
   /**
-   * The format type for axis labels (number or time).
+   * The format type for axis labels (number, time, or utc).
    */
   formatType?: FormatType | SignalRef;
 

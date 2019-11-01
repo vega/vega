@@ -362,9 +362,11 @@ export type TimeUnit =
 export interface TimeUnitTransform {
   type: 'timeunit';
   field: string | TransformField;
+  interval?: boolean | SignalRef;
   units?: (TimeUnit | SignalRef)[] | SignalRef;
   step?: number | SignalRef;
   timezone?: 'local' | 'utc' | SignalRef;
+  signal?: string;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 

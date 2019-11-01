@@ -1,6 +1,6 @@
 {
   "name": "vega-transforms",
-  "version": "4.4.3",
+  "version": "4.5.0",
   "description": "Data processing transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -30,9 +30,9 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.3.2",
+    "d3-array": "^2.3.3",
     "vega-dataflow": "^5.4.1",
-    "vega-statistics": "^1.6.1",
+    "vega-statistics": "^1.6.2",
     "vega-time": "^1.0.0",
     "vega-util": "^1.12.0"
   }
