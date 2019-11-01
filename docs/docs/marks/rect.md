@@ -14,6 +14,6 @@ permalink: /docs/marks/rect/index.html
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| cornerRadius        | {% include type t="Number" %}  | The radius in pixels of rounded rectangle corners (default `0`). |
+| cornerRadius        | {% include type t="Number|CornerRadius" %}  | The radius in pixels of rounded rectangle corners (default `0`). |
 
 {% include properties.md %}

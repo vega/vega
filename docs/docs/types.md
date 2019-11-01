@@ -13,6 +13,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [Boolean](#Boolean)
 - [Color](#Color)
 - [Gradient](#Gradient)
+- [CornerRadius](#CornerRadius)
 - [Number](#Number)
 - [Object](#Object)
 - [String](#String)
@@ -109,6 +110,14 @@ A gradient stop consists of a [Color](#Color) value and an _offset_ progress fra
 | :------------ | :---------------------------: | :------------|
 | offset        | {% include type t="Number" %} | {% include required %} The offset fraction for the color stop, indicating its position within the gradient.|
 | color         | [Color](#Color)               | {% include required %} The color value at this point in the gradient.|
+
+<br/><a name="CornerRadius" href="#CornerRadius">#</a>
+**CornerRadius**
+
+Accepts an object that specifies radius for individual corners. The object may have zero, one, or more of the following keys: `all`, `left`, `right`, `top`, `bottom`, `topLeft`, `topRight`, `bottomLeft`, and `bottomRight`. The key to the right have the highest priority. If a corner is not specified, its radius default to 0.
+
+For example, `{"all": 20, "topLeft": 10}` means all corners except top-left have radius 20, while top-left has 10. `{"top": 10}` means top corners have radius 10, while bottom ones have 0.
+
 
 <br/><a name="Number" href="#Number">#</a>
 **Number**
