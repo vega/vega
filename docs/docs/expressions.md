@@ -22,7 +22,7 @@ This page documents the expression language. If you are interested in implementa
 - [Control Flow Functions](#control-flow-functions)
 - [Math Functions](#math-functions)
 - [Statistical Functions](#statistical-functions)
-- [Date/Time Functions](#datetime-functions)
+- [Date-Time Functions](#datetime-functions)
 - [Array Functions](#array-functions)
 - [String Functions](#string-functions)
 - [Object Functions](#object-functions)
@@ -331,9 +331,9 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 [Back to Top](#reference)
 
 
-## <a name="datetime-functions"></a>Date/Time Functions
+## <a name="datetime-functions"></a>Date-Time Functions
 
-Functions for working with date/time values.
+Functions for working with date-time values.
 
 <a name="now" href="#now">#</a>
 <b>now</b>()<br/>
@@ -387,6 +387,14 @@ Returns the epoch-based timestamp for the given _datetime_ value.
 <b>timezoneoffset</b>(<i>datetime</i>)<br/>
 Returns the timezone offset from the local timezone to UTC for the given _datetime_ value.
 
+<a name="timeOffset" href="#timeOffset">#</a>
+<b>timeOffset</b>(<i>unit</i>, <i>date</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns a new `Date` instance that offsets the given _date_ by the specified time [_unit_](../api/time/#time-units) in the local timezone. The optional _step_ argument indicates the number of time unit steps to offset by (default 1).
+
+<a name="timeSequence" href="#timeSequence">#</a>
+<b>timeSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns an array of `Date` instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time [_unit_](../api/time/#time-units) in the local timezone. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
+
 <a name="utc" href="#utc">#</a>
 <b>utc</b>(<i>year</i>, <i>month</i>[, <i>day</i>, <i>hour</i>, <i>min</i>, <i>sec</i>, <i>millisec</i>])<br/>
 Returns a timestamp for the given UTC date. The _month_ is 0-based, such that `1` represents February.
@@ -426,6 +434,14 @@ Returns the seconds component for the given _datetime_ value, in UTC time.
 <a name="utcmilliseconds" href="#utcmilliseconds">#</a>
 <b>utcmilliseconds</b>(<i>datetime</i>)<br/>
 Returns the milliseconds component for the given _datetime_ value, in UTC time.
+
+<a name="utcOffset" href="#utcOffset">#</a>
+<b>utcOffset</b>(<i>unit</i>, <i>date</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns a new `Date` instance that offsets the given _date_ by the specified time [_unit_](../api/time/#time-units) in UTC time. The optional _step_ argument indicates the number of time unit steps to offset by (default 1).
+
+<a name="utcSequence" href="#utcSequence">#</a>
+<b>utcSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns an array of `Date` instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time [_unit_](../api/time/#time-units) in UTC time. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
 
 [Back to Top](#reference)
 
@@ -587,9 +603,13 @@ Formats a (zero-based) _month_ number as a full month name, according to the cur
 <b>monthAbbrevFormat</b>(<i>month</i>)<br/>
 Formats a (zero-based) _month_ number as an abbreviated month name, according to the current locale. For example: `monthAbbrevFormat(0) -> "Jan"`.
 
+<a name="timeUnitSpecifier" href="#timeUnitSpecifier">#</a>
+<b>timeUnitSpecifier</b>(<i>units</i>[, <i>specifiers</i>]) {% include tag ver="5.8" %}<br/>
+Returns a time format specifier string for the given time [_units_](../api/time/#time-units). The optional _specifiers_ object provides a set of specifier sub-strings for customizing the format; for more, see the [timeUnitSpecifier API documentation](../api/time/#timeUnitSpecifier). The resulting specifier string can then be used as input to the [timeFormat](#timeFormat) or [utcFormat](#utcFormat) functions, or as the _format_ parameter of an axis or legend. For example: `timeFormat(date, timeUnitSpecifier('year'))` or `timeFormat(date, timeUnitSpecifier(['hours', 'minutes']))`.
+
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
-Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `timeFormat(timestamp, '%A')`.
+Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -597,7 +617,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
-Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `utcFormat(timestamp, '%A')`.
+Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
