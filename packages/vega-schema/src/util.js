@@ -110,33 +110,20 @@ export const signalRef = ref('signal');
 export const formatTypeType = enums(formatTypeEnum);
 
 export const formatSpecifier = object({
-  'year': stringType,
-  'quarter': stringType,
-  'month': stringType,
-  'date': stringType,
-  'week': stringType,
-  'day': stringType,
-  'hours': stringType,
-  'minutes': stringType,
-  'seconds': stringType,
-  'milliseconds': stringType,
-  'year-quarter': stringType,
-  'year-month': stringType,
-  'year-month-date': stringType,
-  'month-date': stringType,
-  'year-week': stringType,
-  'year-week-day': stringType,
-  'week-day': stringType,
-  'hours-minutes': stringType,
-  'hours-minutes-seconds': stringType,
-  'hours-minutes-seconds-milliseconds': stringType,
-  'minutes-seconds': stringType,
-  'minutes-seconds-milliseconds': stringType,
-  'seconds-milliseconds': stringType
-}, undefined);
+  year: stringType,
+  quarter: stringType,
+  month: stringType,
+  date: stringType,
+  week: stringType,
+  day: stringType,
+  hours: stringType,
+  minutes: stringType,
+  seconds: stringType,
+  milliseconds: stringType
+});
 
 export const formatTypeOrSignal = {
-  anyOf: [
+  oneOf: [
     stringType,
     formatSpecifier,
     signalRef
