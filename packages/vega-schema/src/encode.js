@@ -199,7 +199,7 @@ const encodeEntry = object({
   // Group-mark properties
   clip: booleanValueRef,
 
-  // Symbol- and text-mark properties
+  // Symbol-, Path- and text-mark properties
   angle: numberValueRef,
 
   // Symbol-mark properties
@@ -208,6 +208,8 @@ const encodeEntry = object({
 
   // Path-mark properties
   path: stringValueRef,
+  scaleX: numberValueRef,
+  scaleY: numberValueRef,
 
   // Arc-mark properties
   innerRadius: numberValueRef,
