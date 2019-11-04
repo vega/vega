@@ -1,14 +1,19 @@
-# vega-time
+---
+layout: api
+title: Time Utilities API
+permalink: /docs/api/time/index.html
+---
 
-JavaScript date-time utilities for Vega. Provides a set of helper methods for working with date objects (or, equivalently, with [UNIX timestamps](https://en.wikipedia.org/wiki/Unix_time)).
+JavaScript date-time utilities for Vega. Provides a set of helper methods for working with date objects (or, equivalently, with [UNIX timestamps](https://en.wikipedia.org/wiki/Unix_time)). These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-time](https://github.com/vega/vega/tree/master/packages/vega-time) package. For more general utility methods, see the [Utilities API reference](../util).
 
-## API Reference
+## Time Utilities API Reference
 
 - [Time Units](#time-units)
 - [Local Time Utilities](#local-time-utilities)
 - [UTC Time Utilities](#utc-time-utilities)
 
-### Time Units
+
+## <a name="time-units"></a>Time Units
 
 The date-time utilities support a set of pre-defined time units. A single _unit_ value is one of the following strings:
 
@@ -71,7 +76,7 @@ The supported options properties are:
 - _maxbins_: The maximum number of allowable bins (default `40`).
 
 
-### Local Time Utilities
+## <a name="local-time-utilities"></a>Local Time Utilities
 
 <a name="timeFormat" href="#timeFormat">#</a>
 vega.<b>timeFormat</b>([<i>specifier</i>])
@@ -121,7 +126,8 @@ vega.<b>timeSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>])
 
 Returns an array of Date instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time _unit_ in the local timezone. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
 
-### UTC Time Utilities
+
+### <a name="utc-time-utilities"></a>UTC Time Utilities
 
 <a name="utcFormat" href="#utcFormat">#</a>
 vega.<b>utcFormat</b>([<i>specifier</i>])

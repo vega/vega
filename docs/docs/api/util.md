@@ -4,7 +4,7 @@ title: Utilities API
 permalink: /docs/api/util/index.html
 ---
 
-Vega uses a set of JavaScript **utilities** throughout its implementation, including function generators, type checkers, log messages, and additional utilities for Object, Array and String values. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-util](https://github.com/vega/vega-util) project.
+Vega uses a set of JavaScript **utilities** throughout its implementation, including function generators, type checkers, log messages, and additional utilities for Object, Array and String values. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-util](https://github.com/vega/vega/tree/master/packages/vega-util) package. For additional utility methods for date-time values, see the [Time Utilities API reference](../time).
 
 ## Utilities API Reference
 
