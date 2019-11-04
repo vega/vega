@@ -21,6 +21,7 @@ Bin.Definition = {
   "metadata": {"modifies": true},
   "params": [
     { "name": "field", "type": "field", "required": true },
+    { "name": "interval", "type": "boolean", "default": true },
     { "name": "anchor", "type": "number" },
     { "name": "maxbins", "type": "number", "default": 20 },
     { "name": "base", "type": "number", "default": 10 },
@@ -39,7 +40,8 @@ Bin.Definition = {
 var prototype = inherits(Bin, Transform);
 
 prototype.transform = function(_, pulse) {
-  var bins = this._bins(_),
+  var band = _.interval !== false,
+      bins = this._bins(_),
       start = bins.start,
       step = bins.step,
       as = _.as || ['bin0', 'bin1'],
@@ -54,17 +56,20 @@ prototype.transform = function(_, pulse) {
     flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
   }
 
-  pulse.visit(flag, function(t) {
-    var v = bins(t);
-    // minimum bin value (inclusive)
-    t[b0] = v;
-    // maximum bin value (exclusive)
-    // use convoluted math for better floating point agreement
-    // see https://github.com/vega/vega/issues/830
-    t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
-  });
+  pulse.visit(flag, band
+    ? function(t) {
+        var v = bins(t);
+        // minimum bin value (inclusive)
+        t[b0] = v;
+        // maximum bin value (exclusive)
+        // use convoluted math for better floating point agreement
+        // see https://github.com/vega/vega/issues/830
+        t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+      }
+    : function(t) { t[b0] = bins(t); }
+  );
 
-  return pulse.modifies(as);
+  return pulse.modifies(band ? as : b0);
 };
 
 prototype._bins = function(_) {
