@@ -13,6 +13,7 @@ import {inherits} from 'vega-util';
  * @param {Array<string>} [params.as] - Output field names for flattened
  *   array fields. Any unspecified fields will use the field name provided
  *   by the fields accessors.
+ * @param {string} [params.index] - Optional output field name for index value.
  */
 export default function Flatten(params) {
   Transform.call(this, [], params);
@@ -23,7 +24,8 @@ Flatten.Definition = {
   "metadata": {"generates": true},
   "params": [
     { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true }
+    { "name": "as", "type": "string", "array": true },
+    { "name": "index", "type": "string" }
   ]
 };
 
@@ -33,7 +35,8 @@ prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.NO_SOURCE),
       fields = _.fields,
       as = fieldNames(fields, _.as || []),
-      m = as.length;
+      m = as.length,
+      index = _.index;
 
   // remove any previous results
   out.rem = this.value;
@@ -48,6 +51,9 @@ prototype.transform = function(_, pulse) {
       d = derive(t);
       for (j=0; j<m; ++j) {
         d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+      }
+      if (index) {
+        d[index] = i;
       }
       out.add.push(d);
     }
