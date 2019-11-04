@@ -17,7 +17,7 @@ export type Transforms =
   | _TODO_<'force'>
   | FormulaTransform
   | GeoJSONTransform
-  | _TODO_<'geopath'>
+  | GeoPathTransform
   | GeoPointTransform
   | GeoShapeTransform
   | GraticuleTransform
@@ -40,6 +40,7 @@ export type Transforms =
   | _TODO_<'sequence'>
   | StackTransform
   | _TODO_<'stratify'>
+  | TimeUnitTransform
   | _TODO_<'tree'>
   | _TODO_<'treelinks'>
   | _TODO_<'treemap'>
@@ -223,6 +224,14 @@ export interface GeoPointTransform {
   as?: string[];
 }
 
+export interface GeoPathTransform {
+  type: 'geopath';
+  projection?: string;
+  field?: string | TransformField;
+  pointRadius?: number | SignalRef | ExprRef;
+  as?: string;
+}
+
 export interface GeoShapeTransform {
   type: 'geoshape';
   projection?: string;
@@ -337,6 +346,29 @@ export interface StackTransform {
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
+
+export type TimeUnit =
+  | 'year'
+  | 'quarter'
+  | 'month'
+  | 'week'
+  | 'day'
+  | 'date'
+  | 'hours'
+  | 'minutes'
+  | 'seconds'
+  | 'milliseconds';
+
+export interface TimeUnitTransform {
+  type: 'timeunit';
+  field: string | TransformField;
+  interval?: boolean | SignalRef;
+  units?: (TimeUnit | SignalRef)[] | SignalRef;
+  step?: number | SignalRef;
+  timezone?: 'local' | 'utc' | SignalRef;
+  signal?: string;
+  as?: Vector2<string | SignalRef> | SignalRef;
+}
 
 export type WindowOnlyOp =
   | 'row_number'

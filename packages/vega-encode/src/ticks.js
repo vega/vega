@@ -1,10 +1,7 @@
-import {isLogarithmic, timeInterval, Time} from 'vega-scale';
+import {isLogarithmic, Time, UTC} from 'vega-scale';
+import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
 import {error, isNumber, isObject, isString, peek, span} from 'vega-util';
-import {timeFormat} from 'd3-time-format';
-import {
-  format as numberFormat,
-  formatSpecifier
-} from 'd3-format';
+import {format as numberFormat, formatSpecifier} from 'd3-format';
 
 /**
  * Determine the tick count or interval function.
@@ -31,8 +28,9 @@ export function tickCount(scale, count, minStep) {
   }
 
   if (isString(count)) {
-    count = timeInterval(count, scale.type)
-          || error('Only time and utc scales accept interval strings.');
+    count = scale.type === Time ? timeInterval(count)
+      : scale.type == UTC ? utcInterval(count)
+      : error('Only time and utc scales accept interval strings.');
     if (step) count = count.every(step);
   }
 
@@ -102,16 +100,19 @@ export function tickValues(scale, count) {
  * @param {Scale} scale - The scale for which to generate the label formatter.
  * @param {*} [count] - The approximate number of desired ticks.
  * @param {string} [specifier] - The format specifier. Must be a legal d3
- *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
+ *   specifier string (see https://github.com/d3/d3-format#formatSpecifier) or
+ *   time multi-format specifier object.
  * @return {function(*):string} - The generated label formatter.
  */
 export function tickFormat(scale, count, specifier, formatType) {
-  var format = scale.tickFormat ? scale.tickFormat(count, specifier)
-    : specifier && formatType === Time ? timeFormat(specifier)
-    : specifier ? numberFormat(specifier)
-    : String;
+  var type = scale.type,
+      format = (type === Time || formatType === Time) ? timeFormat(specifier)
+        : (type === UTC || formatType === UTC) ? utcFormat(specifier)
+        : scale.tickFormat ? scale.tickFormat(count, specifier)
+        : specifier ? numberFormat(specifier)
+        : String;
 
-  if (isLogarithmic(scale.type)) {
+  if (isLogarithmic(type)) {
     var logfmt = variablePrecision(specifier);
     format = scale.bins ? logfmt : filter(format, logfmt);
   }

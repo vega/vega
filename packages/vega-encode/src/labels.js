@@ -1,14 +1,14 @@
 import {Symbols, Discrete} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
-
+import {peek} from 'vega-util';
 import {
   Quantile,
   Quantize,
   Threshold,
   tickFormat as spanFormat,
-  Time
+  Time,
+  UTC
 } from 'vega-scale';
-import {peek} from 'vega-util';
 
 const symbols = {
   [Quantile]:  'quantiles',
@@ -59,7 +59,7 @@ function isDiscreteRange(scale) {
 }
 
 export function labelFormat(scale, count, type, specifier, formatType) {
-  const format = formats[scale.type] && formatType !== Time
+  const format = formats[scale.type] && formatType !== Time && formatType !== UTC
     ? thresholdFormat(scale, specifier)
     : tickFormat(scale, count, specifier, formatType);
 

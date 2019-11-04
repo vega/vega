@@ -1,5 +1,4 @@
 export {default as bandSpace} from './src/scales/bandSpace';
-export {timeInterval} from './src/scales/timeInterval';
 
 export {
   Identity,

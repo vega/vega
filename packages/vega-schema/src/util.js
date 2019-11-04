@@ -10,7 +10,7 @@ const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 
 const anchorEnum = [null, 'start', 'middle', 'end'];
 
-const formatTypeEnum = ['number', 'time'];
+const formatTypeEnum = ['number', 'time', 'utc'];
 
 const orientEnum = ['left', 'right', 'top', 'bottom'];
 
@@ -107,7 +107,15 @@ export const colorStringType = stringType;
 export const nullType = type('null');
 export const signalRef = ref('signal');
 
-export const formatType = enums(formatTypeEnum);
+export const formatTypeType = enums(formatTypeEnum);
+
+export const formatType = {
+  anyOf: [
+    stringType,
+    objectType,
+    signalRef
+  ]
+};
 
 export const textType = {
   oneOf: [

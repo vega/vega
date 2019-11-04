@@ -34,6 +34,7 @@ export {default as sample} from './src/Sample';
 export {default as sequence} from './src/Sequence';
 export {default as sieve} from './src/Sieve';
 export {default as subflow} from './src/Subflow';
+export {default as timeunit} from './src/TimeUnit';
 export {default as tupleindex} from './src/TupleIndex';
 export {default as values} from './src/Values';
 export {default as window} from './src/Window';
