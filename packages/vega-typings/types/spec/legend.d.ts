@@ -6,7 +6,7 @@ import {
   SymbolEncodeEntry,
   TextEncodeEntry,
 } from '.';
-import { FormatType, LabelOverlap, TickCount } from './axis';
+import { FormatType, LabelOverlap, TickCount, TimeFormatSpecifier } from './axis';
 import { Text } from './encode';
 import { LayoutAlign } from './layout';
 import {
@@ -77,7 +77,7 @@ export interface Legend extends BaseLegend {
   /**
    * The format specifier pattern for legend labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or multi-format object.
    */
-  format?: string | object | SignalRef;
+  format?: string | TimeFormatSpecifier | SignalRef;
 
   /**
    * The format type for legend labels (number, time, or utc).

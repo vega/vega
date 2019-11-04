@@ -29,6 +29,32 @@ export type TickCount = number | TimeInterval | SignalRef;
 
 export type FormatType = 'number' | 'time' | 'utc';
 
+export interface TimeFormatSpecifier {
+  year?: string;
+  quarter?: string;
+  month?: string;
+  date?: string;
+  week?: string;
+  day?: string;
+  hours?: string;
+  minutes?: string;
+  seconds?: string;
+  milliseconds?: string;
+  'year-quarter'?: string;
+  'year-month'?: string;
+  'year-month-date'?: string;
+  'month-date'?: string;
+  'year-week'?: string;
+  'year-week-day'?: string;
+  'week-day'?: string;
+  'hours-minutes'?: string;
+  'hours-minutes-seconds'?: string;
+  'hours-minutes-seconds-milliseconds'?: string;
+  'minutes-seconds'?: string;
+  'minutes-seconds-milliseconds'?: string;
+  'seconds-milliseconds'?: string;
+}
+
 export interface Axis extends BaseAxis {
   /**
    * The orientation of the axis. One of `"top"`, `"bottom"`, `"left"` or `"right"`. The orientation can be used to further specialize the axis type (e.g., a y axis oriented for the right edge of the chart).
@@ -50,7 +76,7 @@ export interface Axis extends BaseAxis {
   /**
    * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or multi-format object.
    */
-  format?: string | object | SignalRef;
+  format?: string | TimeFormatSpecifier | SignalRef;
 
   /**
    * The format type for axis labels (number, time, or utc).

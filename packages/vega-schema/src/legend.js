@@ -4,8 +4,8 @@ import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
-  arrayOrSignal, numberOrSignal, textOrSignal,
-  formatType, formatTypeType, numberType, stringType, orSignal
+  arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
+  formatTypeType, numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
@@ -114,7 +114,7 @@ const legendProps = object({
   symbolType: stringValue,
 
   // LABEL CONFIG
-  format: formatType,
+  format: formatTypeOrSignal,
   formatType: orSignal(formatTypeType),
   labelAlign: alignValue,
   labelBaseline: baselineValue,

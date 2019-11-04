@@ -3,9 +3,9 @@ import {
   numberValue, stringValue, booleanValue, colorValue, alignValue,
   anchorValue, baselineValue, fontWeightValue, dashArrayValue,
   booleanOrSignal, arrayOrSignal, numberOrSignal,
-  textOrSignal, booleanOrNumberOrSignal,
+  textOrSignal, booleanOrNumberOrSignal, formatTypeOrSignal,
   def, enums, object, oneOf, orSignal, ref,
-  booleanType, formatType, formatTypeType, numberType, stringType, signalRef
+  booleanType, formatTypeType, numberType, stringType, signalRef
 } from './util';
 
 // types defined elsewhere
@@ -41,7 +41,7 @@ const axisOrientEnum = [
 const axis = object({
   _orient_: enums(axisOrientEnum),
   _scale_: stringType,
-  format: formatType,
+  format: formatTypeOrSignal,
   formatType: orSignal(formatTypeType),
   minExtent: numberValue,
   maxExtent: numberValue,
