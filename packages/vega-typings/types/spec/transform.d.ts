@@ -85,13 +85,14 @@ export type AggregateOp =
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
+  field: string | TransformField;
+  interval?: boolean | SignalRef;
+  anchor?: number | SignalRef;
   extent: Vector2<number | SignalRef> | SignalRef;
   span?: number | SignalRef;
-  field: string | TransformField;
-  as?: Vector2<string | SignalRef> | SignalRef;
   signal?: string;
-  anchor?: number | SignalRef;
   name?: string | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 export interface BaseBin {
   /**
@@ -194,6 +195,7 @@ export interface FilterTransform {
 export interface FlattenTransform {
   type: 'flatten';
   fields: (string | TransformField)[] | SignalRef;
+  index?: string | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
 }
 
