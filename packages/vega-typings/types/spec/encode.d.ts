@@ -281,6 +281,9 @@ export interface LineEncodeEntry extends EncodeEntry, DefinedProperty {
 }
 export interface PathEncodeEntry extends EncodeEntry {
   path?: ProductionRule<StringValueRef>;
+  angle?: ProductionRule<NumericValueRef>;
+  scaleX?: ProductionRule<NumericValueRef>;
+  scaleY?: ProductionRule<NumericValueRef>;
 }
 export interface RectEncodeEntry extends EncodeEntry {
   cornerRadius?: ProductionRule<NumericValueRef>;

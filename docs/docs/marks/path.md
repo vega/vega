@@ -15,8 +15,8 @@ permalink: /docs/marks/path/index.html
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
 | path                | {% include type t="String" %}  | An [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) describing the geometry of the path.|
-| scaleX              | {% include type t="Number" %}  | The scale x factor that will scale the path horizontally.|
-| scaleY              | {% include type t="Number" %}  | The scale y factor that will scale the path vertically.|
-| angle               | {% include type t="Number" %}  | Tha angle rotating the path.|
+| angle               | {% include type t="Number" %}  | {% include tag ver="5.8" %} The angle (in degrees) by which to rotate the symbol (default `0`).|
+| scaleX              | {% include type t="Number" %}  | {% include tag ver="5.8" %} The scale factor by which to scale the path horizontally, prior to any rotation (default `1`).|
+| scaleY              | {% include type t="Number" %}  | {% include tag ver="5.8" %} The scale factor by which to scale the path vertically, prior to any rotation (default `1`).|
 
 {% include properties.md %}
