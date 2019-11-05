@@ -199,6 +199,13 @@ const encodeEntry = object({
   // Group-mark properties
   clip: booleanValueRef,
 
+  // Rect-mark properties
+  cornerRadius: numberValueRef,
+  cornerRadiusTopLeft: numberValueRef,
+  cornerRadiusTopRight: numberValueRef,
+  cornerRadiusBottomRight: numberValueRef,
+  cornerRadiusBottomLeft: numberValueRef,
+
   // Symbol-, Path- and text-mark properties
   angle: numberValueRef,
 
@@ -216,16 +223,19 @@ const encodeEntry = object({
   outerRadius: numberValueRef,
   startAngle: numberValueRef,
   endAngle: numberValueRef,
+  padAngle: numberValueRef,
 
   // Area- and line-mark properties
   interpolate: stringValueRef,
   tension: numberValueRef,
   orient: ref('directionValue'),
+  defined: booleanValueRef,
 
   // Image-mark properties
   url: stringValueRef,
   align: ref('alignValue'),
   baseline: ref('baselineValue'),
+  aspect: booleanValueRef,
 
   // Text-mark properties
   text: textValueRef,

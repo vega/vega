@@ -17,6 +17,7 @@
   "choropleth",
   "contour-map",
   "contour-scatter",
+  "corner-radius",
   "crossfilter",
   "crossfilter-multi",
   "density",
