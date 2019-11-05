@@ -13,9 +13,11 @@ rollup.rollup({
     format: 'cjs'
   });
 }).then(function() {
+  // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);
 
 function abort(error) {
+  // eslint-disable-next-line
   console.error(error.stack);
 }

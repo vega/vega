@@ -10,9 +10,10 @@ function hasArgument(_) {
 }
 
 const external = [].concat(!externals ? [] : [
-  'd3-array',
+  // 'd3-array', // we use d3-array v2, not yet part of D3 v5
   'd3-color',
   'd3-contour',
+  'd3-dispatch',
   'd3-dsv',
   'd3-force',
   'd3-format',
@@ -20,12 +21,12 @@ const external = [].concat(!externals ? [] : [
   'd3-hierarchy',
   'd3-interpolate',
   'd3-path',
-  'd3-scale',
+  // 'd3-scale', // we use d3-scale v3, not yet part of D3 v5
   'd3-shape',
   'd3-time',
   'd3-time-format',
   'd3-timer',
-  'd3-delaunay',
+  // 'd3-delaunay', // not part of D3 v5
   'topojson-client'
 ]);
 
@@ -53,15 +54,18 @@ rollup.rollup({
   onwarn: function(warning) {
     // suppress circular dependency warnings
     if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+      // eslint-disable-next-line
       console.warn(warning.code, warning.message);
     }
   }
 }).then(function(bundle) {
   return bundle.write(options);
 }).then(function() {
+  // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);
 
 function abort(error) {
+  // eslint-disable-next-line
   console.error(error.stack);
 }
