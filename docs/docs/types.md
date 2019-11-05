@@ -12,6 +12,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [Array](#Array)
 - [Boolean](#Boolean)
 - [Color](#Color)
+- [Date](#Date)
 - [Gradient](#Gradient)
 - [Number](#Number)
 - [Object](#Object)
@@ -26,6 +27,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [ColorValue](#ColorValue)
 - [FieldValue](#FieldValue)
 - [GradientValue](#GradientValue)
+- [TimeMultiFormat](#TimeMultiFormat)
 {: .column-list }
 
 ## Literal Values
@@ -51,6 +53,11 @@ Accepts boolean values. For example: `true`, `false`.
 **Color**
 
 Accepts a valid CSS color string. For example: `#f304d3`, `#ccc`, `rgb(253, 12, 134)`, `steelblue`.
+
+<br/><a name="Date" href="#Date">#</a>
+**Date**
+
+A valid JavaScript `Date` object or timestamp. As JSON does not support date values natively, within a Vega specification a date-time value can be expressed either as a numeric timestamp (the number of milliseconds since the UNIX epoch, as produced by the [Date.getTime()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) method) or using a signal expression (such as `{"signal": "datetime(2001, 2, 3)"}`).
 
 <br/><a name="Gradient" href="#Gradient">#</a>
 **Gradient** {% include tag ver="5.4" %}
@@ -358,5 +365,18 @@ Defines a linear gradient based on a scale range to determine colors for a `fill
   }
 }
 ```
+
+[Back to top](#reference)
+
+
+<br/><a name="TimeMultiFormat" href="#TimeMultiFormat">#</a>
+**TimeMultiFormat**
+
+An object defining custom multi-format specifications for date-time values. This object must be a legal input to the [timeFormat API method](../api/time/#timeFormat):
+
+- Object keys must be valid [time units](../api/time/#time-units) (e.g., `year`, `month`, etc).
+- Object values must be valid [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) specifier strings.
+
+These values, in conjunction with defaults for unspecified units, will then be used to create a dynamic formatting function that uses different formats depending on the granularity of the input date (e.g., if the date lies on a year, month, date, hour, _etc._ boundary). For more information, see the [timeFormat API documentation](../api/time/#timeFormat).
 
 [Back to top](#reference)

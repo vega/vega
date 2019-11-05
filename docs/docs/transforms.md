@@ -52,6 +52,7 @@ Transforms for processing streams of data objects.
 - [`regression`](regression) - Fit regression models to smooth and predict values. {% include tag ver="5.4" %}
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
+- [`timeunit`](timeunit) - Discretize date-time values into time unit bins. {% include tag ver="5.8" %}
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.
 
 ## Geographic Transforms

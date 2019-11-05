@@ -40,19 +40,6 @@ export interface TimeFormatSpecifier {
   minutes?: string;
   seconds?: string;
   milliseconds?: string;
-  'year-quarter'?: string;
-  'year-month'?: string;
-  'year-month-date'?: string;
-  'month-date'?: string;
-  'year-week'?: string;
-  'year-week-day'?: string;
-  'week-day'?: string;
-  'hours-minutes'?: string;
-  'hours-minutes-seconds'?: string;
-  'hours-minutes-seconds-milliseconds'?: string;
-  'minutes-seconds'?: string;
-  'minutes-seconds-milliseconds'?: string;
-  'seconds-milliseconds'?: string;
 }
 
 export interface Axis extends BaseAxis {
