@@ -284,6 +284,10 @@ export interface PathEncodeEntry extends EncodeEntry {
 }
 export interface RectEncodeEntry extends EncodeEntry {
   cornerRadius?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopLeft?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomLeft?: ProductionRule<NumericValueRef>;
 }
 export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {
