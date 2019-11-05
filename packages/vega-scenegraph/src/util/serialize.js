@@ -8,6 +8,8 @@ var keys = [
   'strokeDash', 'strokeDashOffset',                             // stroke dash
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
   'cornerRadius', 'padAngle',                                   // arc, rect
+  'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group
+  'cornerRadiusBottomLeft', 'cornerRadiusBottomRight',
   'interpolate', 'tension', 'orient', 'defined',                // area, line
   'url',                                                        // image
   'path',                                                       // path
