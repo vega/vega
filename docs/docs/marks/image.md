@@ -15,8 +15,8 @@ permalink: /docs/marks/image/index.html
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
 | url                 | {% include type t="URL" %}     | The URL of the image file. |
-| aspect              | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if the image aspect ratio should be preserved across sizes. If `true` and only one of the dimensional (*width* or *height*) properties are defined, the other dimensional property will be calculated to match the aspect ratio of the loaded image file.|
-| align               | {% include type t="String" %}  | The horizontal alignment of the image. One of `left`, `center`, or `right`. The default value is `left`.|
-| baseline            | {% include type t="String" %}  | The vertical alignment of the image. One of `top`, `middle`, or `bottom`. The default value is `top`.|
+| aspect              | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if the image aspect ratio should be preserved across sizes. If `true` and only one of the dimensional (*width* or *height*) properties are defined, the other dimensional property will be calculated to match the aspect ratio of the loaded image file. |
+| align               | {% include type t="String" %}  | The horizontal alignment of the image. One of `left`, `center`, or `right`. The default value is `left`. |
+| baseline            | {% include type t="String" %}  | The vertical alignment of the image. One of `top`, `middle`, or `bottom`. The default value is `top`. |
 
 {% include properties.md %}
