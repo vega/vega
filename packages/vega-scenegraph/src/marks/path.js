@@ -47,7 +47,7 @@ function path(context, item) {
 function bound(bounds, item) {
   path(context(bounds), item)
     ? bounds.set(0, 0, 0, 0)
-    : boundStroke(bounds, item, 1);
+    : boundStroke(bounds, item, true);
 
   if (item.angle) {
     bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
