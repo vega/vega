@@ -235,6 +235,11 @@ var MARKS = {
   "group": {
     "properties": {
       "clip": { "type": "boolean" },
+      "cornerRadius": { "type": "number" },
+      "cornerRadiusTopLeft": { "type": "number" },
+      "cornerRadiusTopRight": { "type": "number" },
+      "cornerRadiusBottomRight": { "type": "number" },
+      "cornerRadiusBottomLeft": { "type": "number" },
       "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
     }
   },
@@ -286,7 +291,11 @@ var MARKS = {
   },
   "rect": {
     "properties": {
-      "cornerRadius": { "type": "number" }
+      "cornerRadius": { "type": "number" },
+      "cornerRadiusTopLeft": { "type": "number" },
+      "cornerRadiusTopRight": { "type": "number" },
+      "cornerRadiusBottomRight": { "type": "number" },
+      "cornerRadiusBottomLeft": { "type": "number" }
     }
   },
   "rule": {
