@@ -11,8 +11,8 @@ var keys = [
   'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group
   'cornerRadiusBottomLeft', 'cornerRadiusBottomRight',
   'interpolate', 'tension', 'orient', 'defined',                // area, line
-  'url',                                                        // image
-  'path',                                                       // path
+  'url', 'aspect',                                              // image
+  'path', 'scaleX', 'scaleY',                                   // path
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
   'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text

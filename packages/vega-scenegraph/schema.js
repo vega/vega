@@ -286,7 +286,10 @@ var MARKS = {
   },
   "path": {
     "properties": {
-      "path": { "$ref": "#/refs/path" }
+      "angle": { "type": "number" },
+      "path": { "$ref": "#/refs/path" },
+      "scaleX": { "type": "number" },
+      "scaleY": { "type": "number" }
     }
   },
   "rect": {
