@@ -412,7 +412,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "aspect": false
             },
             {
               "x": 75,
@@ -422,7 +423,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "aspect": false
             },
             {
               "x": 75,
@@ -432,7 +434,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "aspect": false
             }
           ],
           "zindex": 0
@@ -451,7 +454,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "aspect": true
             },
             {
               "x": 125,
@@ -461,7 +465,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "aspect": true
             },
             {
               "x": 125,
@@ -471,7 +476,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "aspect": true
             }
           ],
           "zindex": 0
