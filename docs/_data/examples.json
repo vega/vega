@@ -41,7 +41,8 @@
         {"name": "wheat-plot"},
         {"name": "quantile-quantile-plot"},
         {"name": "quantile-dot-plot"},
-        {"name": "hypothetical-outcome-plots"}
+        {"name": "hypothetical-outcome-plots"},
+        {"name": "time-units"}
     ],
     "Geographic Maps": [
         {"name": "county-unemployment"},
