@@ -1,4 +1,31 @@
-import { SignalRef, Compare, Vector2, ExprRef, FontWeight, FontStyle, Vector7 } from '.';
+import {
+  Compare,
+  ExprRef,
+  FontStyle,
+  FontWeight,
+  SignalRef,
+  Vector2,
+  Vector4,
+  Vector5,
+  Vector6,
+  Vector7,
+} from '.';
+
+export type DataName = string;
+
+export type ProjectionName = string;
+
+export type SignalName = string;
+
+export type ExprString = string;
+
+export interface FieldParam {
+  field: string;
+}
+
+export type TransformField = SignalRef | FieldParam | ExprRef;
+
+export type FieldRef = string | TransformField;
 
 export type Transforms =
   | AggregateTransform
@@ -6,15 +33,15 @@ export type Transforms =
   | CollectTransform
   | CountPatternTransform
   | ContourTransform
-  | _TODO_<'cross'>
-  | _TODO_<'crossfilter'>
-  | _TODO_<'density'>
+  | CrossTransform
+  | CrossFilterTransform
+  | DensityTransform
   | DotBinTransform
   | ExtentTransform
   | FilterTransform
   | FlattenTransform
   | FoldTransform
-  | _TODO_<'force'>
+  | ForceTransform
   | FormulaTransform
   | HeatmapTransform
   | GeoJSONTransform
@@ -28,35 +55,35 @@ export type Transforms =
   | JoinAggregateTransform
   | KDETransform
   | KDE2DTransform
-  | _TODO_<'linkpath'>
+  | LinkPathTransform
   | LoessTransform
   | LookupTransform
-  | _TODO_<'nest'>
-  | _TODO_<'pack'>
-  | _TODO_<'partition'>
-  | _TODO_<'pie'>
+  | NestTransform
+  | PackTransform
+  | PartitionTransform
+  | PieTransform
   | PivotTransform
-  | _TODO_<'project'>
+  | ProjectTransform
   | QuantileTransform
   | RegressionTransform
-  | _TODO_<'resolvefilter'>
+  | ResolveFilterTransform
   | SampleTransform
   | SequenceTransform
   | StackTransform
-  | _TODO_<'stratify'>
+  | StratifyTransform
   | TimeUnitTransform
-  | _TODO_<'tree'>
-  | _TODO_<'treelinks'>
-  | _TODO_<'treemap'>
-  | _TODO_<'voronoi'>
+  | TreeTransform
+  | TreeLinksTransform
+  | TreemapTransform
+  | VoronoiTransform
   | WindowTransform
   | WordcloudTransform;
 
 export interface AggregateTransform {
   type: 'aggregate';
   signal?: string;
-  groupby?: (string | TransformField)[] | SignalRef;
-  fields?: ((string | TransformField) | null)[] | SignalRef;
+  groupby?: FieldRef[] | SignalRef;
+  fields?: (FieldRef | null)[] | SignalRef;
   ops?: (AggregateOp | SignalRef)[] | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
   drop?: boolean | SignalRef;
@@ -89,12 +116,12 @@ export type AggregateOp =
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
-  field: string | TransformField;
+  field: FieldRef;
   interval?: boolean | SignalRef;
   anchor?: number | SignalRef;
   extent: Vector2<number | SignalRef> | SignalRef;
   span?: number | SignalRef;
-  signal?: string;
+  signal?: SignalName;
   name?: string | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
@@ -150,7 +177,7 @@ export interface CollectTransform {
 
 export interface CountPatternTransform {
   type: 'countpattern';
-  field: string | TransformField;
+  field: FieldRef;
   case?: string | SignalRef;
   pattern?: string | SignalRef;
   stopwords?: string | SignalRef;
@@ -162,8 +189,8 @@ export type ContourTransform = {
   signal?: string;
   size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<number | SignalRef> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
   values?: (number | SignalRef)[] | SignalRef;
-  x?: string | TransformField;
-  y?: string | TransformField;
+  x?: FieldRef;
+  y?: FieldRef;
   cellSize?: number | SignalRef;
   bandwidth?: number | SignalRef;
 } & (
@@ -175,83 +202,191 @@ export type ContourTransform = {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
 
+export interface CrossTransform {
+  type: 'cross';
+  filter?: ExprString;
+  as?: Vector2<string | SignalRef> | SignalRef;
+}
+
+export interface CrossFilterTransform {
+  type: 'crossfilter';
+  fields: (string | TransformField)[] | SignalRef;
+  query: (Vector2<number | SignalRef> | SignalRef)[] | SignalRef;
+  signal?: SignalName;
+}
+
+export interface DensityTransform {
+  type: 'density';
+  extent?: Vector2<number | SignalRef> | SignalRef;
+  steps?: number | SignalRef;
+  minsteps?: number | SignalRef;
+  maxsteps?: number | SignalRef;
+  method?: DensityMethod | SignalRef;
+  distribution?: Distribution | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
+}
+export type DensityMethod = 'pdf' | 'cdf';
+export interface DistributionNormal {
+  function: 'normal';
+  mean?: number | SignalRef;
+  stdev?: number | SignalRef;
+}
+export interface DistributionLogNormal {
+  function: 'lognormal';
+  mean?: number | SignalRef;
+  stdev?: number | SignalRef;
+}
+export interface DistributionUniform {
+  function: 'uniform';
+  min?: number | SignalRef;
+  max?: number | SignalRef;
+}
+export interface DistributionKDE {
+  function: 'kde';
+  field: string | TransformField;
+  from?: DataName;
+  bandwidth?: number | SignalRef;
+}
+export interface DistributionMixture {
+  function: 'mixture';
+  field: string | TransformField;
+  distributions?: (Distribution | SignalRef)[] | SignalRef;
+  weights?: (number | SignalRef)[] | SignalRef;
+}
+export type Distribution =
+  | DistributionNormal
+  | DistributionLogNormal
+  | DistributionUniform
+  | DistributionKDE
+  | DistributionMixture;
+
 export interface DotBinTransform {
   type: 'dotbin';
-  field: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
+  field: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
   step?: number | SignalRef;
   smooth?: boolean | SignalRef;
   as?: string | SignalRef;
-  signal?: string;
+  signal?: SignalName;
 }
 
 export interface ExtentTransform {
   type: 'extent';
-  field: string | TransformField;
+  field: FieldRef;
   signal?: string;
 }
 
 export interface FilterTransform {
   type: 'filter';
-  expr: string;
+  expr: ExprString;
 }
 
 export interface FlattenTransform {
   type: 'flatten';
-  fields: (string | TransformField)[] | SignalRef;
+  fields: FieldRef[] | SignalRef;
   index?: string | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
 }
 
 export interface FoldTransform {
   type: 'fold';
-  fields: (string | TransformField)[] | SignalRef;
+  fields: FieldRef[] | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
+export interface ForceTransform {
+  type: 'force';
+  static?: boolean | SignalRef;
+  restart?: boolean | SignalRef;
+  iterations?: number | SignalRef;
+  alpha?: number | SignalRef;
+  alphaMin?: number | SignalRef;
+  alphaTarget?: number | SignalRef;
+  velocityDecay?: number | SignalRef;
+  forces?: (Force | SignalRef)[] | SignalRef;
+  signal?: SignalName;
+}
+export interface ForceCenter {
+  force: 'center';
+  x?: number | SignalRef;
+  y?: number | SignalRef;
+}
+export interface ForceCollide {
+  force: 'collide';
+  radius?: number | SignalRef | ExprRef;
+  strength?: number | SignalRef;
+  iterations?: number | SignalRef;
+}
+export interface ForceLink {
+  force: 'link';
+  links?: DataName;
+  id?: FieldRef;
+  distance?: number | SignalRef | ExprRef;
+  strength?: number | SignalRef | ExprRef;
+  iterations?: number | SignalRef;
+}
+export interface ForceNBody {
+  force: 'nbody';
+  strength?: number | SignalRef;
+  theta?: number | SignalRef;
+  distanceMin?: number | SignalRef;
+  distanceMax?: number | SignalRef;
+}
+export interface ForceX {
+  force: 'x';
+  strength?: number | SignalRef;
+  x?: FieldRef;
+}
+export interface ForceY {
+  force: 'y';
+  strength?: number | SignalRef;
+  y?: FieldRef;
+}
+export type Force = ForceCenter | ForceCollide | ForceLink | ForceNBody | ForceX | ForceY;
+
 export interface FormulaTransform {
   type: 'formula';
-  expr: string;
-  as: string;
+  expr: ExprString;
   initonly?: boolean;
+  as: string | SignalRef;
 }
 
 export interface GeoJSONTransform {
   type: 'geojson';
-  fields?: Vector2<string | TransformField> | SignalRef;
-  geojson?: string | TransformField;
-  signal: string;
+  fields?: Vector2<FieldRef> | SignalRef;
+  geojson?: FieldRef;
+  signal?: SignalName;
 }
 
 export interface GeoPointTransform {
   type: 'geopoint';
-  projection: string; // projection name
-  fields: Vector2<string | TransformField> | SignalRef;
-  as?: Vector2<string>;
+  projection: ProjectionName;
+  fields: Vector2<FieldRef> | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface GeoPathTransform {
   type: 'geopath';
-  projection?: string; // projection name
-  field?: string | TransformField;
+  projection?: ProjectionName;
+  field?: FieldRef;
   pointRadius?: number | SignalRef | ExprRef;
-  as?: string;
+  as?: string | SignalRef;
 }
 
 export interface GeoShapeTransform {
   type: 'geoshape';
-  projection?: string; // projection name
-  field?: string | TransformField;
+  projection?: ProjectionName;
+  field?: FieldRef;
   pointRadius?: number | SignalRef | ExprRef;
-  as?: string;
+  as?: string | SignalRef;
 }
 
 export interface GraticuleTransform {
   type: 'graticule';
-  signal?: string;
-  extent?: Vector2<any> | SignalRef;
-  extentMajor?: Vector2<any> | SignalRef;
-  extentMinor?: Vector2<any> | SignalRef;
+  signal?: SignalName;
+  extent?: Vector2<Vector2<number | SignalRef> | SignalRef> | SignalRef;
+  extentMajor?: Vector2<Vector2<number | SignalRef> | SignalRef> | SignalRef;
+  extentMinor?: Vector2<Vector2<number | SignalRef> | SignalRef> | SignalRef;
   step?: Vector2<number | SignalRef> | SignalRef;
   stepMajor?: Vector2<number | SignalRef> | SignalRef;
   stepMinor?: Vector2<number | SignalRef> | SignalRef;
@@ -272,17 +407,16 @@ export interface IdentifierTransform {
   as: string | SignalRef;
 }
 
-export type ImputeMethod = 'value' | 'median' | 'max' | 'min' | 'mean';
-
 export interface ImputeTransform {
   type: 'impute';
-  groupby?: string[];
-  field: string;
-  key: string;
-  keyvals?: any[] | SignalRef;
-  method?: ImputeMethod;
-  value?: any;
+  field: FieldRef;
+  key: FieldRef;
+  keyvals?: any[]; // includes SignalRef
+  groupby?: FieldRef[] | SignalRef;
+  method?: ImputeMethod | SignalRef;
+  value?: any; // includes SignalRef
 }
+export type ImputeMethod = 'value' | 'median' | 'max' | 'min' | 'mean';
 
 export interface IsocontourTransform {
   type: 'isocontour';
@@ -299,26 +433,41 @@ export interface IsocontourTransform {
 
 export interface JoinAggregateTransform {
   type: 'joinaggregate';
-  groupby?: (string | TransformField)[] | SignalRef;
-  ops?: (AggregateOp | SignalRef)[];
-  fields?: (string | TransformField | null)[] | SignalRef;
+  groupby?: FieldRef[] | SignalRef;
+  ops?: (AggregateOp | SignalRef)[] | SignalRef;
+  fields?: (FieldRef | null)[] | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
 }
 
 export interface KDETransform {
   type: 'kde';
-  field: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
+  field: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
   cumulative?: boolean | SignalRef;
   counts?: boolean | SignalRef;
   bandwidth?: number | SignalRef;
-  extent?: [number, number] | SignalRef;
-  resolve?: 'shared' | 'independent';
+  extent?: Vector2<number | SignalRef> | SignalRef;
+  resolve?: KDEResolve | SignalRef;
   steps?: number | SignalRef;
   minsteps?: number | SignalRef;
   maxsteps?: number | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
+export type KDEResolve = 'shared' | 'independent';
+
+export interface LinkPathTransform {
+  type: 'linkpath';
+  sourceX?: FieldRef;
+  sourceY?: FieldRef;
+  targetX?: FieldRef;
+  targetY?: FieldRef;
+  orient?: LinkPathOrient | SignalRef;
+  shape?: LinkPathShape | SignalRef;
+  require?: SignalRef;
+  as?: string | SignalRef;
+}
+export type LinkPathOrient = 'horizontal' | 'vertical' | 'radial';
+export type LinkPathShape = 'line' | 'arc' | 'curve' | 'diagonal' | 'orthogonal';
 
 export interface KDE2DTransform {
   type: 'kde2d';
@@ -335,37 +484,78 @@ export interface KDE2DTransform {
 
 export interface LoessTransform {
   type: 'loess';
-  x: string | TransformField;
-  y: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
+  x: FieldRef;
+  y: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
   bandwidth?: number | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface LookupTransform {
   type: 'lookup';
-  from: string;
-  key: string | TransformField;
-  fields: (string | TransformField)[] | SignalRef;
-  values?: (string | TransformField)[] | SignalRef;
+  from: DataName;
+  key: FieldRef;
+  fields: FieldRef[] | SignalRef;
+  values?: FieldRef[] | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
-  default?: any;
+  default?: any; // includes SignalRef
+}
+
+export interface NestTransform {
+  type: 'nest';
+  keys?: FieldRef[] | SignalRef;
+  generate?: boolean | SignalRef;
+}
+
+export interface PackTransform {
+  type: 'pack';
+  field?: FieldRef;
+  sort?: Compare;
+  padding?: number | SignalRef;
+  radius?: FieldRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  as?: Vector5<string | SignalRef> | SignalRef;
+}
+
+export interface PartitionTransform {
+  type: 'partition';
+  field?: FieldRef;
+  sort?: Compare;
+  padding?: number | SignalRef;
+  round?: boolean | SignalRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  as?: Vector6<string | SignalRef> | SignalRef;
+}
+
+export interface PieTransform {
+  type: 'pie';
+  field?: FieldRef;
+  startAngle?: number | SignalRef;
+  endAngle?: number | SignalRef;
+  sort?: boolean | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
 }
 
 export interface PivotTransform {
   type: 'pivot';
-  field: string | TransformField;
-  value: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
+  field: FieldRef;
+  value: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
   limit?: number | SignalRef;
   op?: string | SignalRef;
   key?: string | TransformField;
 }
 
+export interface ProjectTransform {
+  type: 'project';
+  fields?: FieldRef[] | SignalRef;
+  as?: string | null | SignalRef;
+}
+
 export interface QuantileTransform {
   type: 'quantile';
-  field: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
+  field: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
   step?: number | SignalRef;
   probs?: number[] | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
@@ -373,14 +563,21 @@ export interface QuantileTransform {
 
 export interface RegressionTransform {
   type: 'regression';
-  x: string | TransformField;
-  y: string | TransformField;
-  groupby?: (string | TransformField)[] | SignalRef;
-  method?: 'linear' | 'exp' | 'log' | 'quad' | 'poly' | 'pow' | SignalRef;
+  x: FieldRef;
+  y: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
+  method?: RegressionMethod | SignalRef;
   order?: number | SignalRef;
   extent?: [number, number] | SignalRef;
   params?: boolean | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
+}
+export type RegressionMethod = 'linear' | 'exp' | 'log' | 'quad' | 'poly' | 'pow';
+
+export interface ResolveFilterTransform {
+  type: 'resolvefilter';
+  ignore: number | SignalRef;
+  filter: SignalRef;
 }
 
 export interface SampleTransform {
@@ -398,14 +595,31 @@ export interface SequenceTransform {
 
 export interface StackTransform {
   type: 'stack';
-  field?: string | TransformField;
-  groupby?: (string | TransformField)[];
+  field?: FieldRef;
+  groupby?: FieldRef[];
   sort?: Compare;
   offset?: StackOffset | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 export type StackOffset = 'zero' | 'center' | 'normalize';
 
+export interface StratifyTransform {
+  type: 'stratify';
+  key: FieldRef;
+  parentKey: FieldRef;
+}
+
+export interface TimeUnitTransform {
+  type: 'timeunit';
+  field: FieldRef;
+  interval?: boolean | SignalRef;
+  units?: (TimeUnit | SignalRef)[] | SignalRef;
+  step?: number | SignalRef;
+  timezone?: TimeZone | SignalRef;
+  as?: Vector2<string | SignalRef> | SignalRef;
+  signal?: SignalName;
+}
+export type TimeZone = 'local' | 'utc';
 export type TimeUnit =
   | 'year'
   | 'quarter'
@@ -418,17 +632,61 @@ export type TimeUnit =
   | 'seconds'
   | 'milliseconds';
 
-export interface TimeUnitTransform {
-  type: 'timeunit';
-  field: string | TransformField;
-  interval?: boolean | SignalRef;
-  units?: (TimeUnit | SignalRef)[] | SignalRef;
-  step?: number | SignalRef;
-  timezone?: 'local' | 'utc' | SignalRef;
-  signal?: string;
-  as?: Vector2<string | SignalRef> | SignalRef;
+export interface TreeTransform {
+  type: 'tree';
+  field?: FieldRef;
+  sort?: Compare;
+  method?: TreeMethod | SignalRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  nodeSize?: Vector2<number | SignalRef> | SignalRef;
+  separation?: boolean | SignalRef;
+  as?: Vector4<string | SignalRef> | SignalRef;
+}
+export type TreeMethod = 'tidy' | 'cluster';
+
+export interface TreeLinksTransform {
+  type: 'treelinks';
 }
 
+export interface TreemapTransform {
+  type: 'treemap';
+  field?: FieldRef;
+  sort?: Compare;
+  method?: TreemapMethod | SignalRef;
+  padding?: number | SignalRef;
+  paddingInner?: number | SignalRef;
+  paddingOuter?: number | SignalRef;
+  paddingTop?: number | SignalRef;
+  paddingRight?: number | SignalRef;
+  paddingBottom?: number | SignalRef;
+  paddingLeft?: number | SignalRef;
+  ratio?: number | SignalRef;
+  round?: boolean | SignalRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  as?: Vector6<string | SignalRef> | SignalRef;
+}
+export type TreemapMethod = 'squarify' | 'resquarify' | 'binary' | 'dice' | 'slice' | 'slicedice';
+
+export interface VoronoiTransform {
+  type: 'voronoi';
+  x: FieldRef;
+  y: FieldRef;
+  size?: Vector2<number | SignalRef> | SignalRef;
+  extent?: Vector2<Vector2<number | SignalRef> | SignalRef> | SignalRef;
+  as?: string | SignalRef;
+}
+
+export interface WindowTransform {
+  type: 'window';
+  sort?: Compare;
+  groupby?: FieldRef[] | SignalRef;
+  ops?: (AggregateOp | WindowOnlyOp | SignalRef)[];
+  params?: (number | SignalRef | null)[] | SignalRef;
+  fields?: (FieldRef | null)[] | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
+  frame?: Vector2<number | SignalRef | null> | SignalRef;
+  ignorePeers?: boolean | SignalRef;
+}
 export type WindowOnlyOp =
   | 'row_number'
   | 'rank'
@@ -444,21 +702,8 @@ export type WindowOnlyOp =
   | 'prev_value'
   | 'next_value';
 
-export interface WindowTransform {
-  type: 'window';
-  sort?: Compare;
-  groupby?: (string | TransformField)[] | SignalRef;
-  ops?: (AggregateOp | WindowOnlyOp | SignalRef)[];
-  params?: (number | SignalRef | null)[] | SignalRef;
-  fields?: (string | TransformField | null)[] | SignalRef;
-  as?: (string | SignalRef | null)[] | SignalRef;
-  frame?: Vector2<number | SignalRef | null> | SignalRef;
-  ignorePeers?: boolean | SignalRef;
-}
-
 export interface WordcloudTransform {
   type: 'wordcloud';
-  signal?: string;
   size?: Vector2<number | SignalRef> | SignalRef;
   font?: string | TransformField;
   fontStyle?: FontStyle | TransformField;
@@ -467,18 +712,8 @@ export interface WordcloudTransform {
   fontSizeRange?: Vector2<number | SignalRef> | SignalRef;
   rotate?: number | TransformField;
   text?: string | TransformField;
-  spiral?: 'archimedian' | 'rectangular';
+  spiral?: WordcloudSpiral | SignalRef;
   padding?: number | TransformField;
   as?: Vector7<string | SignalRef> | SignalRef;
 }
-
-export interface FieldParam {
-  field: string;
-}
-export type TransformField = SignalRef | FieldParam | ExprRef;
-
-/** This transform has yet to be implemented */
-export interface _TODO_<Type extends string> {
-  type: Type;
-  [k: string]: any;
-}
+export type WordcloudSpiral = 'archimedian' | 'rectangular';
