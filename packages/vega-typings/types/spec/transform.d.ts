@@ -32,12 +32,13 @@ export type Transforms =
   | _TODO_<'pack'>
   | _TODO_<'partition'>
   | _TODO_<'pie'>
+  | PivotTransform
   | _TODO_<'project'>
   | QuantileTransform
   | RegressionTransform
   | _TODO_<'resolvefilter'>
   | SampleTransform
-  | _TODO_<'sequence'>
+  | SequenceTransform
   | StackTransform
   | _TODO_<'stratify'>
   | TimeUnitTransform
@@ -215,7 +216,7 @@ export interface FormulaTransform {
 export interface GeoJSONTransform {
   type: 'geojson';
   fields?: Vector2<string | TransformField> | SignalRef;
-  geojson?: TransformField;
+  geojson?: string | TransformField;
   signal: string;
 }
 
@@ -223,12 +224,12 @@ export interface GeoPointTransform {
   type: 'geopoint';
   projection: string; // projection name
   fields: Vector2<string | TransformField> | SignalRef;
-  as?: string[];
+  as?: Vector2<string>;
 }
 
 export interface GeoPathTransform {
   type: 'geopath';
-  projection?: string;
+  projection?: string; // projection name
   field?: string | TransformField;
   pointRadius?: number | SignalRef | ExprRef;
   as?: string;
@@ -236,7 +237,7 @@ export interface GeoPathTransform {
 
 export interface GeoShapeTransform {
   type: 'geoshape';
-  projection?: string;
+  projection?: string; // projection name
   field?: string | TransformField;
   pointRadius?: number | SignalRef | ExprRef;
   as?: string;
@@ -306,11 +307,21 @@ export interface LoessTransform {
 export interface LookupTransform {
   type: 'lookup';
   from: string;
-  key: string;
-  fields: string[];
-  values?: string[];
+  key: string | TransformField;
+  fields: (string | TransformField)[] | SignalRef;
+  values?: (string | TransformField)[] | SignalRef;
   as?: (string | SignalRef)[] | SignalRef;
   default?: any;
+}
+
+export interface PivotTransform {
+  type: 'pivot';
+  field: string | TransformField;
+  value: string | TransformField;
+  groupby?: (string | TransformField)[] | SignalRef;
+  limit?: number | SignalRef;
+  op?: string | SignalRef;
+  key?: string | TransformField;
 }
 
 export interface QuantileTransform {
@@ -337,6 +348,14 @@ export interface RegressionTransform {
 export interface SampleTransform {
   type: 'sample';
   size: number | SignalRef;
+}
+
+export interface SequenceTransform {
+  type: 'sequence';
+  start: number | SignalRef;
+  stop: number | SignalRef;
+  step?: number | SignalRef;
+  as?: string | SignalRef;
 }
 
 export interface StackTransform {
