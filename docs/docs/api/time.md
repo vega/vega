@@ -40,7 +40,7 @@ Returns a standardized and sorted specifier for the given _units_, which must be
 vega.<b>timeUnitSpecifier</b>(<i>units</i>[, <i>specifiers</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
 
-Returns a time format specifier string for the given time _units_. The optional _specifiers_ object provides a set of desired specifier sub-strings for customizing the resulting time formats. The _specifiers_ object may contain keys for both single time units (`"year"`) and time unit sequences (`"year-month-date"`). This method will first standardize the input time units using the [timeUnits](#timeUnits) method. It will then search, starting from the beginning of the units array, for the largest matching sequence defined in the specifiers object. Matching entries are then concatenated together, and the resulting string is whitespaced-trimmed and returned.
+Returns a time format specifier string for the given time _units_. The optional _specifiers_ object provides a set of desired specifier sub-strings for customizing the resulting time formats. The _specifiers_ object may contain keys for both single time units (`"year"`) and time unit sequences (`"year-month-date"`). This method will first standardize the input time units using the [timeUnits](#timeUnits) method. It will then search, starting from the beginning of the units array, for the largest matching sequence defined in the specifiers object. Matching entries are then concatenated together, and the resulting string is whitespace-trimmed and returned.
 
 If no _specifiers_ object is provided, the following defaults are used:
 
