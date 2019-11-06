@@ -32,7 +32,7 @@
     "vega-expression": "^2.6.2",
     "vega-scale": "^5.0.0",
     "vega-scenegraph": "^4.4.0",
-    "vega-selections": "^5.0.1",
+    "vega-selections": "^5.1.0",
     "vega-statistics": "^1.6.2",
     "vega-time": "^1.0.0",
     "vega-util": "^1.12.0"
