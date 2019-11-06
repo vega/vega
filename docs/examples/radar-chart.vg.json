@@ -138,11 +138,29 @@
       "zindex": 1,
       "encode": {
         "enter": {
-          "x": {"signal": "(radius + 20) * cos(scale('angular', datum.key))"},
-          "y": {"signal": "(radius + 20) * sin(scale('angular', datum.key))"},
+          "x": {"signal": "(radius + 5) * cos(scale('angular', datum.key))"},
+          "y": {"signal": "(radius + 5) * sin(scale('angular', datum.key))"},
           "text": {"field": "key"},
-          "align": {"value": "center"},
-          "baseline": {"value": "middle"},
+          "align": [
+            {
+              "test": "abs(scale('angular', datum.key)) > PI / 2",
+              "value": "right"
+            },
+            {
+              "value": "left"
+            }
+          ],
+          "baseline": [
+            {
+              "test": "scale('angular', datum.key) > 0", "value": "top"
+            },
+            {
+              "test": "scale('angular', datum.key) == 0", "value": "middle"
+            },
+            {
+              "value": "bottom"
+            }
+          ],
           "fill": {"value": "black"},
           "fontWeight": {"value": "bold"}
         }
