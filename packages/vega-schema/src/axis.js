@@ -20,6 +20,14 @@ const labelOverlap = oneOf(
 );
 const labelOverlapRef = ref('labelOverlap');
 
+const tickBandEnum = ['center', 'extent'];
+
+const tickBand = oneOf(
+  enums(tickBandEnum),
+  signalRef
+);
+const tickBandRef = ref('tickBand');
+
 const tickCount = oneOf(
   numberType,
   enums(timeIntervals),
@@ -48,6 +56,7 @@ const axis = object({
   offset: numberValue,
   position: numberValue,
   bandPosition: numberValue,
+  translate: numberType,
   values: arrayOrSignal,
   zindex: numberType,
 
@@ -79,6 +88,7 @@ const axis = object({
 
   // TICK CONFIG
   ticks: booleanType,
+  tickBand: tickBandRef,
   tickColor: colorValue,
   tickDash: dashArrayValue,
   tickDashOffset: numberValue,
@@ -133,6 +143,7 @@ const axis = object({
 export default {
   refs: {
     labelOverlap,
+    tickBand,
     tickCount
   },
   defs: {

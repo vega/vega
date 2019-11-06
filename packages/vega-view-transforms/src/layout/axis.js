@@ -2,8 +2,6 @@ import {Top, Bottom, Left, Right} from '../constants';
 import {set, tempBounds} from './util';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
-const AxisOffset = 0.5;
-
 export function isYAxis(mark) {
   var orient = mark.items[0].datum.orient;
   return orient === Left || orient === Right;
@@ -22,6 +20,7 @@ export function axisLayout(view, axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       orient = datum.orient,
+      delta = datum.translate != null ? datum.translate : 0.5,
       indices = axisIndices(datum),
       range = item.range,
       offset = item.offset,
@@ -77,7 +76,7 @@ export function axisLayout(view, axis, width, height) {
   // update bounds
   boundStroke(bounds.translate(x, y), item);
 
-  if (set(item, 'x', x + AxisOffset) | set(item, 'y', y + AxisOffset)) {
+  if (set(item, 'x', x + delta) | set(item, 'y', y + delta)) {
     item.bounds = tempBounds;
     view.dirty(item);
     item.bounds = bounds;

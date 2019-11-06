@@ -162,6 +162,11 @@ export interface AxisEncode {
 
 export interface BaseAxis {
   /**
+   * Translation offset in pixels applied to the axis group mark x and y. If specified, overrides the default behavior of a 0.5 offset to pixel-align stroked lines.
+   */
+  translate?: number;
+
+  /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
    *
    * __Default value:__ `30` for y-axis; `undefined` for x-axis.
@@ -307,6 +312,11 @@ export interface BaseAxis {
    * __Default value:__ `true`
    */
   ticks?: BooleanValue;
+
+  /**
+   * For band scales, indicates if ticks and grid lines should be placed at the center of a band (default) or at the band extents to indicate intervals.
+   */
+  tickBand?: 'center' | 'extent' | SignalRef;
 
   /**
    * The color of the axis's tick.

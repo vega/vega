@@ -143,7 +143,7 @@ export default function() {
 
     // correction for centering bias
     axisBand: {
-      tickOffset: -1
+      tickOffset: -0.5
     },
 
     // defaults for cartographic projection
