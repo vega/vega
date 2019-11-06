@@ -95,7 +95,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 39.5,
+                              "x": 40,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -108,7 +108,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 109.5,
+                              "x": 110,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -121,7 +121,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 179.5,
+                              "x": 180,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -134,7 +134,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 249.5,
+                              "x": 250,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -147,7 +147,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 319.5,
+                              "x": 320,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -160,7 +160,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 389.5,
+                              "x": 390,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",
@@ -173,7 +173,7 @@
                               "fontSize": 10
                             },
                             {
-                              "x": 459.5,
+                              "x": 460,
                               "y": 7,
                               "align": "center",
                               "baseline": "top",

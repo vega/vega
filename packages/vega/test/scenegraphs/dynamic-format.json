@@ -111,7 +111,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 23.5,
+                      "x": 24,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -124,7 +124,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 62.5,
+                      "x": 63,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -137,7 +137,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 101.5,
+                      "x": 102,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -150,7 +150,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 140.5,
+                      "x": 141,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -163,7 +163,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 179.5,
+                      "x": 180,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -176,7 +176,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 218.5,
+                      "x": 219,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -189,7 +189,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 257.5,
+                      "x": 258,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -202,7 +202,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 296.5,
+                      "x": 297,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -215,7 +215,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 335.5,
+                      "x": 336,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
@@ -228,7 +228,7 @@
                       "fontSize": 10
                     },
                     {
-                      "x": 374.5,
+                      "x": 375,
                       "y": 7,
                       "align": "center",
                       "baseline": "top",
