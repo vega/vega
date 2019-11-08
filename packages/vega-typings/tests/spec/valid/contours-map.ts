@@ -1,20 +1,26 @@
-{
+import { Spec } from 'vega';
+
+export const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 900,
   "height": 560,
-  "padding": 10,
+  "padding": 0,
   "autosize": "none",
 
   "signals": [
     {
-      "name": "count", "value": 10,
+      "name": "bandwidth", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 100, "step": 1}
+    },
+    {
+      "name": "levels", "value": 10,
       "bind": {"input": "select", "options": [1, 5, 10, 20]}
     }
   ],
 
   "title": {
     "text": "Density of U.S. Airports, 2008",
-    "offset": -15
+    "offset": -20
   },
 
   "data": [
@@ -99,12 +105,17 @@
           "source": "airports",
           "transform": [
             {
-              "type": "contour",
+              "type": "kde2d",
               "x": "x",
               "y": "y",
               "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"},
-              "bandwidth": 20
+              "bandwidth": {"signal": "bandwidth"}
+            },
+            {
+              "type": "contours",
+              "field": "grid",
+              "levels": {"signal": "levels"},
+              "as": null
             }
           ]
         }
@@ -141,4 +152,4 @@
       ]
     }
   ]
-}
+};

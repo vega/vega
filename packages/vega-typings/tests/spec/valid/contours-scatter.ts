@@ -1,0 +1,174 @@
+import { Spec } from 'vega';
+
+export const spec: Spec = {
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 400,
+  "height": 300,
+  "padding": 5,
+  "autosize": "pad",
+
+  "signals": [
+    {
+      "name": "bandwidth", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 100, "step": 1}
+    },
+    {
+      "name": "resolve", "value": "shared",
+      "bind": {"input": "select", "options": ["independent", "shared"]}
+    },
+    {
+      "name": "counts", "value": true,
+      "bind": {"input": "checkbox"}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "source",
+      "url": "data/cars.json",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Horsepower != null && datum.Miles_per_Gallon != null && datum.Acceleration != null"
+        }
+      ]
+    },
+    {
+      "name": "density",
+      "source": "source",
+      "transform": [
+        {
+          "type": "kde2d",
+          "groupby": ["Origin"],
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "x": {"expr": "scale('x', datum.Horsepower)"},
+          "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
+          "bandwidth": {"signal": "bandwidth"},
+          "counts": {"signal": "counts"}
+        },
+        {
+          "type": "heatmap",
+          "field": "grid",
+          "resolve": {"signal": "resolve"},
+          "color": {"expr": "scale('color', datum.Origin)"}
+        }
+      ]
+    },
+    {
+      "name": "contours",
+      "source": "density",
+      "transform": [
+        {
+          "type": "contours",
+          "field": "grid",
+          "resolve": {"signal": "resolve"},
+          "levels": 3
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "round": true,
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "source", "field": "Horsepower"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "round": true,
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "source", "field": "Miles_per_Gallon"},
+      "range": "height"
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {
+        "data": "source", "field": "Origin",
+        "sort": {"order": "descending"}
+      },
+      "range": "category"
+    },
+     {
+      "name": "density",
+      "type": "linear",
+      "domain": [0, 1],
+      "range": {"scheme": "viridis"}
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "x",
+      "grid": true,
+      "domain": false,
+      "orient": "bottom",
+      "tickCount": 5,
+      "title": "Horsepower"
+    },
+    {
+      "scale": "y",
+      "grid": true,
+      "domain": false,
+      "orient": "left",
+      "titlePadding": 5,
+      "title": "Miles_per_Gallon"
+    }
+  ],
+
+  "legends": [
+    {"stroke": "color", "symbolType": "stroke"}
+  ],
+
+  "marks": [
+    {
+      "name": "marks",
+      "type": "symbol",
+      "from": {"data": "source"},
+      "encode": {
+        "update": {
+          "x": {"scale": "x", "field": "Horsepower"},
+          "y": {"scale": "y", "field": "Miles_per_Gallon"},
+          "size": {"value": 4},
+          "fill": {"value": "#ccc"}
+        }
+      }
+    },
+    {
+      "type": "image",
+      "from": {"data": "density"},
+      "encode": {
+        "update": {
+          "x": {"value": 0},
+          "y": {"value": 0},
+          "width": {"signal": "width"},
+          "height": {"signal": "height"},
+          "image": {"field": "image"},
+          "aspect": {"value": false}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "clip": true,
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "strokeWidth": {"value": 1},
+          "strokeOpacity": {"value": 1},
+          "stroke": {"scale": "color", "field": "Origin"}
+        }
+      },
+      "transform": [
+        { "type": "geopath", "field": "datum.contour" }
+      ]
+    }
+  ]
+};
