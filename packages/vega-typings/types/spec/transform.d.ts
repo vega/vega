@@ -6,6 +6,7 @@ export type Transforms =
   | CollectTransform
   | CountPatternTransform
   | ContourTransform
+  | ContoursTransform
   | _TODO_<'cross'>
   | _TODO_<'crossfilter'>
   | _TODO_<'density'>
@@ -16,6 +17,7 @@ export type Transforms =
   | FoldTransform
   | _TODO_<'force'>
   | FormulaTransform
+  | HeatmapTransform
   | GeoJSONTransform
   | GeoPathTransform
   | GeoPointTransform
@@ -25,6 +27,7 @@ export type Transforms =
   | ImputeTransform
   | JoinAggregateTransform
   | KDETransform
+  | KDE2DTransform
   | _TODO_<'linkpath'>
   | LoessTransform
   | LookupTransform
@@ -156,7 +159,7 @@ export interface CountPatternTransform {
 export type ContourTransform = {
   type: 'contour';
   signal?: string;
-  size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<SignalRef | number> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
+  size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<number | SignalRef> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
   values?: (number | SignalRef)[] | SignalRef;
   x?: string | TransformField;
   y?: string | TransformField;
@@ -170,6 +173,19 @@ export type ContourTransform = {
   | {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
+
+export interface ContoursTransform {
+  type: 'contours';
+  field?: string | TransformField;
+  scale?: number | TransformField;
+  levels?: number | SignalRef;
+  smooth?: boolean | SignalRef;
+  nice?: boolean | SignalRef;
+  zero?: boolean | SignalRef;
+  resolve?: 'shared' | 'independent' | SignalRef;
+  thresholds?: (number | SignalRef)[] | SignalRef;
+  as?: string | null | SignalRef;
+}
 
 export interface DotBinTransform {
   type: 'dotbin';
@@ -254,6 +270,15 @@ export interface GraticuleTransform {
   precision?: number | SignalRef;
 }
 
+export interface HeatmapTransform {
+  type: 'heatmap';
+  field?: string | TransformField;
+  color?: string | TransformField;
+  opacity?: number | TransformField;
+  resolve?: 'independent' | 'shared' | SignalRef;
+  as?: string | SignalRef;
+}
+
 export interface IdentifierTransform {
   type: 'identifier';
   as: string | SignalRef;
@@ -292,6 +317,19 @@ export interface KDETransform {
   minsteps?: number | SignalRef;
   maxsteps?: number | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
+}
+
+export interface KDE2DTransform {
+  type: 'kde2d';
+  size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<number | SignalRef> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
+  groupby?: (string | TransformField)[] | SignalRef;
+  x?: string | TransformField;
+  y?: string | TransformField;
+  weight?: string | TransformField;
+  cellSize?: number | SignalRef;
+  bandwidth?: number | SignalRef;
+  counts?: boolean | SignalRef;
+  as?: string | SignalRef;
 }
 
 export interface LoessTransform {
