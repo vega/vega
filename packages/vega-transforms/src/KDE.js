@@ -13,7 +13,10 @@ import {accessorName, error, extent, inherits} from 'vega-util';
  * @param {function(object): *} params.field - An accessor for the data field
  *   to estimate.
  * @param {number} [params.bandwidth=0] - The KDE kernel bandwidth.
- *   If zero of unspecified, the bandwidth is automatically determined.
+ *   If zero or unspecified, the bandwidth is automatically determined.
+ * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+ *   output values should be probability estimates (false, default) or
+ *   smoothed counts (true).
  * @param {string} [params.cumulative=false] - A boolean flag indicating if a
  *   density (false) or cumulative distribution (true) should be generated.
  * @param {Array<number>} [params.extent] - The domain extent over which to
