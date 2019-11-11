@@ -58,10 +58,10 @@ function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, count, type, specifier, formatType) {
+export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
   const format = formats[scale.type] && formatType !== Time && formatType !== UTC
     ? thresholdFormat(scale, specifier)
-    : tickFormat(scale, count, specifier, formatType);
+    : tickFormat(scale, count, specifier, formatType, noSkip);
 
   return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
     : type === Discrete ? formatDiscrete(format)
