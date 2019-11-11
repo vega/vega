@@ -52,7 +52,7 @@
     "vega-typings": "0.11.0",
     "vega-util": "1.12.0",
     "vega-view": "5.3.2",
-    "vega-view-transforms": "4.4.2",
+    "vega-view-transforms": "4.5.0",
     "vega-voronoi": "4.1.1",
     "vega-wordcloud": "4.0.3"
   },

@@ -1,6 +1,6 @@
 {
   "name": "vega-view-transforms",
-  "version": "4.4.2",
+  "version": "4.5.0",
   "description": "View-specific transforms for Vega dataflows.",
   "keywords": [
     "vega",
