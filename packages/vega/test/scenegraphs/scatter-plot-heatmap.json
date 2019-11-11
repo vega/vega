@@ -464,7 +464,8 @@
               "y": 0,
               "width": 400,
               "height": 300,
-              "aspect": false
+              "aspect": false,
+              "smooth": true
             }
           ],
           "zindex": 0

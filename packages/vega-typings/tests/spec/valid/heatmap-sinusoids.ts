@@ -15,6 +15,9 @@ export const spec: Spec = {
     {
       "name": "offset", "value": 0,
       "bind": {"input": "range", "min": 0, "max": 10, "step": 0.1}
+    },
+    {
+      "name": "smooth", "value": true, "bind": {"input": "checkbox"}
     }
   ],
 
@@ -45,7 +48,8 @@ export const spec: Spec = {
           "y": {"value": 0},
           "width": {"signal": "width"},
           "height": {"signal": "height"},
-          "aspect": {"value": false}
+          "aspect": {"value": false},
+          "smooth": {"signal": "smooth"}
         }
       },
       "transform": [

@@ -76,6 +76,9 @@ export const spec: Spec = {
       "name": "reverse", "value": false, "bind": {"input": "checkbox"}
     },
     {
+      "name": "smooth", "value": true, "bind": {"input": "checkbox"}
+    },
+    {
       "name": "msday",
       "init": "24 * 60 * 60 * 1000"
     }
@@ -170,6 +173,9 @@ export const spec: Spec = {
           "width": {"signal": "width"},
           "height": {"signal": "height"},
           "aspect": {"value": false}
+        },
+        "update": {
+          "smooth": {"signal": "smooth"}
         }
       },
       "transform": [
