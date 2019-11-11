@@ -2,19 +2,27 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 900,
   "height": 560,
-  "padding": 10,
+  "padding": 0,
   "autosize": "none",
 
   "signals": [
     {
-      "name": "count", "value": 10,
+      "name": "bandwidth", "value": 20,
+      "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
+    },
+    {
+      "name": "cellSize", "value": 4,
+      "bind": {"input": "select", "options": [1, 2, 4, 8, 16, 32]}
+    },
+    {
+      "name": "levels", "value": 10,
       "bind": {"input": "select", "options": [1, 5, 10, 20]}
     }
   ],
 
   "title": {
     "text": "Density of U.S. Airports, 2008",
-    "offset": -15
+    "offset": -20
   },
 
   "data": [
@@ -45,6 +53,26 @@
           "expr": "datum.x != null && datum.y != null"
         }
       ]
+    },
+    {
+      "name": "contours",
+      "source": "airports",
+      "transform": [
+        {
+          "type": "kde2d",
+          "x": "x",
+          "y": "y",
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "bandwidth": {"signal": "[bandwidth, bandwidth]"},
+          "cellSize": {"signal": "cellSize"}
+        },
+        {
+          "type": "isocontour",
+          "field": "grid",
+          "levels": {"signal": "levels"},
+          "as": null
+        }
+      ]
     }
   ],
 
@@ -54,6 +82,15 @@
       "type": "albers",
       "scale": 1150,
       "translate": [{"signal": "width / 2"}, {"signal": "height / 2"}]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": {"data": "contours", "field": "value"},
+      "range": {"scheme": "viridis"}
     }
   ],
 
@@ -91,53 +128,24 @@
       }
     },
     {
-      "type": "group",
+      "type": "shape",
       "clip": true,
-      "data": [
-        {
-          "name": "contours",
-          "source": "airports",
-          "transform": [
-            {
-              "type": "contour",
-              "x": "x",
-              "y": "y",
-              "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"},
-              "bandwidth": 20
-            }
-          ]
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#000"},
+          "fill": {"scale": "color", "field": "value"},
+          "fillOpacity": {"value": 0.4}
+        },
+        "update": {
+          "strokeWidth": {"value": 0}
+        },
+        "hover": {
+          "strokeWidth": {"value": 1.5}
         }
-      ],
-      "scales": [
-        {
-          "name": "color",
-          "type": "linear",
-          "domain": {"data": "contours", "field": "value"},
-          "range": {"scheme": "viridis"}
-        }
-      ],
-      "marks": [
-        {
-          "type": "shape",
-          "from": {"data": "contours"},
-          "encode": {
-            "enter": {
-              "stroke": {"value": "firebrick"},
-              "fill": {"scale": "color", "field": "value"},
-              "fillOpacity": {"value": 0.3}
-            },
-            "update": {
-              "strokeWidth": {"value": 1}
-            },
-            "hover": {
-              "strokeWidth": {"value": 3}
-            }
-          },
-          "transform": [
-            { "type": "geoshape", "field": "datum" }
-          ]
-        }
+      },
+      "transform": [
+        { "type": "geoshape", "field": "datum" }
       ]
     }
   ]
