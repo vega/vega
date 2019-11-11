@@ -396,7 +396,7 @@
                           "items": [
                             {
                               "x": -4,
-                              "y": 12,
+                              "y": 12.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -409,7 +409,7 @@
                             },
                             {
                               "x": -4,
-                              "y": 32,
+                              "y": 32.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -422,7 +422,7 @@
                             },
                             {
                               "x": -4,
-                              "y": 52,
+                              "y": 52.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -510,7 +510,7 @@
                           "items": [
                             {
                               "x": -4,
-                              "y": 12,
+                              "y": 12.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -576,7 +576,7 @@
                           "items": [
                             {
                               "x": -4,
-                              "y": 12,
+                              "y": 12.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",
@@ -589,7 +589,7 @@
                             },
                             {
                               "x": -4,
-                              "y": 32,
+                              "y": 32.5,
                               "align": "right",
                               "baseline": "middle",
                               "fill": "#000",

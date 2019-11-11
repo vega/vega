@@ -14,7 +14,7 @@ function flushExpr(scale, threshold, a, b, c) {
   };
 }
 
-export default function(spec, config, userEncode, dataRef, size) {
+export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
@@ -37,7 +37,7 @@ export default function(spec, config, userEncode, dataRef, size) {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: _('tickOffset')
+    offset: band.offset
   };
 
   if (isXAxis) {
