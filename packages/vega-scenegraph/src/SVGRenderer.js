@@ -426,6 +426,14 @@ var mark_extras = {
       values.events = value;
     }
   },
+  image: function(mdef, el, item) {
+    if (item.smooth === false) {
+      setStyle(el, 'image-rendering', 'optimizeSpeed');
+      setStyle(el, 'image-rendering', 'pixelated');
+    } else {
+      setStyle(el, 'image-rendering', null);
+    }
+  },
   text: function(mdef, el, item) {
     var tl = textLines(item),
         key, value, doc, lh;

@@ -106,6 +106,7 @@ function draw(context, scene, bounds) {
 
     if (image.complete || image.toDataURL) {
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
+      context.imageSmoothingEnabled = item.smooth !== false;
       context.drawImage(image, x, y, w, h);
     }
   });

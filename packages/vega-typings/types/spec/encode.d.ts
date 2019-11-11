@@ -251,6 +251,7 @@ export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   url?: ProductionRule<StringValueRef>;
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
+  smooth?: ProductionRule<BooleanValueRef>;
 }
 
 /**

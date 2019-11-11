@@ -288,6 +288,12 @@ function applyStyles(o, mark, tag, defs) {
     s += 'pointer-events: none; ';
   }
 
+  if (tag === 'image') {
+    if (o.smooth === false) {
+      s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
+    }
+  }
+
   if (tag === 'text') {
     s += 'font-family: ' + fontFamily(o) + '; ';
     s += 'font-size: ' + fontSize(o) + 'px; ';

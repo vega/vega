@@ -236,6 +236,7 @@ const encodeEntry = object({
   align: ref('alignValue'),
   baseline: ref('baselineValue'),
   aspect: booleanValueRef,
+  smooth: booleanValueRef,
 
   // Text-mark properties
   text: textValueRef,
