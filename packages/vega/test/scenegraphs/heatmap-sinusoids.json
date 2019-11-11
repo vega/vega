@@ -17,7 +17,8 @@
               "x": 0,
               "y": 0,
               "width": 750,
-              "height": 500
+              "height": 500,
+              "aspect": false
             }
           ],
           "zindex": 0

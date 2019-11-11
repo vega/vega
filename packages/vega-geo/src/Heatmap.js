@@ -22,7 +22,7 @@ import {
  * @param {string} [params.resolve] - The method for resolving maximum values
  *   across multiple input grids. If 'independent' (the default), maximum
  *   calculation will be performed separately for each grid. If 'shared',
- *   a single set of threshold values will be used for all input grids.
+ *   a single global maximum will be used for all input grids.
  * @param {string} [params.as='image'] - The output field in which to store
  *   the generated bitmap canvas images (default 'image').
  */
@@ -62,12 +62,12 @@ prototype.transform = function(_, pulse) {
 
   source.forEach(t => {
     const v = field(t);
-    
+
     // build proxy data object
     const o = extend({}, t, obj);
     // set maximum value if not globally shared
     if (!shared) o.$max = max(v.values || []);
-    
+
     // generate canvas image
     // optimize color/opacity if not pixel-dependent
     t[as] = toCanvas(v, o,

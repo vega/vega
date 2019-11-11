@@ -2971,19 +2971,22 @@
               "x": 0,
               "y": 0,
               "width": 400,
-              "height": 300
+              "height": 300,
+              "aspect": false
             },
             {
               "x": 0,
               "y": 0,
               "width": 400,
-              "height": 300
+              "height": 300,
+              "aspect": false
             },
             {
               "x": 0,
               "y": 0,
               "width": 400,
-              "height": 300
+              "height": 300,
+              "aspect": false
             }
           ],
           "zindex": 0
