@@ -30675,83 +30675,70 @@
           "zindex": 0
         },
         {
-          "marktype": "group",
-          "role": "scope",
+          "marktype": "shape",
+          "role": "mark",
           "interactive": true,
           "clip": true,
           "items": [
             {
-              "items": [
-                {
-                  "marktype": "shape",
-                  "role": "mark",
-                  "interactive": true,
-                  "clip": false,
-                  "items": [
-                    {
-                      "fill": "rgb(68, 1, 84)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(72, 40, 120)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(62, 75, 137)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(49, 104, 142)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(38, 131, 142)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(31, 157, 137)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(53, 183, 121)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(109, 206, 89)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(180, 222, 44)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    },
-                    {
-                      "fill": "rgb(253, 231, 37)",
-                      "fillOpacity": 0.3,
-                      "stroke": "firebrick",
-                      "strokeWidth": 1
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ]
+              "fill": "rgb(68, 1, 84)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(72, 40, 120)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(62, 75, 137)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(49, 104, 142)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(38, 131, 142)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(31, 157, 137)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(53, 183, 121)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(109, 206, 89)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(180, 222, 44)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
+            },
+            {
+              "fill": "rgb(253, 231, 37)",
+              "fillOpacity": 0.4,
+              "stroke": "#000",
+              "strokeWidth": 0
             }
           ],
           "zindex": 0

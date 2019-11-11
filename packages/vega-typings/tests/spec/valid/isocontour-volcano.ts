@@ -1,4 +1,6 @@
-{
+import { Spec } from 'vega';
+
+export const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 960,
   "autosize": "none",
@@ -42,7 +44,7 @@
       "source": "volcano",
       "transform": [
         {
-          "type": "contours",
+          "type": "isocontour",
           "scale": {"expr": "width / datum.width"},
           "smooth": {"signal": "smooth"},
           "thresholds": {"signal": "sequence(90, 195, 5)"}
@@ -65,4 +67,4 @@
       "bind": {"input": "radio", "options": [true, false]}
     }
   ]
-}
+};

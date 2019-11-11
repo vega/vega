@@ -9,8 +9,12 @@ export const spec: Spec = {
 
   "signals": [
     {
-      "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 100, "step": 1}
+      "name": "bandwidth", "value": 20,
+      "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
+    },
+    {
+      "name": "cellSize", "value": 4,
+      "bind": {"input": "select", "options": [1, 2, 4, 8, 16, 32]}
     },
     {
       "name": "levels", "value": 10,
@@ -51,6 +55,26 @@ export const spec: Spec = {
           "expr": "datum.x != null && datum.y != null"
         }
       ]
+    },
+    {
+      "name": "contours",
+      "source": "airports",
+      "transform": [
+        {
+          "type": "kde2d",
+          "x": "x",
+          "y": "y",
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "bandwidth": {"signal": "[bandwidth, bandwidth]"},
+          "cellSize": {"signal": "cellSize"}
+        },
+        {
+          "type": "isocontour",
+          "field": "grid",
+          "levels": {"signal": "levels"},
+          "as": null
+        }
+      ]
     }
   ],
 
@@ -60,6 +84,15 @@ export const spec: Spec = {
       "type": "albers",
       "scale": 1150,
       "translate": [{"signal": "width / 2"}, {"signal": "height / 2"}]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": {"data": "contours", "field": "value"},
+      "range": {"scheme": "viridis"}
     }
   ],
 
@@ -97,58 +130,24 @@ export const spec: Spec = {
       }
     },
     {
-      "type": "group",
+      "type": "shape",
       "clip": true,
-      "data": [
-        {
-          "name": "contours",
-          "source": "airports",
-          "transform": [
-            {
-              "type": "kde2d",
-              "x": "x",
-              "y": "y",
-              "size": [{"signal": "width"}, {"signal": "height"}],
-              "bandwidth": {"signal": "bandwidth"}
-            },
-            {
-              "type": "contours",
-              "field": "grid",
-              "levels": {"signal": "levels"},
-              "as": null
-            }
-          ]
+      "from": {"data": "contours"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#000"},
+          "fill": {"scale": "color", "field": "value"},
+          "fillOpacity": {"value": 0.4}
+        },
+        "update": {
+          "strokeWidth": {"value": 0}
+        },
+        "hover": {
+          "strokeWidth": {"value": 1.5}
         }
-      ],
-      "scales": [
-        {
-          "name": "color",
-          "type": "linear",
-          "domain": {"data": "contours", "field": "value"},
-          "range": {"scheme": "viridis"}
-        }
-      ],
-      "marks": [
-        {
-          "type": "shape",
-          "from": {"data": "contours"},
-          "encode": {
-            "enter": {
-              "stroke": {"value": "firebrick"},
-              "fill": {"scale": "color", "field": "value"},
-              "fillOpacity": {"value": 0.3}
-            },
-            "update": {
-              "strokeWidth": {"value": 1}
-            },
-            "hover": {
-              "strokeWidth": {"value": 3}
-            }
-          },
-          "transform": [
-            { "type": "geoshape", "field": "datum" }
-          ]
-        }
+      },
+      "transform": [
+        { "type": "geoshape", "field": "datum" }
       ]
     }
   ]

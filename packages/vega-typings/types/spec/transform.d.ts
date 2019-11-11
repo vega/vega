@@ -6,7 +6,6 @@ export type Transforms =
   | CollectTransform
   | CountPatternTransform
   | ContourTransform
-  | ContoursTransform
   | _TODO_<'cross'>
   | _TODO_<'crossfilter'>
   | _TODO_<'density'>
@@ -25,6 +24,7 @@ export type Transforms =
   | GraticuleTransform
   | IdentifierTransform
   | ImputeTransform
+  | IsocontourTransform
   | JoinAggregateTransform
   | KDETransform
   | KDE2DTransform
@@ -174,19 +174,6 @@ export type ContourTransform = {
       thresholds?: (number | SignalRef)[] | SignalRef;
     });
 
-export interface ContoursTransform {
-  type: 'contours';
-  field?: string | TransformField;
-  scale?: number | TransformField;
-  levels?: number | SignalRef;
-  smooth?: boolean | SignalRef;
-  nice?: boolean | SignalRef;
-  zero?: boolean | SignalRef;
-  resolve?: 'shared' | 'independent' | SignalRef;
-  thresholds?: (number | SignalRef)[] | SignalRef;
-  as?: string | null | SignalRef;
-}
-
 export interface DotBinTransform {
   type: 'dotbin';
   field: string | TransformField;
@@ -296,6 +283,19 @@ export interface ImputeTransform {
   value?: any;
 }
 
+export interface IsocontourTransform {
+  type: 'isocontour';
+  field?: string | TransformField;
+  scale?: number | TransformField;
+  levels?: number | SignalRef;
+  smooth?: boolean | SignalRef;
+  nice?: boolean | SignalRef;
+  zero?: boolean | SignalRef;
+  resolve?: 'shared' | 'independent' | SignalRef;
+  thresholds?: (number | SignalRef)[] | SignalRef;
+  as?: string | null | SignalRef;
+}
+
 export interface JoinAggregateTransform {
   type: 'joinaggregate';
   groupby?: (string | TransformField)[] | SignalRef;
@@ -322,12 +322,12 @@ export interface KDETransform {
 export interface KDE2DTransform {
   type: 'kde2d';
   size: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<number | SignalRef> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
+  x: string | TransformField;
+  y: string | TransformField;
   groupby?: (string | TransformField)[] | SignalRef;
-  x?: string | TransformField;
-  y?: string | TransformField;
   weight?: string | TransformField;
   cellSize?: number | SignalRef;
-  bandwidth?: number | SignalRef;
+  bandwidth?: (number | SignalRef)[] | SignalRef; // TODO: change to Vector2<number | SignalRef> after https://github.com/Microsoft/TypeScript/issues/28017 has been fixed
   counts?: boolean | SignalRef;
   as?: string | SignalRef;
 }

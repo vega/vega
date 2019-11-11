@@ -9,16 +9,12 @@ export const spec: Spec = {
 
   "signals": [
     {
-      "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 100, "step": 1}
+      "name": "bandwidthX", "value": -1,
+      "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
     },
     {
-      "name": "resolve", "value": "shared",
-      "bind": {"input": "select", "options": ["independent", "shared"]}
-    },
-    {
-      "name": "counts", "value": true,
-      "bind": {"input": "checkbox"}
+      "name": "bandwidthY", "value": -1,
+      "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
     }
   ],
 
@@ -39,30 +35,14 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "kde2d",
-          "groupby": ["Origin"],
           "size": [{"signal": "width"}, {"signal": "height"}],
           "x": {"expr": "scale('x', datum.Horsepower)"},
           "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
-          "bandwidth": {"signal": "bandwidth"},
-          "counts": {"signal": "counts"}
+          "bandwidth": {"signal": "[bandwidthX, bandwidthY]"}
         },
         {
-          "type": "heatmap",
-          "field": "grid",
-          "resolve": {"signal": "resolve"},
-          "color": {"expr": "scale('color', datum.Origin)"}
-        }
-      ]
-    },
-    {
-      "name": "contours",
-      "source": "density",
-      "transform": [
-        {
-          "type": "contours",
-          "field": "grid",
-          "resolve": {"signal": "resolve"},
-          "levels": 3
+          "type": "formula", "as": "extent",
+          "expr": "extent(datum.grid.values)"
         }
       ]
     }
@@ -88,17 +68,9 @@ export const spec: Spec = {
       "range": "height"
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "domain": {
-        "data": "source", "field": "Origin",
-        "sort": {"order": "descending"}
-      },
-      "range": "category"
-    },
-     {
       "name": "density",
       "type": "linear",
+      "zero": true,
       "domain": [0, 1],
       "range": {"scheme": "viridis"}
     }
@@ -107,7 +79,6 @@ export const spec: Spec = {
   "axes": [
     {
       "scale": "x",
-      "grid": true,
       "domain": false,
       "orient": "bottom",
       "tickCount": 5,
@@ -115,7 +86,6 @@ export const spec: Spec = {
     },
     {
       "scale": "y",
-      "grid": true,
       "domain": false,
       "orient": "left",
       "titlePadding": 5,
@@ -124,23 +94,10 @@ export const spec: Spec = {
   ],
 
   "legends": [
-    {"stroke": "color", "symbolType": "stroke"}
+    {"fill": "density", "title": "Density"}
   ],
 
   "marks": [
-    {
-      "name": "marks",
-      "type": "symbol",
-      "from": {"data": "source"},
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "Horsepower"},
-          "y": {"scale": "y", "field": "Miles_per_Gallon"},
-          "size": {"value": 4},
-          "fill": {"value": "#ccc"}
-        }
-      }
-    },
     {
       "type": "image",
       "from": {"data": "density"},
@@ -150,24 +107,16 @@ export const spec: Spec = {
           "y": {"value": 0},
           "width": {"signal": "width"},
           "height": {"signal": "height"},
-          "image": {"field": "image"},
           "aspect": {"value": false}
-        }
-      }
-    },
-    {
-      "type": "path",
-      "clip": true,
-      "from": {"data": "contours"},
-      "encode": {
-        "enter": {
-          "strokeWidth": {"value": 1},
-          "strokeOpacity": {"value": 1},
-          "stroke": {"scale": "color", "field": "Origin"}
         }
       },
       "transform": [
-        { "type": "geopath", "field": "datum.contour" }
+        {
+          "type": "heatmap",
+          "field": "datum.grid",
+          "color": {"expr": "scale('density', datum.$value / datum.$max)"},
+          "opacity": 1
+        }
       ]
     }
   ]
