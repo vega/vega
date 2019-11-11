@@ -265,6 +265,7 @@ var MARKS = {
     "properties": {
       "url": { "type": "string", "format": "uri-reference" },
       "aspect": { "type": "boolean", "default": true },
+      "smooth": { "type": "boolean", "default": true },
       "align": {
         "enum": [ "left", "center", "right" ],
         "default": "left"
