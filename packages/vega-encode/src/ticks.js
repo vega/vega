@@ -104,7 +104,7 @@ export function tickValues(scale, count) {
  *   time multi-format specifier object.
  * @return {function(*):string} - The generated label formatter.
  */
-export function tickFormat(scale, count, specifier, formatType) {
+export function tickFormat(scale, count, specifier, formatType, noSkip) {
   var type = scale.type,
       format = (type === Time || formatType === Time) ? timeFormat(specifier)
         : (type === UTC || formatType === UTC) ? utcFormat(specifier)
@@ -114,16 +114,14 @@ export function tickFormat(scale, count, specifier, formatType) {
 
   if (isLogarithmic(type)) {
     var logfmt = variablePrecision(specifier);
-    format = scale.bins ? logfmt : filter(format, logfmt);
+    format = noSkip || scale.bins ? logfmt : filter(format, logfmt);
   }
 
   return format;
 }
 
 function filter(sourceFormat, targetFormat) {
-  return function(_) {
-    return sourceFormat(_) ? targetFormat(_) : '';
-  };
+  return _ => sourceFormat(_) ? targetFormat(_) : '';
 }
 
 function variablePrecision(specifier) {
