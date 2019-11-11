@@ -1,5 +1,5 @@
 const rollup = require('rollup'),
-      json = require('rollup-plugin-json'),
+      json = require('@rollup/plugin-json'),
       nodeResolve = require('rollup-plugin-node-resolve'),
       esmodule = hasArgument('-m'),
       externals = esmodule || hasArgument('-e'),

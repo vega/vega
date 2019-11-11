@@ -1,5 +1,5 @@
 var rollup = require('rollup'),
-    json = require('rollup-plugin-json'),
+    json = require('@rollup/plugin-json'),
     dependencies = require('./package.json').dependencies,
     output = 'vega-node.js';
 
