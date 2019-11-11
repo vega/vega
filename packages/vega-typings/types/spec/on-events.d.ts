@@ -21,7 +21,8 @@ export type OnEvent = (
     }
   | {
       update: Update;
-    }) & {
+    }
+) & {
   events: Events | EventListener[];
   force?: boolean;
 };

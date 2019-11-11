@@ -254,7 +254,13 @@ Generate sample points from an interpolation function _f_ for the provided domai
 
 ## <a name="statistics"></a>Statistics Routines
 
-Statistical methods for calculating bins, bootstrapped confidence intervals, and quartile boundaries.
+Statistical methods for bandwidth estimation, bin calculation, bootstrapped confidence intervals, and quartile boundaries.
+
+<a name="bandwidthNRD" href="#bandwidthNRD">#</a>
+vega.<b>bandwidthNRD</b>(<i>array</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/bandwidth.js "Source")
+
+Given an *array* of numeric values, estimates a bandwidth value for use in Gaussian kernel density estimation, assuming a normal reference distribution. The underlying formula (from Scott 1992) is 1.06 times the minimum of the standard deviation and the interquartile range divided by 1.34 times the sample size to the negative one-fifth power, along with special case handling in case of zero values for the interquartile range or deviation. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`.
 
 <a name="bin" href="#bin">#</a>
 vega.<b>bin</b>(<i>options</i>)

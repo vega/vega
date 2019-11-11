@@ -200,7 +200,8 @@ export type ContourTransform = {
     }
   | {
       thresholds?: (number | SignalRef)[] | SignalRef;
-    });
+    }
+);
 
 export interface CrossTransform {
   type: 'cross';
