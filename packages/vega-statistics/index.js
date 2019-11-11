@@ -1,7 +1,7 @@
+export {default as bandwidthNRD} from './src/bandwidth';
 export {default as bin} from './src/bin';
 export {default as bootstrapCI} from './src/bootstrapCI';
 export {default as dotbin} from './src/dotbin';
-export {default as estimateBandwidth} from './src/bandwidth';
 export {default as quantiles} from './src/quantiles';
 export {default as quartiles} from './src/quartiles';
 export {random, setRandom} from './src/random';

@@ -9,10 +9,7 @@ export default function(array, f) {
       q = quartiles(array, f),
       h = (q[2] - q[0]) / 1.34;
 
-  v = Math.min(v, h)
-    || v
-    || Math.abs(f ? f(array[0]) : array[0])
-    || 1;
+  v = Math.min(v, h) || v || Math.abs(q[0]) || 1;
 
   return 1.06 * v * Math.pow(n, -0.2);
 }
