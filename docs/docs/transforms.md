@@ -55,7 +55,7 @@ Transforms for processing streams of data objects.
 - [`timeunit`](timeunit) - Discretize date-time values into time unit bins. {% include tag ver="5.8" %}
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.
 
-## Geographic Transforms
+## Geographic and Spatial Transforms
 
 Transforms for modeling spatial data, cartographic projection, and geographic guides.
 
