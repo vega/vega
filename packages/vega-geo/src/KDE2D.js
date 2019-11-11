@@ -6,6 +6,28 @@ import {accessorName, inherits} from 'vega-util';
  * Perform 2D kernel-density estimation of point data.
  * @constructor
  * @param {object} params - The parameters for this operator.
+ * @param {Array<number>} params.size - The [width, height] extent (in
+ *   units of input pixels) over which to perform density estimation.
+ * @param {function(object): number} params.x - The x-coordinate accessor.
+ * @param {function(object): number} params.y - The y-coordinate accessor.
+ * @param {function(object): number} [params.weight] - The weight accessor.
+ * @param {Array<function(object): *>} [params.groupby] - An array of accessors
+ *   to groupby.
+ * @param {number} [params.cellSize] - Contour density calculation cell size.
+ *   This parameter determines the level of spatial approximation. For example,
+ *   the default value of 4 maps to 2x reductions in both x- and y- dimensions.
+ *   A value of 1 will result in an output raster grid whose dimensions exactly
+ *   matches the size parameter.
+ * @param {Array<number>} [params.bandwidth] - The KDE kernel bandwidths,
+ *   in pixels. The input can be a two-element array specifying separate
+ *   x and y bandwidths, or a single-element array specifying both. If the
+ *   bandwidth is unspecified or less than zero, the bandwidth will be
+ *   automatically determined.
+ * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+ *   output values should be probability estimates (false, default) or
+ *   smoothed counts (true).
+ * @param {string} [params.as='grid'] - The output field in which to store
+ *   the generated raster grid (default 'grid').
  */
 export default function KDE2D(params) {
   Transform.call(this, null, params);
@@ -16,12 +38,12 @@ KDE2D.Definition = {
   "metadata": {"generates": true},
   "params": [
     { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "x", "type": "field" },
-    { "name": "y", "type": "field" },
+    { "name": "x", "type": "field", "required": true },
+    { "name": "y", "type": "field", "required": true },
     { "name": "weight", "type": "field" },
+    { "name": "groupby", "type": "field", "array": true },
     { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number" },
+    { "name": "bandwidth", "type": "number", "array": true, "length": 2 },
     { "name": "counts", "type": "boolean", "default": false },
     { "name": "as", "type": "string", "default": "grid"}
   ]

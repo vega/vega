@@ -1,6 +1,6 @@
 import {ingest, Transform} from 'vega-dataflow';
 import {inherits, isArray} from 'vega-util';
-import {transform} from './Contours';
+import {transform} from './Isocontour';
 import {params} from './KDE2D';
 import contours from './util/contours';
 import density2D from './util/density2D';

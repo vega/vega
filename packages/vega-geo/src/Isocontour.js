@@ -5,41 +5,55 @@ import contours from './util/contours';
 import quantize from './util/quantize';
 
 /**
- * Generate contours based on in raster grid data.
+ * Generate isocontours (level sets) based on input raster grid data.
  * @constructor
  * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} [params.field] - The field with raster grid
+ *   data. If unspecified, the tuple itself is interpreted as a raster grid.
  * @param {Array<number>} [params.thresholds] - Contour threshold array. If
- *   this parameter is set, the count and nice parameters will be ignored.
+ *   specified, the count, nice, resolve, and zero parameters are ignored.
  * @param {number} [params.levels] - The desired number of contour levels.
  * @param {boolean} [params.nice] - Boolean flag indicating if the contour
  *   threshold values should be automatically aligned to "nice"
  *   human-friendly values. Setting this flag may cause the number of
  *   thresholds to deviate from the specified count.
+ * @param {string} [params.resolve] - The method for resolving thresholds
+ *   across multiple input grids. If 'independent' (the default),
+ *   threshold calculation will be performed separately for each grid.
+ *   If 'shared' (the default), a single set of threshold values will be
+ *   used for all input grids.
+ * @param {boolean} [params.zero] - Boolean flag indicating if the contour
+ *   threshold values should include zero.
  * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
  *   polygons should be smoothed using linear interpolation. The default is
  *   true. The parameter is ignored when using density estimation.
+ * @param {boolean} [params.scale] - Optional numerical value by which to
+ *   scale the output isocontour coordinates. This parameter can be useful
+ *   to scale the contours to match a desired output resolution.
+ * @param {string} [params.as='contour'] - The output field in which to store
+ *   the generated isocontour data (default 'contour').
  */
-export default function Contours(params) {
+export default function Isocontour(params) {
   Transform.call(this, null, params);
 }
 
-Contours.Definition = {
-  "type": "Contours",
+Isocontour.Definition = {
+  "type": "Isocontour",
   "metadata": {"generates": true},
   "params": [
     { "name": "field", "type": "field" },
-    { "name": "scale", "type": "number", "expr": true },
+    { "name": "thresholds", "type": "number", "array": true },    
     { "name": "levels", "type": "number" },
-    { "name": "smooth", "type": "boolean", "default": true },
     { "name": "nice", "type": "boolean", "default": false },
+    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
     { "name": "zero", "type": "boolean", "default": true },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "shared" },
-    { "name": "thresholds", "type": "number", "array": true },
+    { "name": "smooth", "type": "boolean", "default": true },
+    { "name": "scale", "type": "number", "expr": true },
     { "name": "as", "type": "string", "null": true, "default": "contour" }
   ]
 };
 
-var prototype = inherits(Contours, Transform);
+var prototype = inherits(Isocontour, Transform);
 
 prototype.transform = function(_, pulse) {
   if (this.value && !pulse.changed() && !_.modified()) {

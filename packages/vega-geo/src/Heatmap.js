@@ -11,6 +11,20 @@ import {
  * Render a heatmap image for input raster grid data.
  * @constructor
  * @param {object} params - The parameters for this operator.
+ * @param {function(object): *} [params.field] - The field with raster grid
+ *   data. If unspecified, the tuple itself is interpreted as a raster grid.
+ * @param {string} [params.color] - A constant color value or function for
+ *   individual pixel color. If a function, it will be invoked with an input
+ *   object that includes $x, $y, $value, and $max fields for the grid.
+ * @param {number} [params.opacity] - A constant opacity value or function for
+ *   individual pixel opacity. If a function, it will be invoked with an input
+ *   object that includes $x, $y, $value, and $max fields for the grid.
+ * @param {string} [params.resolve] - The method for resolving maximum values
+ *   across multiple input grids. If 'independent' (the default), maximum
+ *   calculation will be performed separately for each grid. If 'shared',
+ *   a single set of threshold values will be used for all input grids.
+ * @param {string} [params.as='image'] - The output field in which to store
+ *   the generated bitmap canvas images (default 'image').
  */
 export default function Heatmap(params) {
   Transform.call(this, null, params);
@@ -52,7 +66,7 @@ prototype.transform = function(_, pulse) {
     // build proxy data object
     const o = extend({}, t, obj);
     // set maximum value if not globally shared
-    if (!shared) o.$max = max(v.values);
+    if (!shared) o.$max = max(v.values || []);
     
     // generate canvas image
     // optimize color/opacity if not pixel-dependent
