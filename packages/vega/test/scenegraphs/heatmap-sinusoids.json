@@ -18,7 +18,8 @@
               "y": 0,
               "width": 750,
               "height": 500,
-              "aspect": false
+              "aspect": false,
+              "smooth": true
             }
           ],
           "zindex": 0

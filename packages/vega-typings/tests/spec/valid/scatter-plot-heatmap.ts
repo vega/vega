@@ -15,6 +15,14 @@ export const spec: Spec = {
     {
       "name": "bandwidthY", "value": -1,
       "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
+    },
+    {
+      "name": "cellSize", "value": 4,
+      "bind": {"input": "select", "options": [1, 2, 4, 8, 16]}
+    },
+    {
+      "name": "smooth", "value": true,
+      "bind": {"input": "checkbox"}
     }
   ],
 
@@ -38,7 +46,8 @@ export const spec: Spec = {
           "size": [{"signal": "width"}, {"signal": "height"}],
           "x": {"expr": "scale('x', datum.Horsepower)"},
           "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
-          "bandwidth": {"signal": "[bandwidthX, bandwidthY]"}
+          "bandwidth": {"signal": "[bandwidthX, bandwidthY]"},
+          "cellSize": {"signal": "cellSize"}
         },
         {
           "type": "formula", "as": "extent",
@@ -107,7 +116,8 @@ export const spec: Spec = {
           "y": {"value": 0},
           "width": {"signal": "width"},
           "height": {"signal": "height"},
-          "aspect": {"value": false}
+          "aspect": {"value": false},
+          "smooth": {"signal": "smooth"}
         }
       },
       "transform": [
