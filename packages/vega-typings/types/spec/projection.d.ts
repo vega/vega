@@ -22,9 +22,9 @@ export type ProjectionType =
   | 'transverseMercator';
 export interface BaseProjection {
   /*
-   * The type of the projection.
+   * The type of the projection. The default is `"mercator"`.
    */
-  type: ProjectionType | SignalRef;
+  type?: ProjectionType | SignalRef;
   /*
    * The clip angle of the projection.
    */
