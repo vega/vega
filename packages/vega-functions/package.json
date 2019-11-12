@@ -13,7 +13,7 @@
   "module": "index.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-color:d3,d3-format:d3,d3-geo:d3,d3-time-format:d3,vega-dataflow:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-selections:vega,vega-statistics:vega,vega-util:vega -f umd -n vega -o build/vega-functions.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-color:d3,d3-format:d3,d3-geo:d3,d3-time-format:d3,vega-dataflow:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-selections:vega,vega-statistics:vega,vega-time:vega,vega-util:vega -f umd -n vega -o build/vega-functions.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-functions.js -c -m -o build/vega-functions.min.js",
