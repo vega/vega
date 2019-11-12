@@ -71,9 +71,9 @@
     ],
     "Other Chart Types": [
         {"name": "heatmap"},
+        {"name": "density-heatmaps"},
         {"name": "parallel-coordinates"},
         {"name": "word-cloud"},
-        {"name": "timelines"},
         {"name": "beeswarm-plot"}
     ],
     "Custom Visual Designs": [
@@ -82,6 +82,7 @@
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
+        {"name": "timelines"},
         {"name": "u-district-cuisine"}
     ],
     "Interaction Techniques": [

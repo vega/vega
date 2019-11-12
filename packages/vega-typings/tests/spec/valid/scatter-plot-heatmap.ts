@@ -33,7 +33,7 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "filter",
-          "expr": "datum.Horsepower != null && datum.Miles_per_Gallon != null && datum.Acceleration != null"
+          "expr": "datum.Horsepower != null && datum.Miles_per_Gallon != null"
         }
       ]
     },
@@ -48,10 +48,6 @@ export const spec: Spec = {
           "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
           "bandwidth": {"signal": "[bandwidthX, bandwidthY]"},
           "cellSize": {"signal": "cellSize"}
-        },
-        {
-          "type": "formula", "as": "extent",
-          "expr": "extent(datum.grid.values)"
         }
       ]
     }
