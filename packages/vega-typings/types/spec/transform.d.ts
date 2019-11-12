@@ -412,7 +412,7 @@ export interface ImputeTransform {
   type: 'impute';
   field: FieldRef;
   key: FieldRef;
-  keyvals?: any[]; // includes SignalRef
+  keyvals?: any[] | SignalRef;
   groupby?: FieldRef[] | SignalRef;
   method?: ImputeMethod | SignalRef;
   value?: any; // includes SignalRef
