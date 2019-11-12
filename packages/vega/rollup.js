@@ -10,9 +10,8 @@ function hasArgument(_) {
 }
 
 const external = [].concat(!externals ? [] : [
-  // 'd3-array', // we use d3-array v2, not yet part of D3 v5
+  // 'd3-array', // we use d3-array v2, not part of D3 v5
   'd3-color',
-  'd3-contour',
   'd3-dispatch',
   'd3-dsv',
   'd3-force',
@@ -21,7 +20,7 @@ const external = [].concat(!externals ? [] : [
   'd3-hierarchy',
   'd3-interpolate',
   'd3-path',
-  // 'd3-scale', // we use d3-scale v3, not yet part of D3 v5
+  // 'd3-scale', // we use d3-scale v3, not part of D3 v5
   'd3-shape',
   'd3-time',
   'd3-time-format',
