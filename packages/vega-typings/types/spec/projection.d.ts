@@ -30,9 +30,12 @@ export interface BaseProjection {
    */
   clipAngle?: number | SignalRef;
   /*
-   * Sets the projection’s viewport clip extent to the specified bounds in pixels
+   * The projection’s viewport clip extent to the specified bounds in pixels
    */
   clipExtent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
+  /**
+   * The projection’s scale factor to the specified value.
+   */
   scale?: number | SignalRef;
   /*
    * The translation of the projection.
@@ -46,11 +49,17 @@ export interface BaseProjection {
    * The rotation of the projection.
    */
   rotate?: Vector3<number | SignalRef> | SignalRef;
+  /**
+   * The desired parallels of the projection.
+   */
   parallels?: (number | SignalRef)[] | SignalRef;
   /*
    * The desired precision of the projection.
    */
   precision?: number | SignalRef;
+  /**
+   * The default radius (in pixels) to use when drawing GeoJSON `Point` and `MultiPoint` geometries.
+   */
   pointRadius?: number | SignalRef;
   /*
    * GeoJSON data to which the projection should attempt to automatically fit the translate and scale parameters..
