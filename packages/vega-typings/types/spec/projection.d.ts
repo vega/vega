@@ -48,7 +48,7 @@ export interface BaseProjection {
   /**
    * The rotation of the projection.
    */
-  rotate?: Vector3<number | SignalRef> | SignalRef;
+  rotate?: Vector2<number | SignalRef> | Vector3<number | SignalRef> | SignalRef;
   /**
    * The desired parallels of the projection.
    */
