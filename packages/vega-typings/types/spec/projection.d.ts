@@ -76,15 +76,17 @@ export interface BaseProjection {
 
   // TODO: use a union tagged by the projection type to determine which of the following is applicable
   /* The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection */
-  coefficient?: number;
-  distance?: number;
-  fraction?: number;
-  lobes?: number;
-  parallel?: number;
-  radius?: number;
-  ratio?: number;
-  spacing?: number;
-  tilt?: number;
+  coefficient?: number | SignalRef;
+  distance?: number | SignalRef;
+  fraction?: number | SignalRef;
+  lobes?: number | SignalRef;
+  parallel?: number | SignalRef;
+  radius?: number | SignalRef;
+  ratio?: number | SignalRef;
+  spacing?: number | SignalRef;
+  tilt?: number | SignalRef;
+  reflectX?: boolean | SignalRef;
+  reflectY?: boolean | SignalRef;
 }
 export interface Projection extends BaseProjection {
   /*
