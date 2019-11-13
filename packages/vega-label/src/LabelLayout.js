@@ -1,6 +1,8 @@
 import {markBitmaps, baseBitmaps} from './util/markBitmaps';
 import scaler from './util/scaler';
-import placeAreaLabel from './util/placeAreaLabel';
+import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive';
+import placeAreaLabelReducedSearch from './util/placeAreaLabel/placeReducedSearch';
+import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill';
 import placeMarkLabel from './util/placeMarkLabel';
 
 // 8-bit representation of anchors
@@ -24,8 +26,14 @@ const anchorCode = {
   'bottom-right': BOTTOM + RIGHT
 };
 
+const placeAreaLabel = {
+  'naive': placeAreaLabelNaive,
+  'reduced-search': placeAreaLabelReducedSearch,
+  'floodfill': placeAreaLabelFloodFill
+};
+
 export default function(texts, size, compare, offset, anchor,
-  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding)
+  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method)
 {
   // early exit for empty data
   if (!texts.length) return texts;
@@ -76,7 +84,7 @@ export default function(texts, size, compare, offset, anchor,
 
   // generate label placement function
   const place = isGroupArea
-    ? placeAreaLabel($, bitmaps, avoidBaseMark, markIndex)
+    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex)
     : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels
