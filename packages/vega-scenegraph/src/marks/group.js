@@ -1,7 +1,8 @@
-import {rectangle} from '../path/shapes';
+import {hasCornerRadius, rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
 import {intersectRect} from '../util/intersect';
 import {visit, pickVisit} from '../util/visit';
+import {clipGroup} from '../util/canvas/clip';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
 import {hitPath} from '../util/canvas/pick';
@@ -56,8 +57,6 @@ function draw(context, scene, bounds) {
   visit(scene, function(group) {
     var gx = group.x || 0,
         gy = group.y || 0,
-        w = group.width || 0,
-        h = group.height || 0,
         opacity;
 
     // setup graphics context
@@ -79,11 +78,7 @@ function draw(context, scene, bounds) {
     }
 
     // set clip and bounds
-    if (group.clip) {
-      context.beginPath();
-      context.rect(0, 0, w, h);
-      context.clip();
-    }
+    if (group.clip) clipGroup(context, group);
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
@@ -107,22 +102,31 @@ function pick(context, scene, x, y, gx, gy) {
       cy = y * context.pixelRatio;
 
   return pickVisit(scene, function(group) {
-    var hit, dx, dy, b;
+    var hit, dx, dy, dw, dh, b, c;
 
-    // first hit test against bounding box
-    // if a group is clipped, that should be handled by the bounds check.
+    // first hit test bounding box
     b = group.bounds;
     if (b && !b.contains(gx, gy)) return;
 
-    // passed bounds check, so test sub-groups
-    dx = (group.x || 0);
-    dy = (group.y || 0);
+    // passed bounds check, test rectangular clip
+    dx = group.x || 0;
+    dy = group.y || 0;
+    dw = dx + (group.width || 0);
+    dh = dy + (group.height || 0);
+    c = group.clip;
+    if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
 
+    // adjust coordinate system
     context.save();
     context.translate(dx, dy);
-
     dx = gx - dx;
     dy = gy - dy;
+
+    // test background for rounded corner clip
+    if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
+      context.restore();
+      return;
+    }
 
     // hit test against contained marks
     hit = pickVisit(group, function(mark) {
@@ -138,6 +142,7 @@ function pick(context, scene, x, y, gx, gy) {
       hit = group;
     }
 
+    // restore state and return
     context.restore();
     return hit || null;
   });

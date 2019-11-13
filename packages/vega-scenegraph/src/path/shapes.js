@@ -46,6 +46,14 @@ const arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
       symbolShape = d3_symbol().type(type).size(sz),
       trailShape  = vg_trail().x(x).y(y).defined(def).size(ts);
 
+export function hasCornerRadius(item) {
+  return item.cornerRadius
+    || item.cornerRadiusTopLeft
+    || item.cornerRadiusTopRight
+    || item.cornerRadiusBottomRight
+    || item.cornerRadiusBottomLeft;
+}
+
 export function arc(context, item) {
   return arcShape.context(context)(item);
 }
