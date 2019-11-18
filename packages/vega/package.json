@@ -1,6 +1,6 @@
 {
   "name": "vega",
-  "version": "5.8.0",
+  "version": "5.8.1",
   "description": "The Vega visualization grammar.",
   "keywords": [
     "vega",
@@ -45,11 +45,11 @@
     "vega-regression": "1.0.2",
     "vega-runtime": "5.0.2",
     "vega-scale": "5.0.0",
-    "vega-scenegraph": "4.4.0",
+    "vega-scenegraph": "4.4.1",
     "vega-statistics": "1.7.0",
     "vega-time": "1.0.0",
     "vega-transforms": "4.5.0",
-    "vega-typings": "0.11.0",
+    "vega-typings": "0.11.1",
     "vega-util": "1.12.0",
     "vega-view": "5.3.2",
     "vega-view-transforms": "4.5.0",
