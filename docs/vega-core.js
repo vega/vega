@@ -10141,6 +10141,14 @@
         symbolShape = d3Shape.symbol().type(type).size(sz),
         trailShape  = vg_trail().x(x).y(y).defined(def).size(ts);
 
+  function hasCornerRadius(item) {
+    return item.cornerRadius
+      || item.cornerRadiusTopLeft
+      || item.cornerRadiusTopRight
+      || item.cornerRadiusBottomRight
+      || item.cornerRadiusBottomLeft;
+  }
+
   function arc(context, item) {
     return arcShape.context(context)(item);
   }
@@ -10736,13 +10744,35 @@
 
   var area$1 = markMultiItemPath('area', area, pickArea);
 
+  function clip(context, scene) {
+    var clip = scene.clip;
+
+    context.save();
+
+    if (isFunction(clip)) {
+      context.beginPath();
+      clip(context);
+      context.clip();
+    } else {
+      clipGroup(context, scene.group);
+    }
+  }
+
+  function clipGroup(context, group) {
+    context.beginPath();
+    hasCornerRadius(group)
+      ? rectangle(context, group, 0, 0)
+      : context.rect(0, 0, group.width || 0, group.height || 0);
+    context.clip();
+  }
+
   var clip_id = 1;
 
   function resetSVGClipId() {
     clip_id = 1;
   }
 
-  function clip(renderer, item, size) {
+  function clip$1(renderer, item, size) {
     var clip = item.clip,
         defs = renderer._defs,
         id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
@@ -10750,6 +10780,8 @@
 
     if (isFunction(clip)) {
       c.path = clip(null);
+    } else if (hasCornerRadius(size)) {
+      c.path = rectangle(null, size, 0, 0);
     } else {
       c.width = size.width || 0;
       c.height = size.height || 0;
@@ -10771,7 +10803,7 @@
   }
 
   function foreground(emit, item, renderer) {
-    var url = item.clip ? clip(renderer, item, item) : null;
+    var url = item.clip ? clip$1(renderer, item, item) : null;
     emit('clip-path', url);
   }
 
@@ -10806,8 +10838,6 @@
     visit(scene, function(group) {
       var gx = group.x || 0,
           gy = group.y || 0,
-          w = group.width || 0,
-          h = group.height || 0,
           opacity;
 
       // setup graphics context
@@ -10829,11 +10859,7 @@
       }
 
       // set clip and bounds
-      if (group.clip) {
-        context.beginPath();
-        context.rect(0, 0, w, h);
-        context.clip();
-      }
+      if (group.clip) clipGroup(context, group);
       if (bounds) bounds.translate(-gx, -gy);
 
       // draw group contents
@@ -10857,22 +10883,31 @@
         cy = y * context.pixelRatio;
 
     return pickVisit(scene, function(group) {
-      var hit, dx, dy, b;
+      var hit, dx, dy, dw, dh, b, c;
 
-      // first hit test against bounding box
-      // if a group is clipped, that should be handled by the bounds check.
+      // first hit test bounding box
       b = group.bounds;
       if (b && !b.contains(gx, gy)) return;
 
-      // passed bounds check, so test sub-groups
-      dx = (group.x || 0);
-      dy = (group.y || 0);
+      // passed bounds check, test rectangular clip
+      dx = group.x || 0;
+      dy = group.y || 0;
+      dw = dx + (group.width || 0);
+      dh = dy + (group.height || 0);
+      c = group.clip;
+      if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
 
+      // adjust coordinate system
       context.save();
       context.translate(dx, dy);
-
       dx = gx - dx;
       dy = gy - dy;
+
+      // test background for rounded corner clip
+      if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
+        context.restore();
+        return;
+      }
 
       // hit test against contained marks
       hit = pickVisit(group, function(mark) {
@@ -10888,6 +10923,7 @@
         hit = group;
       }
 
+      // restore state and return
       context.restore();
       return hit || null;
     });
@@ -12305,22 +12341,6 @@
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   };
 
-  function clip$1(context, scene) {
-    var clip = scene.clip;
-
-    context.save();
-    context.beginPath();
-
-    if (isFunction(clip)) {
-      clip(context);
-    } else {
-      var group = scene.group;
-      context.rect(0, 0, group.width || 0, group.height || 0);
-    }
-
-    context.clip();
-  }
-
   function devicePixelRatio() {
     return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   }
@@ -12461,7 +12481,7 @@
 
   prototype$M.draw = function(ctx, scene, bounds) {
     var mark = Marks[scene.marktype];
-    if (scene.clip) clip$1(ctx, scene);
+    if (scene.clip) clip(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
@@ -12911,7 +12931,7 @@
       parent.style.setProperty('pointer-events', events);
     }
     if (scene.clip) {
-      parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
+      parent.setAttribute('clip-path', clip$1(renderer, scene, scene.group));
     } else {
       parent.removeAttribute('clip-path');
     }
@@ -13372,7 +13392,7 @@
     // render opening group tag
     str += openTag('g', {
       'class': cssClass(scene),
-      'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
+      'clip-path': scene.clip ? clip$1(renderer, scene, scene.group) : null
     }, style);
 
     // render contained elements
@@ -16723,7 +16743,7 @@
    *   time multi-format specifier object.
    * @return {function(*):string} - The generated label formatter.
    */
-  function tickFormat(scale, count, specifier, formatType) {
+  function tickFormat(scale, count, specifier, formatType, noSkip) {
     var type = scale.type,
         format = (type === Time || formatType === Time) ? timeFormat(specifier)
           : (type === UTC || formatType === UTC) ? utcFormat(specifier)
@@ -16733,16 +16753,14 @@
 
     if (isLogarithmic(type)) {
       var logfmt = variablePrecision(specifier);
-      format = scale.bins ? logfmt : filter$1(format, logfmt);
+      format = noSkip || scale.bins ? logfmt : filter$1(format, logfmt);
     }
 
     return format;
   }
 
   function filter$1(sourceFormat, targetFormat) {
-    return function(_) {
-      return sourceFormat(_) ? targetFormat(_) : '';
-    };
+    return _ => sourceFormat(_) ? targetFormat(_) : '';
   }
 
   function variablePrecision(specifier) {
@@ -16820,7 +16838,7 @@
         scale = _.scale,
         tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
         count = tickCount(scale, tally, _.minstep),
-        format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType),
+        format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values),
         values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
     if (ticks) out.rem = ticks;
@@ -17071,10 +17089,10 @@
     return symbols$1[scale.type] || scale.bins;
   }
 
-  function labelFormat(scale, count, type, specifier, formatType) {
+  function labelFormat(scale, count, type, specifier, formatType, noSkip) {
     const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
       ? thresholdFormat(scale, specifier)
-      : tickFormat(scale, count, specifier, formatType);
+      : tickFormat(scale, count, specifier, formatType, noSkip);
 
     return type === Symbols$1 && isDiscreteRange(scale) ? formatRange(format)
       : type === Discrete ? formatDiscrete(format)
@@ -17160,7 +17178,7 @@
         scale = _.scale,
         limit = +_.limit,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType),
+        format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, !!_.values),
         values = _.values || labelValues(scale, count),
         domain, fraction, size, offset, ellipsis;
 
@@ -22644,7 +22662,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.8.0";
+  var version = "5.8.1";
 
   var Default = 'default';
 
