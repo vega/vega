@@ -22,7 +22,7 @@
   "scripts": {
     "rollup": "node rollup-node && node rollup && node schema-copy",
     "prebuild": "rimraf build && mkdirp build",
-    "build": "yarn rollup && node rollup -e && node rollup -m",
+    "build": "yarn rollup && node rollup -e && node rollup -m && babel build --out-dir build-es5 --config-file ../../babel.config.js",
     "postbuild": "terser build/vega.js -c -m -o build/vega.min.js && terser build/vega-core.js -c -m -o build/vega-core.min.js",
     "pretest": "yarn prebuild && yarn rollup",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js' && eslint index.js test",
