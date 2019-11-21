@@ -423,6 +423,7 @@ export interface IsocontourTransform {
   type: 'isocontour';
   field?: string | TransformField;
   scale?: number | TransformField;
+  translate?: number[] | TransformField;
   levels?: number | SignalRef;
   smooth?: boolean | SignalRef;
   nice?: boolean | SignalRef;
