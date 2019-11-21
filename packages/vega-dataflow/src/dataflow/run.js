@@ -27,7 +27,8 @@ import {id, isArray, Info, Debug} from 'vega-util';
  */
 export async function evaluate(encode, prerun, postrun) {
   const df = this,
-        level = df.logLevel();
+        level = df.logLevel(),
+        async = [];
 
   // if the pulse value is set, this is a re-entrant call
   if (df._pulse) return reentrant(df);
@@ -73,9 +74,13 @@ export async function evaluate(encode, prerun, postrun) {
       // otherwise, evaluate the operator
       next = op.run(df._getPulse(op, encode));
 
-      // await if operator returned a promise
       if (next.then) {
+        // await if operator returns a promise directly
         next = await next;
+      } else if (next.async) {
+        // queue parallel asynchronous execution
+        async.push(next.async);
+        next = StopPropagation;
       }
 
       if (level >= Debug) {
@@ -120,6 +125,13 @@ export async function evaluate(encode, prerun, postrun) {
 
   // invoke postrun function, if provided
   if (postrun) await asyncCallback(df, postrun);
+
+  // handle non-blocking asynchronous callbacks
+  if (async.length) {
+    Promise.all(async).then(cb => df.runAsync(null, () => {
+      cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
+    }));
+  }
 
   return df;
 }
