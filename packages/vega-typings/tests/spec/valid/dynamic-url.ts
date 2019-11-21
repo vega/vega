@@ -17,13 +17,19 @@ export const spec: Spec = {
           "data/uniform-2d.json"
         ]
       }
+    },
+    {
+      "name": "async",
+      "value": false,
+      "bind": {"input": "checkbox"}
     }
   ],
 
   "data": [
     {
       "name": "table",
-      "url": {"signal": "url"}
+      "url": {"signal": "url"},
+      "async": {"signal": "async"}
     }
   ],
 
