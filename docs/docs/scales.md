@@ -163,7 +163,7 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the bands should be centered within the range. A value of 0 or 1 may be used to shift the bands to one side, say to position them adjacent to an axis. For more, see [this explainer for D3 band align](https://observablehq.com/@d3/band-align). |
 | domainImplicit| {% include type t="Boolean" %} | A Boolean flag (default `false`) indicating if an ordinal domain should be implicitly extended with new values. If false, the scale will return `undefined` for values not explicitly included in the domain. If true, new values will be appended to the domain and the matching range value will be returned.|
 | padding       | {% include type t="Number" %} | Sets _paddingInner_ and _paddingOuter_ to the same padding value (default `0`). This value must lie in the range [0,1].|
 | paddingInner  | {% include type t="Number" %} | The inner padding (spacing) within each band step, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
@@ -180,7 +180,7 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the points should be centered within the range. A value of 0 or 1 may be used to shift the points to one side, say to position them adjacent to an axis.|
 | padding       | {% include type t="Number" %} | An alias for _paddingOuter_ (default `0`). This value must lie in the range [0,1].|
 | paddingOuter  | {% include type t="Number" %} | The outer padding (spacing) at the ends of the scale range, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
 
@@ -362,7 +362,7 @@ The _sort_ property of a domain [data reference](#dataref) can accept, in additi
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | field         | {% include type t="Field" %}   | The data field to sort by. If unspecified, defaults to the field specified in the outer data reference.|
-| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops).|
+| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops), and also see below for limitations with multi-field domains.|
 | order         | {% include type t="String" %}  | The sort order. One of `ascending` (default) or `descending`.|
 
 This example sorts distinct `category` field values in descending order by the associated median of the `value` field:
@@ -389,8 +389,7 @@ This example sorts a multi-field domain in descending order based on the counts 
 }
 ```
 
-**Note:** For domains drawn from multiple fields, the _sort.field_ property is not allowed and the only legal _op_ is `count`.
-
+**Note:** For multi-field domains, the sort _field_ values may not be undefined across all input data sets, and will exhibit duplicate values when drawing multiple domain values from the same data set. To avoid inaccurate sorting, the only allowed sort _op_ values for multi-domain scales are `count`, `min`, and `max`. Support for `min` and `max` is available in versions {% include tag ver="5.5" %}.
 
 ## <a name="range"></a>Scale Ranges
 

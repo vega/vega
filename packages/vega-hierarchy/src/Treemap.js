@@ -1,5 +1,5 @@
 import HierarchyLayout from './HierarchyLayout';
-import {error, inherits} from 'vega-util';
+import {error, hasOwnProperty, inherits} from 'vega-util';
 import {
   treemap,
   treemapBinary,
@@ -66,7 +66,7 @@ prototype.layout = function() {
     if (t.ratio) x.tile(t.ratio(_));
   };
   x.method = function(_) {
-    if (Tiles.hasOwnProperty(_)) x.tile(Tiles[_]);
+    if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
     else error('Unrecognized Treemap layout method: ' + _);
   };
   return x;

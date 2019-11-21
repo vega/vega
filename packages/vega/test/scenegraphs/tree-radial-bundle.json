@@ -44311,6 +44311,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "depends on",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -44359,6 +44360,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "imported by",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -44398,6 +44400,7 @@
                       "orient": "top",
                       "text": "Dependencies",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

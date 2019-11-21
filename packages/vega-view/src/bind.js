@@ -129,11 +129,19 @@ function checkbox(bind, el, param, value) {
 /**
  * Generates a selection list input element.
  */
-function select(bind, el, param, value, view) {
-  var node = element('select', {name: param.signal});
+
+function select(bind, el, param, value) {
+  var node = element('select', {name: param.signal}),
+      label = param.labels || [];
   el.appendChild(node);
 
   bind.elements = [node];
+
+  param.options.forEach(function(option, i) {
+    var attr = {value: option};
+    if (valuesEqual(option, value)) attr.selected = true;
+    node.appendChild(element('option', attr, (label[i] || option)+''));
+  });
 
   const handler = (name, options) => {
     while (node.firstChild) {
@@ -173,11 +181,12 @@ function select(bind, el, param, value, view) {
  * Generates a radio button group.
  */
 function radio(bind, el, param, value) {
-  var group = element('span', {'class': RadioClass});
+  var group = element('span', {'class': RadioClass}),
+      label = param.labels || [];
 
   el.appendChild(group);
 
-  bind.elements = param.options.map(function(option) {
+  bind.elements = param.options.map(function(option, i) {
     var id = OptionClass + param.signal + '-' + option;
 
     var attr = {
@@ -195,7 +204,7 @@ function radio(bind, el, param, value) {
     });
 
     group.appendChild(input);
-    group.appendChild(element('label', {'for': id}, option+''));
+    group.appendChild(element('label', {'for': id}, (label[i] || option)+''));
 
     return input;
   });
@@ -216,8 +225,8 @@ function radio(bind, el, param, value) {
 function range(bind, el, param, value) {
   value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
-  var min = param.min || Math.min(0, +value) || 0,
-      max = param.max || Math.max(100, +value) || 100,
+  var max = param.max != null ? param.max : Math.max(100, +value) || 100,
+      min = param.min || Math.min(0, max, +value) || 0,
       step = param.step || tickStep(min, max, 100);
 
   var node = element('input', {

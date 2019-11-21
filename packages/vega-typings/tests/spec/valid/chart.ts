@@ -131,23 +131,23 @@ export const spec: Spec = {
     {
       "shape": "shapeScale",
       "stroke": "colorScale",
-      "title": "Legend Right 1"
+      "title": ["Legend", "Right 1"]
     },
     {
       "shape": "shapeScale",
       "fill": "colorScale",
       "orient": "right",
-      "title": "Legend Right 2"
+      "title": ["Legend", "Right 2"]
     },
     {
       "shape": "shapeScale",
       "orient": "left",
-      "title": "Legend Left 1"
+      "title": ["Legend", "Left 1"]
     },
     {
       "stroke": "colorScale",
       "orient": "left",
-      "title": "Legend Left 2"
+      "title": ["Legend", "Left 2"]
     },
     {
       "shape": "innerScale",

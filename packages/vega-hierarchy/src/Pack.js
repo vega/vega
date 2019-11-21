@@ -31,6 +31,6 @@ var prototype = inherits(Pack, HierarchyLayout);
 
 prototype.layout = pack;
 
-prototype.params = ['size', 'padding'];
+prototype.params = ['radius', 'size', 'padding'];
 
 prototype.fields = Output;

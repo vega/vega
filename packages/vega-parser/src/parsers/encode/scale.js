@@ -1,7 +1,8 @@
 import expression from './expression';
 import field from './field';
+import property from './property';
 import {ScalePrefix} from 'vega-functions';
-import {isString, stringValue} from 'vega-util';
+import {hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(enc, value, scope, params, fields) {
   var scale = getScale(enc.scale, scope, params, fields),
@@ -20,8 +21,13 @@ export default function(enc, value, scope, params, fields) {
 
     if (enc.band && (flag = hasBandwidth(enc.scale, scope))) {
       func = scale + '.bandwidth';
-      interp = +enc.band;
-      interp = func + '()' + (interp===1 ? '' : '*' + interp);
+
+      if (enc.band.signal) {
+        interp = func + '()*' + property(enc.band, scope, params, fields);
+      } else {
+        interp = +enc.band;
+        interp = func + '()' + (interp===1 ? '' : '*' + interp);
+      }
 
       // if we don't know the scale type, check for bandwidth
       if (flag < 0) interp = '(' + func + '?' + interp + ':0)';
@@ -52,7 +58,7 @@ export function getScale(name, scope, params, fields) {
   if (isString(name)) {
     // direct scale lookup; add scale as parameter
     scaleName = ScalePrefix + name;
-    if (!params.hasOwnProperty(scaleName)) {
+    if (!hasOwnProperty(params, scaleName)) {
       params[scaleName] = scope.scaleRef(name);
     }
     scaleName = stringValue(scaleName);

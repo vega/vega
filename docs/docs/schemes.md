@@ -4,7 +4,7 @@ title: Color Schemes
 permalink: /docs/schemes/index.html
 ---
 
-Color **schemes** provide a set of named color palettes for both discrete and continuous color encodings. Vega provides a collection of perceptually-motivated color schemes, many of which were origially created by [Cynthia Brewer](https://en.wikipedia.org/wiki/Cynthia_Brewer) and the [ColorBrewer](http://colorbrewer2.org/) project, or by [Maureen Stone](https://research.tableau.com/user/maureen-stone) of Tableau Software. To view and set default color schemes, see the [Config documentation](../config/#scale-range).
+Color **schemes** provide a set of named color palettes for both discrete and continuous color encodings. Vega provides a collection of perceptually-motivated color schemes, many of which were originally created by [Cynthia Brewer](https://en.wikipedia.org/wiki/Cynthia_Brewer) and the [ColorBrewer](http://colorbrewer2.org/) project, or by [Maureen Stone](https://research.tableau.com/user/maureen-stone) of Tableau Software. To view and set default color schemes, see the [Config documentation](../config/#scale-range).
 
 Discrete color schemes may be used directly with scales that have discrete (or discretizing) domains, such as [`ordinal`](../scales/#ordinal), [`quantize`](../scales/#quantize), and [`quantile`](../scales/#quantile) scales. Continuous color schemes can be used directly with continuous scales (such as [`linear`](../scales/#linear), [`log`](../scales/#log), and [`sqrt`](../scales/#sqrt) scales), and &ndash; by specifying a scheme `count` property &ndash; can also be used to generate discrete color schemes.
 

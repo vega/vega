@@ -11,6 +11,7 @@ export default function(array, f) {
         break;
       }
     }
+    if (i === n) return [-1, -1];
     u = v = i;
     while (++i < n) {
       b = array[i];
@@ -33,6 +34,7 @@ export default function(array, f) {
         break;
       }
     }
+    if (i === n) return [-1, -1];
     u = v = i;
     while (++i < n) {
       b = f(array[i], i, array);

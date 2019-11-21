@@ -80,3 +80,16 @@ export function rederive(t, d) {
 export function replace(t, d) {
   return setid(d, tupleid(t));
 }
+
+/**
+ * Generate an augmented comparator function that provides stable
+ * sorting by tuple id when the given comparator produces ties.
+ * @param {function} cmp - The comparator to augment.
+ * @param {function} [f] - Optional tuple accessor function.
+ * @return {function} An augmented comparator function.
+ */
+export function stableCompare(cmp, f) {
+  return !cmp ? null
+    : f ? (a, b) => cmp(a, b) || (tupleid(f(a)) - tupleid(f(b)))
+    : (a, b) => cmp(a, b) || (tupleid(a) - tupleid(b));
+}

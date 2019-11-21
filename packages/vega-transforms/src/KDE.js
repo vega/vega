@@ -1,8 +1,8 @@
+import {partition} from './util/util';
 import {randomKDE} from 'vega-statistics';
 import {ingest, Transform} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';
-import {accessorName, error, inherits} from 'vega-util';
-import {extent} from 'd3-array';
+import {accessorName, error, extent, inherits} from 'vega-util';
 
 /**
  * Compute kernel density estimates (KDE) for one or more data groups.
@@ -12,12 +12,20 @@ import {extent} from 'd3-array';
  *   to groupby.
  * @param {function(object): *} params.field - An accessor for the data field
  *   to estimate.
- * @param {number} [params.bandwidth=0] - The KDE kernal bandwidth.
- *   If zero of unspecified, the bandwidth is automatically determined.
+ * @param {number} [params.bandwidth=0] - The KDE kernel bandwidth.
+ *   If zero or unspecified, the bandwidth is automatically determined.
+ * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+ *   output values should be probability estimates (false, default) or
+ *   smoothed counts (true).
  * @param {string} [params.cumulative=false] - A boolean flag indicating if a
  *   density (false) or cumulative distribution (true) should be generated.
  * @param {Array<number>} [params.extent] - The domain extent over which to
  *   plot the density. If unspecified, the [min, max] data extent is used.
+ * @param {string} [params.resolve='independent'] - Indicates how parameters for
+ *   multiple densities should be resolved. If "independent" (the default), each
+ *   density may have its own domain extent and dynamic number of curve sample
+ *   steps. If "shared", the KDE transform will ensure that all densities are
+ *   defined over a shared domain and curve steps, enabling stacking.
  * @param {number} [params.minsteps=25] - The minimum number of curve samples
  *   for plotting the density.
  * @param {number} [params.maxsteps=200] - The maximum number of curve samples
@@ -41,6 +49,7 @@ KDE.Definition = {
     { "name": "counts", "type": "boolean", "default": false },
     { "name": "bandwidth", "type": "number", "default": 0 },
     { "name": "extent", "type": "number", "array": true, "length": 2 },
+    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
     { "name": "steps", "type": "number" },
     { "name": "minsteps", "type": "number", "default": 25 },
     { "name": "maxsteps", "type": "number", "default": 200 },
@@ -59,21 +68,28 @@ prototype.transform = function(_, pulse) {
           names = (_.groupby || []).map(accessorName),
           bandwidth = _.bandwidth,
           method = _.cumulative ? 'cdf' : 'pdf',
-          minsteps = _.steps || _.minsteps || 25,
-          maxsteps = _.steps || _.maxsteps || 200,
           as = _.as || ['value', 'density'],
           values = [];
+
+    let domain = _.extent,
+        minsteps = _.steps || _.minsteps || 25,
+        maxsteps = _.steps || _.maxsteps || 200;
 
     if (method !== 'pdf' && method !== 'cdf') {
       error('Invalid density method: ' + method);
     }
 
+    if (_.resolve === 'shared') {
+      if (!domain) domain = extent(source, _.field);
+      minsteps = maxsteps = _.steps || maxsteps;
+    }
+
     groups.forEach(g => {
       const density = randomKDE(g, bandwidth)[method],
             scale = _.counts ? g.length : 1,
-            domain = _.extent || extent(g);
+            local = domain || extent(g);
 
-      sampleCurve(density, domain, minsteps, maxsteps).forEach(v => {
+      sampleCurve(density, local, minsteps, maxsteps).forEach(v => {
         const t = {};
         for (let i=0; i<names.length; ++i) {
           t[names[i]] = g.dims[i];
@@ -90,28 +106,3 @@ prototype.transform = function(_, pulse) {
 
   return out;
 };
-
-function partition(data, groupby, field) {
-  var groups = [],
-      get = function(f) { return f(t); },
-      map, i, n, t, k, g;
-
-  // partition data points into stack groups
-  if (groupby == null) {
-    groups.push(data.map(field));
-  } else {
-    for (map={}, i=0, n=data.length; i<n; ++i) {
-      t = data[i];
-      k = groupby.map(get);
-      g = map[k];
-      if (!g) {
-        map[k] = (g = []);
-        g.dims = k;
-        groups.push(g);
-      }
-      g.push(field(t));
-    }
-  }
-
-  return groups;
-}

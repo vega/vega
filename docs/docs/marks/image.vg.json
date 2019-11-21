@@ -15,6 +15,8 @@
       "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
     { "name": "aspect", "value": true,
       "bind": {"input": "checkbox"} },
+    { "name": "smooth", "value": true,
+      "bind": {"input": "checkbox"} },
     { "name": "align", "value": "left",
       "bind": {"input": "select", "options": ["left", "center", "right"]} },
     { "name": "baseline", "value": "top",
@@ -35,6 +37,7 @@
           "width": {"signal": "w"},
           "height": {"signal": "h"},
           "aspect": {"signal": "aspect"},
+          "smooth": {"signal": "smooth"},
           "align": {"signal": "align"},
           "baseline": {"signal": "baseline"}
         },

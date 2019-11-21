@@ -23,6 +23,8 @@ export {
 
 export * from 'vega-statistics';
 
+export * from 'vega-time';
+
 export * from 'vega-util';
 
 export * from 'vega-loader';
@@ -52,7 +54,6 @@ export {
   interpolate,
   interpolateColors,
   interpolateRange,
-  timeInterval,
   quantizeInterpolator
 } from 'vega-scale';
 

@@ -8,8 +8,7 @@ export const spec: Spec = {
     "legend": {
       "offset": 5,
       "gradientDirection": "horizontal",
-      "gradientLength": 300,
-      "gradientWidth": 15
+      "gradientLength": 300
     }
   },
 

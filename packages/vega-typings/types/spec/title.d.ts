@@ -1,4 +1,5 @@
-import { Encodable, SignalRef, TextEncodeEntry } from '.';
+import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '.';
+import { Encode, Text } from './encode';
 import {
   AlignValue,
   AnchorValue,
@@ -14,24 +15,29 @@ export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = null | 'start' | 'middle' | 'end';
 export type TitleFrame = 'bounds' | 'group';
 
-export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
+export interface Title extends BaseTitle {
   /**
    * The title text.
    */
-  text: string | SignalRef;
+  text: Text | SignalRef;
 
   /**
-   * A mark name property to apply to the title text mark.
+   * The subtitle text.
+   */
+  subtitle?: Text | SignalRef;
+
+  /**
+   * A mark name property to apply to the title text mark. (**Deprecated.**)
    */
   name?: string;
 
   /**
-   * A boolean flag indicating if the title element should respond to input events such as mouse hover.
+   * A boolean flag indicating if the title element should respond to input events such as mouse hover. (**Deprecated.**)
    */
   interactive?: boolean;
 
   /**
-   * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied.
+   * A mark style property to apply to the title text mark. If not specified, a default style of `"group-title"` is applied. (**Deprecated**)
    */
   style?: string | string[];
 
@@ -44,96 +50,149 @@ export interface Title extends Encodable<TextEncodeEntry>, BaseTitle {
    * @minimum 0
    */
   zindex?: number;
+
+  /**
+   * Mark definitions for custom title encoding.
+   */
+  encode?: TitleEncode | Encode<TextEncodeEntry>; // second entry is **deprecated**
 }
 
-export interface BaseTitle<
-  N = NumberValue,
-  S = StringValue,
-  C = ColorValue,
-  FW = FontWeightValue,
-  FS = FontStyleValue,
-  A = AlignValue,
-  TB = TextBaselineValue,
-  F = TitleFrame | StringValue,
-  AN = AnchorValue,
-  O = TitleOrient | SignalRef
-> {
+export interface TitleEncode {
   /**
-   * The anchor position for placing the title. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
+   * Custom encoding for the title container group.
    */
-  anchor?: AN;
+  group?: GuideEncodeEntry<GroupEncodeEntry>;
+  /**
+   * Custom encoding for the title text.
+   */
+  title?: GuideEncodeEntry<TextEncodeEntry>;
+  /**
+   * Custom encoding for the subtitle text.
+   */
+  subtitle?: GuideEncodeEntry<TextEncodeEntry>;
+}
+
+export interface BaseTitle {
+  /**
+   * The anchor position for placing the title and subtitle text. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
+   */
+  anchor?: AnchorValue;
 
   /**
    * The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height).
    */
-  frame?: F;
+  frame?: TitleFrame | StringValue;
 
   /**
-   * The orthogonal offset in pixels by which to displace the title from its position along the edge of the chart.
+   * The orthogonal offset in pixels by which to displace the title group from its position along the edge of the chart.
    */
-  offset?: N;
-
-  align?: A;
+  offset?: NumberValue;
 
   /**
-   * Angle in degrees of title text.
+   * Horizontal text alignment for title text. One of `"left"`, `"center"`, or `"right"`.
    */
-  angle?: N;
+  align?: AlignValue;
 
   /**
-   * Vertical text baseline for title text. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
+   * Angle in degrees of title and subtitle text.
    */
-  baseline?: TB;
+  angle?: NumberValue;
+
+  /**
+   * Vertical text baseline for title and subtitle text. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
+   */
+  baseline?: TextBaselineValue;
+
+  /**
+   * Delta offset for title and subtitle text x-coordinate.
+   */
+  dx?: NumberValue;
+
+  /**
+   * Delta offset for title and subtitle text y-coordinate.
+   */
+  dy?: NumberValue;
 
   /**
    * Text color for title text.
    */
-  color?: C;
-
-  /**
-   * Delta offset for title text x-coordinate.
-   */
-  dx?: N;
-
-  /**
-   * Delta offset for title text y-coordinate.
-   */
-  dy?: N;
+  color?: ColorValue;
 
   /**
    * Font name for title text.
    */
-  font?: S;
+  font?: StringValue;
 
   /**
    * Font size in pixels for title text.
    *
-   * __Default value:__ `10`.
-   *
    * @minimum 0
    */
-  fontSize?: N;
+  fontSize?: NumberValue;
 
   /**
    * Font style for title text.
    */
-  fontStyle?: FS;
+  fontStyle?: FontStyleValue;
 
   /**
    * Font weight for title text.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  fontWeight?: FW;
+  fontWeight?: FontWeightValue;
 
   /**
-   * The maximum allowed length in pixels of legend labels.
+   * Line height in pixels for multi-line title text.
+   */
+  lineHeight?: NumberValue;
+
+  /**
+   * The maximum allowed length in pixels of title and subtitle text.
    *
    * @minimum 0
    */
-  limit?: N;
+  limit?: NumberValue;
 
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
    */
-  orient?: O;
+  orient?: TitleOrient | SignalRef;
+
+  /**
+   * Text color for subtitle text.
+   */
+  subtitleColor?: ColorValue;
+
+  /**
+   * Font name for subtitle text.
+   */
+  subtitleFont?: StringValue;
+
+  /**
+   * Font size in pixels for subtitle text.
+   *
+   * @minimum 0
+   */
+  subtitleFontSize?: NumberValue;
+
+  /**
+   * Font style for subtitle text.
+   */
+  subtitleFontStyle?: FontStyleValue;
+
+  /**
+   * Font weight for subtitle text.
+   * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
+   */
+  subtitleFontWeight?: FontWeightValue;
+
+  /**
+   * Line height in pixels for multi-line subtitle text.
+   */
+  subtitleLineHeight?: NumberValue;
+
+  /**
+   * The padding in pixels between title and subtitle text.
+   */
+  subtitlePadding?: NumberValue;
 }

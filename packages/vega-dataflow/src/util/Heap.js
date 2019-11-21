@@ -1,6 +1,7 @@
 export default function Heap(cmp) {
   var nodes = [];
   return {
+    clear: () => nodes = [],
     size: () => nodes.length,
     peek: () => nodes[0],
     push: x => {

@@ -5,12 +5,19 @@ export const spec: Spec = {
   "width": 850,
   "height": 200,
   "padding": 5,
+  "config": {
+    "signals": [
+      {"name": "baseFontSize", "value": 14}
+    ],
+    "title": {
+      "fontSize": {"signal": "baseFontSize + 2"}
+    }
+  },
   "title": {
     "text": "Font Size Steps and Weber's Law?",
     "anchor": "start",
     "frame": "group",
     "orient": "top",
-    "fontSize": 16,
     "dy": 30
   },
   "data": [
@@ -64,14 +71,14 @@ export const spec: Spec = {
       "scale": "y",
       "offset": 5,
       "values": [10, 20, 30, 40, 50, 60, 72],
-      "title": "Linear Font Size",
+      "title": ["Font Size", "(Linear)"],
       "titlePadding": 8
     },
     {
       "orient": "right",
       "scale": "logy",
       "offset": 5,
-      "title": "Log-Transformed Font Size",
+      "title": ["Font Size", "(Log-Transformed)"],
       "titlePadding": 8
     },
     {

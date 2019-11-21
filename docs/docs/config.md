@@ -40,7 +40,9 @@ For example, this Vega spec includes light-gray axis grid lines by default:
 - [Axis Properties](#axes)
 - [Legend Properties](#legends)
 - [Title Properties](#title)
+- [Projection Properties](#projection)
 - [Scale Range Properties](#scale-range)
+- [Signals](#signals)
 {: .column-list }
 
 ## <a name="view"></a>View Properties
@@ -73,11 +75,26 @@ Set default view background and chart plotting area background colors:
 
 Properties for event handling configuration, defined within an `"events"` property block.
 
-| Property      | Type                                 | Description    |
-| :------------ | :----------------------------------: | :------------- |
-| defaults      | {% include type t="Object" %}        | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+| Property      | Type                                  | Description    |
+| :------------ | :-----------------------------------: | :------------- |
+| bind          | {% include type t="String" %}         | Configuration control for binding input DOM elements to signals. The available options are `"any"` (default, all bindings are allowed), `"container"` (use only the view container DOM element for all bindings, suppressing per-binding selectors), and `"none"` (suppresses all input bindings). {% include tag ver="5.5" %}|
+| defaults      | {% include type t="Object" %}         | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+| selector      | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for external sources specified using a CSS selector. If a boolean value, `true` (default) permits selector event listeners, `false` disallows all selector events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
+| timer         | {% include type t="Boolean" %}        | Configuration control for event listeners for a `"timer"` source. One of `true` (default) to permit timer event listeners, or `false` to disallow timer events. {% include tag ver="5.5" %}|
+| view          | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the Vega `"view"` source. If a boolean value, `true` (default) permits view event listeners, `false` disallows all view events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
+| window        | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the browser `"window"` source. If a boolean value, `true` (default) permits window event listeners, `false` disallows all window events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
 
 ### Usage
+
+To disable event listeners on external DOM elements specified by a CSS selector and permit only `mousemove` and `mouseup` events on the browser `window` object:
+
+{: .suppress-error}
+```json
+"events": {
+  "selector": false,
+  "window": ["mousemove", "mouseup"]
+}
+```
 
 To prevent the default behavior for all events originating within a Vega view:
 
@@ -89,7 +106,6 @@ To prevent the default behavior for all events originating within a Vega view:
   }
 }
 ```
-
 
 To prevent the default behavior for all events originating within a Vega view, except for `wheel` events:
 
@@ -207,6 +223,7 @@ Additional property blocks can target more specific axis types based on the orie
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |
+| tickBand        | {% include type t="String" %}   | Indicates the type of tick style to use in conjunction with band scales. One of `"center"` (default) to center ticks in the middle of the band interval, or `"extent"` to place ticks at band extents (interval boundaries). If specified, this property may override the settings of `bandPosition`, `tickExtra`, and `tickOffset`. {% include tag ver="5.8" %} |
 | tickColor       | {% include type t="Color" %}    | Color of axis ticks. |
 | tickDash        | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
 | tickDashOffset  | {% include type t="Number" %}   | The pixel offset at which to start the tick mark dash array. {% include tag ver="5.0" %} |
@@ -226,10 +243,12 @@ Additional property blocks can target more specific axis types based on the orie
 | titleFontStyle  | {% include type t="String" %} | Font style of axis titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %}   | Font weight of axis titles. |
 | titleLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis titles. |
+| titleLineHeight | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity    | {% include type t="Number" %}   | Opacity of axis titles. {% include tag ver="4.1" %} |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
+| translate       | {% include type t="Number" %}   | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates, in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
 
 ### Usage
 
@@ -299,12 +318,14 @@ Properties defining default settings for legends. These properties are defined u
 | symbolDashOffset      | {% include type t="Number" %}   | The pixel offset at which to start the symbol dash array. {% include tag ver="5.0" %} |
 | symbolDirection       | {% include type t="String" %}   | The default direction (`"horizontal"` or `"vertical"`) for symbol legends. |
 | symbolFillColor       | {% include type t="Color" %}    | Fill color for legend symbols. |
+| symbolLimit           | {% include type t="Number" %}   | The maximum number of allowed entries for a symbol legend. If the number of entries exceeds the limit, entries will be dropped and replaced with an ellipsis. {% include tag ver="5.7" %} |
 | symbolOffset          | {% include type t="Number" %}   | Horizontal pixel offset for legend symbols. |
 | symbolOpacity         | {% include type t="Number" %}   | Opacity of legend symbols. {% include tag ver="4.1" %} |
 | symbolSize            | {% include type t="Number" %}   | Default symbol area size (in pixels<sup>2</sup>). |
 | symbolStrokeColor     | {% include type t="Color" %}    | Stroke color for legend symbols. |
 | symbolStrokeWidth     | {% include type t="Number" %}   | Default legend symbol stroke width. |
 | symbolType            | {% include type t="String" %}   | Default shape type (such as `"circle"`) for legend symbols. |
+| tickCount             | {% include type t="Number|String|Object" %} | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary. {% include tag ver="5.7" %} |
 | titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
 | titleAnchor           | {% include type t="String" %}   | The anchor position for placing legend titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
 | titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
@@ -314,6 +335,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleFontStyle        | {% include type t="String" %}   | Font style of legend titles (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight       | {% include type t="String|Number" %}   | Font weight for legend titles. |
 | titleLimit            | {% include type t="Number" %}   | The maximum allowed length in pixels of legend titles. |
+| titleLineHeight       | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
@@ -329,10 +351,11 @@ Collections of legends with the same *orient* value are positioned together, eit
 | center                | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if legends should be centered within the respective layout area. For example, given a vertical direction, two legends will share a left edge by default. If *center* is true, the smaller legends will be centered in the space spanned by all the legends.|
 | direction             | {% include type t="String" %}   | The direction in which subsequent legends should be spatially positioned. One of `"horizontal"` or `"vertical"`.|
 | margin                | {% include type t="Number" %}   | Margin, in pixels, to place between consecutive legends with the same *orient* value. |
-| offset                | {% include type t="Number" %}   | Offset, in pixels, of the
-legend from the chart body. |
+| offset                | {% include type t="Number" %}   | Offset, in pixels, of the legend from the chart body. |
 
 In addition to these top-level properties, the legend layout may include sub-objects (containing the same properties listed above) for any of the legal [legend *orient* values](../legends/#orientation) other than `"none"`: `"left"`, `"right"`, `"top"`, `"bottom"`, `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`.
+
+**Note**: The [default configuration](https://github.com/vega/vega/blob/master/packages/vega-parser/src/config.js) includes legend layout entries for `"left"` and `"right"` orientations. If you add custom layout parameters at the top-level, these will _not_ override more specific configurations. If you want to modify the layout of `"left"`- or `"right"`-oriented legends, use a specific sub-object targeting those orientations.
 
 ### Usage
 
@@ -374,21 +397,29 @@ Properties defining default settings for titles. These properties are defined un
 
 | Property              | Type                            | Description    |
 | :-------------------- | :-----------------------------: | :------------- |
-| align                 | {% include type t="String" %}   | Horizontal text alignment of the title. If specified, this value overrides automatic alignment based on the _anchor_ value. |
-| anchor                | {% include type t="String" %}   | Title anchor position (`"start"`, `"middle"`, or `"end"`). |
-| angle                 | {% include type t="Number" %}   | Angle in degrees of the title text. |
-| baseline              | {% include type t="String" %}   | Vertical text baseline of the title. |
+| align                 | {% include type t="String" %}   | Horizontal text alignment of the title and subtitle. If specified, this value overrides automatic alignment based on the _anchor_ value. |
+| anchor                | {% include type t="String" %}   | Title and subtitle anchor position (`"start"`, `"middle"`, or `"end"`). |
+| angle                 | {% include type t="Number" %}   | Angle in degrees of the title and subtitle text. |
+| baseline              | {% include type t="String" %}   | Vertical text baseline of the title and subtitle. |
 | color                 | {% include type t="Color" %}    | Text color of the title text. |
-| dx                    | {% include type t="Number" %}   | Horizontal offset added to the title x-coordinate. {% include tag ver="5.2" %} |
-| dy                    | {% include type t="Number" %}   | Vertical offset added to the title y-coordinate. {% include tag ver="5.2" %} |
+| dx                    | {% include type t="Number" %}   | Horizontal offset added to the title and subtitle x-coordinate. {% include tag ver="5.2" %} |
+| dy                    | {% include type t="Number" %}   | Vertical offset added to the title and subtitle y-coordinate. {% include tag ver="5.2" %} |
 | font                  | {% include type t="String" %}   | Font name of the title text. |
 | fontSize              | {% include type t="Number" %}   | Font size in pixels of the title text. |
 | fontStyle             | {% include type t="String" %}   | Font style of the title text (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | fontWeight            | {% include type t="String|Number" %}   | Font weight for title text. |
 | frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
-| limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of legend labels. |
+| limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of title and subtitle text. |
+| lineHeight            | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
 | orient                | {% include type t="String" %}   | Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`). |
+| subtitleColor         | {% include type t="Color" %}    | Text color of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFont          | {% include type t="String" %}   | Font name of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFontSize      | {% include type t="Number" %}   | Font size in pixels of the subtitle text. {% include tag ver="5.7" %} |
+| subtitleFontStyle     | {% include type t="String" %}   | Font style of the subtitle text (e.g., `normal` or `italic`). {% include tag ver="5.7" %} |
+| subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
+| subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
+| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
 
 ### Usage
 
@@ -402,6 +433,26 @@ This example gives every title a 10 pixel offset and a font size of 18 pixels.
   }
 }
 ```
+
+[Back to Top](#reference)
+
+
+## <a name="projection"></a>Projection Properties
+
+Default properties to apply to [cartographic projections](../projections), if not explicitly included in the input JSON specification. Any legal projection property may be included. These properties are defined under the `"projection"` property in the config object. A common use for this property is to set a default projection type.
+
+### Usage
+
+This example sets the default projection type to be an `"equalEarth"` projection:
+
+```json
+{
+  "projection": {
+    "type": "equalEarth"
+  }
+}
+```
+
 
 [Back to Top](#reference)
 
@@ -444,6 +495,28 @@ This example sets new default color palettes.
     ],
     "ordinal": {"scheme": "greens"},
     "ramp": {"scheme": "purples"}
+  }
+}
+```
+
+[Back to Top](#reference)
+
+
+## <a name="signals"></a>Signal Definitions {% include tag ver="5.5" %}
+
+Configuration files may also contain signal definitions for the top-level scope of a Vega specification. The syntax is identical to [standard signal definitions](../signals/): an array of named signal objects. Adding signal definitions to a configuration can be useful for defining style variables (colors, font sizes, etc.) that may be used elsewhere within either the config or a spec itself. Signals directly defined within a specification itself take precedence over those defined in the configuration.
+
+### Usage
+
+To enable dynamic scaling of font sizes, one can define a signal that for a font size scale factor, then define other config entries relative to this value:
+
+```json
+{
+  "signals": [
+    {"name": "fontSizeScale", "value": 1}
+  ],
+  "text": {
+    "fontSize": {"signal": "11 * fontSizeScale"}
   }
 }
 ```

@@ -1,6 +1,6 @@
 {
   "name": "vega-transforms",
-  "version": "4.1.0",
+  "version": "4.5.0",
   "description": "Data processing transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -20,7 +20,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,vega-dataflow:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-transforms.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,vega-dataflow:vega,vega-statistics:vega,vega-time:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-transforms.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-transforms.js -c -m -o build/vega-transforms.min.js",
@@ -30,9 +30,10 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.0.3",
-    "vega-dataflow": "^5.2.1",
-    "vega-statistics": "^1.4.0",
-    "vega-util": "^1.10.0"
+    "d3-array": "^2.3.3",
+    "vega-dataflow": "^5.4.1",
+    "vega-statistics": "^1.6.2",
+    "vega-time": "^1.0.0",
+    "vega-util": "^1.12.0"
   }
 }

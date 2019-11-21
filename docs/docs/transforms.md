@@ -34,6 +34,7 @@ Transforms for processing streams of data objects.
 - [`countpattern`](countpattern) - Count the frequency of patterns in text strings.
 - [`cross`](cross) - Perform a cross-product of a data stream with itself.
 - [`density`](density) - Generate values drawn from a probability distribution.
+- [`dotbin`](dotbin) - Perform density binning for dot plot construction. {% include tag ver="5.7" %}
 - [`extent`](extent) - Compute minimum and maximum values over a data stream.
 - [`filter`](filter) - Filter a data stream using a predicate expression.
 - [`flatten`](flatten) - Map array-typed fields to data objects, one per array entry. {% include tag ver="3.1" %}
@@ -47,21 +48,26 @@ Transforms for processing streams of data objects.
 - [`lookup`](lookup) - Extend data objects by looking up key values on another stream.
 - [`pivot`](pivot) - Pivot unique values to new aggregate fields. {% include tag ver="3.2" %}
 - [`project`](project) - Generate derived data objects with a selected set of fields.
+- [`quantile`](quantile) - Calculate sample quantile values over an input data stream. {% include tag ver="5.7" %}
 - [`regression`](regression) - Fit regression models to smooth and predict values. {% include tag ver="5.4" %}
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
+- [`timeunit`](timeunit) - Discretize date-time values into time unit bins. {% include tag ver="5.8" %}
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.
 
-## Geographic Transforms
+## Geographic and Spatial Transforms
 
-Transforms for projecting geographic data and generating geographic guides.
+Transforms for modeling spatial data, cartographic projection, and geographic guides.
 
-- [`contour`](contour) - Model a spatial distribution using discrete levels.
+- [`contour`](contour) - _Deprecated._ Model a spatial distribution using discrete levels.
 - [`geojson`](geojson) - Consolidate geographic data into a GeoJSON feature collection.
 - [`geopath`](geopath) - Map GeoJSON features to SVG path strings.
 - [`geopoint`](geopoint) - Map (longitude, latitude) coordinates to (x, y) points.
 - [`geoshape`](geoshape) - Map GeoJSON features to a shape instance for procedural drawing.
 - [`graticule`](graticule) - Generate a reference grid for cartographic maps.
+- [`heatmap`](heatmap) - Generate heatmap images for raster grid data. {% include tag ver="5.8" %}
+- [`isocontour`](isocontour) - Generate level set contours for raster grid data. {% include tag ver="5.8" %}
+- [`kde2d`](kde2d) - Estimate 2D densities as output raster grids. {% include tag ver="5.8" %}
 
 ## Layout Transforms
 

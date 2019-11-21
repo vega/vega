@@ -1,6 +1,7 @@
 import {default as dsv, delimitedFormat} from './dsv';
 import json from './json';
 import topojson from './topojson';
+import {hasOwnProperty} from 'vega-util';
 
 export const format = {
   dsv: dsv,
@@ -15,7 +16,7 @@ export function formats(name, reader) {
     format[name] = reader;
     return this;
   } else {
-    return format.hasOwnProperty(name) ? format[name] : null;
+    return hasOwnProperty(format, name) ? format[name] : null;
   }
 }
 

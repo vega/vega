@@ -16,7 +16,7 @@ Internally, this transform processes a collection of special tree node objects g
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| field               | {% include type t="Field" %}   | The data field corresponding to a numeric value for the node. The sum of values for a node and all its descendants is available on the node object as the `value` property. If _radius_ is `null`, this field determines the node size.|
+| field               | {% include type t="Field" %}   | The data field corresponding to a numeric value for the node. The sum of values for a node and all its descendants is available on the node object as the `value` property. If unspecified, the layout will instead tally the counts of leaf nodes. If _radius_ is `null`, this field determines the node size.|
 | sort                | {% include type t="Compare" %} | A comparator for sorting sibling nodes. The inputs to the comparator are tree node objects, not input data objects.|
 | size                | {% include type t="Number[]" %}| The size of the layout, provided as a [width, height] array.|
 | radius              | {% include type t="Field" %}   | An explicit node radius to use. If `null` (the default), the radius of each leaf circle is derived from the _field_ value.|

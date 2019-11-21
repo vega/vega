@@ -1,6 +1,6 @@
 import {
   All, Each, Flush, Column, X, Y, Row, Middle, End,
-  Group, AxisRole, LegendRole,
+  Group, AxisRole, LegendRole, TitleRole,
   RowHeader, RowFooter, RowTitle,
   ColHeader, ColFooter, ColTitle
 } from '../constants';
@@ -31,6 +31,7 @@ function gridLayoutGroups(group) {
       switch (mark.role) {
         case AxisRole:
         case LegendRole:
+        case TitleRole:
           break;
         case RowHeader: views.rowheaders.push(...items); break;
         case RowFooter: views.rowfooters.push(...items); break;

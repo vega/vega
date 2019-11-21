@@ -1,6 +1,6 @@
 {
   "name": "vega-schema",
-  "version": "5.4.0",
+  "version": "5.8.0",
   "description": "Generate the Vega JSON schema.",
   "keywords": [
     "vega",
@@ -21,7 +21,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-scale": "^4.0.0"
+    "vega-scale": "^5.0.0"
   },
   "devDependencies": {
     "vega-crossfilter": "*",

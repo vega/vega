@@ -24,7 +24,7 @@ var prototype = inherits(Transform, Operator);
  * @return the output pulse for this operator (or StopPropagation)
  */
 prototype.run = function(pulse) {
-  if (pulse.stamp <= this.stamp) return pulse.StopPropagation;
+  if (pulse.stamp < this.stamp) return pulse.StopPropagation;
 
   var rv;
   if (this.skip()) {
@@ -33,8 +33,6 @@ prototype.run = function(pulse) {
     rv = this.evaluate(pulse);
   }
   rv = rv || pulse;
-
-  this.stamp = pulse.stamp;
 
   if (rv.then) {
     rv = rv.then(_ => this.pulse =_);

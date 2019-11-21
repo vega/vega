@@ -10,8 +10,8 @@ The **geojson** transform consolidates geographic data into a single [GeoJSON](h
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| fields              | {% include type t="Field[]" %} | Data fields containing  longitude and latitude values, respectively.|
-| geojson             | {% include type t="Field" %}   | Data field containing  GeoJSON feature objects.|
+| fields              | {% include type t="Field[]" %} | Data fields containing longitude and latitude values, respectively.|
+| geojson             | {% include type t="Field" %}   | Data field containing GeoJSON [Feature objects](https://tools.ietf.org/html/rfc7946#section-3.2). For Vega versions {% include tag ver="5.7" %}, this parameter defaults to the identity function (treat input data objects as GeoJSON Feature objects) if neither this parameter nor the _fields_ parameter are specified.|
 
 ## Usage
 

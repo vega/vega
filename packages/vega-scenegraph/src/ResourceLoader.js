@@ -50,12 +50,10 @@ prototype.loadImage = function(uri) {
 
       img.onload = function() {
         decrement(loader);
-        img.loaded = true;
       };
 
       img.onerror = function() {
         decrement(loader);
-        img.loaded = false;
       }
 
       img.src = url;
@@ -63,7 +61,7 @@ prototype.loadImage = function(uri) {
     })
     .catch(function(e) {
       decrement(loader);
-      return {loaded: false, width: 0, height: 0, src: e && e.url || ''};
+      return {complete: false, width: 0, height: 0, src: e && e.url || ''};
     });
 };
 

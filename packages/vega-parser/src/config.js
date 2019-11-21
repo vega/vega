@@ -1,32 +1,3 @@
-import {isArray, isObject} from 'vega-util';
-
-export default function(configs) {
-  return (configs || []).reduce((out, config) => {
-    for (var key in config) {
-      var r = key === 'legend' ? {'layout': 1}
-        : key === 'style' ? true : null;
-      copy(out, key, config[key], r);
-    }
-    return out;
-  }, defaults());
-}
-
-function copy(output, key, value, recurse) {
-  var k, o;
-  if (isObject(value) && !isArray(value)) {
-    o = isObject(output[key]) ? output[key] : (output[key] = {});
-    for (k in value) {
-      if (recurse && (recurse === true || recurse[k])) {
-        copy(o, k, value[k]);
-      } else {
-        o[k] = value[k];
-      }
-    }
-  } else {
-    output[key] = value;
-  }
-}
-
 var defaultFont = 'sans-serif',
     defaultSymbolSize = 30,
     defaultStrokeWidth = 2,
@@ -40,7 +11,7 @@ var defaultFont = 'sans-serif',
  * Users can provide their own (sub-)set of these default values
  * by passing in a config object to the top-level parse method.
  */
-function defaults() {
+export default function() {
   return {
     // default padding around visualization
     padding: 0,
@@ -110,6 +81,12 @@ function defaults() {
         fontSize: 13,
         fontWeight: 'bold'
       },
+      // chart subtitle
+      'group-subtitle': {
+        fill: black,
+        font: defaultFont,
+        fontSize: 12
+      },
       // defaults for styled point marks in Vega-Lite
       point: {
         size: defaultSymbolSize,
@@ -136,7 +113,8 @@ function defaults() {
     title: {
       orient: 'top',
       anchor: 'middle',
-      offset: 4
+      offset: 4,
+      subtitlePadding: 3
     },
 
     // defaults for axes
@@ -165,7 +143,12 @@ function defaults() {
 
     // correction for centering bias
     axisBand: {
-      tickOffset: -1
+      tickOffset: -0.5
+    },
+
+    // defaults for cartographic projection
+    projection: {
+      type: 'mercator'
     },
 
     // defaults for legends
@@ -187,6 +170,7 @@ function defaults() {
       labelLimit: 160,
       labelOffset: 4,
       labelOverlap: true,
+      symbolLimit: 30,
       symbolType: 'circle',
       symbolSize: 100,
       symbolOffset: 0,

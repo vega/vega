@@ -2,10 +2,10 @@ import {timeIntervals} from './scale';
 import {
   numberValue, stringValue, booleanValue, colorValue, alignValue,
   anchorValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrSignal, arrayOrSignal, numberOrSignal, stringOrSignal,
-  booleanOrNumberOrSignal,
+  booleanOrSignal, arrayOrSignal, numberOrSignal,
+  textOrSignal, booleanOrNumberOrSignal, formatTypeOrSignal,
   def, enums, object, oneOf, orSignal, ref,
-  booleanType, formatType, numberType, stringType, signalRef
+  booleanType, formatTypeType, numberType, stringType, signalRef
 } from './util';
 
 // types defined elsewhere
@@ -19,6 +19,14 @@ const labelOverlap = oneOf(
   signalRef
 );
 const labelOverlapRef = ref('labelOverlap');
+
+const tickBandEnum = ['center', 'extent'];
+
+const tickBand = oneOf(
+  enums(tickBandEnum),
+  signalRef
+);
+const tickBandRef = ref('tickBand');
 
 const tickCount = oneOf(
   numberType,
@@ -41,18 +49,19 @@ const axisOrientEnum = [
 const axis = object({
   _orient_: enums(axisOrientEnum),
   _scale_: stringType,
-  format: stringOrSignal,
-  formatType: orSignal(formatType),
+  format: formatTypeOrSignal,
+  formatType: orSignal(formatTypeType),
   minExtent: numberValue,
   maxExtent: numberValue,
   offset: numberValue,
   position: numberValue,
   bandPosition: numberValue,
+  translate: numberType,
   values: arrayOrSignal,
   zindex: numberType,
 
   // TITLE CONFIG
-  title: stringOrSignal,
+  title: textOrSignal,
   titlePadding: numberValue,
   titleAlign: alignValue,
   titleAnchor: anchorValue,
@@ -66,6 +75,7 @@ const axis = object({
   titleFontStyle: stringValue,
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
+  titleLineHeight: numberValue,
   titleOpacity: numberValue,
 
   // DOMAIN CONFIG
@@ -78,6 +88,7 @@ const axis = object({
 
   // TICK CONFIG
   ticks: booleanType,
+  tickBand: tickBandRef,
   tickColor: colorValue,
   tickDash: dashArrayValue,
   tickDashOffset: numberValue,
@@ -132,6 +143,7 @@ const axis = object({
 export default {
   refs: {
     labelOverlap,
+    tickBand,
     tickCount
   },
   defs: {

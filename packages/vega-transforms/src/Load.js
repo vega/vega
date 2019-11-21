@@ -1,5 +1,5 @@
 import {ingest, Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {array, inherits} from 'vega-util';
 
 /**
  * Load and parse data from an external source. Marshalls parameter
@@ -24,7 +24,7 @@ prototype.transform = function(_, pulse) {
   } else {
     // return promise for async loading
     return df.request(_.url, _.format)
-      .then(res => output(this, pulse, res.data || []));
+      .then(res => output(this, pulse, array(res.data)));
   }
 };
 

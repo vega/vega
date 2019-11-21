@@ -1,11 +1,9 @@
 language: node_js
-os: osx
 node_js:
-  - "8"
   - "10"
+  - "12"
 before_install:
-  - brew update
-  - brew install cairo pango
+  - sudo apt-get install -y libcairo2-dev libpango1.0-dev
 script:
   - yarn test
 cache: yarn

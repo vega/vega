@@ -108,6 +108,7 @@
                       "orient": "top",
                       "text": "Quantize 2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -248,6 +249,7 @@
                       "orient": "top",
                       "text": "Quantize 3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -410,6 +412,7 @@
                       "orient": "top",
                       "text": "Quantize 4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -594,6 +597,7 @@
                       "orient": "top",
                       "text": "Quantize 5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -800,6 +804,7 @@
                       "orient": "top",
                       "text": "Quantize 6",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1028,6 +1033,7 @@
                       "orient": "top",
                       "text": "Quantize 7",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1278,6 +1284,7 @@
                       "orient": "top",
                       "text": "Quantize 8",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1550,6 +1557,7 @@
                       "orient": "top",
                       "text": "Quantize 9",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1690,6 +1698,7 @@
                       "orient": "top",
                       "text": "Quantile 3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -1874,6 +1883,7 @@
                       "orient": "top",
                       "text": "Quantile 5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2102,6 +2112,7 @@
                       "orient": "top",
                       "text": "Quantile 7",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2220,6 +2231,7 @@
                       "orient": "top",
                       "text": "Threshold 1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2360,6 +2372,7 @@
                       "orient": "top",
                       "text": "Threshold 2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2522,6 +2535,7 @@
                       "orient": "top",
                       "text": "Threshold 3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -2706,6 +2720,7 @@
                       "orient": "top",
                       "text": "Bin-Ordinal 5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
@@ -3000,6 +3015,7 @@
                       "orient": "top",
                       "text": "Bin-Ordinal 10",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

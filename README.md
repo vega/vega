@@ -17,7 +17,16 @@ For a basic setup allowing you to build Vega and run examples:
 - Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
 - After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
 
-This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, run `bundle install` and `bundle exec jekyll serve` in the `docs` folder. The last command launches a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `yarn docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+
+## ES5 Support
+For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) ES5-compatible version of the code in `packages/vega/build-es5` directory. Older browser would also require several polyfill libraries:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.4/polyfill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.3/runtime.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
+```
 
 ## Contributions, Development, and Support
 

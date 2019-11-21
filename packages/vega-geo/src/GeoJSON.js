@@ -1,6 +1,6 @@
 import {Feature, FeatureCollection, MultiPoint} from './constants';
 import {Transform} from 'vega-dataflow';
-import {accessorFields, inherits} from 'vega-util';
+import {accessorFields, identity, inherits} from 'vega-util';
 
 /**
  * Consolidate an array of [longitude, latitude] points or GeoJSON features
@@ -35,7 +35,7 @@ prototype.transform = function(_, pulse) {
       fields = _.fields,
       lon = fields && fields[0],
       lat = fields && fields[1],
-      geojson = _.geojson,
+      geojson = _.geojson || (!fields && identity),
       flag = pulse.ADD,
       mod;
 

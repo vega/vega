@@ -209,13 +209,17 @@ function configureBins(scale, _, count) {
 
   if (bins && !isArray(bins)) {
     // generate bin boundary array
-    const domain = (bins.start == null || bins.stop == null) && scale.domain(),
-          start = bins.start == null ? domain[0] : bins.start,
-          stop = bins.stop == null ? peek(domain) : bins.stop,
-          step = bins.step;
+    let domain = scale.domain(),
+        lo = domain[0],
+        hi = peek(domain),
+        start = bins.start == null ? lo : bins.start,
+        stop = bins.stop == null ? hi : bins.stop,
+        step = bins.step;
 
     if (!step) error('Scale bins parameter missing step property.');
-    bins = sequence(start, stop + step, step);
+    if (start < lo) start = step * Math.ceil(lo / step);
+    if (stop > hi) stop = step * Math.floor(hi / step);
+    bins = sequence(start, stop + step / 2, step);
   }
 
   if (bins) {
@@ -243,22 +247,29 @@ function configureBins(scale, _, count) {
 }
 
 function configureRange(scale, _, count) {
-  var round = _.round || false,
+  var type = scale.type,
+      round = _.round || false,
       range = _.range;
 
   // if range step specified, calculate full range extent
   if (_.rangeStep != null) {
-    range = configureRangeStep(scale.type, _, count);
+    range = configureRangeStep(type, _, count);
   }
 
   // else if a range scheme is defined, use that
   else if (_.scheme) {
-    range = configureScheme(scale.type, _, count);
-    if (isFunction(range)) return scale.interpolator(range);
+    range = configureScheme(type, _, count);
+    if (isFunction(range)) {
+      if (scale.interpolator) {
+        return scale.interpolator(range);
+      } else {
+        error(`Scale type ${type} does not support interpolating color schemes.`);
+      }
+    }
   }
 
   // given a range array for an interpolating scale, convert to interpolator
-  else if (range && isInterpolating(scale.type)) {
+  if (range && isInterpolating(type)) {
     return scale.interpolator(
       interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
     );
@@ -297,7 +308,7 @@ function configureScheme(type, _, count) {
   } else {
     name = _.scheme.toLowerCase();
     scheme = getScheme(name);
-    if (!scheme) error('Unrecognized scheme name: ' + _.scheme);
+    if (!scheme) error(`Unrecognized scheme name: ${_.scheme}`);
   }
 
   // determine size for potential discrete range

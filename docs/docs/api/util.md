@@ -4,7 +4,7 @@ title: Utilities API
 permalink: /docs/api/util/index.html
 ---
 
-Vega uses a set of JavaScript **utilities** throughout its implementation, including function generators, type checkers, log messages, and additional utilities for Object, Array and String values. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-util](https://github.com/vega/vega-util) project.
+Vega uses a set of JavaScript **utilities** throughout its implementation, including function generators, type checkers, log messages, and additional utilities for Object, Array and String values. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-util](https://github.com/vega/vega/tree/master/packages/vega-util) package. For additional utility methods for date-time values, see the [Time Utilities API reference](../time).
 
 ## Utilities API Reference
 
@@ -221,6 +221,12 @@ vega.<b>extend</b>(<i>target</i>[, <i>source1</i>, <i>source2</i>, …])
 
 Extends a *target* object by copying (in order) all enumerable properties of the input *source* objects.
 
+<a name="hasOwnProperty" href="#hasOwnProperty">#</a>
+vega.<b>hasOwnProperty</b>(<i>object</i>, <i>property</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/hasOwnProperty.js "Source")
+
+Returns `true` if the input *object* has a named *property* defined on it, otherwise `false`. This method concerns the input object only, ignoring properties defined up the prototype chain. The method is equivalent to [`Object.hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty), but improves security by guarding against overridden Object prototype built-ins.
+
 <a name="inherits" href="#inherits">#</a>
 vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inherits.js "Source")
@@ -247,6 +253,18 @@ map.clean(); // invoke garbage collection, clears empty entries
 ```
 
 By using basic JavaScript objects to hash values and avoiding calls to the built-in JavaScript `delete` operator, fastmaps provide good performance. However, this speed comes at the cost of some object bloat, requiring periodic garbage collection in the case of many deletions. The fastmap object provides a *clean* method for requesting garbage collection of empty map entries. The *test* method is a getter/setter for providing an optional boolean-valued function that indicates additional objects (not just empty entries from deleted keys) that should be removed during garbage collection.
+
+<a name="mergeConfig" href="#mergeConfig">#</a>
+vega.<b>mergeConfig</b>(<i>...config</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Merges a collection of Vega configuration objects into a single combined object. Configuration objects with higher index positions in the arguments list have higher precedence, and so may override settings provided by earlier objects.
+
+<a name="writeConfig" href="#writeConfig">#</a>
+vega.<b>writeConfig</b>(<i>config</i>, <i>key</i>, <i>value</i>[, <i>recurse</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/mergeConfig.js "Source")
+
+Writes a value to a Vega configuration object. Given a *config* object and a configuration property *key* and *value*, appropriately assign the value to the config object. The *recurse* parameter controls if recursive merging (as opposed to overwriting) is performed: if `false` or undefined, no recursion is performed; if `true` one level of recursive merge is performed; if *recurse* is object-valued, one level of recursive merge is performed for keys that the *recurse* object maps to a truthy value. This method is a helper method used within *mergeConfig*.
 
 
 ## <a name="arrays"></a>Arrays
@@ -328,6 +346,12 @@ vega.<b>panPow</b>(<i>domain</i>, <i>delta</i>, <i>exponent</i>)
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that translates the domain by a _delta_ using a power scale transform parameterized by the provided _exponent_. The _delta_ value is expressed as a fraction of the current domain span, and may be positive or negative to indicate the translation direction. The return value is a two-element array indicating the starting and ending value of the translated (panned) domain.
 
+<a name="panSymlog" href="#panSymlog">#</a>
+vega.<b>panSymlog</b>(<i>domain</i>, <i>delta</i>, <i>constant</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that translates the domain by a _delta_ using a symlog (symmetric log) scale transform parameterized by the provided _constant_. The _delta_ value is expressed as a fraction of the current domain span, and may be positive or negative to indicate the translation direction. The return value is a two-element array indicating the starting and ending value of the translated (panned) domain.
+
 <a name="peek" href="#peek">#</a>
 vega.<b>peek</b>(<i>array</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/peek.js "Source")
@@ -380,6 +404,12 @@ vega.<b>zoomPow</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>exponent</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
 
 Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a power scale transform parameterized by the provided _exponent_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
+
+<a name="zoomSymlog" href="#zoomSymlog">#</a>
+vega.<b>zoomSymlog</b>(<i>domain</i>, <i>anchor</i>, <i>scale</i>, <i>constant</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/transform.js "Source")
+
+Given an input numeric _domain_ (sorted in increasing order), returns a new domain array that scales (zooms) the domain by a _scale_ factor using a symlog (symmetric log) scale transform parameterized by the provided _constant_, centered on the given _anchor_ value. If _anchor_ is `null`, the midpoint of the domain is used instead. The return value is a two-element array indicating the starting and ending value of the scaled (zoomed) domain.
 
 ## <a name="dates"></a>Dates
 

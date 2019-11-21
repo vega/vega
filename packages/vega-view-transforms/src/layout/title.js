@@ -1,17 +1,17 @@
 import {Top, Bottom, Left, Right, Start, End, Group} from '../constants';
 import {set, tempBounds} from './util';
 
-export function titleLayout(view, title, width, height, viewBounds) {
-  var item = title.items[0],
-      frame = item.frame,
-      orient = item.orient,
-      anchor = item.anchor,
-      offset = item.offset,
-      bounds = item.bounds,
-      vertical = (orient === Left || orient === Right),
-      start = 0,
-      end = vertical ? height : width,
-      x = 0, y = 0, pos;
+export function titleLayout(view, mark, width, height, viewBounds) {
+  var group = mark.items[0],
+      frame = group.frame,
+      orient = group.orient,
+      anchor = group.anchor,
+      offset = group.offset,
+      padding = group.padding,
+      title = group.items[0].items[0],
+      subtitle = group.items[1] && group.items[1].items[0],
+      end = (orient === Left || orient === Right) ? height : width,
+      start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
 
   if (frame !== Group) {
     orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
@@ -25,20 +25,48 @@ export function titleLayout(view, title, width, height, viewBounds) {
     : (anchor === End) ? end
     : (start + end) / 2;
 
-  tempBounds.clear().union(bounds);
+  if (subtitle && subtitle.text) {
+    // position subtitle
+    switch (orient) {
+      case Top:
+      case Bottom:
+        sy = title.bounds.height() + padding;
+        break;
+      case Left:
+        sx = title.bounds.width() + padding;
+        break;
+      case Right:
+        sx = -title.bounds.width() - padding;
+        break;
+    }
 
-  // position title text
+    tempBounds.clear().union(subtitle.bounds);
+    tempBounds.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+    if (set(subtitle, 'x', sx) | set(subtitle, 'y', sy)) {
+      view.dirty(subtitle);
+      subtitle.bounds.clear().union(tempBounds);
+      subtitle.mark.bounds.clear().union(tempBounds);
+      view.dirty(subtitle);
+    }
+
+    tempBounds.clear().union(subtitle.bounds);
+  } else {
+    tempBounds.clear();
+  }
+  tempBounds.union(title.bounds);
+
+  // position title group
   switch (orient) {
     case Top:
       x = pos;
-      y = viewBounds.y1 - offset;
+      y = viewBounds.y1 - tempBounds.height() - offset;
       break;
     case Left:
-      x = viewBounds.x1 - offset;
+      x = viewBounds.x1 - tempBounds.width() - offset;
       y = pos;
       break;
     case Right:
-      x = viewBounds.x2 + offset;
+      x = viewBounds.x2 + tempBounds.width() + offset;
       y = pos;
       break;
     case Bottom:
@@ -46,18 +74,16 @@ export function titleLayout(view, title, width, height, viewBounds) {
       y = viewBounds.y2 + offset;
       break;
     default:
-      x = item.x;
-      y = item.y;
+      x = group.x;
+      y = group.y;
   }
 
-  bounds.translate(x - (item.x || 0), y - (item.y || 0));
-  if (set(item, 'x', x) | set(item, 'y', y)) {
-    item.bounds = tempBounds;
-    view.dirty(item);
-    item.bounds = bounds;
-    view.dirty(item);
+  if (set(group, 'x', x) | set(group, 'y', y)) {
+    tempBounds.translate(x, y);
+    view.dirty(group);
+    group.bounds.clear().union(tempBounds);
+    mark.bounds.clear().union(tempBounds);
+    view.dirty(group);
   }
-
-  // update bounds
-  return title.bounds.clear().union(bounds);
+  return group.bounds;
 }

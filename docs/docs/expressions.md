@@ -10,7 +10,7 @@ The expression language is a restricted subset of JavaScript. All basic arithmet
 
 To keep the expression language simple, secure and free of unwanted side effects, the following elements are **not** allowed: assignment operators (`=`, `+=` etc), pre/postfix updates (`++`), `new` expressions, and most control flow statements (`for`, `while`, `switch`, etc). In addition, function calls involving nested properties (`foo.bar()`) are not allowed. Instead, the expression language supports a collection of functions defined in the top-level scope.
 
-This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; are maintained in the [vega-expression module](https://github.com/vega/vega/tree/master/packages/vega-expression).
+This page documents the expression language. If you are interested in implementation aspects, the bulk of the expression language &ndash; including parsing, code generation, and some of the constant and function definitions &ndash; is provided by the [vega-expression module](https://github.com/vega/vega/tree/master/packages/vega-expression).
 
 
 ## <a name="reference"></a>Expression Language Reference
@@ -21,7 +21,8 @@ This page documents the expression language. If you are interested in implementa
 - [Type Coercion Functions](#type-coercion-functions)
 - [Control Flow Functions](#control-flow-functions)
 - [Math Functions](#math-functions)
-- [Date/Time Functions](#datetime-functions)
+- [Statistical Functions](#statistical-functions)
+- [Date-Time Functions](#datetime-functions)
 - [Array Functions](#array-functions)
 - [String Functions](#string-functions)
 - [Object Functions](#object-functions)
@@ -190,35 +191,35 @@ Basic mathematical functions.
 
 <a name="isNaN" href="#isNaN">#</a>
 <b>isNaN</b>(<i>value</i>)<br/>
-Returns true if _value_ is not a number. Same as JavaScript's `isNaN`.
+Returns true if _value_ is not a number. Same as JavaScript's [`Number.isNaN`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNan).
 
 <a name="isFinite" href="#isFinite">#</a>
 <b>isFinite</b>(<i>value</i>)<br/>
-Returns true if _value_ is a finite number. Same as JavaScript's `isFinite`.
+Returns true if _value_ is a finite number. Same as JavaScript's [`Number.isFinite`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite).
 
 <a name="abs" href="#abs">#</a>
 <b>abs</b>(<i>value</i>)<br/>
-Returns the absolute value of _value_. Same as JavaScript's `Math.abs`.
+Returns the absolute value of _value_. Same as JavaScript's [`Math.abs`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs).
 
 <a name="acos" href="#acos">#</a>
 <b>acos</b>(<i>value</i>)<br/>
-Trigonometric arccosine. Same as JavaScript's `Math.acos`.
+Trigonometric arccosine. Same as JavaScript's [`Math.acos`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acos).
 
 <a name="asin" href="#asin">#</a>
 <b>asin</b>(<i>value</i>)<br/>
-Trigonometric arcsine. Same as JavaScript's `Math.asin`.
+Trigonometric arcsine. Same as JavaScript's [`Math.asin`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asin).
 
 <a name="atan" href="#atan">#</a>
 <b>atan</b>(<i>value</i>)<br/>
-Trigonometric arctangent. Same as JavaScript's `Math.atan`.
+Trigonometric arctangent. Same as JavaScript's [`Math.atan`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan).
 
 <a name="atan2" href="#atan2">#</a>
 <b>atan2</b>(<i>dy</i>, <i>dx</i>)<br/>
-Returns the arctangent of _dy / dx_. Same as JavaScript's `Math.atan2`.
+Returns the arctangent of _dy / dx_. Same as JavaScript's [`Math.atan2`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2).
 
 <a name="ceil" href="#ceil">#</a>
 <b>ceil</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's `Math.ceil`.
+Rounds _value_ to the nearest integer of equal or greater value. Same as JavaScript's [`Math.ceil`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil).
 
 <a name="clamp" href="#clamp">#</a>
 <b>clamp</b>(<i>value</i>, <i>min</i>, <i>max</i>)<br/>
@@ -226,58 +227,113 @@ Restricts _value_ to be between the specified _min_ and _max_.
 
 <a name="cos" href="#cos">#</a>
 <b>cos</b>(<i>value</i>)<br/>
-Trigonometric cosine. Same as JavaScript's `Math.cos`.
+Trigonometric cosine. Same as JavaScript's [`Math.cos`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos).
 
 <a name="exp" href="#exp">#</a>
 <b>exp</b>(<i>exponent</i>)<br/>
-Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's `Math.exp`.
+Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's [`Math.exp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp).
 
 <a name="floor" href="#floor">#</a>
 <b>floor</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's `Math.floor`.
+Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's [`Math.floor`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
 <a name="log" href="#log">#</a>
 <b>log</b>(<i>value</i>)<br/>
-Returns the natural logarithm of _value_. Same as JavaScript's `Math.log`.
+Returns the natural logarithm of _value_. Same as JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
 
 <a name="max" href="#max">#</a>
 <b>max</b>(<i>value1</i>, <i>value2</i>, ...)<br/>
-Returns the maximum argument value. Same as JavaScript's `Math.max`.
+Returns the maximum argument value. Same as JavaScript's [`Math.max`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max).
 
 <a name="min" href="#min">#</a>
 <b>min</b>(<i>value1</i>, <i>value2</i>, ...)<br/>
-Returns the minimum argument value. Same as JavaScript's `Math.min`.
+Returns the minimum argument value. Same as JavaScript's [`Math.min`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min).
 
 <a name="pow" href="#pow">#</a>
 <b>pow</b>(<i>value</i>, <i>exponent</i>)<br/>
-Returns _value_ raised to the given _exponent_. Same as JavaScript's `Math.pow`.
+Returns _value_ raised to the given _exponent_. Same as JavaScript's [`Math.pow`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow).
 
 <a name="random" href="#random">#</a>
 <b>random</b>()<br/>
-Returns a pseudo-random number in the range [0,1). Same as JavaScript's `Math.random`.
+Returns a pseudo-random number in the range [0,1). Same as JavaScript's [`Math.random`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random).
 
 <a name="round" href="#round">#</a>
 <b>round</b>(<i>value</i>)<br/>
-Rounds _value_ to the nearest integer. Same as JavaScript's `Math.round`.
+Rounds _value_ to the nearest integer. Same as JavaScript's [`Math.round`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round).
 
 <a name="sin" href="#sin">#</a>
 <b>sin</b>(<i>value</i>)<br/>
-Trigonometric sine. Same as JavaScript's `Math.sin`.
+Trigonometric sine. Same as JavaScript's [`Math.sin`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin).
 
 <a name="sqrt" href="#sqrt">#</a>
 <b>sqrt</b>(<i>value</i>)<br/>
-Square root function. Same as JavaScript's `Math.sqrt`.
+Square root function. Same as JavaScript's [`Math.sqrt`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt).
 
 <a name="tan" href="#tan">#</a>
 <b>tan</b>(<i>value</i>)<br/>
-Trigonometric tangent. Same as JavaScript's `Math.tan`.
+Trigonometric tangent. Same as JavaScript's [`Math.tan`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan).
 
 [Back to Top](#reference)
 
 
-## <a name="datetime-functions"></a>Date/Time Functions
+## <a name="statistical-functions"></a>Statistical Functions
 
-Functions for working with date/time values.
+Methods for sampling and calculating values for probability distributions.
+
+<a name="sampleNormal" href="#sampleNormal">#</a>
+<b>sampleNormal</b>([<i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [normal (Gaussian) probability distribution](https://en.wikipedia.org/wiki/Normal_distribution) with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="cumulativeNormal" href="#cumulativeNormal">#</a>
+<b>cumulativeNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="densityNormal" href="#densityNormal">#</a>
+<b>densityNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_, for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="quantileNormal" href="#quantileNormal">#</a>
+<b>quantileNormal</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_, for a normal distribution with specified _mean_ and standard deviation _stdev_. If unspecified, the mean defaults to `0` and the standard deviation defaults to `1`.
+
+<a name="sampleLogNormal" href="#sampleLogNormal">#</a>
+<b>sampleLogNormal</b>([<i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [log-normal probability distribution](https://en.wikipedia.org/wiki/Log-normal_distribution) with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="cumulativeLogNormal" href="#cumulativeNormal">#</a>
+<b>cumulativeLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="densityLogNormal" href="#densityLogNormal">#</a>
+<b>densityLogNormal</b>(value[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_, for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="quantileLogNormal" href="#quantileLogNormal">#</a>
+<b>quantileLogNormal</b>(probability[, <i>mean</i>, <i>stdev</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_, for a log-normal distribution with specified log _mean_ and log standard deviation _stdev_. If unspecified, the log mean defaults to `0` and the log standard deviation defaults to `1`.
+
+<a name="sampleUniform" href="#sampleUniform">#</a>
+<b>sampleUniform</b>([<i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="cumulativeUniform" href="#cumulativeUniform">#</a>
+<b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain _value_ for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="densityUniform" href="#densityUniform">#</a>
+<b>densityUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
+Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain _value_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+<a name="quantileUniform" href="#quantileUniform">#</a>
+<b>quantileUniform</b>(probability[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
+Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input _probability_,  for a uniform distribution over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+
+[Back to Top](#reference)
+
+
+## <a name="datetime-functions"></a>Date-Time Functions
+
+Functions for working with date-time values.
 
 <a name="now" href="#now">#</a>
 <b>now</b>()<br/>
@@ -331,6 +387,14 @@ Returns the epoch-based timestamp for the given _datetime_ value.
 <b>timezoneoffset</b>(<i>datetime</i>)<br/>
 Returns the timezone offset from the local timezone to UTC for the given _datetime_ value.
 
+<a name="timeOffset" href="#timeOffset">#</a>
+<b>timeOffset</b>(<i>unit</i>, <i>date</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns a new `Date` instance that offsets the given _date_ by the specified time [_unit_](../api/time/#time-units) in the local timezone. The optional _step_ argument indicates the number of time unit steps to offset by (default 1).
+
+<a name="timeSequence" href="#timeSequence">#</a>
+<b>timeSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns an array of `Date` instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time [_unit_](../api/time/#time-units) in the local timezone. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
+
 <a name="utc" href="#utc">#</a>
 <b>utc</b>(<i>year</i>, <i>month</i>[, <i>day</i>, <i>hour</i>, <i>min</i>, <i>sec</i>, <i>millisec</i>])<br/>
 Returns a timestamp for the given UTC date. The _month_ is 0-based, such that `1` represents February.
@@ -370,6 +434,14 @@ Returns the seconds component for the given _datetime_ value, in UTC time.
 <a name="utcmilliseconds" href="#utcmilliseconds">#</a>
 <b>utcmilliseconds</b>(<i>datetime</i>)<br/>
 Returns the milliseconds component for the given _datetime_ value, in UTC time.
+
+<a name="utcOffset" href="#utcOffset">#</a>
+<b>utcOffset</b>(<i>unit</i>, <i>date</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns a new `Date` instance that offsets the given _date_ by the specified time [_unit_](../api/time/#time-units) in UTC time. The optional _step_ argument indicates the number of time unit steps to offset by (default 1).
+
+<a name="utcSequence" href="#utcSequence">#</a>
+<b>utcSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>]) {% include tag ver="5.8" %}<br/>
+Returns an array of `Date` instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time [_unit_](../api/time/#time-units) in UTC time. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
 
 [Back to Top](#reference)
 
@@ -531,9 +603,13 @@ Formats a (zero-based) _month_ number as a full month name, according to the cur
 <b>monthAbbrevFormat</b>(<i>month</i>)<br/>
 Formats a (zero-based) _month_ number as an abbreviated month name, according to the current locale. For example: `monthAbbrevFormat(0) -> "Jan"`.
 
+<a name="timeUnitSpecifier" href="#timeUnitSpecifier">#</a>
+<b>timeUnitSpecifier</b>(<i>units</i>[, <i>specifiers</i>]) {% include tag ver="5.8" %}<br/>
+Returns a time format specifier string for the given time [_units_](../api/time/#time-units). The optional _specifiers_ object provides a set of specifier sub-strings for customizing the format; for more, see the [timeUnitSpecifier API documentation](../api/time/#timeUnitSpecifier). The resulting specifier string can then be used as input to the [timeFormat](#timeFormat) or [utcFormat](#utcFormat) functions, or as the _format_ parameter of an axis or legend. For example: `timeFormat(date, timeUnitSpecifier('year'))` or `timeFormat(date, timeUnitSpecifier(['hours', 'minutes']))`.
+
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
-Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `timeFormat(timestamp, '%A')`.
+Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -541,7 +617,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
-Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/). For example: `utcFormat(timestamp, '%A')`.
+Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
@@ -588,6 +664,14 @@ Constructs a new [CIE LAB](https://en.wikipedia.org/wiki/Lab_color_space#CIELAB)
 <b>hcl</b>(<i>h</i>, <i>c</i>, <i>l</i>[, <i>opacity</i>]) |
 <b>hcl</b>(<i>specifier</i>)<br/>
 Constructs a new [HCL](https://en.wikipedia.org/wiki/Lab_color_space#CIELAB) (hue, chroma, luminance) color. If _h_, _c_ and _l_ are specified, these represent the channel values of the returned color; an _opacity_ may also be specified. If a CSS Color Module Level 3 _specifier_ string is specified, it is parsed and then converted to the HCL color space. Uses [d3-color's hcl function](https://github.com/d3/d3-color#hcl).
+
+<a name="luminance" href="#luminance">#</a>
+<b>luminance</b>(specifier) {% include tag ver="5.7" %}<br/>
+Returns the luminance for the given color _specifier_ (compatible with [d3-color's rgb function](https://github.com/d3/d3-color#rgb)). The luminance is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef).
+
+<a name="contrast" href="#contrast">#</a>
+<b>contrast</b>(specifier1, specifier2) {% include tag ver="5.7" %}<br/>
+Returns the contrast ratio between the input color specifiers as a float between 1 and 21. The contrast is calculated according to the [W3C Web Content Accessibility Guidelines](https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef).
 
 [Back to Top](#reference)
 

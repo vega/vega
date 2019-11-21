@@ -134,13 +134,9 @@ export const spec: Spec = {
       "grid": true, "domain": false,
       "values": [1982, 1986, 1990, 1994, 1998, 2002, 2006, 2010, 2014, 2018],
       "tickSize": 0,
+      "gridColor": "white",
+      "gridOpacity": 0.75,
       "encode": {
-        "grid": {
-          "enter": {
-            "stroke": {"value": "white"},
-            "strokeOpacity": {"value": 0.75}
-          }
-        },
         "labels": {
           "update": {
             "x": {"scale": "x", "field": "value"}
@@ -153,13 +149,9 @@ export const spec: Spec = {
       "grid": true, "domain": false,
       "values": [0, -0.5, -1, -1.5],
       "tickSize": 0,
+      "gridColor": "white",
+      "gridOpacity": 0.75,
       "encode": {
-        "grid": {
-          "enter": {
-            "stroke": {"value": "white"},
-            "strokeOpacity": {"value": 0.75}
-          }
-        },
         "labels": {
           "enter": {
             "text": {"signal": "format(datum.value, '$.1f') + ' trillion'"}

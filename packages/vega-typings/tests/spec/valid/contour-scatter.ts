@@ -86,7 +86,8 @@ export const spec: Spec = {
               "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
               "size": [{"signal": "width"}, {"signal": "height"}],
               "count": {"signal": "count"},
-              "nice": {"signal": "nice"}
+              "nice": {"signal": "nice"},
+              "bandwidth": 20
             }
           ]
         }

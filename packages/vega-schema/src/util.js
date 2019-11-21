@@ -10,7 +10,7 @@ const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
 
 const anchorEnum = [null, 'start', 'middle', 'end'];
 
-const formatTypeEnum = ['number', 'time'];
+const formatTypeEnum = ['number', 'time', 'utc'];
 
 const orientEnum = ['left', 'right', 'top', 'bottom'];
 
@@ -107,7 +107,35 @@ export const colorStringType = stringType;
 export const nullType = type('null');
 export const signalRef = ref('signal');
 
-export const formatType = enums(formatTypeEnum);
+export const formatTypeType = enums(formatTypeEnum);
+
+export const formatSpecifier = object({
+  year: stringType,
+  quarter: stringType,
+  month: stringType,
+  date: stringType,
+  week: stringType,
+  day: stringType,
+  hours: stringType,
+  minutes: stringType,
+  seconds: stringType,
+  milliseconds: stringType
+});
+
+export const formatTypeOrSignal = {
+  oneOf: [
+    stringType,
+    formatSpecifier,
+    signalRef
+  ]
+};
+
+export const textType = {
+  oneOf: [
+    stringType,
+    {type: 'array', items: stringType}
+  ]
+};
 
 export const alignValue = oneOf(
   enums(alignEnum),
@@ -165,3 +193,4 @@ export const booleanOrSignal = ref('booleanOrSignal');
 export const arrayOrSignal = ref('arrayOrSignal');
 export const numberOrSignal = ref('numberOrSignal');
 export const stringOrSignal = ref('stringOrSignal');
+export const textOrSignal = ref('textOrSignal');

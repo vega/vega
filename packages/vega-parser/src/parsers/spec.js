@@ -13,46 +13,38 @@ export default function(spec, scope, preprocessed) {
   var signals = array(spec.signals),
       scales = array(spec.scales);
 
-  if (!preprocessed) signals.forEach(function(_) {
-    parseSignal(_, scope);
-  });
+  // parse signal definitions, if not already preprocessed
+  if (!preprocessed) signals.forEach(_ => parseSignal(_, scope));
 
-  array(spec.projections).forEach(function(_) {
-    parseProjection(_, scope);
-  });
+  // parse cartographic projection definitions
+  array(spec.projections).forEach(_ => parseProjection(_, scope));
 
-  scales.forEach(function(_) {
-    initScale(_, scope);
-  });
+  // initialize scale references
+  scales.forEach(_ => initScale(_, scope));
 
-  array(spec.data).forEach(function(_) {
-    parseData(_, scope);
-  });
+  // parse data sources
+  array(spec.data).forEach(_ => parseData(_, scope));
 
-  scales.forEach(function(_) {
-    parseScale(_, scope);
-  });
+  // parse scale definitions
+  scales.forEach(_ => parseScale(_, scope));
 
-  signals.forEach(function(_) {
-    parseSignalUpdates(_, scope);
-  });
+  // parse signal updates
+  (preprocessed || signals).forEach(_ => parseSignalUpdates(_, scope));
 
-  array(spec.axes).forEach(function(_) {
-    parseAxis(_, scope);
-  });
+  // parse axis definitions
+  array(spec.axes).forEach(_ => parseAxis(_, scope));
 
-  array(spec.marks).forEach(function(_) {
-    parseMark(_, scope);
-  });
+  // parse mark definitions
+  array(spec.marks).forEach(_ => parseMark(_, scope));
 
-  array(spec.legends).forEach(function(_) {
-    parseLegend(_, scope);
-  });
+  // parse legend definitions
+  array(spec.legends).forEach(_ => parseLegend(_, scope));
 
-  if (spec.title) {
-    parseTitle(spec.title, scope);
-  }
+  // parse title, if defined
+  if (spec.title) parseTitle(spec.title, scope);
 
+  // parse collected lambda (anonymous) expressions
   scope.parseLambdas();
+
   return scope;
 }

@@ -1,5 +1,5 @@
 import {
-  enums, not, object, oneOf, ref,
+  array, enums, not, object, oneOf, ref,
   arrayType, numberType, stringType
 } from './util';
 
@@ -28,6 +28,7 @@ const bind = oneOf(
         field: stringType
       })
     ),
+    labels: array(stringType),
     debounce: numberType,
     name: stringType
   }),

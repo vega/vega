@@ -401,10 +401,18 @@ Returns the [scale](https://github.com/vega/vega/blob/master/packages/vega-scale
 [projection](https://github.com/vega/vega/blob/master/packages/vega-projection/) instance with the given *name*. The return value is a *live* instance used by the underlying dataflow. Callers should take care not to modify the returned instance!
 
 <a name="view_data" href="#view_data">#</a>
-view.<b>data</b>(<i>name</i>)
+view.<b>data</b>(<i>name</i>[, <i>values</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
-Returns the data set with the given *name*. The returned array of data objects is a *live* array used by the underlying dataflow. Callers that wish to modify the returned array should first make a defensive copy, for example using `view.data('name').slice()`.
+If only one argument is provided, returns the data set with the given *name*. The returned array of data objects is a *live* array used by the underlying dataflow. Callers that wish to modify the returned array should first make a defensive copy, for example using `view.data('name').slice()`.
+
+{% include tag ver="5.5" %} If two arguments are provided, removes the current data and inserts the input *values*, which can be either a single data object or an array of data objects. This call is equivalent to:
+
+```js
+view.change(vega.changeset().remove(vega.truthy).insert(values));
+```
+
+Data updates do not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. Note also that a single argument (getter) call returns the *output* of the data transform pipeline, whereas the two argument (setter) call sets the *input* to the transform pipeline.
 
 <a name="view_addDataListener" href="#view_addDataListener">#</a>
 view.<b>addDataListener</b>(<i>name</i>, <i>handler</i>)

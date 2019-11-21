@@ -1,5 +1,6 @@
 import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
 import { Renderers } from './renderer';
+import { Transform, Changeset } from './dataflow';
 
 // TODO
 export type Runtime = any;
@@ -36,6 +37,7 @@ export class View {
   change(name: string, changeset: Changeset): this;
   changeset(): any;
   data(name: string): any[];
+  data(name: string, tuples: any): this;
 
   width(): number;
   width(w: number): this;
@@ -75,14 +77,7 @@ export class View {
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 
-export interface Changeset {
-  insert(tuples: any): this;
-  remove(tuples: any): this;
-  modify(tuple: any, field?: string, value?: any): this;
-}
-
 export const Warn: number;
-export function changeset(): Changeset;
 export interface LoaderOptions {
   baseURL?: string;
   mode?: 'file' | 'http';
@@ -98,30 +93,17 @@ export function read(
 ): object[];
 
 export type TypeInference = DataType | 'integer';
-export function inferType(values: any[], field?: string): TypeInference;
-export function inferTypes(values: any[], fields: string[]): { [field: string]: TypeInference };
+export function inferType(values: readonly any[], field?: string): TypeInference;
+export function inferTypes(
+  values: readonly any[],
+  fields: readonly string[],
+): { [field: string]: TypeInference };
 
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
 export type SignalListenerHandler = (name: string, value: SignalValue) => void;
 export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
 export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
-
-export interface Operator {
-  targets: any;
-  set: any;
-  skip: any;
-  modified: any;
-  parameters: any;
-  marshall: any;
-  evaluate: any;
-  run: any;
-}
-
-export interface Transform extends Operator {
-  run: any;
-  evaluate: any;
-}
 
 export interface Item<T = any> {
   /**
@@ -168,3 +150,4 @@ export const transforms: { [name: string]: Transform };
 export * from 'vega-util';
 export * from './renderer';
 export * from './scene';
+export * from './dataflow';

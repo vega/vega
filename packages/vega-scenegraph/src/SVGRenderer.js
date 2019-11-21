@@ -3,18 +3,18 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
-import {inherits} from 'vega-util';
+import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
-  this._dirtyID = 1;
+  this._dirtyID = 0;
   this._dirty = [];
   this._svg = null;
   this._root = null;
@@ -235,7 +235,7 @@ prototype.isDirty = function(item) {
 prototype._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
-  if (!items.length) return true;
+  if (!items.length || !this._dirtyID) return true;
 
   var id = ++this._dirtyID,
       item, mark, type, mdef, i, n, o;
@@ -390,16 +390,17 @@ function bind(item, el, sibling, tag, svg) {
   }
 
   // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+  if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
 }
 
-function hasSiblings(item) {
-  var parent = item.mark || item.group;
-  return parent && parent.items.length > 1;
+function siblingCheck(node, sibling) {
+  return node.parentNode
+    && node.parentNode.childNodes.length > 1
+    && node.previousSibling != sibling; // treat null/undefined the same
 }
 
 
@@ -425,13 +426,46 @@ var mark_extras = {
       values.events = value;
     }
   },
+  image: function(mdef, el, item) {
+    if (item.smooth === false) {
+      setStyle(el, 'image-rendering', 'optimizeSpeed');
+      setStyle(el, 'image-rendering', 'pixelated');
+    } else {
+      setStyle(el, 'image-rendering', null);
+    }
+  },
   text: function(mdef, el, item) {
-    var value;
+    var tl = textLines(item),
+        key, value, doc, lh;
 
-    value = textValue(item);
-    if (value !== values.text) {
-      el.textContent = value;
-      values.text = value;
+    if (isArray(tl)) {
+      // multi-line text
+      value = tl.map(_ => textValue(item, _));
+      key = value.join('\n'); // content cache key
+
+      if (key !== values.text) {
+        domClear(el, 0);
+        doc = el.ownerDocument;
+        lh = lineHeight(item);
+        value.forEach((t, i) => {
+          const ts = domCreate(doc, 'tspan', ns);
+          ts.__data__ = item; // data binding
+          ts.textContent = t;
+          if (i) {
+            ts.setAttribute('x', 0);
+            ts.setAttribute('dy', lh);
+          }
+          el.appendChild(ts);
+        });
+        values.text = key;
+      }
+    } else {
+      // single-line text
+      value = textValue(item, tl);
+      if (value !== values.text) {
+        el.textContent = value;
+        values.text = value;
+      }
     }
 
     setStyle(el, 'font-family', fontFamily(item));

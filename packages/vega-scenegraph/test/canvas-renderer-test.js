@@ -109,7 +109,8 @@ tape('CanvasRenderer should support full redraw', function(t) {
   var mark = scene.items[0].items[0].items;
   var rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
   mark.push({
-    mark:mark, x:0, y:0, width:10, height:10, fill:'purple'
+    mark: mark, x: 0, y: 0, width: 10, height: 10, fill: 'purple',
+    bounds: new Bounds().set(0, 0, 10, 10)
   });
   r.render(scene);
 

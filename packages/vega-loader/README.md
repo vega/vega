@@ -78,7 +78,7 @@ The *schema* object contents may depend on the data format (see below). Common o
 
 - *type*: The data format type, such as `json`, `csv`, `tsv`, or `topojson`.
 - *property*: For JSON types, specifies a property of the loaded JSON to reference. This is useful if a loaded JSON file contains multiple data sets and one would like to parse data under a specific property.
-- *parse*: When set to `'auto'` (the default), the method will perform type inference (using the [inferTypes](#inferTypes) method) to determine data types of each field. Alternatively, callers can specify parsing rules by providing an object mapping field names to data types (for example: `{'timestamp': 'date', 'price': 'number'}`). The valid data type options are `'boolean'`, `'integer'`, `'number'`, `'date'`, and `'string'`.
+- *parse*: When set to `'auto'`, the method will perform type inference (using the [inferTypes](#inferTypes) method) to determine data types of each field. Alternatively, callers can specify parsing rules by providing an object mapping field names to data types (for example: `{'timestamp': 'date', 'price': 'number'}`). The valid data type options are `'boolean'`, `'integer'`, `'number'`, `'date'`, and `'string'`.
 
 The `'date'` data type also accepts an optional format string (`'date:format'`). If provided, the optional *dateParse* function is used to generate date-time parsers for a date format string. If *dateParse* is unspecified, the [d3-time-format](https://github.com/d3/d3-time-format) library is used by default. Date-time format strings may be quoted (`date:'%A'`), but quoting is not required. In addition, parsing of date-time format strings to UTC time is supported (`'utc:format'`).
 

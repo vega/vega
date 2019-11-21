@@ -133,6 +133,11 @@ function layoutGroup(view, group, _) {
     viewBounds.union(titleLayout(view, title, width, height, viewBounds));
   }
 
+  // override aggregated view bounds if content is clipped
+  if (group.clip) {
+    viewBounds.set(0, 0, group.width || 0, group.height || 0);
+  }
+
   // perform size adjustment
   viewSizeLayout(view, group, viewBounds, _);
 }
