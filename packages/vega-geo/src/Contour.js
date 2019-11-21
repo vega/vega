@@ -71,7 +71,7 @@ prototype.transform = function(_, pulse) {
   if (!values) {
     values = pulse.materialize(pulse.SOURCE).source;
     grid = params(density2D(), _)(values, true);
-    post = transform(grid);
+    post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
     size = [grid.width, grid.height];
     values = grid.values;
   }
