@@ -17,17 +17,7 @@ export {
   BinOrdinal,
   Ordinal,
   Band,
-  Point,
-  isValidScaleType,
-  isTemporal,
-  isQuantile,
-  isSequential,
-  isDiverging,
-  isInterpolating,
-  isContinuous,
-  isLogarithmic,
-  isDiscrete,
-  isDiscretizing
+  Point
 } from './src/scales/types';
 
 export {
@@ -39,7 +29,19 @@ export {
   quantizeInterpolator
 } from './src/interpolate';
 
-export {default as scale} from './src/scales';
+export {
+  default as scale,
+  isValidScaleType,
+  isTemporal,
+  isQuantile,
+  isSequential,
+  isDiverging,
+  isInterpolating,
+  isContinuous,
+  isLogarithmic,
+  isDiscrete,
+  isDiscretizing
+} from './src/scales';
 
 export {scheme} from './src/schemes';
 

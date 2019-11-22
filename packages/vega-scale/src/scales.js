@@ -21,6 +21,66 @@ import {
 
 import * as $ from 'd3-scale';
 
+var temporalScales = [Time, UTC];
+var binnedScales = [BinOrdinal];
+var quantileScales = [Quantile];
+var sequentialScales = [];
+var divergingScales = [];
+var interpolatingScales = [];
+var logarithmicScales = [Log];
+var continuousScales = [Linear, Log, Pow, Sqrt, Symlog, Time, UTC, Sequential];
+var discreteScales = [BinOrdinal, Ordinal, Band, Point];
+var discretizingScales = [BinOrdinal, Quantile, Quantize, Threshold];
+
+export function isValidScaleType(type) {
+  return hasOwnProperty(scales, type)
+}
+
+export function isTemporal(key) {
+  return temporalScales.includes(key);
+}
+
+export function isBinned(key) {
+  return binnedScales.includes(key);
+}
+
+export function isQuantile(key) {
+  return quantileScales.includes(key);
+}
+
+export function isSequential(key) {
+  return (key && key.startsWith(Sequential))
+    || sequentialScales.includes(key);
+}
+
+export function isDiverging(key) {
+  return (key && key.startsWith(Diverging))
+    || divergingScales.includes(key);
+}
+
+export function isInterpolating(key) {
+  return isSequential(key)
+    || isDiverging(key)
+    || interpolatingScales.includes(key);
+}
+
+export function isLogarithmic(key) {
+  return (key && key.endsWith('-log'))
+    || logarithmicScales.includes(key);
+}
+
+export function isContinuous(key) {
+  return continuousScales.includes(key);
+}
+
+export function isDiscrete(key) {
+  return discreteScales.includes(key);
+}
+
+export function isDiscretizing(key) {
+  return discretizingScales.includes(key);
+}
+
 /**
  * Augment scales with their type and needed inverse methods.
  */
@@ -39,12 +99,45 @@ function create(type, constructor) {
   };
 }
 
-export default function scale(type, scale) {
+export default function scale(type, scale, options) {
   if (arguments.length > 1) {
     scales[type] = create(type, scale);
+
+    options = options || {}
+    if (options.temporal) {
+      temporalScales.push(type);
+    }
+    if (options.binned) {
+      binnedScales.push(type);
+    }
+    if (options.quantile) {
+      quantileScales.push(type);
+    }
+    if (options.sequential) {
+      sequentialScales.push(type);
+    }
+    if (options.diverging) {
+      divergingScales.push(type);
+    }
+    if (options.interpolating) {
+      interpolatingScales.push(type);
+    }
+    if (options.logarithmic) {
+      logarithmicScales.push(type);
+    }
+    if (options.continuous) {
+      continuousScales.push(type);
+    }
+    if (options.discrete) {
+      discreteScales.push(type);
+    }
+    if (options.discretizing) {
+      discretizingScales.push(type);
+    }
+
     return this;
   } else {
-    return hasOwnProperty(scales, type) ? scales[type] : undefined;
+    return isValidScaleType(type) ? scales[type] : undefined;
   }
 }
 
