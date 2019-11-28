@@ -11,25 +11,13 @@ import {
   SymbolShape,
   TextBaseline,
 } from '.';
-import { BaseAxis, LabelOverlap } from './axis';
-import { LayoutAlign, LayoutBounds } from './layout';
-import { BaseLegend, LegendOrient } from './legend';
+import { BaseAxis } from './axis';
+import { Color } from './color';
+import { LayoutBounds } from './layout';
+import { BaseLegend } from './legend';
 import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
-import {
-  AlignValue,
-  AnchorValue,
-  ColorValue,
-  DashArrayValue,
-  FontStyleValue,
-  FontWeightValue,
-  NumberValue,
-  OrientValue,
-  StringValue,
-  SymbolShapeValue,
-  TextBaselineValue,
-} from './values';
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -368,28 +356,28 @@ export interface LegendConfig extends BaseLegend {
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
    */
-  gradientLabelLimit?: NumberValue;
+  gradientLabelLimit?: number | SignalRef;
 
   /**
    * Vertical offset in pixels for color ramp gradient labels.
    *
    * __Default value:__ `2`.
    */
-  gradientLabelOffset?: NumberValue;
+  gradientLabelOffset?: number | SignalRef;
 
   /**
    * Default fill color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"transparent"`.
    */
-  symbolBaseFillColor?: ColorValue;
+  symbolBaseFillColor?: null | Color | SignalRef;
 
   /**
    * Default stroke color for legend symbols. Only applied if there is no `"fill"` scale color encoding for the legend.
    *
    * __Default value:__ `"gray"`.
    */
-  symbolBaseStrokeColor?: ColorValue;
+  symbolBaseStrokeColor?: null | Color | SignalRef;
 
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for symbol legends.
@@ -401,12 +389,12 @@ export interface LegendConfig extends BaseLegend {
   /**
    * Border stroke dash pattern for the full legend.
    */
-  strokeDash?: number[];
+  strokeDash?: number[] | SignalRef;
 
   /**
    * Border stroke width for the full legend.
    */
-  strokeWidth?: NumberValue;
+  strokeWidth?: number | SignalRef;
 
   /**
    * Legend orient group layout parameters.
