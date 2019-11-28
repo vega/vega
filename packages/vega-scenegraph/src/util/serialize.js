@@ -6,6 +6,7 @@ var keys = [
   'fill', 'fillOpacity', 'opacity',                             // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
   'strokeDash', 'strokeDashOffset',                             // stroke dash
+  'strokeOffset',                                               // group
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
   'cornerRadius', 'padAngle',                                   // arc, rect
   'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group

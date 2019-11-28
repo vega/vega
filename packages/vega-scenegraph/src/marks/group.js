@@ -9,16 +9,21 @@ import {hitPath} from '../util/canvas/pick';
 import clip from '../util/svg/clip';
 import {translateItem} from '../util/svg/transform';
 
-var StrokeOffset = 0.5;
+function offset(item) {
+  var sw = (sw = item.strokeWidth) != null ? sw : 1;
+  return item.strokeOffset != null ? item.strokeOffset
+    : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
+    : 0;
+}
 
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
 
 function background(emit, item) {
-  var offset = item.stroke ? StrokeOffset : 0;
+  var off = offset(item);
   emit('class', 'background');
-  emit('d', rectangle(null, item, offset, offset));
+  emit('d', rectangle(null, item, off, off));
 }
 
 function foreground(emit, item, renderer) {
@@ -44,9 +49,9 @@ function bound(bounds, group) {
 }
 
 function backgroundPath(context, group) {
-  var offset = group.stroke ? StrokeOffset : 0;
+  var off = offset(group);
   context.beginPath();
-  rectangle(context, group, offset, offset);
+  rectangle(context, group, off, off);
 }
 
 var hitBackground = hitPath(backgroundPath);
