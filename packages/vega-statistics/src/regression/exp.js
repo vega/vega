@@ -8,12 +8,12 @@ export default function(data, x, y) {
   visitPoints(data, x, y, (dx, dy) => {
     const ly = Math.log(dy),
           xy = dx * dy;
-    Y += dy;
-    XY += xy;
-    X2Y += dx * xy;
-    YL += dy * ly;
-    XYL += xy * ly;
     ++n;
+    Y += (dy - Y) / n;
+    XY += (xy - XY) / n;
+    X2Y += (dx * xy - X2Y) / n;
+    YL += (dy * ly - YL) / n;
+    XYL += (xy * ly - XYL) / n;
   });
 
   const coef = ols(XY / Y, YL / Y, XYL / Y, X2Y / Y),
@@ -24,6 +24,6 @@ export default function(data, x, y) {
   return {
     coef: coef,
     predict: predict,
-    rSquared: rSquared(data, x, y, Y / n, predict)
+    rSquared: rSquared(data, x, y, Y, predict)
   };
 }
