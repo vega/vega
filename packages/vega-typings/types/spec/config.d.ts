@@ -13,11 +13,25 @@ import {
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
+import { ColorValueRef, NumericValueRef, ScaledValueRef } from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
 import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
+
+export type ExcludeValueRefKeepSignal<T> =
+  | Exclude<T, ScaledValueRef<any> | NumericValueRef | ColorValueRef>
+  | KeepSignal<T>;
+
+export type KeepSignal<T> = T extends SignalRef ? SignalRef : never;
+
+/**
+ * Config properties cannot be scaled or reference fields but they can reference signals.
+ */
+export type ExcludeMappedValueRef<T> = {
+  [P in keyof T]: ExcludeValueRefKeepSignal<T[P]>;
+};
 
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
@@ -364,10 +378,10 @@ export type AxisConfigKeys =
   | 'axisLeft'
   | 'axisBand';
 
-export type AxisConfig = BaseAxis;
+export type AxisConfig = ExcludeMappedValueRef<BaseAxis>;
 
 /**
- * Legend Config without signals so we can use it in Vega-Lite.
+ * Legend config without signals so we can use it in Vega-Lite.
  */
 export interface LegendConfig extends BaseLegend {
   /**
@@ -469,6 +483,6 @@ export interface LegendLayout extends BaseLegendLayout {
   'bottom-right'?: BaseLegendLayout;
 }
 
-export type TitleConfig = BaseTitle;
+export type TitleConfig = ExcludeMappedValueRef<BaseTitle>;
 
-export type ProjectionConfig = BaseProjection;
+export type ProjectionConfig = ExcludeMappedValueRef<BaseProjection>;
