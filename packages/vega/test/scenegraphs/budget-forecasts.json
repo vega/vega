@@ -451,7 +451,7 @@
                   "items": [
                     {
                       "x": 2,
-                      "y": 90.26086956521738,
+                      "y": 90.26086956521739,
                       "align": "left",
                       "baseline": "middle",
                       "fill": "#000",
@@ -527,14 +527,14 @@
                   "items": [
                     {
                       "x": 0,
-                      "y": 108.17391304347825,
+                      "y": 108.17391304347824,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 17.073170731707318,
-                      "y": 96.695652173913,
+                      "y": 96.69565217391303,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -548,7 +548,7 @@
                     },
                     {
                       "x": 51.21951219512195,
-                      "y": 81.39130434782606,
+                      "y": 81.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -568,35 +568,35 @@
                   "items": [
                     {
                       "x": 0,
-                      "y": 123.6521739130435,
+                      "y": 123.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 17.073170731707318,
-                      "y": 112.69565217391306,
+                      "y": 112.69565217391305,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 34.146341463414636,
-                      "y": 100.695652173913,
+                      "y": 100.69565217391303,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 51.21951219512195,
-                      "y": 93.21739130434776,
+                      "y": 93.21739130434779,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 68.29268292682927,
-                      "y": 79.30434782608694,
+                      "y": 79.30434782608695,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -616,14 +616,14 @@
                   "items": [
                     {
                       "x": 17.073170731707318,
-                      "y": 122.43478260869563,
+                      "y": 122.43478260869564,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 34.146341463414636,
-                      "y": 127.6521739130435,
+                      "y": 127.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -644,7 +644,7 @@
                     },
                     {
                       "x": 85.3658536585366,
-                      "y": 114.08695652173913,
+                      "y": 114.08695652173915,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -754,7 +754,7 @@
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 126.60869565217394,
+                      "y": 126.60869565217392,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -802,21 +802,21 @@
                     },
                     {
                       "x": 136.58536585365854,
-                      "y": 134.26086956521732,
+                      "y": 134.26086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 121.91304347826082,
+                      "y": 121.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 170.7317073170732,
-                      "y": 113.73913043478262,
+                      "y": 113.73913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -850,7 +850,7 @@
                     },
                     {
                       "x": 119.51219512195122,
-                      "y": 135.47826086956525,
+                      "y": 135.47826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -864,7 +864,7 @@
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 110.08695652173913,
+                      "y": 110.08695652173914,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -898,21 +898,21 @@
                     },
                     {
                       "x": 136.58536585365854,
-                      "y": 123.13043478260869,
+                      "y": 123.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 117.56521739130437,
+                      "y": 117.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 170.7317073170732,
-                      "y": 107.304347826087,
+                      "y": 107.30434782608698,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -926,7 +926,7 @@
                     },
                     {
                       "x": 204.8780487804878,
-                      "y": 86.95652173913044,
+                      "y": 86.95652173913042,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -946,28 +946,28 @@
                   "items": [
                     {
                       "x": 119.51219512195122,
-                      "y": 137.39130434782612,
+                      "y": 137.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 136.58536585365854,
-                      "y": 134.95652173913044,
+                      "y": 134.9565217391304,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 128.3478260869565,
+                      "y": 128.34782608695653,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 170.7317073170732,
-                      "y": 119.13043478260869,
+                      "y": 119.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -981,14 +981,14 @@
                     },
                     {
                       "x": 204.8780487804878,
-                      "y": 103.65217391304344,
+                      "y": 103.65217391304347,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 221.95121951219514,
-                      "y": 96.17391304347825,
+                      "y": 96.17391304347827,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1015,7 +1015,7 @@
                     },
                     {
                       "x": 153.65853658536585,
-                      "y": 137.73913043478257,
+                      "y": 137.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1029,28 +1029,28 @@
                     },
                     {
                       "x": 187.8048780487805,
-                      "y": 108.52173913043475,
+                      "y": 108.52173913043477,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 204.8780487804878,
-                      "y": 98.78260869565219,
+                      "y": 98.78260869565216,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 221.95121951219514,
-                      "y": 90.95652173913044,
+                      "y": 90.95652173913042,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 239.02439024390245,
-                      "y": 81.91304347826087,
+                      "y": 81.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1077,28 +1077,28 @@
                     },
                     {
                       "x": 170.7317073170732,
-                      "y": 125.56521739130437,
+                      "y": 125.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 187.8048780487805,
-                      "y": 107.47826086956519,
+                      "y": 107.4782608695652,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 204.8780487804878,
-                      "y": 96.86956521739131,
+                      "y": 96.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 221.95121951219514,
-                      "y": 88.86956521739131,
+                      "y": 88.86956521739128,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1112,7 +1112,7 @@
                     },
                     {
                       "x": 256.0975609756098,
-                      "y": 88,
+                      "y": 87.99999999999999,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1153,14 +1153,14 @@
                     },
                     {
                       "x": 221.95121951219514,
-                      "y": 141.73913043478257,
+                      "y": 141.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 239.02439024390245,
-                      "y": 105.73913043478262,
+                      "y": 105.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1174,7 +1174,7 @@
                     },
                     {
                       "x": 273.1707317073171,
-                      "y": 85.56521739130437,
+                      "y": 85.56521739130436,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1291,7 +1291,7 @@
                     },
                     {
                       "x": 290.2439024390244,
-                      "y": 132.5217391304348,
+                      "y": 132.52173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1339,14 +1339,14 @@
                     },
                     {
                       "x": 290.2439024390244,
-                      "y": 133.73913043478257,
+                      "y": 133.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 307.3170731707317,
-                      "y": 134.26086956521732,
+                      "y": 134.26086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1408,7 +1408,7 @@
                     },
                     {
                       "x": 324.39024390243907,
-                      "y": 135.30434782608694,
+                      "y": 135.30434782608697,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1442,14 +1442,14 @@
                     },
                     {
                       "x": 273.1707317073171,
-                      "y": 125.04347826086956,
+                      "y": 125.04347826086955,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 290.2439024390244,
-                      "y": 122.95652173913038,
+                      "y": 122.95652173913041,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1463,14 +1463,14 @@
                     },
                     {
                       "x": 324.39024390243907,
-                      "y": 104.86956521739131,
+                      "y": 104.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 341.4634146341464,
-                      "y": 96.3478260869565,
+                      "y": 96.34782608695649,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1484,7 +1484,7 @@
                     },
                     {
                       "x": 375.609756097561,
-                      "y": 80.86956521739125,
+                      "y": 80.86956521739128,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1511,35 +1511,35 @@
                     },
                     {
                       "x": 290.2439024390244,
-                      "y": 119.6521739130435,
+                      "y": 119.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 307.3170731707317,
-                      "y": 118.08695652173913,
+                      "y": 118.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 324.39024390243907,
-                      "y": 117.04347826086956,
+                      "y": 117.04347826086953,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 341.4634146341464,
-                      "y": 109.73913043478262,
+                      "y": 109.73913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 358.5365853658537,
-                      "y": 98.08695652173907,
+                      "y": 98.08695652173908,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1566,7 +1566,7 @@
                   "items": [
                     {
                       "x": 290.2439024390244,
-                      "y": 95.30434782608694,
+                      "y": 95.30434782608693,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1587,7 +1587,7 @@
                     },
                     {
                       "x": 341.4634146341464,
-                      "y": 88.3478260869565,
+                      "y": 88.34782608695653,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1601,7 +1601,7 @@
                     },
                     {
                       "x": 375.609756097561,
-                      "y": 71.13043478260869,
+                      "y": 71.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1615,28 +1615,28 @@
                     },
                     {
                       "x": 409.7560975609756,
-                      "y": 68.17391304347825,
+                      "y": 68.17391304347824,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 426.82926829268297,
-                      "y": 63.6521739130435,
+                      "y": 63.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 443.9024390243903,
-                      "y": 59.30434782608694,
+                      "y": 59.30434782608693,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 50.60869565217388,
+                      "y": 50.60869565217389,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1670,35 +1670,35 @@
                     },
                     {
                       "x": 341.4634146341464,
-                      "y": 64.17391304347831,
+                      "y": 64.17391304347828,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 358.5365853658537,
-                      "y": 61.217391304347814,
+                      "y": 61.2173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 375.609756097561,
-                      "y": 50.434782608695684,
+                      "y": 50.43478260869567,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 392.6829268292683,
-                      "y": 52.3478260869565,
+                      "y": 52.347826086956495,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 409.7560975609756,
-                      "y": 48.17391304347825,
+                      "y": 48.173913043478265,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1718,49 +1718,49 @@
                   "items": [
                     {
                       "x": 324.39024390243907,
-                      "y": 61.565217391304316,
+                      "y": 61.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 341.4634146341464,
-                      "y": 53.04347826086956,
+                      "y": 53.04347826086957,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 358.5365853658537,
-                      "y": 50.26086956521738,
+                      "y": 50.26086956521736,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 375.609756097561,
-                      "y": 50.434782608695684,
+                      "y": 50.43478260869567,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 392.6829268292683,
-                      "y": 51.82608695652175,
+                      "y": 51.826086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 409.7560975609756,
-                      "y": 50.782608695652186,
+                      "y": 50.782608695652165,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 426.82926829268297,
-                      "y": 48.34782608695656,
+                      "y": 48.34782608695654,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1774,7 +1774,7 @@
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 36.695652173913004,
+                      "y": 36.69565217391302,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1795,7 +1795,7 @@
                     },
                     {
                       "x": 512.1951219512196,
-                      "y": 27.13043478260863,
+                      "y": 27.13043478260864,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1815,77 +1815,77 @@
                   "items": [
                     {
                       "x": 341.4634146341464,
-                      "y": 37.73913043478262,
+                      "y": 37.73913043478263,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 358.5365853658537,
-                      "y": 29.21739130434787,
+                      "y": 29.217391304347863,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 375.609756097561,
-                      "y": 40.86956521739131,
+                      "y": 40.86956521739129,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 392.6829268292683,
-                      "y": 39.82608695652175,
+                      "y": 39.82608695652176,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 409.7560975609756,
-                      "y": 37.217391304347814,
+                      "y": 37.21739130434783,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 426.82926829268297,
-                      "y": 37.73913043478262,
+                      "y": 37.73913043478263,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 443.9024390243903,
-                      "y": 32.695652173913004,
+                      "y": 32.69565217391302,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 27.82608695652175,
+                      "y": 27.826086956521756,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 478.0487804878049,
-                      "y": 24.17391304347825,
+                      "y": 24.173913043478244,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 495.1219512195122,
-                      "y": 16,
+                      "y": 16.000000000000014,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 512.1951219512196,
-                      "y": 9.391304347826065,
+                      "y": 9.391304347826068,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1912,7 +1912,7 @@
                   "items": [
                     {
                       "x": 358.5365853658537,
-                      "y": 62.43478260869563,
+                      "y": 62.43478260869564,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1940,21 +1940,21 @@
                     },
                     {
                       "x": 426.82926829268297,
-                      "y": 78.43478260869563,
+                      "y": 78.43478260869566,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 443.9024390243903,
-                      "y": 74.08695652173913,
+                      "y": 74.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 71.13043478260869,
+                      "y": 71.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -1974,7 +1974,7 @@
                   "items": [
                     {
                       "x": 375.609756097561,
-                      "y": 124,
+                      "y": 123.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2009,7 +2009,7 @@
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 122.95652173913038,
+                      "y": 122.95652173913041,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2064,14 +2064,14 @@
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 134.43478260869568,
+                      "y": 134.43478260869566,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 478.0487804878049,
-                      "y": 132.5217391304348,
+                      "y": 132.52173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2188,21 +2188,21 @@
                     },
                     {
                       "x": 495.1219512195122,
-                      "y": 126.95652173913044,
+                      "y": 126.95652173913045,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 512.1951219512196,
-                      "y": 122.08695652173913,
+                      "y": 122.08695652173915,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 529.2682926829268,
-                      "y": 125.39130434782606,
+                      "y": 125.39130434782608,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2229,14 +2229,14 @@
                     },
                     {
                       "x": 460.9756097560976,
-                      "y": 134.95652173913044,
+                      "y": 134.9565217391304,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 478.0487804878049,
-                      "y": 132,
+                      "y": 131.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2250,7 +2250,7 @@
                     },
                     {
                       "x": 512.1951219512196,
-                      "y": 106.60869565217388,
+                      "y": 106.6086956521739,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2264,7 +2264,7 @@
                     },
                     {
                       "x": 546.3414634146342,
-                      "y": 80,
+                      "y": 79.99999999999999,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2284,7 +2284,7 @@
                   "items": [
                     {
                       "x": 460.9756097560976,
-                      "y": 119.82608695652169,
+                      "y": 119.8260869565217,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2305,14 +2305,14 @@
                     },
                     {
                       "x": 512.1951219512196,
-                      "y": 118.08695652173913,
+                      "y": 118.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
                     },
                     {
                       "x": 529.2682926829268,
-                      "y": 106.60869565217388,
+                      "y": 106.6086956521739,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2326,7 +2326,7 @@
                     },
                     {
                       "x": 563.4146341463415,
-                      "y": 85.39130434782606,
+                      "y": 85.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2367,7 +2367,7 @@
                     },
                     {
                       "x": 529.2682926829268,
-                      "y": 246.6086956521739,
+                      "y": 246.60869565217388,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2464,7 +2464,7 @@
                     },
                     {
                       "x": 546.3414634146342,
-                      "y": 229.91304347826087,
+                      "y": 229.9130434782609,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2499,7 +2499,7 @@
                     },
                     {
                       "x": 631.7073170731708,
-                      "y": 209.91304347826085,
+                      "y": 209.91304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2520,7 +2520,7 @@
                     },
                     {
                       "x": 682.9268292682927,
-                      "y": 236.52173913043478,
+                      "y": 236.52173913043475,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
                       "strokeWidth": 1
@@ -2541,13 +2541,13 @@
           "items": [
             {
               "x": 0,
-              "y": 123.6521739130435,
+              "y": 123.65217391304348,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
             {
               "x": 17.073170731707318,
-              "y": 122.43478260869563,
+              "y": 122.43478260869564,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
@@ -2583,7 +2583,7 @@
             },
             {
               "x": 119.51219512195122,
-              "y": 137.39130434782612,
+              "y": 137.3913043478261,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
@@ -2643,7 +2643,7 @@
             },
             {
               "x": 290.2439024390244,
-              "y": 95.30434782608694,
+              "y": 95.30434782608693,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
@@ -2655,25 +2655,25 @@
             },
             {
               "x": 324.39024390243907,
-              "y": 61.565217391304316,
+              "y": 61.56521739130434,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
             {
               "x": 341.4634146341464,
-              "y": 37.73913043478262,
+              "y": 37.73913043478263,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
             {
               "x": 358.5365853658537,
-              "y": 62.43478260869563,
+              "y": 62.43478260869564,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
             {
               "x": 375.609756097561,
-              "y": 124,
+              "y": 123.99999999999997,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
@@ -2703,7 +2703,7 @@
             },
             {
               "x": 460.9756097560976,
-              "y": 119.82608695652169,
+              "y": 119.8260869565217,
               "stroke": "steelblue",
               "strokeWidth": 3
             },
@@ -2746,7 +2746,7 @@
           "items": [
             {
               "x": 0,
-              "y": 90.26086956521738,
+              "y": 90.26086956521739,
               "stroke": "#000",
               "strokeWidth": 1,
               "x2": 512.1951219512196
@@ -2763,7 +2763,7 @@
           "items": [
             {
               "x": 512.1951219512196,
-              "y": 91.26086956521738,
+              "y": 91.26086956521739,
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 0.5,
