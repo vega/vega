@@ -23,7 +23,7 @@ export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
     Partial<Record<AxisConfigKeys, AxisConfig>> {
   autosize?: AutoSize;
-  background?: string;
+  background?: null | Color | SignalRef;
   group?: any; // TODO
   events?: {
     bind?: 'any' | 'container' | 'none';
@@ -33,16 +33,36 @@ export interface Config
     view?: boolean | string[];
     window?: boolean | string[];
   };
-  style?: any; // TODO
+  style?: {
+    [style: string]: MarkConfig;
+  };
   legend?: LegendConfig;
   title?: TitleConfig;
   projection?: ProjectionConfig;
   range?: {
+    /**
+     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
+     */
     category?: RangeScheme | string[];
+    /**
+     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for diverging quantitative ramps.
+     */
     diverging?: RangeScheme | string[];
+    /**
+     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for quantitative heatmaps.
+     */
     heatmap?: RangeScheme | string[];
+    /**
+     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for rank-ordered data.
+     */
     ordinal?: RangeScheme | string[];
+    /**
+     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for sequential quantitative ramps.
+     */
     ramp?: RangeScheme | string[];
+    /**
+     * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
+     */
     symbol?: SymbolShape[];
   };
   signals?: (InitSignal | NewSignal)[];
@@ -54,26 +74,24 @@ export type MarkConfigKeys = 'mark' | Mark['type'];
 
 export interface MarkConfig {
   /**
-   * Default Fill Color.  This has higher precedence than config.color
+   * Default fill color.
    *
    * __Default value:__ (None)
    *
    */
-  fill?: string | SignalRef;
+  fill?: Color | null | SignalRef;
 
   /**
-   * Default Stroke Color.  This has higher precedence than config.color
+   * Default stroke color.
    *
    * __Default value:__ (None)
    *
    */
-  stroke?: string | SignalRef;
+  stroke?: Color | null | SignalRef;
 
   // ---------- Opacity ----------
   /**
    * The overall opacity (value between [0,1]).
-   *
-   * __Default value:__ `0.7` for non-aggregate plots with `point`, `tick`, `circle`, or `square` marks or layered `bar` charts and `1` otherwise.
    *
    * @minimum 0
    * @maximum 1
@@ -176,6 +194,7 @@ export interface MarkConfig {
    * - `"monotone"`: cubic interpolation that preserves monotonicity in y.
    */
   interpolate?: Interpolate | SignalRef;
+
   /**
    * Depending on the interpolation type, sets the tension parameter (for line and area marks).
    * @minimum 0
