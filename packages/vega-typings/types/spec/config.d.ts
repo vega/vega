@@ -368,7 +368,7 @@ export interface LegendConfig extends BaseLegend {
    *
    * __Default value:__ `"vertical"`.
    */
-  gradientDirection?: Orientation;
+  gradientDirection?: Orientation | SignalRef;
 
   /**
    * The maximum allowed length in pixels of color ramp gradient labels.
@@ -401,7 +401,7 @@ export interface LegendConfig extends BaseLegend {
    *
    * __Default value:__ `"vertical"`.
    */
-  symbolDirection?: Orientation;
+  symbolDirection?: Orientation | SignalRef;
 
   /**
    * Border stroke dash pattern for the full legend.
