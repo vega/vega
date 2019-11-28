@@ -53,32 +53,7 @@ export interface Config
   legend?: LegendConfig;
   title?: TitleConfig;
   projection?: ProjectionConfig;
-  range?: {
-    /**
-     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
-     */
-    category?: RangeScheme | string[];
-    /**
-     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for diverging quantitative ramps.
-     */
-    diverging?: RangeScheme | string[];
-    /**
-     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for quantitative heatmaps.
-     */
-    heatmap?: RangeScheme | string[];
-    /**
-     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for rank-ordered data.
-     */
-    ordinal?: RangeScheme | string[];
-    /**
-     * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for sequential quantitative ramps.
-     */
-    ramp?: RangeScheme | string[];
-    /**
-     * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
-     */
-    symbol?: SymbolShape[];
-  };
+  range?: RangeConfig;
   signals?: (InitSignal | NewSignal)[];
 }
 
@@ -486,3 +461,30 @@ export interface LegendLayout extends BaseLegendLayout {
 export type TitleConfig = ExcludeMappedValueRef<BaseTitle>;
 
 export type ProjectionConfig = ExcludeMappedValueRef<BaseProjection>;
+
+export interface RangeConfig {
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
+   */
+  category?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for diverging quantitative ramps.
+   */
+  diverging?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for quantitative heatmaps.
+   */
+  heatmap?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for rank-ordered data.
+   */
+  ordinal?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for sequential quantitative ramps.
+   */
+  ramp?: RangeScheme | string[];
+  /**
+   * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
+   */
+  symbol?: SymbolShape[];
+}
