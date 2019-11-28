@@ -419,42 +419,36 @@ export interface LegendConfig extends BaseLegend {
   layout?: LegendLayout;
 }
 
-export interface BaseLegendLayout<
-  NS = number | SignalRef,
-  BS = boolean | SignalRef,
-  OS = Orientation | SignalRef,
-  LB = LayoutBounds,
-  AN = TitleAnchor | SignalRef
-> {
+export interface BaseLegendLayout {
   /**
    * The anchor point for legend orient group layout.
    */
-  anchor?: AN;
+  anchor?: TitleAnchor | SignalRef;
 
   /**
    * The bounds calculation to use for legend orient group layout.
    */
-  bounds?: LB;
+  bounds?: LayoutBounds;
 
   /**
    * A flag to center legends within a shared orient group.
    */
-  center?: BS;
+  center?: boolean | SignalRef;
 
   /**
    * The layout direction for legend orient group layout.
    */
-  direction?: OS;
+  direction?: Orientation | SignalRef;
 
   /**
    * The pixel margin between legends within a orient group.
    */
-  margin?: NS;
+  margin?: number | SignalRef;
 
   /**
    * The pixel offset from the chart body for a legend orient group.
    */
-  offset?: NS;
+  offset?: number | SignalRef;
 }
 
 export interface LegendLayout extends BaseLegendLayout {
