@@ -8,17 +8,27 @@ export function points(data, x, y, sort) {
     data.sort((a, b) => x(a) - x(b));
   }
 
-  const X = new Float64Array(data.length),
-        Y = new Float64Array(data.length);
+  const n = data.length,
+        X = new Float64Array(n),
+        Y = new Float64Array(n);
 
-  let i = 0;
-  for (let d of data) {
-    X[i] = +x(d);
-    Y[i] = +y(d);
+  // extract values, calculate means
+  let i = 0, ux = 0, uy = 0, xv, yv, d;
+  for (d of data) {
+    X[i] = xv = +x(d);
+    Y[i] = yv = +y(d);
     ++i;
+    ux += (xv - ux) / i;
+    uy += (yv - uy) / i;
   }
 
-  return [X, Y];
+  // mean center the data
+  for (i=0; i<n; ++i) {
+    X[i] -= ux;
+    Y[i] -= uy;
+  }
+
+  return [X, Y, ux, uy];
 }
 
 export function visitPoints(data, x, y, callback) {

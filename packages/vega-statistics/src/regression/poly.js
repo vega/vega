@@ -13,27 +13,23 @@ export default function(data, x, y, order) {
   if (order === 1) return linear(data, x, y);
   if (order === 2) return quad(data, x, y);
 
-  const [xv, yv] = points(data, x, y),
+  const [xv, yv, ux, uy] = points(data, x, y),
         n = xv.length,
         lhs = [],
         rhs = [],
         k = order + 1;
 
-  let Y = 0, i, j, l, v, c;
+  let i, j, l, v, c;
 
-  for (i = 0; i < n; ++i) {
-    Y += yv[i];
-  }
-
-  for (i = 0; i < k; ++i) {
-    for (l = 0, v = 0; l < n; ++l) {
+  for (i=0; i<k; ++i) {
+    for (l=0, v=0; l<n; ++l) {
       v += Math.pow(xv[l], i) * yv[l];
     }
     lhs.push(v);
 
     c = new Float64Array(k);
-    for (j = 0; j < k; ++j) {
-      for (l = 0, v = 0; l < n; ++l) {
+    for (j=0; j<k; ++j) {
+      for (l=0, v=0; l<n; ++l) {
         v += Math.pow(xv[l], i + j);
       }
       c[j] = v;
@@ -44,16 +40,41 @@ export default function(data, x, y, order) {
 
   const coef = gaussianElimination(rhs),
         predict = x => {
-          let y = 0, i = 0, n = coef.length;
-          for (; i < n; ++i) y += coef[i] * Math.pow(x, i);
+          x -= ux;
+          let y = uy + coef[0] + coef[1] * x + coef[2] * x * x;
+          for (i=3; i<k; ++i) y += coef[i] * Math.pow(x, i);
           return y;
         };
 
   return {
-    coef: coef,
+    coef: uncenter(k, coef, -ux, uy),
     predict: predict,
-    rSquared: rSquared(data, x, y, Y / n, predict)
+    rSquared: rSquared(data, x, y, 0, predict)
   };
+}
+
+function uncenter(k, a, x, y) {
+  const z = Array(k);
+  let i, j, v, c;
+
+  // initialize to zero
+  for (i=0; i<k; ++i) z[i] = 0;
+
+  // polynomial expansion
+  for (i=k-1; i>=0; --i) {
+    v = a[i];
+    c = 1;
+    z[i] += v;
+    for (j=1; j<=i; ++j) {
+      c *= (i + 1 - j) / j; // binomial coefficent
+      z[i-j] += v * Math.pow(x, j) * c;
+    }
+  }
+
+  // bias term
+  z[0] += y;
+
+  return z;
 }
 
 // Given an array for a two-dimensional matrix and the polynomial order,
