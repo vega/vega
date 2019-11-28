@@ -131,6 +131,11 @@ export interface MarkConfig {
   strokeDashOffset?: number;
 
   /**
+   * The distance between the stroke and the mark boundary.
+   */
+  strokeOffset?: number;
+
+  /**
    * The stroke cap for line ending style.
    *
    * __Default value:__ `butt`
