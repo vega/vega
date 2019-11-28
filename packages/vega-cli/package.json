@@ -22,6 +22,6 @@
   "dependencies": {
     "canvas": "^2.6.0",
     "vega": "5.8.1",
-    "yargs": "14"
+    "yargs": "15"
   }
 }
