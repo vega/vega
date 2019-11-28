@@ -253,12 +253,12 @@ export interface MarkConfig {
   /**
    * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property is ignored if the text is array-valued.
    */
-  lineBreak?: string;
+  lineBreak?: string | SignalRef;
 
   /**
    * The line height in pixels (the spacing between subsequent lines of text) for multi-line text marks.
    */
-  lineHeight?: number;
+  lineHeight?: number | SignalRef;
 
   /**
    * Polar coordinate angle, in radians, of the text label from the origin determined by the `x` and `y` properties. Values for `theta` follow the same convention of `arc` mark `startAngle` and `endAngle` properties: angles are measured in radians, with `0` indicating "north".
