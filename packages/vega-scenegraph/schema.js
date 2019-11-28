@@ -240,7 +240,8 @@ var MARKS = {
       "cornerRadiusTopRight": { "type": "number" },
       "cornerRadiusBottomRight": { "type": "number" },
       "cornerRadiusBottomLeft": { "type": "number" },
-      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
+      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } },
+      "strokeOffset": { "type": "number" }
     }
   },
   "arc": {
