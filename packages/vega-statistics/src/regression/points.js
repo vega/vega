@@ -13,8 +13,8 @@ export function points(data, x, y, sort) {
 
   let i = 0;
   for (let d of data) {
-    X[i] = x(d);
-    Y[i] = y(d);
+    X[i] = +x(d);
+    Y[i] = +y(d);
     ++i;
   }
 
@@ -22,11 +22,11 @@ export function points(data, x, y, sort) {
 }
 
 export function visitPoints(data, x, y, callback) {
-  let index = -1, i = -1, u, v;
+  let i = -1, u, v;
 
   for (let d of data) {
-    u = x(d, ++index, data);
-    v = y(d, index, data);
+    u = x(d);
+    v = y(d);
     if (u != null && (u = +u) >= u && v != null && (v = +v) >= v) {
       callback(u, v, ++i);
     }
