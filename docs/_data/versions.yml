@@ -1,4 +1,4 @@
-vega__latest: '5.8.1'
+vega__latest: '5.9.0'
 schema: '5'
 vega: '5'
 vega-lite: '3'
