@@ -1,4 +1,4 @@
-import {hasCornerRadius, rectangle} from '../../path/shapes';
+import {hasCornerRadius, rectangleWithContract} from '../../path/shapes';
 import {isFunction} from 'vega-util';
 
 export default function(context, scene) {
@@ -15,10 +15,14 @@ export default function(context, scene) {
   }
 }
 
-export function clipGroup(context, group) {
+export function clipGroup(context, group, offset) {
+  var sw = group.stroke ? (group.strokeWidth || 1) : 0;
   context.beginPath();
   hasCornerRadius(group)
-    ? rectangle(context, group, 0, 0)
-    : context.rect(0, 0, group.width || 0, group.height || 0);
+    ? rectangleWithContract(context, group, offset, offset, sw)
+    : context.rect(
+        sw / 2 + offset, sw / 2 + offset,
+        Math.max(0, (group.width || 0) - sw), Math.max(0, (group.height || 0) - sw)
+      );
   context.clip();
 }

@@ -201,10 +201,14 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('d', clip.path);
   } else {
     mask = domChild(el, 0, 'rect', ns);
-    mask.setAttribute('x', 0);
-    mask.setAttribute('y', 0);
+    mask.setAttribute('x', clip.x || 0);
+    mask.setAttribute('y', clip.y || 0);
     mask.setAttribute('width', clip.width);
     mask.setAttribute('height', clip.height);
+  }
+
+  if(el.childNodes.length > 1) {
+    el.removeChild(el.childNodes[1]);
   }
 
   return index + 1;

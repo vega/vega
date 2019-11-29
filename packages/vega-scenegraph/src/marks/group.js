@@ -22,7 +22,8 @@ function background(emit, item) {
 }
 
 function foreground(emit, item, renderer) {
-  var url = item.clip ? clip(renderer, item, item) : null;
+  var offset = item.stroke ? StrokeOffset : 0;
+  var url = item.clip ? clip(renderer, item, item, offset) : null;
   emit('clip-path', url);
 }
 
@@ -78,7 +79,10 @@ function draw(context, scene, bounds) {
     }
 
     // set clip and bounds
-    if (group.clip) clipGroup(context, group);
+    if (group.clip) {
+      var offset = group.stroke ? StrokeOffset : 0;
+      clipGroup(context, group, offset);
+    }
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents

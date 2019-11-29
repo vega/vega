@@ -77,6 +77,24 @@ export function rectangle(context, item, x, y) {
   return rectShape.context(context)(item, x, y);
 }
 
+export function rectangleWithContract(context, item, x, y, contract) {
+  if(contract) {
+    let rs = {
+      width: Math.max(0, item.width - contract),
+      height: Math.max(0, item.height - contract)
+    };
+    // Modify cornerRadius properties appropriately
+    if(item.cornerRadius) rs.cornerRadius = Math.max(0, item.cornerRadius - contract / 2);
+    if(item.cornerRadiusTopLeft) rs.cornerRadiusTopLeft = Math.max(0, item.cornerRadiusTopLeft - contract / 2);
+    if(item.cornerRadiusTopRight) rs.cornerRadiusTopRight = Math.max(0, item.cornerRadiusTopRight - contract / 2);
+    if(item.cornerRadiusBottomLeft) rs.cornerRadiusBottomLeft = Math.max(0, item.cornerRadiusBottomLeft - contract / 2);
+    if(item.cornerRadiusBottomRight) rs.cornerRadiusBottomRight = Math.max(0, item.cornerRadiusBottomRight - contract / 2);
+    return rectangle(context, rs, x + contract / 2 , y + contract / 2);
+  } else {
+    return rectangle(context, item, x, y);
+  }
+}
+
 export function shape(context, item) {
   return (item.mark.shape || item.shape)
     .context(context)(item);
