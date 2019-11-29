@@ -213,7 +213,7 @@ export interface MarkConfig {
   /**
    * The horizontal alignment of the text. One of `"left"`, `"right"`, `"center"`.
    */
-  align?: Align;
+  align?: Align | SignalRef;
 
   /**
    * The rotation angle of the text, in degrees.
