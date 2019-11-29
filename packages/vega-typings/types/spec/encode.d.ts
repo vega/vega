@@ -245,6 +245,7 @@ export interface AreaEncodeEntry extends LineEncodeEntry {
 }
 export interface GroupEncodeEntry extends RectEncodeEntry {
   clip?: ProductionRule<BooleanValueRef>;
+  strokeOffset?: ProductionRule<NumericValueRef>;
 }
 export type Baseline = 'top' | 'middle' | 'bottom';
 export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
