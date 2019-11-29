@@ -54,7 +54,8 @@
         {"name": "zoomable-world-map"},
         {"name": "distortion-comparison"},
         {"name": "volcano-contours"},
-        {"name": "wind-vectors"}
+        {"name": "wind-vectors"},
+        {"name": "annual-precipitation"}
     ],
     "Tree Diagrams": [
         {"name": "tree-layout"},
