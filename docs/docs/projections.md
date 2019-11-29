@@ -48,7 +48,7 @@ Alternative default values for any of the properties above can be set using a cu
 
 ## <a name="types"></a>Projection Types
 
-Vega includes all cartographic projections provided by the [d3-geo](https://github.com/d3/d3-geo#) library.
+Vega includes all cartographic projections provided by the [d3-geo](https://github.com/d3/d3-geo#) library, as well as the `mollweide` projection.
 
 | Type          | Description   |
 | :------------ |:------------- |
@@ -64,6 +64,7 @@ Vega includes all cartographic projections provided by the [d3-geo](https://gith
 | [gnomonic](https://github.com/d3/d3-geo#geoGnomonic) | The gnomonic projection. |
 | [identity](https://github.com/d3/d3-geo#geoIdentity) | The identity transform, which can be used to translate, scale, and clip planar geometry. Also supports additional boolean [`reflectX`](https://github.com/d3/d3-geo#identity_reflectX) and [`reflectY`](https://github.com/d3/d3-geo#identity_reflectY) parameters. {% include tag ver="3.3" %} |
 | [mercator](https://github.com/d3/d3-geo#geoMercator) | The spherical Mercator projection. Uses a default `clipExtent` such that the world is projected to a square, clipped to approximately ±85&deg; latitude. |
+| [mollweide](https://github.com/d3/d3-geo-projection#geoMollweide) | An equal-area, pseudocylindrical map projection generally used for global maps of the world or night sky. {% include tag ver="5.9" %} |
 | [naturalEarth1](https://github.com/d3/d3-geo#geoNaturalEarth1) | The [Natural Earth projection](http://www.shadedrelief.com/NE_proj/) is a pseudocylindrical projection designed by Tom Patterson. It is neither conformal nor equal-area, but appealing to the eye for small-scale maps of the whole world. {% include tag ver="4.0" %} |
 | [orthographic](https://github.com/d3/d3-geo#geoOrthographic) | The orthographic projection. |
 | [stereographic](https://github.com/d3/d3-geo#geoStereographic) | The stereographic projection. |
@@ -76,7 +77,7 @@ Vega can be extended with additional projections, such as those found in the [d3
 To register all extended projections from d3-geo-projection with Vega, simply import the [vega-projection-extended](https://github.com/vega/vega-projection-extended) library:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@2"></script>
 ```
 
 Alternatively, custom projections can be manually registered using the `vega.projection` method:
