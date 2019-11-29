@@ -851,6 +851,12 @@
             "options": {
               "type": "array"
             },
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "debounce": {
               "type": "number"
             },
@@ -1253,6 +1259,9 @@
                 }
               ]
             },
+            "async": {
+              "$ref": "#/refs/booleanOrSignal"
+            },
             "name": {
               "type": "string"
             },
@@ -1545,6 +1554,9 @@
                 }
               ]
             },
+            "async": {
+              "$ref": "#/refs/booleanOrSignal"
+            },
             "name": {
               "type": "string"
             },
@@ -1645,6 +1657,9 @@
         },
         "clip": {
           "$ref": "#/refs/booleanValue"
+        },
+        "strokeOffset": {
+          "$ref": "#/refs/numberValue"
         },
         "cornerRadius": {
           "$ref": "#/refs/numberValue"
@@ -8147,6 +8162,32 @@
             },
             {
               "$ref": "#/refs/paramField"
+            }
+          ]
+        },
+        "translate": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  },
+                  {
+                    "$ref": "#/refs/expr"
+                  },
+                  {
+                    "$ref": "#/refs/paramField"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
             }
           ]
         },
