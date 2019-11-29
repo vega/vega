@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "5.3.2",
+  "version": "5.4.0",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -23,12 +23,12 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.3.3",
-    "d3-timer": "^1.0.9",
-    "vega-dataflow": "^5.4.1",
+    "d3-array": "^2.4.0",
+    "d3-timer": "^1.0.10",
+    "vega-dataflow": "^5.5.0",
     "vega-functions": "^5.5.0",
     "vega-runtime": "^5.0.2",
-    "vega-scenegraph": "^4.4.0",
-    "vega-util": "^1.12.0"
+    "vega-scenegraph": "^4.5.0",
+    "vega-util": "^1.12.1"
   }
 }
