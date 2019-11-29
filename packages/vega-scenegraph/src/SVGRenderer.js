@@ -206,6 +206,7 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('width', clip.width);
     mask.setAttribute('height', clip.height);
   }
+  domClear(el, 1);
 
   return index + 1;
 }
