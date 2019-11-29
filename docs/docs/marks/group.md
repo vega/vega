@@ -20,5 +20,6 @@ permalink: /docs/marks/group/index.html
 | cornerRadiusTopRight    | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the top right corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
 | cornerRadiusBottomLeft  | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the bottom left corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
 | cornerRadiusBottomRight | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the bottom right corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
+| strokeOffset            | {% include type t="Number" %}  | The offset in pixels at which to draw a stroked group background. If unspecified, the default behavior is to dynamically offset stroked backgrounds such that 1 pixel stroke widths align with the pixel grid. {% include tag ver="5.9" %} |
 
 {% include properties.md %}
