@@ -198,6 +198,7 @@ const encodeEntry = object({
 
   // Group-mark properties
   clip: booleanValueRef,
+  strokeOffset: numberValueRef,
 
   // Rect-mark properties
   cornerRadius: numberValueRef,

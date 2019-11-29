@@ -131,7 +131,7 @@ export interface MarkConfig {
   strokeDashOffset?: number;
 
   /**
-   * The distance between the stroke and the mark boundary.
+   * The amount to offset background rendering for stroked group marks.
    */
   strokeOffset?: number;
 
