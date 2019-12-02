@@ -2522,7 +2522,7 @@ d3-format@1, d3-format@^1.4.1:
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.4.2.tgz#2a8c0ebf500f315981c2110eaaf70b82f472cb2b"
   integrity sha512-gco1Ih54PgMsyIXgttLxEhNy/mXxq8+rLnCb5shQk+P5TsiySrwWU5gpB4zen626J4LIwBxHvDChyA8qDm57ww==
 
-d3-geo-projection@^2.7.0:
+d3-geo-projection@^2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/d3-geo-projection/-/d3-geo-projection-2.7.1.tgz#bcac6a9ac9d77786c97dab3f3f556913fd6db202"
   integrity sha512-qT9Msnb6c1AUgIbOML7DrCj5anaoy/WVrCCoN5iFTa5YX/VH53Xpv2W5DHMQsemabi66BmJ94wCamHGssnIQWA==
@@ -2532,7 +2532,7 @@ d3-geo-projection@^2.7.0:
     d3-geo "^1.10.0"
     resolve "^1.1.10"
 
-d3-geo@^1.10.0, d3-geo@^1.11.6, d3-geo@^1.11.7:
+d3-geo@^1.10.0, d3-geo@^1.11.6, d3-geo@^1.11.7, d3-geo@^1.11.9:
   version "1.11.9"
   resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.11.9.tgz#77eaed14ba62fc2c0aef55cd2943849c866f7ae6"
   integrity sha512-9edcH6J3s/Aa3KJITWqFJbyB/8q3mMlA9Fi7z6yy+FAYMnRaxmC7jBhUnsINxVWD14GmqX3DK8uk7nV6/Ekt4A==
@@ -5951,9 +5951,9 @@ rollup-pluginutils@^2.5.0, rollup-pluginutils@^2.8.1:
     estree-walker "^0.6.1"
 
 rollup@^1.27.5:
-  version "1.27.5"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.27.5.tgz#d100fb0ffd8353575cb2057152547b9abfddfe59"
-  integrity sha512-8rfVdzuTg2kt8ObD9LNJpEwUN7B6lsl3sHc5fddtgICpLjpYeSf4m2+RftBzcCaBTMi1iYX3Ez8zFT4Gj2nJjg==
+  version "1.27.8"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.27.8.tgz#94288a957af9f4c2380b73a17494d87705997d0f"
+  integrity sha512-EVoEV5rAWl+5clnGznt1KY8PeVkzVQh/R0d2s3gHEkN7gfoyC4JmvIVuCtPbYE8NM5Ep/g+nAmvKXBjzaqTsHA==
   dependencies:
     "@types/estree" "*"
     "@types/node" "*"
@@ -6913,6 +6913,13 @@ vega-datasets@^1.27.0:
   version "1.27.0"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.27.0.tgz#011adae7b099b5625cc5be76a7875d6a53c5745a"
   integrity sha512-5i2KxRFPIP1V/LWH8iLumi3yovTL7OxnR099Rw9m+h9AtwtAFB+ysX7d/Kr4efZ3zhR0s/uNRVetf4dAX6m/mw==
+
+vega-projection@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/vega-projection/-/vega-projection-1.3.0.tgz#4f8292fae8e64c733010068ae26bfcea07ed9ddd"
+  integrity sha512-BFOc/XSVVW96WIAAyiUcppCeegniibiKGX0OLbGpQ5WIbeDHsbCXqnkeBpD5wsjvPXaiQRHTZ0PZ8VvCoCQV+g==
+  dependencies:
+    d3-geo "^1.11.6"
 
 verror@1.10.0:
   version "1.10.0"
