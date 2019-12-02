@@ -51,22 +51,24 @@ context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
 };
 
 function cubicExtrema(x0, x1, x2, x3, cb) {
-  const a = 6 * (x3 - x0 + 3 * x1 - 3 * x2),
-        b = 6 * (x0 + x2 - 2 * x1),
-        c = 3 * (x0 - x1);
+  const a = x3 - x0 + 3 * x1 - 3 * x2,
+        b = x0 + x2 - 2 * x1,
+        c = x0 - x1;
 
   let t0 = 0, t1 = 0, r;
 
   // solve for parameter t
   if (Math.abs(a) > Epsilon) {
-    r = b * b + 2 * c * a;
+    // quadratic equation
+    r = b * b + c * a;
     if (r >= 0) {
       r = Math.sqrt(r);
       t0 = (-b + r) / a;
       t1 = (-b - r) / a;
     }
   } else {
-    t0 = c / b;
+    // linear equation
+    t0 = 0.5 * c / b;
   }
 
   // calculate position
