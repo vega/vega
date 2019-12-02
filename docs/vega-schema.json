@@ -1658,6 +1658,9 @@
         "clip": {
           "$ref": "#/refs/booleanValue"
         },
+        "strokeForeground": {
+          "$ref": "#/refs/booleanValue"
+        },
         "strokeOffset": {
           "$ref": "#/refs/numberValue"
         },
