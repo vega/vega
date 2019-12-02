@@ -9348,10 +9348,11 @@
     return result;
   }
 
-  var DegToRad = Math.PI / 180;
-  var HalfPi = Math.PI / 2;
-  var Tau = Math.PI * 2;
-  var HalfSqrt3 = Math.sqrt(3) / 2;
+  const DegToRad = Math.PI / 180;
+  const Epsilon = 1e-14;
+  const HalfPi = Math.PI / 2;
+  const Tau = Math.PI * 2;
+  const HalfSqrt3 = Math.sqrt(3) / 2;
 
   var segmentCache = {};
   var bezierCache = {};
@@ -10274,7 +10275,7 @@
     return item.strokeJoin && item.strokeJoin !== 'miter' ? 0 : strokeWidth;
   }
 
-  var bounds,
+  var bounds, lx, ly,
       circleThreshold = Tau - 1e-8;
 
   function context(_) {
@@ -10286,75 +10287,110 @@
 
   function add$1(x, y) { bounds.add(x, y); }
 
+  function addL(x, y) { add$1(lx = x, ly = y); }
+
+  function addX(x) { add$1(x, bounds.y1); }
+
+  function addY(y) { add$1(bounds.x1, y); }
+
   context.beginPath = noop;
 
   context.closePath = noop;
 
-  context.moveTo = add$1;
+  context.moveTo = addL;
 
-  context.lineTo = add$1;
+  context.lineTo = addL;
 
   context.rect = function(x, y, w, h) {
-    add$1(x, y);
     add$1(x + w, y + h);
+    addL(x, y);
   };
 
   context.quadraticCurveTo = function(x1, y1, x2, y2) {
-    add$1(x1, y1);
-    add$1(x2, y2);
+    quadExtrema(lx, x1, x2, addX);
+    quadExtrema(ly, y1, y2, addY);
+    addL(x2, y2);
   };
+
+  function quadExtrema(x0, x1, x2, cb) {
+    const t = (x0 - x1) / (x0 + x2 - 2 * x1);
+    if (0 < t && t < 1) cb(x0 + (x1 - x0) * t);
+  }
 
   context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
-    add$1(x1, y1);
-    add$1(x2, y2);
-    add$1(x3, y3);
+    cubicExtrema(lx, x1, x2, x3, addX);
+    cubicExtrema(ly, y1, y2, y3, addY);
+    addL(x3, y3);
   };
 
+  function cubicExtrema(x0, x1, x2, x3, cb) {
+    const a = x3 - x0 + 3 * x1 - 3 * x2,
+          b = x0 + x2 - 2 * x1,
+          c = x0 - x1;
+
+    let t0 = 0, t1 = 0, r;
+
+    // solve for parameter t
+    if (Math.abs(a) > Epsilon) {
+      // quadratic equation
+      r = b * b + c * a;
+      if (r >= 0) {
+        r = Math.sqrt(r);
+        t0 = (-b + r) / a;
+        t1 = (-b - r) / a;
+      }
+    } else {
+      // linear equation
+      t0 = 0.5 * c / b;
+    }
+
+    // calculate position
+    if (0 < t0 && t0 < 1) cb(cubic(t0, x0, x1, x2, x3));
+    if (0 < t1 && t1 < 1) cb(cubic(t1, x0, x1, x2, x3));
+  }
+
+  function cubic(t, x0, x1, x2, x3) {
+    const s = 1 - t, s2 = s * s, t2 = t * t;
+    return (s2 * s * x0) + (3 * s2 * t * x1) + (3 * s * t2 * x2) + (t2 * t * x3);
+  }
+
   context.arc = function(cx, cy, r, sa, ea, ccw) {
+    // store last point on path
+    lx = r * Math.cos(ea) + cx;
+    ly = r * Math.sin(ea) + cy;
+
     if (Math.abs(ea - sa) > circleThreshold) {
+      // treat as full circle
       add$1(cx - r, cy - r);
       add$1(cx + r, cy + r);
-      return;
-    }
+    } else {
+      const update = a => add$1(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
+      let s, i;
 
-    var xmin = Infinity, xmax = -Infinity,
-        ymin = Infinity, ymax = -Infinity,
-        s, i, x, y;
+      // sample end points
+      update(sa);
+      update(ea);
 
-    function update(a) {
-      x = r * Math.cos(a);
-      y = r * Math.sin(a);
-      if (x < xmin) xmin = x;
-      if (x > xmax) xmax = x;
-      if (y < ymin) ymin = y;
-      if (y > ymax) ymax = y;
-    }
+      // sample interior points aligned with 90 degrees
+      if (ea !== sa) {
+        sa = sa % Tau; if (sa < 0) sa += Tau;
+        ea = ea % Tau; if (ea < 0) ea += Tau;
 
-    // Sample end points and interior points aligned with 90 degrees
-    update(sa);
-    update(ea);
+        if (ea < sa) {
+          ccw = !ccw; // flip direction
+          s = sa; sa = ea; ea = s; // swap end-points
+        }
 
-    if (ea !== sa) {
-      sa = sa % Tau; if (sa < 0) sa += Tau;
-      ea = ea % Tau; if (ea < 0) ea += Tau;
-
-      if (ea < sa) {
-        ccw = !ccw; // flip direction
-        s = sa; sa = ea; ea = s; // swap end-points
-      }
-
-      if (ccw) {
-        ea -= Tau;
-        s = sa - (sa % HalfPi);
-        for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
-      } else {
-        s = sa - (sa % HalfPi) + HalfPi;
-        for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
+        if (ccw) {
+          ea -= Tau;
+          s = sa - (sa % HalfPi);
+          for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
+        } else {
+          s = sa - (sa % HalfPi) + HalfPi;
+          for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
+        }
       }
     }
-
-    add$1(cx + xmin, cy + ymin);
-    add$1(cx + xmax, cy + ymax);
   };
 
   var context$1 = (context$1 = domCanvas(1,1))
@@ -10877,13 +10913,26 @@
     emit('transform', translateItem(item));
   }
 
-  function background(emit, item) {
+  function emitRectangle(emit, item) {
     var off = offset$1(item);
-    emit('class', 'background');
     emit('d', rectangle(null, item, off, off));
   }
 
-  function foreground(emit, item, renderer) {
+  function background(emit, item) {
+    emit('class', 'background');
+    emitRectangle(emit, item);
+  }
+
+  function foreground(emit, item) {
+    emit('class', 'foreground');
+    if (item.strokeForeground) {
+      emitRectangle(emit, item);
+    } else {
+      emit('d', '');
+    }
+  }
+
+  function content(emit, item, renderer) {
     var url = item.clip ? clip$1(renderer, item, item) : null;
     emit('clip-path', url);
   }
@@ -10905,13 +10954,14 @@
     return bounds.translate(group.x || 0, group.y || 0);
   }
 
-  function backgroundPath(context, group) {
+  function rectanglePath(context, group, x, y) {
     var off = offset$1(group);
     context.beginPath();
-    rectangle(context, group, off, off);
+    rectangle(context, group, (x || 0) + off, (y || 0) + off);
   }
 
-  var hitBackground = hitPath(backgroundPath);
+  var hitBackground = hitPath(rectanglePath);
+  var hitForeground = hitPath(rectanglePath, false);
 
   function draw(context, scene, bounds) {
     var renderer = this;
@@ -10919,27 +10969,23 @@
     visit(scene, function(group) {
       var gx = group.x || 0,
           gy = group.y || 0,
-          opacity;
-
-      // setup graphics context
-      context.save();
-      context.translate(gx, gy);
+          fore = group.strokeForeground,
+          opacity = group.opacity == null ? 1 : group.opacity;
 
       // draw group background
-      if (group.stroke || group.fill) {
-        opacity = group.opacity == null ? 1 : group.opacity;
-        if (opacity > 0) {
-          backgroundPath(context, group);
-          if (group.fill && fill(context, group, opacity)) {
-            context.fill();
-          }
-          if (group.stroke && stroke(context, group, opacity)) {
-            context.stroke();
-          }
+      if ((group.stroke || group.fill) && opacity) {
+        rectanglePath(context, group, gx, gy);
+        if (group.fill && fill(context, group, opacity)) {
+          context.fill();
+        }
+        if (group.stroke && !fore && stroke(context, group, opacity)) {
+          context.stroke();
         }
       }
 
-      // set clip and bounds
+      // setup graphics context, set clip and bounds
+      context.save();
+      context.translate(gx, gy);
       if (group.clip) clipGroup(context, group);
       if (bounds) bounds.translate(-gx, -gy);
 
@@ -10951,6 +10997,14 @@
       // restore graphics context
       if (bounds) bounds.translate(gx, gy);
       context.restore();
+
+      // draw group foreground
+      if (fore && group.stroke && opacity) {
+        rectanglePath(context, group, gx, gy);
+        if (stroke(context, group, opacity)) {
+          context.stroke();
+        }
+      }
     });
   }
 
@@ -10964,7 +11018,7 @@
         cy = y * context.pixelRatio;
 
     return pickVisit(scene, function(group) {
-      var hit, dx, dy, dw, dh, b, c;
+      var hit, fore, ix, dx, dy, dw, dh, b, c;
 
       // first hit test bounding box
       b = group.bounds;
@@ -10987,7 +11041,17 @@
       // test background for rounded corner clip
       if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
         context.restore();
-        return;
+        return null;
+      }
+
+      fore = group.strokeForeground;
+      ix = scene.interactive !== false;
+
+      // hit test against group foreground
+      if (ix && fore && group.stroke
+          && hitForeground(context, group, cx, cy)) {
+        context.restore();
+        return group;
       }
 
       // hit test against contained marks
@@ -10998,8 +11062,7 @@
       });
 
       // hit test against group background
-      if (!hit && scene.interactive !== false
-          && (group.fill || group.stroke)
+      if (!hit && ix && (group.fill || (!fore && group.stroke))
           && hitBackground(context, group, cx, cy)) {
         hit = group;
       }
@@ -11024,6 +11087,7 @@
     draw:       draw,
     pick:       pick$1,
     isect:      intersectRect,
+    content:    content,
     background: background,
     foreground: foreground
   };
@@ -11676,7 +11740,7 @@
     'fill', 'fillOpacity', 'opacity',                             // fill
     'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
     'strokeDash', 'strokeDashOffset',                             // stroke dash
-    'strokeOffset',                                               // group
+    'strokeForeground', 'strokeOffset',                           // group
     'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
     'cornerRadius', 'padAngle',                                   // arc, rect
     'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group
@@ -13044,7 +13108,7 @@
 
   // Recursively process group contents.
   function recurse(renderer, el, group) {
-    el = el.lastChild;
+    el = el.lastChild.previousSibling;
     var prev, idx = 0;
 
     visit(group, function(item) {
@@ -13071,16 +13135,20 @@
         node.__data__ = item;
         node.__values__ = {fill: 'default'};
 
-        // if group, create background and foreground elements
+        // if group, create background, content, and foreground elements
         if (tag === 'g') {
           var bg = domCreate(doc, 'path', ns);
-          bg.setAttribute('class', 'background');
           node.appendChild(bg);
           bg.__data__ = item;
 
-          var fg = domCreate(doc, 'g', ns);
+          var cg = domCreate(doc, 'g', ns);
+          node.appendChild(cg);
+          cg.__data__ = item;
+
+          var fg = domCreate(doc, 'path', ns);
           node.appendChild(fg);
           fg.__data__ = item;
+          fg.__values__ = {};
         }
       }
     }
@@ -13108,18 +13176,46 @@
   // Extra configuration for certain mark types
   var mark_extras = {
     group: function(mdef, el, item) {
-      values = el.__values__; // use parent's values hash
+      var fg, bg;
 
-      element = el.childNodes[1];
+      element = fg = el.childNodes[2];
+      values = fg.__values__;
       mdef.foreground(emit, item, this);
 
-      element = el.childNodes[0];
+      values = el.__values__; // use parent's values hash
+      element = el.childNodes[1];
+      mdef.content(emit, item, this);
+
+      element = bg = el.childNodes[0];
       mdef.background(emit, item, this);
 
       var value = item.mark.interactive === false ? 'none' : null;
       if (value !== values.events) {
-        element.style.setProperty('pointer-events', value);
+        fg.style.setProperty('pointer-events', value);
+        bg.style.setProperty('pointer-events', value);
         values.events = value;
+      }
+
+      if (item.strokeForeground && item.stroke) {
+        const fill = item.fill;
+        fg.style.removeProperty('display');
+
+        // set style of background
+        this.style(bg, item);
+        bg.style.removeProperty('stroke');
+
+        // set style of foreground
+        if (fill) item.fill = null;
+        values = fg.__values__;
+        this.style(fg, item);
+        if (fill) item.fill = fill;
+
+        // leave element null to prevent downstream styling
+        element = null;
+      } else {
+        // ensure foreground is ignored
+        fg.style.setProperty('display', 'none');
+        fg.style.setProperty('fill', 'none');
       }
     },
     image: function(mdef, el, item) {
@@ -13198,7 +13294,7 @@
 
     // apply svg css styles
     // note: element may be modified by 'extra' method
-    this.style(element, item);
+    if (element) this.style(element, item);
   };
 
   function emit(name, value, ns) {
@@ -13501,12 +13597,33 @@
           str += escape_text(textValue(item, tl));
         }
       } else if (tag === 'g') {
+        const fore = item.strokeForeground,
+              fill = item.fill,
+              stroke = item.stroke;
+
+        if (fore && stroke) {
+          item.stroke = null;
+        }
+
         str += openTag('path', renderer.attributes(mdef.background, item),
           applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
 
-        str += openTag('g', renderer.attributes(mdef.foreground, item))
+        str += openTag('g', renderer.attributes(mdef.content, item))
           + renderer.markGroup(item)
           + closeTag('g');
+
+        if (fore && stroke) {
+          if (fill) item.fill = null;
+          item.stroke = stroke;
+
+          str += openTag('path', renderer.attributes(mdef.foreground, item),
+            applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+
+          if (fill) item.fill = fill;
+        } else {
+          str += openTag('path', renderer.attributes(mdef.foreground, item),
+            applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+        }
       }
 
       str += closeTag(tag);
@@ -13540,6 +13657,13 @@
 
     if (tag === 'bgrect' && mark.interactive === false) {
       s += 'pointer-events: none; ';
+    }
+
+    if (tag === 'bgfore') {
+      if (mark.interactive === false) {
+        s += 'pointer-events: none; ';
+      }
+      s += 'display: none; ';
     }
 
     if (tag === 'image') {
