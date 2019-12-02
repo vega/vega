@@ -7,6 +7,7 @@
 
   "signals": [
     { "name": "clip", "value": false, "bind": {"input": "checkbox"} },
+    { "name": "foreground", "value": false, "bind": {"input": "checkbox"} },
     { "name": "x", "value": 25,
       "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
     { "name": "y", "value": 25,
@@ -36,6 +37,7 @@
           "opacity": {"value": 1},
           "cornerRadius": {"signal": "cornerRadius"},
           "strokeWidth": {"signal": "strokeWidth"},
+          "strokeForeground": {"signal": "foreground"},
           "fill": {"signal": "color !== 'stroke' ? '#939597' : null"},
           "stroke": {"signal": "color !== 'fill' ? '#652c90' : null"}
         },
