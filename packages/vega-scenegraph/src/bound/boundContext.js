@@ -10,33 +10,31 @@ export default function context(_) {
 
 function noop() {}
 
-function add(x, y) {
-  bounds.add(x, y);
-  lx = x;
-  ly = y;
-}
+function add(x, y) { bounds.add(x, y); }
 
-function addX(x) { bounds.add(x, bounds.y1); }
+function addL(x, y) { add(lx = x, ly = y); }
 
-function addY(y) { bounds.add(bounds.x1, y); }
+function addX(x) { add(x, bounds.y1); }
+
+function addY(y) { add(bounds.x1, y); }
 
 context.beginPath = noop;
 
 context.closePath = noop;
 
-context.moveTo = add;
+context.moveTo = addL;
 
-context.lineTo = add;
+context.lineTo = addL;
 
 context.rect = function(x, y, w, h) {
   add(x + w, y + h);
-  add(x, y);
+  addL(x, y);
 };
 
 context.quadraticCurveTo = function(x1, y1, x2, y2) {
   quadExtrema(lx, x1, x2, addX);
   quadExtrema(ly, y1, y2, addY);
-  add(x2, y2);
+  addL(x2, y2);
 };
 
 function quadExtrema(x0, x1, x2, cb) {
@@ -47,7 +45,7 @@ function quadExtrema(x0, x1, x2, cb) {
 context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
   cubicExtrema(lx, x1, x2, x3, addX);
   cubicExtrema(ly, y1, y2, y3, addY);
-  add(x3, y3);
+  addL(x3, y3);
 };
 
 function cubicExtrema(x0, x1, x2, x3, cb) {
@@ -82,30 +80,23 @@ function cubic(t, x0, x1, x2, x3) {
 }
 
 context.arc = function(cx, cy, r, sa, ea, ccw) {
-  var xmin = Infinity, xmax = -Infinity,
-      ymin = Infinity, ymax = -Infinity,
-      s, i, x, y, ex, ey;
-
-  function update(a) {
-    x = r * Math.cos(a);
-    y = r * Math.sin(a);
-    if (x < xmin) xmin = x;
-    if (x > xmax) xmax = x;
-    if (y < ymin) ymin = y;
-    if (y > ymax) ymax = y;
-  }
-
-  // get last point
-  update(ea); ex = x; ey = y;
+  // store last point on path
+  lx = r * Math.cos(ea) + cx;
+  ly = r * Math.sin(ea) + cy;
 
   if (Math.abs(ea - sa) > circleThreshold) {
     // treat as full circle
     add(cx - r, cy - r);
     add(cx + r, cy + r);
   } else {
-    // sample end points and interior points aligned with 90 degrees
-    update(sa);
+    const update = a => add(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
+    let s, i;
 
+    // sample end points
+    update(sa);
+    update(ea);
+
+    // sample interior points aligned with 90 degrees
     if (ea !== sa) {
       sa = sa % Tau; if (sa < 0) sa += Tau;
       ea = ea % Tau; if (ea < 0) ea += Tau;
@@ -124,11 +115,5 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
         for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
       }
     }
-
-    add(cx + xmin, cy + ymin);
-    add(cx + xmax, cy + ymax);
   }
-
-  // set last point
-  lx = ex; ly = ey;
 };
