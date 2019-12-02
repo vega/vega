@@ -241,6 +241,7 @@ var MARKS = {
       "cornerRadiusBottomRight": { "type": "number" },
       "cornerRadiusBottomLeft": { "type": "number" },
       "items": { "type": "array", "items": { "$ref": "#/refs/mark" } },
+      "strokeForeground": { "type": "boolean" },
       "strokeOffset": { "type": "number" }
     }
   },
