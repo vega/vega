@@ -446,7 +446,7 @@ var mark_extras = {
       bg.style.removeProperty('stroke');
 
       // set style of foreground
-      if (fill) item.fill = null;
+      item.fill = null;
       values = fg.__values__;
       this.style(fg, item);
       if (fill) item.fill = fill;
