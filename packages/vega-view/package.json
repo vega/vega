@@ -26,7 +26,7 @@
     "d3-array": "^2.4.0",
     "d3-timer": "^1.0.10",
     "vega-dataflow": "^5.5.0",
-    "vega-functions": "^5.5.0",
+    "vega-functions": "^5.5.1",
     "vega-runtime": "^5.0.2",
     "vega-scenegraph": "^4.5.0",
     "vega-util": "^1.12.1"
