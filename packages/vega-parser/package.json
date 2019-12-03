@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "vega-dataflow": "^5.5.0",
-    "vega-event-selector": "^2.0.1",
-    "vega-expression": "^2.6.2",
+    "vega-event-selector": "^2.0.2",
+    "vega-expression": "^2.6.3",
     "vega-functions": "^5.5.0",
     "vega-scale": "^6.0.0",
     "vega-util": "^1.12.1"
