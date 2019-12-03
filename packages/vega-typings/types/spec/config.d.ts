@@ -126,7 +126,7 @@ export interface MarkConfig {
   strokeDashOffset?: number | SignalRef;
 
   /**
-   * The amount to offset background rendering for stroked group marks.
+   * The offset in pixels at which to draw the group stroke and fill. If unspecified, the default behavior is to dynamically offset stroked groups such that 1 pixel stroke widths align with the pixel grid.
    */
   strokeOffset?: number | SignalRef;
 
