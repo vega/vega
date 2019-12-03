@@ -12,6 +12,7 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-scale.js",
   "module": "index",
+  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",

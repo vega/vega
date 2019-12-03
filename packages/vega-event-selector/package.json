@@ -11,6 +11,7 @@
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "main": "build/vega-event-selector.js",
   "module": "index",
+  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
