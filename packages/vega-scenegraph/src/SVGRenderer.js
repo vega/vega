@@ -389,7 +389,7 @@ function bind(item, el, sibling, tag, svg) {
         var fg = domCreate(doc, 'path', ns);
         node.appendChild(fg);
         fg.__data__ = item;
-        fg.__values__ = {};
+        fg.__values__ = {fill: 'default'};
       }
     }
   }
