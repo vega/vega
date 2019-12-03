@@ -33,7 +33,7 @@
     "@rollup/plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "tape": "^4.11.0",
-    "terser": "^4.4.1",
+    "terser": "^4.4.2",
     "typescript": "^3.7.2",
     "vega-datasets": "^1.28.0"
   },
