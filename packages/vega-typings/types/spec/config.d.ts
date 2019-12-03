@@ -13,17 +13,31 @@ import {
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
+import { ColorValueRef, NumericValueRef, ScaledValueRef } from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
 import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 
+export type ExcludeValueRefKeepSignal<T> =
+  | Exclude<T, ScaledValueRef<any> | NumericValueRef | ColorValueRef>
+  | KeepSignal<T>;
+
+export type KeepSignal<T> = T extends SignalRef ? SignalRef : never;
+
+/**
+ * Config properties cannot be scaled or reference fields but they can reference signals.
+ */
+export type ExcludeMappedValueRef<T> = {
+  [P in keyof T]: ExcludeValueRefKeepSignal<T[P]>;
+};
+
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
     Partial<Record<AxisConfigKeys, AxisConfig>> {
   autosize?: AutoSize;
-  background?: string;
+  background?: null | Color | SignalRef;
   group?: any; // TODO
   events?: {
     bind?: 'any' | 'container' | 'none';
@@ -33,18 +47,13 @@ export interface Config
     view?: boolean | string[];
     window?: boolean | string[];
   };
-  style?: any; // TODO
+  style?: {
+    [style: string]: MarkConfig;
+  };
   legend?: LegendConfig;
   title?: TitleConfig;
   projection?: ProjectionConfig;
-  range?: {
-    category?: RangeScheme | string[];
-    diverging?: RangeScheme | string[];
-    heatmap?: RangeScheme | string[];
-    ordinal?: RangeScheme | string[];
-    ramp?: RangeScheme | string[];
-    symbol?: SymbolShape[];
-  };
+  range?: RangeConfig;
   signals?: (InitSignal | NewSignal)[];
 }
 
@@ -54,26 +63,24 @@ export type MarkConfigKeys = 'mark' | Mark['type'];
 
 export interface MarkConfig {
   /**
-   * Default Fill Color.  This has higher precedence than config.color
+   * Default fill color.
    *
    * __Default value:__ (None)
    *
    */
-  fill?: string | SignalRef;
+  fill?: Color | null | SignalRef;
 
   /**
-   * Default Stroke Color.  This has higher precedence than config.color
+   * Default stroke color.
    *
    * __Default value:__ (None)
    *
    */
-  stroke?: string | SignalRef;
+  stroke?: Color | null | SignalRef;
 
   // ---------- Opacity ----------
   /**
    * The overall opacity (value between [0,1]).
-   *
-   * __Default value:__ `0.7` for non-aggregate plots with `point`, `tick`, `circle`, or `square` marks or layered `bar` charts and `1` otherwise.
    *
    * @minimum 0
    * @maximum 1
@@ -119,9 +126,9 @@ export interface MarkConfig {
   strokeDashOffset?: number | SignalRef;
 
   /**
-   * The amount to offset background rendering for stroked group marks.
+   * The offset in pixels at which to draw the group stroke and fill. If unspecified, the default behavior is to dynamically offset stroked groups such that 1 pixel stroke widths align with the pixel grid.
    */
-  strokeOffset?: number;
+  strokeOffset?: number | SignalRef;
 
   /**
    * The stroke cap for line ending style.
@@ -176,6 +183,7 @@ export interface MarkConfig {
    * - `"monotone"`: cubic interpolation that preserves monotonicity in y.
    */
   interpolate?: Interpolate | SignalRef;
+
   /**
    * Depending on the interpolation type, sets the tension parameter (for line and area marks).
    * @minimum 0
@@ -205,7 +213,7 @@ export interface MarkConfig {
   /**
    * The horizontal alignment of the text. One of `"left"`, `"right"`, `"center"`.
    */
-  align?: Align;
+  align?: Align | SignalRef;
 
   /**
    * The rotation angle of the text, in degrees.
@@ -345,10 +353,10 @@ export type AxisConfigKeys =
   | 'axisLeft'
   | 'axisBand';
 
-export type AxisConfig = BaseAxis;
+export type AxisConfig = ExcludeMappedValueRef<BaseAxis>;
 
 /**
- * Legend Config without signals so we can use it in Vega-Lite.
+ * Legend config without signals so we can use it in Vega-Lite.
  */
 export interface LegendConfig extends BaseLegend {
   /**
@@ -450,6 +458,33 @@ export interface LegendLayout extends BaseLegendLayout {
   'bottom-right'?: BaseLegendLayout;
 }
 
-export type TitleConfig = BaseTitle;
+export type TitleConfig = ExcludeMappedValueRef<BaseTitle>;
 
-export type ProjectionConfig = BaseProjection;
+export type ProjectionConfig = ExcludeMappedValueRef<BaseProjection>;
+
+export interface RangeConfig {
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
+   */
+  category?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for diverging quantitative ramps.
+   */
+  diverging?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for quantitative heatmaps.
+   */
+  heatmap?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for rank-ordered data.
+   */
+  ordinal?: RangeScheme | string[];
+  /**
+   * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for sequential quantitative ramps.
+   */
+  ramp?: RangeScheme | string[];
+  /**
+   * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
+   */
+  symbol?: SymbolShape[];
+}
