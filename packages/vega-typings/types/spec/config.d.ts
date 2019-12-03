@@ -178,8 +178,6 @@ export interface MarkConfig {
   interpolate?: Interpolate | SignalRef;
   /**
    * Depending on the interpolation type, sets the tension parameter (for line and area marks).
-   * @minimum 0
-   * @maximum 1
    */
   tension?: number | SignalRef;
 
@@ -209,6 +207,7 @@ export interface MarkConfig {
 
   /**
    * The rotation angle of the text, in degrees.
+   *
    * @minimum 0
    * @maximum 360
    */
@@ -234,6 +233,7 @@ export interface MarkConfig {
 
   /**
    * Polar coordinate radial offset, in pixels, of the text label from the origin determined by the `x` and `y` properties.
+   *
    * @minimum 0
    */
   radius?: number | SignalRef;
@@ -265,6 +265,7 @@ export interface MarkConfig {
 
   /**
    * The font size, in pixels.
+   *
    * @minimum 0
    */
   fontSize?: number | SignalRef;
