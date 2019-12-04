@@ -64,6 +64,7 @@ prototype.transform = function(_, pulse) {
         // maximum bin value (exclusive)
         // use convoluted math for better floating point agreement
         // see https://github.com/vega/vega/issues/830
+        // infinite values propagate through this formula! #2227
         t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
       }
     : function(t) { t[b0] = bins(t); }
@@ -92,12 +93,13 @@ prototype._bins = function(_) {
 
   var f = function(t) {
     var v = field(t);
-    if (v == null) {
-      return null;
-    } else {
-      v = Math.max(start, Math.min(+v, stop - step));
-      return start + step * Math.floor(EPSILON + (v - start) / step);
-    }
+    return v == null ? null
+      : v < start ? -Infinity
+      : v > stop ? +Infinity
+      : (
+          v = Math.max(start, Math.min(+v, stop - step)),
+          start + step * Math.floor(EPSILON + (v - start) / step)
+        );
   };
 
   f.start = start;
