@@ -70,11 +70,15 @@ export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
 
 function formatRange(format) {
   return function(value, index, array) {
-    var limit = array[index + 1] || array.max || +Infinity,
+    var limit = get(array[index + 1], get(array.max, +Infinity)),
         lo = formatValue(value, format),
         hi = formatValue(limit, format);
-    return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
+    return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
   };
+}
+
+function get(value, dflt) {
+  return value != null ? value : dflt;
 }
 
 function formatDiscrete(format) {
