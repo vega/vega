@@ -14,6 +14,7 @@ The **kde2d** transform {% include tag ver="5.8" %} performs two-dimensional [ke
 | x                   | {% include type t="Field" %}    | {% include required %} The x-coordinate field for density estimation. |
 | y                   | {% include type t="Field" %}    | {% include required %} The y-coordinate field for density estimation. |
 | weight              | {% include type t="Field" %}    | The data point weight field for density estimation. If unspecified, all data points are assumed to have a weight of 1. |
+| groupby             | {% include type t="Field[]" %}  | The data fields to group by. If not specified, a single group containing all data objects will be used. |
 | cellSize            | {% include type t="Number" %}   | Contour density calculation cell size. This parameter determines the level of spatial approximation. For example, the default value of `4` results in 2x reductions to the _width_ and _height_. A value of `1` results in an output raster grid with base dimensions matching the _size_ parameter. |
 | bandwidth           | {% include type t="Number[]" %} | The KDE kernel bandwidths. The input can be a two-element array specifying separate x and y bandwidths, or a single-element array specifying both. If the values are unspecified or less than zero, the bandwidth will be automatically determined. |
 | counts              | {% include type t="Boolean" %}  | A boolean flag indicating if the output values should be probability estimates (`false`, default) or smoothed counts (`true`). |
