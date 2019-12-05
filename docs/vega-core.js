@@ -5613,6 +5613,7 @@
           // maximum bin value (exclusive)
           // use convoluted math for better floating point agreement
           // see https://github.com/vega/vega/issues/830
+          // infinite values propagate through this formula! #2227
           t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
         }
       : function(t) { t[b0] = bins(t); }
@@ -5641,12 +5642,13 @@
 
     var f = function(t) {
       var v = field(t);
-      if (v == null) {
-        return null;
-      } else {
-        v = Math.max(start, Math.min(+v, stop - step));
-        return start + step * Math.floor(EPSILON + (v - start) / step);
-      }
+      return v == null ? null
+        : v < start ? -Infinity
+        : v > stop ? +Infinity
+        : (
+            v = Math.max(start, Math.min(+v, stop - step)),
+            start + step * Math.floor(EPSILON + (v - start) / step)
+          );
     };
 
     f.start = start;
@@ -17277,11 +17279,15 @@
 
   function formatRange(format) {
     return function(value, index, array) {
-      var limit = array[index + 1] || array.max || +Infinity,
+      var limit = get$3(array[index + 1], get$3(array.max, +Infinity)),
           lo = formatValue(value, format),
           hi = formatValue(limit, format);
-      return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
+      return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
     };
+  }
+
+  function get$3(value, dflt) {
+    return value != null ? value : dflt;
   }
 
   function formatDiscrete(format) {
@@ -17385,7 +17391,7 @@
       items = items.map(function(value, index) {
         return ingest({
           index:  index,
-          label:  format(value, index, values),
+          label:  format(value, index, items),
           value:  value,
           offset: offset,
           size:   size(value, _)
