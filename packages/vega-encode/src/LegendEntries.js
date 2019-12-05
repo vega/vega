@@ -71,7 +71,7 @@ prototype.transform = function(_, pulse) {
     items = items.map(function(value, index) {
       return ingest({
         index:  index,
-        label:  format(value, index, values),
+        label:  format(value, index, items),
         value:  value,
         offset: offset,
         size:   size(value, _)
