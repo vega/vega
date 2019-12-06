@@ -3,7 +3,6 @@
   "width": 400,
   "height": 400,
   "signals": [
-    {"name": "label", "value": ""},
     {"name": "centerX", "init": "width/2"},
     {"name": "centerY", "init": "height/2"},
     {"name": "radiusRef", "init": "min(width,height)*0.8"},
@@ -207,7 +206,6 @@
     },
     {
       "type": "symbol",
-      "name": "hourNeedle",
       "encode": {
         "enter": {
           "size": {"signal": "pow(2*sizeFactor, 2)"},
@@ -221,22 +219,6 @@
           "zIndex": {"value": 1}
         },
         "update": {"angle": {"signal": "currentHour*30"}}
-      }
-    },
-    {
-      "type": "text",
-      "from": {"data": "hourNeedle"},
-      "encode": {
-        "enter": {
-          "x": {"signal": "centerX"},
-          "y": {
-            "signal": "centerY + (datum.angle > 270 || datum.angle < 90? 25 : -25 )* sizeFactor"
-          },
-          "text": {"signal": "label"},
-          "align": {"value": "center"},
-          "baseline": {"value": "middle"},
-          "fontSize": {"signal": "20*sizeFactor"}
-        }
       }
     },
     {
