@@ -95,6 +95,7 @@
         {"name": "global-development"},
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
-        {"name": "pi-monte-carlo"}
+        {"name": "pi-monte-carlo"},
+        {"name": "watch"}
     ]
 }
