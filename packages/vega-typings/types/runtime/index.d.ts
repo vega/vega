@@ -51,8 +51,11 @@ export class View {
   resize(): this;
 
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
-  toSVG(): Promise<string>;
-  toCanvas(): Promise<HTMLCanvasElement>;
+  toSVG(scaleFactor?: number): Promise<string>;
+  toCanvas(
+    scaleFactor?: number,
+    options?: { type?: string; context?: any },
+  ): Promise<HTMLCanvasElement>;
 
   signal(name: string, value: SignalValue): this;
   signal(name: string): SignalValue;
