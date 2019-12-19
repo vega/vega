@@ -89,19 +89,19 @@ vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
 Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
-vega.<b>cumulativeUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+vega.<b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the value of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function) at the given input domain *value* for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="densityUniform" href="#densityUniform">#</a>
-vega.<b>densityUniform</b>(value[, <i>mean</i>, <i>stdev</i>])
+vega.<b>densityUniform</b>(value[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the value of the [probability density function](https://en.wikipedia.org/wiki/Probability_density_function) at the given input domain *value*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="quantileUniform" href="#quantileUniform">#</a>
-vega.<b>quantileUniform</b>(probability[, <i>mean</i>, <i>stdev</i>])
+vega.<b>quantileUniform</b>(probability[, <i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns the quantile value (the inverse of the [cumulative distribution function](https://en.wikipedia.org/wiki/Cumulative_distribution_function)) for the given input *probability*,  for a uniform distribution over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
@@ -245,7 +245,13 @@ Generate sample points from an interpolation function _f_ for the provided domai
 
 ### Statistics
 
-Statistical methods for calculating bins, bootstrapped confidence intervals, and quartile boundaries.
+Statistical methods for bandwidth estimation, bin calculation, bootstrapped confidence intervals, and quartile boundaries.
+
+<a name="bandwidthNRD" href="#bandwidthNRD">#</a>
+vega.<b>bandwidthNRD</b>(<i>array</i>[, <i>accessor</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/bandwidth.js "Source")
+
+Given an *array* of numeric values, estimates a bandwidth value for use in Gaussian kernel density estimation, assuming a normal reference distribution. The underlying formula (from Scott 1992) is 1.06 times the minimum of the standard deviation and the interquartile range divided by 1.34 times the sample size to the negative one-fifth power, along with special case handling in case of zero values for the interquartile range or deviation. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`.
 
 <a name="bin" href="#bin">#</a>
 vega.<b>bin</b>(<i>options</i>)

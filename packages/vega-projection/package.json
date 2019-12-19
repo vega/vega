@@ -1,6 +1,6 @@
 {
   "name": "vega-projection",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -23,6 +23,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-geo": "^1.11.6"
+    "d3-geo": "^1.11.9",
+    "d3-geo-projection": "^2.7.1"
   }
 }

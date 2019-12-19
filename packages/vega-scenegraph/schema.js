@@ -235,7 +235,14 @@ var MARKS = {
   "group": {
     "properties": {
       "clip": { "type": "boolean" },
-      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } }
+      "cornerRadius": { "type": "number" },
+      "cornerRadiusTopLeft": { "type": "number" },
+      "cornerRadiusTopRight": { "type": "number" },
+      "cornerRadiusBottomRight": { "type": "number" },
+      "cornerRadiusBottomLeft": { "type": "number" },
+      "items": { "type": "array", "items": { "$ref": "#/refs/mark" } },
+      "strokeForeground": { "type": "boolean" },
+      "strokeOffset": { "type": "number" }
     }
   },
   "arc": {
@@ -260,6 +267,7 @@ var MARKS = {
     "properties": {
       "url": { "type": "string", "format": "uri-reference" },
       "aspect": { "type": "boolean", "default": true },
+      "smooth": { "type": "boolean", "default": true },
       "align": {
         "enum": [ "left", "center", "right" ],
         "default": "left"
@@ -281,12 +289,19 @@ var MARKS = {
   },
   "path": {
     "properties": {
-      "path": { "$ref": "#/refs/path" }
+      "angle": { "type": "number" },
+      "path": { "$ref": "#/refs/path" },
+      "scaleX": { "type": "number" },
+      "scaleY": { "type": "number" }
     }
   },
   "rect": {
     "properties": {
-      "cornerRadius": { "type": "number" }
+      "cornerRadius": { "type": "number" },
+      "cornerRadiusTopLeft": { "type": "number" },
+      "cornerRadiusTopRight": { "type": "number" },
+      "cornerRadiusBottomRight": { "type": "number" },
+      "cornerRadiusBottomLeft": { "type": "number" }
     }
   },
   "rule": {

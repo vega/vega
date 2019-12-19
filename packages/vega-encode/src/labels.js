@@ -1,14 +1,14 @@
 import {Symbols, Discrete} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
-
+import {peek} from 'vega-util';
 import {
   Quantile,
   Quantize,
   Threshold,
   tickFormat as spanFormat,
-  Time
+  Time,
+  UTC
 } from 'vega-scale';
-import {peek} from 'vega-util';
 
 const symbols = {
   [Quantile]:  'quantiles',
@@ -58,10 +58,10 @@ function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, count, type, specifier, formatType) {
-  const format = formats[scale.type] && formatType !== Time
+export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
+  const format = formats[scale.type] && formatType !== Time && formatType !== UTC
     ? thresholdFormat(scale, specifier)
-    : tickFormat(scale, count, specifier, formatType);
+    : tickFormat(scale, count, specifier, formatType, noSkip);
 
   return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
     : type === Discrete ? formatDiscrete(format)
@@ -70,11 +70,15 @@ export function labelFormat(scale, count, type, specifier, formatType) {
 
 function formatRange(format) {
   return function(value, index, array) {
-    var limit = array[index + 1] || array.max || +Infinity,
+    var limit = get(array[index + 1], get(array.max, +Infinity)),
         lo = formatValue(value, format),
         hi = formatValue(limit, format);
-    return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
+    return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
   };
+}
+
+function get(value, dflt) {
+  return value != null ? value : dflt;
 }
 
 function formatDiscrete(format) {
@@ -90,7 +94,7 @@ function formatPoint(format) {
 }
 
 function formatValue(value, format) {
-  return isFinite(value) ? format(value) : null;
+  return Number.isFinite(value) ? format(value) : null;
 }
 
 export function labelFraction(scale) {

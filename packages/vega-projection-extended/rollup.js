@@ -18,7 +18,7 @@ rollup.rollup({
   input: 'index.js',
   external: modules,
   plugins: [
-    nodeResolve({module: true})
+    nodeResolve()
   ]
 }).then(function(bundle) {
   return bundle.write({

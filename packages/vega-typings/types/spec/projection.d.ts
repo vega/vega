@@ -22,17 +22,20 @@ export type ProjectionType =
   | 'transverseMercator';
 export interface BaseProjection {
   /*
-   * The type of the projection.
+   * The type of the projection. The default is `"mercator"`.
    */
-  type: ProjectionType | SignalRef;
+  type?: ProjectionType | SignalRef;
   /*
    * The clip angle of the projection.
    */
   clipAngle?: number | SignalRef;
   /*
-   * Sets the projection’s viewport clip extent to the specified bounds in pixels
+   * The projection’s viewport clip extent to the specified bounds in pixels
    */
   clipExtent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
+  /**
+   * The projection’s scale factor to the specified value.
+   */
   scale?: number | SignalRef;
   /*
    * The translation of the projection.
@@ -45,12 +48,18 @@ export interface BaseProjection {
   /**
    * The rotation of the projection.
    */
-  rotate?: Vector3<number | SignalRef> | SignalRef;
+  rotate?: Vector2<number | SignalRef> | Vector3<number | SignalRef> | SignalRef;
+  /**
+   * The desired parallels of the projection.
+   */
   parallels?: (number | SignalRef)[] | SignalRef;
   /*
    * The desired precision of the projection.
    */
   precision?: number | SignalRef;
+  /**
+   * The default radius (in pixels) to use when drawing GeoJSON `Point` and `MultiPoint` geometries.
+   */
   pointRadius?: number | SignalRef;
   /*
    * GeoJSON data to which the projection should attempt to automatically fit the translate and scale parameters..
@@ -67,15 +76,17 @@ export interface BaseProjection {
 
   // TODO: use a union tagged by the projection type to determine which of the following is applicable
   /* The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection */
-  coefficient?: number;
-  distance?: number;
-  fraction?: number;
-  lobes?: number;
-  parallel?: number;
-  radius?: number;
-  ratio?: number;
-  spacing?: number;
-  tilt?: number;
+  coefficient?: number | SignalRef;
+  distance?: number | SignalRef;
+  fraction?: number | SignalRef;
+  lobes?: number | SignalRef;
+  parallel?: number | SignalRef;
+  radius?: number | SignalRef;
+  ratio?: number | SignalRef;
+  spacing?: number | SignalRef;
+  tilt?: number | SignalRef;
+  reflectX?: boolean | SignalRef;
+  reflectY?: boolean | SignalRef;
 }
 export interface Projection extends BaseProjection {
   /*

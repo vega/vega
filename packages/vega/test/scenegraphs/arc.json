@@ -21,7 +21,7 @@
               "startAngle": 0,
               "endAngle": 0.474202664692799,
               "innerRadius": 20,
-              "outerRadius": 58.43075691322091
+              "outerRadius": 58.43075691322092
             },
             {
               "x": 200,
@@ -31,7 +31,7 @@
               "startAngle": 0.474202664692799,
               "endAngle": 1.383091105353997,
               "innerRadius": 20,
-              "outerRadius": 73.2049737408941
+              "outerRadius": 73.20497374089409
             },
             {
               "x": 200,
@@ -90,7 +90,7 @@
               "fill": "#000",
               "text": 12,
               "theta": 0.2371013323463995,
-              "radius": 66.4307569132209,
+              "radius": 66.43075691322092,
               "font": "sans-serif",
               "fontSize": 11
             },
@@ -102,7 +102,7 @@
               "fill": "#000",
               "text": 23,
               "theta": 0.928646885023398,
-              "radius": 81.2049737408941,
+              "radius": 81.20497374089409,
               "font": "sans-serif",
               "fontSize": 11
             },

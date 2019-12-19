@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "4.1.2",
+  "version": "6.0.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -12,6 +12,7 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-scale.js",
   "module": "index",
+  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3:d3,d3-time:d3,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
@@ -24,10 +25,9 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.3.1",
-    "d3-interpolate": "^1.3.2",
-    "d3-scale": "^3.1.0",
-    "d3-time": "^1.0.11",
-    "vega-util": "^1.11.0"
+    "d3-array": "^2.4.0",
+    "d3-interpolate": "^1.4.0",
+    "d3-scale": "^3.2.1",
+    "vega-util": "^1.12.1"
   }
 }

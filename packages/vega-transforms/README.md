@@ -25,6 +25,7 @@ This package provides the following Vega data transforms:
 - [**Quantile**](https://vega.github.io/vega/docs/transforms/quantile/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Quantile.js "Source")
 - [**Sample**](https://vega.github.io/vega/docs/transforms/sample/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Sample.js "Source")
 - [**Sequence**](https://vega.github.io/vega/docs/transforms/sequence/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Sequence.js "Source")
+- [**TimeUnit**](https://vega.github.io/vega/docs/transforms/timeunit/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/TimeUnit.js "Source")
 - [**Window**](https://vega.github.io/vega/docs/transforms/window/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Window.js "Source")
 
 And provides the following internal transforms:

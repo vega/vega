@@ -1,12 +1,15 @@
 import {
-  format as d3_format
+  timeFormat as _timeFormat,
+  utcFormat as _utcFormat
+} from 'vega-time';
+
+import {
+  format as _numberFormat
 } from 'd3-format';
 
 import {
-  timeFormat as d3_timeFormat,
-  timeParse as d3_timeParse,
-  utcFormat as d3_utcFormat,
-  utcParse as d3_utcParse
+  timeParse as _timeParse,
+  utcParse as _utcParse
 } from 'd3-time-format';
 
 const formatCache = {};
@@ -21,29 +24,30 @@ function formatter(type, method, specifier) {
 }
 
 export function format(_, specifier) {
-  return formatter('format', d3_format, specifier)(_);
+  return formatter('format', _numberFormat, specifier)(_);
 }
 
 export function timeFormat(_, specifier) {
-  return formatter('timeFormat', d3_timeFormat, specifier)(_);
+  return formatter('timeFormat', _timeFormat, specifier)(_);
 }
 
 export function utcFormat(_, specifier) {
-  return formatter('utcFormat', d3_utcFormat, specifier)(_);
+  return formatter('utcFormat', _utcFormat, specifier)(_);
 }
 
 export function timeParse(_, specifier) {
-  return formatter('timeParse', d3_timeParse, specifier)(_);
+  return formatter('timeParse', _timeParse, specifier)(_);
 }
 
 export function utcParse(_, specifier) {
-  return formatter('utcParse', d3_utcParse, specifier)(_);
+  return formatter('utcParse', _utcParse, specifier)(_);
 }
 
 var dateObj = new Date(2000, 0, 1);
 
 function time(month, day, specifier) {
   if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
+  dateObj.setYear(2000);
   dateObj.setMonth(month);
   dateObj.setDate(day);
   return timeFormat(dateObj, specifier);

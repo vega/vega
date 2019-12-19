@@ -56,8 +56,8 @@ tape('normal approximates the cdf', function(t) {
 tape('normal approximates the inverse cdf', function(t) {
   var n1 = normal();
   // out of domain inputs
-  t.ok(isNaN(n1.icdf(-1)));
-  t.ok(isNaN(n1.icdf(2)));
+  t.ok(Number.isNaN(n1.icdf(-1)));
+  t.ok(Number.isNaN(n1.icdf(2)));
   t.equal(n1.icdf(0), -Infinity);
   t.equal(n1.icdf(1), Infinity);
   // regular values

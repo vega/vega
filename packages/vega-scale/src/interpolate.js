@@ -1,4 +1,4 @@
-import getScale from './scales';
+import {scale as getScale} from './scales';
 import {constant, peek} from 'vega-util';
 import * as $ from 'd3-interpolate';
 
@@ -31,7 +31,7 @@ export function scaleCopy(scale) {
 export function scaleFraction(scale, min, max) {
   var delta = max - min, i, t, s;
 
-  if (!delta || !isFinite(delta)) {
+  if (!delta || !Number.isFinite(delta)) {
     return constant(0.5);
   } else {
     i = (t = scale.type).indexOf('-');

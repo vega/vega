@@ -9,6 +9,11 @@ import {transformItem} from '../util/svg/transform';
 import {DegToRad} from '../util/constants';
 
 function attr(emit, item) {
+  var sx = item.scaleX || 1,
+      sy = item.scaleY || 1;
+  if (sx !== 1 || sy !== 1) {
+    emit('vector-effect', 'non-scaling-stroke');
+  }
   emit('transform', transformItem(item));
   emit('d', item.path);
 }
@@ -16,39 +21,37 @@ function attr(emit, item) {
 function path(context, item) {
   var path = item.path;
   if (path == null) return true;
-  var scaleX = item.scaleX || 1;
-  var scaleY = item.scaleY || 1;
-  var hasRotate = context.rotate;
-  var hasTranslate = context.translate;
-  var a = (item.angle || 0) * DegToRad;
-  var x = item.x || 0;
-  var y = item.y || 0;
-  var cache = item.pathCache;
+
+  var x = item.x || 0,
+      y = item.y || 0,
+      sx = item.scaleX || 1,
+      sy = item.scaleY || 1,
+      a = (item.angle || 0) * DegToRad,
+      cache = item.pathCache;
+
   if (!cache || cache.path !== path) {
     (item.pathCache = cache = pathParse(path)).path = path;
   }
-  if(hasTranslate && hasRotate){
+
+  if (a && context.rotate && context.translate) {
     context.translate(x, y);
-    if (a) context.rotate(a);
-  }
-
-  pathRender(context, cache, hasTranslate ? 0 : x, hasTranslate ? 0 : y, scaleX, scaleY);
-
-  if(hasTranslate && hasRotate){
-    if (a) context.rotate(-a);
+    context.rotate(a);
+    pathRender(context, cache, 0, 0, sx, sy);
+    context.rotate(-a);
     context.translate(-x, -y);
+  } else {
+    pathRender(context, cache, x, y, sx, sy);
   }
 }
 
 function bound(bounds, item) {
-  var x = item.x || 0,
-  y = item.y || 0;
   path(context(bounds), item)
     ? bounds.set(0, 0, 0, 0)
-    : boundStroke(bounds, item);
-    if (item.angle) {
-      bounds.rotate(item.angle * DegToRad, x, y);
-    }
+    : boundStroke(bounds, item, true);
+
+  if (item.angle) {
+    bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
+  }
 
   return bounds;
 }

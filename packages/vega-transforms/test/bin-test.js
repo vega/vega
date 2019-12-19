@@ -2,7 +2,9 @@ var tape = require('tape'),
     util = require('vega-util'),
     vega = require('vega-dataflow'),
     tx = require('../'),
-    Bin = tx.bin;
+    changeset = vega.changeset,
+    Bin = tx.bin,
+    Collect = tx.collect;
 
 var TOLERANCE = 2e-14;
 
@@ -63,8 +65,58 @@ function testBin(t, b, extent, step) {
   }
 
   // test bins that precede extent
-  t.equal(b({v: f(-1)}), f(0));
+  t.equal(b({v: f(-1)}), -Infinity);
 
   // test very last, inclusive bin
   t.equal(b({v: f(steps)}), f(steps - 1));
+
+  // test bins that exceed extent
+  t.equal(b({v: f(steps+1)}), Infinity);
 }
+
+tape('Bin handles tail aggregation for last bin', function(t) {
+  var df = new vega.Dataflow(),
+      bin = df.add(Bin, {
+        field:   util.field('v'),
+        extent:  [0, 29],
+        maxbins: 10,
+        nice:    false
+      });
+
+  df.run();
+  testBin(t, bin.value, [0, 29], 5);
+
+  // inspired by vega/vega#2181
+  t.equal(bin.value({v:28}), 25);
+  t.equal(bin.value({v:29}), 25);
+  t.equal(bin.value({v:30}), 25);
+  t.equal(bin.value({v:31}), Infinity);
+
+  t.end();
+});
+
+tape('Bin supports point output', function(t) {
+  var data = [{v: 5.5}];
+
+  var df = new vega.Dataflow(),
+      c = df.add(Collect),
+      b = df.add(Bin, {
+        field:    util.field('v'),
+        interval: false,
+        extent:   [0, 10],
+        step:     1,
+        nice:     false,
+        pulse:    c
+      });
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(b.pulse.rem.length, 0);
+  t.equal(b.pulse.add.length, 1);
+  t.equal(b.pulse.mod.length, 0);
+  t.equal(b.pulse.add[0].bin0, 5);
+  t.equal(b.pulse.add[0].bin1, undefined);
+  t.equal(b.pulse.fields.bin0, true);
+  t.equal(b.pulse.fields.bin1, undefined);
+
+  t.end();
+});

@@ -245,12 +245,15 @@ export interface AreaEncodeEntry extends LineEncodeEntry {
 }
 export interface GroupEncodeEntry extends RectEncodeEntry {
   clip?: ProductionRule<BooleanValueRef>;
+  strokeForeground?: ProductionRule<BooleanValueRef>;
+  strokeOffset?: ProductionRule<NumericValueRef>;
 }
 export type Baseline = 'top' | 'middle' | 'bottom';
 export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   url?: ProductionRule<StringValueRef>;
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
+  smooth?: ProductionRule<BooleanValueRef>;
 }
 
 /**
@@ -281,9 +284,16 @@ export interface LineEncodeEntry extends EncodeEntry, DefinedProperty {
 }
 export interface PathEncodeEntry extends EncodeEntry {
   path?: ProductionRule<StringValueRef>;
+  angle?: ProductionRule<NumericValueRef>;
+  scaleX?: ProductionRule<NumericValueRef>;
+  scaleY?: ProductionRule<NumericValueRef>;
 }
 export interface RectEncodeEntry extends EncodeEntry {
   cornerRadius?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopLeft?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomLeft?: ProductionRule<NumericValueRef>;
 }
 export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {

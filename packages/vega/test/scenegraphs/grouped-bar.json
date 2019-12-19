@@ -23,7 +23,7 @@
                   "items": [
                     {
                       "x": -4,
-                      "y": 44,
+                      "y": 44.5,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",
@@ -36,7 +36,7 @@
                     },
                     {
                       "x": -4,
-                      "y": 119,
+                      "y": 119.5,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",
@@ -49,7 +49,7 @@
                     },
                     {
                       "x": -4,
-                      "y": 194,
+                      "y": 194.5,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",

@@ -27,7 +27,20 @@ export type LabelOverlap = boolean | 'parity' | 'greedy';
 
 export type TickCount = number | TimeInterval | SignalRef;
 
-export type FormatType = 'number' | 'time';
+export type FormatType = 'number' | 'time' | 'utc';
+
+export interface TimeFormatSpecifier {
+  year?: string;
+  quarter?: string;
+  month?: string;
+  date?: string;
+  week?: string;
+  day?: string;
+  hours?: string;
+  minutes?: string;
+  seconds?: string;
+  milliseconds?: string;
+}
 
 export interface Axis extends BaseAxis {
   /**
@@ -48,12 +61,12 @@ export interface Axis extends BaseAxis {
   gridScale?: string;
 
   /**
-   * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier.
+   * The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or multi-format object.
    */
-  format?: string | SignalRef;
+  format?: string | TimeFormatSpecifier | SignalRef;
 
   /**
-   * The format type for axis labels (number or time).
+   * The format type for axis labels (number, time, or utc).
    */
   formatType?: FormatType | SignalRef;
 
@@ -134,123 +147,113 @@ export interface AxisEncode {
   domain?: GuideEncodeEntry<RuleEncodeEntry>;
 }
 
-export interface BaseAxis<
-  N = NumberValue,
-  NS = number | SignalRef,
-  B = BooleanValue,
-  BNS = number | boolean | SignalRef,
-  S = StringValue,
-  C = ColorValue,
-  FW = FontWeightValue,
-  FS = FontStyleValue,
-  A = AlignValue,
-  TB = TextBaselineValue,
-  LA = LayoutAlign | SignalRef,
-  LO = LabelOverlap | SignalRef,
-  DA = DashArrayValue,
-  AN = AnchorValue
-> {
+export interface BaseAxis {
+  /**
+   * Translation offset in pixels applied to the axis group mark x and y. If specified, overrides the default behavior of a 0.5 offset to pixel-align stroked lines.
+   */
+  translate?: number;
+
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
    *
    * __Default value:__ `30` for y-axis; `undefined` for x-axis.
    */
-  minExtent?: N;
+  minExtent?: NumberValue;
 
   /**
    * The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles.
    *
    * __Default value:__ `undefined`.
    */
-  maxExtent?: N;
+  maxExtent?: NumberValue;
 
   /**
    * An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands.
    *
    *  __Default value:__ `0.5`
    */
-  bandPosition?: N;
+  bandPosition?: NumberValue;
 
   // ---------- Title ----------
   /**
    * The padding, in pixels, between title and axis.
    */
-  titlePadding?: N;
+  titlePadding?: NumberValue;
 
   /**
    * Horizontal text alignment of axis titles.
    */
-  titleAlign?: A;
+  titleAlign?: AlignValue;
 
   /**
    * Text anchor position for placing axis titles.
    */
-  titleAnchor?: AN;
+  titleAnchor?: AnchorValue;
 
   /**
    * Angle in degrees of axis titles.
    */
-  titleAngle?: N;
+  titleAngle?: NumberValue;
 
   /**
    * X-coordinate of the axis title relative to the axis group.
    */
-  titleX?: N;
+  titleX?: NumberValue;
 
   /**
    * Y-coordinate of the axis title relative to the axis group.
    */
-  titleY?: N;
+  titleY?: NumberValue;
 
   /**
    * Vertical text baseline for axis titles.
    */
-  titleBaseline?: TB;
+  titleBaseline?: TextBaselineValue;
 
   /**
    * Color of the title, can be in hex color code or regular color name.
    */
-  titleColor?: C;
+  titleColor?: ColorValue;
 
   /**
    * Font of the title. (e.g., `"Helvetica Neue"`).
    */
-  titleFont?: S;
+  titleFont?: StringValue;
 
   /**
    * Font size of the title.
    *
    * @minimum 0
    */
-  titleFontSize?: N;
+  titleFontSize?: NumberValue;
 
   /**
    * Font style of the title.
    */
-  titleFontStyle?: FS;
+  titleFontStyle?: FontStyleValue;
 
   /**
    * Font weight of the title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  titleFontWeight?: FW;
+  titleFontWeight?: FontWeightValue;
 
   /**
    * Maximum allowed pixel width of axis titles.
    *
    * @minimum 0
    */
-  titleLimit?: N;
+  titleLimit?: NumberValue;
 
   /**
    * Line height in pixels for multi-line title text.
    */
-  titleLineHeight?: N;
+  titleLineHeight?: NumberValue;
 
   /**
    * Opacity of the axis title.
    */
-  titleOpacity?: N;
+  titleOpacity?: NumberValue;
 
   // ---------- Domain ----------
   /**
@@ -263,31 +266,31 @@ export interface BaseAxis<
   /**
    * An array of alternating [stroke, space] lengths for dashed domain lines.
    */
-  domainDash?: DA;
+  domainDash?: DashArrayValue;
 
   /**
    * The pixel offset at which to start drawing with the domain dash array.
    */
-  domainDashOffset?: N;
+  domainDashOffset?: NumberValue;
 
   /**
    * Color of axis domain line.
    *
    * __Default value:__ `"gray"`.
    */
-  domainColor?: C;
+  domainColor?: ColorValue;
 
   /**
    * Opacity of the axis domain line.
    */
-  domainOpacity?: N;
+  domainOpacity?: NumberValue;
 
   /**
    * Stroke width of axis domain line
    *
    * __Default value:__ `1`
    */
-  domainWidth?: N;
+  domainWidth?: NumberValue;
 
   // ---------- Ticks ----------
   /**
@@ -295,46 +298,51 @@ export interface BaseAxis<
    *
    * __Default value:__ `true`
    */
-  ticks?: B;
+  ticks?: BooleanValue;
+
+  /**
+   * For band scales, indicates if ticks and grid lines should be placed at the center of a band (default) or at the band extents to indicate intervals.
+   */
+  tickBand?: 'center' | 'extent' | SignalRef;
 
   /**
    * The color of the axis's tick.
    *
    * __Default value:__ `"gray"`
    */
-  tickColor?: C;
+  tickColor?: ColorValue;
 
   /**
    * An array of alternating [stroke, space] lengths for dashed tick mark lines.
    */
-  tickDash?: DA;
+  tickDash?: DashArrayValue;
 
   /**
    * The pixel offset at which to start drawing with the tick mark dash array.
    */
-  tickDashOffset?: N;
+  tickDashOffset?: NumberValue;
 
   /**
    * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPosition": 1` and an axis `"padding"` value of `0`.
    */
-  tickExtra?: B;
+  tickExtra?: BooleanValue;
 
   /**
    * Position offset in pixels to apply to ticks, labels, and gridlines.
    */
-  tickOffset?: N;
+  tickOffset?: NumberValue;
 
   /**
    * Opacity of the ticks.
    */
-  tickOpacity?: N;
+  tickOpacity?: NumberValue;
 
   /**
    * Boolean flag indicating if pixel position values should be rounded to the nearest integer.
    *
    * __Default value:__ `true`
    */
-  tickRound?: B;
+  tickRound?: BooleanValue;
 
   /**
    * The size in pixels of axis ticks.
@@ -342,7 +350,7 @@ export interface BaseAxis<
    * __Default value:__ `5`
    * @minimum 0
    */
-  tickSize?: N;
+  tickSize?: NumberValue;
 
   /**
    * The width, in pixels, of ticks.
@@ -350,7 +358,7 @@ export interface BaseAxis<
    * __Default value:__ `1`
    * @minimum 0
    */
-  tickWidth?: N;
+  tickWidth?: NumberValue;
 
   // ---------- Grid ----------
   /**
@@ -363,17 +371,17 @@ export interface BaseAxis<
    *
    * __Default value:__ `"lightGray"`.
    */
-  gridColor?: C;
+  gridColor?: ColorValue;
 
   /**
    * An array of alternating [stroke, space] lengths for dashed grid lines.
    */
-  gridDash?: DA;
+  gridDash?: DashArrayValue;
 
   /**
    * The pixel offset at which to start drawing with the grid dash array.
    */
-  gridDashOffset?: N;
+  gridDashOffset?: NumberValue;
 
   /**
    * The stroke opacity of grid (value between [0,1])
@@ -382,7 +390,7 @@ export interface BaseAxis<
    * @minimum 0
    * @maximum 1
    */
-  gridOpacity?: N;
+  gridOpacity?: NumberValue;
 
   /**
    * The grid width, in pixels.
@@ -390,7 +398,7 @@ export interface BaseAxis<
    * __Default value:__ `1`
    * @minimum 0
    */
-  gridWidth?: N;
+  gridWidth?: NumberValue;
 
   // ---------- Labels ----------
   /**
@@ -403,41 +411,41 @@ export interface BaseAxis<
   /**
    * Horizontal text alignment of axis tick labels, overriding the default setting for the current axis orientation.
    */
-  labelAlign?: A;
+  labelAlign?: AlignValue;
 
   /**
    * Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation. Can be `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
    */
-  labelBaseline?: TB;
+  labelBaseline?: TextBaselineValue;
 
   /**
    * Indicates if labels should be hidden if they exceed the axis range. If `false` (the default) no bounds overlap analysis is performed. If `true`, labels will be hidden if they exceed the axis range by more than 1 pixel. If this property is a number, it specifies the pixel tolerance: the maximum amount by which a label bounding box may exceed the axis range.
    *
    * __Default value:__ `false`.
    */
-  labelBound?: BNS;
+  labelBound?: number | boolean | SignalRef;
 
   /**
    * Indicates if the first and last axis labels should be aligned flush with the scale range. Flush alignment for a horizontal axis will left-align the first label and right-align the last label. For vertical axes, bottom and top text baselines are applied instead. If this property is a number, it also indicates the number of pixels by which to offset the first and last labels; for example, a value of 2 will flush-align the first and last labels and also push them 2 pixels outward from the center of the axis. The additional adjustment can sometimes help the labels better visually group with corresponding axis ticks.
    */
-  labelFlush?: BNS;
+  labelFlush?: number | boolean | SignalRef;
 
   /**
    * Indicates the number of pixels by which to offset flush-adjusted labels. For example, a value of `2` will push flush-adjusted labels 2 pixels outward from the center of the axis. Offsets can help the labels better visually group with corresponding axis ticks.
    *
    * __Default value:__ `0`.
    */
-  labelFlushOffset?: NS;
+  labelFlushOffset?: number | SignalRef;
 
   /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
    */
-  labelOverlap?: LO;
+  labelOverlap?: LabelOverlap | SignalRef;
 
   /**
    * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
    */
-  labelSeparation?: NS;
+  labelSeparation?: number | SignalRef;
 
   /**
    * The rotation angle of the axis labels.
@@ -447,46 +455,46 @@ export interface BaseAxis<
    * @minimum -360
    * @maximum 360
    */
-  labelAngle?: N;
+  labelAngle?: NumberValue;
 
   /**
    * The color of the tick label, can be in hex color code or regular color name.
    */
-  labelColor?: C;
+  labelColor?: ColorValue;
 
   /**
    * The font of the tick label.
    */
-  labelFont?: S;
+  labelFont?: StringValue;
 
   /**
    * The font size of the label, in pixels.
    *
    * @minimum 0
    */
-  labelFontSize?: N;
+  labelFontSize?: NumberValue;
 
   /**
    * Font style of the title.
    */
-  labelFontStyle?: FS;
+  labelFontStyle?: FontStyleValue;
 
   /**
    * Font weight of axis tick labels.
    */
-  labelFontWeight?: FW;
+  labelFontWeight?: FontWeightValue;
 
   /**
    * Maximum allowed pixel width of axis tick labels.
    *
    * __Default value:__ `180`
    */
-  labelLimit?: N;
+  labelLimit?: NumberValue;
 
   /**
    * The opacity of the labels.
    */
-  labelOpacity?: N;
+  labelOpacity?: NumberValue;
 
   /**
    * The padding, in pixels, between axis and text labels.
@@ -494,5 +502,5 @@ export interface BaseAxis<
    * __Default value:__ `2`
    */
 
-  labelPadding?: N;
+  labelPadding?: NumberValue;
 }

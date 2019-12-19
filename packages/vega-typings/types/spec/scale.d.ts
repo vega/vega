@@ -31,6 +31,9 @@ export type SortOrder = 'ascending' | 'descending' | SignalRef;
 export type SortField =
   | boolean
   | {
+      order: SortOrder;
+    }
+  | {
       field?: ScaleField;
       op: ScaleField;
       order?: SortOrder;

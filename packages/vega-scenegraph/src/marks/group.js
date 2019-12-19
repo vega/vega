@@ -1,26 +1,45 @@
-import {rectangle} from '../path/shapes';
+import {hasCornerRadius, rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
 import {intersectRect} from '../util/intersect';
 import {visit, pickVisit} from '../util/visit';
+import {clipGroup} from '../util/canvas/clip';
 import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
 import {hitPath} from '../util/canvas/pick';
 import clip from '../util/svg/clip';
 import {translateItem} from '../util/svg/transform';
 
-var StrokeOffset = 0.5;
+function offset(item) {
+  var sw = (sw = item.strokeWidth) != null ? sw : 1;
+  return item.strokeOffset != null ? item.strokeOffset
+    : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
+    : 0;
+}
 
 function attr(emit, item) {
   emit('transform', translateItem(item));
 }
 
-function background(emit, item) {
-  var offset = item.stroke ? StrokeOffset : 0;
-  emit('class', 'background');
-  emit('d', rectangle(null, item, offset, offset));
+function emitRectangle(emit, item) {
+  var off = offset(item);
+  emit('d', rectangle(null, item, off, off));
 }
 
-function foreground(emit, item, renderer) {
+function background(emit, item) {
+  emit('class', 'background');
+  emitRectangle(emit, item);
+}
+
+function foreground(emit, item) {
+  emit('class', 'foreground');
+  if (item.strokeForeground) {
+    emitRectangle(emit, item);
+  } else {
+    emit('d', '');
+  }
+}
+
+function content(emit, item, renderer) {
   var url = item.clip ? clip(renderer, item, item) : null;
   emit('clip-path', url);
 }
@@ -42,13 +61,14 @@ function bound(bounds, group) {
   return bounds.translate(group.x || 0, group.y || 0);
 }
 
-function backgroundPath(context, group) {
-  var offset = group.stroke ? StrokeOffset : 0;
+function rectanglePath(context, group, x, y) {
+  var off = offset(group);
   context.beginPath();
-  rectangle(context, group, offset, offset);
+  rectangle(context, group, (x || 0) + off, (y || 0) + off);
 }
 
-var hitBackground = hitPath(backgroundPath);
+var hitBackground = hitPath(rectanglePath);
+var hitForeground = hitPath(rectanglePath, false);
 
 function draw(context, scene, bounds) {
   var renderer = this;
@@ -56,34 +76,24 @@ function draw(context, scene, bounds) {
   visit(scene, function(group) {
     var gx = group.x || 0,
         gy = group.y || 0,
-        w = group.width || 0,
-        h = group.height || 0,
-        opacity;
-
-    // setup graphics context
-    context.save();
-    context.translate(gx, gy);
+        fore = group.strokeForeground,
+        opacity = group.opacity == null ? 1 : group.opacity;
 
     // draw group background
-    if (group.stroke || group.fill) {
-      opacity = group.opacity == null ? 1 : group.opacity;
-      if (opacity > 0) {
-        backgroundPath(context, group);
-        if (group.fill && fill(context, group, opacity)) {
-          context.fill();
-        }
-        if (group.stroke && stroke(context, group, opacity)) {
-          context.stroke();
-        }
+    if ((group.stroke || group.fill) && opacity) {
+      rectanglePath(context, group, gx, gy);
+      if (group.fill && fill(context, group, opacity)) {
+        context.fill();
+      }
+      if (group.stroke && !fore && stroke(context, group, opacity)) {
+        context.stroke();
       }
     }
 
-    // set clip and bounds
-    if (group.clip) {
-      context.beginPath();
-      context.rect(0, 0, w, h);
-      context.clip();
-    }
+    // setup graphics context, set clip and bounds
+    context.save();
+    context.translate(gx, gy);
+    if (group.clip) clipGroup(context, group);
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
@@ -94,6 +104,14 @@ function draw(context, scene, bounds) {
     // restore graphics context
     if (bounds) bounds.translate(gx, gy);
     context.restore();
+
+    // draw group foreground
+    if (fore && group.stroke && opacity) {
+      rectanglePath(context, group, gx, gy);
+      if (stroke(context, group, opacity)) {
+        context.stroke();
+      }
+    }
   });
 }
 
@@ -107,22 +125,41 @@ function pick(context, scene, x, y, gx, gy) {
       cy = y * context.pixelRatio;
 
   return pickVisit(scene, function(group) {
-    var hit, dx, dy, b;
+    var hit, fore, ix, dx, dy, dw, dh, b, c;
 
-    // first hit test against bounding box
-    // if a group is clipped, that should be handled by the bounds check.
+    // first hit test bounding box
     b = group.bounds;
     if (b && !b.contains(gx, gy)) return;
 
-    // passed bounds check, so test sub-groups
-    dx = (group.x || 0);
-    dy = (group.y || 0);
+    // passed bounds check, test rectangular clip
+    dx = group.x || 0;
+    dy = group.y || 0;
+    dw = dx + (group.width || 0);
+    dh = dy + (group.height || 0);
+    c = group.clip;
+    if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
 
+    // adjust coordinate system
     context.save();
     context.translate(dx, dy);
-
     dx = gx - dx;
     dy = gy - dy;
+
+    // test background for rounded corner clip
+    if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
+      context.restore();
+      return null;
+    }
+
+    fore = group.strokeForeground;
+    ix = scene.interactive !== false;
+
+    // hit test against group foreground
+    if (ix && fore && group.stroke
+        && hitForeground(context, group, cx, cy)) {
+      context.restore();
+      return group;
+    }
 
     // hit test against contained marks
     hit = pickVisit(group, function(mark) {
@@ -132,12 +169,12 @@ function pick(context, scene, x, y, gx, gy) {
     });
 
     // hit test against group background
-    if (!hit && scene.interactive !== false
-        && (group.fill || group.stroke)
+    if (!hit && ix && (group.fill || (!fore && group.stroke))
         && hitBackground(context, group, cx, cy)) {
       hit = group;
     }
 
+    // restore state and return
     context.restore();
     return hit || null;
   });
@@ -157,6 +194,7 @@ export default {
   draw:       draw,
   pick:       pick,
   isect:      intersectRect,
+  content:    content,
   background: background,
   foreground: foreground
 };

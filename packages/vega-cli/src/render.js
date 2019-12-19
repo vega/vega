@@ -32,7 +32,7 @@ module.exports = function(type, callback, opt) {
 
   // use a seeded random number generator, if specified
   if (typeof arg.seed !== 'undefined') {
-    if (isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
+    if (Number.isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
     vega.setRandom(vega.randomLCG(arg.seed));
   }
 

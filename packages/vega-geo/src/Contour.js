@@ -1,10 +1,10 @@
 import {ingest, Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
-import {extent} from 'd3-array';
-import {contours, contourDensity} from 'd3-contour';
-
-var CONTOUR_PARAMS = ['size', 'smooth'];
-var DENSITY_PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
+import {inherits, isArray} from 'vega-util';
+import {transform} from './Isocontour';
+import {params} from './KDE2D';
+import contours from './util/contours';
+import density2D from './util/density2D';
+import quantize from './util/quantize';
 
 /**
  * Generate contours based on kernel-density estimation of point data.
@@ -49,52 +49,39 @@ Contour.Definition = {
     { "name": "cellSize", "type": "number" },
     { "name": "bandwidth", "type": "number" },
     { "name": "count", "type": "number" },
-    { "name": "smooth", "type": "boolean" },
     { "name": "nice", "type": "boolean", "default": false },
-    { "name": "thresholds", "type": "number", "array": true }
+    { "name": "thresholds", "type": "number", "array": true },
+    { "name": "smooth", "type": "boolean", "default": true }
   ]
 };
 
 var prototype = inherits(Contour, Transform);
 
 prototype.transform = function(_, pulse) {
-  if (this.value && !pulse.changed() && !_.modified())
+  if (this.value && !pulse.changed() && !_.modified()) {
     return pulse.StopPropagation;
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      count = _.count || 10,
-      contour, params, values;
-
-  if (_.values) {
-    contour = contours();
-    params = CONTOUR_PARAMS;
-    values = _.values;
-  } else {
-    contour = contourDensity();
-    params = DENSITY_PARAMS;
-    values = pulse.materialize(pulse.SOURCE).source;
   }
 
-  // set threshold parameter
-  contour.thresholds(_.thresholds || (_.nice ? count : quantize(count)));
+  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+      contour = contours().smooth(_.smooth !== false),
+      values = _.values,
+      thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
+      size = _.size, grid, post;
 
-  // set all other parameters
-  params.forEach(function(param) {
-    if (_[param] != null) contour[param](_[param]);
-  });
+  if (!values) {
+    values = pulse.materialize(pulse.SOURCE).source;
+    grid = params(density2D(), _)(values, true);
+    post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
+    size = [grid.width, grid.height];
+    values = grid.values;
+  }
+
+  thresh = isArray(thresh) ? thresh : thresh(values);
+  values = contour.size(size)(values, thresh);
+  if (post) values.forEach(post);
 
   if (this.value) out.rem = this.value;
-  values = values && values.length ? contour(values).map(ingest) : [];
-  this.value = out.source = out.add = values;
+  this.value = out.source = out.add = (values || []).map(ingest);
 
   return out;
 };
-
-function quantize(k) {
-  return function(values) {
-    var ex = extent(values), x0 = ex[0], dx = ex[1] - x0,
-        t = [], i = 1;
-    for (; i<=k; ++i) t.push(x0 + dx * i / (k + 1));
-    return t;
-  };
-}
