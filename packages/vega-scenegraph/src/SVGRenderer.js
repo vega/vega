@@ -536,6 +536,11 @@ prototype._update = function(mdef, el, item) {
   // apply svg css styles
   // note: element may be modified by 'extra' method
   if (element) this.style(element, item);
+
+  // apply css class to element
+  if(element && item.css){
+    element.setAttribute('class', item.css);
+  }
 };
 
 function emit(name, value, ns) {
