@@ -72,138 +72,127 @@ export interface TitleEncode {
   subtitle?: GuideEncodeEntry<TextEncodeEntry>;
 }
 
-export interface BaseTitle<
-  N = NumberValue,
-  S = StringValue,
-  C = ColorValue,
-  FW = FontWeightValue,
-  FS = FontStyleValue,
-  A = AlignValue,
-  TB = TextBaselineValue,
-  F = TitleFrame | StringValue,
-  AN = AnchorValue,
-  O = TitleOrient | SignalRef
-> {
+export interface BaseTitle {
   /**
    * The anchor position for placing the title and subtitle text. One of `"start"`, `"middle"`, or `"end"`. For example, with an orientation of top these anchor positions map to a left-, center-, or right-aligned title.
    */
-  anchor?: AN;
+  anchor?: AnchorValue;
 
   /**
    * The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height).
    */
-  frame?: F;
+  frame?: TitleFrame | StringValue;
 
   /**
    * The orthogonal offset in pixels by which to displace the title group from its position along the edge of the chart.
    */
-  offset?: N;
+  offset?: NumberValue;
 
   /**
    * Horizontal text alignment for title text. One of `"left"`, `"center"`, or `"right"`.
    */
-  align?: A;
+  align?: AlignValue;
 
   /**
    * Angle in degrees of title and subtitle text.
    */
-  angle?: N;
+  angle?: NumberValue;
 
   /**
    * Vertical text baseline for title and subtitle text. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
    */
-  baseline?: TB;
+  baseline?: TextBaselineValue;
 
   /**
    * Delta offset for title and subtitle text x-coordinate.
    */
-  dx?: N;
+  dx?: NumberValue;
 
   /**
    * Delta offset for title and subtitle text y-coordinate.
    */
-  dy?: N;
+  dy?: NumberValue;
 
   /**
    * Text color for title text.
    */
-  color?: C;
+  color?: ColorValue;
 
   /**
    * Font name for title text.
    */
-  font?: S;
+  font?: StringValue;
 
   /**
    * Font size in pixels for title text.
    *
    * @minimum 0
    */
-  fontSize?: N;
+  fontSize?: NumberValue;
 
   /**
    * Font style for title text.
    */
-  fontStyle?: FS;
+  fontStyle?: FontStyleValue;
 
   /**
    * Font weight for title text.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  fontWeight?: FW;
+  fontWeight?: FontWeightValue;
 
   /**
    * Line height in pixels for multi-line title text.
    */
-  lineHeight?: N;
+  lineHeight?: NumberValue;
 
   /**
    * The maximum allowed length in pixels of title and subtitle text.
    *
    * @minimum 0
    */
-  limit?: N;
+  limit?: NumberValue;
 
   /**
    * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
    */
-  orient?: O;
+  orient?: TitleOrient | SignalRef;
 
   /**
    * Text color for subtitle text.
    */
-  subtitleColor?: C;
+  subtitleColor?: ColorValue;
 
   /**
    * Font name for subtitle text.
    */
-  subtitleFont?: S;
+  subtitleFont?: StringValue;
 
   /**
    * Font size in pixels for subtitle text.
    *
    * @minimum 0
    */
-  subtitleFontSize?: N;
+  subtitleFontSize?: NumberValue;
 
   /**
    * Font style for subtitle text.
    */
-  subtitleFontStyle?: FS;
+  subtitleFontStyle?: FontStyleValue;
 
   /**
    * Font weight for subtitle text.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  subtitleFontWeight?: FW;
+  subtitleFontWeight?: FontWeightValue;
 
   /**
    * Line height in pixels for multi-line subtitle text.
    */
-  subtitleLineHeight?: N;
+  subtitleLineHeight?: NumberValue;
 
   /**
    * The padding in pixels between title and subtitle text.
    */
-  subtitlePadding?: N;
+  subtitlePadding?: NumberValue;
 }

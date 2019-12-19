@@ -3,9 +3,11 @@
   "width": 200,
   "height": 200,
   "padding": 5,
+  "autosize": "none",
 
   "signals": [
     { "name": "clip", "value": false, "bind": {"input": "checkbox"} },
+    { "name": "foreground", "value": false, "bind": {"input": "checkbox"} },
     { "name": "x", "value": 25,
       "bind": {"input": "range", "min": 0, "max": 200, "step": 1} },
     { "name": "y", "value": 25,
@@ -26,10 +28,6 @@
     {
       "type": "group",
       "encode": {
-        "enter": {
-          "fill": {"value": "#939597"},
-          "stroke": {"value": "#652c90"}
-        },
         "update": {
           "x": {"signal": "x"},
           "y": {"signal": "y"},
@@ -39,8 +37,9 @@
           "opacity": {"value": 1},
           "cornerRadius": {"signal": "cornerRadius"},
           "strokeWidth": {"signal": "strokeWidth"},
-          "fillOpacity": {"signal": "color === 'fill' || color === 'both' ? 1 : 0"},
-          "strokeOpacity": {"signal": "color === 'stroke' || color === 'both' ? 1 : 0"}
+          "strokeForeground": {"signal": "foreground"},
+          "fill": {"signal": "color !== 'stroke' ? '#939597' : null"},
+          "stroke": {"signal": "color !== 'fill' ? '#652c90' : null"}
         },
         "hover": {
           "opacity": {"value": 0.5}
@@ -62,15 +61,19 @@
         {
           "type": "rect",
           "from": {"data": "table"},
-          "interactive": false,
           "encode": {
             "enter": {
               "x": {"field": "x"},
               "y": {"field": "y"},
               "width": {"field": "w"},
               "height": {"field": "h"},
-              "fill": {"value": "aliceblue"},
               "stroke": {"value": "firebrick"}
+            },
+            "update": {
+              "fill": {"value": "aliceblue"}
+            },
+            "hover": {
+              "fill": {"value": "salmon"}
             }
           }
         }

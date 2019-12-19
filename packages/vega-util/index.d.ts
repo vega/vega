@@ -68,6 +68,9 @@ export interface FastMap {
 }
 export function fastmap(_?: object): FastMap;
 
+export function mergeConfig<C extends object>(...c: C[]): C;
+export function writeConfig<C extends object>(c: C, key: string, value: any, recurse?: boolean | object): void;
+
 // Arrays
 
 export function array<T>(v: T | T[]): T[];

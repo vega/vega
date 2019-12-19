@@ -1,3 +1,4 @@
+export {default as bandwidthNRD} from './src/bandwidth';
 export {default as bin} from './src/bin';
 export {default as bootstrapCI} from './src/bootstrapCI';
 export {default as dotbin} from './src/dotbin';

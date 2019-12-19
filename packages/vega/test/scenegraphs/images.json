@@ -295,7 +295,7 @@
                     },
                     {
                       "x": -7,
-                      "y": 66.66666666666669,
+                      "y": 66.66666666666667,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",
@@ -308,7 +308,7 @@
                     },
                     {
                       "x": -7,
-                      "y": 33.333333333333314,
+                      "y": 33.33333333333333,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",
@@ -387,7 +387,7 @@
             },
             {
               "x": 25,
-              "y": 33.333333333333314,
+              "y": 33.33333333333333,
               "width": 50,
               "height": 50,
               "align": "center",
@@ -412,7 +412,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "aspect": false
             },
             {
               "x": 75,
@@ -422,17 +423,19 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "aspect": false
             },
             {
               "x": 75,
-              "y": 33.333333333333314,
+              "y": 33.33333333333333,
               "width": 25,
               "height": 50,
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "aspect": false
             }
           ],
           "zindex": 0
@@ -451,7 +454,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "aspect": true
             },
             {
               "x": 125,
@@ -461,17 +465,19 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "aspect": true
             },
             {
               "x": 125,
-              "y": 33.333333333333314,
+              "y": 33.33333333333333,
               "width": 50,
               "height": 30,
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "aspect": true
             }
           ],
           "zindex": 0
@@ -502,7 +508,7 @@
             },
             {
               "x": 175,
-              "y": 33.333333333333314,
+              "y": 33.33333333333333,
               "width": 25,
               "align": "center",
               "baseline": "middle",

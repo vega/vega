@@ -47,7 +47,7 @@ To create themes, new default values for many title properties can be set using 
 
 ## <a name="custom"></a>Custom Title Encodings
 
-Custom mark properties can be set for all title elements using the _encode_ parameter. The addressable elements are:
+In addition to the customization parameters above, mark properties can be set for all title elements using the _encode_ parameter. The addressable elements are:
 
 - `group` for the title [group](../marks/group) mark,
 - `title` for the title [text](../marks/text) mark, and
@@ -56,3 +56,29 @@ Custom mark properties can be set for all title elements using the _encode_ para
 Each element accepts a set of visual encoding directives grouped into `enter`, `update`, `exit`, _etc._ objects as described in the [Marks](../marks) documentation. Mark properties can be styled using standard [value references](../types/#Value).
 
 In addition, each encode block may include a string-valued `name` property to assign a unique name to the mark set, a boolean-valued `interactive` property to enable input event handling, and a string-valued (or array-valued) `style` property to apply default property values. Unless otherwise specified, title elements use a default style of `"group-title"` and subtitle elements use a default style of `"group-subtitle"`.
+
+The following example shows how to set custom color and font properties for title and subtitle text marks, and enable interactivity for the subtitle text:
+
+{: .suppress-error}
+```json
+"title": {
+  "text": "Title Text",
+  "subtitle": "Subtitle Text",
+  "encode": {
+    "title": {
+      "enter": {
+        "fill": {"value": "purple"}
+      }
+    },
+    "subtitle": {
+      "interactive": true,
+      "update": {
+        "fontStyle": {"value": "italic"}
+      },
+      "hover": {
+        "fontStyle": {"value": "normal"}
+      }
+    }
+  }
+}
+```

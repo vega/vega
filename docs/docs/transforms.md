@@ -52,18 +52,22 @@ Transforms for processing streams of data objects.
 - [`regression`](regression) - Fit regression models to smooth and predict values. {% include tag ver="5.4" %}
 - [`sample`](sample) - Randomly sample data objects in a stream.
 - [`sequence`](sequence) - Generate a new stream containing a sequence of numeric values.
+- [`timeunit`](timeunit) - Discretize date-time values into time unit bins. {% include tag ver="5.8" %}
 - [`window`](window) - Calculate over ordered groups, including ranking and running totals.
 
-## Geographic Transforms
+## Geographic and Spatial Transforms
 
-Transforms for projecting geographic data and generating geographic guides.
+Transforms for modeling spatial data, cartographic projection, and geographic guides.
 
-- [`contour`](contour) - Model a spatial distribution using discrete levels.
+- [`contour`](contour) - _Deprecated._ Model a spatial distribution using discrete levels.
 - [`geojson`](geojson) - Consolidate geographic data into a GeoJSON feature collection.
 - [`geopath`](geopath) - Map GeoJSON features to SVG path strings.
 - [`geopoint`](geopoint) - Map (longitude, latitude) coordinates to (x, y) points.
 - [`geoshape`](geoshape) - Map GeoJSON features to a shape instance for procedural drawing.
 - [`graticule`](graticule) - Generate a reference grid for cartographic maps.
+- [`heatmap`](heatmap) - Generate heatmap images for raster grid data. {% include tag ver="5.8" %}
+- [`isocontour`](isocontour) - Generate level set contours for raster grid data. {% include tag ver="5.8" %}
+- [`kde2d`](kde2d) - Estimate 2D densities as output raster grids. {% include tag ver="5.8" %}
 
 ## Layout Transforms
 

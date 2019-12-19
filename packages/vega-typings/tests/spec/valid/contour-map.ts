@@ -105,7 +105,8 @@ export const spec: Spec = {
               "x": "x",
               "y": "y",
               "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"}
+              "count": {"signal": "count"},
+              "bandwidth": 20
             }
           ]
         }

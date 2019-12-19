@@ -1,6 +1,6 @@
 var tape = require('tape'),
 validTicks = require('../').validTicks,
-timeInterval = require('vega-scale').timeInterval;
+timeInterval = require('vega-time').timeInterval;
 
 tape('validTicks uses count correctly', function(t) {
   var data = [0, 1, 2, 3, 4, 5, 6, 7];

@@ -5,9 +5,9 @@ import {truthy} from 'vega-util';
 
 function getImage(item, renderer) {
   var image = item.image;
-  if (!image || image.url !== item.url) {
-    image = {loaded: false, width: 0, height: 0};
-    renderer.loadImage(item.url).then(function(image) {
+  if (!image || item.url && item.url !== image.url) {
+    image = {complete: false, width: 0, height: 0};
+    renderer.loadImage(item.url).then(image => {
       item.image = image;
       item.image.url = item.url;
     });
@@ -48,7 +48,11 @@ function attr(emit, item, renderer) {
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
 
-  emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
+  if (!image.src && image.toDataURL) {
+    emit('href', image.toDataURL(), 'http://www.w3.org/1999/xlink', 'xlink:href');
+  } else {
+    emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
+  }
   emit('transform', translate(x, y));
   emit('width', w);
   emit('height', h);
@@ -100,8 +104,9 @@ function draw(context, scene, bounds) {
       }
     }
 
-    if (image.loaded) {
+    if (image.complete || image.toDataURL) {
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
+      context.imageSmoothingEnabled = item.smooth !== false;
       context.drawImage(image, x, y, w, h);
     }
   });

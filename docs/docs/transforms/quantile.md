@@ -21,7 +21,7 @@ The **quantile** transform {% include tag ver="5.7" %} calculates empirical [qua
 This example computes the [quartile](https://en.wikipedia.org/wiki/Quartile) boundaries for the input data field *value*:
 
 ```json
-{"type": "quantile", "field": "value", "quantiles": [0.25, 0.50, 0.75]}
+{"type": "quantile", "field": "value", "probs": [0.25, 0.50, 0.75]}
 ```
 
 This example computes 20 equally-spaced quantiles (from 0.025 to 0.975):

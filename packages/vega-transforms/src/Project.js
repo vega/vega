@@ -23,7 +23,7 @@ Project.Definition = {
   "metadata": {"generates": true, "changes": true},
   "params": [
     { "name": "fields", "type": "field", "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true },
+    { "name": "as", "type": "string", "null": true, "array": true }
   ]
 };
 

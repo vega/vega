@@ -206,6 +206,7 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('width', clip.width);
     mask.setAttribute('height', clip.height);
   }
+  domClear(el, 1);
 
   return index + 1;
 }
@@ -348,7 +349,7 @@ prototype.draw = function(el, scene, prev) {
 
 // Recursively process group contents.
 function recurse(renderer, el, group) {
-  el = el.lastChild;
+  el = el.lastChild.previousSibling;
   var prev, idx = 0;
 
   visit(group, function(item) {
@@ -375,16 +376,20 @@ function bind(item, el, sibling, tag, svg) {
       node.__data__ = item;
       node.__values__ = {fill: 'default'};
 
-      // if group, create background and foreground elements
+      // if group, create background, content, and foreground elements
       if (tag === 'g') {
         var bg = domCreate(doc, 'path', ns);
-        bg.setAttribute('class', 'background');
         node.appendChild(bg);
         bg.__data__ = item;
 
-        var fg = domCreate(doc, 'g', ns);
+        var cg = domCreate(doc, 'g', ns);
+        node.appendChild(cg);
+        cg.__data__ = item;
+
+        var fg = domCreate(doc, 'path', ns);
         node.appendChild(fg);
         fg.__data__ = item;
+        fg.__values__ = {fill: 'default'};
       }
     }
   }
@@ -412,18 +417,54 @@ var element = null, // temp var for current SVG element
 // Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
-    values = el.__values__; // use parent's values hash
+    var fg, bg;
 
-    element = el.childNodes[1];
+    element = fg = el.childNodes[2];
+    values = fg.__values__;
     mdef.foreground(emit, item, this);
 
-    element = el.childNodes[0];
+    values = el.__values__; // use parent's values hash
+    element = el.childNodes[1];
+    mdef.content(emit, item, this);
+
+    element = bg = el.childNodes[0];
     mdef.background(emit, item, this);
 
     var value = item.mark.interactive === false ? 'none' : null;
     if (value !== values.events) {
-      element.style.setProperty('pointer-events', value);
+      fg.style.setProperty('pointer-events', value);
+      bg.style.setProperty('pointer-events', value);
       values.events = value;
+    }
+
+    if (item.strokeForeground && item.stroke) {
+      const fill = item.fill;
+      fg.style.removeProperty('display');
+
+      // set style of background
+      this.style(bg, item);
+      bg.style.removeProperty('stroke');
+
+      // set style of foreground
+      if (fill) item.fill = null;
+      values = fg.__values__;
+      this.style(fg, item);
+      if (fill) item.fill = fill;
+
+      // leave element null to prevent downstream styling
+      element = null;
+    } else {
+      // ensure foreground is ignored
+      fg.style.setProperty('display', 'none');
+      fg.style.setProperty('fill', 'none');
+    }
+  },
+  image: function(mdef, el, item) {
+    if (item.smooth === false) {
+      setStyle(el, 'image-rendering', 'optimizeSpeed');
+      setStyle(el, 'image-rendering', 'pixelated');
+    } else {
+      setStyle(el, 'image-rendering', null);
     }
   },
   text: function(mdef, el, item) {
@@ -494,7 +535,7 @@ prototype._update = function(mdef, el, item) {
 
   // apply svg css styles
   // note: element may be modified by 'extra' method
-  this.style(element, item);
+  if (element) this.style(element, item);
 };
 
 function emit(name, value, ns) {

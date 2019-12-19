@@ -66,3 +66,13 @@ tape('kde does not support the inverse cdf', function(t) {
   t.throws(function() { stats.randomKDE([1,1,1]).icdf(0.5); });
   t.end();
 });
+
+tape('kde auto-selects positive bandwidth values', function(t) {
+  var a = [377, 347, 347, 347, 347, 347];
+  t.ok(stats.randomKDE(a).bandwidth() > 0);
+  t.ok(stats.randomKDE(a.slice(1)).bandwidth() > 0);
+  t.ok(stats.randomKDE([-1, -1, -1]).bandwidth() > 0);
+  t.ok(stats.randomKDE([0, 0, 0]).bandwidth() > 0);
+  t.ok(stats.randomKDE([]).bandwidth() > 0);
+  t.end();
+});

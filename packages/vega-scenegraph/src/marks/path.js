@@ -5,10 +5,16 @@ import pathRender from '../path/render';
 import {intersectPath} from '../util/intersect';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
-import {translateItem} from '../util/svg/transform';
+import {transformItem} from '../util/svg/transform';
+import {DegToRad} from '../util/constants';
 
 function attr(emit, item) {
-  emit('transform', translateItem(item));
+  var sx = item.scaleX || 1,
+      sy = item.scaleY || 1;
+  if (sx !== 1 || sy !== 1) {
+    emit('vector-effect', 'non-scaling-stroke');
+  }
+  emit('transform', transformItem(item));
   emit('d', item.path);
 }
 
@@ -16,17 +22,38 @@ function path(context, item) {
   var path = item.path;
   if (path == null) return true;
 
-  var cache = item.pathCache;
+  var x = item.x || 0,
+      y = item.y || 0,
+      sx = item.scaleX || 1,
+      sy = item.scaleY || 1,
+      a = (item.angle || 0) * DegToRad,
+      cache = item.pathCache;
+
   if (!cache || cache.path !== path) {
     (item.pathCache = cache = pathParse(path)).path = path;
   }
-  pathRender(context, cache, item.x, item.y);
+
+  if (a && context.rotate && context.translate) {
+    context.translate(x, y);
+    context.rotate(a);
+    pathRender(context, cache, 0, 0, sx, sy);
+    context.rotate(-a);
+    context.translate(-x, -y);
+  } else {
+    pathRender(context, cache, x, y, sx, sy);
+  }
 }
 
 function bound(bounds, item) {
-  return path(context(bounds), item)
+  path(context(bounds), item)
     ? bounds.set(0, 0, 0, 0)
-    : boundStroke(bounds, item);
+    : boundStroke(bounds, item, true);
+
+  if (item.angle) {
+    bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
+  }
+
+  return bounds;
 }
 
 export default {

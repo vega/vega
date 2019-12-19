@@ -124,7 +124,7 @@ export var AggregateOps = {
     init: 'this.min = undefined;',
     add:  'if (v < this.min || this.min === undefined) this.min = v;',
     rem:  'if (v <= this.min) this.min = NaN;',
-    set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
+    set:  'this.min = (Number.isNaN(this.min) ? cell.data.min(this.get) : this.min)',
     str:  ['values'], idx: 4
   }),
   'max': measure({
@@ -132,7 +132,7 @@ export var AggregateOps = {
     init: 'this.max = undefined;',
     add:  'if (v > this.max || this.max === undefined) this.max = v;',
     rem:  'if (v >= this.max) this.max = NaN;',
-    set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
+    set:  'this.max = (Number.isNaN(this.max) ? cell.data.max(this.get) : this.max)',
     str:  ['values'], idx: 4
   })
 };

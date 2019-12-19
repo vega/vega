@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "2.6.1",
+  "version": "2.6.3",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -12,6 +12,7 @@
   "license": "BSD-3-Clause",
   "main": "build/vega-expression.js",
   "module": "index",
+  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
