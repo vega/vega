@@ -26,12 +26,12 @@ function emitRectangle(emit, item) {
 }
 
 function background(emit, item) {
-  emit('class', 'background');
+  emit('class', 'background' + (item.css ? ' ' + item.css : ''));
   emitRectangle(emit, item);
 }
 
 function foreground(emit, item) {
-  emit('class', 'foreground');
+  emit('class', 'foreground' + (item.cssForeground ? ' ' + item.cssForeground : ''));
   if (item.strokeForeground) {
     emitRectangle(emit, item);
   } else {

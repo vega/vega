@@ -9,6 +9,9 @@ import {transformItem} from '../util/svg/transform';
 import {DegToRad} from '../util/constants';
 
 function attr(emit, item) {
+  if(item.css){
+    emit('class', item.css)
+  }
   var sx = item.scaleX || 1,
       sy = item.scaleY || 1;
   if (sx !== 1 || sy !== 1) {

@@ -38,6 +38,9 @@ function imageYOffset(baseline, h) {
 }
 
 function attr(emit, item, renderer) {
+  if(item.css){
+    emit('class', item.css)
+  }
   var image = getImage(item, renderer),
       x = item.x || 0,
       y = item.y || 0,

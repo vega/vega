@@ -201,6 +201,7 @@ const encodeEntry = object({
   clip: booleanValueRef,
   strokeForeground: booleanValueRef,
   strokeOffset: numberValueRef,
+  cssForeground: stringValueRef,
 
   // Rect-mark properties
   cornerRadius: numberValueRef,

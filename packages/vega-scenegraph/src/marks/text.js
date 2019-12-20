@@ -34,6 +34,9 @@ function anchorPoint(item) {
 }
 
 function attr(emit, item) {
+  if(item.css){
+    emit('class', item.css)
+  }
   var dx = item.dx || 0,
       dy = (item.dy || 0) + offset(item),
       p = anchorPoint(item),

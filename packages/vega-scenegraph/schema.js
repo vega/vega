@@ -195,7 +195,8 @@ var ITEM_BASE = {
     "zindex": { "type": "number" },
     "cursor": { "type": "string" },
     "href": { "type": "string", "format": "uri-reference" },
-    "tooltip": {}
+    "tooltip": {},
+    "css":{"type": "string"}
   }
 };
 
@@ -242,7 +243,8 @@ var MARKS = {
       "cornerRadiusBottomLeft": { "type": "number" },
       "items": { "type": "array", "items": { "$ref": "#/refs/mark" } },
       "strokeForeground": { "type": "boolean" },
-      "strokeOffset": { "type": "number" }
+      "strokeOffset": { "type": "number" },
+      "cssForeground":{"type": "string"}
     }
   },
   "arc": {
