@@ -19,7 +19,7 @@
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "@types/node": "^12.12.14",
+    "@types/node": "^13.1.4",
     "ajv": "^6.10.2",
     "canvas": "^2.6.0",
     "dtslint": "^2.0.2",
