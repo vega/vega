@@ -1,5 +1,5 @@
 var rollup = require('rollup'),
-    nodeResolve = require('rollup-plugin-node-resolve'),
+    nodeResolve = require('@rollup/plugin-node-resolve'),
     externals = process.argv[2] === '-e',
     output = 'vega-projections' + (externals ? '-core' : '') + '.js';
 
