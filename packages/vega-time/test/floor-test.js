@@ -73,3 +73,43 @@ tape('utcFloor generates utc floor function', function(t) {
 
   t.end();
 });
+
+tape('timeFloor handles step parameter', function(t) {
+  const d1 = local(2020, 5, 15),
+        d2 = local(2020, 5, 22),
+        yq = ['year', 'quarter'],
+        yw = ['year', 'week'];
+
+  t.equal(+vega.timeFloor(yq)(d1), +local(2020, 3, 1));
+  t.equal(+vega.timeFloor(yq, 1)(d1), +local(2020, 3, 1));
+  t.equal(+vega.timeFloor(yq, 2)(d1), +local(2020, 0, 1));
+
+  t.equal(+vega.timeFloor(yw)(d1), +local(2020, 5, 14));
+  t.equal(+vega.timeFloor(yw, 1)(d1), +local(2020, 5, 14));
+  t.equal(+vega.timeFloor(yw, 2)(d1), +local(2020, 5, 7));
+  t.equal(+vega.timeFloor(yw, 3)(d1), +local(2020, 4, 31));
+  t.equal(+vega.timeFloor(yw, 4)(d1), +local(2020, 4, 24));
+  t.equal(+vega.timeFloor(yw, 4)(d2), +local(2020, 5, 21));
+
+  t.end();
+});
+
+tape('utcFloor handles step parameter', function(t) {
+  const d1 = utc(2020, 5, 15),
+        d2 = utc(2020, 5, 22),
+        yq = ['year', 'quarter'],
+        yw = ['year', 'week'];
+
+  t.equal(+vega.utcFloor(yq)(d1), +utc(2020, 3, 1));
+  t.equal(+vega.utcFloor(yq, 1)(d1), +utc(2020, 3, 1));
+  t.equal(+vega.utcFloor(yq, 2)(d1), +utc(2020, 0, 1));
+
+  t.equal(+vega.utcFloor(yw)(d1), +utc(2020, 5, 14));
+  t.equal(+vega.utcFloor(yw, 1)(d1), +utc(2020, 5, 14));
+  t.equal(+vega.utcFloor(yw, 2)(d1), +utc(2020, 5, 7));
+  t.equal(+vega.utcFloor(yw, 3)(d1), +utc(2020, 4, 31));
+  t.equal(+vega.utcFloor(yw, 4)(d1), +utc(2020, 4, 24));
+  t.equal(+vega.utcFloor(yw, 4)(d2), +utc(2020, 5, 21));
+
+  t.end();
+});

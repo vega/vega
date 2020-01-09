@@ -15,10 +15,13 @@ import {timeWeek, utcWeek} from 'd3-time';
 
 const t0 = new Date;
 
-function floor(units, step, fn, newDate) {
+function floor(units, step, get, inv, newDate) {
   const s = step || 1,
         b = peek(units),
-        _ = (unit, p, key) => skip(fn[key || unit], unit === b && s, p);
+        _ = (unit, p, key) => {
+          key = key || unit;
+          return getUnit(get[key], inv[key], unit === b && s, p);
+        };
 
   const t = new Date,
         u = toSet(units),
@@ -43,10 +46,11 @@ function floor(units, step, fn, newDate) {
   };
 }
 
-function skip(f, step, phase) {
-  return step <= 1 ? f
+function getUnit(f, inv, step, phase) {
+  const u = step <= 1 ? f
     : phase ? (d, y) => phase + step * Math.floor((f(d, y) - phase) / step)
     : (d, y) => step * Math.floor(f(d, y) / step);
+  return inv ? (d, y) => inv(u(d, y), y) : u;
 }
 
 // returns the day of the year based on week number, day of week,
@@ -59,16 +63,21 @@ function weekday(week, day, firstDay) {
 
 const localGet = {
   [YEAR]:         d => d.getFullYear(),
-  [QUARTER]:      d => 3 * ~~(d.getMonth() / 3),
+  [QUARTER]:      d => Math.floor(d.getMonth() / 3),
   [MONTH]:        d => d.getMonth(),
   [DATE]:         d => d.getDate(),
   [HOURS]:        d => d.getHours(),
   [MINUTES]:      d => d.getMinutes(),
   [SECONDS]:      d => d.getSeconds(),
   [MILLISECONDS]: d => d.getMilliseconds(),
-  [DAY]:          (d, y) => weekday(1, d.getDay(), localFirst(y)),
-  [WEEK]:         (d, y) => weekday(localWeekNum(d), 0, localFirst(y)),
-  [WEEK + DAY]:   (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y))
+  [WEEK]:         d => localWeekNum(d),
+  [WEEK + DAY]:   (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
+  [DAY]:          (d, y) => weekday(1, d.getDay(), localFirst(y))
+};
+
+const localInv = {
+  [QUARTER]: q => 3 * q,
+  [WEEK]:    (w, y) => weekday(w, 0, localFirst(y))
 };
 
 function localYear(y) {
@@ -97,23 +106,28 @@ function localDate(y, m, d, H, M, S, L) {
 }
 
 export function timeFloor(units, step) {
-  return floor(units, step || 1, localGet, localDate);
+  return floor(units, step || 1, localGet, localInv, localDate);
 }
 
 // -- UTC TIME --
 
 const utcGet = {
   [YEAR]:         d => d.getUTCFullYear(),
-  [QUARTER]:      d => 3 * ~~(d.getUTCMonth() / 3),
+  [QUARTER]:      d => Math.floor(d.getUTCMonth() / 3),
   [MONTH]:        d => d.getUTCMonth(),
   [DATE]:         d => d.getUTCDate(),
   [HOURS]:        d => d.getUTCHours(),
   [MINUTES]:      d => d.getUTCMinutes(),
   [SECONDS]:      d => d.getUTCSeconds(),
   [MILLISECONDS]: d => d.getUTCMilliseconds(),
+  [WEEK]:         d => utcWeekNum(d),
   [DAY]:          (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
-  [WEEK]:         (d, y) => weekday(utcWeekNum(d), 0, utcFirst(y)),
   [WEEK + DAY]:   (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+};
+
+const utcInv = {
+  [QUARTER]: q => 3 * q,
+  [WEEK]:    (w, y) => weekday(w, 0, utcFirst(y))
 };
 
 function utcWeekNum(d) {
@@ -136,5 +150,5 @@ function utcDate(y, m, d, H, M, S, L) {
 }
 
 export function utcFloor(units, step) {
-  return floor(units, step || 1, utcGet, utcDate);
+  return floor(units, step || 1, utcGet, utcInv, utcDate);
 }
