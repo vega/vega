@@ -1,6 +1,6 @@
 const rollup = require('rollup'),
       json = require('@rollup/plugin-json'),
-      nodeResolve = require('@rollup/plugin-node-resolve'),
+      resolve = require('@rollup/plugin-node-resolve'),
       esmodule = hasArgument('-m'),
       externals = esmodule || hasArgument('-e'),
       output = `vega${esmodule ? '-module' : externals ? '-core' : ''}.js`;
@@ -47,7 +47,10 @@ rollup.rollup({
   input: 'index.js',
   external: external,
   plugins: [
-    nodeResolve({browser: true}),
+    resolve({
+      browser: true,
+      customResolveOptions: { preserveSymlinks: false }
+    }),
     json()
   ],
   onwarn: function(warning) {

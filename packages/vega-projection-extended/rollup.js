@@ -1,5 +1,5 @@
 var rollup = require('rollup'),
-    nodeResolve = require('@rollup/plugin-node-resolve'),
+    resolve = require('@rollup/plugin-node-resolve'),
     externals = process.argv[2] === '-e',
     output = 'vega-projections' + (externals ? '-core' : '') + '.js';
 
@@ -18,7 +18,9 @@ rollup.rollup({
   input: 'index.js',
   external: modules,
   plugins: [
-    nodeResolve()
+    resolve({
+      customResolveOptions: { preserveSymlinks: false }
+    })
   ]
 }).then(function(bundle) {
   return bundle.write({
@@ -28,9 +30,11 @@ rollup.rollup({
     globals: module_globals
   });
 }).then(function() {
+  // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);
 
 function abort(error) {
+  // eslint-disable-next-line
   console.error(error.stack);
 }
