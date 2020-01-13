@@ -2,6 +2,7 @@ import {Symbols, Discrete} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
 import {peek} from 'vega-util';
 import {
+  Log,
   Quantile,
   Quantize,
   Threshold,
@@ -23,8 +24,23 @@ const formats = {
 
 export function labelValues(scale, count) {
   return scale.bins ? binValues(scale.bins)
+    : scale.type === Log ? logValues(scale, count)
     : symbols[scale.type] ? thresholdValues(scale[symbols[scale.type]]())
     : tickValues(scale, count);
+}
+
+function logValues(scale, count) {
+  var ticks = tickValues(scale, count),
+      base = scale.base(),
+      logb = Math.log(base),
+      k = Math.max(1, base * count / ticks.length);
+
+  // apply d3-scale's log format filter criteria
+  return ticks.filter(d => {
+    var i = d / Math.pow(base, Math.round(Math.log(d) / logb));
+    if (i * base < base - 0.5) i *= base;
+    return i <= k;
+  });
 }
 
 export function thresholdFormat(scale, specifier) {

@@ -40,7 +40,8 @@ prototype.transform = function(_, pulse) {
       scale = _.scale,
       limit = +_.limit,
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-      format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, !!_.values),
+      lskip = !!_.values || type === Symbols,
+      format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
       values = _.values || labelValues(scale, count, type),
       domain, fraction, size, offset, ellipsis;
 
