@@ -42,7 +42,8 @@
       c = p[j];
       if (c === '\\') {
         s += p.substring(i, j);
-        i = ++j;
+        s += p.substring(++j, ++j);
+        i = j;
       } else if (c === q) {
         push();
         q = null;
@@ -6115,7 +6116,7 @@
         a
       ],
       predict: predict,
-      rSquared: rSquared(data, x, y, 0, predict)
+      rSquared: rSquared(data, x, y, uy, predict)
     };
   }
 
@@ -6165,7 +6166,7 @@
     return {
       coef: uncenter(k, coef, -ux, uy),
       predict: predict,
-      rSquared: rSquared(data, x, y, 0, predict)
+      rSquared: rSquared(data, x, y, uy, predict)
     };
   }
 
@@ -9215,10 +9216,13 @@
 
   const t0$1 = new Date;
 
-  function floor(units, step, fn, newDate) {
+  function floor(units, step, get, inv, newDate) {
     const s = step || 1,
           b = peek(units),
-          _ = (unit, p, key) => skip(fn[key || unit], unit === b && s, p);
+          _ = (unit, p, key) => {
+            key = key || unit;
+            return getUnit(get[key], inv[key], unit === b && s, p);
+          };
 
     const t = new Date,
           u = toSet(units),
@@ -9243,10 +9247,11 @@
     };
   }
 
-  function skip(f, step, phase) {
-    return step <= 1 ? f
+  function getUnit(f, inv, step, phase) {
+    const u = step <= 1 ? f
       : phase ? (d, y) => phase + step * Math.floor((f(d, y) - phase) / step)
       : (d, y) => step * Math.floor(f(d, y) / step);
+    return inv ? (d, y) => inv(u(d, y), y) : u;
   }
 
   // returns the day of the year based on week number, day of week,
@@ -9259,16 +9264,21 @@
 
   const localGet = {
     [YEAR]:         d => d.getFullYear(),
-    [QUARTER]:      d => 3 * ~~(d.getMonth() / 3),
+    [QUARTER]:      d => Math.floor(d.getMonth() / 3),
     [MONTH]:        d => d.getMonth(),
     [DATE]:         d => d.getDate(),
     [HOURS]:        d => d.getHours(),
     [MINUTES]:      d => d.getMinutes(),
     [SECONDS]:      d => d.getSeconds(),
     [MILLISECONDS]: d => d.getMilliseconds(),
-    [DAY]:          (d, y) => weekday$1(1, d.getDay(), localFirst(y)),
-    [WEEK]:         (d, y) => weekday$1(localWeekNum(d), 0, localFirst(y)),
-    [WEEK + DAY]:   (d, y) => weekday$1(localWeekNum(d), d.getDay(), localFirst(y))
+    [WEEK]:         d => localWeekNum(d),
+    [WEEK + DAY]:   (d, y) => weekday$1(localWeekNum(d), d.getDay(), localFirst(y)),
+    [DAY]:          (d, y) => weekday$1(1, d.getDay(), localFirst(y))
+  };
+
+  const localInv = {
+    [QUARTER]: q => 3 * q,
+    [WEEK]:    (w, y) => weekday$1(w, 0, localFirst(y))
   };
 
   function localYear(y) {
@@ -9297,23 +9307,28 @@
   }
 
   function timeFloor(units, step) {
-    return floor(units, step || 1, localGet, localDate$1);
+    return floor(units, step || 1, localGet, localInv, localDate$1);
   }
 
   // -- UTC TIME --
 
   const utcGet = {
     [YEAR]:         d => d.getUTCFullYear(),
-    [QUARTER]:      d => 3 * ~~(d.getUTCMonth() / 3),
+    [QUARTER]:      d => Math.floor(d.getUTCMonth() / 3),
     [MONTH]:        d => d.getUTCMonth(),
     [DATE]:         d => d.getUTCDate(),
     [HOURS]:        d => d.getUTCHours(),
     [MINUTES]:      d => d.getUTCMinutes(),
     [SECONDS]:      d => d.getUTCSeconds(),
     [MILLISECONDS]: d => d.getUTCMilliseconds(),
+    [WEEK]:         d => utcWeekNum(d),
     [DAY]:          (d, y) => weekday$1(1, d.getUTCDay(), utcFirst(y)),
-    [WEEK]:         (d, y) => weekday$1(utcWeekNum(d), 0, utcFirst(y)),
     [WEEK + DAY]:   (d, y) => weekday$1(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+  };
+
+  const utcInv = {
+    [QUARTER]: q => 3 * q,
+    [WEEK]:    (w, y) => weekday$1(w, 0, utcFirst(y))
   };
 
   function utcWeekNum(d) {
@@ -9336,7 +9351,7 @@
   }
 
   function utcFloor(units, step) {
-    return floor(units, step || 1, utcGet, utcDate$1);
+    return floor(units, step || 1, utcGet, utcInv, utcDate$1);
   }
 
   const timeIntervals = {
@@ -19551,7 +19566,7 @@
       switch (s[i]) {
         case ".": i0 = i1 = i; break;
         case "0": if (i0 === 0) i0 = i; i1 = i; break;
-        default: if (i0 > 0) { if (!+s[i]) break out; i0 = 0; } break;
+        default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break;
       }
     }
     return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
@@ -21507,8 +21522,23 @@
 
   function labelValues(scale, count) {
     return scale.bins ? binValues(scale.bins)
+      : scale.type === Log ? logValues(scale, count)
       : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
       : tickValues(scale, count);
+  }
+
+  function logValues(scale, count) {
+    var ticks = tickValues(scale, count),
+        base = scale.base(),
+        logb = Math.log(base),
+        k = Math.max(1, base * count / ticks.length);
+
+    // apply d3-scale's log format filter criteria
+    return ticks.filter(d => {
+      var i = d / Math.pow(base, Math.round(Math.log(d) / logb));
+      if (i * base < base - 0.5) i *= base;
+      return i <= k;
+    });
   }
 
   function thresholdFormat(scale, specifier) {
@@ -21635,7 +21665,8 @@
         scale = _.scale,
         limit = +_.limit,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, !!_.values),
+        lskip = !!_.values || type === Symbols$1,
+        format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
         values = _.values || labelValues(scale, count),
         domain, fraction, size, offset, ellipsis;
 
@@ -32517,7 +32548,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.9.0";
+  var version = "5.9.1";
 
   var Default = 'default';
 
