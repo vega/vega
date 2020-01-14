@@ -38,6 +38,6 @@ export default function(data, x, y) {
       a
     ],
     predict: predict,
-    rSquared: rSquared(data, x, y, 0, predict)
+    rSquared: rSquared(data, x, y, uy, predict)
   };
 }
