@@ -83,7 +83,7 @@ Properties for specifying a coordinate axis.
 | titleY        | {% include type t="Number" %}  | Custom Y position of the axis title relative to the axis group, overriding the standard layout. |
 | translate     | {% include type t="Number" %}  | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
 | values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values. The array entries should be legal values in the backing scale domain.|
-| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
+| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
 
 To create themes, new default values for many axis properties can be set using a [config](../config) object.
 
