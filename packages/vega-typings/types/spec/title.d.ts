@@ -42,7 +42,7 @@ export interface Title extends BaseTitle {
   style?: string | string[];
 
   /**
-   * 	The integer z-index indicating the layering of the title group relative to other axis, mark and legend groups.
+   * 	The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups.
    *
    * __Default value:__ `0`.
    *
