@@ -497,7 +497,7 @@ export interface BaseAxis {
   labelOpacity?: NumberValue;
 
   /**
-   * The padding, in pixels, between axis and text labels.
+   * The padding in pixels between labels and ticks.
    *
    * __Default value:__ `2`
    */
