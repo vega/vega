@@ -497,6 +497,14 @@ export interface BaseAxis {
   labelOpacity?: NumberValue;
 
   /**
+   * Position offset in pixels to apply to labels, in addition to tickOffset.
+   *
+   * __Default value:__ `0`
+   */
+
+  labelOffset?: NumberValue;
+
+  /**
    * The padding in pixels between labels and ticks.
    *
    * __Default value:__ `2`
