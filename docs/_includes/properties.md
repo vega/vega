@@ -21,6 +21,8 @@
 | strokeDashOffset  | {% include type t="Number" %} | The pixel offset at which to start the stroke dash array.|
 | strokeJoin        | {% include type t="String" %} | The stroke line join method. One of `miter` (default), `round` or `bevel`.|
 | strokeMiterLimit  | {% include type t="Number" %} | The miter limit at which to bevel a line join.|
+| tabIndex          | {% include type t="Number" %} | The tab order. This proeprty is important for screen readers. This property only works with the SVG renderer.|
+| ariaLabel         | {% include type t="String" %} | The label for the mark used by screen readers. This property only works with the SVG renderer.|
 | cursor            | {% include type t="String" %} | The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.|
 | href              | {% include type t="URL" %}    | A URL to load upon mouse click. If defined, the mark acts as a hyperlink.|
 | tooltip           | {% include type t="Any" %} | The tooltip text to show upon mouse hover. If the value is an object (other than a Date or an array), then all key-value pairs in the object will be shown in the tooltip, one per line (e.g., `"key1: value1\nkey2: value2"`). Array values will be shown in brackets `[value1, value2, ...]`.  Other values will be coerced to strings. Nested object values will _not_ be recursively printed.|
