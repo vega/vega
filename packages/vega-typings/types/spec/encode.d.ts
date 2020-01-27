@@ -220,6 +220,8 @@ export interface EncodeEntry {
   strokeMiterLimit?: ProductionRule<NumericValueRef>;
   cursor?: ProductionRule<StringValueRef>;
   tooltip?: ProductionRule<StringValueRef>;
+  ariaLabel?: ProductionRule<StringValueRef>;
+  tabIndex?: ProductionRule<NumericValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 export type Align = 'left' | 'center' | 'right';

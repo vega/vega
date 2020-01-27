@@ -414,6 +414,11 @@ function siblingCheck(node, sibling) {
 var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
+var general_extras = {
+  'ariaLabel': 'aria-label',
+  'tabIndex': 'tabindex'
+}
+
 // Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
@@ -528,6 +533,13 @@ prototype._update = function(mdef, el, item) {
 
   // apply svg attributes
   mdef.attr(emit, item, this);
+
+  // apply general SVG properties
+  for (const prop in general_extras) {
+    if (item[prop]) {
+      emit(general_extras[prop], item[prop]);
+    }
+  }
 
   // some marks need special treatment
   var extra = mark_extras[mdef.type];

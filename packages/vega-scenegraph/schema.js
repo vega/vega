@@ -193,6 +193,8 @@ var ITEM_BASE = {
     "strokeDash": { "type": "array", "items": { "type": "number" } },
     "strokeDashOffset": { "type": "number", "default": 0 },
     "zindex": { "type": "number" },
+    "tabIndex": { "type": "number" },
+    "ariaLabel": { "type": "string" },
     "cursor": { "type": "string" },
     "href": { "type": "string", "format": "uri-reference" },
     "tooltip": {}

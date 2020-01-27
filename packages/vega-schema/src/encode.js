@@ -192,6 +192,8 @@ const encodeEntry = object({
   strokeDashOffset: numberValueRef,
   strokeJoin: ref('strokeJoinValue'),
   strokeMiterLimit: numberValueRef,
+  tabIndex: numberValueRef,
+  ariaLabel: stringValueRef,
   cursor: stringValueRef,
   tooltip: anyValueRef,
   zindex: numberValueRef,
