@@ -29,8 +29,17 @@ function measureWidth(item, text) {
     : (context.font = font(item), measure(textValue(item, text)));
 }
 
+// width computation is expensive so we are memoizing it
+const widthCache = {}
+
 function measure(text) {
-  return context.measureText(text).width;
+  const key = context.font + text;
+  let width = widthCache[key];
+  if (width === undefined) {
+    width = context.measureText(text).width;
+    widthCache[key] = width;
+  }
+  return width;
 }
 
 export function fontSize(item) {
