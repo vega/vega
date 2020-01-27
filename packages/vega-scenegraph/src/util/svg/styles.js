@@ -11,5 +11,3 @@ export var styles = {
   'strokeMiterLimit': 'stroke-miterlimit',
   'opacity':          'opacity'
 };
-
-export var styleProperties = Object.keys(styles);

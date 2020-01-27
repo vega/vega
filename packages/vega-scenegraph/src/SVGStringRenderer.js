@@ -7,7 +7,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styles, styleProperties} from './util/svg/styles';
+import {styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -303,7 +303,7 @@ prototype.markGroup = function(scene) {
 
 function applyStyles(o, mark, tag, defs) {
   if (o == null) return '';
-  var i, n, prop, name, value, s = '';
+  let s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
@@ -330,10 +330,9 @@ function applyStyles(o, mark, tag, defs) {
     if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
   }
 
-  for (i=0, n=styleProperties.length; i<n; ++i) {
-    prop = styleProperties[i];
-    name = styles[prop];
-    value = o[prop];
+  for (const prop in styles) {
+    let value = o[prop];
+    const name = styles[prop];
 
     if (value == null) {
       if (name === 'fill') {

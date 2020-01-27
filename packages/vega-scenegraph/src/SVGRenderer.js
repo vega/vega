@@ -7,7 +7,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styles, styleProperties} from './util/svg/styles';
+import {styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
@@ -564,11 +564,9 @@ function emit(name, value, ns) {
 
 prototype.style = function(el, o) {
   if (o == null) return;
-  var i, n, prop, name, value;
 
-  for (i=0, n=styleProperties.length; i<n; ++i) {
-    prop = styleProperties[i];
-    value = o[prop];
+  for (const prop in styles) {
+    let value = o[prop];
 
     if (prop === 'font') {
       value = fontFamily(o);
@@ -576,7 +574,7 @@ prototype.style = function(el, o) {
 
     if (value === values[prop]) continue;
 
-    name = styles[prop];
+    const name = styles[prop];
     if (value == null) {
       if (name === 'fill') {
         el.style.setProperty(name, 'none');
