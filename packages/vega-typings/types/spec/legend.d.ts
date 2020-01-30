@@ -383,7 +383,7 @@ export interface BaseLegend {
    *
    * __Default value:__ `"circle"`.
    */
-  symbolType?: SymbolShapeValue;
+  symbolType?: SymbolShapeValue | SignalRef;
 
   // ---------- Label ----------
   /**
