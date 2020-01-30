@@ -6,7 +6,7 @@ import {lru} from './lru';
 const TEXT_WIDTH_CACHE_SIZE = 10000;
 const widthCache = lru(TEXT_WIDTH_CACHE_SIZE);
 
-var currFontHeight;
+var currFontHeight, currentFont;
 
 export var textMetrics = {
   height: fontSize,
@@ -31,13 +31,14 @@ function estimate(text) {
 // measure text width if canvas is available
 function measureWidth(item, text) {
   return fontSize(item) <= 0 ? 0
-    : (context.font = font(item), measure(textValue(item, text)));
+    : (currentFont = font(item), measure(textValue(item, text)));
 }
 
 function measure(text) {
-  const key = context.font + text;
+  const key = currentFont + text;
   let width = widthCache.get(key);
   if (width === undefined) {
+    context.font = currentFont;
     width = context.measureText(text).width;
     widthCache.set(key, width);
   }
@@ -86,7 +87,7 @@ function truncate(item, line) {
 
   if (textMetrics.width === measureWidth) {
     // we are using canvas
-    context.font = font(item);
+    currentFont = font(item);
     width = measure;
   } else {
     // we are relying on estimates
