@@ -1,5 +1,10 @@
 import {context} from './canvas/context';
 import {isArray} from 'vega-util';
+import {lru} from './lru';
+
+// width computation is expensive so we are memoizing it
+const TEXT_WIDTH_CACHE_SIZE = 10000;
+const widthCache = lru(TEXT_WIDTH_CACHE_SIZE);
 
 var currFontHeight;
 
@@ -29,15 +34,12 @@ function measureWidth(item, text) {
     : (context.font = font(item), measure(textValue(item, text)));
 }
 
-// width computation is expensive so we are memoizing it
-const widthCache = {}
-
 function measure(text) {
   const key = context.font + text;
-  let width = widthCache[key];
+  let width = widthCache.get(key);
   if (width === undefined) {
     width = context.measureText(text).width;
-    widthCache[key] = width;
+    widthCache.set(key, width);
   }
   return width;
 }
