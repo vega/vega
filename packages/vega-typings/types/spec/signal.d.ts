@@ -1,5 +1,9 @@
 import { Binding, Expr, OnEvent } from '.';
 
+/**
+ * @hide
+ * // Hide from Vega-Lite schema (Since @hide isn't used by Vega, we can just add it here for now.)
+ */
 export interface SignalRef {
   signal: string;
 }
