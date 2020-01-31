@@ -22,6 +22,8 @@ TimeUnit.Definition = {
     { "name": "interval", "type": "boolean", "default": true },
     { "name": "units", "type": "string", "array": true },
     { "name": "step", "type": "number", "default": 1 },
+    { "name": "maxbins", "type": "number", "default": 40 },
+    { "name": "extent", "type": "string", "array": true},
     { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
     { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
   ]
@@ -76,7 +78,7 @@ prototype._floor = function(_, pulse) {
   let {units, step} = _.units
     ? {units: _.units, step: _.step || 1}
     : timeBin({
-      extent:  extent(pulse.materialize(pulse.SOURCE).source, _.field),
+      extent:  _.extent ? _.extent.map(d => new Date(d)) : extent(pulse.materialize(pulse.SOURCE).source, _.field),
       maxbins: _.maxbins
     });
 
