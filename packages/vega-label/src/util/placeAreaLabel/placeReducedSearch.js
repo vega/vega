@@ -45,7 +45,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
         labelPlaced = false,
         labelPlaced2 = false,
         maxAreaWidth = 0,
-        x1, x2, y1, y2, x, y, _x, _y, _x1, _xMid, _x2, _y1, _yMid, _y2, areaWidth, result;
+        x1, x2, y1, y2, x, y, _x, _y, _x1, _xMid, _x2, _y1, _yMid, _y2, areaWidth, result, swapTmp;
 
     // for each area sample point
     for (let i=0; i<n; ++i) {
@@ -54,12 +54,24 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
       x2 = items[i].x2 === undefined ? x1 : items[i].x2;
       y2 = items[i].y2 === undefined ? y1 : items[i].y2;
 
+      if (x1 > x2) {
+        swapTmp = x1;
+        x1 = x2;
+        x2 = swapTmp;
+      }
+
+      if (y1 > y2) {
+        swapTmp = y1;
+        y1 = y2;
+        y2 = swapTmp;
+      }
+
       _x1 = $(x1);
       _x2 = $(x2);
-      _xMid = ~~(($(x1) + _x2) / 2);
+      _xMid = ~~((_x1 + _x2) / 2);
       _y1 = $(y1);
       _y2 = $(y2);
-      _yMid = ~~(($(y1) + _y2) / 2);
+      _yMid = ~~((_y1 + _y2) / 2);
 
       // search along the line from mid point between the 2 border to lower border
       for (_x = _xMid; _x >= _x1; --_x) {
