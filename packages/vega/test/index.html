@@ -27,21 +27,6 @@
   </head>
   <body>
     <div id="header">
-      Vega Specification:
-      <select id="specs">
-        <option value="">-----</option>
-      </select> &nbsp;
-      Renderer:
-      <select id="render">
-        <option value="svg" selected>svg</option>
-        <option value="canvas">canvas</option>
-      </select> &nbsp;
-      Log Level:
-      <select id="level">
-        <option value="2" selected>warn</option>
-        <option value="3">info</option>
-        <option value="4">debug</option>
-      </select> <br/>
     </div>
     <div id="view"></div>
     <div id="external"></div>
@@ -55,72 +40,45 @@ const options = {
   hover:     true
 };
 
-const select = document.querySelector('#specs');
-select.addEventListener('change', function() {
-  load(select.options[select.selectedIndex].value);
-});
+const size_widths = [];
+for (let i = 200; i <= 2000; i += 200) {
+  size_widths.push(i);
+}
 
-const render = document.querySelector('#render');
-render.addEventListener('change', function() {
-  options.renderer = render.options[render.selectedIndex].value;
-  if (view) view.renderer(options.renderer).runAsync();
-});
-
-const level = document.querySelector('#level');
-level.addEventListener('change', function() {
-  options.logLevel = +level.options[level.selectedIndex].value;
-  if (view) view.logLevel(options.logLevel);
-});
-
-
-async function init() {
-  try {
-    const data = await fetch('specs-valid.json').then(r => r.json());
-
-    // load manifest of test specifications
-    data.forEach(function(name) {
-      const opt = document.createElement('option');
-      opt.setAttribute('value', name);
-      opt.textContent = name;
-      select.appendChild(opt);
-    });
-
-    // if query string is present, try to load spec
-    if (location.search) load(location.search.slice(1));
-  } catch (err) {
-    console.error(err, err.stack);
+const sizes = [];
+for (const w of size_widths) {
+  for (let i = 0; i < 10; i++) {
+    sizes.push(w);
   }
 }
 
-async function load(name) {
-  if (!name) {
-    if (view) view.finalize().container().innerHTML = '';
-    return;
-  }
-
-  // update select widget state
-  select.selectedIndex = 0;
-  for (let i=0, n=select.options.length; i<n; ++i) {
-    if (select.options[i].value === name) {
-      select.selectedIndex = i; break;
-    }
-  }
-
+async function loadJobs() {
   // load vega spec, then visualize it
   try {
-    spec = await fetch(`specs-valid/${name}.vg.json`).then(r => r.json());
-    console.log('LOAD', name);
+    const spec = await fetch(`specs-valid/jobs.vg.json`).then(r => r.json());
+    let idx = 0;
+    let interval;
+    const renderJobs = async () => {
+      const w = sizes[idx++];
+      console.log(`width: ${w}`);
 
-    if (view) view.finalize(); // finalize existing view
-    runtime = vega.parse(spec);
-    view = await new vega.View(runtime, options).runAsync();
-    console.log('INIT', name);
+      if (view) view.finalize(); // finalize existing view
+      spec["width"] = w;
+      spec["height"] = w;
+      spec["marks"][1]["transform"]["size"] = [w, w];
+      runtime = vega.parse(spec);
+      view = await new vega.View(runtime, options).runAsync();
+      if (idx > sizes.length) {
+        clearInterval(interval)
+      }
+    }
+    interval = setInterval(renderJobs, 10000);
   } catch (err) {
     console.error(err, err.stack);
   }
 }
 
-init();
+loadJobs();
     </script>
   </body>
 </html>

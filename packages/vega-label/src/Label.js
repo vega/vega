@@ -72,6 +72,7 @@ Label.Definition = {
 const prototype = inherits(Label, Transform);
 
 prototype.transform = function (_, pulse) {
+  console.time("label");
   function modp(param) {
     const p = _[param];
     return isFunction(p) && pulse.modified(p.fields);
@@ -108,5 +109,6 @@ prototype.transform = function (_, pulse) {
     t[as[4]] = l.baseline;
   });
 
+  console.timeEnd("label");
   return pulse.reflow(mod).modifies(as);
 };
