@@ -18,6 +18,7 @@ import {
   Gradient,
   NumericValueRef,
   ScaledValueRef,
+  Text,
   TextDirection,
 } from './encode.d';
 import { LayoutBounds } from './layout';
@@ -323,7 +324,7 @@ export interface MarkConfig {
   /**
    * Placeholder text if the `text` channel is not specified
    */
-  text?: string | SignalRef;
+  text?: Text | SignalRef;
 
   /**
    * A URL to load upon mouse click. If defined, the mark acts as a hyperlink.
