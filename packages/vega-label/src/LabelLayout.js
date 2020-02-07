@@ -45,7 +45,8 @@ export default function(texts, size, compare, offset, anchor,
         grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
         isGroupArea = grouptype === 'area',
         boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        $ = scaler(size[0], size[1], padding);
+        $ = scaler(size[0], size[1], padding),
+        isNaiveGroupArea = isGroupArea && method === 'naive';
 
   // prepare text mark data for placing
   const data = texts.map(d => ({
@@ -58,29 +59,32 @@ export default function(texts, size, compare, offset, anchor,
     boundary: boundary(d)
   }));
 
-  // sort labels in priority order, if comparator is provided
-  if (compare) {
-    data.sort((a, b) => compare(a.datum, b.datum));
-  }
+  let bitmaps;
+  if (!isNaiveGroupArea) {
+    // sort labels in priority order, if comparator is provided
+    if (compare) {
+      data.sort((a, b) => compare(a.datum, b.datum));
+    }
 
-  // flag indicating if label can be placed inside its base mark
-  let labelInside = false;
-  for (let i=0; i < anchors.length && !labelInside; ++i) {
-    // label inside if anchor is at center
-    // label inside if offset to be inside the mark bound
-    labelInside = anchors[i] === 0x5 || offsets[i] < 0;
-  }
+    // flag indicating if label can be placed inside its base mark
+    let labelInside = false;
+    for (let i=0; i < anchors.length && !labelInside; ++i) {
+      // label inside if anchor is at center
+      // label inside if offset to be inside the mark bound
+      labelInside = anchors[i] === 0x5 || offsets[i] < 0;
+    }
 
-  // extract data information from base mark when base mark is to be avoided
-  // base mark is implicitly avoided if it is a group area
-  if (marktype && (avoidBaseMark || isGroupArea)) {
-    avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
-  }
+    // extract data information from base mark when base mark is to be avoided
+    // base mark is implicitly avoided if it is a group area
+    if (marktype && (avoidBaseMark || isGroupArea)) {
+      avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
+    }
 
-  // generate bitmaps for layout calculation
-  const bitmaps = avoidMarks.length
-    ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
-    : baseBitmaps($, avoidBaseMark && data);
+    // generate bitmaps for layout calculation
+    bitmaps = avoidMarks.length
+      ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
+      : baseBitmaps($, avoidBaseMark && data);
+  }
 
   // generate label placement function
   const place = isGroupArea
