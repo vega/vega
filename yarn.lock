@@ -1566,9 +1566,9 @@
     "@rollup/pluginutils" "^3.0.4"
 
 "@rollup/plugin-node-resolve@^7.0.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-7.1.0.tgz#94ed832a0444f5e8c529526303c83f8283e4cbc5"
-  integrity sha512-pN3fQsTYuA/guTDCyAthMHWqupoGVSO4bgUFVK8ulr/zmNY9bY/xewNO2ptHJYZY1FW3KkblF+I4a4MWEBYJQA==
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-7.1.1.tgz#8c6e59c4b28baf9d223028d0e450e06a485bb2b7"
+  integrity sha512-14ddhD7TnemeHE97a4rLOhobfYvUVcaYuqTnL8Ti7Jxi9V9Jr5LY7Gko4HZ5k4h4vqQM0gBQt6tsp9xXW94WPA==
   dependencies:
     "@rollup/pluginutils" "^3.0.6"
     "@types/resolve" "0.0.8"
