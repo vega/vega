@@ -551,7 +551,7 @@ export interface PivotTransform {
 export interface ProjectTransform {
   type: 'project';
   fields?: FieldRef[] | SignalRef;
-  as?: string | null | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
 }
 
 export interface QuantileTransform {
