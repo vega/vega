@@ -538,7 +538,7 @@ export type TitleConfig = ExcludeMappedValueRef<BaseTitle>;
 
 export type ProjectionConfig = ExcludeMappedValueRef<BaseProjection>;
 
-export interface RangeConfig {
+export type RangeConfig = {
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
    */
@@ -563,4 +563,6 @@ export interface RangeConfig {
    * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
    */
   symbol?: SymbolShape[];
-}
+} & {
+  [name: string]: RangeScheme | number[] | boolean[] | string[] | SymbolShape[];
+};
