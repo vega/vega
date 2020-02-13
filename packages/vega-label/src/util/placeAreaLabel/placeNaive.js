@@ -1,5 +1,4 @@
 import {textMetrics} from 'vega-scenegraph';
-import {collision, outOfBounds} from './common';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
   let width = $.width,
@@ -12,8 +11,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
           textHeight = d.datum.fontSize, // label width
           textWidth = textMetrics.width(d.datum); // label height
 
-    let labelPlaced = false,
-        maxAreaWidth = 0,
+    let maxAreaWidth = 0,
         x1, x2, y1, y2, x, y, areaWidth;
 
     // for each area sample point
