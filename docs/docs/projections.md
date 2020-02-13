@@ -43,6 +43,8 @@ In addition to the shared properties above, the following properties are support
 [`spacing`](https://github.com/d3/d3-geo-projection#lagrange_spacing),
 [`tilt`](https://github.com/d3/d3-geo-projection#satellite_tilt).
 
+Alternative default values for any of the properties above can be set using a custom [config](../config/#projection) object.
+
 ## <a name="types"></a>Projection Types
 
 Vega includes all cartographic projections provided by the [d3-geo](https://github.com/d3/d3-geo#) library.
@@ -52,7 +54,7 @@ Vega includes all cartographic projections provided by the [d3-geo](https://gith
 | [albers](https://github.com/d3/d3-geo#geoAlbers)          | The Albers’ equal-area conic projection. This is a U.S.-centric configuration of `"conicEqualArea"`. |
 | [albersUsa](https://github.com/d3/d3-geo#geoAlbersUsa) | A U.S.-centric composite with projections for the lower 48 states, Hawaii, and Alaska (scaled to 0.35 times the true relative area). |
 | [azimuthalEqualArea](https://github.com/d3/d3-geo#geoAzimuthalEqualArea) | The azimuthal equal-area projection. |
-| [azimuthalEquidistanct](https://github.com/d3/d3-geo#geoAzimuthalEquidistant) | The azimuthal equidistant projection. |
+| [azimuthalEquidistant](https://github.com/d3/d3-geo#geoAzimuthalEquidistant) | The azimuthal equidistant projection. |
 | [conicConformal](https://github.com/d3/d3-geo#geoConicConformal) | The conic conformal projection. The parallels default to [30&deg;, 30&deg;] resulting in flat top. |
 | [conicEqualArea](https://github.com/d3/d3-geo#geoConicEqualArea) | The Albers’ equal-area conic projection. |
 | [conicEquidistant](https://github.com/d3/d3-geo#geoConicEquidistant) | The conic equidistant projection. |

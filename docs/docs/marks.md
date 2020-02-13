@@ -109,7 +109,7 @@ When generating data-driven facets, by default new aggregate data values are gen
 
 ### <a name="reactivegeom"></a>Reactive Geometry
 
-Typically a `"from": {"data": "..."}` statement draws data from a backing data source defined within a `"data"` block. However, Vega can also use a set of marks as the backing data objects for a new set of marks &mdash; a feature referred to a _reactive geometry_. For example, one might add text marks to serve as labels, using computed `x`, `y`, `width`, or `height` values of the source marks to determine label placement.
+Typically a `"from": {"data": "..."}` statement draws data from a backing data source defined within a `"data"` block. However, Vega can also use a set of marks as the backing data objects for a new set of marks &mdash; a feature referred to as _reactive geometry_. For example, one might add text marks to serve as labels, using computed `x`, `y`, `width`, or `height` values of the source marks to determine label placement.
 
 To use a set of marks as a backing data source, the mark definition must include a unique `name` property. The marks can then be referenced as `"from": {"data": "name"}`.
 

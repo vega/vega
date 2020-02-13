@@ -127,6 +127,7 @@
                       "opacity": 1,
                       "text": "-0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -139,6 +140,7 @@
                       "opacity": 1,
                       "text": "-0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -151,6 +153,7 @@
                       "opacity": 1,
                       "text": "-0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -163,6 +166,7 @@
                       "opacity": 1,
                       "text": "-0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -175,6 +179,7 @@
                       "opacity": 1,
                       "text": "-0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -187,6 +192,7 @@
                       "opacity": 1,
                       "text": "0.0",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -199,6 +205,7 @@
                       "opacity": 1,
                       "text": "0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -211,6 +218,7 @@
                       "opacity": 1,
                       "text": "0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -223,6 +231,7 @@
                       "opacity": 1,
                       "text": "0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -235,6 +244,7 @@
                       "opacity": 1,
                       "text": "0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -247,6 +257,7 @@
                       "opacity": 1,
                       "text": "0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     }
@@ -388,6 +399,7 @@
                       "opacity": 1,
                       "text": "-0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -400,6 +412,7 @@
                       "opacity": 1,
                       "text": "-0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -412,6 +425,7 @@
                       "opacity": 1,
                       "text": "-0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -424,6 +438,7 @@
                       "opacity": 1,
                       "text": "-0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -436,6 +451,7 @@
                       "opacity": 1,
                       "text": "-0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -448,6 +464,7 @@
                       "opacity": 1,
                       "text": "0.0",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -460,6 +477,7 @@
                       "opacity": 1,
                       "text": "0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -472,6 +490,7 @@
                       "opacity": 1,
                       "text": "0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -484,6 +503,7 @@
                       "opacity": 1,
                       "text": "0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -496,6 +516,7 @@
                       "opacity": 1,
                       "text": "0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -508,6 +529,7 @@
                       "opacity": 1,
                       "text": "0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     },
@@ -520,6 +542,7 @@
                       "opacity": 1,
                       "text": "0.6",
                       "angle": 0,
+                      "limit": 180,
                       "font": "Monaco",
                       "fontSize": 10
                     }

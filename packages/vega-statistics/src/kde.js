@@ -1,7 +1,6 @@
+import estimateBandwidth from './bandwidth';
 import gaussian from './normal';
-import quartiles from './quartiles';
 import {random} from './random';
-import {variance} from 'd3-array';
 
 // TODO: support for additional kernels?
 export default function(support, bandwidth) {
@@ -49,13 +48,4 @@ export default function(support, bandwidth) {
   };
 
   return dist.data(support);
-}
-
-// Scott, D. W. (1992) Multivariate Density Estimation:
-// Theory, Practice, and Visualization. Wiley.
-function estimateBandwidth(array) {
-  var n = array.length,
-      q = quartiles(array),
-      h = (q[2] - q[0]) / 1.34;
-  return 1.06 * Math.min(Math.sqrt(variance(array)), h) * Math.pow(n, -0.2);
 }

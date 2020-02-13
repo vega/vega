@@ -44,6 +44,11 @@ export {
 } from './src/log';
 
 export {
+  luminance,
+  contrast
+} from './src/luminance';
+
+export {
   default as merge
 } from './src/merge';
 

@@ -2,16 +2,18 @@ import {
   randomKDE,
   randomMixture,
   randomNormal,
+  randomLogNormal,
   randomUniform
 } from 'vega-statistics';
 
 import {error, hasOwnProperty} from 'vega-util';
 
 var Distributions = {
-  kde:     randomKDE,
-  mixture: randomMixture,
-  normal:  randomNormal,
-  uniform: randomUniform
+  kde:       randomKDE,
+  mixture:   randomMixture,
+  normal:    randomNormal,
+  lognormal: randomLogNormal,
+  uniform:   randomUniform
 };
 
 var DISTRIBUTIONS = 'distributions',

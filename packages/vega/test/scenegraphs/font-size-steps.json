@@ -95,6 +95,7 @@
                       "opacity": 1,
                       "text": "10",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -107,6 +108,7 @@
                       "opacity": 1,
                       "text": "20",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -119,6 +121,7 @@
                       "opacity": 1,
                       "text": "30",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -131,6 +134,7 @@
                       "opacity": 1,
                       "text": "40",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -143,6 +147,7 @@
                       "opacity": 1,
                       "text": "50",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -155,6 +160,7 @@
                       "opacity": 1,
                       "text": "60",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -167,6 +173,7 @@
                       "opacity": 1,
                       "text": "72",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -197,13 +204,16 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -31,
+                      "x": -44,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "Linear Font Size",
+                      "text": [
+                        "Font Size",
+                        "(Linear)"
+                      ],
                       "angle": -90,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -307,6 +317,7 @@
                       "opacity": 1,
                       "text": "10",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -319,6 +330,7 @@
                       "opacity": 1,
                       "text": "20",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -331,6 +343,7 @@
                       "opacity": 1,
                       "text": "30",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -343,6 +356,7 @@
                       "opacity": 1,
                       "text": "40",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -355,6 +369,7 @@
                       "opacity": 1,
                       "text": "50",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -367,6 +382,7 @@
                       "opacity": 1,
                       "text": "60",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -379,6 +395,7 @@
                       "opacity": 1,
                       "text": "70",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -409,13 +426,16 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": 31,
+                      "x": 44,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "Log-Transformed Font Size",
+                      "text": [
+                        "Font Size",
+                        "(Log-Transformed)"
+                      ],
                       "angle": 90,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -559,6 +579,7 @@
                       "opacity": 1,
                       "text": "10",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -571,6 +592,7 @@
                       "opacity": 1,
                       "text": "11",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11
                     },
@@ -583,6 +605,7 @@
                       "opacity": 1,
                       "text": "12",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 12
                     },
@@ -595,6 +618,7 @@
                       "opacity": 1,
                       "text": "14",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 14
                     },
@@ -607,6 +631,7 @@
                       "opacity": 1,
                       "text": "16",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 16
                     },
@@ -619,6 +644,7 @@
                       "opacity": 1,
                       "text": "18",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 18
                     },
@@ -631,6 +657,7 @@
                       "opacity": 1,
                       "text": "21",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 21
                     },
@@ -643,6 +670,7 @@
                       "opacity": 1,
                       "text": "24",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 24
                     },
@@ -655,6 +683,7 @@
                       "opacity": 1,
                       "text": "36",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 36
                     },
@@ -667,6 +696,7 @@
                       "opacity": 1,
                       "text": "48",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 48
                     },
@@ -679,6 +709,7 @@
                       "opacity": 1,
                       "text": "60",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 60
                     },
@@ -691,6 +722,7 @@
                       "opacity": 1,
                       "text": "72",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 72
                     }
@@ -1004,6 +1036,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "log",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -1053,6 +1086,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "linear",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -1087,25 +1121,40 @@
           "zindex": 0
         },
         {
-          "marktype": "text",
+          "marktype": "group",
           "role": "title",
           "interactive": false,
           "clip": false,
           "items": [
             {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Font Size Steps and Weber's Law?",
+                      "angle": 0,
+                      "dy": 30,
+                      "font": "sans-serif",
+                      "fontSize": 16,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
               "x": 0,
-              "y": -82,
+              "y": -98,
               "align": "left",
-              "baseline": "bottom",
-              "fill": "#000",
-              "opacity": 1,
               "orient": "top",
-              "text": "Font Size Steps and Weber's Law?",
-              "angle": 0,
-              "dy": 30,
-              "font": "sans-serif",
-              "fontSize": 16,
-              "fontWeight": "bold"
+              "angle": 0
             }
           ],
           "zindex": 0

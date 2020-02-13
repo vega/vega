@@ -143,6 +143,7 @@
                       "opacity": 1,
                       "text": "-0.6",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -155,6 +156,7 @@
                       "opacity": 1,
                       "text": "-0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -167,6 +169,7 @@
                       "opacity": 1,
                       "text": "-0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -179,6 +182,7 @@
                       "opacity": 1,
                       "text": "-0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -191,6 +195,7 @@
                       "opacity": 1,
                       "text": "-0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -203,6 +208,7 @@
                       "opacity": 1,
                       "text": "-0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -215,6 +221,7 @@
                       "opacity": 1,
                       "text": "0.0",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -227,6 +234,7 @@
                       "opacity": 1,
                       "text": "0.1",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -239,6 +247,7 @@
                       "opacity": 1,
                       "text": "0.2",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -251,6 +260,7 @@
                       "opacity": 1,
                       "text": "0.3",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -263,6 +273,7 @@
                       "opacity": 1,
                       "text": "0.4",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -275,6 +286,7 @@
                       "opacity": 1,
                       "text": "0.5",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -287,6 +299,7 @@
                       "opacity": 1,
                       "text": "0.6",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -6397,6 +6410,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "Normal Estimate",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -6444,6 +6458,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "Kernel Density Estimate",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }

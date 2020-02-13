@@ -5,7 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
-import {lookup} from './guides/guide-util';
+import {lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
@@ -21,6 +21,7 @@ export default function(spec, scope) {
       interactive = axisEncode.interactive,
       style = axisEncode.style,
       _ = lookup(spec, config),
+      band = tickBand(_),
       datum, dataRef, ticksRef, size, group, children;
 
   // single-element data source for axis group
@@ -30,7 +31,8 @@ export default function(spec, scope) {
     labels: !!_('labels'),
     grid:   !!_('grid'),
     domain: !!_('domain'),
-    title:  spec.title != null
+    title:  spec.title != null,
+    translate: _('translate')
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
@@ -49,7 +51,7 @@ export default function(spec, scope) {
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({
     scale:   scope.scaleRef(spec.scale),
-    extra:   scope.property(_('tickExtra')),
+    extra:   scope.property(band.extra),
     count:   scope.objectProperty(spec.tickCount),
     values:  scope.objectProperty(spec.values),
     minstep: scope.property(spec.tickMinStep),
@@ -62,19 +64,19 @@ export default function(spec, scope) {
 
   // include axis gridlines if requested
   if (datum.grid) {
-    children.push(axisGrid(spec, config, encode.grid, ticksRef));
+    children.push(axisGrid(spec, config, encode.grid, ticksRef, band));
   }
 
   // include axis ticks if requested
   if (datum.ticks) {
     size = _('tickSize');
-    children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
+    children.push(axisTicks(spec, config, encode.ticks, ticksRef, size, band));
   }
 
   // include axis labels if requested
   if (datum.labels) {
     size = datum.ticks ? size : 0;
-    children.push(axisLabels(spec, config, encode.labels, ticksRef, size));
+    children.push(axisLabels(spec, config, encode.labels, ticksRef, size, band));
   }
 
   // include axis domain path if requested

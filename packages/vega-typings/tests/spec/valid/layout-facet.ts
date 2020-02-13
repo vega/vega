@@ -203,14 +203,10 @@ export const spec: Spec = {
         "text": {"signal": "parent.a"},
         "orient": "left",
         "offset": 10,
-        "encode": {
-          "update": {
-            "align": {"value": "right"},
-            "baseline": {"value": "middle"},
-            "angle": {"value": 0},
-            "fontSize": {"value": 11}
-          }
-        }
+        "align": "right",
+        "baseline": "middle",
+        "angle": 0,
+        "fontSize": 11
       }
     },
     {

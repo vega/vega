@@ -13,7 +13,7 @@ var Zero = 'zero',
  * @param {function(object): *} params.field - The value field to stack.
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
  * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
- * @param {string} [offset='zero'] - One of 'zero', 'center', 'normalize'.
+ * @param {string} [offset='zero'] - Stack baseline offset. One of 'zero', 'center', 'normalize'.
  */
 export default function Stack(params) {
   Transform.call(this, null, params);

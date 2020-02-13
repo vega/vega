@@ -4,8 +4,8 @@ import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
-  numberOrSignal, stringOrSignal, arrayOrSignal,
-  formatType, numberType, stringType, orSignal
+  arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
+  formatTypeType, numberType, stringType, orSignal
 } from './util';
 
 // types defined elsewhere
@@ -59,6 +59,7 @@ const legendProps = object({
   // LEGEND CONFIG
   tickCount: tickCountRef,
   tickMinStep: numberOrSignal,
+  symbolLimit: numberOrSignal,
   values: arrayOrSignal,
   zindex: numberType,
 
@@ -72,7 +73,7 @@ const legendProps = object({
   legendY: numberValue,
 
   // LEGEND TITLE CONFIG
-  title: stringOrSignal,
+  title: textOrSignal,
   titleAlign: alignValue,
   titleAnchor: anchorValue,
   titleBaseline: baselineValue,
@@ -82,6 +83,7 @@ const legendProps = object({
   titleFontStyle: stringValue,
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
+  titleLineHeight: numberValue,
   titleOpacity: numberValue,
   titleOrient: orientValue,
   titlePadding: numberValue,
@@ -112,8 +114,8 @@ const legendProps = object({
   symbolType: stringValue,
 
   // LABEL CONFIG
-  format: stringOrSignal,
-  formatType: orSignal(formatType),
+  format: formatTypeOrSignal,
+  formatType: orSignal(formatTypeType),
   labelAlign: alignValue,
   labelBaseline: baselineValue,
   labelColor: colorValue,

@@ -166,9 +166,12 @@ tape('Evaluate expressions with white list', function(t) {
 
   // Function evaluation
   // should eval math functions', function() {
-  t.equal(evaluate('isNaN(1/0)'), isNaN(1/0));
-  t.equal(evaluate('isFinite(1)'), isFinite(1));
-  t.equal(evaluate('isFinite(1/0)'), isFinite(1/0));
+  t.equal(evaluate('isNaN(1/0)'), Number.isNaN(1/0));
+  t.equal(evaluate('isNaN("1")'), Number.isNaN('1'));
+  t.equal(evaluate('isFinite(1)'), Number.isFinite(1));
+  t.equal(evaluate('isFinite(1/0)'), Number.isFinite(1/0));
+  t.equal(evaluate('isFinite(null)'), Number.isFinite(null));
+  t.equal(evaluate('isFinite("0")'), Number.isFinite('0'));
   t.equal(evaluate('abs(-3)'), Math.abs(-3));
   t.equal(evaluate('acos(1)'), Math.acos(1));
   t.equal(evaluate('asin(1)'), Math.asin(1));

@@ -34,8 +34,8 @@ tape('Wordcloud generates wordcloud layout', function(t) {
   t.equal(wc.stamp, df.stamp());
 
   for (var i=0, n=data.length; i<n; ++i) {
-    t.ok(data[i].x != null && !isNaN(data[i].x));
-    t.ok(data[i].y != null && !isNaN(data[i].y));
+    t.ok(data[i].x != null && !Number.isNaN(data[i].x));
+    t.ok(data[i].y != null && !Number.isNaN(data[i].y));
     t.equal(data[i].font, 'sans-serif');
     t.equal(data[i].fontSize, Math.sqrt(data[i].size));
     t.equal(data[i].fontStyle, 'normal');

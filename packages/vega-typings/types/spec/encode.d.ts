@@ -57,6 +57,7 @@ export type AlignValueRef = ScaledValueRef<Align>;
 export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
 export type OrientValueRef = ScaledValueRef<Orient>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
+export type TextValueRef = ScaledValueRef<Text>;
 export type BooleanValueRef = ScaledValueRef<boolean>;
 export type ArrayValueRef = ScaledValueRef<any[]>;
 export type ArbitraryValueRef = NumericValueRef | ColorValueRef | ScaledValueRef<any>;
@@ -250,6 +251,7 @@ export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   url?: ProductionRule<StringValueRef>;
   aspect?: ProductionRule<BooleanValueRef>;
   baseline?: ProductionRule<ScaledValueRef<Baseline>>;
+  smooth?: ProductionRule<BooleanValueRef>;
 }
 
 /**
@@ -280,9 +282,16 @@ export interface LineEncodeEntry extends EncodeEntry, DefinedProperty {
 }
 export interface PathEncodeEntry extends EncodeEntry {
   path?: ProductionRule<StringValueRef>;
+  angle?: ProductionRule<NumericValueRef>;
+  scaleX?: ProductionRule<NumericValueRef>;
+  scaleY?: ProductionRule<NumericValueRef>;
 }
 export interface RectEncodeEntry extends EncodeEntry {
   cornerRadius?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopLeft?: ProductionRule<NumericValueRef>;
+  cornerRadiusTopRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomRight?: ProductionRule<NumericValueRef>;
+  cornerRadiusBottomLeft?: ProductionRule<NumericValueRef>;
 }
 export type RuleEncodeEntry = EncodeEntry;
 export interface ShapeEncodeEntry extends EncodeEntry {
@@ -307,6 +316,7 @@ export interface SymbolEncodeEntry extends EncodeEntry {
   shape?: ProductionRule<ScaledValueRef<SymbolShape>>;
   angle?: ProductionRule<NumericValueRef>;
 }
+export type Text = string | string[];
 export type TextBaseline = 'alphabetic' | Baseline;
 export type TextDirection = 'ltr' | 'rtl';
 export type FontWeight =
@@ -327,18 +337,20 @@ export type FontWeight =
 // see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
 export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
 export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProperty {
-  text?: ProductionRule<StringValueRef>;
+  text?: ProductionRule<TextValueRef>;
   angle?: ProductionRule<NumericValueRef>;
-  baseline?: ProductionRule<ScaledValueRef<TextBaseline>>;
+  baseline?: ProductionRule<TextBaselineValueRef>;
   dir?: ProductionRule<ScaledValueRef<TextDirection>>;
   dx?: ProductionRule<NumericValueRef>;
   dy?: ProductionRule<NumericValueRef>;
   ellipsis?: ProductionRule<StringValueRef>;
   font?: ProductionRule<StringValueRef>;
   fontSize?: ProductionRule<NumericValueRef>;
-  fontWeight?: ProductionRule<ScaledValueRef<FontWeight>>;
-  fontStyle?: ProductionRule<ScaledValueRef<FontStyle>>;
+  fontWeight?: ProductionRule<FontWeightValueRef>;
+  fontStyle?: ProductionRule<FontStyleValueRef>;
   limit?: ProductionRule<NumericValueRef>;
+  lineBreak?: ProductionRule<StringValueRef>;
+  lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
 }
 export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty {}

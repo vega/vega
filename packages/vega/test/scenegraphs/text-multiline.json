@@ -1,0 +1,555 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "group",
+          "role": "scope",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 66.66666666666667,
+              "y": 37.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 200,
+              "y": 37.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "right",
+                      "baseline": "top",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 333.33333333333337,
+              "y": 37.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "middle",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 66.66666666666667,
+              "y": 112.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "center",
+                      "baseline": "middle",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 200,
+              "y": 112.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 333.33333333333337,
+              "y": 112.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "alphabetic",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 66.66666666666667,
+              "y": 187.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "center",
+                      "baseline": "alphabetic",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 200,
+              "y": 187.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "right",
+                      "baseline": "alphabetic",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 333.33333333333337,
+              "y": 187.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "bottom",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 66.66666666666667,
+              "y": 262.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "center",
+                      "baseline": "bottom",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 200,
+              "y": 262.5
+            },
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -10,
+                      "y": 0.5,
+                      "stroke": "steelblue",
+                      "strokeWidth": 1,
+                      "x2": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "right",
+                      "baseline": "bottom",
+                      "fill": "black",
+                      "text": "Longer text|Short",
+                      "angle": 0,
+                      "limit": 100,
+                      "lineBreak": "|",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 333.33333333333337,
+              "y": 262.5
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 300
+    }
+  ],
+  "zindex": 0
+}

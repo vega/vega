@@ -16,29 +16,34 @@
     "Circular Charts": [
         {"name": "pie-chart"},
         {"name": "donut-chart"},
-        {"name": "radial-plot"}
+        {"name": "radial-plot"},
+        {"name": "radar-chart"}
     ],
-    "Dot & Scatter Plots": [
+    "Scatter Plots": [
         {"name": "scatter-plot"},
         {"name": "scatter-plot-null-values"},
         {"name": "connected-scatter-plot"},
         {"name": "error-bars"},
-        {"name": "barley-trellis-plot"}
+        {"name": "barley-trellis-plot"},
+        {"name": "regression"},
+        {"name": "loess-regression"}
     ],
     "Distributions": [
+        {"name": "top-k-plot"},
+        {"name": "top-k-plot-with-others"},
         {"name": "histogram"},
         {"name": "histogram-null-values"},
+        {"name": "dot-plot"},
         {"name": "probability-density"},
         {"name": "box-plot"},
         {"name": "violin-plot"},
-        {"name": "top-k-plot"},
-        {"name": "top-k-plot-with-others"},
         {"name": "binned-scatter-plot"},
         {"name": "contour-plot"},
         {"name": "wheat-plot"},
+        {"name": "quantile-quantile-plot"},
+        {"name": "quantile-dot-plot"},
         {"name": "hypothetical-outcome-plots"},
-        {"name": "regression"},
-        {"name": "loess-regression"}
+        {"name": "time-units"}
     ],
     "Geographic Maps": [
         {"name": "county-unemployment"},
@@ -67,9 +72,9 @@
     ],
     "Other Chart Types": [
         {"name": "heatmap"},
+        {"name": "density-heatmaps"},
         {"name": "parallel-coordinates"},
         {"name": "word-cloud"},
-        {"name": "timelines"},
         {"name": "beeswarm-plot"}
     ],
     "Custom Visual Designs": [
@@ -78,6 +83,7 @@
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
+        {"name": "timelines"},
         {"name": "u-district-cuisine"}
     ],
     "Interaction Techniques": [

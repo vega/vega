@@ -11,31 +11,40 @@ import {
   line as d3_line
 } from 'd3-shape';
 
-function x(item)    { return item.x || 0; }
-function y(item)    { return item.y || 0; }
-function w(item)    { return item.width || 0; }
-function ts(item)   { return item.size || 1; }
-function h(item)    { return item.height || 0; }
-function xw(item)   { return (item.x || 0) + (item.width || 0); }
-function yh(item)   { return (item.y || 0) + (item.height || 0); }
-function sa(item)   { return item.startAngle || 0; }
-function ea(item)   { return item.endAngle || 0; }
-function pa(item)   { return item.padAngle || 0; }
-function ir(item)   { return item.innerRadius || 0; }
-function or(item)   { return item.outerRadius || 0; }
-function cr(item)   { return item.cornerRadius || 0; }
-function def(item)  { return !(item.defined === false); }
-function size(item) { return item.size == null ? 64 : item.size; }
-function type(item) { return symbols(item.shape || 'circle'); }
+function value(a, b) {
+  return a != null ? a : b;
+}
 
-var arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
-                          .innerRadius(ir).outerRadius(or).cornerRadius(cr),
-    areavShape  = d3_area().x(x).y1(y).y0(yh).defined(def),
-    areahShape  = d3_area().y(y).x1(x).x0(xw).defined(def),
-    lineShape   = d3_line().x(x).y(y).defined(def),
-    rectShape   = vg_rect().x(x).y(y).width(w).height(h).cornerRadius(cr),
-    symbolShape = d3_symbol().type(type).size(size),
-    trailShape  = vg_trail().x(x).y(y).defined(def).size(ts);
+const x =  item => item.x || 0,
+      y =  item => item.y || 0,
+      w =  item => item.width || 0,
+      h =  item => item.height || 0,
+      xw = item => (item.x || 0) + (item.width || 0),
+      yh = item => (item.y || 0) + (item.height || 0),
+      sa = item => item.startAngle || 0,
+      ea = item => item.endAngle || 0,
+      pa = item => item.padAngle || 0,
+      ir = item => item.innerRadius || 0,
+      or = item => item.outerRadius || 0,
+      cr = item => item.cornerRadius || 0,
+      tl = item => value(item.cornerRadiusTopLeft, item.cornerRadius) || 0,
+      tr = item => value(item.cornerRadiusTopRight, item.cornerRadius) || 0,
+      br = item => value(item.cornerRadiusBottomRight, item.cornerRadius) || 0,
+      bl = item => value(item.cornerRadiusBottomLeft, item.cornerRadius) || 0,
+      sz = item => value(item.size, 64),
+      ts = item => item.size || 1,
+      def = item => !(item.defined === false),
+      type = item => symbols(item.shape || 'circle');
+
+const arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
+                      .innerRadius(ir).outerRadius(or).cornerRadius(cr),
+      areavShape  = d3_area().x(x).y1(y).y0(yh).defined(def),
+      areahShape  = d3_area().y(y).x1(x).x0(xw).defined(def),
+      lineShape   = d3_line().x(x).y(y).defined(def),
+      rectShape   = vg_rect().x(x).y(y).width(w).height(h)
+                      .cornerRadius(tl, tr, br, bl),
+      symbolShape = d3_symbol().type(type).size(sz),
+      trailShape  = vg_trail().x(x).y(y).defined(def).size(ts);
 
 export function arc(context, item) {
   return arcShape.context(context)(item);

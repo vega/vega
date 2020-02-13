@@ -23,6 +23,11 @@ export {
 } from './src/logger';
 
 export {
+  mergeConfig,
+  writeConfig
+} from './src/mergeConfig';
+
+export {
   panLinear,
   panLog,
   panPow,

@@ -12,9 +12,13 @@ permalink: /docs/marks/group/index.html
 
 ## Type-Specific Mark Properties
 
-| Property            | Type                           | Description   |
-| :------------------ | :----------------------------: | :------------ |
-| clip                | {% include type t="Boolean" %} | A boolean flag indicating if the visible group content should be clipped to the group's specified width and height. |
-| cornerRadius        | {% include type t="Number" %}  | The radius in pixels of rounded rectangle corners for the group background (default `0`). |
+| Property                | Type                           | Description   |
+| :---------------------- | :----------------------------: | :------------ |
+| clip                    | {% include type t="Boolean" %} | A boolean flag indicating if the visible group content should be clipped to the group's specified width and height. |
+| cornerRadius            | {% include type t="Number" %}  | The radius in pixels of rounded rectangle corners for all four corners (default `0`). |
+| cornerRadiusTopLeft     | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the top left corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
+| cornerRadiusTopRight    | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the top right corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
+| cornerRadiusBottomLeft  | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the bottom left corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
+| cornerRadiusBottomRight | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the bottom right corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
 
 {% include properties.md %}

@@ -43,5 +43,6 @@ Vega also provides a **JavaScript runtime API**, responsible for parsing JSON sp
 | [Locale](api/locale)           | Use number and date formats for a specific locale. |
 | [Extensibility](api/extensibility) | Extend Vega with new projections, scales, color schemes, or data transforms. |
 | [Statistics](api/statistics)   | Statistical methods used by Vega. |
+| [Time](api/time)               | Utility methods for date-time values. |
 | [Util](api/util)               | General JavaScript utilities. |
 | [Debugging](api/debugging)     | A guide to debugging Vega visualizations at runtime. |

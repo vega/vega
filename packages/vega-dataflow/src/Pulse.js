@@ -1,5 +1,5 @@
 import {tupleid} from './Tuple';
-import {array, isArray, visitArray} from 'vega-util';
+import {isArray, visitArray} from 'vega-util';
 
 /**
  * Sentinel value indicating pulse propagation should stop.
@@ -269,9 +269,12 @@ prototype.reflow = function(fork) {
  * @return {Pulse} - This pulse instance.
  */
 prototype.modifies = function(_) {
-  var fields = array(_),
-      hash = this.fields || (this.fields = {});
-  fields.forEach(function(f) { hash[f] = true; });
+  var hash = this.fields || (this.fields = {});
+  if (isArray(_)) {
+    _.forEach(f => hash[f] = true);
+  } else {
+    hash[_] = true;
+  }
   return this;
 };
 

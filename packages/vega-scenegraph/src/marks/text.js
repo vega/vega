@@ -1,12 +1,13 @@
 import Bounds from '../Bounds';
 import {DegToRad, HalfPi} from '../util/constants';
-import {font, offset, textMetrics, textValue} from '../util/text';
+import {font, lineHeight, offset, textLines, textMetrics, textValue} from '../util/text';
 import {intersectBoxLine} from '../util/intersect';
 import {visit} from '../util/visit';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
 import {translate, rotate} from '../util/svg/transform';
+import {isArray} from 'vega-util';
 
 var textAlign = {
   'left':   'start',
@@ -59,10 +60,20 @@ function bound(bounds, item, mode) {
       y = p.y1,
       dx = item.dx || 0,
       dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
+      tl = textLines(item),
       w;
 
+  // get dimensions
+  if (isArray(tl)) {
+    // multi-line text
+    h += lineHeight(item) * (tl.length - 1);
+    w = tl.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
+  } else {
+    // single-line text
+    w = textMetrics.width(item, tl);
+  }
+
   // horizontal alignment
-  w = textMetrics.width(item);
   if (a === 'center') {
     dx -= (w / 2);
   } else if (a === 'right') {
@@ -72,6 +83,7 @@ function bound(bounds, item, mode) {
   }
 
   bounds.set(dx+=x, dy+=y, dx+w, dy+h);
+
   if (item.angle && !mode) {
     bounds.rotate(item.angle * DegToRad, x, y);
   } else if (mode === 2) {
@@ -82,12 +94,12 @@ function bound(bounds, item, mode) {
 
 function draw(context, scene, bounds) {
   visit(scene, function(item) {
-    var opacity, p, x, y, str;
-    if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-    if (!(str = textValue(item))) return; // get text string
+    var opacity = item.opacity == null ? 1 : item.opacity,
+        p, x, y, i, lh, tl, str;
 
-    opacity = item.opacity == null ? 1 : item.opacity;
-    if (opacity === 0 || item.fontSize <= 0) return;
+    if (bounds && !bounds.intersects(item.bounds) || // bounds check
+        opacity === 0 || item.fontSize <= 0 ||
+        item.text == null || item.text.length === 0) return;
 
     context.font = font(item);
     context.textAlign = item.align || 'left';
@@ -105,12 +117,29 @@ function draw(context, scene, bounds) {
     x += (item.dx || 0);
     y += (item.dy || 0) + offset(item);
 
-    if (item.fill && fill(context, item, opacity)) {
-      context.fillText(str, x, y);
+    tl = textLines(item);
+    if (isArray(tl)) {
+      lh = lineHeight(item);
+      for (i=0; i<tl.length; ++i) {
+        str = textValue(item, tl[i]);
+        if (item.fill && fill(context, item, opacity)) {
+          context.fillText(str, x, y);
+        }
+        if (item.stroke && stroke(context, item, opacity)) {
+          context.strokeText(str, x, y);
+        }
+        y += lh;
+      }
+    } else {
+      str = textValue(item, tl);
+      if (item.fill && fill(context, item, opacity)) {
+        context.fillText(str, x, y);
+      }
+      if (item.stroke && stroke(context, item, opacity)) {
+        context.strokeText(str, x, y);
+      }
     }
-    if (item.stroke && stroke(context, item, opacity)) {
-      context.strokeText(str, x, y);
-    }
+
     if (item.angle) context.restore();
   });
 }

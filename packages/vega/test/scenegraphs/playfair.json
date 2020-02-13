@@ -79,6 +79,7 @@
                       "opacity": 1,
                       "text": "1600",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -91,6 +92,7 @@
                       "opacity": 1,
                       "text": "1650",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -103,6 +105,7 @@
                       "opacity": 1,
                       "text": "1700",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -115,6 +118,7 @@
                       "opacity": 1,
                       "text": "1750",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -127,6 +131,7 @@
                       "opacity": 1,
                       "text": "1800",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -283,6 +288,7 @@
                       "opacity": 1,
                       "text": "0",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10,
                       "fontStyle": "italic"
@@ -296,6 +302,7 @@
                       "opacity": 1,
                       "text": "20",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10,
                       "fontStyle": "italic"
@@ -309,6 +316,7 @@
                       "opacity": 1,
                       "text": "40",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10,
                       "fontStyle": "italic"
@@ -322,6 +330,7 @@
                       "opacity": 1,
                       "text": "60",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10,
                       "fontStyle": "italic"
@@ -335,6 +344,7 @@
                       "opacity": 1,
                       "text": "80",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10,
                       "fontStyle": "italic"

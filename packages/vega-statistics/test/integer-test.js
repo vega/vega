@@ -40,8 +40,8 @@ tape('integer evaluates the cdf', function(t) {
 tape('integer evaluates the inverse cdf', function(t) {
   var n1 = integer(0, 5);
   // extreme values
-  t.ok(isNaN(n1.icdf(-1)));
-  t.ok(isNaN(n1.icdf(2)));
+  t.ok(Number.isNaN(n1.icdf(-1)));
+  t.ok(Number.isNaN(n1.icdf(2)));
   // in range values
   t.equal(n1.icdf(0), -1);
   t.equal(n1.icdf(0.2), 0);

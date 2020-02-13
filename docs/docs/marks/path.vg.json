@@ -11,8 +11,18 @@
       "bind": {"input": "range", "min": 10, "max": 190, "step": 1} },
     { "name": "y", "value": 100,
       "bind": {"input": "range", "min": 10, "max": 190, "step": 1} },
+    { "name": "scaleX", "value": 1,
+      "bind": {"input": "range", "min": 0.1, "max": 2, "step": 0.1} },
+    { "name": "scaleY", "value": 1,
+      "bind": {"input": "range", "min": 0.1, "max": 2, "step": 0.1} },
+    { "name": "angle", "value": 0,
+      "bind": {"input": "range", "min": -180, "max": 180, "step": 1} },
     { "name": "strokeWidth", "value": 4,
       "bind": {"input": "range", "min": 0, "max": 10, "step": 0.5} },
+    { "name": "strokeCap", "value": "butt",
+      "bind": {"input": "radio", "options": ["butt", "round", "square"]} },
+    { "name": "strokeJoin", "value": "miter",
+      "bind": {"input": "radio", "options": ["bevel", "miter", "round"]} },
     { "name": "color", "value": "both",
       "bind": {"input": "radio", "options": ["fill", "stroke", "both"]} }
   ],
@@ -32,7 +42,12 @@
           "opacity": {"value": 1},
           "strokeWidth": {"signal": "strokeWidth"},
           "fillOpacity": {"signal": "color === 'fill' || color === 'both' ? 1 : 0"},
-          "strokeOpacity": {"signal": "color === 'stroke' || color === 'both' ? 1 : 0"}
+          "strokeOpacity": {"signal": "color === 'stroke' || color === 'both' ? 1 : 0"},
+          "strokeCap": {"signal": "strokeCap"},
+          "strokeJoin": {"signal": "strokeJoin"},
+          "angle": {"signal": "angle"},
+          "scaleX": {"signal": "scaleX"},
+          "scaleY": {"signal": "scaleY"}
         },
         "hover": {
           "opacity": {"value": 0.5}

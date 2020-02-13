@@ -3,7 +3,7 @@ import {FrameRole, MarkRole} from '../marks/roles';
 import {array, extend, hasOwnProperty, isArray, isObject} from 'vega-util';
 
 export function encoder(_) {
-  return isObject(_) ? extend({}, _) : {value: _};
+  return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
 }
 
 export function addEncode(object, name, value, set) {

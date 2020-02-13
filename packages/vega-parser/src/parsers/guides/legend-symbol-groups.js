@@ -44,18 +44,18 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   };
 
+  var baseFill = null,
+      baseStroke = null;
   if (!spec.fill) {
-    addEncoders(encode, {
-      fill:   config.symbolBaseFillColor,
-      stroke: config.symbolBaseStrokeColor
-    });
+    baseFill = config.symbolBaseFillColor;
+    baseStroke = config.symbolBaseStrokeColor;
   }
 
   addEncoders(encode, {
-    fill:             _('symbolFillColor'),
+    fill:             _('symbolFillColor', baseFill),
     shape:            _('symbolType'),
     size:             _('symbolSize'),
-    stroke:           _('symbolStrokeColor'),
+    stroke:           _('symbolStrokeColor', baseStroke),
     strokeDash:       _('symbolDash'),
     strokeDashOffset: _('symbolDashOffset'),
     strokeWidth:      _('symbolStrokeWidth')

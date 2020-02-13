@@ -76,3 +76,22 @@ tape('bin generates boundaries with minimum step size', function(t) {
 
   t.end();
 });
+
+tape('bin generates boundaries for given span size', function(t) {
+  var b = bin({extent:[0, 100], span:10, maxbins:10, nice:false});
+  t.equal(b.start, 0);
+  t.equal(b.stop, 100);
+  t.equal(b.step, 1);
+
+  b = bin({extent:[0, 100], span:1, maxbins:20, nice:false});
+  t.equal(b.start, 0);
+  t.equal(b.stop, 100);
+  t.equal(b.step, 0.05);
+
+  b = bin({extent:[0, 100], span:100, maxbins:10, nice:false});
+  t.equal(b.start, 0);
+  t.equal(b.stop, 100);
+  t.equal(b.step, 10);
+
+  t.end();
+});

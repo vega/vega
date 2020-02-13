@@ -22,8 +22,8 @@ Properties for specifying a coordinate axis.
 | domainOpacity | {% include type t="Number" %}  | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth   | {% include type t="Number" %}  | Stroke width of axis domain line. |
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom). |
-| format        | {% include type t="String" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier. |
-| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"` or `"time"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type. {% include tag ver="5.1" %} |
+| format        | {% include type t="String|TimeMultiFormat" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or a [TimeMultiFormat object](../types/#TimeMultiFormat). |
+| formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"`, `"time"`, `"utc"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type. Supported {% include tag ver="5.1" %}, UTC support {% include tag ver="5.8" %}. |
 | grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`). |
 | gridColor     | {% include type t="Color" %}   | Color of axis grid lines. |
 | gridDash      | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
@@ -53,6 +53,7 @@ Properties for specifying a coordinate axis.
 | offset        | {% include type t="Number|Value" %} | The orthogonal offset in pixels by which to displace the axis from its position along the edge of the chart.|
 | position      | {% include type t="Number|Value" %} | The anchor position of the axis in pixels (default `0`). For x-axes with top or bottom orientation, this sets the axis group `x` coordinate. For y-axes with left or right orientation, this sets the axis group `y` coordinate.|
 | ticks         | {% include type t="Boolean" %} | A boolean flag indicating if ticks should be included as part of the axis (default `true`).|
+| tickBand      | {% include type t="String" %} | Indicates the type of tick style to use in conjunction with band scales. One of `"center"` (default) to center ticks in the middle of the band interval, or `"extent"` to place ticks at band extents (interval boundaries). If specified, this property may override the settings of `bandPosition`, `tickExtra`, and `tickOffset`. {% include tag ver="5.8" %} |
 | tickColor     | {% include type t="Color" %}   | Color of axis ticks. |
 | tickCount     | {% include type t="Number|String|Object" %}  | A desired number of ticks, for axes visualizing quantitative scales. The resulting number may be different so that values are "nice" (multiples of 2, 5, 10) and lie within the underlying scale's range. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
 | tickDash      | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
@@ -64,7 +65,7 @@ Properties for specifying a coordinate axis.
 | tickRound     | {% include type t="Boolean" %} | Boolean flag indicating if pixel position values should be rounded to the nearest integer. |
 | tickSize      | {% include type t="Number" %}  | The length in pixels of axis ticks.|
 | tickWidth     | {% include type t="Number" %}  | Width in pixels of axis ticks. |
-| title         | {% include type t="String" %}  | A title for the axis (none by default).|
+| title         | {% include type t="String|String[]" %}  | A title for the axis (none by default). For versions {% include tag ver="5.7" %}, a string array specifies a title with multiple lines of text.|
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing the axis title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the axis title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
 | titleAngle    | {% include type t="Number" %}  | Angle in degrees of the axis title. |
@@ -75,11 +76,13 @@ Properties for specifying a coordinate axis.
 | titleFontStyle  | {% include type t="String" %} | Font style of the axis title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of axis title. |
 | titleLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of the axis title. |
+| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of axis title. {% include tag ver="4.1" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding in pixels between the axis labels and axis title.|
 | titleX        | {% include type t="Number" %}  | Custom X position of the axis title relative to the axis group, overriding the standard layout. |
 | titleY        | {% include type t="Number" %}  | Custom Y position of the axis title relative to the axis group, overriding the standard layout. |
-| values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values.|
+| translate     | {% include type t="Number" %}  | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
+| values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values. The array entries should be legal values in the backing scale domain.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
 
 To create themes, new default values for many axis properties can be set using a [config](../config) object.

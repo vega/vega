@@ -14,6 +14,7 @@ _Note:_ The `flatten` transform only applies to array-typed data fields. If your
 | Property            | Type                            | Description   |
 | :------------------ | :-----------------------------: | :------------ |
 | fields              | {% include type t="Field[]" %}  | {% include required %} An array of one or more data fields containing arrays to flatten. If multiple fields are specified, their array values should have a parallel structure, ideally with the same length. If the lengths of parallel arrays do not match, the longest array will be used with `null` values added for missing entries.|
+| index               | {% include type t="String" %}   | The output field name for the zero-based index of the array values. If unspecified, an index field is not added. {% include tag ver="5.8" %}|
 | as                  | {% include type t="String[]" %} | The output field names for extracted array values. If unspecified, the field name of the corresponding array field is used.|
 
 ## Usage
@@ -44,6 +45,33 @@ Result:
   {"name": "beta",  "data": 456, "foo": 3},
   {"name": "beta",  "data": 456, "foo": 4},
   {"name": "beta",  "data": 456, "foo": 5}
+]
+```
+
+### Adding an Index Field
+
+```json
+{"type": "flatten", "fields": ["foo"], "index": "idx"}
+```
+
+This example adds an field containing the array index that each item originated from.
+
+```json
+[
+  {"name": "alpha", "data": 123, "foo": [1, 2]},
+  {"name": "beta",  "data": 456, "foo": [3, 4, 5]}
+]
+```
+
+Result:
+
+```json
+[
+  {"name": "alpha", "data": 123, "foo": 1, "idx": 0},
+  {"name": "alpha", "data": 123, "foo": 2, "idx": 1},
+  {"name": "beta",  "data": 456, "foo": 3, "idx": 0},
+  {"name": "beta",  "data": 456, "foo": 4, "idx": 1},
+  {"name": "beta",  "data": 456, "foo": 5, "idx": 2}
 ]
 ```
 

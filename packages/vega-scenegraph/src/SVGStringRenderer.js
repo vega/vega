@@ -3,12 +3,12 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
-import {inherits} from 'vega-util';
+import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);
@@ -233,7 +233,19 @@ prototype.mark = function(scene) {
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
     if (tag === 'text') {
-      str += escape_text(textValue(item));
+      const tl = textLines(item);
+      if (isArray(tl)) {
+        // multi-line text
+        const attrs = {x: 0, dy: lineHeight(item)};
+        for (let i=0; i<tl.length; ++i) {
+          str += openTag('tspan', i ? attrs: null)
+            + escape_text(textValue(item, tl[i]))
+            + closeTag('tspan');
+        }
+      } else {
+        // single-line text
+        str += escape_text(textValue(item, tl));
+      }
     } else if (tag === 'g') {
       str += openTag('path', renderer.attributes(mdef.background, item),
         applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
@@ -274,6 +286,12 @@ function applyStyles(o, mark, tag, defs) {
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
+  }
+
+  if (tag === 'image') {
+    if (o.smooth === false) {
+      s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
+    }
   }
 
   if (tag === 'text') {

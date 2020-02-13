@@ -36,4 +36,5 @@ All Vega packages, by category:
   - [vega-projection-extended](/packages/vega-projection-extended): Extended collection of cartographic projections.
   - [vega-scale](/packages/vega-scale): Scale functions (linear, log, ordinal) and related methods.
   - [vega-statistics](/packages/vega-statistics): Probability distributions and statistical utilities.
+  - [vega-time](/packages/vega-time): Utility methods for dates and times.
   - [vega-util](/packages/vega-util): General utility methods.

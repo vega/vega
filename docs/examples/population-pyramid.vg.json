@@ -58,7 +58,7 @@
       "name": "c",
       "type": "ordinal",
       "domain": [1, 2],
-      "range": ["#1f77b4", "#e377c2"]
+      "range": ["#d5855a", "#6c4e97"]
     }
   ],
 
@@ -99,7 +99,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Females"}
       ],
 
       "marks": [
@@ -140,7 +140,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Males"}
       ],
 
       "marks": [

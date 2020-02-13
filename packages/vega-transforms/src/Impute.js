@@ -95,7 +95,7 @@ prototype.transform = function(_, pulse) {
       t = {_impute: true};
       for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
       t[kName] = kVal;
-      t[fName] = isNaN(value) ? (value = impute(group, field)) : value;
+      t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
 
       curr.push(ingest(t));
     }

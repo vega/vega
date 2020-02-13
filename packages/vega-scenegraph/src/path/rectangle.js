@@ -1,5 +1,8 @@
 import {path} from 'd3-path';
 
+// See http://spencermortensen.com/articles/bezier-circle/
+const C = 0.448084975506; // C = 1 - c
+
 function rectangleX(d) {
   return d.x;
 }
@@ -16,8 +19,12 @@ function rectangleHeight(d) {
   return d.height;
 }
 
-function constant(_) {
-  return function() { return _; };
+function number(_) {
+  return typeof _ === 'function' ? _ : () => +_;
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max));
 }
 
 export default function() {
@@ -25,7 +32,10 @@ export default function() {
       y = rectangleY,
       width = rectangleWidth,
       height = rectangleHeight,
-      cornerRadius = constant(0),
+      crTL = number(0),
+      crTR = crTL,
+      crBL = crTL,
+      crBR = crTL,
       context = null;
 
   function rectangle(_, x0, y0) {
@@ -34,24 +44,28 @@ export default function() {
         y1 = y0 != null ? y0 : +y.call(this, _),
         w  = +width.call(this, _),
         h  = +height.call(this, _),
-        cr = +cornerRadius.call(this, _);
+        s  = Math.min(w, h) / 2,
+        tl = clamp(+crTL.call(this, _), 0, s),
+        tr = clamp(+crTR.call(this, _), 0, s),
+        bl = clamp(+crBL.call(this, _), 0, s),
+        br = clamp(+crBR.call(this, _), 0, s);
 
     if (!context) context = buffer = path();
 
-    if (cr <= 0) {
+    if (tl <= 0 && tr <= 0 && bl <= 0 && br <= 0) {
       context.rect(x1, y1, w, h);
     } else {
       var x2 = x1 + w,
           y2 = y1 + h;
-      context.moveTo(x1 + cr, y1);
-      context.lineTo(x2 - cr, y1);
-      context.quadraticCurveTo(x2, y1, x2, y1 + cr);
-      context.lineTo(x2, y2 - cr);
-      context.quadraticCurveTo(x2, y2, x2 - cr, y2);
-      context.lineTo(x1 + cr, y2);
-      context.quadraticCurveTo(x1, y2, x1, y2 - cr);
-      context.lineTo(x1, y1 + cr);
-      context.quadraticCurveTo(x1, y1, x1 + cr, y1);
+      context.moveTo(x1 + tl, y1);
+      context.lineTo(x2 - tr, y1);
+      context.bezierCurveTo(x2 - C * tr, y1, x2, y1 + C * tr, x2, y1 + tr);
+      context.lineTo(x2, y2 - br);
+      context.bezierCurveTo(x2, y2 - C * br, x2 - C * br, y2, x2 - br, y2);
+      context.lineTo(x1 + bl, y2);
+      context.bezierCurveTo(x1 + C * bl, y2, x1, y2 - C * bl, x1, y2 - bl);
+      context.lineTo(x1, y1 + tl);
+      context.bezierCurveTo(x1, y1 + C * tl, x1 + C * tl, y1, x1 + tl, y1);
       context.closePath();
     }
 
@@ -63,7 +77,7 @@ export default function() {
 
   rectangle.x = function(_) {
     if (arguments.length) {
-      x = typeof _ === 'function' ? _ : constant(+_);
+      x = number(_);
       return rectangle;
     } else {
       return x;
@@ -72,7 +86,7 @@ export default function() {
 
   rectangle.y = function(_) {
     if (arguments.length) {
-      y = typeof _ === 'function' ? _ : constant(+_);
+      y = number(_);
       return rectangle;
     } else {
       return y;
@@ -81,7 +95,7 @@ export default function() {
 
   rectangle.width = function(_) {
     if (arguments.length) {
-      width = typeof _ === 'function' ? _ : constant(+_);
+      width = number(_);
       return rectangle;
     } else {
       return width;
@@ -90,19 +104,22 @@ export default function() {
 
   rectangle.height = function(_) {
     if (arguments.length) {
-      height = typeof _ === 'function' ? _ : constant(+_);
+      height = number(_);
       return rectangle;
     } else {
       return height;
     }
   };
 
-  rectangle.cornerRadius = function(_) {
+  rectangle.cornerRadius = function(tl, tr, br, bl) {
     if (arguments.length) {
-      cornerRadius = typeof _ === 'function' ? _ : constant(+_);
+      crTL = number(tl);
+      crTR = tr != null ? number(tr) : crTL;
+      crBR = br != null ? number(br) : crTL;
+      crBL = bl != null ? number(bl) : crTR;
       return rectangle;
     } else {
-      return cornerRadius;
+      return crTL;
     }
   };
 

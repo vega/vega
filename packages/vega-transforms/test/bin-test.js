@@ -2,7 +2,9 @@ var tape = require('tape'),
     util = require('vega-util'),
     vega = require('vega-dataflow'),
     tx = require('../'),
-    Bin = tx.bin;
+    changeset = vega.changeset,
+    Bin = tx.bin,
+    Collect = tx.collect;
 
 var TOLERANCE = 2e-14;
 
@@ -68,3 +70,29 @@ function testBin(t, b, extent, step) {
   // test very last, inclusive bin
   t.equal(b({v: f(steps)}), f(steps - 1));
 }
+
+tape('Bin supports point output', function(t) {
+  var data = [{v: 5.5}];
+
+  var df = new vega.Dataflow(),
+      c = df.add(Collect),
+      b = df.add(Bin, {
+        field:    util.field('v'),
+        interval: false,
+        extent:   [0, 10],
+        step:     1,
+        nice:     false,
+        pulse:    c
+      });
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(b.pulse.rem.length, 0);
+  t.equal(b.pulse.add.length, 1);
+  t.equal(b.pulse.mod.length, 0);
+  t.equal(b.pulse.add[0].bin0, 5);
+  t.equal(b.pulse.add[0].bin1, undefined);
+  t.equal(b.pulse.fields.bin0, true);
+  t.equal(b.pulse.fields.bin1, undefined);
+
+  t.end();
+});

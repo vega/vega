@@ -43,7 +43,8 @@ export type EventStream = StreamParameters &
     | {
         source: 'window';
         type: WindowEventType;
-      });
+      }
+  );
 export interface DerivedStream extends StreamParameters {
   stream: Stream;
 }

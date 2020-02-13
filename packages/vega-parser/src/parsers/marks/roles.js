@@ -18,3 +18,5 @@ export var LegendSymbolRole = 'legend-symbol';
 export var LegendTitleRole = 'legend-title';
 
 export var TitleRole = 'title';
+export var TitleTextRole = 'title-text';
+export var TitleSubtitleRole = 'title-subtitle';

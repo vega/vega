@@ -8,12 +8,15 @@ var keys = [
   'strokeDash', 'strokeDashOffset',                             // stroke dash
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
   'cornerRadius', 'padAngle',                                   // arc, rect
+  'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group
+  'cornerRadiusBottomLeft', 'cornerRadiusBottomRight',
   'interpolate', 'tension', 'orient', 'defined',                // area, line
-  'url',                                                        // image
-  'path',                                                       // path
+  'url', 'aspect', 'smooth',                                    // image
+  'path', 'scaleX', 'scaleY',                                   // path
   'x2', 'y2',                                                   // rule
   'size', 'shape',                                              // symbol
-  'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text
+  'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
+  'ellipsis', 'limit', 'lineBreak', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
 ];
 

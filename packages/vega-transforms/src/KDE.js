@@ -1,3 +1,4 @@
+import {partition} from './util/util';
 import {randomKDE} from 'vega-statistics';
 import {ingest, Transform} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';
@@ -12,7 +13,10 @@ import {accessorName, error, extent, inherits} from 'vega-util';
  * @param {function(object): *} params.field - An accessor for the data field
  *   to estimate.
  * @param {number} [params.bandwidth=0] - The KDE kernel bandwidth.
- *   If zero of unspecified, the bandwidth is automatically determined.
+ *   If zero or unspecified, the bandwidth is automatically determined.
+ * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+ *   output values should be probability estimates (false, default) or
+ *   smoothed counts (true).
  * @param {string} [params.cumulative=false] - A boolean flag indicating if a
  *   density (false) or cumulative distribution (true) should be generated.
  * @param {Array<number>} [params.extent] - The domain extent over which to
@@ -102,28 +106,3 @@ prototype.transform = function(_, pulse) {
 
   return out;
 };
-
-function partition(data, groupby, field) {
-  var groups = [],
-      get = function(f) { return f(t); },
-      map, i, n, t, k, g;
-
-  // partition data points into stack groups
-  if (groupby == null) {
-    groups.push(data.map(field));
-  } else {
-    for (map={}, i=0, n=data.length; i<n; ++i) {
-      t = data[i];
-      k = groupby.map(get);
-      g = map[k];
-      if (!g) {
-        map[k] = (g = []);
-        g.dims = k;
-        groups.push(g);
-      }
-      g.push(field(t));
-    }
-  }
-
-  return groups;
-}

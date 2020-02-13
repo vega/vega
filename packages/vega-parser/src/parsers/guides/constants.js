@@ -21,6 +21,7 @@ export const Value  = 'value';
 export const GuideLabelStyle = 'guide-label';
 export const GuideTitleStyle = 'guide-title';
 export const GroupTitleStyle = 'group-title';
+export const GroupSubtitleStyle = 'group-subtitle';
 
 export const Symbols = 'symbol';
 export const Gradient = 'gradient';
@@ -40,6 +41,7 @@ export const LegendScales = [
 
 export const Skip = {
   name: 1,
+  style: 1,
   interactive: 1
 };
 

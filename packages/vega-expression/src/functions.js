@@ -25,8 +25,8 @@ export default function(codegen) {
 
   return {
     // MATH functions
-    isNaN:    'isNaN',
-    isFinite: 'isFinite',
+    isNaN:    'Number.isNaN',
+    isFinite: 'Number.isFinite',
     abs:      'Math.abs',
     acos:     'Math.acos',
     asin:     'Math.asin',

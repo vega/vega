@@ -1,10 +1,13 @@
 import parseView from './parsers/view';
 import Scope from './Scope';
 import defaults from './config';
-import {error, isObject} from 'vega-util';
+import {error, isObject, mergeConfig} from 'vega-util';
 
 export default function(spec, config) {
-  if (!isObject(spec)) error('Input Vega specification must be an object.');
-  return parseView(spec, new Scope(defaults([config, spec.config])))
-    .toRuntime();
+  if (!isObject(spec)) {
+    error('Input Vega specification must be an object.');
+  }
+
+  config = mergeConfig(defaults(), config, spec.config);
+  return parseView(spec, new Scope(config)).toRuntime();
 }

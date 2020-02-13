@@ -1,4 +1,4 @@
-import {Union} from './constants';
+import {Union, VlMulti, Or, And} from './constants';
 import {array, toNumber} from 'vega-util';
 
 /**
@@ -8,10 +8,10 @@ import {array, toNumber} from 'vega-util';
  *                 One of 'intersect' or 'union' (default).
  * @returns {object} An object of selected fields and values.
  */
-export function selectionResolve(name, op) {
+export function selectionResolve(name, op, isMulti) {
   var data = this.context.data[name],
     entries = data ? data.values.value : [],
-    resolved = {}, types = {},
+    resolved = {}, multiRes = {}, types = {},
     entry, fields, values, unit, field, res, resUnit, type, union,
     n = entries.length, i = 0, j, m;
 
@@ -30,18 +30,33 @@ export function selectionResolve(name, op) {
       union = ops[type + '_union'];
       res[unit] = union(resUnit, array(values[j]));
     }
+
+    // If the same multi-selection is repeated over views and projected over
+    // an encoding, it may operate over different fields making it especially
+    // tricky to reliably resolve it. At best, we can de-dupe identical entries
+    // but doing so may be more computationally expensive than it is worth.
+    // Instead, for now, we simply transform our store representation into
+    // a more human-friendly one.
+    if (isMulti) {
+      resUnit = multiRes[unit] || (multiRes[unit] = []);
+      resUnit.push(array(values).reduce((obj, curr, j) => (obj[fields[j].field] = curr, obj), {}));
+    }
   }
 
   // Then resolve fields across units as per the op.
   op = op || Union;
   Object.keys(resolved).forEach(function (field) {
     resolved[field] = Object.keys(resolved[field])
-      .map(function (unit) { return resolved[field][unit]; })
-      .reduce(function (acc, curr) {
-        return acc === undefined ? curr :
-          ops[types[field] + '_' + op](acc, curr);
-      });
+      .map(unit => resolved[field][unit])
+      .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
   });
+
+  entries = Object.keys(multiRes);
+  if (isMulti && entries.length) {
+    resolved[VlMulti] = op === Union
+      ? {[Or]: entries.reduce((acc, k) => (acc.push.apply(acc, multiRes[k]), acc), [])}
+      : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
+  }
 
   return resolved;
 }

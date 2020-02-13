@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = global || self, factory(global.vega = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -166,6 +166,62 @@
         return this;
       }
     }
+  }
+
+  function mergeConfig(...configs) {
+    return configs.reduce((out, source) => {
+      for (var key in source) {
+        if (key === 'signals') {
+          // for signals, we merge the signals arrays
+          // source signals take precedence over
+          // existing signals with the same name
+          out.signals = mergeNamed(out.signals, source.signals);
+        } else {
+          // otherwise, merge objects subject to recursion constraints
+          // for legend block, recurse for the layout entry only
+          // for style block, recurse for all properties
+          // otherwise, no recursion: objects overwrite, no merging
+          var r = key === 'legend' ? {'layout': 1}
+            : key === 'style' ? true
+            : null;
+          writeConfig(out, key, source[key], r);
+        }
+      }
+      return out;
+    }, {});
+  }
+
+  function writeConfig(output, key, value, recurse) {
+    var k, o;
+    if (isObject(value) && !isArray(value)) {
+      o = isObject(output[key]) ? output[key] : (output[key] = {});
+      for (k in value) {
+        if (recurse && (recurse === true || recurse[k])) {
+          writeConfig(o, k, value[k]);
+        } else {
+          o[k] = value[k];
+        }
+      }
+    } else {
+      output[key] = value;
+    }
+  }
+
+  function mergeNamed(a, b) {
+    if (a == null) return b;
+
+    const map = {}, out = [];
+
+    function add(_) {
+      if (!map[_.name]) {
+        map[_.name] = 1;
+        out.push(_);
+      }
+    }
+
+    b.forEach(add);
+    a.forEach(add);
+    return out;
   }
 
   function peek(array) {
@@ -699,7 +755,7 @@
    * the last and first values.
    */
   function span(array) {
-    return (peek(array) - array[0]) || 0;
+    return array && (peek(array) - array[0]) || 0;
   }
 
   function toBoolean(_) {
@@ -1796,15 +1852,15 @@
   }
 
   function isDate$1(_) {
-    return !isNaN(Date.parse(_));
+    return !Number.isNaN(Date.parse(_));
   }
 
   function isNumber$1(_) {
-    return !isNaN(+_) && !(_ instanceof Date);
+    return !Number.isNaN(+_) && !(_ instanceof Date);
   }
 
   function isInteger(_) {
-    return isNumber$1(_) && (_=+_) === ~~_;
+    return isNumber$1(_) && Number.isInteger(+_);
   }
 
   var EOL = {},
@@ -2044,6 +2100,7 @@
   }
 
   function feature(topology, o) {
+    if (typeof o === "string") o = topology.objects[o];
     return o.type === "GeometryCollection"
         ? {type: "FeatureCollection", features: o.geometries.map(function(o) { return feature$1(topology, o); })}
         : feature$1(topology, o);
@@ -2292,10 +2349,12 @@
   function newInterval(floori, offseti, count, field) {
 
     function interval(date) {
-      return floori(date = new Date(+date)), date;
+      return floori(date = arguments.length === 0 ? new Date : new Date(+date)), date;
     }
 
-    interval.floor = interval;
+    interval.floor = function(date) {
+      return floori(date = new Date(+date)), date;
+    };
 
     interval.ceil = function(date) {
       return floori(date = new Date(date - 1)), offseti(date, 1), floori(date), date;
@@ -2575,8 +2634,8 @@
     return new Date(Date.UTC(d.y, d.m, d.d, d.H, d.M, d.S, d.L));
   }
 
-  function newYear(y) {
-    return {y: y, m: 0, d: 1, H: 0, M: 0, S: 0, L: 0};
+  function newDate(y, m, d) {
+    return {y: y, m: m, d: d, H: 0, M: 0, S: 0, L: 0};
   }
 
   function formatLocale(locale) {
@@ -2616,6 +2675,7 @@
       "m": formatMonthNumber,
       "M": formatMinutes,
       "p": formatPeriod,
+      "q": formatQuarter,
       "Q": formatUnixTimestamp,
       "s": formatUnixTimestampSeconds,
       "S": formatSeconds,
@@ -2648,6 +2708,7 @@
       "m": formatUTCMonthNumber,
       "M": formatUTCMinutes,
       "p": formatUTCPeriod,
+      "q": formatUTCQuarter,
       "Q": formatUnixTimestamp,
       "s": formatUnixTimestampSeconds,
       "S": formatUTCSeconds,
@@ -2680,6 +2741,7 @@
       "m": parseMonthNumber,
       "M": parseMinutes,
       "p": parsePeriod,
+      "q": parseQuarter,
       "Q": parseUnixTimestamp,
       "s": parseUnixTimestampSeconds,
       "S": parseSeconds,
@@ -2732,32 +2794,39 @@
       };
     }
 
-    function newParse(specifier, newDate) {
+    function newParse(specifier, Z) {
       return function(string) {
-        var d = newYear(1900),
+        var d = newDate(1900, undefined, 1),
             i = parseSpecifier(d, specifier, string += "", 0),
             week, day$1;
         if (i != string.length) return null;
 
         // If a UNIX timestamp is specified, return it.
         if ("Q" in d) return new Date(d.Q);
+        if ("s" in d) return new Date(d.s * 1000 + ("L" in d ? d.L : 0));
+
+        // If this is utcParse, never use the local timezone.
+        if (Z && !("Z" in d)) d.Z = 0;
 
         // The am-pm flag is 0 for AM, and 1 for PM.
         if ("p" in d) d.H = d.H % 12 + d.p * 12;
+
+        // If the month was not specified, inherit from the quarter.
+        if (d.m === undefined) d.m = "q" in d ? d.q : 0;
 
         // Convert day-of-week and week-of-year to day-of-year.
         if ("V" in d) {
           if (d.V < 1 || d.V > 53) return null;
           if (!("w" in d)) d.w = 1;
           if ("Z" in d) {
-            week = utcDate(newYear(d.y)), day$1 = week.getUTCDay();
+            week = utcDate(newDate(d.y, 0, 1)), day$1 = week.getUTCDay();
             week = day$1 > 4 || day$1 === 0 ? utcMonday.ceil(week) : utcMonday(week);
             week = utcDay.offset(week, (d.V - 1) * 7);
             d.y = week.getUTCFullYear();
             d.m = week.getUTCMonth();
             d.d = week.getUTCDate() + (d.w + 6) % 7;
           } else {
-            week = newDate(newYear(d.y)), day$1 = week.getDay();
+            week = localDate(newDate(d.y, 0, 1)), day$1 = week.getDay();
             week = day$1 > 4 || day$1 === 0 ? monday.ceil(week) : monday(week);
             week = day.offset(week, (d.V - 1) * 7);
             d.y = week.getFullYear();
@@ -2766,7 +2835,7 @@
           }
         } else if ("W" in d || "U" in d) {
           if (!("w" in d)) d.w = "u" in d ? d.u % 7 : "W" in d ? 1 : 0;
-          day$1 = "Z" in d ? utcDate(newYear(d.y)).getUTCDay() : newDate(newYear(d.y)).getDay();
+          day$1 = "Z" in d ? utcDate(newDate(d.y, 0, 1)).getUTCDay() : localDate(newDate(d.y, 0, 1)).getDay();
           d.m = 0;
           d.d = "W" in d ? (d.w + 6) % 7 + d.W * 7 - (day$1 + 5) % 7 : d.w + d.U * 7 - (day$1 + 6) % 7;
         }
@@ -2780,7 +2849,7 @@
         }
 
         // Otherwise, all fields are in local time.
-        return newDate(d);
+        return localDate(d);
       };
     }
 
@@ -2863,6 +2932,10 @@
       return locale_periods[+(d.getHours() >= 12)];
     }
 
+    function formatQuarter(d) {
+      return 1 + ~~(d.getMonth() / 3);
+    }
+
     function formatUTCShortWeekday(d) {
       return locale_shortWeekdays[d.getUTCDay()];
     }
@@ -2883,6 +2956,10 @@
       return locale_periods[+(d.getUTCHours() >= 12)];
     }
 
+    function formatUTCQuarter(d) {
+      return 1 + ~~(d.getUTCMonth() / 3);
+    }
+
     return {
       format: function(specifier) {
         var f = newFormat(specifier += "", formats);
@@ -2890,7 +2967,7 @@
         return f;
       },
       parse: function(specifier) {
-        var p = newParse(specifier += "", localDate);
+        var p = newParse(specifier += "", false);
         p.toString = function() { return specifier; };
         return p;
       },
@@ -2900,7 +2977,7 @@
         return f;
       },
       utcParse: function(specifier) {
-        var p = newParse(specifier, utcDate);
+        var p = newParse(specifier += "", true);
         p.toString = function() { return specifier; };
         return p;
       }
@@ -2973,6 +3050,11 @@
     return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || "00")), i + n[0].length) : -1;
   }
 
+  function parseQuarter(d, string, i) {
+    var n = numberRe.exec(string.slice(i, i + 1));
+    return n ? (d.q = n[0] * 3 - 3, i + n[0].length) : -1;
+  }
+
   function parseMonthNumber(d, string, i) {
     var n = numberRe.exec(string.slice(i, i + 2));
     return n ? (d.m = n[0] - 1, i + n[0].length) : -1;
@@ -3025,7 +3107,7 @@
 
   function parseUnixTimestampSeconds(d, string, i) {
     var n = numberRe.exec(string.slice(i));
-    return n ? (d.Q = (+n[0]) * 1000, i + n[0].length) : -1;
+    return n ? (d.s = +n[0], i + n[0].length) : -1;
   }
 
   function formatDayOfMonth(d, p) {
@@ -3070,7 +3152,7 @@
   }
 
   function formatWeekNumberSunday(d, p) {
-    return pad$2(sunday.count(year(d), d), p, 2);
+    return pad$2(sunday.count(year(d) - 1, d), p, 2);
   }
 
   function formatWeekNumberISO(d, p) {
@@ -3084,7 +3166,7 @@
   }
 
   function formatWeekNumberMonday(d, p) {
-    return pad$2(monday.count(year(d), d), p, 2);
+    return pad$2(monday.count(year(d) - 1, d), p, 2);
   }
 
   function formatYear$1(d, p) {
@@ -3144,7 +3226,7 @@
   }
 
   function formatUTCWeekNumberSunday(d, p) {
-    return pad$2(utcSunday.count(utcYear(d), d), p, 2);
+    return pad$2(utcSunday.count(utcYear(d) - 1, d), p, 2);
   }
 
   function formatUTCWeekNumberISO(d, p) {
@@ -3158,7 +3240,7 @@
   }
 
   function formatUTCWeekNumberMonday(d, p) {
-    return pad$2(utcMonday.count(utcYear(d), d), p, 2);
+    return pad$2(utcMonday.count(utcYear(d) - 1, d), p, 2);
   }
 
   function formatUTCYear(d, p) {
@@ -3210,25 +3292,6 @@
     utcParse = locale.utcParse;
     return locale;
   }
-
-  var isoSpecifier = "%Y-%m-%dT%H:%M:%S.%LZ";
-
-  function formatIsoNative(date) {
-    return date.toISOString();
-  }
-
-  var formatIso = Date.prototype.toISOString
-      ? formatIsoNative
-      : utcFormat(isoSpecifier);
-
-  function parseIsoNative(string) {
-    var date = new Date(string);
-    return isNaN(date) ? null : date;
-  }
-
-  var parseIso = +new Date("2000-01-01T00:00:00.000Z")
-      ? parseIsoNative
-      : utcParse(isoSpecifier);
 
   function read(data, schema, dateParse) {
     schema = schema || {};
@@ -3756,9 +3819,12 @@
    * @return {Pulse} - This pulse instance.
    */
   prototype$3.modifies = function(_) {
-    var fields = array(_),
-        hash = this.fields || (this.fields = {});
-    fields.forEach(function(f) { hash[f] = true; });
+    var hash = this.fields || (this.fields = {});
+    if (isArray(_)) {
+      _.forEach(f => hash[f] = true);
+    } else {
+      hash[_] = true;
+    }
     return this;
   };
 
@@ -4764,7 +4830,7 @@
       init: 'this.min = undefined;',
       add:  'if (v < this.min || this.min === undefined) this.min = v;',
       rem:  'if (v <= this.min) this.min = NaN;',
-      set:  'this.min = (isNaN(this.min) ? cell.data.min(this.get) : this.min)',
+      set:  'this.min = (Number.isNaN(this.min) ? cell.data.min(this.get) : this.min)',
       str:  ['values'], idx: 4
     }),
     'max': measure({
@@ -4772,7 +4838,7 @@
       init: 'this.max = undefined;',
       add:  'if (v > this.max || this.max === undefined) this.max = v;',
       rem:  'if (v >= this.max) this.max = NaN;',
-      set:  'this.max = (isNaN(this.max) ? cell.data.max(this.get) : this.max)',
+      set:  'this.max = (Number.isNaN(this.max) ? cell.data.max(this.get) : this.max)',
       str:  ['values'], idx: 4
     })
   };
@@ -4843,61 +4909,6 @@
     return ctr;
   }
 
-  function bin(_) {
-    // determine range
-    var maxb = _.maxbins || 20,
-        base = _.base || 10,
-        logb = Math.log(base),
-        div  = _.divide || [5, 2],
-        min  = _.extent[0],
-        max  = _.extent[1],
-        span = (max - min) || Math.abs(min) || 1,
-        step, level, minstep, precision, v, i, n, eps;
-
-    if (_.step) {
-      // if step size is explicitly given, use that
-      step = _.step;
-    } else if (_.steps) {
-      // if provided, limit choice to acceptable step sizes
-      v = span / maxb;
-      for (i=0, n=_.steps.length; i < n && _.steps[i] < v; ++i);
-      step = _.steps[Math.max(0, i-1)];
-    } else {
-      // else use span to determine step size
-      level = Math.ceil(Math.log(maxb) / logb);
-      minstep = _.minstep || 0;
-      step = Math.max(
-        minstep,
-        Math.pow(base, Math.round(Math.log(span) / logb) - level)
-      );
-
-      // increase step size if too many bins
-      while (Math.ceil(span/step) > maxb) { step *= base; }
-
-      // decrease step size if allowed
-      for (i=0, n=div.length; i<n; ++i) {
-        v = step / div[i];
-        if (v >= minstep && span / v <= maxb) step = v;
-      }
-    }
-
-    // update precision, min and max
-    v = Math.log(step);
-    precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
-    eps = Math.pow(base, -precision - 1);
-    if (_.nice || _.nice === undefined) {
-      v = Math.floor(min / step + eps) * step;
-      min = min < v ? v - step : v;
-      max = Math.ceil(max / step) * step;
-    }
-
-    return {
-      start: min,
-      stop:  max === min ? min + step : max,
-      step:  step
-    };
-  }
-
   function* numbers(values, valueof) {
     if (valueof === undefined) {
       for (let value of values) {
@@ -4913,12 +4924,6 @@
         }
       }
     }
-  }
-
-  exports.random = Math.random;
-
-  function setRandom(r) {
-    exports.random = r;
   }
 
   function ascending(a, b) {
@@ -4987,34 +4992,9 @@
     if (count > 1) return sum / (count - 1);
   }
 
-  function extent$1(values, valueof) {
-    let min;
-    let max;
-    if (valueof === undefined) {
-      for (const value of values) {
-        if (value != null) {
-          if (min === undefined) {
-            if (value >= value) min = max = value;
-          } else {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null) {
-          if (min === undefined) {
-            if (value >= value) min = max = value;
-          } else {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
-      }
-    }
-    return [min, max];
+  function deviation(values, valueof) {
+    const v = variance(values, valueof);
+    return v ? Math.sqrt(v) : v;
   }
 
   function sequence(start, stop, step) {
@@ -5083,43 +5063,6 @@
     return stop < start ? -step1 : step1;
   }
 
-  function number(x) {
-    return x === null ? NaN : +x;
-  }
-
-  function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    }
-  }
-
-  function quantile(values, p, valueof) {
-    return quantileSorted(Float64Array.from(numbers$1(values, valueof)).sort(ascending), p);
-  }
-
-  function quantileSorted(values, p, valueof = number) {
-    if (!(n = values.length)) return;
-    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = +valueof(values[i0], i0, values),
-        value1 = +valueof(values[i0 + 1], i0 + 1, values);
-    return value0 + (value1 - value0) * (i - i0);
-  }
-
   function max(values, valueof) {
     let max;
     if (valueof === undefined) {
@@ -5141,24 +5084,25 @@
     return max;
   }
 
-  function mean(values, valueof) {
-    let count = 0;
-    let sum = 0;
+  function min(values, valueof) {
+    let min;
     if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          ++count, sum += value;
+      for (const value of values) {
+        if (value != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          ++count, sum += value;
+        if ((value = valueof(value, ++index, values)) != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
         }
       }
     }
-    if (count) return sum / count;
+    return min;
   }
 
   // Based on https://github.com/mourner/quickselect
@@ -5204,35 +5148,84 @@
     array[j] = t;
   }
 
-  function median(values, valueof) {
-    values = Float64Array.from(numbers$1(values, valueof));
-    if (!values.length) return;
-    const n = values.length;
-    const i = n >> 1;
-    quickselect(values, i - 1, 0);
-    if ((n & 1) === 0) quickselect(values, i, i);
-    return quantile(values, 0.5);
+  function number(x) {
+    return x === null ? NaN : +x;
   }
 
-  function min(values, valueof) {
-    let min;
+  function* numbers$1(values, valueof) {
     if (valueof === undefined) {
-      for (const value of values) {
-        if (value != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          yield value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          yield value;
         }
       }
     }
-    return min;
+  }
+
+  function quantile(values, p, valueof) {
+    values = Float64Array.from(numbers$1(values, valueof));
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return min(values);
+    if (p >= 1) return max(values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = max(quickselect(values, i0).subarray(0, i0 + 1)),
+        value1 = min(values.subarray(i0 + 1));
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function quantileSorted(values, p, valueof = number) {
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = +valueof(values[i0], i0, values),
+        value1 = +valueof(values[i0 + 1], i0 + 1, values);
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function mean(values, valueof) {
+    let count = 0;
+    let sum = 0;
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    }
+    if (count) return sum / count;
+  }
+
+  function median(values, valueof) {
+    return quantile(values, 0.5, valueof);
+  }
+
+  function* flatten(arrays) {
+    for (const array of arrays) {
+      yield* array;
+    }
+  }
+
+  function merge$1(arrays) {
+    return Array.from(flatten(arrays));
   }
 
   function permute(source, keys) {
@@ -5258,6 +5251,94 @@
     return sum;
   }
 
+  function quantiles(array, p, f) {
+    var values = Float64Array.from(numbers(array, f));
+
+    // don't depend on return value from typed array sort call
+    // protects against undefined sort results in Safari (vega/vega-lite#4964)
+    values.sort(ascending);
+
+    return p.map(_ => quantileSorted(values, _));
+  }
+
+  function quartiles(array, f) {
+    return quantiles(array, [0.25, 0.50, 0.75], f);
+  }
+
+  // Scott, D. W. (1992) Multivariate Density Estimation:
+  // Theory, Practice, and Visualization. Wiley.
+  function bandwidthNRD(array, f) {
+    var n = array.length,
+        v = deviation(array, f),
+        q = quartiles(array, f),
+        h = (q[2] - q[0]) / 1.34;
+
+    v = Math.min(v, h) || v || Math.abs(q[0]) || 1;
+
+    return 1.06 * v * Math.pow(n, -0.2);
+  }
+
+  function bin(_) {
+    // determine range
+    var maxb = _.maxbins || 20,
+        base = _.base || 10,
+        logb = Math.log(base),
+        div  = _.divide || [5, 2],
+        min  = _.extent[0],
+        max  = _.extent[1],
+        span = _.span || (max - min) || Math.abs(min) || 1,
+        step, level, minstep, precision, v, i, n, eps;
+
+    if (_.step) {
+      // if step size is explicitly given, use that
+      step = _.step;
+    } else if (_.steps) {
+      // if provided, limit choice to acceptable step sizes
+      v = span / maxb;
+      for (i=0, n=_.steps.length; i < n && _.steps[i] < v; ++i);
+      step = _.steps[Math.max(0, i-1)];
+    } else {
+      // else use span to determine step size
+      level = Math.ceil(Math.log(maxb) / logb);
+      minstep = _.minstep || 0;
+      step = Math.max(
+        minstep,
+        Math.pow(base, Math.round(Math.log(span) / logb) - level)
+      );
+
+      // increase step size if too many bins
+      while (Math.ceil(span/step) > maxb) { step *= base; }
+
+      // decrease step size if allowed
+      for (i=0, n=div.length; i<n; ++i) {
+        v = step / div[i];
+        if (v >= minstep && span / v <= maxb) step = v;
+      }
+    }
+
+    // update precision, min and max
+    v = Math.log(step);
+    precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+    eps = Math.pow(base, -precision - 1);
+    if (_.nice || _.nice === undefined) {
+      v = Math.floor(min / step + eps) * step;
+      min = min < v ? v - step : v;
+      max = Math.ceil(max / step) * step;
+    }
+
+    return {
+      start: min,
+      stop:  max === min ? min + step : max,
+      step:  step
+    };
+  }
+
+  exports.random = Math.random;
+
+  function setRandom(r) {
+    exports.random = r;
+  }
+
   function bootstrapCI(array, samples, alpha, f) {
     if (!array.length) return [undefined, undefined];
 
@@ -5281,18 +5362,68 @@
     ];
   }
 
-  function quartiles(array, f) {
-    var values = Float64Array.from(numbers(array, f));
+  // Dot density binning for dot plot construction.
+  // Based on Leland Wilkinson, Dot Plots, The American Statistician, 1999.
+  // https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf
+  function dotbin(array, step, smooth, f) {
+    f = f || (_ => _);
 
-    // don't depend on return value from typed array sort call
-    // protects against undefined sort results in Safari (vega/vega-lite#4964)
-    values.sort(ascending);
+    let i = 0, j = 1,
+        n = array.length,
+        v = new Float64Array(n),
+        a = f(array[0]),
+        b = a,
+        w = a + step,
+        x;
 
-    return [
-      quantile(values, 0.25),
-      quantile(values, 0.50),
-      quantile(values, 0.75)
-    ];
+    for (; j<n; ++j) {
+      x = f(array[j]);
+      if (x >= w) {
+        b = (a + b) / 2;
+        for (; i<j; ++i) v[i] = b;
+        w = x + step;
+        a = x;
+      }
+      b = x;
+    }
+
+    b = (a + b) / 2;
+    for (; i<j; ++i) v[i] = b;
+
+    return smooth ? smoothing(v, step + step / 4) : v;
+  }
+
+  // perform smoothing to reduce variance
+  // swap points between "adjacent" stacks
+  // Wilkinson defines adjacent as within step/4 units
+  function smoothing(v, thresh) {
+    let n = v.length,
+        a = 0,
+        b = 1,
+        c, d;
+
+    // get left stack
+    while (v[a] === v[b]) ++b;
+
+    while (b < n) {
+      // get right stack
+      c = b + 1;
+      while (v[b] === v[c]) ++c;
+
+      // are stacks adjacent?
+      // if so, compare sizes and swap as needed
+      if (v[b] - v[b-1] < thresh) {
+        d = b + ((a + c - b - b) >> 1);
+        while (d < b) v[d++] = v[b];
+        while (d > b) v[d--] = v[a];
+      }
+
+      // update left stack indices
+      a = b;
+      b = c;
+    }
+
+    return v;
   }
 
   function lcg(seed) {
@@ -5353,102 +5484,193 @@
     return dist.min(min).max(max);
   }
 
-  function randomNormal(mean, stdev) {
-    var mu,
-        sigma,
-        next = NaN,
-        dist = {};
+  const SQRT2PI = Math.sqrt(2 * Math.PI);
+  const SQRT2 = Math.SQRT2;
 
-    dist.mean = function(_) {
-      if (arguments.length) {
-        mu = _ || 0;
-        next = NaN;
-        return dist;
-      } else {
-        return mu;
-      }
-    };
+  let nextSample = NaN;
 
-    dist.stdev = function(_) {
-      if (arguments.length) {
-        sigma = _ == null ? 1 : _;
-        next = NaN;
-        return dist;
-      } else {
-        return sigma;
-      }
-    };
+  function sampleNormal(mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
 
-    dist.sample = function() {
-      var x = 0, y = 0, rds, c;
-      if (next === next) {
-        x = next;
-        next = NaN;
-        return x;
-      }
+    let x = 0, y = 0, rds, c;
+    if (nextSample === nextSample) {
+      x = nextSample;
+      nextSample = NaN;
+    } else {
       do {
         x = exports.random() * 2 - 1;
         y = exports.random() * 2 - 1;
         rds = x * x + y * y;
       } while (rds === 0 || rds > 1);
       c = Math.sqrt(-2 * Math.log(rds) / rds); // Box-Muller transform
-      next = mu + y * c * sigma;
-      return mu + x * c * sigma;
-    };
+      x *= c;
+      nextSample = y * c;
+    }
+    return mean + x * stdev;
+  }
 
-    dist.pdf = function(x) {
-      var exp = Math.exp(Math.pow(x-mu, 2) / (-2 * Math.pow(sigma, 2)));
-      return (1 / (sigma * Math.sqrt(2*Math.PI))) * exp;
-    };
+  function densityNormal(value, mean, stdev) {
+    stdev = stdev == null ? 1 : stdev;
+    const z = (value - (mean || 0)) / stdev;
+    return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
+  }
 
-    // Approximation from West (2009)
-    // Better Approximations to Cumulative Normal Functions
-    dist.cdf = function(x) {
-      var cd,
-          z = (x - mu) / sigma,
-          Z = Math.abs(z);
-      if (Z > 37) {
-        cd = 0;
+  // Approximation from West (2009)
+  // Better Approximations to Cumulative Normal Functions
+  function cumulativeNormal(value, mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+
+    let cd,
+        z = (value - mean) / stdev,
+        Z = Math.abs(z);
+
+    if (Z > 37) {
+      cd = 0;
+    } else {
+      let sum, exp = Math.exp(-Z * Z / 2);
+      if (Z < 7.07106781186547) {
+        sum = 3.52624965998911e-02 * Z + 0.700383064443688;
+        sum = sum * Z + 6.37396220353165;
+        sum = sum * Z + 33.912866078383;
+        sum = sum * Z + 112.079291497871;
+        sum = sum * Z + 221.213596169931;
+        sum = sum * Z + 220.206867912376;
+        cd = exp * sum;
+        sum = 8.83883476483184e-02 * Z + 1.75566716318264;
+        sum = sum * Z + 16.064177579207;
+        sum = sum * Z + 86.7807322029461;
+        sum = sum * Z + 296.564248779674;
+        sum = sum * Z + 637.333633378831;
+        sum = sum * Z + 793.826512519948;
+        sum = sum * Z + 440.413735824752;
+        cd = cd / sum;
       } else {
-        var sum, exp = Math.exp(-Z*Z/2);
-        if (Z < 7.07106781186547) {
-          sum = 3.52624965998911e-02 * Z + 0.700383064443688;
-          sum = sum * Z + 6.37396220353165;
-          sum = sum * Z + 33.912866078383;
-          sum = sum * Z + 112.079291497871;
-          sum = sum * Z + 221.213596169931;
-          sum = sum * Z + 220.206867912376;
-          cd = exp * sum;
-          sum = 8.83883476483184e-02 * Z + 1.75566716318264;
-          sum = sum * Z + 16.064177579207;
-          sum = sum * Z + 86.7807322029461;
-          sum = sum * Z + 296.564248779674;
-          sum = sum * Z + 637.333633378831;
-          sum = sum * Z + 793.826512519948;
-          sum = sum * Z + 440.413735824752;
-          cd = cd / sum;
-        } else {
-          sum = Z + 0.65;
-          sum = Z + 4 / sum;
-          sum = Z + 3 / sum;
-          sum = Z + 2 / sum;
-          sum = Z + 1 / sum;
-          cd = exp / sum / 2.506628274631;
-        }
+        sum = Z + 0.65;
+        sum = Z + 4 / sum;
+        sum = Z + 3 / sum;
+        sum = Z + 2 / sum;
+        sum = Z + 1 / sum;
+        cd = exp / sum / 2.506628274631;
       }
-      return z > 0 ? 1 - cd : cd;
-    };
+    }
+    return z > 0 ? 1 - cd : cd;
+  }
 
-    // Approximation of Probit function using inverse error function.
-    dist.icdf = function(p) {
-      if (p <= 0 || p >= 1) return NaN;
-      var x = 2*p - 1,
-          v = (8 * (Math.PI - 3)) / (3 * Math.PI * (4-Math.PI)),
-          a = (2 / (Math.PI*v)) + (Math.log(1 - Math.pow(x,2)) / 2),
-          b = Math.log(1 - (x*x)) / v,
-          s = (x > 0 ? 1 : -1) * Math.sqrt(Math.sqrt((a*a) - b) - a);
-      return mu + sigma * Math.SQRT2 * s;
-    };
+  // Approximation of Probit function using inverse error function.
+  function quantileNormal(p, mean, stdev) {
+    if (p < 0 || p > 1) return NaN;
+    return (mean || 0) + (stdev == null ? 1 : stdev) * SQRT2 * erfinv(2 * p - 1);
+  }
+
+  // Approximate inverse error function. Implementation from "Approximating
+  // the erfinv function" by Mike Giles, GPU Computing Gems, volume 2, 2010.
+  // Ported from Apache Commons Math, http://www.apache.org/licenses/LICENSE-2.0
+  function erfinv(x) {
+    // beware that the logarithm argument must be
+    // commputed as (1.0 - x) * (1.0 + x),
+    // it must NOT be simplified as 1.0 - x * x as this
+    // would induce rounding errors near the boundaries +/-1
+    let w = - Math.log((1 - x) * (1 + x)), p;
+
+    if (w < 6.25) {
+        w -= 3.125;
+        p =  -3.6444120640178196996e-21;
+        p =   -1.685059138182016589e-19 + p * w;
+        p =   1.2858480715256400167e-18 + p * w;
+        p =    1.115787767802518096e-17 + p * w;
+        p =   -1.333171662854620906e-16 + p * w;
+        p =   2.0972767875968561637e-17 + p * w;
+        p =   6.6376381343583238325e-15 + p * w;
+        p =  -4.0545662729752068639e-14 + p * w;
+        p =  -8.1519341976054721522e-14 + p * w;
+        p =   2.6335093153082322977e-12 + p * w;
+        p =  -1.2975133253453532498e-11 + p * w;
+        p =  -5.4154120542946279317e-11 + p * w;
+        p =    1.051212273321532285e-09 + p * w;
+        p =  -4.1126339803469836976e-09 + p * w;
+        p =  -2.9070369957882005086e-08 + p * w;
+        p =   4.2347877827932403518e-07 + p * w;
+        p =  -1.3654692000834678645e-06 + p * w;
+        p =  -1.3882523362786468719e-05 + p * w;
+        p =    0.0001867342080340571352 + p * w;
+        p =  -0.00074070253416626697512 + p * w;
+        p =   -0.0060336708714301490533 + p * w;
+        p =      0.24015818242558961693 + p * w;
+        p =       1.6536545626831027356 + p * w;
+    } else if (w < 16.0) {
+        w = Math.sqrt(w) - 3.25;
+        p =   2.2137376921775787049e-09;
+        p =   9.0756561938885390979e-08 + p * w;
+        p =  -2.7517406297064545428e-07 + p * w;
+        p =   1.8239629214389227755e-08 + p * w;
+        p =   1.5027403968909827627e-06 + p * w;
+        p =   -4.013867526981545969e-06 + p * w;
+        p =   2.9234449089955446044e-06 + p * w;
+        p =   1.2475304481671778723e-05 + p * w;
+        p =  -4.7318229009055733981e-05 + p * w;
+        p =   6.8284851459573175448e-05 + p * w;
+        p =   2.4031110387097893999e-05 + p * w;
+        p =   -0.0003550375203628474796 + p * w;
+        p =   0.00095328937973738049703 + p * w;
+        p =   -0.0016882755560235047313 + p * w;
+        p =    0.0024914420961078508066 + p * w;
+        p =   -0.0037512085075692412107 + p * w;
+        p =     0.005370914553590063617 + p * w;
+        p =       1.0052589676941592334 + p * w;
+        p =       3.0838856104922207635 + p * w;
+    } else if (Number.isFinite(w)) {
+        w = Math.sqrt(w) - 5.0;
+        p =  -2.7109920616438573243e-11;
+        p =  -2.5556418169965252055e-10 + p * w;
+        p =   1.5076572693500548083e-09 + p * w;
+        p =  -3.7894654401267369937e-09 + p * w;
+        p =   7.6157012080783393804e-09 + p * w;
+        p =  -1.4960026627149240478e-08 + p * w;
+        p =   2.9147953450901080826e-08 + p * w;
+        p =  -6.7711997758452339498e-08 + p * w;
+        p =   2.2900482228026654717e-07 + p * w;
+        p =  -9.9298272942317002539e-07 + p * w;
+        p =   4.5260625972231537039e-06 + p * w;
+        p =  -1.9681778105531670567e-05 + p * w;
+        p =   7.5995277030017761139e-05 + p * w;
+        p =  -0.00021503011930044477347 + p * w;
+        p =  -0.00013871931833623122026 + p * w;
+        p =       1.0103004648645343977 + p * w;
+        p =       4.8499064014085844221 + p * w;
+    } else {
+        p = Infinity;
+    }
+
+    return p * x;
+  }
+
+  function randomNormal(mean, stdev) {
+    var mu,
+        sigma,
+        dist = {
+          mean: function(_) {
+            if (arguments.length) {
+              mu = _ || 0;
+              return dist;
+            } else {
+              return mu;
+            }
+          },
+          stdev: function(_) {
+            if (arguments.length) {
+              sigma = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return sigma;
+            }
+          },
+          sample: () => sampleNormal(mu, sigma),
+          pdf: value => densityNormal(value, mu, sigma),
+          cdf: value => cumulativeNormal(value, mu, sigma),
+          icdf: p => quantileNormal(p, mu, sigma)
+        };
 
     return dist.mean(mean).stdev(stdev);
   }
@@ -5472,7 +5694,7 @@
     dist.bandwidth = function(_) {
       if (!arguments.length) return bandwidth;
       bandwidth = _;
-      if (!bandwidth && support) bandwidth = estimateBandwidth(support);
+      if (!bandwidth && support) bandwidth = bandwidthNRD(support);
       return dist;
     };
 
@@ -5501,13 +5723,55 @@
     return dist.data(support);
   }
 
-  // Scott, D. W. (1992) Multivariate Density Estimation:
-  // Theory, Practice, and Visualization. Wiley.
-  function estimateBandwidth(array) {
-    var n = array.length,
-        q = quartiles(array),
-        h = (q[2] - q[0]) / 1.34;
-    return 1.06 * Math.min(Math.sqrt(variance(array)), h) * Math.pow(n, -0.2);
+  function sampleLogNormal(mean, stdev) {
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+    return Math.exp(mean + sampleNormal() * stdev);
+  }
+
+  function densityLogNormal(value, mean, stdev) {
+    if (value <= 0) return 0;
+    mean = mean || 0;
+    stdev = stdev == null ? 1 : stdev;
+    const z = (Math.log(value) - mean) / stdev;
+    return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI * value);
+  }
+
+  function cumulativeLogNormal(value, mean, stdev) {
+    return cumulativeNormal(Math.log(value), mean, stdev);
+  }
+
+  function quantileLogNormal(p, mean, stdev) {
+    return Math.exp(quantileNormal(p, mean, stdev));
+  }
+
+  function randomLogNormal(mean, stdev) {
+    var mu,
+        sigma,
+        dist = {
+          mean: function(_) {
+            if (arguments.length) {
+              mu = _ || 0;
+              return dist;
+            } else {
+              return mu;
+            }
+          },
+          stdev: function(_) {
+            if (arguments.length) {
+              sigma = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return sigma;
+            }
+          },
+          sample: () => sampleLogNormal(mu, sigma),
+          pdf: value => densityLogNormal(value, mu, sigma),
+          cdf: value => cumulativeLogNormal(value, mu, sigma),
+          icdf: p => quantileLogNormal(p, mu, sigma)
+        };
+
+    return dist.mean(mean).stdev(stdev);
   }
 
   function randomMixture(dists, weights) {
@@ -5577,51 +5841,67 @@
     return dist.distributions(dists).weights(weights);
   }
 
-  function randomUniform(min, max) {
+  function sampleUniform(min, max) {
     if (max == null) {
       max = (min == null ? 1 : min);
       min = 0;
     }
+    return min + (max - min) * exports.random();
+  }
 
-    var dist = {},
-        a, b, d;
+  function densityUniform(value, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return (value >= min && value <= max) ? 1 / (max - min) : 0;
+  }
 
-    dist.min = function(_) {
-      if (arguments.length) {
-        a = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return a;
-      }
-    };
+  function cumulativeUniform(value, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return value < min ? 0 : value > max ? 1 : (value - min) / (max - min);
+  }
 
-    dist.max = function(_) {
-      if (arguments.length) {
-        b = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return b;
-      }
-    };
+  function quantileUniform(p, min, max) {
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
+    return (p >= 0 && p <= 1) ? min + p * (max - min) : NaN;
+  }
 
-    dist.sample = function() {
-      return a + d * exports.random();
-    };
+  function randomUniform(min, max) {
+    var a, b,
+        dist = {
+          min: function(_) {
+            if (arguments.length) {
+              a = _ || 0;
+              return dist;
+            } else {
+              return a;
+            }
+          },
+          max: function(_) {
+            if (arguments.length) {
+              b = _ == null ? 1 : _;
+              return dist;
+            } else {
+              return b;
+            }
+          },
+          sample: () => sampleUniform(a, b),
+          pdf: value => densityUniform(value, a, b),
+          cdf: value => cumulativeUniform(value, a, b),
+          icdf: p => quantileUniform(p, a, b)
+        };
 
-    dist.pdf = function(x) {
-      return (x >= a && x <= b) ? 1 / d : 0;
-    };
-
-    dist.cdf = function(x) {
-      return x < a ? 0 : x > b ? 1 : (x - a) / d;
-    };
-
-    dist.icdf = function(p) {
-      return (p >= 0 && p <= 1) ? a + p * d : NaN;
-    };
-
+    if (max == null) {
+      max = (min == null ? 1 : min);
+      min = 0;
+    }
     return dist.min(min).max(max);
   }
 
@@ -6583,11 +6863,13 @@
     "metadata": {"modifies": true},
     "params": [
       { "name": "field", "type": "field", "required": true },
+      { "name": "interval", "type": "boolean", "default": true },
       { "name": "anchor", "type": "number" },
       { "name": "maxbins", "type": "number", "default": 20 },
       { "name": "base", "type": "number", "default": 10 },
       { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
       { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
+      { "name": "span", "type": "number" },
       { "name": "step", "type": "number" },
       { "name": "steps", "type": "number", "array": true },
       { "name": "minstep", "type": "number", "default": 0 },
@@ -6600,7 +6882,8 @@
   var prototype$9 = inherits(Bin, Transform);
 
   prototype$9.transform = function(_, pulse) {
-    var bins = this._bins(_),
+    var band = _.interval !== false,
+        bins = this._bins(_),
         start = bins.start,
         step = bins.step,
         as = _.as || ['bin0', 'bin1'],
@@ -6615,17 +6898,20 @@
       flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
     }
 
-    pulse.visit(flag, function(t) {
-      var v = bins(t);
-      // minimum bin value (inclusive)
-      t[b0] = v;
-      // maximum bin value (exclusive)
-      // use convoluted math for better floating point agreement
-      // see https://github.com/vega/vega/issues/830
-      t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
-    });
+    pulse.visit(flag, band
+      ? function(t) {
+          var v = bins(t);
+          // minimum bin value (inclusive)
+          t[b0] = v;
+          // maximum bin value (exclusive)
+          // use convoluted math for better floating point agreement
+          // see https://github.com/vega/vega/issues/830
+          t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+        }
+      : function(t) { t[b0] = bins(t); }
+    );
 
-    return pulse.modifies(as);
+    return pulse.modifies(band ? as : b0);
   };
 
   prototype$9._bins = function(_) {
@@ -6941,10 +7227,11 @@
   }
 
   var Distributions = {
-    kde:     randomKDE,
-    mixture: randomMixture,
-    normal:  randomNormal,
-    uniform: randomUniform
+    kde:       randomKDE,
+    mixture:   randomMixture,
+    normal:    randomNormal,
+    lognormal: randomLogNormal,
+    uniform:   randomUniform
   };
 
   var DISTRIBUTIONS = 'distributions',
@@ -7021,6 +7308,13 @@
   var distributions = [
     {
       "key": {"function": "normal"},
+      "params": [
+        { "name": "mean", "type": "number", "default": 0 },
+        { "name": "stdev", "type": "number", "default": 1 }
+      ]
+    },
+    {
+      "key": {"function": "lognormal"},
       "params": [
         { "name": "mean", "type": "number", "default": 0 },
         { "name": "stdev", "type": "number", "default": 1 }
@@ -7108,6 +7402,110 @@
     return function() { return pulse.materialize(pulse.SOURCE).source; };
   }
 
+  // use either provided alias or accessor field name
+  function fieldNames(fields, as) {
+    if (!fields) return null;
+    return fields.map(function(f, i) {
+      return as[i] || accessorName(f);
+    });
+  }
+
+  function partition(data, groupby, field) {
+    var groups = [],
+        get = function(f) { return f(t); },
+        map, i, n, t, k, g;
+
+    // partition data points into groups
+    if (groupby == null) {
+      groups.push(data.map(field));
+    } else {
+      for (map={}, i=0, n=data.length; i<n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = (g = []);
+          g.dims = k;
+          groups.push(g);
+        }
+        g.push(field(t));
+      }
+    }
+
+    return groups;
+  }
+
+  const Output = 'bin';
+
+  /**
+   * Dot density binning for dot plot construction.
+   * Based on Leland Wilkinson, Dot Plots, The American Statistician, 1999.
+   * https://www.cs.uic.edu/~wilkinson/Publications/dotplots.pdf
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to bin.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+   * @param {number} [params.step] - The step size (bin width) within which dots should be
+   *   stacked. Defaults to 1/30 of the extent of the data *field*.
+   * @param {boolean} [params.smooth=false] - A boolean flag indicating if dot density
+   *   stacks should be smoothed to reduce variance.
+   */
+  function DotBin(params) {
+    Transform.call(this, null, params);
+  }
+
+  DotBin.Definition = {
+    "type": "DotBin",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "field", "type": "field", "required": true },
+      { "name": "groupby", "type": "field", "array": true },
+      { "name": "step", "type": "number" },
+      { "name": "smooth", "type": "boolean", "default": false },
+      { "name": "as", "type": "string", "default": Output }
+    ]
+  };
+
+  const prototype$e = inherits(DotBin, Transform);
+
+  prototype$e.transform = function(_, pulse) {
+    if (this.value && !(_.modified() || pulse.changed())) {
+      return pulse; // early exit
+    }
+
+    const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(pulse.source, _.groupby, identity),
+          smooth = _.smooth || false,
+          field = _.field,
+          step = _.step || autostep(source, field),
+          sort = stableCompare((a, b) => field(a) - field(b)),
+          as = _.as || Output,
+          n = groups.length;
+
+    // compute dotplot bins per group
+    let min = Infinity, max = -Infinity, i = 0, j;
+    for (; i<n; ++i) {
+      const g = groups[i].sort(sort);
+      j = -1;
+      for (const v of dotbin(g, step, smooth, field)) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        g[++j][as] = v;
+      }
+    }
+
+    this.value = {
+      start: min,
+      stop: max,
+      step: step
+    };
+    return pulse.reflow(true).modifies(as);
+  };
+
+  function autostep(data, field) {
+    return span(extent(data, field)) / 30;
+  }
+
   /**
    * Wraps an expression function with access to external parameters.
    * @constructor
@@ -7153,9 +7551,9 @@
     ]
   };
 
-  var prototype$e = inherits(Extent, Transform);
+  var prototype$f = inherits(Extent, Transform);
 
-  prototype$e.transform = function(_, pulse) {
+  prototype$f.transform = function(_, pulse) {
     var extent = this.value,
         field = _.field,
         min = extent[0],
@@ -7204,9 +7602,9 @@
     this.parent = parent;
   }
 
-  var prototype$f = inherits(Subflow, Operator);
+  var prototype$g = inherits(Subflow, Operator);
 
-  prototype$f.connect = function(target) {
+  prototype$g.connect = function(target) {
     this.targets().add(target);
     return (target.source = this);
   };
@@ -7215,7 +7613,7 @@
    * Add an 'add' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being added.
    */
-  prototype$f.add = function(t) {
+  prototype$g.add = function(t) {
     this.value.add.push(t);
   };
 
@@ -7223,7 +7621,7 @@
    * Add a 'rem' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being removed.
    */
-  prototype$f.rem = function(t) {
+  prototype$g.rem = function(t) {
     this.value.rem.push(t);
   };
 
@@ -7231,7 +7629,7 @@
    * Add a 'mod' tuple to the subflow pulse.
    * @param {Tuple} t - The tuple being modified.
    */
-  prototype$f.mod = function(t) {
+  prototype$g.mod = function(t) {
     this.value.mod.push(t);
   };
 
@@ -7240,7 +7638,7 @@
    * @param {Pulse} pulse - The pulse to copy from.
    * @see Pulse.init
    */
-  prototype$f.init = function(pulse) {
+  prototype$g.init = function(pulse) {
     this.value.init(pulse, pulse.NO_SOURCE);
   };
 
@@ -7249,7 +7647,7 @@
    * default behavior to simply return the contained pulse value.
    * @return {Pulse}
    */
-  prototype$f.evaluate = function() {
+  prototype$g.evaluate = function() {
     // assert: this.value.stamp === pulse.stamp
     return this.value;
   };
@@ -7275,13 +7673,13 @@
     };
   }
 
-  var prototype$g = inherits(Facet, Transform);
+  var prototype$h = inherits(Facet, Transform);
 
-  prototype$g.activate = function(flow) {
+  prototype$h.activate = function(flow) {
     this._targets[this._targets.active++] = flow;
   };
 
-  prototype$g.subflow = function(key, flow, pulse, parent) {
+  prototype$h.subflow = function(key, flow, pulse, parent) {
     var flows = this.value,
         sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
@@ -7301,7 +7699,7 @@
     return sf;
   };
 
-  prototype$g.transform = function(_, pulse) {
+  prototype$h.transform = function(_, pulse) {
     var df = pulse.dataflow,
         self = this,
         key = _.key,
@@ -7407,9 +7805,9 @@
     ]
   };
 
-  var prototype$h = inherits(Filter, Transform);
+  var prototype$i = inherits(Filter, Transform);
 
-  prototype$h.transform = function(_, pulse) {
+  prototype$i.transform = function(_, pulse) {
     var df = pulse.dataflow,
         cache = this.value, // cache ids of filtered tuples
         output = pulse.fork(),
@@ -7456,14 +7854,6 @@
     return output;
   };
 
-  // use either provided alias or accessor field name
-  function fieldNames(fields, as) {
-    if (!fields) return null;
-    return fields.map(function(f, i) {
-      return as[i] || accessorName(f);
-    });
-  }
-
   /**
    * Flattens array-typed field values into new data objects.
    * If multiple fields are specified, they are treated as parallel arrays,
@@ -7472,6 +7862,8 @@
    * @param {object} params - The parameters for this operator.
    * @param {Array<function(object): *>} params.fields - An array of field
    *   accessors for the tuple fields that should be flattened.
+   * @param {string} [params.index] - Optional output field name for index
+   *   value. If unspecified, no index field is included in the output.
    * @param {Array<string>} [params.as] - Output field names for flattened
    *   array fields. Any unspecified fields will use the field name provided
    *   by the fields accessors.
@@ -7485,16 +7877,18 @@
     "metadata": {"generates": true},
     "params": [
       { "name": "fields", "type": "field", "array": true, "required": true },
+      { "name": "index", "type": "string" },
       { "name": "as", "type": "string", "array": true }
     ]
   };
 
-  var prototype$i = inherits(Flatten, Transform);
+  var prototype$j = inherits(Flatten, Transform);
 
-  prototype$i.transform = function(_, pulse) {
+  prototype$j.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         fields = _.fields,
         as = fieldNames(fields, _.as || []),
+        index = _.index || null,
         m = as.length;
 
     // remove any previous results
@@ -7502,8 +7896,8 @@
 
     // generate flattened tuples
     pulse.visit(pulse.SOURCE, function(t) {
-      var arrays = fields.map(function(f) { return f(t); }),
-          maxlen = arrays.reduce(function(l, a) { return Math.max(l, a.length); }, 0),
+      var arrays = fields.map(f => f(t)),
+          maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
           i = 0, j, d, v;
 
       for (; i<maxlen; ++i) {
@@ -7511,11 +7905,15 @@
         for (j=0; j<m; ++j) {
           d[as[j]] = (v = arrays[j][i]) == null ? null : v;
         }
+        if (index) {
+          d[index] = i;
+        }
         out.add.push(d);
       }
     });
 
     this.value = out.source = out.add;
+    if (index) out.modifies(index);
     return out.modifies(as);
   };
 
@@ -7542,9 +7940,9 @@
     ]
   };
 
-  var prototype$j = inherits(Fold, Transform);
+  var prototype$k = inherits(Fold, Transform);
 
-  prototype$j.transform = function(_, pulse) {
+  prototype$k.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         fields = _.fields,
         fnames = fields.map(accessorName),
@@ -7591,20 +7989,16 @@
     ]
   };
 
-  var prototype$k = inherits(Formula, Transform);
+  var prototype$l = inherits(Formula, Transform);
 
-  prototype$k.transform = function(_, pulse) {
+  prototype$l.transform = function(_, pulse) {
     var func = _.expr,
         as = _.as,
         mod = _.modified(),
         flag = _.initonly ? pulse.ADD
           : mod ? pulse.SOURCE
-          : pulse.modified(func.fields) ? pulse.ADD_MOD
+          : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
           : pulse.ADD;
-
-    function set(t) {
-      t[as] = func(t, _);
-    }
 
     if (mod) {
       // parameters updated, need to reflow
@@ -7615,7 +8009,7 @@
       pulse.modifies(as);
     }
 
-    return pulse.visit(flag, set);
+    return pulse.visit(flag, t => t[as] = func(t, _));
   };
 
   /**
@@ -7632,9 +8026,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$l = inherits(Generate, Transform);
+  var prototype$m = inherits(Generate, Transform);
 
-  prototype$l.transform = function(_, pulse) {
+  prototype$m.transform = function(_, pulse) {
     var data = this.value,
         out = pulse.fork(pulse.ALL),
         num = _.size - data.length,
@@ -7710,7 +8104,7 @@
     ]
   };
 
-  var prototype$m = inherits(Impute, Transform);
+  var prototype$n = inherits(Impute, Transform);
 
   function getValue(_) {
     var m = _.method || Methods.value, v;
@@ -7730,14 +8124,14 @@
     return function(t) { return t ? f(t) : NaN; };
   }
 
-  prototype$m.transform = function(_, pulse) {
+  prototype$n.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         impute = getValue(_),
         field = getField(_),
         fName = accessorName(_.field),
         kName = accessorName(_.key),
         gNames = (_.groupby || []).map(accessorName),
-        groups = partition(pulse.source, _.groupby, _.key, _.keyvals),
+        groups = partition$1(pulse.source, _.groupby, _.key, _.keyvals),
         curr = [],
         prev = this.value,
         m = groups.domain.length,
@@ -7756,7 +8150,7 @@
         t = {_impute: true};
         for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
         t[kName] = kVal;
-        t[fName] = isNaN(value) ? (value = impute(group, field)) : value;
+        t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
 
         curr.push(ingest(t));
       }
@@ -7770,7 +8164,7 @@
     return out;
   };
 
-  function partition(data, groupby, key, keyvals) {
+  function partition$1(data, groupby, key, keyvals) {
     var get = function(f) { return f(t); },
         groups = [],
         domain = keyvals ? keyvals.slice() : [],
@@ -7819,9 +8213,9 @@
     ]
   };
 
-  var prototype$n = inherits(JoinAggregate, Aggregate);
+  var prototype$o = inherits(JoinAggregate, Aggregate);
 
-  prototype$n.transform = function(_, pulse) {
+  prototype$o.transform = function(_, pulse) {
     var aggr = this,
         mod = _.modified(),
         cells;
@@ -7847,7 +8241,7 @@
     return pulse.reflow(mod).modifies(this._outputs);
   };
 
-  prototype$n.changes = function() {
+  prototype$o.changes = function() {
     var adds = this._adds,
         mods = this._mods,
         i, n;
@@ -7874,7 +8268,10 @@
    * @param {function(object): *} params.field - An accessor for the data field
    *   to estimate.
    * @param {number} [params.bandwidth=0] - The KDE kernel bandwidth.
-   *   If zero of unspecified, the bandwidth is automatically determined.
+   *   If zero or unspecified, the bandwidth is automatically determined.
+   * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+   *   output values should be probability estimates (false, default) or
+   *   smoothed counts (true).
    * @param {string} [params.cumulative=false] - A boolean flag indicating if a
    *   density (false) or cumulative distribution (true) should be generated.
    * @param {Array<number>} [params.extent] - The domain extent over which to
@@ -7915,14 +8312,14 @@
     ]
   };
 
-  var prototype$o = inherits(KDE, Transform);
+  var prototype$p = inherits(KDE, Transform);
 
-  prototype$o.transform = function(_, pulse) {
+  prototype$p.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
       const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$1(source, _.groupby, _.field),
+            groups = partition(source, _.groupby, _.field),
             names = (_.groupby || []).map(accessorName),
             bandwidth = _.bandwidth,
             method = _.cumulative ? 'cdf' : 'pdf',
@@ -7965,31 +8362,6 @@
     return out;
   };
 
-  function partition$1(data, groupby, field) {
-    var groups = [],
-        get = function(f) { return f(t); },
-        map, i, n, t, k, g;
-
-    // partition data points into stack groups
-    if (groupby == null) {
-      groups.push(data.map(field));
-    } else {
-      for (map={}, i=0, n=data.length; i<n; ++i) {
-        t = data[i];
-        k = groupby.map(get);
-        g = map[k];
-        if (!g) {
-          map[k] = (g = []);
-          g.dims = k;
-          groups.push(g);
-        }
-        g.push(field(t));
-      }
-    }
-
-    return groups;
-  }
-
   /**
    * Generates a key function.
    * @constructor
@@ -8021,9 +8393,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$p = inherits(Load, Transform);
+  var prototype$q = inherits(Load, Transform);
 
-  prototype$p.transform = function(_, pulse) {
+  prototype$q.transform = function(_, pulse) {
     const df = pulse.dataflow;
 
     if (_.values) {
@@ -8032,7 +8404,7 @@
     } else {
       // return promise for async loading
       return df.request(_.url, _.format)
-        .then(res => output$1(this, pulse, res.data || []));
+        .then(res => output$1(this, pulse, array(res.data)));
     }
   };
 
@@ -8072,9 +8444,9 @@
     ]
   };
 
-  var prototype$q = inherits(Lookup, Transform);
+  var prototype$r = inherits(Lookup, Transform);
 
-  prototype$q.transform = function(_, pulse) {
+  prototype$r.transform = function(_, pulse) {
     var out = pulse,
         as = _.as,
         keys = _.fields,
@@ -8227,11 +8599,11 @@
     ]
   };
 
-  var prototype$r = inherits(Pivot, Aggregate);
+  var prototype$s = inherits(Pivot, Aggregate);
 
-  prototype$r._transform = prototype$r.transform;
+  prototype$s._transform = prototype$s.transform;
 
-  prototype$r.transform = function(_, pulse) {
+  prototype$s.transform = function(_, pulse) {
     return this._transform(aggregateParams(_, pulse), pulse);
   };
 
@@ -8306,9 +8678,9 @@
     Facet.call(this, params);
   }
 
-  var prototype$s = inherits(PreFacet, Facet);
+  var prototype$t = inherits(PreFacet, Facet);
 
-  prototype$s.transform = function(_, pulse) {
+  prototype$t.transform = function(_, pulse) {
     var self = this,
         flow = _.subflow,
         field = _.field;
@@ -8358,13 +8730,13 @@
     "metadata": {"generates": true, "changes": true},
     "params": [
       { "name": "fields", "type": "field", "array": true },
-      { "name": "as", "type": "string", "null": true, "array": true },
+      { "name": "as", "type": "string", "null": true, "array": true }
     ]
   };
 
-  var prototype$t = inherits(Project, Transform);
+  var prototype$u = inherits(Project, Transform);
 
-  prototype$t.transform = function(_, pulse) {
+  prototype$u.transform = function(_, pulse) {
     var fields = _.fields,
         as = fieldNames(_.fields, _.as || []),
         derive = fields
@@ -8418,13 +8790,86 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$u = inherits(Proxy, Transform);
+  var prototype$v = inherits(Proxy, Transform);
 
-  prototype$u.transform = function(_, pulse) {
+  prototype$v.transform = function(_, pulse) {
     this.value = _.value;
     return _.modified('value')
       ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
       : pulse.StopPropagation;
+  };
+
+  /**
+   * Generates sample quantile values from an input data stream.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - An accessor for the data field
+   *   over which to calculate quantile values.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors
+   *   to groupby.
+   * @param {Array<number>} [params.probs] - An array of probabilities in
+   *   the range (0, 1) for which to compute quantile values. If not specified,
+   *   the *step* parameter will be used.
+   * @param {Array<number>} [params.step=0.01] - A probability step size for
+   *   sampling quantile values. All values from one-half the step size up to
+   *   1 (exclusive) will be sampled. This parameter is only used if the
+   *   *quantiles* parameter is not provided.
+   */
+  function Quantile(params) {
+    Transform.call(this, null, params);
+  }
+
+  Quantile.Definition = {
+    "type": "Quantile",
+    "metadata": {"generates": true, "changes": true},
+    "params": [
+      { "name": "groupby", "type": "field", "array": true },
+      { "name": "field", "type": "field", "required": true },
+      { "name": "probs", "type": "number", "array": true },
+      { "name": "step", "type": "number", "default": 0.01 },
+      { "name": "as", "type": "string", "array": true, "default": ["prob", "value"] }
+    ]
+  };
+
+  var prototype$w = inherits(Quantile, Transform);
+
+  var EPSILON$1 = 1e-14;
+
+  prototype$w.transform = function(_, pulse) {
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        as = _.as || ['prob', 'value'];
+
+    if (this.value && !_.modified() && !pulse.changed()) {
+      out.source = this.value;
+      return out;
+    }
+
+    const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(source, _.groupby, _.field),
+          names = (_.groupby || []).map(accessorName),
+          values = [],
+          step = _.step || 0.01,
+          p = _.probs || sequence(step/2, 1 - EPSILON$1, step),
+          n = p.length;
+
+    groups.forEach(g => {
+      const q = quantiles(g, p);
+
+      for (let i=0; i<n; ++i) {
+        const t = {};
+        for (let i=0; i<names.length; ++i) {
+          t[names[i]] = g.dims[i];
+        }
+        t[as[0]] = p[i];
+        t[as[1]] = q[i];
+        values.push(ingest(t));
+      }
+    });
+
+    if (this.value) out.rem = this.value;
+    this.value = out.add = out.source = values;
+
+    return out;
   };
 
   /**
@@ -8441,9 +8886,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$v = inherits(Relay, Transform);
+  var prototype$x = inherits(Relay, Transform);
 
-  prototype$v.transform = function(_, pulse) {
+  prototype$x.transform = function(_, pulse) {
     var out, lut;
 
     if (this.value) {
@@ -8456,20 +8901,27 @@
     if (_.derive) {
       out = pulse.fork(pulse.NO_SOURCE);
 
-      pulse.visit(pulse.REM, function(t) {
+      pulse.visit(pulse.REM, t => {
         var id = tupleid(t);
         out.rem.push(lut[id]);
         lut[id] = null;
       });
 
-      pulse.visit(pulse.ADD, function(t) {
+      pulse.visit(pulse.ADD, t => {
         var dt = derive(t);
         lut[tupleid(t)] = dt;
         out.add.push(dt);
       });
 
-      pulse.visit(pulse.MOD, function(t) {
-        out.mod.push(rederive(t, lut[tupleid(t)]));
+      pulse.visit(pulse.MOD, t => {
+        var dt = lut[tupleid(t)], k;
+        for (k in t) {
+          dt[k] = t[k];
+          // down stream writes may overwrite re-derived tuples
+          // conservatively mark all source fields as modified
+          out.modifies(k);
+        }
+        out.mod.push(dt);
       });
     }
 
@@ -8496,9 +8948,9 @@
     ]
   };
 
-  var prototype$w = inherits(Sample, Transform);
+  var prototype$y = inherits(Sample, Transform);
 
-  prototype$w.transform = function(_, pulse) {
+  prototype$y.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE),
         mod = _.modified('size'),
         num = _.size,
@@ -8605,9 +9057,9 @@
     ]
   };
 
-  var prototype$x = inherits(Sequence, Transform);
+  var prototype$z = inherits(Sequence, Transform);
 
-  prototype$x.transform = function(_, pulse) {
+  prototype$z.transform = function(_, pulse) {
     if (this.value && !_.modified()) return;
 
     var out = pulse.materialize().fork(pulse.MOD),
@@ -8637,13 +9089,484 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$y = inherits(Sieve, Transform);
+  var prototype$A = inherits(Sieve, Transform);
 
-  prototype$y.transform = function(_, pulse) {
+  prototype$A.transform = function(_, pulse) {
     this.value = pulse.source;
     return pulse.changed()
       ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
       : pulse.StopPropagation;
+  };
+
+  const YEAR = 'year';
+  const QUARTER = 'quarter';
+  const MONTH = 'month';
+  const WEEK = 'week';
+  const DATE = 'date';
+  const DAY = 'day';
+  const HOURS = 'hours';
+  const MINUTES = 'minutes';
+  const SECONDS = 'seconds';
+  const MILLISECONDS = 'milliseconds';
+
+  const UNITS = [
+    YEAR,
+    QUARTER,
+    MONTH,
+    WEEK,
+    DATE,
+    DAY,
+    HOURS,
+    MINUTES,
+    SECONDS,
+    MILLISECONDS
+  ].reduce((o, u, i) => (o[u] = 1 + i, o), {});
+
+  function timeUnits(units) {
+    const u = array(units).slice(),
+          m = {};
+
+    // check validity
+    if (!u.length) error('Missing time unit.');
+
+    u.forEach(unit => {
+      if (hasOwnProperty(UNITS, unit)) {
+        m[unit] = 1;
+      } else {
+        error(`Invalid time unit: ${unit}.`);
+      }
+    });
+
+    if ((m[WEEK] || m[DAY]) && (m[QUARTER] || m[MONTH] || m[DATE])) {
+      error(`Incompatible time units: ${units}`);
+    }
+
+    // ensure proper sort order
+    u.sort((a, b) => UNITS[a] - UNITS[b]);
+
+    return u;
+  }
+
+  const t0$1 = new Date;
+
+  function floor(units, step, fn, newDate) {
+    const s = step || 1,
+          b = peek(units),
+          _ = (unit, p, key) => skip(fn[key || unit], unit === b && s, p);
+
+    const t = new Date,
+          u = toSet(units),
+          y = u[YEAR] ? _(YEAR) : constant(2012),
+          m = u[MONTH] ? _(MONTH)
+            : u[QUARTER] ? _(QUARTER)
+            : zero,
+          d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY)
+            : u[WEEK] ? _(WEEK, 1)
+            : u[DAY] ? _(DAY, 1)
+            : u[DATE] ? _(DATE, 1)
+            : one,
+          H = u[HOURS] ? _(HOURS) : zero,
+          M = u[MINUTES] ? _(MINUTES) : zero,
+          S = u[SECONDS] ? _(SECONDS) : zero,
+          L = u[MILLISECONDS] ? _(MILLISECONDS) : zero;
+
+    return function(v) {
+      t.setTime(+v);
+      const year = y(t);
+      return newDate(year, m(t), d(t, year), H(t), M(t), S(t), L(t));
+    };
+  }
+
+  function skip(f, step, phase) {
+    return step <= 1 ? f
+      : phase ? (d, y) => phase + step * Math.floor((f(d, y) - phase) / step)
+      : (d, y) => step * Math.floor(f(d, y) / step);
+  }
+
+  // returns the day of the year based on week number, day of week,
+  // and the day of the week for the first day of the year
+  function weekday$1(week, day, firstDay) {
+    return day + week * 7 - (firstDay + 6) % 7;
+  }
+
+  // -- LOCAL TIME --
+
+  const localGet = {
+    [YEAR]:         d => d.getFullYear(),
+    [QUARTER]:      d => 3 * ~~(d.getMonth() / 3),
+    [MONTH]:        d => d.getMonth(),
+    [DATE]:         d => d.getDate(),
+    [HOURS]:        d => d.getHours(),
+    [MINUTES]:      d => d.getMinutes(),
+    [SECONDS]:      d => d.getSeconds(),
+    [MILLISECONDS]: d => d.getMilliseconds(),
+    [DAY]:          (d, y) => weekday$1(1, d.getDay(), localFirst(y)),
+    [WEEK]:         (d, y) => weekday$1(localWeekNum(d), 0, localFirst(y)),
+    [WEEK + DAY]:   (d, y) => weekday$1(localWeekNum(d), d.getDay(), localFirst(y))
+  };
+
+  function localYear(y) {
+    t0$1.setFullYear(y);
+    t0$1.setMonth(0);
+    t0$1.setDate(1);
+    t0$1.setHours(0, 0, 0, 0);
+    return t0$1;
+  }
+
+  function localWeekNum(d) {
+    return sunday.count(localYear(d.getFullYear()) - 1, d);
+  }
+
+  function localFirst(y) {
+    return localYear(y).getDay();
+  }
+
+  function localDate$1(y, m, d, H, M, S, L) {
+    if (0 <= y && y < 100) {
+      var date = new Date(-1, m, d, H, M, S, L);
+      date.setFullYear(y);
+      return date;
+    }
+    return new Date(y, m, d, H, M, S, L);
+  }
+
+  function timeFloor(units, step) {
+    return floor(units, step || 1, localGet, localDate$1);
+  }
+
+  // -- UTC TIME --
+
+  const utcGet = {
+    [YEAR]:         d => d.getUTCFullYear(),
+    [QUARTER]:      d => 3 * ~~(d.getUTCMonth() / 3),
+    [MONTH]:        d => d.getUTCMonth(),
+    [DATE]:         d => d.getUTCDate(),
+    [HOURS]:        d => d.getUTCHours(),
+    [MINUTES]:      d => d.getUTCMinutes(),
+    [SECONDS]:      d => d.getUTCSeconds(),
+    [MILLISECONDS]: d => d.getUTCMilliseconds(),
+    [DAY]:          (d, y) => weekday$1(1, d.getUTCDay(), utcFirst(y)),
+    [WEEK]:         (d, y) => weekday$1(utcWeekNum(d), 0, utcFirst(y)),
+    [WEEK + DAY]:   (d, y) => weekday$1(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+  };
+
+  function utcWeekNum(d) {
+    const y = Date.UTC(d.getUTCFullYear(), 0, 1);
+    return utcSunday.count(y - 1, d);
+  }
+
+  function utcFirst(y) {
+    t0$1.setTime(Date.UTC(y, 0, 1));
+    return t0$1.getUTCDay();
+  }
+
+  function utcDate$1(y, m, d, H, M, S, L) {
+    if (0 <= y && y < 100) {
+      var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
+      date.setUTCFullYear(d.y);
+      return date;
+    }
+    return new Date(Date.UTC(y, m, d, H, M, S, L));
+  }
+
+  function utcFloor(units, step) {
+    return floor(units, step || 1, utcGet, utcDate$1);
+  }
+
+  const timeIntervals = {
+    [YEAR]:         year,
+    [QUARTER]:      month.every(3),
+    [MONTH]:        month,
+    [WEEK]:         sunday,
+    [DATE]:         day,
+    [DAY]:          day,
+    [HOURS]:        hour,
+    [MINUTES]:      minute,
+    [SECONDS]:      second,
+    [MILLISECONDS]: millisecond
+  };
+
+  const utcIntervals = {
+    [YEAR]:         utcYear,
+    [QUARTER]:      utcMonth.every(3),
+    [MONTH]:        utcMonth,
+    [WEEK]:         utcSunday,
+    [DATE]:         utcDay,
+    [DAY]:          utcDay,
+    [HOURS]:        utcHour,
+    [MINUTES]:      utcMinute,
+    [SECONDS]:      second,
+    [MILLISECONDS]: millisecond
+  };
+
+  function timeInterval(unit) {
+    return timeIntervals[unit];
+  }
+
+  function utcInterval(unit) {
+    return utcIntervals[unit];
+  }
+
+  function offset(ival, date, step) {
+    return ival ? ival.offset(date, step) : undefined;
+  }
+
+  function timeOffset(unit, date, step) {
+    return offset(timeInterval(unit), date, step);
+  }
+
+  function utcOffset(unit, date, step) {
+    return offset(utcInterval(unit), date, step);
+  }
+
+  function sequence$1(ival, start, stop, step) {
+    return ival ? ival.range(start, stop, step) : undefined;
+  }
+
+  function timeSequence(unit, start, stop, step) {
+    return sequence$1(timeInterval(unit), start, stop, step);
+  }
+
+  function utcSequence(unit, start, stop, step) {
+    return sequence$1(utcInterval(unit), start, stop, step);
+  }
+
+  const defaultSpecifiers = {
+    [YEAR]: '%Y ',
+    [QUARTER]: 'Q%q ',
+    [MONTH]: '%b ',
+    [DATE]: '%d ',
+    [WEEK]: 'W%U ',
+    [DAY]: '%a ',
+    [HOURS]: '%H:00',
+    [MINUTES]: '00:%M',
+    [SECONDS]: ':%S',
+    [MILLISECONDS]: '.%L',
+    [`${YEAR}-${MONTH}`]: '%Y-%m ',
+    [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
+    [`${HOURS}-${MINUTES}`]: '%H:%M'
+  };
+
+  function timeUnitSpecifier(units, specifiers) {
+    const s = extend({}, defaultSpecifiers, specifiers),
+          u = timeUnits(units),
+          n = u.length;
+
+    let fmt = '', start = 0, end, key;
+
+    for (start=0; start<n; ) {
+      for (end=u.length; end > start; --end) {
+        key = u.slice(start, end).join('-');
+        if (s[key] != null) {
+          fmt += s[key];
+          start = end;
+          break;
+        }
+      }
+    }
+
+    return fmt.trim();
+  }
+
+  function timeFormat$1(specifier) {
+    return formatter(timeFormat, timeInterval, specifier);
+  }
+
+  function utcFormat$1(specifier) {
+    return formatter(utcFormat, utcInterval, specifier);
+  }
+
+  function formatter(format, interval, specifier) {
+    return isString(specifier)
+      ? format(specifier)
+      : multiFormat(format, interval, specifier);
+  }
+
+  function multiFormat(format, interval, spec) {
+    spec = spec || {};
+    if (!isObject(spec)) {
+      error(`Invalid time multi-format specifier: ${spec}`);
+    }
+
+    const second = interval(SECONDS),
+          minute = interval(MINUTES),
+          hour = interval(HOURS),
+          day = interval(DATE),
+          week = interval(WEEK),
+          month = interval(MONTH),
+          quarter = interval(QUARTER),
+          year = interval(YEAR),
+          L = format(spec[MILLISECONDS] || '.%L'),
+          S = format(spec[SECONDS] || ':%S'),
+          M = format(spec[MINUTES] || '%I:%M'),
+          H = format(spec[HOURS] || '%I %p'),
+          d = format(spec[DATE] || spec[DAY] || '%a %d'),
+          w = format(spec[WEEK] || '%b %d'),
+          m = format(spec[MONTH] || '%B'),
+          q = format(spec[QUARTER] || '%B'),
+          y = format(spec[YEAR] || '%Y');
+
+    return function(date) {
+      return (second(date) < date ? L
+        : minute(date) < date ? S
+        : hour(date) < date ? M
+        : day(date) < date ? H
+        : month(date) < date ? (week(date) < date ? d : w)
+        : year(date) < date ? (quarter(date) < date ? m : q)
+        : y)(date);
+    };
+  }
+
+  const durationSecond$1 = 1000,
+        durationMinute$1 = durationSecond$1 * 60,
+        durationHour$1 = durationMinute$1 * 60,
+        durationDay$1 = durationHour$1 * 24,
+        durationWeek$1 = durationDay$1 * 7,
+        durationMonth = durationDay$1 * 30,
+        durationYear = durationDay$1 * 365;
+
+  const Milli   = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS],
+        Seconds = Milli.slice(0, -1),
+        Minutes = Seconds.slice(0, -1),
+        Hours   = Minutes.slice(0, -1),
+        Day     = Hours.slice(0, -1),
+        Week    = [YEAR, WEEK],
+        Month   = [YEAR, MONTH],
+        Year    = [YEAR];
+
+  const intervals = [
+    [Seconds,  1,      durationSecond$1],
+    [Seconds,  5,  5 * durationSecond$1],
+    [Seconds, 15, 15 * durationSecond$1],
+    [Seconds, 30, 30 * durationSecond$1],
+    [Minutes,  1,      durationMinute$1],
+    [Minutes,  5,  5 * durationMinute$1],
+    [Minutes, 15, 15 * durationMinute$1],
+    [Minutes, 30, 30 * durationMinute$1],
+    [  Hours,  1,      durationHour$1  ],
+    [  Hours,  3,  3 * durationHour$1  ],
+    [  Hours,  6,  6 * durationHour$1  ],
+    [  Hours, 12, 12 * durationHour$1  ],
+    [    Day,  1,      durationDay$1   ],
+    [   Week,  1,      durationWeek$1  ],
+    [  Month,  1,      durationMonth ],
+    [  Month,  3,  3 * durationMonth ],
+    [   Year,  1,      durationYear  ]
+  ];
+
+  function timeBin(opt) {
+    const ext = opt.extent,
+          max = opt.maxbins || 40,
+          target = Math.abs(span(ext)) / max;
+
+    let i = bisector(i => i[2]).right(intervals, target),
+        units, step;
+
+    if (i === intervals.length) {
+      units = Year,
+      step = tickStep(ext[0] / durationYear, ext[1] / durationYear, max);
+    } else if (i) {
+      i = intervals[target / intervals[i - 1][2] < intervals[i][2] / target ? i - 1 : i];
+      units = i[0];
+      step = i[1];
+    } else {
+      units = Milli;
+      step = Math.max(tickStep(ext[0], ext[1], max), 1);
+    }
+
+    return {units, step};
+  }
+
+  /**
+   * Discretize dates to specific time units.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The data field containing date/time values.
+   */
+  function TimeUnit(params) {
+    Transform.call(this, null, params);
+  }
+
+  const OUTPUT = ['unit0', 'unit1'];
+
+  TimeUnit.Definition = {
+    "type": "TimeUnit",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "field", "type": "field", "required": true },
+      { "name": "interval", "type": "boolean", "default": true },
+      { "name": "units", "type": "string", "array": true },
+      { "name": "step", "type": "number", "default": 1 },
+      { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
+      { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
+    ]
+  };
+
+  var prototype$B = inherits(TimeUnit, Transform);
+
+  prototype$B.transform = function(_, pulse) {
+    var field = _.field,
+        band = _.interval !== false,
+        utc = _.timezone === 'utc',
+        floor = this._floor(_, pulse),
+        offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+        as = _.as || OUTPUT,
+        u0 = as[0],
+        u1 = as[1],
+        min = floor.start || Infinity,
+        max = floor.stop || -Infinity,
+        step = floor.step,
+        flag = pulse.ADD;
+
+    if (_.modified() || pulse.modified(accessorFields(_.field))) {
+      pulse = pulse.reflow(true);
+      flag = pulse.SOURCE;
+      min = Infinity;
+      max = -Infinity;
+    }
+
+    pulse.visit(flag, function(t) {
+      var v = field(t), a, b;
+      if (v == null) {
+        t[u0] = null;
+        if (band) t[u1] = null;
+      } else {
+        t[u0] = a = b = floor(v);
+        if (band) t[u1] = b = offset(a, step);
+        if (a < min) min = a;
+        if (b > max) max = b;
+      }
+    });
+
+    floor.start = min;
+    floor.stop = max;
+
+    return pulse.modifies(band ? as : u0);
+  };
+
+  prototype$B._floor = function(_, pulse) {
+    const utc = _.timezone === 'utc';
+
+    // get parameters
+    let {units, step} = _.units
+      ? {units: _.units, step: _.step || 1}
+      : timeBin({
+        extent:  extent(pulse.materialize(pulse.SOURCE).source, _.field),
+        maxbins: _.maxbins
+      });
+
+    // check / standardize time units
+    units = timeUnits(units);
+
+    const prev = this.value || {},
+          floor = (utc ? utcFloor : timeFloor)(units, step);
+
+    floor.unit = peek(units);
+    floor.units = units;
+    floor.step = step;
+    floor.start = prev.start;
+    floor.stop = prev.stop;
+    return this.value = floor;
   };
 
   /**
@@ -8657,9 +9580,9 @@
     Transform.call(this, fastmap(), params);
   }
 
-  var prototype$z = inherits(TupleIndex, Transform);
+  var prototype$C = inherits(TupleIndex, Transform);
 
-  prototype$z.transform = function(_, pulse) {
+  prototype$C.transform = function(_, pulse) {
     var df = pulse.dataflow,
         field = _.field,
         index = this.value,
@@ -8696,9 +9619,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$A = inherits(Values, Transform);
+  var prototype$D = inherits(Values, Transform);
 
-  prototype$A.transform = function(_, pulse) {
+  prototype$D.transform = function(_, pulse) {
     var run = !this.value
       || _.modified('field')
       || _.modified('sort')
@@ -8919,14 +9842,14 @@
     self.inputs = Object.keys(inputs);
   }
 
-  const prototype$B = WindowState.prototype;
+  const prototype$E = WindowState.prototype;
 
-  prototype$B.init = function() {
+  prototype$E.init = function() {
     this.windows.forEach(_ => _.init());
     if (this.cell) this.cell.init();
   };
 
-  prototype$B.update = function(w, t) {
+  prototype$E.update = function(w, t) {
     let self = this,
         cell = self.cell,
         wind = self.windows,
@@ -9038,9 +9961,9 @@
     ]
   };
 
-  var prototype$C = inherits(Window, Transform);
+  var prototype$F = inherits(Window, Transform);
 
-  prototype$C.transform = function(_, pulse) {
+  prototype$F.transform = function(_, pulse) {
     var self = this,
         state = self.state,
         mod = _.modified(),
@@ -9078,7 +10001,7 @@
     return pulse.reflow(mod).modifies(state.outputs);
   };
 
-  prototype$C.group = function(key) {
+  prototype$F.group = function(key) {
     var self = this,
         group = self.value[key];
 
@@ -9138,6 +10061,7 @@
 
 
   var tx = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     aggregate: Aggregate,
     bin: Bin,
     collect: Collect,
@@ -9145,6 +10069,7 @@
     countpattern: CountPattern,
     cross: Cross,
     density: Density,
+    dotbin: DotBin,
     expression: Expression,
     extent: Extent,
     facet: Facet,
@@ -9167,11 +10092,13 @@
     prefacet: PreFacet,
     project: Project,
     proxy: Proxy,
+    quantile: Quantile,
     relay: Relay,
     sample: Sample,
     sequence: Sequence,
     sieve: Sieve,
     subflow: Subflow,
+    timeunit: TimeUnit,
     tupleindex: TupleIndex,
     values: Values,
     window: Window
@@ -9231,13 +10158,13 @@
     if (b) this.union(b);
   }
 
-  var prototype$D = Bounds.prototype;
+  var prototype$G = Bounds.prototype;
 
-  prototype$D.clone = function() {
+  prototype$G.clone = function() {
     return new Bounds(this);
   };
 
-  prototype$D.clear = function() {
+  prototype$G.clear = function() {
     this.x1 = +Number.MAX_VALUE;
     this.y1 = +Number.MAX_VALUE;
     this.x2 = -Number.MAX_VALUE;
@@ -9245,7 +10172,7 @@
     return this;
   };
 
-  prototype$D.empty = function() {
+  prototype$G.empty = function() {
     return (
       this.x1 === +Number.MAX_VALUE &&
       this.y1 === +Number.MAX_VALUE &&
@@ -9254,7 +10181,7 @@
     );
   };
 
-  prototype$D.equals = function(b) {
+  prototype$G.equals = function(b) {
     return (
       this.x1 === b.x1 &&
       this.y1 === b.y1 &&
@@ -9263,7 +10190,7 @@
     );
   };
 
-  prototype$D.set = function(x1, y1, x2, y2) {
+  prototype$G.set = function(x1, y1, x2, y2) {
     if (x2 < x1) {
       this.x2 = x1;
       this.x1 = x2;
@@ -9281,7 +10208,7 @@
     return this;
   };
 
-  prototype$D.add = function(x, y) {
+  prototype$G.add = function(x, y) {
     if (x < this.x1) this.x1 = x;
     if (y < this.y1) this.y1 = y;
     if (x > this.x2) this.x2 = x;
@@ -9289,7 +10216,7 @@
     return this;
   };
 
-  prototype$D.expand = function(d) {
+  prototype$G.expand = function(d) {
     this.x1 -= d;
     this.y1 -= d;
     this.x2 += d;
@@ -9297,7 +10224,7 @@
     return this;
   };
 
-  prototype$D.round = function() {
+  prototype$G.round = function() {
     this.x1 = Math.floor(this.x1);
     this.y1 = Math.floor(this.y1);
     this.x2 = Math.ceil(this.x2);
@@ -9305,7 +10232,7 @@
     return this;
   };
 
-  prototype$D.translate = function(dx, dy) {
+  prototype$G.translate = function(dx, dy) {
     this.x1 += dx;
     this.x2 += dx;
     this.y1 += dy;
@@ -9313,7 +10240,7 @@
     return this;
   };
 
-  prototype$D.rotate = function(angle, x, y) {
+  prototype$G.rotate = function(angle, x, y) {
     const p = this.rotatedPoints(angle, x, y);
     return this.clear()
       .add(p[0], p[1])
@@ -9322,7 +10249,7 @@
       .add(p[6], p[7]);
   };
 
-  prototype$D.rotatedPoints = function(angle, x, y) {
+  prototype$G.rotatedPoints = function(angle, x, y) {
     var {x1, y1, x2, y2} = this,
         cos = Math.cos(angle),
         sin = Math.sin(angle),
@@ -9337,7 +10264,7 @@
     ];
   };
 
-  prototype$D.union = function(b) {
+  prototype$G.union = function(b) {
     if (b.x1 < this.x1) this.x1 = b.x1;
     if (b.y1 < this.y1) this.y1 = b.y1;
     if (b.x2 > this.x2) this.x2 = b.x2;
@@ -9345,7 +10272,7 @@
     return this;
   };
 
-  prototype$D.intersect = function(b) {
+  prototype$G.intersect = function(b) {
     if (b.x1 > this.x1) this.x1 = b.x1;
     if (b.y1 > this.y1) this.y1 = b.y1;
     if (b.x2 < this.x2) this.x2 = b.x2;
@@ -9353,7 +10280,7 @@
     return this;
   };
 
-  prototype$D.encloses = function(b) {
+  prototype$G.encloses = function(b) {
     return b && (
       this.x1 <= b.x1 &&
       this.x2 >= b.x2 &&
@@ -9362,7 +10289,7 @@
     );
   };
 
-  prototype$D.alignsWith = function(b) {
+  prototype$G.alignsWith = function(b) {
     return b && (
       this.x1 == b.x1 ||
       this.x2 == b.x2 ||
@@ -9371,7 +10298,7 @@
     );
   };
 
-  prototype$D.intersects = function(b) {
+  prototype$G.intersects = function(b) {
     return b && !(
       this.x2 < b.x1 ||
       this.x1 > b.x2 ||
@@ -9380,7 +10307,7 @@
     );
   };
 
-  prototype$D.contains = function(x, y) {
+  prototype$G.contains = function(x, y) {
     return !(
       x < this.x1 ||
       x > this.x2 ||
@@ -9389,11 +10316,11 @@
     );
   };
 
-  prototype$D.width = function() {
+  prototype$G.width = function() {
     return this.x2 - this.x1;
   };
 
-  prototype$D.height = function() {
+  prototype$G.height = function() {
     return this.y2 - this.y1;
   };
 
@@ -9489,9 +10416,9 @@
     this._loader = customLoader || loader();
   }
 
-  var prototype$E = ResourceLoader.prototype;
+  var prototype$H = ResourceLoader.prototype;
 
-  prototype$E.pending = function() {
+  prototype$H.pending = function() {
     return this._pending;
   };
 
@@ -9503,7 +10430,7 @@
     loader._pending -= 1;
   }
 
-  prototype$E.sanitizeURL = function(uri) {
+  prototype$H.sanitizeURL = function(uri) {
     var loader = this;
     increment(loader);
 
@@ -9518,7 +10445,7 @@
       });
   };
 
-  prototype$E.loadImage = function(uri) {
+  prototype$H.loadImage = function(uri) {
     var loader = this,
         Image = domImage();
     increment(loader);
@@ -9533,12 +10460,10 @@
 
         img.onload = function() {
           decrement(loader);
-          img.loaded = true;
         };
 
         img.onerror = function() {
           decrement(loader);
-          img.loaded = false;
         };
 
         img.src = url;
@@ -9546,11 +10471,11 @@
       })
       .catch(function(e) {
         decrement(loader);
-        return {loaded: false, width: 0, height: 0, src: e && e.url || ''};
+        return {complete: false, width: 0, height: 0, src: e && e.url || ''};
       });
   };
 
-  prototype$E.ready = function() {
+  prototype$H.ready = function() {
     var loader = this;
     return new Promise(function(accept) {
       function poll(value) {
@@ -11283,25 +12208,29 @@
 
   var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 
-  function scale(current, s) {
+  function scale(current, sX, sY) {
     var c = (temp[0] = current[0]);
     if (c === 'a' || c === 'A') {
-      temp[1] = s * current[1];
-      temp[2] = s * current[2];
+      temp[1] = sX * current[1];
+      temp[2] = sY * current[2];
       temp[3] = current[3];
       temp[4] = current[4];
       temp[5] = current[5];
-      temp[6] = s * current[6];
-      temp[7] = s * current[7];
+      temp[6] = sX * current[6];
+      temp[7] = sY * current[7];
+    } else if (c === 'h' || c === 'H') {
+      temp[1] = sX * current[1];
+    } else if (c === 'v' || c === 'V') {
+      temp[1] = sY * current[1];
     } else {
       for (var i=1, n=current.length; i<n; ++i) {
-        temp[i] = s * current[i];
+        temp[i] = (i % 2 == 1 ? sX : sY) * current[i];
       }
     }
     return temp;
   }
 
-  function pathRender(context, path, l, t, s) {
+  function pathRender(context, path, l, t, sX, sY) {
     var current, // current instruction
         previous = null,
         x = 0, // current x
@@ -11315,13 +12244,16 @@
 
     if (l == null) l = 0;
     if (t == null) t = 0;
-    if (s == null) s = 1;
+    if (sX == null) sX = 1;
+    if (sY == null) sY = sX;
 
     if (context.beginPath) context.beginPath();
 
     for (var i=0, len=path.length; i<len; ++i) {
       current = path[i];
-      if (s !== 1) current = scale(current, s);
+      if (sX !== 1 || sY !== 1) {
+        current = scale(current, sX, sY);
+      }
 
       switch (current[0]) { // first letter
 
@@ -11748,6 +12680,9 @@
     return custom[path];
   }
 
+  // See http://spencermortensen.com/articles/bezier-circle/
+  const C = 0.448084975506; // C = 1 - c
+
   function rectangleX(d) {
     return d.x;
   }
@@ -11764,8 +12699,12 @@
     return d.height;
   }
 
-  function constant$2(_) {
-    return function() { return _; };
+  function number$1(_) {
+    return typeof _ === 'function' ? _ : () => +_;
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
   }
 
   function vg_rect() {
@@ -11773,7 +12712,10 @@
         y = rectangleY,
         width = rectangleWidth,
         height = rectangleHeight,
-        cornerRadius = constant$2(0),
+        crTL = number$1(0),
+        crTR = crTL,
+        crBL = crTL,
+        crBR = crTL,
         context = null;
 
     function rectangle(_, x0, y0) {
@@ -11782,24 +12724,28 @@
           y1 = y0 != null ? y0 : +y.call(this, _),
           w  = +width.call(this, _),
           h  = +height.call(this, _),
-          cr = +cornerRadius.call(this, _);
+          s  = Math.min(w, h) / 2,
+          tl = clamp(+crTL.call(this, _), 0, s),
+          tr = clamp(+crTR.call(this, _), 0, s),
+          bl = clamp(+crBL.call(this, _), 0, s),
+          br = clamp(+crBR.call(this, _), 0, s);
 
       if (!context) context = buffer = path();
 
-      if (cr <= 0) {
+      if (tl <= 0 && tr <= 0 && bl <= 0 && br <= 0) {
         context.rect(x1, y1, w, h);
       } else {
         var x2 = x1 + w,
             y2 = y1 + h;
-        context.moveTo(x1 + cr, y1);
-        context.lineTo(x2 - cr, y1);
-        context.quadraticCurveTo(x2, y1, x2, y1 + cr);
-        context.lineTo(x2, y2 - cr);
-        context.quadraticCurveTo(x2, y2, x2 - cr, y2);
-        context.lineTo(x1 + cr, y2);
-        context.quadraticCurveTo(x1, y2, x1, y2 - cr);
-        context.lineTo(x1, y1 + cr);
-        context.quadraticCurveTo(x1, y1, x1 + cr, y1);
+        context.moveTo(x1 + tl, y1);
+        context.lineTo(x2 - tr, y1);
+        context.bezierCurveTo(x2 - C * tr, y1, x2, y1 + C * tr, x2, y1 + tr);
+        context.lineTo(x2, y2 - br);
+        context.bezierCurveTo(x2, y2 - C * br, x2 - C * br, y2, x2 - br, y2);
+        context.lineTo(x1 + bl, y2);
+        context.bezierCurveTo(x1 + C * bl, y2, x1, y2 - C * bl, x1, y2 - bl);
+        context.lineTo(x1, y1 + tl);
+        context.bezierCurveTo(x1, y1 + C * tl, x1 + C * tl, y1, x1 + tl, y1);
         context.closePath();
       }
 
@@ -11811,7 +12757,7 @@
 
     rectangle.x = function(_) {
       if (arguments.length) {
-        x = typeof _ === 'function' ? _ : constant$2(+_);
+        x = number$1(_);
         return rectangle;
       } else {
         return x;
@@ -11820,7 +12766,7 @@
 
     rectangle.y = function(_) {
       if (arguments.length) {
-        y = typeof _ === 'function' ? _ : constant$2(+_);
+        y = number$1(_);
         return rectangle;
       } else {
         return y;
@@ -11829,7 +12775,7 @@
 
     rectangle.width = function(_) {
       if (arguments.length) {
-        width = typeof _ === 'function' ? _ : constant$2(+_);
+        width = number$1(_);
         return rectangle;
       } else {
         return width;
@@ -11838,19 +12784,22 @@
 
     rectangle.height = function(_) {
       if (arguments.length) {
-        height = typeof _ === 'function' ? _ : constant$2(+_);
+        height = number$1(_);
         return rectangle;
       } else {
         return height;
       }
     };
 
-    rectangle.cornerRadius = function(_) {
+    rectangle.cornerRadius = function(tl, tr, br, bl) {
       if (arguments.length) {
-        cornerRadius = typeof _ === 'function' ? _ : constant$2(+_);
+        crTL = number$1(tl);
+        crTR = tr != null ? number$1(tr) : crTL;
+        crBR = br != null ? number$1(br) : crTL;
+        crBL = bl != null ? number$1(bl) : crTR;
         return rectangle;
       } else {
-        return cornerRadius;
+        return crTL;
       }
     };
 
@@ -11980,31 +12929,40 @@
     return trail;
   }
 
-  function x$1(item)    { return item.x || 0; }
-  function y$1(item)    { return item.y || 0; }
-  function w(item)    { return item.width || 0; }
-  function ts(item)   { return item.size || 1; }
-  function h(item)    { return item.height || 0; }
-  function xw(item)   { return (item.x || 0) + (item.width || 0); }
-  function yh(item)   { return (item.y || 0) + (item.height || 0); }
-  function sa(item)   { return item.startAngle || 0; }
-  function ea(item)   { return item.endAngle || 0; }
-  function pa(item)   { return item.padAngle || 0; }
-  function ir(item)   { return item.innerRadius || 0; }
-  function or(item)   { return item.outerRadius || 0; }
-  function cr(item)   { return item.cornerRadius || 0; }
-  function def(item)  { return !(item.defined === false); }
-  function size(item) { return item.size == null ? 64 : item.size; }
-  function type(item) { return symbols(item.shape || 'circle'); }
+  function value(a, b) {
+    return a != null ? a : b;
+  }
 
-  var arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
-                            .innerRadius(ir).outerRadius(or).cornerRadius(cr),
-      areavShape  = d3_area().x(x$1).y1(y$1).y0(yh).defined(def),
-      areahShape  = d3_area().y(y$1).x1(x$1).x0(xw).defined(def),
-      lineShape   = d3_line().x(x$1).y(y$1).defined(def),
-      rectShape   = vg_rect().x(x$1).y(y$1).width(w).height(h).cornerRadius(cr),
-      symbolShape = d3_symbol().type(type).size(size),
-      trailShape  = vg_trail().x(x$1).y(y$1).defined(def).size(ts);
+  const x$1 =  item => item.x || 0,
+        y$1 =  item => item.y || 0,
+        w =  item => item.width || 0,
+        h =  item => item.height || 0,
+        xw = item => (item.x || 0) + (item.width || 0),
+        yh = item => (item.y || 0) + (item.height || 0),
+        sa = item => item.startAngle || 0,
+        ea = item => item.endAngle || 0,
+        pa = item => item.padAngle || 0,
+        ir = item => item.innerRadius || 0,
+        or = item => item.outerRadius || 0,
+        cr = item => item.cornerRadius || 0,
+        tl = item => value(item.cornerRadiusTopLeft, item.cornerRadius) || 0,
+        tr = item => value(item.cornerRadiusTopRight, item.cornerRadius) || 0,
+        br = item => value(item.cornerRadiusBottomRight, item.cornerRadius) || 0,
+        bl = item => value(item.cornerRadiusBottomLeft, item.cornerRadius) || 0,
+        sz = item => value(item.size, 64),
+        ts = item => item.size || 1,
+        def = item => !(item.defined === false),
+        type = item => symbols(item.shape || 'circle');
+
+  const arcShape    = d3_arc().startAngle(sa).endAngle(ea).padAngle(pa)
+                        .innerRadius(ir).outerRadius(or).cornerRadius(cr),
+        areavShape  = d3_area().x(x$1).y1(y$1).y0(yh).defined(def),
+        areahShape  = d3_area().y(y$1).x1(x$1).x0(xw).defined(def),
+        lineShape   = d3_line().x(x$1).y(y$1).defined(def),
+        rectShape   = vg_rect().x(x$1).y(y$1).width(w).height(h)
+                        .cornerRadius(tl, tr, br, bl),
+        symbolShape = d3_symbol().type(type).size(sz),
+        trailShape  = vg_trail().x(x$1).y(y$1).defined(def).size(ts);
 
   function arc(context, item) {
     return arcShape.context(context)(item);
@@ -12042,11 +13000,17 @@
     return trailShape.context(context)(items);
   }
 
-  function boundStroke(bounds, item) {
+  function boundStroke(bounds, item, miter) {
     if (item.stroke && item.opacity !== 0 && item.strokeOpacity !== 0) {
-      bounds.expand(item.strokeWidth != null ? +item.strokeWidth : 1);
+      const sw = item.strokeWidth != null ? +item.strokeWidth : 1;
+      bounds.expand(sw + (miter ? miterAdjustment(item, sw) : 0));
     }
     return bounds;
+  }
+
+  function miterAdjustment(item, strokeWidth) {
+    // TODO: more sophisticated adjustment? Or miter support in boundContext?
+    return item.strokeJoin && item.strokeJoin !== 'miter' ? 0 : strokeWidth;
   }
 
   var bounds,
@@ -12222,18 +13186,18 @@
 
     const canvasGradient = gradient.gradient === 'radial'
       ? context.createRadialGradient(
-          bounds.x1 + (gradient.x1 || 0.5) * w,
-          bounds.y1 + (gradient.y1 || 0.5) * h,
-          Math.max(w, h) * (gradient.r1 || 0),
-          bounds.x1 + (gradient.x2 || 0.5) * w,
-          bounds.y1 + (gradient.y2 || 0.5) * h,
-          Math.max(w, h) * (gradient.r2 || 0.5)
+          bounds.x1 + v(gradient.x1, 0.5) * w,
+          bounds.y1 + v(gradient.y1, 0.5) * h,
+          Math.max(w, h) * v(gradient.r1, 0),
+          bounds.x1 + v(gradient.x2, 0.5) * w,
+          bounds.y1 + v(gradient.y2, 0.5) * h,
+          Math.max(w, h) * v(gradient.r2, 0.5)
         )
       : context.createLinearGradient(
-          bounds.x1 + (gradient.x1 || 0) * w,
-          bounds.y1 + (gradient.y1 || 0) * h,
-          bounds.x1 + (gradient.x2 || 1) * w,
-          bounds.y1 + (gradient.y2 || 0) * h
+          bounds.x1 + v(gradient.x1, 0) * w,
+          bounds.y1 + v(gradient.y1, 0) * h,
+          bounds.x1 + v(gradient.x2, 1) * w,
+          bounds.y1 + v(gradient.y2, 0) * h
         );
 
     for (let i=0; i<n; ++i) {
@@ -12241,6 +13205,10 @@
     }
 
     return canvasGradient;
+  }
+
+  function v(value, dflt) {
+    return value == null ? dflt : value;
   }
 
   function color(context, item, value) {
@@ -12428,13 +13396,18 @@
     return 'rotate(' + a + ')';
   }
 
+  function scale$1(scaleX, scaleY){
+    return 'scale('+ scaleX + ',' + scaleY+')';
+  }
+
   function translateItem(item) {
     return translate(item.x || 0, item.y || 0);
   }
 
   function transformItem(item) {
     return translate(item.x || 0, item.y || 0)
-      + (item.angle ? ' ' + rotate(item.angle) : '');
+      + (item.angle ? ' ' + rotate(item.angle) : '')
+      + (item.scaleX || item.scaleY ? ' ' + scale$1(item.scaleX || 1, item.scaleY || 1) : '');   
   }
 
   function markItemPath(type, shape, isect) {
@@ -12763,14 +13736,28 @@
 
   function getImage(item, renderer) {
     var image = item.image;
-    if (!image || image.url !== item.url) {
-      image = {loaded: false, width: 0, height: 0};
-      renderer.loadImage(item.url).then(function(image) {
+    if (!image || item.url && item.url !== image.url) {
+      image = {complete: false, width: 0, height: 0};
+      renderer.loadImage(item.url).then(image => {
         item.image = image;
         item.image.url = item.url;
       });
     }
     return image;
+  }
+
+  function imageWidth(item, image) {
+    return item.width != null ? item.width
+      : !image || !image.width ? 0
+      : item.aspect !== false && item.height ? item.height * image.width / image.height
+      : image.width;
+  }
+
+  function imageHeight(item, image) {
+    return item.height != null ? item.height
+      : !image || !image.height ? 0
+      : item.aspect !== false && item.width ? item.width * image.height / image.width
+      : image.height;
   }
 
   function imageXOffset(align, w) {
@@ -12785,14 +13772,18 @@
     var image = getImage(item, renderer),
         x = item.x || 0,
         y = item.y || 0,
-        w = (item.width != null ? item.width : image.width) || 0,
-        h = (item.height != null ? item.height : image.height) || 0,
+        w = imageWidth(item, image),
+        h = imageHeight(item, image),
         a = item.aspect === false ? 'none' : 'xMidYMid';
 
     x -= imageXOffset(item.align, w);
     y -= imageYOffset(item.baseline, h);
 
-    emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
+    if (!image.src && image.toDataURL) {
+      emit('href', image.toDataURL(), 'http://www.w3.org/1999/xlink', 'xlink:href');
+    } else {
+      emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
+    }
     emit('transform', translate(x, y));
     emit('width', w);
     emit('height', h);
@@ -12803,8 +13794,8 @@
     var image = item.image,
         x = item.x || 0,
         y = item.y || 0,
-        w = (item.width != null ? item.width : (image && image.width)) || 0,
-        h = (item.height != null ? item.height : (image && image.height)) || 0;
+        w = imageWidth(item, image),
+        h = imageHeight(item, image);
 
     x -= imageXOffset(item.align, w);
     y -= imageYOffset(item.baseline, h);
@@ -12821,8 +13812,8 @@
       var image = getImage(item, renderer),
           x = item.x || 0,
           y = item.y || 0,
-          w = (item.width != null ? item.width : image.width) || 0,
-          h = (item.height != null ? item.height : image.height) || 0,
+          w = imageWidth(item, image),
+          h = imageHeight(item, image),
           opacity, ar0, ar1, t;
 
       x -= imageXOffset(item.align, w);
@@ -12844,8 +13835,9 @@
         }
       }
 
-      if (image.loaded) {
+      if (image.complete || image.toDataURL) {
         context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
+        context.imageSmoothingEnabled = item.smooth !== false;
         context.drawImage(image, x, y, w, h);
       }
     });
@@ -12868,7 +13860,12 @@
   var line$1 = markMultiItemPath('line', line, pickLine);
 
   function attr$2(emit, item) {
-    emit('transform', translateItem(item));
+    var sx = item.scaleX || 1,
+        sy = item.scaleY || 1;
+    if (sx !== 1 || sy !== 1) {
+      emit('vector-effect', 'non-scaling-stroke');
+    }
+    emit('transform', transformItem(item));
     emit('d', item.path);
   }
 
@@ -12876,17 +13873,38 @@
     var path = item.path;
     if (path == null) return true;
 
-    var cache = item.pathCache;
+    var x = item.x || 0,
+        y = item.y || 0,
+        sx = item.scaleX || 1,
+        sy = item.scaleY || 1,
+        a = (item.angle || 0) * DegToRad,
+        cache = item.pathCache;
+
     if (!cache || cache.path !== path) {
       (item.pathCache = cache = pathParse(path)).path = path;
     }
-    pathRender(context, cache, item.x, item.y);
+
+    if (a && context.rotate && context.translate) {
+      context.translate(x, y);
+      context.rotate(a);
+      pathRender(context, cache, 0, 0, sx, sy);
+      context.rotate(-a);
+      context.translate(-x, -y);
+    } else {
+      pathRender(context, cache, x, y, sx, sy);
+    }
   }
 
   function bound$2(bounds, item) {
-    return path$1(context(bounds), item)
+    path$1(context(bounds), item)
       ? bounds.set(0, 0, 0, 0)
-      : boundStroke(bounds, item);
+      : boundStroke(bounds, item, true);
+
+    if (item.angle) {
+      bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
+    }
+
+    return bounds;
   }
 
   var path$2 = {
@@ -13005,9 +14023,9 @@
   useCanvas(true);
 
   // make dumb, simple estimate if no canvas is available
-  function estimateWidth(item) {
+  function estimateWidth(item, text) {
     currFontHeight = fontSize(item);
-    return estimate(textValue(item));
+    return estimate(textValue(item, text));
   }
 
   function estimate(text) {
@@ -13015,9 +14033,9 @@
   }
 
   // measure text width if canvas is available
-  function measureWidth(item) {
+  function measureWidth(item, text) {
     return fontSize(item) <= 0 ? 0
-      : (context$1.font = font(item), measure$1(textValue(item)));
+      : (context$1.font = font(item), measure$1(textValue(item, text)));
   }
 
   function measure$1(text) {
@@ -13032,18 +14050,36 @@
     textMetrics.width = (use && context$1) ? measureWidth : estimateWidth;
   }
 
-  function textValue(item) {
-    var s = item.text;
-    if (s == null) {
-      return '';
-    } else {
-      return item.limit > 0 ? truncate$1(item) : s + '';
-    }
+  function lineHeight(item) {
+    return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
   }
 
-  function truncate$1(item) {
+  function lineArray(_) {
+    return isArray(_) ? _.length > 1 ? _ : _[0] : _;
+  }
+
+  function textLines(item) {
+    return lineArray(
+      item.lineBreak && item.text && !isArray(item.text)
+        ? item.text.split(item.lineBreak)
+        : item.text
+    );
+  }
+
+  function multiLineOffset(item) {
+    const tl = textLines(item);
+    return (isArray(tl) ? (tl.length - 1) : 0) * lineHeight(item);
+  }
+
+  function textValue(item, line) {
+    return line == null ? ''
+      : item.limit > 0 ? truncate$1(item, line)
+      : line + '';
+  }
+
+  function truncate$1(item, line) {
     var limit = +item.limit,
-        text = item.text + '',
+        text = line + '',
         width;
 
     if (textMetrics.width === measureWidth) {
@@ -13098,7 +14134,7 @@
       fontFamily(item, quote);
   }
 
-  function offset(item) {
+  function offset$1(item) {
     // perform our own font baseline calculation
     // why? not all browsers support SVG 1.1 'alignment-baseline' :(
     var baseline = item.baseline,
@@ -13136,7 +14172,7 @@
 
   function attr$5(emit, item) {
     var dx = item.dx || 0,
-        dy = (item.dy || 0) + offset(item),
+        dy = (item.dy || 0) + offset$1(item),
         p = anchorPoint(item),
         x = p.x1,
         y = p.y1,
@@ -13160,11 +14196,21 @@
         x = p.x1,
         y = p.y1,
         dx = item.dx || 0,
-        dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
+        dy = (item.dy || 0) + offset$1(item) - Math.round(0.8*h), // use 4/5 offset
+        tl = textLines(item),
         w;
 
+    // get dimensions
+    if (isArray(tl)) {
+      // multi-line text
+      h += lineHeight(item) * (tl.length - 1);
+      w = tl.reduce((w, t) => Math.max(w, textMetrics.width(item, t)), 0);
+    } else {
+      // single-line text
+      w = textMetrics.width(item, tl);
+    }
+
     // horizontal alignment
-    w = textMetrics.width(item);
     if (a === 'center') {
       dx -= (w / 2);
     } else if (a === 'right') {
@@ -13172,6 +14218,7 @@
     }
 
     bounds.set(dx+=x, dy+=y, dx+w, dy+h);
+
     if (item.angle && !mode) {
       bounds.rotate(item.angle * DegToRad, x, y);
     } else if (mode === 2) {
@@ -13182,12 +14229,12 @@
 
   function draw$4(context, scene, bounds) {
     visit(scene, function(item) {
-      var opacity, p, x, y, str;
-      if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
-      if (!(str = textValue(item))) return; // get text string
+      var opacity = item.opacity == null ? 1 : item.opacity,
+          p, x, y, i, lh, tl, str;
 
-      opacity = item.opacity == null ? 1 : item.opacity;
-      if (opacity === 0 || item.fontSize <= 0) return;
+      if (bounds && !bounds.intersects(item.bounds) || // bounds check
+          opacity === 0 || item.fontSize <= 0 ||
+          item.text == null || item.text.length === 0) return;
 
       context.font = font(item);
       context.textAlign = item.align || 'left';
@@ -13203,14 +14250,31 @@
         x = y = 0; // reset x, y
       }
       x += (item.dx || 0);
-      y += (item.dy || 0) + offset(item);
+      y += (item.dy || 0) + offset$1(item);
 
-      if (item.fill && fill(context, item, opacity)) {
-        context.fillText(str, x, y);
+      tl = textLines(item);
+      if (isArray(tl)) {
+        lh = lineHeight(item);
+        for (i=0; i<tl.length; ++i) {
+          str = textValue(item, tl[i]);
+          if (item.fill && fill(context, item, opacity)) {
+            context.fillText(str, x, y);
+          }
+          if (item.stroke && stroke(context, item, opacity)) {
+            context.strokeText(str, x, y);
+          }
+          y += lh;
+        }
+      } else {
+        str = textValue(item, tl);
+        if (item.fill && fill(context, item, opacity)) {
+          context.fillText(str, x, y);
+        }
+        if (item.stroke && stroke(context, item, opacity)) {
+          context.strokeText(str, x, y);
+        }
       }
-      if (item.stroke && stroke(context, item, opacity)) {
-        context.strokeText(str, x, y);
-      }
+
       if (item.angle) context.restore();
     });
   }
@@ -13320,12 +14384,15 @@
     'strokeDash', 'strokeDashOffset',                             // stroke dash
     'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
     'cornerRadius', 'padAngle',                                   // arc, rect
+    'cornerRadiusTopLeft', 'cornerRadiusTopRight',                // rect, group
+    'cornerRadiusBottomLeft', 'cornerRadiusBottomRight',
     'interpolate', 'tension', 'orient', 'defined',                // area, line
-    'url',                                                        // image
-    'path',                                                       // path
+    'url', 'aspect', 'smooth',                                    // image
+    'path', 'scaleX', 'scaleY',                                   // path
     'x2', 'y2',                                                   // rule
     'size', 'shape',                                              // symbol
-    'text', 'angle', 'theta', 'radius', 'dx', 'dy',               // text
+    'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
+    'ellipsis', 'limit', 'lineBreak', 'lineHeight',
     'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
   ];
 
@@ -13369,13 +14436,13 @@
     }
   }
 
-  var prototype$F = Scenegraph.prototype;
+  var prototype$I = Scenegraph.prototype;
 
-  prototype$F.toJSON = function(indent) {
+  prototype$I.toJSON = function(indent) {
     return sceneToJSON(this.root, indent || 0);
   };
 
-  prototype$F.mark = function(markdef, group, index) {
+  prototype$I.mark = function(markdef, group, index) {
     group = group || this.root.items[0];
     var mark = createMark(markdef, group);
     group.items[index] = mark;
@@ -13491,7 +14558,7 @@
     handler.element().setAttribute('title', value || '');
   }
 
-  var prototype$G = Handler.prototype;
+  var prototype$J = Handler.prototype;
 
   /**
    * Initialize a new Handler instance.
@@ -13502,7 +14569,7 @@
    *   the "this" context for event callbacks.
    * @return {Handler} - This handler instance.
    */
-  prototype$G.initialize = function(el, origin, obj) {
+  prototype$J.initialize = function(el, origin, obj) {
     this._el = el;
     this._obj = obj || null;
     return this.origin(origin);
@@ -13512,7 +14579,7 @@
    * Returns the parent container element for a visualization.
    * @return {DOMElement} - The containing DOM element.
    */
-  prototype$G.element = function() {
+  prototype$J.element = function() {
     return this._el;
   };
 
@@ -13521,14 +14588,14 @@
    * Subclasses must override if the first child is not the scene element.
    * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
    */
-  prototype$G.canvas = function() {
+  prototype$J.canvas = function() {
     return this._el && this._el.firstChild;
   };
 
   /**
    * Get / set the origin coordinates of the visualization.
    */
-  prototype$G.origin = function(origin) {
+  prototype$J.origin = function(origin) {
     if (arguments.length) {
       this._origin = origin || [0, 0];
       return this;
@@ -13540,7 +14607,7 @@
   /**
    * Get / set the scenegraph root.
    */
-  prototype$G.scene = function(scene) {
+  prototype$J.scene = function(scene) {
     if (!arguments.length) return this._scene;
     this._scene = scene;
     return this;
@@ -13549,12 +14616,12 @@
   /**
    * Add an event handler. Subclasses should override this method.
    */
-  prototype$G.on = function(/*type, handler*/) {};
+  prototype$J.on = function(/*type, handler*/) {};
 
   /**
    * Remove an event handler. Subclasses should override this method.
    */
-  prototype$G.off = function(/*type, handler*/) {};
+  prototype$J.off = function(/*type, handler*/) {};
 
   /**
    * Utility method for finding the array index of an event handler.
@@ -13563,7 +14630,7 @@
    * @param {function} handler - The event handler instance to find.
    * @return {number} - The handler's array index or -1 if not registered.
    */
-  prototype$G._handlerIndex = function(h, type, handler) {
+  prototype$J._handlerIndex = function(h, type, handler) {
     for (var i = h ? h.length : 0; --i>=0;) {
       if (h[i].type === type && (!handler || h[i].handler === handler)) {
         return i;
@@ -13580,7 +14647,7 @@
    *   null or unspecified, this method returns handlers for all types.
    * @return {Array} - A new array containing all registered event handlers.
    */
-  prototype$G.handlers = function(type) {
+  prototype$J.handlers = function(type) {
     var h = this._handlers, a = [], k;
     if (type) {
       a.push.apply(a, h[this.eventName(type)]);
@@ -13596,7 +14663,7 @@
    * @param {string} name - The input event type string.
    * @return {string} - A string with the event type only.
    */
-  prototype$G.eventName = function(name) {
+  prototype$J.eventName = function(name) {
     var i = name.indexOf('.');
     return i < 0 ? name : name.slice(0,i);
   };
@@ -13607,7 +14674,7 @@
    * @param {Item} item - The scenegraph item.
    * @param {string} href - The URL to navigate to.
    */
-  prototype$G.handleHref = function(event, item, href) {
+  prototype$J.handleHref = function(event, item, href) {
     this._loader
       .sanitize(href, {context:'href'})
       .then(function(opt) {
@@ -13626,7 +14693,7 @@
    * @param {boolean} show - A boolean flag indicating whether
    *   to show or hide a tooltip for the given item.
    */
-  prototype$G.handleTooltip = function(event, item, show) {
+  prototype$J.handleTooltip = function(event, item, show) {
     if (item && item.tooltip != null) {
       item = resolveItem(item, event, this.canvas(), this._origin);
       var value = (show && item && item.tooltip) || null;
@@ -13642,7 +14709,7 @@
    *   DOMRect type) consisting of x, y, width, heigh, top, left,
    *   right, and bottom properties.
    */
-  prototype$G.getItemBoundingClientRect = function(item) {
+  prototype$J.getItemBoundingClientRect = function(item) {
     if (!(el = this.canvas())) return;
 
     var el, rect = el.getBoundingClientRect(),
@@ -13685,7 +14752,7 @@
     this._loader = new ResourceLoader(loader);
   }
 
-  var prototype$H = Renderer.prototype;
+  var prototype$K = Renderer.prototype;
 
   /**
    * Initialize a new Renderer instance.
@@ -13698,7 +14765,7 @@
    *   the width and height to determine the final pixel size.
    * @return {Renderer} - This renderer instance.
    */
-  prototype$H.initialize = function(el, width, height, origin, scaleFactor) {
+  prototype$K.initialize = function(el, width, height, origin, scaleFactor) {
     this._el = el;
     return this.resize(width, height, origin, scaleFactor);
   };
@@ -13707,7 +14774,7 @@
    * Returns the parent container element for a visualization.
    * @return {DOMElement} - The containing DOM element.
    */
-  prototype$H.element = function() {
+  prototype$K.element = function() {
     return this._el;
   };
 
@@ -13716,14 +14783,14 @@
    * Subclasses must override if the first child is not the scene element.
    * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
    */
-  prototype$H.canvas = function() {
+  prototype$K.canvas = function() {
     return this._el && this._el.firstChild;
   };
 
   /**
    * Get / set the background color.
    */
-  prototype$H.background = function(bgcolor) {
+  prototype$K.background = function(bgcolor) {
     if (arguments.length === 0) return this._bgcolor;
     this._bgcolor = bgcolor;
     return this;
@@ -13739,7 +14806,7 @@
    *   the width and height to determine the final pixel size.
    * @return {Renderer} - This renderer instance;
    */
-  prototype$H.resize = function(width, height, origin, scaleFactor) {
+  prototype$K.resize = function(width, height, origin, scaleFactor) {
     this._width = width;
     this._height = height;
     this._origin = origin || [0, 0];
@@ -13753,7 +14820,7 @@
    * incremental should implement this method.
    * @param {Item} item - The dirty item whose bounds should be redrawn.
    */
-  prototype$H.dirty = function(/*item*/) {
+  prototype$K.dirty = function(/*item*/) {
   };
 
   /**
@@ -13766,7 +14833,7 @@
    * @param {object} scene - The root mark of a scenegraph to render.
    * @return {Renderer} - This renderer instance.
    */
-  prototype$H.render = function(scene) {
+  prototype$K.render = function(scene) {
     var r = this;
 
     // bind arguments into a render call, and cache it
@@ -13788,7 +14855,7 @@
    * method to actually perform rendering.
    * @param {object} scene - The root mark of a scenegraph to render.
    */
-  prototype$H._render = function(/*scene*/) {
+  prototype$K._render = function(/*scene*/) {
     // subclasses to override
   };
 
@@ -13800,7 +14867,7 @@
    * @param {object} scene - The root mark of a scenegraph to render.
    * @return {Promise} - A Promise that resolves when rendering is complete.
    */
-  prototype$H.renderAsync = function(scene) {
+  prototype$K.renderAsync = function(scene) {
     var r = this.render(scene);
     return this._ready
       ? this._ready.then(function() { return r; })
@@ -13815,7 +14882,7 @@
    * @param {string} uri - The URI for the requested resource.
    * @return {Promise} - A Promise that resolves to the requested resource.
    */
-  prototype$H._load = function(method, uri) {
+  prototype$K._load = function(method, uri) {
     var r = this,
         p = r._loader[method](uri);
 
@@ -13839,7 +14906,7 @@
    * @param {string} uri - The URI string to sanitize.
    * @return {Promise} - A Promise that resolves to the sanitized URL.
    */
-  prototype$H.sanitizeURL = function(uri) {
+  prototype$K.sanitizeURL = function(uri) {
     return this._load('sanitizeURL', uri);
   };
 
@@ -13850,7 +14917,7 @@
    * @param {string} uri - The URI string of the image.
    * @return {Promise} - A Promise that resolves to the loaded Image.
    */
-  prototype$H.loadImage = function(uri) {
+  prototype$K.loadImage = function(uri) {
     return this._load('loadImage', uri);
   };
 
@@ -13888,17 +14955,17 @@
     this._first = true;
   }
 
-  var prototype$I = inherits(CanvasHandler, Handler);
+  var prototype$L = inherits(CanvasHandler, Handler);
 
-  prototype$I.initialize = function(el, origin, obj) {
+  prototype$L.initialize = function(el, origin, obj) {
     // add event listeners
     var canvas = this._canvas = el && domFind(el, 'canvas');
     if (canvas) {
       var that = this;
       this.events.forEach(function(type) {
         canvas.addEventListener(type, function(evt) {
-          if (prototype$I[type]) {
-            prototype$I[type].call(that, evt);
+          if (prototype$L[type]) {
+            prototype$L[type].call(that, evt);
           } else {
             that.fire(type, evt);
           }
@@ -13910,20 +14977,20 @@
   };
 
   // return the backing canvas instance
-  prototype$I.canvas = function() {
+  prototype$L.canvas = function() {
     return this._canvas;
   };
 
   // retrieve the current canvas context
-  prototype$I.context = function() {
+  prototype$L.context = function() {
     return this._canvas.getContext('2d');
   };
 
   // supported events
-  prototype$I.events = Events;
+  prototype$L.events = Events;
 
   // to keep old versions of firefox happy
-  prototype$I.DOMMouseScroll = function(evt) {
+  prototype$L.DOMMouseScroll = function(evt) {
     this.fire('mousewheel', evt);
   };
 
@@ -13956,25 +15023,25 @@
     };
   }
 
-  prototype$I.mousemove = move('mousemove', 'mouseover', 'mouseout');
-  prototype$I.dragover  = move('dragover', 'dragenter', 'dragleave');
+  prototype$L.mousemove = move('mousemove', 'mouseover', 'mouseout');
+  prototype$L.dragover  = move('dragover', 'dragenter', 'dragleave');
 
-  prototype$I.mouseout  = inactive('mouseout');
-  prototype$I.dragleave = inactive('dragleave');
+  prototype$L.mouseout  = inactive('mouseout');
+  prototype$L.dragleave = inactive('dragleave');
 
-  prototype$I.mousedown = function(evt) {
+  prototype$L.mousedown = function(evt) {
     this._down = this._active;
     this.fire('mousedown', evt);
   };
 
-  prototype$I.click = function(evt) {
+  prototype$L.click = function(evt) {
     if (this._down === this._active) {
       this.fire('click', evt);
       this._down = null;
     }
   };
 
-  prototype$I.touchstart = function(evt) {
+  prototype$L.touchstart = function(evt) {
     this._touch = this.pickEvent(evt.changedTouches[0]);
 
     if (this._first) {
@@ -13985,17 +15052,17 @@
     this.fire('touchstart', evt, true);
   };
 
-  prototype$I.touchmove = function(evt) {
+  prototype$L.touchmove = function(evt) {
     this.fire('touchmove', evt, true);
   };
 
-  prototype$I.touchend = function(evt) {
+  prototype$L.touchend = function(evt) {
     this.fire('touchend', evt, true);
     this._touch = null;
   };
 
   // fire an event
-  prototype$I.fire = function(type, evt, touch) {
+  prototype$L.fire = function(type, evt, touch) {
     var a = touch ? this._touch : this._active,
         h = this._handlers[type], i, len;
 
@@ -14018,7 +15085,7 @@
   };
 
   // add an event handler
-  prototype$I.on = function(type, handler) {
+  prototype$L.on = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers,
         i = this._handlerIndex(h[name], type, handler);
@@ -14034,7 +15101,7 @@
   };
 
   // remove an event handler
-  prototype$I.off = function(type, handler) {
+  prototype$L.off = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers[name],
         i = this._handlerIndex(h, type, handler);
@@ -14046,7 +15113,7 @@
     return this;
   };
 
-  prototype$I.pickEvent = function(evt) {
+  prototype$L.pickEvent = function(evt) {
     var p = point$4(evt, this._canvas),
         o = this._origin;
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
@@ -14055,7 +15122,7 @@
   // find the scenegraph item at the current mouse position
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
-  prototype$I.pick = function(scene, x, y, gx, gy) {
+  prototype$L.pick = function(scene, x, y, gx, gy) {
     var g = this.context(),
         mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
@@ -14120,11 +15187,11 @@
     this._dirty = new Bounds();
   }
 
-  var prototype$J = inherits(CanvasRenderer, Renderer),
+  var prototype$M = inherits(CanvasRenderer, Renderer),
       base = Renderer.prototype,
       tempBounds$1 = new Bounds();
 
-  prototype$J.initialize = function(el, width, height, origin, scaleFactor, options) {
+  prototype$M.initialize = function(el, width, height, origin, scaleFactor, options) {
     this._options = options;
     this._canvas = domCanvas(1, 1, options && options.type); // instantiate a small canvas
 
@@ -14136,7 +15203,7 @@
     return base.initialize.call(this, el, width, height, origin, scaleFactor);
   };
 
-  prototype$J.resize = function(width, height, origin, scaleFactor) {
+  prototype$M.resize = function(width, height, origin, scaleFactor) {
     base.resize.call(this, width, height, origin, scaleFactor);
     resize(this._canvas, this._width, this._height,
       this._origin, this._scale, this._options && this._options.context);
@@ -14144,15 +15211,15 @@
     return this;
   };
 
-  prototype$J.canvas = function() {
+  prototype$M.canvas = function() {
     return this._canvas;
   };
 
-  prototype$J.context = function() {
+  prototype$M.context = function() {
     return this._canvas ? this._canvas.getContext('2d') : null;
   };
 
-  prototype$J.dirty = function(item) {
+  prototype$M.dirty = function(item) {
     var b = translate$1(item.bounds, item.mark.group);
     this._dirty.union(b);
   };
@@ -14172,6 +15239,12 @@
     return b;
   }
 
+  function viewBounds(origin, width, height) {
+    return tempBounds$1
+      .set(0, 0, width, height)
+      .translate(-origin[0], -origin[1]);
+  }
+
   function translate$1(bounds, group) {
     if (group == null) return bounds;
     var b = tempBounds$1.clear().union(bounds);
@@ -14181,7 +15254,7 @@
     return b;
   }
 
-  prototype$J._render = function(scene) {
+  prototype$M._render = function(scene) {
     var g = this.context(),
         o = this._origin,
         w = this._width,
@@ -14192,9 +15265,9 @@
     g.save();
     if (this._redraw || b.empty()) {
       this._redraw = false;
-      b = null;
+      b = viewBounds(o, w, h).expand(1);
     } else {
-      b = clipToBounds(g, b, o);
+      b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o);
     }
 
     this.clear(-o[0], -o[1], w, h);
@@ -14209,14 +15282,14 @@
     return this;
   };
 
-  prototype$J.draw = function(ctx, scene, bounds) {
+  prototype$M.draw = function(ctx, scene, bounds) {
     var mark = Marks[scene.marktype];
     if (scene.clip) clip$1(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
 
-  prototype$J.clear = function(x, y, w, h) {
+  prototype$M.clear = function(x, y, w, h) {
     var g = this.context();
     g.clearRect(x, y, w, h);
     if (this._bgcolor != null) {
@@ -14236,9 +15309,9 @@
     });
   }
 
-  var prototype$K = inherits(SVGHandler, Handler);
+  var prototype$N = inherits(SVGHandler, Handler);
 
-  prototype$K.initialize = function(el, origin, obj) {
+  prototype$N.initialize = function(el, origin, obj) {
     var svg = this._svg;
     if (svg) {
       svg.removeEventListener(HrefEvent, this._hrefHandler);
@@ -14254,7 +15327,7 @@
     return Handler.prototype.initialize.call(this, el, origin, obj);
   };
 
-  prototype$K.canvas = function() {
+  prototype$N.canvas = function() {
     return this._svg;
   };
 
@@ -14270,7 +15343,7 @@
   }
 
   // add an event handler
-  prototype$K.on = function(type, handler) {
+  prototype$N.on = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers,
         i = this._handlerIndex(h[name], type, handler);
@@ -14292,7 +15365,7 @@
   };
 
   // remove an event handler
-  prototype$K.off = function(type, handler) {
+  prototype$N.off = function(type, handler) {
     var name = this.eventName(type),
         h = this._handlers[name],
         i = this._handlerIndex(h, type, handler);
@@ -14357,17 +15430,17 @@
 
   function SVGRenderer(loader) {
     Renderer.call(this, loader);
-    this._dirtyID = 1;
+    this._dirtyID = 0;
     this._dirty = [];
     this._svg = null;
     this._root = null;
     this._defs = null;
   }
 
-  var prototype$L = inherits(SVGRenderer, Renderer);
+  var prototype$O = inherits(SVGRenderer, Renderer);
   var base$1 = Renderer.prototype;
 
-  prototype$L.initialize = function(el, width, height, padding) {
+  prototype$O.initialize = function(el, width, height, padding) {
     if (el) {
       this._svg = domChild(el, 0, 'svg', ns);
       this._svg.setAttribute('class', 'marks');
@@ -14389,14 +15462,14 @@
     return base$1.initialize.call(this, el, width, height, padding);
   };
 
-  prototype$L.background = function(bgcolor) {
+  prototype$O.background = function(bgcolor) {
     if (arguments.length && this._svg) {
       this._svg.style.setProperty('background-color', bgcolor);
     }
     return base$1.background.apply(this, arguments);
   };
 
-  prototype$L.resize = function(width, height, origin, scaleFactor) {
+  prototype$O.resize = function(width, height, origin, scaleFactor) {
     base$1.resize.call(this, width, height, origin, scaleFactor);
 
     if (this._svg) {
@@ -14411,11 +15484,11 @@
     return this;
   };
 
-  prototype$L.canvas = function() {
+  prototype$O.canvas = function() {
     return this._svg;
   };
 
-  prototype$L.svg = function() {
+  prototype$O.svg = function() {
     if (!this._svg) return null;
 
     var attr = {
@@ -14441,7 +15514,7 @@
 
   // -- Render entry point --
 
-  prototype$L._render = function(scene) {
+  prototype$O._render = function(scene) {
     // perform spot updates and re-render markup
     if (this._dirtyCheck()) {
       if (this._dirtyAll) this._resetDefs();
@@ -14459,7 +15532,7 @@
 
   // -- Manage SVG definitions ('defs') block --
 
-  prototype$L.updateDefs = function() {
+  prototype$O.updateDefs = function() {
     var svg = this._svg,
         defs = this._defs,
         el = defs.el,
@@ -14553,7 +15626,7 @@
     return index + 1;
   }
 
-  prototype$L._resetDefs = function() {
+  prototype$O._resetDefs = function() {
     var def = this._defs;
     def.gradient = {};
     def.clipping = {};
@@ -14562,23 +15635,23 @@
 
   // -- Manage rendering of items marked as dirty --
 
-  prototype$L.dirty = function(item) {
+  prototype$O.dirty = function(item) {
     if (item.dirty !== this._dirtyID) {
       item.dirty = this._dirtyID;
       this._dirty.push(item);
     }
   };
 
-  prototype$L.isDirty = function(item) {
+  prototype$O.isDirty = function(item) {
     return this._dirtyAll
       || !item._svg
       || item.dirty === this._dirtyID;
   };
 
-  prototype$L._dirtyCheck = function() {
+  prototype$O._dirtyCheck = function() {
     this._dirtyAll = true;
     var items = this._dirty;
-    if (!items.length) return true;
+    if (!items.length || !this._dirtyID) return true;
 
     var id = ++this._dirtyID,
         item, mark, type, mdef, i, n, o;
@@ -14643,7 +15716,7 @@
   // -- Construct & maintain scenegraph to SVG mapping ---
 
   // Draw a mark container.
-  prototype$L.draw = function(el, scene, prev) {
+  prototype$O.draw = function(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
     var renderer = this,
@@ -14733,16 +15806,17 @@
     }
 
     // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-    if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+    if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
       el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
     }
 
     return node;
   }
 
-  function hasSiblings(item) {
-    var parent = item.mark || item.group;
-    return parent && parent.items.length > 1;
+  function siblingCheck(node, sibling) {
+    return node.parentNode
+      && node.parentNode.childNodes.length > 1
+      && node.previousSibling != sibling; // treat null/undefined the same
   }
 
 
@@ -14768,13 +15842,46 @@
         values.events = value;
       }
     },
+    image: function(mdef, el, item) {
+      if (item.smooth === false) {
+        setStyle(el, 'image-rendering', 'optimizeSpeed');
+        setStyle(el, 'image-rendering', 'pixelated');
+      } else {
+        setStyle(el, 'image-rendering', null);
+      }
+    },
     text: function(mdef, el, item) {
-      var value;
+      var tl = textLines(item),
+          key, value, doc, lh;
 
-      value = textValue(item);
-      if (value !== values.text) {
-        el.textContent = value;
-        values.text = value;
+      if (isArray(tl)) {
+        // multi-line text
+        value = tl.map(_ => textValue(item, _));
+        key = value.join('\n'); // content cache key
+
+        if (key !== values.text) {
+          domClear(el, 0);
+          doc = el.ownerDocument;
+          lh = lineHeight(item);
+          value.forEach((t, i) => {
+            const ts = domCreate(doc, 'tspan', ns);
+            ts.__data__ = item; // data binding
+            ts.textContent = t;
+            if (i) {
+              ts.setAttribute('x', 0);
+              ts.setAttribute('dy', lh);
+            }
+            el.appendChild(ts);
+          });
+          values.text = key;
+        }
+      } else {
+        // single-line text
+        value = textValue(item, tl);
+        if (value !== values.text) {
+          el.textContent = value;
+          values.text = value;
+        }
       }
 
       setStyle(el, 'font-family', fontFamily(item));
@@ -14796,7 +15903,7 @@
     }
   }
 
-  prototype$L._update = function(mdef, el, item) {
+  prototype$O._update = function(mdef, el, item) {
     // set dom element and values cache
     // provides access to emit method
     element = el;
@@ -14838,7 +15945,7 @@
     values[name] = value;
   }
 
-  prototype$L.style = function(el, o) {
+  prototype$O.style = function(el, o) {
     if (o == null) return;
     var i, n, prop, name, value;
 
@@ -14895,10 +16002,10 @@
     };
   }
 
-  var prototype$M = inherits(SVGStringRenderer, Renderer);
+  var prototype$P = inherits(SVGStringRenderer, Renderer);
   var base$2 = Renderer.prototype;
 
-  prototype$M.resize = function(width, height, origin, scaleFactor) {
+  prototype$P.resize = function(width, height, origin, scaleFactor) {
     base$2.resize.call(this, width, height, origin, scaleFactor);
     var o = this._origin,
         t = this._text;
@@ -14937,7 +16044,7 @@
     return this;
   };
 
-  prototype$M.background = function() {
+  prototype$P.background = function() {
     var rv = base$2.background.apply(this, arguments);
     if (arguments.length && this._text.head) {
       this.resize(this._width, this._height, this._origin, this._scale);
@@ -14945,18 +16052,18 @@
     return rv;
   };
 
-  prototype$M.svg = function() {
+  prototype$P.svg = function() {
     var t = this._text;
     return t.head + t.bg + t.defs + t.root + t.body + t.foot;
   };
 
-  prototype$M._render = function(scene) {
+  prototype$P._render = function(scene) {
     this._text.body = this.mark(scene);
     this._text.defs = this.buildDefs();
     return this;
   };
 
-  prototype$M.buildDefs = function() {
+  prototype$P.buildDefs = function() {
     var all = this._defs,
         defs = '',
         i, id, def, tag, stops;
@@ -15046,13 +16153,13 @@
     object$1[prefixed || name] = value;
   }
 
-  prototype$M.attributes = function(attr, item) {
+  prototype$P.attributes = function(attr, item) {
     object$1 = {};
     attr(emit$1, item, this);
     return object$1;
   };
 
-  prototype$M.href = function(item) {
+  prototype$P.href = function(item) {
     var that = this,
         href = item.href,
         attr;
@@ -15073,7 +16180,7 @@
     return null;
   };
 
-  prototype$M.mark = function(scene) {
+  prototype$P.mark = function(scene) {
     var renderer = this,
         mdef = Marks[scene.marktype],
         tag  = mdef.tag,
@@ -15100,7 +16207,19 @@
       str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
       if (tag === 'text') {
-        str += escape_text(textValue(item));
+        const tl = textLines(item);
+        if (isArray(tl)) {
+          // multi-line text
+          const attrs = {x: 0, dy: lineHeight(item)};
+          for (let i=0; i<tl.length; ++i) {
+            str += openTag('tspan', i ? attrs: null)
+              + escape_text(textValue(item, tl[i]))
+              + closeTag('tspan');
+          }
+        } else {
+          // single-line text
+          str += escape_text(textValue(item, tl));
+        }
       } else if (tag === 'g') {
         str += openTag('path', renderer.attributes(mdef.background, item),
           applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
@@ -15124,7 +16243,7 @@
     return str + closeTag('g');
   };
 
-  prototype$M.markGroup = function(scene) {
+  prototype$P.markGroup = function(scene) {
     var renderer = this,
         str = '';
 
@@ -15141,6 +16260,12 @@
 
     if (tag === 'bgrect' && mark.interactive === false) {
       s += 'pointer-events: none; ';
+    }
+
+    if (tag === 'image') {
+      if (o.smooth === false) {
+        s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
+      }
     }
 
     if (tag === 'text') {
@@ -15354,9 +16479,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$N = inherits(Bound, Transform);
+  var prototype$Q = inherits(Bound, Transform);
 
-  prototype$N.transform = function(_, pulse) {
+  prototype$Q.transform = function(_, pulse) {
     var view = pulse.dataflow,
         mark = _.mark,
         type = mark.marktype,
@@ -15382,9 +16507,13 @@
         markBounds.union(boundItem$1(item, bound));
       });
 
-      // force reflow for legends to propagate any layout changes
-      // suppress other types to prevent overall layout jumpiness
-      if (mark.role === LegendRole) pulse.reflow();
+      // force reflow for axes/legends/titles to propagate any layout changes
+      switch (mark.role) {
+        case AxisRole:
+        case LegendRole:
+        case TitleRole:
+          pulse.reflow();
+      }
     }
 
     else {
@@ -15442,9 +16571,9 @@
     ]
   };
 
-  var prototype$O = inherits(Identifier, Transform);
+  var prototype$R = inherits(Identifier, Transform);
 
-  prototype$O.transform = function(_, pulse) {
+  prototype$R.transform = function(_, pulse) {
     var counter = getCounter(pulse.dataflow),
         id = counter.value,
         as = _.as;
@@ -15477,9 +16606,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$P = inherits(Mark, Transform);
+  var prototype$S = inherits(Mark, Transform);
 
-  prototype$P.transform = function(_, pulse) {
+  prototype$S.transform = function(_, pulse) {
     var mark = this.value;
 
     // acquire mark on first invocation, bind context and group
@@ -15544,7 +16673,7 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$Q = inherits(Overlap, Transform);
+  var prototype$T = inherits(Overlap, Transform);
 
   var methods = {
     parity: function(items) {
@@ -15611,7 +16740,7 @@
     return pulse.reflow(_.modified()).modifies('opacity');
   }
 
-  prototype$Q.transform = function(_, pulse) {
+  prototype$T.transform = function(_, pulse) {
     var reduce = methods[_.method] || methods.parity,
         source = pulse.materialize(pulse.SOURCE).source,
         sep = _.separation || 0,
@@ -15673,9 +16802,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$R = inherits(Render, Transform);
+  var prototype$U = inherits(Render, Transform);
 
-  prototype$R.transform = function(_, pulse) {
+  prototype$U.transform = function(_, pulse) {
     var view = pulse.dataflow;
 
     pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
@@ -15693,8 +16822,6 @@
     return item[property] === value ? 0
       : (item[property] = value, 1);
   }
-
-  const AxisOffset = 0.5;
 
   function isYAxis(mark) {
     var orient = mark.items[0].datum.orient;
@@ -15714,6 +16841,7 @@
     var item = axis.items[0],
         datum = item.datum,
         orient = datum.orient,
+        delta = datum.translate != null ? datum.translate : 0.5,
         indices = axisIndices(datum),
         range = item.range,
         offset = item.offset,
@@ -15723,6 +16851,7 @@
         title = datum.title && item.items[indices[2]].items[0],
         titlePadding = item.titlePadding,
         bounds = item.bounds,
+        dl = title && multiLineOffset(title),
         x = 0, y = 0, i, s;
 
     tempBounds$2.clear().union(bounds);
@@ -15736,28 +16865,28 @@
         x = position || 0;
         y = -offset;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 0, -1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
         bounds.add(0, -s).add(range, 0);
         break;
       case Left:
         x = -offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 1, -1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
         bounds.add(-s, 0).add(0, range);
         break;
       case Right:
         x = width + offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 1, 1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
         bounds.add(0, 0).add(s, range);
         break;
       case Bottom:
         x = position || 0;
         y = height + offset;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-        if (title) s = axisTitleLayout(title, s, titlePadding, 0, 1, bounds);
+        if (title) s = axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
         bounds.add(0, 0).add(range, s);
         break;
       default:
@@ -15768,7 +16897,7 @@
     // update bounds
     boundStroke(bounds.translate(x, y), item);
 
-    if (set(item, 'x', x + AxisOffset) | set(item, 'y', y + AxisOffset)) {
+    if (set(item, 'x', x + delta) | set(item, 'y', y + delta)) {
       item.bounds = tempBounds$2;
       view.dirty(item);
       item.bounds = bounds;
@@ -15778,18 +16907,20 @@
     return item.mark.bounds.clear().union(bounds);
   }
 
-  function axisTitleLayout(title, offset, pad, isYAxis, sign, bounds) {
+  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
     var b = title.bounds, dx = 0, dy = 0;
 
     if (title.auto) {
+      view.dirty(title);
+
       offset += pad;
 
       isYAxis
-        ? dx = (title.x || 0) - (title.x = sign * offset)
-        : dy = (title.y || 0) - (title.y = sign * offset);
+        ? dx = (title.x || 0) - (title.x = sign * (offset + dl))
+        : dy = (title.y || 0) - (title.y = sign * (offset + dl));
 
-      b.translate(-dx, -dy);
-      title.mark.bounds.set(b.x1, b.y1, b.x2, b.y2);
+      title.mark.bounds.clear().union(b.translate(-dx, -dy));
+      view.dirty(title);
 
       if (isYAxis) {
         bounds.add(0, b.y1).add(0, b.y2);
@@ -15828,6 +16959,7 @@
         switch (mark.role) {
           case AxisRole:
           case LegendRole:
+          case TitleRole:
             break;
           case RowHeader: views.rowheaders.push(...items); break;
           case RowFooter: views.rowfooters.push(...items); break;
@@ -16323,24 +17455,24 @@
         case Bottom:
           break;
         default:
-          ey += title.fontSize + tpad;
+          ey += title.bounds.height() + tpad;
       }
       if (ex || ey) translate$2(view, entry, ex, ey);
 
       switch (title.orient) {
         case Left:
-          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
           break;
         case Right:
-          tx += legendTitleOffset(item, entry, title, End, 1, 0) + tpad;
-          ty += legendTitleOffset(item, entry, title, anchor, 0, 1);
+          tx += legendTitleOffset(item, entry, title, End, 0, 0) + tpad;
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
           break;
         case Bottom:
-          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
-          ty += legendTitleOffset(item, entry, title, End, 0, 0, 1) + tpad;
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+          ty += legendTitleOffset(item, entry, title, End, -1, 0, 1) + tpad;
           break;
         default:
-          tx += legendTitleOffset(item, entry, title, anchor, 1, 0);
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
       }
       if (tx || ty) translate$2(view, title, tx, ty);
 
@@ -16352,15 +17484,18 @@
     }
   }
 
-  function legendTitleOffset(item, entry, title, anchor, x, lr, noBar) {
+  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
     const grad = item.datum.type !== 'symbol',
           vgrad = title.datum.vgrad,
           e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
-          s = e.bounds[x ? 'x2' : 'y2'] - item.padding,
+          s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
           u = vgrad && lr ? s : 0,
-          v = vgrad && lr ? 0 : s;
+          v = vgrad && lr ? 0 : s,
+          o = y <= 0 ? 0 : multiLineOffset(title);
 
-    return Math.round(anchor === Start ? u : anchor === End ? v : 0.5 * s);
+    return Math.round(anchor === Start ? u
+      : anchor === End ? (v - o)
+      : 0.5 * (s - o));
   }
 
   function translate$2(view, item, dx, dy) {
@@ -16385,17 +17520,17 @@
     });
   }
 
-  function titleLayout(view, title, width, height, viewBounds) {
-    var item = title.items[0],
-        frame = item.frame,
-        orient = item.orient,
-        anchor = item.anchor,
-        offset = item.offset,
-        bounds = item.bounds,
-        vertical = (orient === Left || orient === Right),
-        start = 0,
-        end = vertical ? height : width,
-        x = 0, y = 0, pos;
+  function titleLayout(view, mark, width, height, viewBounds) {
+    var group = mark.items[0],
+        frame = group.frame,
+        orient = group.orient,
+        anchor = group.anchor,
+        offset = group.offset,
+        padding = group.padding,
+        title = group.items[0].items[0],
+        subtitle = group.items[1] && group.items[1].items[0],
+        end = (orient === Left || orient === Right) ? height : width,
+        start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
 
     if (frame !== Group) {
       orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
@@ -16409,20 +17544,48 @@
       : (anchor === End) ? end
       : (start + end) / 2;
 
-    tempBounds$2.clear().union(bounds);
+    if (subtitle && subtitle.text) {
+      // position subtitle
+      switch (orient) {
+        case Top:
+        case Bottom:
+          sy = title.bounds.height() + padding;
+          break;
+        case Left:
+          sx = title.bounds.width() + padding;
+          break;
+        case Right:
+          sx = -title.bounds.width() - padding;
+          break;
+      }
 
-    // position title text
+      tempBounds$2.clear().union(subtitle.bounds);
+      tempBounds$2.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+      if (set(subtitle, 'x', sx) | set(subtitle, 'y', sy)) {
+        view.dirty(subtitle);
+        subtitle.bounds.clear().union(tempBounds$2);
+        subtitle.mark.bounds.clear().union(tempBounds$2);
+        view.dirty(subtitle);
+      }
+
+      tempBounds$2.clear().union(subtitle.bounds);
+    } else {
+      tempBounds$2.clear();
+    }
+    tempBounds$2.union(title.bounds);
+
+    // position title group
     switch (orient) {
       case Top:
         x = pos;
-        y = viewBounds.y1 - offset;
+        y = viewBounds.y1 - tempBounds$2.height() - offset;
         break;
       case Left:
-        x = viewBounds.x1 - offset;
+        x = viewBounds.x1 - tempBounds$2.width() - offset;
         y = pos;
         break;
       case Right:
-        x = viewBounds.x2 + offset;
+        x = viewBounds.x2 + tempBounds$2.width() + offset;
         y = pos;
         break;
       case Bottom:
@@ -16430,20 +17593,18 @@
         y = viewBounds.y2 + offset;
         break;
       default:
-        x = item.x;
-        y = item.y;
+        x = group.x;
+        y = group.y;
     }
 
-    bounds.translate(x - (item.x || 0), y - (item.y || 0));
-    if (set(item, 'x', x) | set(item, 'y', y)) {
-      item.bounds = tempBounds$2;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
+    if (set(group, 'x', x) | set(group, 'y', y)) {
+      tempBounds$2.translate(x, y);
+      view.dirty(group);
+      group.bounds.clear().union(tempBounds$2);
+      mark.bounds.clear().union(tempBounds$2);
+      view.dirty(group);
     }
-
-    // update bounds
-    return title.bounds.clear().union(bounds);
+    return group.bounds;
   }
 
   /**
@@ -16457,9 +17618,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$S = inherits(ViewLayout, Transform);
+  var prototype$V = inherits(ViewLayout, Transform);
 
-  prototype$S.transform = function(_, pulse) {
+  prototype$V.transform = function(_, pulse) {
     // TODO incremental update, output?
     var view = pulse.dataflow;
     _.mark.items.forEach(function(group) {
@@ -16633,6 +17794,7 @@
 
 
   var vtx = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     bound: Bound,
     identifier: Identifier,
     mark: Mark,
@@ -16660,7 +17822,7 @@
   const Sequential = 'sequential';
   const Diverging = 'diverging';
 
-  const Quantile = 'quantile';
+  const Quantile$1 = 'quantile';
   const Quantize = 'quantize';
   const Threshold = 'threshold';
 
@@ -16680,7 +17842,7 @@
       case Time:
       case UTC:
       case Sequential:
-      case Quantile:
+      case Quantile$1:
       case Quantize:
       case Threshold:
       case Ordinal:
@@ -16693,7 +17855,7 @@
   }
 
   function isQuantile(key) {
-    return key === Quantile;
+    return key === Quantile$1;
   }
 
   function isSequential(key) {
@@ -16736,36 +17898,9 @@
 
   function isDiscretizing(key) {
     return key === BinOrdinal
-      || key === Quantile
+      || key === Quantile$1
       || key === Quantize
       || key === Threshold;
-  }
-
-  var time = {
-    millisecond: millisecond,
-    second:      second,
-    minute:      minute,
-    hour:        hour,
-    day:         day,
-    week:        sunday,
-    month:       month,
-    year:        year
-  };
-
-  var utc = {
-    millisecond: millisecond,
-    second:      second,
-    minute:      utcMinute,
-    hour:        utcHour,
-    day:         utcDay,
-    week:        utcSunday,
-    month:       utcMonth,
-    year:        utcYear
-  };
-
-  function timeInterval(unit, type) {
-    const t = (type === UTC ? utc : time);
-    return hasOwnProperty(t, unit) && t[unit];
   }
 
   function invertRange(scale) {
@@ -16831,8 +17966,17 @@
   function initInterpolator(domain, interpolator) {
     switch (arguments.length) {
       case 0: break;
-      case 1: this.interpolator(domain); break;
-      default: this.interpolator(interpolator).domain(domain); break;
+      case 1: {
+        if (typeof domain === "function") this.interpolator(domain);
+        else this.range(domain);
+        break;
+      }
+      default: {
+        this.domain(domain);
+        if (typeof interpolator === "function") this.interpolator(interpolator);
+        else this.range(interpolator);
+        break;
+      }
     }
     return this;
   }
@@ -16901,8 +18045,7 @@
   var reI = "\\s*([+-]?\\d+)\\s*",
       reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
       reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-      reHex3 = /^#([0-9a-f]{3})$/,
-      reHex6 = /^#([0-9a-f]{6})$/,
+      reHex = /^#([0-9a-f]{3,8})$/,
       reRgbInteger = new RegExp("^rgb\\(" + [reI, reI, reI] + "\\)$"),
       reRgbPercent = new RegExp("^rgb\\(" + [reP, reP, reP] + "\\)$"),
       reRgbaInteger = new RegExp("^rgba\\(" + [reI, reI, reI, reN] + "\\)$"),
@@ -17088,10 +18231,13 @@
   }
 
   function color$1(format) {
-    var m;
+    var m, l;
     format = (format + "").trim().toLowerCase();
-    return (m = reHex3.exec(format)) ? (m = parseInt(m[1], 16), new Rgb((m >> 8 & 0xf) | (m >> 4 & 0x0f0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1)) // #f00
-        : (m = reHex6.exec(format)) ? rgbn(parseInt(m[1], 16)) // #ff0000
+    return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
+        : l === 3 ? new Rgb((m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1) // #f00
+        : l === 8 ? new Rgb(m >> 24 & 0xff, m >> 16 & 0xff, m >> 8 & 0xff, (m & 0xff) / 0xff) // #ff000000
+        : l === 4 ? new Rgb((m >> 12 & 0xf) | (m >> 8 & 0xf0), (m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), (((m & 0xf) << 4) | (m & 0xf)) / 0xff) // #f000
+        : null) // invalid hex
         : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
         : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
         : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
@@ -17269,7 +18415,7 @@
       Xn = 0.96422,
       Yn = 1,
       Zn = 0.82521,
-      t0$1 = 4 / 29,
+      t0$2 = 4 / 29,
       t1$1 = 6 / 29,
       t2 = 3 * t1$1 * t1$1,
       t3 = t1$1 * t1$1 * t1$1;
@@ -17324,11 +18470,11 @@
   }));
 
   function xyz2lab(t) {
-    return t > t3 ? Math.pow(t, 1 / 3) : t / t2 + t0$1;
+    return t > t3 ? Math.pow(t, 1 / 3) : t / t2 + t0$2;
   }
 
   function lab2xyz(t) {
-    return t > t1$1 ? t * t * t : t2 * (t - t0$1);
+    return t > t1$1 ? t * t * t : t2 * (t - t0$2);
   }
 
   function lrgb2rgb(x) {
@@ -17378,12 +18524,12 @@
 
   var A = -0.14861,
       B = +1.78277,
-      C = -0.29227,
+      C$1 = -0.29227,
       D = -0.90649,
       E = +1.97294,
       ED = E * D,
       EB = E * B,
-      BC_DA = B * C - D * A;
+      BC_DA = B * C$1 - D * A;
 
   function cubehelixConvert(o) {
     if (o instanceof Cubehelix) return new Cubehelix(o.h, o.s, o.l, o.opacity);
@@ -17393,7 +18539,7 @@
         b = o.b / 255,
         l = (BC_DA * b + ED * r - EB * g) / (BC_DA + ED - EB),
         bl = b - l,
-        k = (E * (g - l) - C * bl) / D,
+        k = (E * (g - l) - C$1 * bl) / D,
         s = Math.sqrt(k * k + bl * bl) / (E * l * (1 - l)), // NaN if l=0 or l=1
         h = s ? Math.atan2(k, bl) * rad2deg - 120 : NaN;
     return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
@@ -17427,7 +18573,7 @@
           sinh = Math.sin(h);
       return new Rgb(
         255 * (l + a * (A * cosh + B * sinh)),
-        255 * (l + a * (C * cosh + D * sinh)),
+        255 * (l + a * (C$1 * cosh + D * sinh)),
         255 * (l + a * (E * cosh)),
         this.opacity
       );
@@ -17466,7 +18612,7 @@
     };
   }
 
-  function constant$3(x) {
+  function constant$2(x) {
     return function() {
       return x;
     };
@@ -17486,18 +18632,18 @@
 
   function hue(a, b) {
     var d = b - a;
-    return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$3(isNaN(a) ? b : a);
+    return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$2(isNaN(a) ? b : a);
   }
 
   function gamma(y) {
     return (y = +y) === 1 ? nogamma : function(a, b) {
-      return b - a ? exponential(a, b, y) : constant$3(isNaN(a) ? b : a);
+      return b - a ? exponential(a, b, y) : constant$2(isNaN(a) ? b : a);
     };
   }
 
   function nogamma(a, b) {
     var d = b - a;
-    return d ? linear(a, d) : constant$3(isNaN(a) ? b : a);
+    return d ? linear(a, d) : constant$2(isNaN(a) ? b : a);
   }
 
   var rgb$1 = (function rgbGamma(y) {
@@ -17667,7 +18813,7 @@
 
   function interpolate(a, b) {
     var t = typeof b, c;
-    return b == null || t === "boolean" ? constant$3(b)
+    return b == null || t === "boolean" ? constant$2(b)
         : (t === "number" ? interpolateNumber
         : t === "string" ? ((c = color$1(b)) ? (b = c, rgb$1) : string)
         : b instanceof color$1 ? rgb$1
@@ -17972,6 +19118,7 @@
 
 
   var $$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     interpolate: interpolate,
     interpolateArray: array$1,
     interpolateBasis: basis$1,
@@ -18000,13 +19147,13 @@
     quantize: quantize
   });
 
-  function constant$4(x) {
+  function constant$3(x) {
     return function() {
       return x;
     };
   }
 
-  function number$1(x) {
+  function number$2(x) {
     return +x;
   }
 
@@ -18019,11 +19166,11 @@
   function normalize(a, b) {
     return (b -= (a = +a))
         ? function(x) { return (x - a) / b; }
-        : constant$4(isNaN(b) ? NaN : 0.5);
+        : constant$3(isNaN(b) ? NaN : 0.5);
   }
 
-  function clamper(domain) {
-    var a = domain[0], b = domain[domain.length - 1], t;
+  function clamper(a, b) {
+    var t;
     if (a > b) t = a, a = b, b = t;
     return function(x) { return Math.max(a, Math.min(b, x)); };
   }
@@ -18082,7 +19229,9 @@
         input;
 
     function rescale() {
-      piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
+      var n = Math.min(domain.length, range.length);
+      if (clamp !== identity$3) clamp = clamper(domain[0], domain[n - 1]);
+      piecewise = n > 2 ? polymap : bimap;
       output = input = null;
       return scale;
     }
@@ -18096,7 +19245,7 @@
     };
 
     scale.domain = function(_) {
-      return arguments.length ? (domain = Array.from(_, number$1), clamp === identity$3 || (clamp = clamper(domain)), rescale()) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number$2), rescale()) : domain.slice();
     };
 
     scale.range = function(_) {
@@ -18108,7 +19257,7 @@
     };
 
     scale.clamp = function(_) {
-      return arguments.length ? (clamp = _ ? clamper(domain) : identity$3, scale) : clamp !== identity$3;
+      return arguments.length ? (clamp = _ ? true : identity$3, rescale()) : clamp !== identity$3;
     };
 
     scale.interpolate = function(_) {
@@ -18125,8 +19274,8 @@
     };
   }
 
-  function continuous(transform, untransform) {
-    return transformer()(transform, untransform);
+  function continuous() {
+    return transformer()(identity$3, identity$3);
   }
 
   // Computes the decimal coefficient and exponent of the specified number x with
@@ -18179,24 +19328,35 @@
   var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 
   function formatSpecifier(specifier) {
-    return new FormatSpecifier(specifier);
+    if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+    var match;
+    return new FormatSpecifier({
+      fill: match[1],
+      align: match[2],
+      sign: match[3],
+      symbol: match[4],
+      zero: match[5],
+      width: match[6],
+      comma: match[7],
+      precision: match[8] && match[8].slice(1),
+      trim: match[9],
+      type: match[10]
+    });
   }
 
   formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
 
   function FormatSpecifier(specifier) {
-    if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-    var match;
-    this.fill = match[1] || " ";
-    this.align = match[2] || ">";
-    this.sign = match[3] || "-";
-    this.symbol = match[4] || "";
-    this.zero = !!match[5];
-    this.width = match[6] && +match[6];
-    this.comma = !!match[7];
-    this.precision = match[8] && +match[8].slice(1);
-    this.trim = !!match[9];
-    this.type = match[10] || "";
+    this.fill = specifier.fill === undefined ? " " : specifier.fill + "";
+    this.align = specifier.align === undefined ? ">" : specifier.align + "";
+    this.sign = specifier.sign === undefined ? "-" : specifier.sign + "";
+    this.symbol = specifier.symbol === undefined ? "" : specifier.symbol + "";
+    this.zero = !!specifier.zero;
+    this.width = specifier.width === undefined ? undefined : +specifier.width;
+    this.comma = !!specifier.comma;
+    this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
+    this.trim = !!specifier.trim;
+    this.type = specifier.type === undefined ? "" : specifier.type + "";
   }
 
   FormatSpecifier.prototype.toString = function() {
@@ -18205,9 +19365,9 @@
         + this.sign
         + this.symbol
         + (this.zero ? "0" : "")
-        + (this.width == null ? "" : Math.max(1, this.width | 0))
+        + (this.width === undefined ? "" : Math.max(1, this.width | 0))
         + (this.comma ? "," : "")
-        + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+        + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0))
         + (this.trim ? "~" : "")
         + this.type;
   };
@@ -18269,14 +19429,18 @@
     return x;
   }
 
-  var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
+  var map = Array.prototype.map,
+      prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
 
   function formatLocale$1(locale) {
-    var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : identity$4,
-        currency = locale.currency,
-        decimal = locale.decimal,
-        numerals = locale.numerals ? formatNumerals(locale.numerals) : identity$4,
-        percent = locale.percent || "%";
+    var group = locale.grouping === undefined || locale.thousands === undefined ? identity$4 : formatGroup(map.call(locale.grouping, Number), locale.thousands + ""),
+        currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
+        currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
+        decimal = locale.decimal === undefined ? "." : locale.decimal + "",
+        numerals = locale.numerals === undefined ? identity$4 : formatNumerals(map.call(locale.numerals, String)),
+        percent = locale.percent === undefined ? "%" : locale.percent + "",
+        minus = locale.minus === undefined ? "-" : locale.minus + "",
+        nan = locale.nan === undefined ? "NaN" : locale.nan + "";
 
     function newFormat(specifier) {
       specifier = formatSpecifier(specifier);
@@ -18296,15 +19460,15 @@
       if (type === "n") comma = true, type = "g";
 
       // The "" type, and any invalid type, is an alias for ".12~g".
-      else if (!formatTypes[type]) precision == null && (precision = 12), trim = true, type = "g";
+      else if (!formatTypes[type]) precision === undefined && (precision = 12), trim = true, type = "g";
 
       // If zero fill is specified, padding goes after sign and before digits.
       if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
 
       // Compute the prefix and suffix.
       // For SI-prefix, the suffix is lazily computed.
-      var prefix = symbol === "$" ? currency[0] : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
-          suffix = symbol === "$" ? currency[1] : /[%p]/.test(type) ? percent : "";
+      var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
+          suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "";
 
       // What format function should we use?
       // Is this an integer type?
@@ -18316,7 +19480,7 @@
       // or clamp the specified precision to the supported range.
       // For significant precision, it must be in [1, 21].
       // For fixed precision, it must be in [0, 20].
-      precision = precision == null ? 6
+      precision = precision === undefined ? 6
           : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
           : Math.max(0, Math.min(20, precision));
 
@@ -18333,7 +19497,7 @@
 
           // Perform the initial formatting.
           var valueNegative = value < 0;
-          value = formatType(Math.abs(value), precision);
+          value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
 
           // Trim insignificant zeros.
           if (trim) value = formatTrim(value);
@@ -18342,7 +19506,8 @@
           if (valueNegative && +value === 0) valueNegative = false;
 
           // Compute the prefix and suffix.
-          valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+          valuePrefix = (valueNegative ? (sign === "(" ? sign : minus) : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
+
           valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
 
           // Break the formatted value into the integer “value” part that can be
@@ -18411,7 +19576,8 @@
     decimal: ".",
     thousands: ",",
     grouping: [3],
-    currency: ["$", ""]
+    currency: ["$", ""],
+    minus: "-"
   });
 
   function defaultLocale$1(definition) {
@@ -18518,7 +19684,7 @@
   }
 
   function linear$1() {
-    var scale = continuous(identity$3, identity$3);
+    var scale = continuous();
 
     scale.copy = function() {
       return copy(scale, linear$1());
@@ -18539,7 +19705,7 @@
     scale.invert = scale;
 
     scale.domain = scale.range = function(_) {
-      return arguments.length ? (domain = Array.from(_, number$1), scale) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number$2), scale) : domain.slice();
     };
 
     scale.unknown = function(_) {
@@ -18550,7 +19716,7 @@
       return identity$5(domain).unknown(unknown);
     };
 
-    domain = arguments.length ? Array.from(domain, number$1) : [0, 1];
+    domain = arguments.length ? Array.from(domain, number$2) : [0, 1];
 
     return linearish(scale);
   }
@@ -18656,15 +19822,15 @@
           z = [];
 
       if (!(base % 1) && j - i < n) {
-        i = Math.round(i) - 1, j = Math.round(j) + 1;
-        if (u > 0) for (; i < j; ++i) {
+        i = Math.floor(i), j = Math.ceil(j);
+        if (u > 0) for (; i <= j; ++i) {
           for (k = 1, p = pows(i); k < base; ++k) {
             t = p * k;
             if (t < u) continue;
             if (t > v) break;
             z.push(t);
           }
-        } else for (; i < j; ++i) {
+        } else for (; i <= j; ++i) {
           for (k = base - 1, p = pows(i); k >= 1; --k) {
             t = p * k;
             if (t < u) continue;
@@ -18672,6 +19838,7 @@
             z.push(t);
           }
         }
+        if (!z.length) z = ticks(u, v, n);
       } else {
         z = ticks(i, j, Math.min(j - i, n)).map(pows);
       }
@@ -18938,24 +20105,24 @@
     return initRange.apply(scale, arguments);
   }
 
-  var durationSecond$1 = 1000,
-      durationMinute$1 = durationSecond$1 * 60,
-      durationHour$1 = durationMinute$1 * 60,
-      durationDay$1 = durationHour$1 * 24,
-      durationWeek$1 = durationDay$1 * 7,
-      durationMonth = durationDay$1 * 30,
-      durationYear = durationDay$1 * 365;
+  var durationSecond$2 = 1000,
+      durationMinute$2 = durationSecond$2 * 60,
+      durationHour$2 = durationMinute$2 * 60,
+      durationDay$2 = durationHour$2 * 24,
+      durationWeek$2 = durationDay$2 * 7,
+      durationMonth$1 = durationDay$2 * 30,
+      durationYear$1 = durationDay$2 * 365;
 
   function date$1(t) {
     return new Date(t);
   }
 
-  function number$2(t) {
+  function number$3(t) {
     return t instanceof Date ? +t : +new Date(+t);
   }
 
   function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-    var scale = continuous(identity$3, identity$3),
+    var scale = continuous(),
         invert = scale.invert,
         domain = scale.domain;
 
@@ -18969,24 +20136,24 @@
         formatYear = format("%Y");
 
     var tickIntervals = [
-      [second,  1,      durationSecond$1],
-      [second,  5,  5 * durationSecond$1],
-      [second, 15, 15 * durationSecond$1],
-      [second, 30, 30 * durationSecond$1],
-      [minute,  1,      durationMinute$1],
-      [minute,  5,  5 * durationMinute$1],
-      [minute, 15, 15 * durationMinute$1],
-      [minute, 30, 30 * durationMinute$1],
-      [  hour,  1,      durationHour$1  ],
-      [  hour,  3,  3 * durationHour$1  ],
-      [  hour,  6,  6 * durationHour$1  ],
-      [  hour, 12, 12 * durationHour$1  ],
-      [   day,  1,      durationDay$1   ],
-      [   day,  2,  2 * durationDay$1   ],
-      [  week,  1,      durationWeek$1  ],
-      [ month,  1,      durationMonth ],
-      [ month,  3,  3 * durationMonth ],
-      [  year,  1,      durationYear  ]
+      [second,  1,      durationSecond$2],
+      [second,  5,  5 * durationSecond$2],
+      [second, 15, 15 * durationSecond$2],
+      [second, 30, 30 * durationSecond$2],
+      [minute,  1,      durationMinute$2],
+      [minute,  5,  5 * durationMinute$2],
+      [minute, 15, 15 * durationMinute$2],
+      [minute, 30, 30 * durationMinute$2],
+      [  hour,  1,      durationHour$2  ],
+      [  hour,  3,  3 * durationHour$2  ],
+      [  hour,  6,  6 * durationHour$2  ],
+      [  hour, 12, 12 * durationHour$2  ],
+      [   day,  1,      durationDay$2   ],
+      [   day,  2,  2 * durationDay$2   ],
+      [  week,  1,      durationWeek$2  ],
+      [ month,  1,      durationMonth$1 ],
+      [ month,  3,  3 * durationMonth$1 ],
+      [  year,  1,      durationYear$1  ]
     ];
 
     function tickFormat(date) {
@@ -19010,7 +20177,7 @@
             i = bisector(function(i) { return i[2]; }).right(tickIntervals, target),
             step;
         if (i === tickIntervals.length) {
-          step = tickStep(start / durationYear, stop / durationYear, interval);
+          step = tickStep(start / durationYear$1, stop / durationYear$1, interval);
           interval = year;
         } else if (i) {
           i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
@@ -19031,7 +20198,7 @@
     };
 
     scale.domain = function(_) {
-      return arguments.length ? domain(Array.from(_, number$2)) : domain().map(date$1);
+      return arguments.length ? domain(Array.from(_, number$3)) : domain().map(date$1);
     };
 
     scale.ticks = function(interval) {
@@ -19064,7 +20231,7 @@
     return scale;
   }
 
-  function time$1() {
+  function time() {
     return initRange.apply(calendar(year, month, sunday, day, hour, minute, second, millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
   }
 
@@ -19098,6 +20265,17 @@
     scale.interpolator = function(_) {
       return arguments.length ? (interpolator = _, scale) : interpolator;
     };
+
+    function range(interpolate) {
+      return function(_) {
+        var r0, r1;
+        return arguments.length ? ([r0, r1] = _, interpolator = interpolate(r0, r1), scale) : [interpolator(0), interpolator(1)];
+      };
+    }
+
+    scale.range = range(interpolate);
+
+    scale.rangeRound = range(interpolateRound);
 
     scale.unknown = function(_) {
       return arguments.length ? (unknown = _, scale) : unknown;
@@ -19165,6 +20343,7 @@
     var x0 = 0,
         x1 = 0.5,
         x2 = 1,
+        s = 1,
         t0,
         t1,
         t2,
@@ -19176,11 +20355,11 @@
         unknown;
 
     function scale(x) {
-      return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
+      return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (s * x < s * t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
     }
 
     scale.domain = function(_) {
-      return arguments.length ? ([x0, x1, x2] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), scale) : [x0, x1, x2];
+      return arguments.length ? ([x0, x1, x2] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale) : [x0, x1, x2];
     };
 
     scale.clamp = function(_) {
@@ -19191,12 +20370,23 @@
       return arguments.length ? (interpolator = _, scale) : interpolator;
     };
 
+    function range(interpolate) {
+      return function(_) {
+        var r0, r1, r2;
+        return arguments.length ? ([r0, r1, r2] = _, interpolator = piecewise(interpolate, [r0, r1, r2]), scale) : [interpolator(0), interpolator(0.5), interpolator(1)];
+      };
+    }
+
+    scale.range = range(interpolate);
+
+    scale.rangeRound = range(interpolateRound);
+
     scale.unknown = function(_) {
       return arguments.length ? (unknown = _, scale) : unknown;
     };
 
     return function(t) {
-      transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1);
+      transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1;
       return scale;
     };
   }
@@ -19430,10 +20620,10 @@
     return pointish(band().paddingInner(1));
   }
 
-  var map = Array.prototype.map;
+  var map$1 = Array.prototype.map;
 
   function numbers$2(_) {
-    return map.call(_, function(x) { return +x; });
+    return map$1.call(_, function(x) { return +x; });
   }
 
   var slice = Array.prototype.slice;
@@ -19495,7 +20685,7 @@
     };
   }
 
-  function scale$1(type, scale) {
+  function scale$2(type, scale) {
     if (arguments.length > 1) {
       scales[type] = create(type, scale);
       return this;
@@ -19514,7 +20704,7 @@
     [Pow]:           pow$1,
     [Sqrt]:          sqrt$1,
     [Symlog]:        symlog$1,
-    [Time]:          time$1,
+    [Time]:          time,
     [UTC]:           utcTime,
 
     // sequential scales
@@ -19533,7 +20723,7 @@
     [Diverging+'-'+Symlog]:   divergingSymlog,
 
     // discretizing scales
-    [Quantile]:      quantile$1,
+    [Quantile$1]:      quantile$1,
     [Quantize]:      quantize$1,
     [Threshold]:     threshold,
 
@@ -19545,7 +20735,7 @@
   };
 
   for (var key$1 in scales) {
-    scale$1(key$1, scales[key$1]);
+    scale$2(key$1, scales[key$1]);
   }
 
   const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
@@ -19570,12 +20760,12 @@
   function scaleFraction(scale, min, max) {
     var delta = max - min, i, t, s;
 
-    if (!delta || !isFinite(delta)) {
+    if (!delta || !Number.isFinite(delta)) {
       return constant(0.5);
     } else {
       i = (t = scale.type).indexOf('-');
       t = i < 0 ? t : t.slice(i + 1);
-      s = scale$1(t)().domain([min, max]).range([0, 1]);
+      s = scale$2(t)().domain([min, max]).range([0, 1]);
       scaleProps.forEach(m => scale[m] ? s[m](scale[m]()) : 0);
       return s;
     }
@@ -19708,8 +20898,13 @@
   function tickCount(scale, count, minStep) {
     var step;
 
-    if (isNumber(count) && minStep != null) {
-      count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+    if (isNumber(count)) {
+      if (scale.bins) {
+        count = Math.max(count, scale.bins.length);
+      }
+      if (minStep != null) {
+        count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+      }
     }
 
     if (isObject(count)) {
@@ -19718,8 +20913,9 @@
     }
 
     if (isString(count)) {
-      count = timeInterval(count, scale.type)
-            || error('Only time and utc scales accept interval strings.');
+      count = scale.type === Time ? timeInterval(count)
+        : scale.type == UTC ? utcInterval(count)
+        : error('Only time and utc scales accept interval strings.');
       if (step) count = count.every(step);
     }
 
@@ -19773,24 +20969,9 @@
    * @return {Array<*>} - The generated tick values.
    */
   function tickValues(scale, count) {
-    return scale.bins ? validTicks(scale, binValues(scale.bins, count))
+    return scale.bins ? validTicks(scale, scale.bins)
       : scale.ticks ? scale.ticks(count)
       : scale.domain();
-  }
-
-  /**
-   * Generate tick values for an array of bin values.
-   * @param {Array<*>} bins - An array of bin boundaries.
-   * @param {Number} [count] - The approximate number of desired ticks.
-   * @return {Array<*>} - The generated tick values.
-   */
-  function binValues(bins, count) {
-    var n = bins.length,
-        stride = ~~(n / (count || n));
-
-    return stride < 2
-      ? bins.slice()
-      : bins.filter(function(x, i) { return !(i % stride); });
   }
 
   /**
@@ -19804,16 +20985,19 @@
    * @param {Scale} scale - The scale for which to generate the label formatter.
    * @param {*} [count] - The approximate number of desired ticks.
    * @param {string} [specifier] - The format specifier. Must be a legal d3
-   *   specifier string (see https://github.com/d3/d3-format#formatSpecifier).
+   *   specifier string (see https://github.com/d3/d3-format#formatSpecifier) or
+   *   time multi-format specifier object.
    * @return {function(*):string} - The generated label formatter.
    */
   function tickFormat(scale, count, specifier, formatType) {
-    var format = scale.tickFormat ? scale.tickFormat(count, specifier)
-      : specifier && formatType === Time ? timeFormat(specifier)
-      : specifier ? format$1(specifier)
-      : String;
+    var type = scale.type,
+        format = (type === Time || formatType === Time) ? timeFormat$1(specifier)
+          : (type === UTC || formatType === UTC) ? utcFormat$1(specifier)
+          : scale.tickFormat ? scale.tickFormat(count, specifier)
+          : specifier ? format$1(specifier)
+          : String;
 
-    if (isLogarithmic(scale.type)) {
+    if (isLogarithmic(type)) {
       var logfmt = variablePrecision(specifier);
       format = scale.bins ? logfmt : filter$1(format, logfmt);
     }
@@ -19890,9 +21074,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$T = inherits(AxisTicks, Transform);
+  var prototype$W = inherits(AxisTicks, Transform);
 
-  prototype$T.transform = function(_, pulse) {
+  prototype$W.transform = function(_, pulse) {
     if (this.value && !_.modified()) {
       return pulse.StopPropagation;
     }
@@ -19943,7 +21127,7 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$U = inherits(DataJoin, Transform);
+  var prototype$X = inherits(DataJoin, Transform);
 
   function defaultItemCreate() {
     return ingest({});
@@ -19953,7 +21137,7 @@
     return t.exit;
   }
 
-  prototype$U.transform = function(_, pulse) {
+  prototype$X.transform = function(_, pulse) {
     var df = pulse.dataflow,
         out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         item = _.item || defaultItemCreate,
@@ -20040,9 +21224,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$V = inherits(Encode, Transform);
+  var prototype$Y = inherits(Encode, Transform);
 
-  prototype$V.transform = function(_, pulse) {
+  prototype$Y.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ADD_REM),
         fmod = _.mod || false,
         encoders = _.encoders,
@@ -20106,18 +21290,18 @@
   var Gradient$1 = 'gradient';
 
   const symbols$1 = {
-    [Quantile]:  'quantiles',
+    [Quantile$1]:  'quantiles',
     [Quantize]:  'thresholds',
     [Threshold]: 'domain'
   };
 
   const formats$1 = {
-    [Quantile]:  'quantiles',
+    [Quantile$1]:  'quantiles',
     [Quantize]:  'domain'
   };
 
   function labelValues(scale, count) {
-    return scale.bins ? binValues$1(scale.bins)
+    return scale.bins ? binValues(scale.bins)
       : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
       : tickValues(scale, count);
   }
@@ -20142,7 +21326,7 @@
     return values;
   }
 
-  function binValues$1(bins) {
+  function binValues(bins) {
     const values = bins.slice(0, -1);
     values.max = peek(bins);
 
@@ -20154,7 +21338,7 @@
   }
 
   function labelFormat(scale, count, type, specifier, formatType) {
-    const format = formats$1[scale.type] && formatType !== Time
+    const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
       ? thresholdFormat(scale, specifier)
       : tickFormat(scale, count, specifier, formatType);
 
@@ -20185,7 +21369,7 @@
   }
 
   function formatValue(value, format) {
-    return isFinite(value) ? format(value) : null;
+    return Number.isFinite(value) ? format(value) : null;
   }
 
   function labelFraction(scale) {
@@ -20214,6 +21398,8 @@
    * @param {Scale} params.scale - The scale to generate items for.
    * @param {*} [params.count=5] - The approximate number of items, or
    *   desired tick interval, to use.
+   * @param {*} [params.limit] - The maximum number of entries to
+   *   include in a symbol legend.
    * @param {Array<*>} [params.values] - The exact tick values to use.
    *   These must be legal domain values for the provided scale.
    *   If provided, the count argument is ignored.
@@ -20227,9 +21413,9 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$W = inherits(LegendEntries, Transform);
+  var prototype$Z = inherits(LegendEntries, Transform);
 
-  prototype$W.transform = function(_, pulse) {
+  prototype$Z.transform = function(_, pulse) {
     if (this.value != null && !_.modified()) {
       return pulse.StopPropagation;
     }
@@ -20238,28 +21424,37 @@
         items = this.value,
         type  = _.type || Symbols$1,
         scale = _.scale,
+        limit = +_.limit,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
         format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType),
         values = _.values || labelValues(scale, count),
-        domain, fraction, size, offset;
+        domain, fraction, size, offset, ellipsis;
 
     if (items) out.rem = items;
 
     if (type === Symbols$1) {
+      if (limit && values.length > limit) {
+        pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
+        items = values.slice(0, limit - 1);
+        ellipsis = true;
+      } else {
+        items = values;
+      }
+
       if (isFunction(size = _.size)) {
         // if first value maps to size zero, remove from list (vega#717)
-        if (!_.values && scale(values[0]) === 0) {
-          values = values.slice(1);
+        if (!_.values && scale(items[0]) === 0) {
+          items = items.slice(1);
         }
         // compute size offset for legend entries
-        offset = values.reduce(function(max, value) {
+        offset = items.reduce(function(max, value) {
           return Math.max(max, size(value, _));
         }, 0);
       } else {
         size = constant(offset = size || 8);
       }
 
-      items = values.map(function(value, index) {
+      items = items.map(function(value, index) {
         return ingest({
           index:  index,
           label:  format(value, index, values),
@@ -20268,6 +21463,17 @@
           size:   size(value, _)
         });
       });
+
+      if (ellipsis) {
+        ellipsis = values[items.length];
+        items.push(ingest({
+          index:    items.length,
+          label:    `\u2026${values.length-items.length} entries`,
+          value:    ellipsis,
+          offset:   offset,
+          size:     size(ellipsis, _)
+        }));
+      }
     }
 
     else if (type === Gradient$1) {
@@ -20358,9 +21564,9 @@
     ]
   };
 
-  var prototype$X = inherits(LinkPath, Transform);
+  var prototype$_ = inherits(LinkPath, Transform);
 
-  prototype$X.transform = function(_, pulse) {
+  prototype$_.transform = function(_, pulse) {
     var sx = _.sourceX || sourceX,
         sy = _.sourceY || sourceY,
         tx = _.targetX || targetX,
@@ -20507,9 +21713,9 @@
     ]
   };
 
-  var prototype$Y = inherits(Pie, Transform);
+  var prototype$$ = inherits(Pie, Transform);
 
-  prototype$Y.transform = function(_, pulse) {
+  prototype$$.transform = function(_, pulse) {
     var as = _.as || ['startAngle', 'endAngle'],
         startAngle = as[0],
         endAngle = as[1],
@@ -20571,15 +21777,15 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$Z = inherits(Scale, Transform);
+  var prototype$10 = inherits(Scale, Transform);
 
-  prototype$Z.transform = function(_, pulse) {
+  prototype$10.transform = function(_, pulse) {
     var df = pulse.dataflow,
         scale = this.value,
         key = scaleKey(_);
 
     if (!scale || key !== scale.type) {
-      this.value = scale = scale$1(key)();
+      this.value = scale = scale$2(key)();
     }
 
     for (key in _) if (!SKIP$2[key]) {
@@ -20721,13 +21927,17 @@
 
     if (bins && !isArray(bins)) {
       // generate bin boundary array
-      const domain = (bins.start == null || bins.stop == null) && scale.domain(),
-            start = bins.start == null ? domain[0] : bins.start,
-            stop = bins.stop == null ? peek(domain) : bins.stop,
-            step = bins.step;
+      let domain = scale.domain(),
+          lo = domain[0],
+          hi = peek(domain),
+          start = bins.start == null ? lo : bins.start,
+          stop = bins.stop == null ? hi : bins.stop,
+          step = bins.step;
 
       if (!step) error('Scale bins parameter missing step property.');
-      bins = sequence(start, stop + step, step);
+      if (start < lo) start = step * Math.ceil(lo / step);
+      if (stop > hi) stop = step * Math.floor(hi / step);
+      bins = sequence(start, stop + step / 2, step);
     }
 
     if (bins) {
@@ -20822,7 +22032,7 @@
     // determine size for potential discrete range
     count = (type === Threshold) ? count + 1
       : (type === BinOrdinal) ? count - 1
-      : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
+      : (type === Quantile$1 || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
       : count;
 
     // adjust and/or quantize scheme as appropriate
@@ -20852,9 +22062,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$_ = inherits(SortItems, Transform);
+  var prototype$11 = inherits(SortItems, Transform);
 
-  prototype$_.transform = function(_, pulse) {
+  prototype$11.transform = function(_, pulse) {
     var mod = _.modified('sort')
            || pulse.changed(pulse.ADD)
            || pulse.modified(_.sort.fields)
@@ -20878,7 +22088,7 @@
    * @param {function(object): *} params.field - The value field to stack.
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
-   * @param {string} [offset='zero'] - One of 'zero', 'center', 'normalize'.
+   * @param {string} [offset='zero'] - Stack baseline offset. One of 'zero', 'center', 'normalize'.
    */
   function Stack(params) {
     Transform.call(this, null, params);
@@ -20896,9 +22106,9 @@
     ]
   };
 
-  var prototype$$ = inherits(Stack, Transform);
+  var prototype$12 = inherits(Stack, Transform);
 
-  prototype$$.transform = function(_, pulse) {
+  prototype$12.transform = function(_, pulse) {
     var as = _.as || DefOutput,
         y0 = as[0],
         y1 = as[1],
@@ -21003,6 +22213,7 @@
 
 
   var encode = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     axisticks: AxisTicks,
     datajoin: DataJoin,
     encode: Encode,
@@ -21015,200 +22226,9 @@
     validTicks: validTicks
   });
 
-  function ascending$1(a, b) {
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  function bisector$1(compare) {
-    if (compare.length === 1) compare = ascendingComparator$1(compare);
-    return {
-      left: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) < 0) lo = mid + 1;
-          else hi = mid;
-        }
-        return lo;
-      },
-      right: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) > 0) hi = mid;
-          else lo = mid + 1;
-        }
-        return lo;
-      }
-    };
-  }
-
-  function ascendingComparator$1(f) {
-    return function(d, x) {
-      return ascending$1(f(d), x);
-    };
-  }
-
-  var ascendingBisect$1 = bisector$1(ascending$1);
-
-  function extent$2(values, valueof) {
-    var n = values.length,
-        i = -1,
-        value,
-        min,
-        max;
-
-    if (valueof == null) {
-      while (++i < n) { // Find the first comparable value.
-        if ((value = values[i]) != null && value >= value) {
-          min = max = value;
-          while (++i < n) { // Compare the remaining values.
-            if ((value = values[i]) != null) {
-              if (min > value) min = value;
-              if (max < value) max = value;
-            }
-          }
-        }
-      }
-    }
-
-    else {
-      while (++i < n) { // Find the first comparable value.
-        if ((value = valueof(values[i], i, values)) != null && value >= value) {
-          min = max = value;
-          while (++i < n) { // Compare the remaining values.
-            if ((value = valueof(values[i], i, values)) != null) {
-              if (min > value) min = value;
-              if (max < value) max = value;
-            }
-          }
-        }
-      }
-    }
-
-    return [min, max];
-  }
-
-  function range(start, stop, step) {
-    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-    var i = -1,
-        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-        range = new Array(n);
-
-    while (++i < n) {
-      range[i] = start + i * step;
-    }
-
-    return range;
-  }
-
-  var e10$1 = Math.sqrt(50),
-      e5$1 = Math.sqrt(10),
-      e2$1 = Math.sqrt(2);
-
-  function tickStep$1(start, stop, count) {
-    var step0 = Math.abs(stop - start) / Math.max(0, count),
-        step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-        error = step0 / step1;
-    if (error >= e10$1) step1 *= 10;
-    else if (error >= e5$1) step1 *= 5;
-    else if (error >= e2$1) step1 *= 2;
-    return stop < start ? -step1 : step1;
-  }
-
-  function thresholdSturges(values) {
-    return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
-  }
-
-  function max$3(values, valueof) {
-    var n = values.length,
-        i = -1,
-        value,
-        max;
-
-    if (valueof == null) {
-      while (++i < n) { // Find the first comparable value.
-        if ((value = values[i]) != null && value >= value) {
-          max = value;
-          while (++i < n) { // Compare the remaining values.
-            if ((value = values[i]) != null && value > max) {
-              max = value;
-            }
-          }
-        }
-      }
-    }
-
-    else {
-      while (++i < n) { // Find the first comparable value.
-        if ((value = valueof(values[i], i, values)) != null && value >= value) {
-          max = value;
-          while (++i < n) { // Compare the remaining values.
-            if ((value = valueof(values[i], i, values)) != null && value > max) {
-              max = value;
-            }
-          }
-        }
-      }
-    }
-
-    return max;
-  }
-
-  var array$2 = Array.prototype;
-
-  var slice$1 = array$2.slice;
-
-  function ascending$2(a, b) {
-    return a - b;
-  }
-
-  function area$2(ring) {
-    var i = 0, n = ring.length, area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
-    while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
-    return area;
-  }
-
-  function constant$5(x) {
-    return function() {
-      return x;
-    };
-  }
-
-  function contains(ring, hole) {
-    var i = -1, n = hole.length, c;
-    while (++i < n) if (c = ringContains(ring, hole[i])) return c;
-    return 0;
-  }
-
-  function ringContains(ring, point) {
-    var x = point[0], y = point[1], contains = -1;
-    for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
-      var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j], xj = pj[0], yj = pj[1];
-      if (segmentContains(pi, pj, point)) return 0;
-      if (((yi > y) !== (yj > y)) && ((x < (xj - xi) * (y - yi) / (yj - yi) + xi))) contains = -contains;
-    }
-    return contains;
-  }
-
-  function segmentContains(a, b, c) {
-    var i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
-  }
-
-  function collinear(a, b, c) {
-    return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
-  }
-
-  function within(p, q, r) {
-    return p <= q && q <= r || r <= q && q <= p;
-  }
-
   function noop$2() {}
 
-  var cases = [
+  const cases = [
     [],
     [[[1.0, 1.5], [0.5, 1.0]]],
     [[[1.5, 1.0], [1.0, 1.5]]],
@@ -21227,27 +22247,14 @@
     []
   ];
 
+  // Implementation adapted from d3/d3-contour. Thanks!
   function contours() {
     var dx = 1,
         dy = 1,
-        threshold = thresholdSturges,
         smooth = smoothLinear;
 
-    function contours(values) {
-      var tz = threshold(values);
-
-      // Convert number of thresholds into uniform thresholds.
-      if (!Array.isArray(tz)) {
-        var domain = extent$2(values), start = domain[0], stop = domain[1];
-        tz = tickStep$1(start, stop, tz);
-        tz = range(Math.floor(start / tz) * tz, Math.floor(stop / tz) * tz, tz);
-      } else {
-        tz = tz.slice().sort(ascending$2);
-      }
-
-      return tz.map(function(value) {
-        return contour(values, value);
-      });
+    function contours(values, tz) {
+      return tz.map(value => contour(values, value));
     }
 
     // Accumulate, smooth contour rings, assign holes to exterior rings.
@@ -21272,7 +22279,7 @@
       });
 
       return {
-        type: "MultiPolygon",
+        type: 'MultiPolygon',
         value: value,
         coordinates: polygons
       };
@@ -21389,12 +22396,8 @@
     contours.size = function(_) {
       if (!arguments.length) return [dx, dy];
       var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-      if (!(_0 > 0) || !(_1 > 0)) throw new Error("invalid size");
+      if (!(_0 > 0) || !(_1 > 0)) error('invalid size');
       return dx = _0, dy = _1, contours;
-    };
-
-    contours.thresholds = function(_) {
-      return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$5(slice$1.call(_)) : constant$5(_), contours) : threshold;
     };
 
     contours.smooth = function(_) {
@@ -21404,118 +22407,153 @@
     return contours;
   }
 
-  // TODO Optimize edge cases.
-  // TODO Optimize index calculation.
-  // TODO Optimize arguments.
-  function blurX(source, target, r) {
-    var n = source.width,
-        m = source.height,
-        w = (r << 1) + 1;
-    for (var j = 0; j < m; ++j) {
-      for (var i = 0, sr = 0; i < n + r; ++i) {
-        if (i < n) {
-          sr += source.data[i + j * n];
-        }
-        if (i >= r) {
-          if (i >= w) {
-            sr -= source.data[i - w + j * n];
-          }
-          target.data[i - r + j * n] = sr / Math.min(i + 1, n - 1 + w - i, w);
-        }
-      }
+  function area$2(ring) {
+    var i = 0,
+        n = ring.length,
+        area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
+    while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
+    return area;
+  }
+
+  function contains(ring, hole) {
+    var i = -1, n = hole.length, c;
+    while (++i < n) if (c = ringContains(ring, hole[i])) return c;
+    return 0;
+  }
+
+  function ringContains(ring, point) {
+    var x = point[0], y = point[1], contains = -1;
+    for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
+      var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j], xj = pj[0], yj = pj[1];
+      if (segmentContains(pi, pj, point)) return 0;
+      if (((yi > y) !== (yj > y)) && ((x < (xj - xi) * (y - yi) / (yj - yi) + xi))) contains = -contains;
     }
+    return contains;
   }
 
-  // TODO Optimize edge cases.
-  // TODO Optimize index calculation.
-  // TODO Optimize arguments.
-  function blurY(source, target, r) {
-    var n = source.width,
-        m = source.height,
-        w = (r << 1) + 1;
-    for (var i = 0; i < n; ++i) {
-      for (var j = 0, sr = 0; j < m + r; ++j) {
-        if (j < m) {
-          sr += source.data[i + j * n];
-        }
-        if (j >= r) {
-          if (j >= w) {
-            sr -= source.data[i + (j - w) * n];
-          }
-          target.data[i + (j - r) * n] = sr / Math.min(j + 1, m - 1 + w - j, w);
-        }
-      }
+  function segmentContains(a, b, c) {
+    var i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
+  }
+
+  function collinear(a, b, c) {
+    return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
+  }
+
+  function within(p, q, r) {
+    return p <= q && q <= r || r <= q && q <= p;
+  }
+
+  function quantize$2(k, nice, zero) {
+    return function(values) {
+      var ex = extent(values),
+          start = zero ? Math.min(ex[0], 0) : ex[0],
+          stop = ex[1],
+          span = stop - start,
+          step = nice ? tickStep(start, stop, k) : (span / (k + 1));
+      return sequence(step, stop, step);
+    };
+  }
+
+  /**
+   * Generate isocontours (level sets) based on input raster grid data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} [params.field] - The field with raster grid
+   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
+   * @param {Array<number>} [params.thresholds] - Contour threshold array. If
+   *   specified, the levels, nice, resolve, and zero parameters are ignored.
+   * @param {number} [params.levels] - The desired number of contour levels.
+   * @param {boolean} [params.nice] - Boolean flag indicating if the contour
+   *   threshold values should be automatically aligned to "nice"
+   *   human-friendly values. Setting this flag may cause the number of
+   *   thresholds to deviate from the specified levels.
+   * @param {string} [params.resolve] - The method for resolving thresholds
+   *   across multiple input grids. If 'independent' (the default), threshold
+   *   calculation will be performed separately for each grid. If 'shared', a
+   *   single set of threshold values will be used for all input grids.
+   * @param {boolean} [params.zero] - Boolean flag indicating if the contour
+   *   threshold values should include zero.
+   * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
+   *   polygons should be smoothed using linear interpolation. The default is
+   *   true. The parameter is ignored when using density estimation.
+   * @param {boolean} [params.scale] - Optional numerical value by which to
+   *   scale the output isocontour coordinates. This parameter can be useful
+   *   to scale the contours to match a desired output resolution.
+   * @param {string} [params.as='contour'] - The output field in which to store
+   *   the generated isocontour data (default 'contour').
+   */
+  function Isocontour(params) {
+    Transform.call(this, null, params);
+  }
+
+  Isocontour.Definition = {
+    "type": "Isocontour",
+    "metadata": {"generates": true},
+    "params": [
+      { "name": "field", "type": "field" },
+      { "name": "thresholds", "type": "number", "array": true },
+      { "name": "levels", "type": "number" },
+      { "name": "nice", "type": "boolean", "default": false },
+      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
+      { "name": "zero", "type": "boolean", "default": true },
+      { "name": "smooth", "type": "boolean", "default": true },
+      { "name": "scale", "type": "number", "expr": true },
+      { "name": "as", "type": "string", "null": true, "default": "contour" }
+    ]
+  };
+
+  var prototype$13 = inherits(Isocontour, Transform);
+
+  prototype$13.transform = function(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
     }
-  }
 
-  function defaultX(d) {
-    return d[0];
-  }
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        field = _.field || identity,
+        contour = contours().smooth(_.smooth !== false),
+        tz = _.thresholds || levels(source, field, _),
+        as = _.as === null ? null : _.as || 'contour',
+        values = [];
 
-  function defaultY(d) {
-    return d[1];
-  }
+    source.forEach(t => {
+      const grid = field(t);
 
-  function defaultWeight() {
-    return 1;
-  }
+      // generate contour paths in GeoJSON format
+      const paths = contour.size([grid.width, grid.height])(
+        grid.values, isArray(tz) ? tz : tz(grid.values)
+      );
 
-  function contourDensity() {
-    var x = defaultX,
-        y = defaultY,
-        weight = defaultWeight,
-        dx = 960,
-        dy = 500,
-        r = 20, // blur radius
-        k = 2, // log2(grid cell size)
-        o = r * 3, // grid offset, to pad for blur
-        n = (dx + o * 2) >> k, // grid width
-        m = (dy + o * 2) >> k, // grid height
-        threshold = constant$5(20);
+      // adjust contour path coordinates as needed
+      if (_.scale || grid.x1 || grid.y1 || grid.scale) {
+        var s = _.scale;
+        paths.forEach(transform$2(grid, isFunction(s) ? s(t, _) : s));
+      }
 
-    function density(data) {
-      var values0 = new Float32Array(n * m),
-          values1 = new Float32Array(n * m);
-
-      data.forEach(function(d, i, data) {
-        var xi = (+x(d, i, data) + o) >> k,
-            yi = (+y(d, i, data) + o) >> k,
-            wi = +weight(d, i, data);
-        if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
-          values0[xi + yi * n] += wi;
-        }
+      // ingest; copy source data properties to output
+      paths.forEach(p => {
+        values.push(rederive(t, ingest(as != null ? {[as]: p} : p)));
       });
+    });
 
-      // TODO Optimize.
-      blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
-      blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
-      blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
-      blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
-      blurX({width: n, height: m, data: values0}, {width: n, height: m, data: values1}, r >> k);
-      blurY({width: n, height: m, data: values1}, {width: n, height: m, data: values0}, r >> k);
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = values;
 
-      var tz = threshold(values0);
+    return out;
+  };
 
-      // Convert number of thresholds into uniform thresholds.
-      if (!Array.isArray(tz)) {
-        var stop = max$3(values0);
-        tz = tickStep$1(0, stop, tz);
-        tz = range(0, Math.floor(stop / tz) * tz, tz);
-        tz.shift();
-      }
+  function levels(values, f, _) {
+    const q = quantize$2(_.levels || 10, _.nice, _.zero !== false);
+    return _.resolve !== 'shared'
+      ? q
+      : q(values.map(t => max(f(t).values)));
+  }
 
-      return contours()
-          .thresholds(tz)
-          .size([n, m])
-        (values0)
-          .map(transform);
-    }
-
-    function transform(geometry) {
-      geometry.value *= Math.pow(2, -2 * k); // Density in points per square pixel.
-      geometry.coordinates.forEach(transformPolygon);
-      return geometry;
-    }
+  function transform$2(grid, scale) {
+    const x1 = grid.x1 || 0,
+          y1 = grid.y1 || 0,
+          s = scale != null ? scale : (grid.scale || 1);
 
     function transformPolygon(coordinates) {
       coordinates.forEach(transformRing);
@@ -21525,59 +22563,272 @@
       coordinates.forEach(transformPoint);
     }
 
-    // TODO Optimize.
     function transformPoint(coordinates) {
-      coordinates[0] = coordinates[0] * Math.pow(2, k) - o;
-      coordinates[1] = coordinates[1] * Math.pow(2, k) - o;
+      coordinates[0] = (coordinates[0] - x1) * s;
+      coordinates[1] = (coordinates[1] - y1) * s;
     }
 
-    function resize() {
-      o = r * 3;
-      n = (dx + o * 2) >> k;
-      m = (dy + o * 2) >> k;
-      return density;
+    return function(geometry) {
+      geometry.coordinates.forEach(transformPolygon);
+      return geometry;
+    };
+  }
+
+  function radius(bw, data, f) {
+    const v = bw >= 0 ? bw : bandwidthNRD(data, f);
+    return Math.round((Math.sqrt(4 * v * v + 1) - 1) / 2);
+  }
+
+  function number$4(_) {
+    return isFunction(_) ? _ : constant(+_);
+  }
+
+  // Implementation adapted from d3/d3-contour. Thanks!
+  function density2D() {
+    var x = d => d[0],
+        y = d => d[1],
+        weight = one,
+        bandwidth = [-1, -1],
+        dx = 960,
+        dy = 500,
+        k = 2; // log2(cellSize)
+
+    function density(data, counts) {
+      const rx = radius(bandwidth[0], data, x) >> k, // blur x-radius
+            ry = radius(bandwidth[1], data, y) >> k, // blur y-radius
+            ox = rx ? rx + 2 : 0, // x-offset padding for blur
+            oy = ry ? ry + 2 : 0, // y-offset padding for blur
+            n = 2 * ox + (dx >> k), // grid width
+            m = 2 * oy + (dy >> k), // grid height
+            values0 = new Float32Array(n * m),
+            values1 = new Float32Array(n * m);
+
+      let values = values0;
+
+      data.forEach(d => {
+        const xi = ox + (+x(d) >> k),
+              yi = oy + (+y(d) >> k);
+
+        if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
+          values0[xi + yi * n] += +weight(d);
+        }
+      });
+
+      if (rx > 0 && ry > 0) {
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+      } else if (rx > 0) {
+        blurX(n, m, values0, values1, rx);
+        blurX(n, m, values1, values0, rx);
+        blurX(n, m, values0, values1, rx);
+        values = values1;
+      } else if (ry > 0) {
+        blurY(n, m, values0, values1, ry);
+        blurY(n, m, values1, values0, ry);
+        blurY(n, m, values0, values1, ry);
+        values = values1;
+      }
+
+      // scale density estimates
+      // density in points per square pixel or probability density
+      let s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
+      for (let i=0, sz=n*m; i<sz; ++i) values[i] *= s;
+
+      return {
+        values: values,
+        scale: 1 << k,
+        width: n,
+        height: m,
+        x1: ox,
+        y1: oy,
+        x2: ox + (dx >> k),
+        y2: oy + (dy >> k)
+      };
     }
 
     density.x = function(_) {
-      return arguments.length ? (x = typeof _ === "function" ? _ : constant$5(+_), density) : x;
+      return arguments.length ? (x = number$4(_), density) : x;
     };
 
     density.y = function(_) {
-      return arguments.length ? (y = typeof _ === "function" ? _ : constant$5(+_), density) : y;
+      return arguments.length ? (y = number$4(_), density) : y;
     };
 
     density.weight = function(_) {
-      return arguments.length ? (weight = typeof _ === "function" ? _ : constant$5(+_), density) : weight;
+      return arguments.length ? (weight = number$4(_), density) : weight;
     };
 
     density.size = function(_) {
       if (!arguments.length) return [dx, dy];
       var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-      if (!(_0 >= 0) && !(_0 >= 0)) throw new Error("invalid size");
-      return dx = _0, dy = _1, resize();
+      if (!(_0 >= 0) && !(_0 >= 0)) error('invalid size');
+      return dx = _0, dy = _1, density;
     };
 
     density.cellSize = function(_) {
       if (!arguments.length) return 1 << k;
-      if (!((_ = +_) >= 1)) throw new Error("invalid cell size");
-      return k = Math.floor(Math.log(_) / Math.LN2), resize();
-    };
-
-    density.thresholds = function(_) {
-      return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? constant$5(slice$1.call(_)) : constant$5(_), density) : threshold;
+      if (!((_ = +_) >= 1)) error('invalid cell size');
+      k = Math.floor(Math.log(_) / Math.LN2);
+      return density;
     };
 
     density.bandwidth = function(_) {
-      if (!arguments.length) return Math.sqrt(r * (r + 1));
-      if (!((_ = +_) >= 0)) throw new Error("invalid bandwidth");
-      return r = Math.round((Math.sqrt(4 * _ * _ + 1) - 1) / 2), resize();
+      if (!arguments.length) return bandwidth;
+      _ = array(_);
+      if (_.length === 1) _ = [+_[0], +_[0]];
+      if (_.length !== 2) error('invalid bandwidth');
+      return bandwidth = _, density;
     };
 
     return density;
   }
 
-  var CONTOUR_PARAMS = ['size', 'smooth'];
-  var DENSITY_PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
+  function blurX(n, m, source, target, r) {
+    const w = (r << 1) + 1;
+    for (let j = 0; j < m; ++j) {
+      for (let i = 0, sr = 0; i < n + r; ++i) {
+        if (i < n) {
+          sr += source[i + j * n];
+        }
+        if (i >= r) {
+          if (i >= w) {
+            sr -= source[i - w + j * n];
+          }
+          target[i - r + j * n] = sr / Math.min(i + 1, n - 1 + w - i, w);
+        }
+      }
+    }
+  }
+
+  function blurY(n, m, source, target, r) {
+    const w = (r << 1) + 1;
+    for (let i = 0; i < n; ++i) {
+      for (let j = 0, sr = 0; j < m + r; ++j) {
+        if (j < m) {
+          sr += source[i + j * n];
+        }
+        if (j >= r) {
+          if (j >= w) {
+            sr -= source[i + (j - w) * n];
+          }
+          target[i + (j - r) * n] = sr / Math.min(j + 1, m - 1 + w - j, w);
+        }
+      }
+    }
+  }
+
+  /**
+   * Perform 2D kernel-density estimation of point data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<number>} params.size - The [width, height] extent (in
+   *   units of input pixels) over which to perform density estimation.
+   * @param {function(object): number} params.x - The x-coordinate accessor.
+   * @param {function(object): number} params.y - The y-coordinate accessor.
+   * @param {function(object): number} [params.weight] - The weight accessor.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors
+   *   to groupby.
+   * @param {number} [params.cellSize] - Contour density calculation cell size.
+   *   This parameter determines the level of spatial approximation. For example,
+   *   the default value of 4 maps to 2x reductions in both x- and y- dimensions.
+   *   A value of 1 will result in an output raster grid whose dimensions exactly
+   *   matches the size parameter.
+   * @param {Array<number>} [params.bandwidth] - The KDE kernel bandwidths,
+   *   in pixels. The input can be a two-element array specifying separate
+   *   x and y bandwidths, or a single-element array specifying both. If the
+   *   bandwidth is unspecified or less than zero, the bandwidth will be
+   *   automatically determined.
+   * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+   *   output values should be probability estimates (false, default) or
+   *   smoothed counts (true).
+   * @param {string} [params.as='grid'] - The output field in which to store
+   *   the generated raster grid (default 'grid').
+   */
+  function KDE2D(params) {
+    Transform.call(this, null, params);
+  }
+
+  KDE2D.Definition = {
+    "type": "KDE2D",
+    "metadata": {"generates": true},
+    "params": [
+      { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
+      { "name": "x", "type": "field", "required": true },
+      { "name": "y", "type": "field", "required": true },
+      { "name": "weight", "type": "field" },
+      { "name": "groupby", "type": "field", "array": true },
+      { "name": "cellSize", "type": "number" },
+      { "name": "bandwidth", "type": "number", "array": true, "length": 2 },
+      { "name": "counts", "type": "boolean", "default": false },
+      { "name": "as", "type": "string", "default": "grid"}
+    ]
+  };
+
+  var prototype$14 = inherits(KDE2D, Transform);
+
+  const PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
+
+  function params(obj, _) {
+    PARAMS.forEach(param => _[param] != null ? obj[param](_[param]) : 0);
+    return obj;
+  }
+
+  prototype$14.transform = function(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified())
+      return pulse.StopPropagation;
+
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        groups = partition$3(source, _.groupby),
+        names = (_.groupby || []).map(accessorName),
+        kde = params(density2D(), _),
+        as = _.as || 'grid',
+        values = [];
+
+    function set(t, vals) {
+      for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
+      return t;
+    }
+
+    // generate density raster grids
+    values = groups.map(g => ingest(
+      set({[as]: kde(g, _.counts)}, g.dims)
+    ));
+
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = values;
+
+    return out;
+  };
+
+  function partition$3(data, groupby) {
+    var groups = [],
+        get = f => f(t),
+        map, i, n, t, k, g;
+
+    // partition data points into groups
+    if (groupby == null) {
+      groups.push(data);
+    } else {
+      for (map={}, i=0, n=data.length; i<n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = (g = []);
+          g.dims = k;
+          groups.push(g);
+        }
+        g.push(t);
+      }
+    }
+
+    return groups;
+  }
 
   /**
    * Generate contours based on kernel-density estimation of point data.
@@ -21622,55 +22873,42 @@
       { "name": "cellSize", "type": "number" },
       { "name": "bandwidth", "type": "number" },
       { "name": "count", "type": "number" },
-      { "name": "smooth", "type": "boolean" },
       { "name": "nice", "type": "boolean", "default": false },
-      { "name": "thresholds", "type": "number", "array": true }
+      { "name": "thresholds", "type": "number", "array": true },
+      { "name": "smooth", "type": "boolean", "default": true }
     ]
   };
 
-  var prototype$10 = inherits(Contour, Transform);
+  var prototype$15 = inherits(Contour, Transform);
 
-  prototype$10.transform = function(_, pulse) {
-    if (this.value && !pulse.changed() && !_.modified())
+  prototype$15.transform = function(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified()) {
       return pulse.StopPropagation;
-
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        count = _.count || 10,
-        contour, params, values;
-
-    if (_.values) {
-      contour = contours();
-      params = CONTOUR_PARAMS;
-      values = _.values;
-    } else {
-      contour = contourDensity();
-      params = DENSITY_PARAMS;
-      values = pulse.materialize(pulse.SOURCE).source;
     }
 
-    // set threshold parameter
-    contour.thresholds(_.thresholds || (_.nice ? count : quantize$2(count)));
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        contour = contours().smooth(_.smooth !== false),
+        values = _.values,
+        thresh = _.thresholds || quantize$2(_.count || 10, _.nice, !!values),
+        size = _.size, grid, post;
 
-    // set all other parameters
-    params.forEach(function(param) {
-      if (_[param] != null) contour[param](_[param]);
-    });
+    if (!values) {
+      values = pulse.materialize(pulse.SOURCE).source;
+      grid = params(density2D(), _)(values, true);
+      post = transform$2(grid);
+      size = [grid.width, grid.height];
+      values = grid.values;
+    }
+
+    thresh = isArray(thresh) ? thresh : thresh(values);
+    values = contour.size(size)(values, thresh);
+    if (post) values.forEach(post);
 
     if (this.value) out.rem = this.value;
-    values = values && values.length ? contour(values).map(ingest) : [];
-    this.value = out.source = out.add = values;
+    this.value = out.source = out.add = (values || []).map(ingest);
 
     return out;
   };
-
-  function quantize$2(k) {
-    return function(values) {
-      var ex = extent$1(values), x0 = ex[0], dx = ex[1] - x0,
-          t = [], i = 1;
-      for (; i<=k; ++i) t.push(x0 + dx * i / (k + 1));
-      return t;
-    };
-  }
 
   var Feature = 'Feature';
   var FeatureCollection = 'FeatureCollection';
@@ -21701,15 +22939,15 @@
     ]
   };
 
-  var prototype$11 = inherits(GeoJSON, Transform);
+  var prototype$16 = inherits(GeoJSON, Transform);
 
-  prototype$11.transform = function(_, pulse) {
+  prototype$16.transform = function(_, pulse) {
     var features = this._features,
         points = this._points,
         fields = _.fields,
         lon = fields && fields[0],
         lat = fields && fields[1],
-        geojson = _.geojson,
+        geojson = _.geojson || (!fields && identity),
         flag = pulse.ADD,
         mod;
 
@@ -22006,7 +23244,7 @@
       p0, // previous 3D point
       deltaSum = adder(),
       ranges,
-      range$1;
+      range;
 
   var boundsStream = {
     point: boundsPoint,
@@ -22027,7 +23265,7 @@
       if (areaRingSum < 0) lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
       else if (deltaSum > epsilon$3) phi1 = 90;
       else if (deltaSum < -epsilon$3) phi0 = -90;
-      range$1[0] = lambda0$1, range$1[1] = lambda1;
+      range[0] = lambda0$1, range[1] = lambda1;
     },
     sphere: function() {
       lambda0$1 = -(lambda1 = 180), phi0 = -(phi1 = 90);
@@ -22035,7 +23273,7 @@
   };
 
   function boundsPoint(lambda, phi) {
-    ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
+    ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
   }
@@ -22082,7 +23320,7 @@
         }
       }
     } else {
-      ranges.push(range$1 = [lambda0$1 = lambda, lambda1 = lambda]);
+      ranges.push(range = [lambda0$1 = lambda, lambda1 = lambda]);
     }
     if (phi < phi0) phi0 = phi;
     if (phi > phi1) phi1 = phi;
@@ -22094,7 +23332,7 @@
   }
 
   function boundsLineEnd() {
-    range$1[0] = lambda0$1, range$1[1] = lambda1;
+    range[0] = lambda0$1, range[1] = lambda1;
     boundsStream.point = boundsPoint;
     p0 = null;
   }
@@ -22118,7 +23356,7 @@
     boundsRingPoint(lambda00$1, phi00$1);
     areaStream.lineEnd();
     if (abs$1(deltaSum) > epsilon$3) lambda0$1 = -(lambda1 = 180);
-    range$1[0] = lambda0$1, range$1[1] = lambda1;
+    range[0] = lambda0$1, range[1] = lambda1;
     p0 = null;
   }
 
@@ -22167,7 +23405,7 @@
       }
     }
 
-    ranges = range$1 = null;
+    ranges = range = null;
 
     return lambda0$1 === Infinity || phi0 === Infinity
         ? [[NaN, NaN], [NaN, NaN]]
@@ -22627,80 +23865,6 @@
     // same side as the South pole.
 
     return (angle < -epsilon$3 || angle < epsilon$3 && sum$1 < -epsilon$3) ^ (winding & 1);
-  }
-
-  function ascending$3(a, b) {
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  function bisector$2(compare) {
-    if (compare.length === 1) compare = ascendingComparator$2(compare);
-    return {
-      left: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) < 0) lo = mid + 1;
-          else hi = mid;
-        }
-        return lo;
-      },
-      right: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) > 0) hi = mid;
-          else lo = mid + 1;
-        }
-        return lo;
-      }
-    };
-  }
-
-  function ascendingComparator$2(f) {
-    return function(d, x) {
-      return ascending$3(f(d), x);
-    };
-  }
-
-  var ascendingBisect$2 = bisector$2(ascending$3);
-
-  function range$2(start, stop, step) {
-    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-    var i = -1,
-        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-        range = new Array(n);
-
-    while (++i < n) {
-      range[i] = start + i * step;
-    }
-
-    return range;
-  }
-
-  function merge$1(arrays) {
-    var n = arrays.length,
-        m,
-        i = -1,
-        j = 0,
-        merged,
-        array;
-
-    while (++i < n) j += arrays[i].length;
-    merged = new Array(j);
-
-    while (--n >= 0) {
-      array = arrays[n];
-      m = array.length;
-      while (--m >= 0) {
-        merged[--j] = array[m];
-      }
-    }
-
-    return merged;
   }
 
   function clip$2(pointVisible, clipLine, interpolate, start) {
@@ -23319,15 +24483,13 @@
     };
   }
 
-  var lengthSum = adder();
-
   function graticuleX(y0, y1, dy) {
-    var y = range$2(y0, y1 - epsilon$3, dy).concat(y1);
+    var y = sequence(y0, y1 - epsilon$3, dy).concat(y1);
     return function(x) { return y.map(function(y) { return [x, y]; }); };
   }
 
   function graticuleY(x0, x1, dx) {
-    var x = range$2(x0, x1 - epsilon$3, dx).concat(x1);
+    var x = sequence(x0, x1 - epsilon$3, dx).concat(x1);
     return function(y) { return x.map(function(x) { return [x, y]; }); };
   }
 
@@ -23343,10 +24505,10 @@
     }
 
     function lines() {
-      return range$2(ceil(X0 / DX) * DX, X1, DX).map(X)
-          .concat(range$2(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
-          .concat(range$2(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$3; }).map(x))
-          .concat(range$2(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$3; }).map(y));
+      return sequence(ceil(X0 / DX) * DX, X1, DX).map(X)
+          .concat(sequence(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+          .concat(sequence(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$3; }).map(x))
+          .concat(sequence(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$3; }).map(y));
     }
 
     graticule.lines = function() {
@@ -23634,7 +24796,7 @@
     result: noop$3
   };
 
-  var lengthSum$1 = adder(),
+  var lengthSum = adder(),
       lengthRing,
       x00$2,
       y00$2,
@@ -23657,8 +24819,8 @@
       lengthRing = null;
     },
     result: function() {
-      var length = +lengthSum$1;
-      lengthSum$1.reset();
+      var length = +lengthSum;
+      lengthSum.reset();
       return length;
     }
   };
@@ -23670,7 +24832,7 @@
 
   function lengthPoint(x, y) {
     x0$4 -= x, y0$4 -= y;
-    lengthSum$1.add(sqrt$2(x0$4 * x0$4 + y0$4 * y0$4));
+    lengthSum.add(sqrt$2(x0$4 * x0$4 + y0$4 * y0$4));
     x0$4 = x, y0$4 = y;
   }
 
@@ -24748,9 +25910,9 @@
     ]
   };
 
-  var prototype$12 = inherits(GeoPath, Transform);
+  var prototype$17 = inherits(GeoPath, Transform);
 
-  prototype$12.transform = function(_, pulse) {
+  prototype$17.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         path = this.value,
         field = _.field || identity,
@@ -24810,9 +25972,9 @@
     ]
   };
 
-  var prototype$13 = inherits(GeoPoint, Transform);
+  var prototype$18 = inherits(GeoPoint, Transform);
 
-  prototype$13.transform = function(_, pulse) {
+  prototype$18.transform = function(_, pulse) {
     var proj = _.projection,
         lon = _.fields[0],
         lat = _.fields[1],
@@ -24869,9 +26031,9 @@
     ]
   };
 
-  var prototype$14 = inherits(GeoShape, Transform);
+  var prototype$19 = inherits(GeoShape, Transform);
 
-  prototype$14.transform = function(_, pulse) {
+  prototype$19.transform = function(_, pulse) {
     var out = pulse.fork(pulse.ALL),
         shape = this.value,
         as = _.as || 'shape',
@@ -24936,9 +26098,9 @@
     ]
   };
 
-  var prototype$15 = inherits(Graticule, Transform);
+  var prototype$1a = inherits(Graticule, Transform);
 
-  prototype$15.transform = function(_, pulse) {
+  prototype$1a.transform = function(_, pulse) {
     var src = this.value,
         gen = this.generator, t;
 
@@ -24962,6 +26124,147 @@
   };
 
   /**
+   * Render a heatmap image for input raster grid data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} [params.field] - The field with raster grid
+   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
+   * @param {string} [params.color] - A constant color value or function for
+   *   individual pixel color. If a function, it will be invoked with an input
+   *   object that includes $x, $y, $value, and $max fields for the grid.
+   * @param {number} [params.opacity] - A constant opacity value or function for
+   *   individual pixel opacity. If a function, it will be invoked with an input
+   *   object that includes $x, $y, $value, and $max fields for the grid.
+   * @param {string} [params.resolve] - The method for resolving maximum values
+   *   across multiple input grids. If 'independent' (the default), maximum
+   *   calculation will be performed separately for each grid. If 'shared',
+   *   a single global maximum will be used for all input grids.
+   * @param {string} [params.as='image'] - The output field in which to store
+   *   the generated bitmap canvas images (default 'image').
+   */
+  function Heatmap(params) {
+    Transform.call(this, null, params);
+  }
+
+  Heatmap.Definition = {
+    "type": "heatmap",
+    "metadata": {"modifies": true},
+    "params": [
+      { "name": "field", "type": "field" },
+      { "name": "color", "type": "string", "expr": true},
+      { "name": "opacity", "type": "number", "expr": true},
+      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
+      { "name": "as", "type": "string", "default": "image" }
+    ]
+  };
+
+  var prototype$1b = inherits(Heatmap, Transform);
+
+  prototype$1b.transform = function(_, pulse) {
+    if (!pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
+    }
+
+    var source = pulse.materialize(pulse.SOURCE).source,
+        shared = _.resolve === 'shared',
+        field = _.field || identity,
+        opacity = opacity_(_.opacity, _),
+        color = color_(_.color, _),
+        as = _.as || 'image',
+        obj = {
+          $x: 0, $y: 0, $value: 0,
+          $max: shared ? max(source.map(t => max(field(t).values))) : 0
+        };
+
+    source.forEach(t => {
+      const v = field(t);
+
+      // build proxy data object
+      const o = extend({}, t, obj);
+      // set maximum value if not globally shared
+      if (!shared) o.$max = max(v.values || []);
+
+      // generate canvas image
+      // optimize color/opacity if not pixel-dependent
+      t[as] = toCanvas(v, o,
+        color.dep ? color : constant(color(o)),
+        opacity.dep ? opacity : constant(opacity(o))
+      );
+    });
+
+    return pulse.reflow(true).modifies(as);
+  };
+
+  // get image color function
+  function color_(color, _) {
+    let f;
+    if (isFunction(color)) {
+      f = obj => rgb(color(obj, _));
+      f.dep = dependency(color);
+    } else {
+      // default to mid-grey
+      f = constant(rgb(color || '#888'));
+    }
+    return f;
+  }
+
+  // get image opacity function
+  function opacity_(opacity, _) {
+    let f;
+    if (isFunction(opacity)) {
+      f = obj => opacity(obj, _);
+      f.dep = dependency(opacity);
+    } else if (opacity) {
+      f = constant(opacity);
+    } else {
+      // default to [0, max] opacity gradient
+      f = obj => (obj.$value / obj.$max) || 0;
+      f.dep = true;
+    }
+    return f;
+  }
+
+  // check if function depends on individual pixel data
+  function dependency(f) {
+    if (!isFunction(f)) return false;
+    const set = toSet(accessorFields(f));
+    return set.$x || set.$y || set.$value || set.$max;
+  }
+
+  // render raster grid to canvas
+  function toCanvas(grid, obj, color, opacity) {
+    const n = grid.width,
+          m = grid.height,
+          x1 = grid.x1 || 0,
+          y1 = grid.y1 || 0,
+          x2 = grid.x2 || n,
+          y2 = grid.y2 || m,
+          val = grid.values,
+          value = val ? i => val[i] : zero,
+          can = domCanvas(x2 - x1, y2 - y1),
+          ctx = can.getContext('2d'),
+          img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
+          pix = img.data;
+
+    for (let j=y1, k=0; j<y2; ++j) {
+      obj.$y = j - y1;
+      for (let i=x1, r=j*n; i<x2; ++i, k+=4) {
+        obj.$x = i - x1;
+        obj.$value = value(i + r);
+
+        const v = color(obj);
+        pix[k+0] = v.r;
+        pix[k+1] = v.g;
+        pix[k+2] = v.b;
+        pix[k+3] = ~~(255 * opacity(obj));
+      }
+    }
+
+    ctx.putImageData(img, 0, 0);
+    return can;
+  }
+
+  /**
    * Maintains a cartographic projection.
    * @constructor
    * @param {object} params - The parameters for this operator.
@@ -24971,9 +26274,9 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$16 = inherits(Projection, Transform);
+  var prototype$1c = inherits(Projection, Transform);
 
-  prototype$16.transform = function(_, pulse) {
+  prototype$1c.transform = function(_, pulse) {
     var proj = this.value;
 
     if (!proj || _.modified('type')) {
@@ -25029,12 +26332,16 @@
 
 
   var geo = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     contour: Contour,
     geojson: GeoJSON,
     geopath: GeoPath,
     geopoint: GeoPoint,
     geoshape: GeoShape,
     graticule: Graticule,
+    heatmap: Heatmap,
+    isocontour: Isocontour,
+    kde2d: KDE2D,
     projection: Projection
   });
 
@@ -25405,7 +26712,7 @@
     return this;
   }
 
-  function defaultX$1(d) {
+  function defaultX(d) {
     return d[0];
   }
 
@@ -25413,7 +26720,7 @@
     return arguments.length ? (this._x = _, this) : this._x;
   }
 
-  function defaultY$1(d) {
+  function defaultY(d) {
     return d[1];
   }
 
@@ -25422,7 +26729,7 @@
   }
 
   function quadtree(nodes, x, y) {
-    var tree = new Quadtree(x == null ? defaultX$1 : x, y == null ? defaultY$1 : y, NaN, NaN, NaN, NaN);
+    var tree = new Quadtree(x == null ? defaultX : x, y == null ? defaultY : y, NaN, NaN, NaN, NaN);
     return nodes == null ? tree : tree.addAll(nodes);
   }
 
@@ -25482,7 +26789,7 @@
   treeProto.x = tree_x;
   treeProto.y = tree_y;
 
-  function constant$6(x) {
+  function constant$4(x) {
     return function() {
       return x;
     };
@@ -25506,7 +26813,7 @@
         strength = 1,
         iterations = 1;
 
-    if (typeof radius !== "function") radius = constant$6(radius == null ? 1 : +radius);
+    if (typeof radius !== "function") radius = constant$4(radius == null ? 1 : +radius);
 
     function force() {
       var i, n = nodes.length,
@@ -25581,7 +26888,7 @@
     };
 
     force.radius = function(_) {
-      return arguments.length ? (radius = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : radius;
+      return arguments.length ? (radius = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : radius;
     };
 
     return force;
@@ -25601,7 +26908,7 @@
     var id = index,
         strength = defaultStrength,
         strengths,
-        distance = constant$6(30),
+        distance = constant$4(30),
         distances,
         nodes,
         count,
@@ -25690,11 +26997,11 @@
     };
 
     force.strength = function(_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$6(+_), initializeStrength(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initializeStrength(), force) : strength;
     };
 
     force.distance = function(_) {
-      return arguments.length ? (distance = typeof _ === "function" ? _ : constant$6(+_), initializeDistance(), force) : distance;
+      return arguments.length ? (distance = typeof _ === "function" ? _ : constant$4(+_), initializeDistance(), force) : distance;
     };
 
     return force;
@@ -26058,7 +27365,7 @@
     var nodes,
         node,
         alpha,
-        strength = constant$6(-30),
+        strength = constant$4(-30),
         strengths,
         distanceMin2 = 1,
         distanceMax2 = Infinity,
@@ -26146,7 +27453,7 @@
     };
 
     force.strength = function(_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
     };
 
     force.distanceMin = function(_) {
@@ -26165,12 +27472,12 @@
   }
 
   function forceX(x) {
-    var strength = constant$6(0.1),
+    var strength = constant$4(0.1),
         nodes,
         strengths,
         xz;
 
-    if (typeof x !== "function") x = constant$6(x == null ? 0 : +x);
+    if (typeof x !== "function") x = constant$4(x == null ? 0 : +x);
 
     function force(alpha) {
       for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -26194,23 +27501,23 @@
     };
 
     force.strength = function(_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
     };
 
     force.x = function(_) {
-      return arguments.length ? (x = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : x;
+      return arguments.length ? (x = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : x;
     };
 
     return force;
   }
 
   function forceY(y) {
-    var strength = constant$6(0.1),
+    var strength = constant$4(0.1),
         nodes,
         strengths,
         yz;
 
-    if (typeof y !== "function") y = constant$6(y == null ? 0 : +y);
+    if (typeof y !== "function") y = constant$4(y == null ? 0 : +y);
 
     function force(alpha) {
       for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -26234,11 +27541,11 @@
     };
 
     force.strength = function(_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
     };
 
     force.y = function(_) {
-      return arguments.length ? (y = typeof _ === "function" ? _ : constant$6(+_), initialize(), force) : y;
+      return arguments.length ? (y = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : y;
     };
 
     return force;
@@ -26340,9 +27647,9 @@
     ]
   };
 
-  var prototype$17 = inherits(Force, Transform);
+  var prototype$1d = inherits(Force, Transform);
 
-  prototype$17.transform = function(_, pulse) {
+  prototype$1d.transform = function(_, pulse) {
     var sim = this.value,
         change = pulse.changed(pulse.ADD_REM),
         params = _.modified(ForceParams),
@@ -26385,7 +27692,7 @@
     return this.finish(_, pulse);
   };
 
-  prototype$17.finish = function(_, pulse) {
+  prototype$1d.finish = function(_, pulse) {
     var dataflow = pulse.dataflow;
 
     // inspect dependencies, touch link source data
@@ -26486,6 +27793,7 @@
 
 
   var force = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     force: Force
   });
 
@@ -26790,7 +28098,7 @@
     copy: node_copy
   };
 
-  var slice$2 = Array.prototype.slice;
+  var slice$1 = Array.prototype.slice;
 
   function shuffle(array) {
     var m = array.length,
@@ -26808,7 +28116,7 @@
   }
 
   function enclose(circles) {
-    var i = 0, n = (circles = shuffle(slice$2.call(circles))).length, B = [], p, e;
+    var i = 0, n = (circles = shuffle(slice$1.call(circles))).length, B = [], p, e;
 
     while (i < n) {
       p = circles[i];
@@ -27049,7 +28357,7 @@
     return 0;
   }
 
-  function constant$7(x) {
+  function constant$5(x) {
     return function() {
       return x;
     };
@@ -27089,7 +28397,7 @@
     };
 
     pack.padding = function(x) {
-      return arguments.length ? (padding = typeof x === "function" ? x : constant$7(+x), pack) : padding;
+      return arguments.length ? (padding = typeof x === "function" ? x : constant$5(+x), pack) : padding;
     };
 
     return pack;
@@ -27151,7 +28459,7 @@
     }
   }
 
-  function partition$3() {
+  function partition$4() {
     var dx = 1,
         dy = 1,
         padding = 0,
@@ -27649,7 +28957,7 @@
     };
 
     treemap.paddingInner = function(x) {
-      return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$7(+x), treemap) : paddingInner;
+      return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$5(+x), treemap) : paddingInner;
     };
 
     treemap.paddingOuter = function(x) {
@@ -27657,19 +28965,19 @@
     };
 
     treemap.paddingTop = function(x) {
-      return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$7(+x), treemap) : paddingTop;
+      return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$5(+x), treemap) : paddingTop;
     };
 
     treemap.paddingRight = function(x) {
-      return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$7(+x), treemap) : paddingRight;
+      return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$5(+x), treemap) : paddingRight;
     };
 
     treemap.paddingBottom = function(x) {
-      return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$7(+x), treemap) : paddingBottom;
+      return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$5(+x), treemap) : paddingBottom;
     };
 
     treemap.paddingLeft = function(x) {
-      return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$7(+x), treemap) : paddingLeft;
+      return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$5(+x), treemap) : paddingLeft;
     };
 
     return treemap;
@@ -27782,13 +29090,13 @@
     ]
   };
 
-  var prototype$18 = inherits(Nest, Transform);
+  var prototype$1e = inherits(Nest, Transform);
 
   function children(n) {
     return n.values;
   }
 
-  prototype$18.transform = function(_, pulse) {
+  prototype$1e.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Nest transform requires an upstream data source.');
     }
@@ -27892,9 +29200,9 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$19 = inherits(HierarchyLayout, Transform);
+  var prototype$1f = inherits(HierarchyLayout, Transform);
 
-  prototype$19.transform = function(_, pulse) {
+  prototype$1f.transform = function(_, pulse) {
     if (!pulse.source || !pulse.source.root) {
       error(this.constructor.name
         + ' transform requires a backing tree data source.');
@@ -27942,7 +29250,7 @@
     return a.parent === b.parent ? 1 : 2;
   }
 
-  var Output = ['x', 'y', 'r', 'depth', 'children'];
+  var Output$1 = ['x', 'y', 'r', 'depth', 'children'];
 
   /**
    * Packed circle tree layout.
@@ -27963,19 +29271,19 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "radius", "type": "field", "default": null },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
+      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
     ]
   };
 
-  var prototype$1a = inherits(Pack, HierarchyLayout);
+  var prototype$1g = inherits(Pack, HierarchyLayout);
 
-  prototype$1a.layout = pack;
+  prototype$1g.layout = pack;
 
-  prototype$1a.params = ['radius', 'size', 'padding'];
+  prototype$1g.params = ['radius', 'size', 'padding'];
 
-  prototype$1a.fields = Output;
+  prototype$1g.fields = Output$1;
 
-  var Output$1 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Partition tree layout.
@@ -27996,17 +29304,17 @@
       { "name": "padding", "type": "number", "default": 0 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
+      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
     ]
   };
 
-  var prototype$1b = inherits(Partition, HierarchyLayout);
+  var prototype$1h = inherits(Partition, HierarchyLayout);
 
-  prototype$1b.layout = partition$3;
+  prototype$1h.layout = partition$4;
 
-  prototype$1b.params = ['size', 'round', 'padding'];
+  prototype$1h.params = ['size', 'round', 'padding'];
 
-  prototype$1b.fields = Output$1;
+  prototype$1h.fields = Output$2;
 
   /**
     * Stratify a collection of tuples into a tree structure based on
@@ -28029,9 +29337,9 @@
     ]
   };
 
-  var prototype$1c = inherits(Stratify, Transform);
+  var prototype$1i = inherits(Stratify, Transform);
 
-  prototype$1c.transform = function(_, pulse) {
+  prototype$1i.transform = function(_, pulse) {
     if (!pulse.source) {
       error('Stratify transform requires an upstream data source.');
     }
@@ -28067,7 +29375,7 @@
     cluster: cluster
   };
 
-  var Output$2 = ['x', 'y', 'depth', 'children'];
+  var Output$3 = ['x', 'y', 'depth', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -28089,24 +29397,24 @@
       { "name": "size", "type": "number", "array": true, "length": 2 },
       { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
       { "name": "separation", "type": "boolean", "default": true },
-      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
+      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
     ]
   };
 
-  var prototype$1d = inherits(Tree, HierarchyLayout);
+  var prototype$1j = inherits(Tree, HierarchyLayout);
 
   /**
    * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
    */
-  prototype$1d.layout = function(method) {
+  prototype$1j.layout = function(method) {
     var m = method || 'tidy';
     if (hasOwnProperty(Layouts, m)) return Layouts[m]();
     else error('Unrecognized Tree layout method: ' + m);
   };
 
-  prototype$1d.params = ['size', 'nodeSize'];
+  prototype$1j.params = ['size', 'nodeSize'];
 
-  prototype$1d.fields = Output$2;
+  prototype$1j.fields = Output$3;
 
   /**
     * Generate tuples representing links between tree nodes.
@@ -28125,9 +29433,9 @@
     "params": []
   };
 
-  var prototype$1e = inherits(TreeLinks, Transform);
+  var prototype$1k = inherits(TreeLinks, Transform);
 
-  prototype$1e.transform = function(_, pulse) {
+  prototype$1k.transform = function(_, pulse) {
     var links = this.value,
         tree = pulse.source && pulse.source.root,
         out = pulse.fork(pulse.NO_SOURCE),
@@ -28177,7 +29485,7 @@
     resquarify: treemapResquarify
   };
 
-  var Output$3 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  var Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Treemap layout.
@@ -28207,17 +29515,17 @@
       { "name": "ratio", "type": "number", "default": 1.618033988749895 },
       { "name": "round", "type": "boolean", "default": false },
       { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
+      { "name": "as", "type": "string", "array": true, "length": Output$4.length, "default": Output$4 }
     ]
   };
 
-  var prototype$1f = inherits(Treemap, HierarchyLayout);
+  var prototype$1l = inherits(Treemap, HierarchyLayout);
 
   /**
    * Treemap layout generator. Adds 'method' and 'ratio' parameters
    * to configure the underlying tile method.
    */
-  prototype$1f.layout = function() {
+  prototype$1l.layout = function() {
     var x = treemap();
     x.ratio = function(_) {
       var t = x.tile();
@@ -28230,17 +29538,18 @@
     return x;
   };
 
-  prototype$1f.params = [
+  prototype$1l.params = [
     'method', 'ratio', 'size', 'round',
     'padding', 'paddingInner', 'paddingOuter',
     'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
   ];
 
-  prototype$1f.fields = Output$3;
+  prototype$1l.fields = Output$4;
 
 
 
   var tree$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     nest: Nest,
     pack: Pack,
     partition: Partition,
@@ -28250,7 +29559,7 @@
     treemap: Treemap
   });
 
-  function partition$4(data, groupby) {
+  function partition$5(data, groupby) {
     var groups = [],
         get = function(f) { return f(t); },
         map, i, n, t, k, g;
@@ -28300,14 +29609,14 @@
     ]
   };
 
-  var prototype$1g = inherits(Loess, Transform);
+  var prototype$1m = inherits(Loess, Transform);
 
-  prototype$1g.transform = function(_, pulse) {
+  prototype$1m.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
       const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$4(source, _.groupby),
+            groups = partition$5(source, _.groupby),
             names = (_.groupby || []).map(accessorName),
             m = names.length,
             as = _.as || [accessorName(_.x), accessorName(_.y)],
@@ -28375,14 +29684,14 @@
     ]
   };
 
-  var prototype$1h = inherits(Regression, Transform);
+  var prototype$1n = inherits(Regression, Transform);
 
-  prototype$1h.transform = function(_, pulse) {
+  prototype$1n.transform = function(_, pulse) {
     var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
       const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$4(source, _.groupby),
+            groups = partition$5(source, _.groupby),
             names = (_.groupby || []).map(accessorName),
             method = _.method || 'linear',
             order = _.order || 3,
@@ -28453,11 +29762,12 @@
 
 
   var reg = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     loess: Loess,
     regression: Regression
   });
 
-  const EPSILON$1 = Math.pow(2, -52);
+  const EPSILON$2 = Math.pow(2, -52);
   const EDGE_STACK = new Uint32Array(512);
 
   class Delaunator {
@@ -28636,7 +29946,7 @@
               const y = coords[2 * i + 1];
 
               // skip near-duplicate points
-              if (k > 0 && Math.abs(x - xp) <= EPSILON$1 && Math.abs(y - yp) <= EPSILON$1) continue;
+              if (k > 0 && Math.abs(x - xp) <= EPSILON$2 && Math.abs(y - yp) <= EPSILON$2) continue;
               xp = x;
               yp = y;
 
@@ -28836,8 +30146,19 @@
       return dx * dx + dy * dy;
   }
 
-  function orient(px, py, qx, qy, rx, ry) {
-      return (qy - py) * (rx - qx) - (qx - px) * (ry - qy) < 0;
+  // return 2d orientation sign if we're confident in it through J. Shewchuk's error bound check
+  function orientIfSure(px, py, rx, ry, qx, qy) {
+      const l = (ry - py) * (qx - px);
+      const r = (rx - px) * (qy - py);
+      return Math.abs(l - r) >= 3.3306690738754716e-16 * Math.abs(l + r) ? l - r : 0;
+  }
+
+  // a more robust orientation test that's stable in a given triangle (to fix robustness issues)
+  function orient(rx, ry, qx, qy, px, py) {
+      const sign = orientIfSure(px, py, rx, ry, qx, qy) ||
+      orientIfSure(rx, ry, qx, qy, px, py) ||
+      orientIfSure(qx, qy, px, py, rx, ry);
+      return sign < 0;
   }
 
   function inCircle(ax, ay, bx, by, cx, cy, px, py) {
@@ -29017,7 +30338,7 @@
 
       // Compute circumcenters.
       const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
-      for (let i = 0, j = 0, n = triangles.length; i < n; i += 3, j += 2) {
+      for (let i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
         const t1 = triangles[i] * 2;
         const t2 = triangles[i + 1] * 2;
         const t3 = triangles[i + 2] * 2;
@@ -29027,22 +30348,31 @@
         const y2 = points[t2 + 1];
         const x3 = points[t3];
         const y3 = points[t3 + 1];
-        const a2 = x1 - x2;
-        const a3 = x1 - x3;
-        const b2 = y1 - y2;
-        const b3 = y1 - y3;
-        const d1 = x1 * x1 + y1 * y1;
-        const d2 = d1 - x2 * x2 - y2 * y2;
-        const d3 = d1 - x3 * x3 - y3 * y3;
-        const ab = (a3 * b2 - a2 * b3) * 2;
-        // degenerate case (2 points)
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const ex = x3 - x1;
+        const ey = y3 - y1;
+        const bl = dx * dx + dy * dy;
+        const cl = ex * ex + ey * ey;
+        const ab = (dx * ey - dy * ex) * 2;
+
         if (!ab) {
-          circumcenters[j] = (x1 + x3) / 2 + 1e8 * b3;
-          circumcenters[j + 1] = (y1 + y3) / 2 - 1e8 * a3;
-        } else {
-          circumcenters[j] = (b2 * d3 - b3 * d2) / ab;
-          circumcenters[j + 1] = (a3 * d2 - a2 * d3) / ab;
+          // degenerate case (collinear diagram)
+          x = (x1 + x3) / 2 - 1e8 * ey;
+          y = (y1 + y3) / 2 + 1e8 * ex;
         }
+        else if (Math.abs(ab) < 1e-8) {
+          // almost equal points (degenerate triangle)
+          x = (x1 + x3) / 2;
+          y = (y1 + y3) / 2;
+        } else {
+          const d = 1 / ab;
+          x = x1 + (ey * bl - dy * cl) * d;
+          y = y1 + (dx * cl - ex * bl) * d;
+        }
+        circumcenters[j] = x;
+        circumcenters[j + 1] = y;
       }
 
       // Compute exterior cell rays.
@@ -29096,7 +30426,9 @@
       const points = this._clip(i);
       if (points === null) return;
       context.moveTo(points[0], points[1]);
-      for (let i = 2, n = points.length; i < n; i += 2) {
+      let n = points.length;
+      while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
+      for (let i = 2; i < n; i += 2) {
         if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
           context.lineTo(points[i], points[i + 1]);
       }
@@ -29243,6 +30575,14 @@
           P.splice(j, 0, x, y), j += 2;
         }
       }
+      if (P.length > 4) {
+        for (let i = 0; i < P.length; i+= 2) {
+          const j = (i + 2) % P.length, k = (i + 4) % P.length;
+          if (P[i] === P[j] && P[j] === P[k]
+          || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1])
+            P.splice(j, 2), i -= 2;
+        }
+      }
       return j;
     }
     _project(x0, y0, vx, vy) {
@@ -29287,20 +30627,18 @@
     return p[1];
   }
 
-  function area$4(hull, points) {
-    let n = hull.length, x0, y0,
-        x1 = points[2 * hull[n - 1]],
-        y1 = points[2 * hull[n - 1] + 1],
-        area = 0;
-
-    for (let i = 0; i < n; i ++) {
-      x0 = x1, y0 = y1;
-      x1 = points[2 * hull[i]];
-      y1 = points[2 * hull[i] + 1];
-      area += y0 * x1 - x0 * y1;
+  // A triangulation is collinear if all its triangles have a non-null area
+  function collinear$1(d) {
+    const {triangles, coords} = d;
+    for (let i = 0; i < triangles.length; i += 3) {
+      const a = 2 * triangles[i],
+            b = 2 * triangles[i + 1],
+            c = 2 * triangles[i + 2],
+            cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1])
+                  - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
+      if (cross > 1e-10) return false;
     }
-
-    return area / 2;
+    return true;
   }
 
   function jitter(x, y, r) {
@@ -29324,7 +30662,7 @@
       const d = this._delaunator, points = this.points;
 
       // check for collinear
-      if (d.hull && d.hull.length > 2 && area$4(d.hull, points) < 1e-10) {
+      if (d.hull && d.hull.length > 2 && collinear$1(d)) {
         this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
           .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
         const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
@@ -29538,11 +30876,11 @@
     ]
   };
 
-  const prototype$1i = inherits(Voronoi$1, Transform);
+  const prototype$1o = inherits(Voronoi$1, Transform);
 
   const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
-  prototype$1i.transform = function(_, pulse) {
+  prototype$1o.transform = function(_, pulse) {
     const as = _.as || 'path',
           data = pulse.source;
 
@@ -29580,6 +30918,7 @@
 
 
   var voronoi = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     voronoi: Voronoi$1
   });
 
@@ -30013,7 +31352,7 @@
     rectangular: rectangularSpiral
   };
 
-  var Output$4 = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+  var Output$5 = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
 
   var Params$1 = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
@@ -30035,13 +31374,13 @@
       { "name": "text", "type": "field" },
       { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
       { "name": "padding", "type": "number", "expr": true },
-      { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$4 }
+      { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$5 }
     ]
   };
 
-  var prototype$1j = inherits(Wordcloud, Transform);
+  var prototype$1p = inherits(Wordcloud, Transform);
 
-  prototype$1j.transform = function(_, pulse) {
+  prototype$1p.transform = function(_, pulse) {
     if (_.size && !(_.size[0] && _.size[1])) {
       error('Wordcloud size dimensions must be non-zero.');
     }
@@ -30056,7 +31395,7 @@
 
     var data = pulse.materialize(pulse.SOURCE).source,
         layout = this.value,
-        as = _.as || Output$4,
+        as = _.as || Output$5,
         fontSize = _.fontSize || 14,
         range;
 
@@ -30067,8 +31406,8 @@
     // create font size scaling function as needed
     if (range) {
       var fsize = fontSize,
-          sizeScale = scale$1('sqrt')()
-            .domain(extent$3(fsize, data))
+          sizeScale = scale$2('sqrt')()
+            .domain(extent(data, fsize))
             .range(range);
       fontSize = function(x) { return sizeScale(fsize(x)); };
     }
@@ -30116,25 +31455,10 @@
     return pulse.reflow(mod).modifies(as);
   };
 
-  function extent$3(field, data) {
-    var min = +Infinity,
-        max = -Infinity,
-        i = 0,
-        n = data.length,
-        v;
-
-    for (; i<n; ++i) {
-      v = field(data[i]);
-      if (v < min) min = v;
-      if (v > max) max = v;
-    }
-
-    return [min, max];
-  }
-
 
 
   var wordcloud = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     wordcloud: Wordcloud
   });
 
@@ -30152,8 +31476,8 @@
     var width = 8,
         data = [],
         seen = array32(0),
-        curr = array$3(0, width),
-        prev = array$3(0, width);
+        curr = array$2(0, width),
+        prev = array$2(0, width);
 
     return {
 
@@ -30222,8 +31546,8 @@
         var k = curr.length;
         if (n > k || m > width) {
           width = Math.max(m, width);
-          curr = array$3(n, width, curr);
-          prev = array$3(n, width);
+          curr = array$2(n, width, curr);
+          prev = array$2(n, width);
         }
       }
     };
@@ -30236,7 +31560,7 @@
     return copy;
   }
 
-  function array$3(n, m, array) {
+  function array$2(n, m, array) {
     var copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
     if (array) copy.set(array);
     return copy;
@@ -30415,9 +31739,9 @@
     ]
   };
 
-  var prototype$1k = inherits(CrossFilter, Transform);
+  var prototype$1q = inherits(CrossFilter, Transform);
 
-  prototype$1k.transform = function(_, pulse) {
+  prototype$1q.transform = function(_, pulse) {
     if (!this._dims) {
       return this.init(_, pulse);
     } else {
@@ -30430,7 +31754,7 @@
     }
   };
 
-  prototype$1k.init = function(_, pulse) {
+  prototype$1q.init = function(_, pulse) {
     var fields = _.fields,
         query = _.query,
         indices = this._indices = {},
@@ -30448,7 +31772,7 @@
     return this.eval(_, pulse);
   };
 
-  prototype$1k.reinit = function(_, pulse) {
+  prototype$1q.reinit = function(_, pulse) {
     var output = pulse.materialize().fork(),
         fields = _.fields,
         query = _.query,
@@ -30515,7 +31839,7 @@
     return output;
   };
 
-  prototype$1k.eval = function(_, pulse) {
+  prototype$1q.eval = function(_, pulse) {
     var output = pulse.materialize().fork(),
         m = this._dims.length,
         mask = 0;
@@ -30543,7 +31867,7 @@
     return output;
   };
 
-  prototype$1k.insert = function(_, pulse, output) {
+  prototype$1q.insert = function(_, pulse, output) {
     var tuples = pulse.add,
         bits = this.value,
         dims = this._dims,
@@ -30577,7 +31901,7 @@
     }
   };
 
-  prototype$1k.modify = function(pulse, output) {
+  prototype$1q.modify = function(pulse, output) {
     var out = output.mod,
         bits = this.value,
         curr = bits.curr(),
@@ -30591,7 +31915,7 @@
     }
   };
 
-  prototype$1k.remove = function(_, pulse, output) {
+  prototype$1q.remove = function(_, pulse, output) {
     var indices = this._indices,
         bits = this.value,
         curr = bits.curr(),
@@ -30621,7 +31945,7 @@
   };
 
   // reindex filters and indices after propagation completes
-  prototype$1k.reindex = function(pulse, num, map) {
+  prototype$1q.reindex = function(pulse, num, map) {
     var indices = this._indices,
         bits = this.value;
 
@@ -30631,7 +31955,7 @@
     });
   };
 
-  prototype$1k.update = function(_, pulse, output) {
+  prototype$1q.update = function(_, pulse, output) {
     var dims = this._dims,
         query = _.query,
         stamp = pulse.stamp,
@@ -30661,7 +31985,7 @@
     return mask;
   };
 
-  prototype$1k.incrementAll = function(dim, query, stamp, out) {
+  prototype$1q.incrementAll = function(dim, query, stamp, out) {
     var bits = this.value,
         seen = bits.seen(),
         curr = bits.curr(),
@@ -30725,7 +32049,7 @@
     dim.range = query.slice();
   };
 
-  prototype$1k.incrementOne = function(dim, query, add, rem) {
+  prototype$1q.incrementOne = function(dim, query, add, rem) {
     var bits = this.value,
         curr = bits.curr(),
         index = dim.index(),
@@ -30795,9 +32119,9 @@
     ]
   };
 
-  var prototype$1l = inherits(ResolveFilter, Transform);
+  var prototype$1r = inherits(ResolveFilter, Transform);
 
-  prototype$1l.transform = function(_, pulse) {
+  prototype$1r.transform = function(_, pulse) {
     var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
         bitmap = _.filter,
         mask = bitmap.mask;
@@ -30846,11 +32170,12 @@
 
 
   var xf = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     crossfilter: CrossFilter,
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.5.3";
+  var version = "5.8.0";
 
   var Default = 'default';
 
@@ -30939,7 +32264,7 @@
     return Math.max(0, view._viewHeight + padding.top + padding.bottom);
   }
 
-  function offset$1(view) {
+  function offset$2(view) {
     var padding = view.padding(),
         origin = view._origin;
     return [
@@ -30949,7 +32274,7 @@
   }
 
   function resizeRenderer(view) {
-    var origin = offset$1(view),
+    var origin = offset$2(view),
         w = width(view),
         h = height(view);
 
@@ -30998,7 +32323,7 @@
         p, e, translate;
 
     if (el) {
-      translate = offset$1(view);
+      translate = offset$2(view);
       e = event.changedTouches ? event.changedTouches[0] : event;
       p = point$4(e, el);
       p[0] -= translate[0];
@@ -31310,7 +32635,7 @@
       case 'checkbox': input = checkbox; break;
       case 'select':   input = select; break;
       case 'radio':    input = radio; break;
-      case 'range':    input = range$3; break;
+      case 'range':    input = range$1; break;
     }
 
     input(bind, div, param, value);
@@ -31431,7 +32756,7 @@
   /**
    * Generates a slider input element.
    */
-  function range$3(bind, el, param, value) {
+  function range$1(bind, el, param, value) {
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
     var max = param.max != null ? param.max : Math.max(100, +value) || 100,
@@ -31475,7 +32800,7 @@
   function initializeRenderer(view, r, el, constructor, scaleFactor, opt) {
     r = r || new constructor(view.loader());
     return r
-      .initialize(el, width(view), height(view), offset$1(view), scaleFactor, opt)
+      .initialize(el, width(view), height(view), offset$2(view), scaleFactor, opt)
       .background(view._background);
   }
 
@@ -31493,7 +32818,7 @@
     // instantiate scenegraph handler
     var handler = new constructor(view.loader(), trap(view, view.tooltip()))
       .scene(view.scenegraph().root)
-      .initialize(el, offset$1(view), view);
+      .initialize(el, offset$2(view), view);
 
     // transfer event handlers
     if (prevHandler) {
@@ -33072,9 +34397,6 @@
       case '%':
         prec = 11;
         break;
-
-      default:
-        break;
     }
 
     return prec;
@@ -33227,8 +34549,8 @@
 
     return {
       // MATH functions
-      isNaN:    'isNaN',
-      isFinite: 'isFinite',
+      isNaN:    'Number.isNaN',
+      isFinite: 'Number.isFinite',
       abs:      'Math.abs',
       acos:     'Math.acos',
       asin:     'Math.asin',
@@ -33446,6 +34768,9 @@
 
   const Intersect = 'intersect';
   const Union = 'union';
+  const VlMulti = 'vlMulti';
+  const Or = 'or';
+  const And = 'and';
 
   var TYPE_ENUM = 'E',
       TYPE_RANGE_INC = 'R',
@@ -33556,10 +34881,10 @@
    *                 One of 'intersect' or 'union' (default).
    * @returns {object} An object of selected fields and values.
    */
-  function selectionResolve(name, op) {
+  function selectionResolve(name, op, isMulti) {
     var data = this.context.data[name],
       entries = data ? data.values.value : [],
-      resolved = {}, types = {},
+      resolved = {}, multiRes = {}, types = {},
       entry, fields, values, unit, field, res, resUnit, type, union,
       n = entries.length, i = 0, j, m;
 
@@ -33578,18 +34903,33 @@
         union = ops[type + '_union'];
         res[unit] = union(resUnit, array(values[j]));
       }
+
+      // If the same multi-selection is repeated over views and projected over
+      // an encoding, it may operate over different fields making it especially
+      // tricky to reliably resolve it. At best, we can de-dupe identical entries
+      // but doing so may be more computationally expensive than it is worth.
+      // Instead, for now, we simply transform our store representation into
+      // a more human-friendly one.
+      if (isMulti) {
+        resUnit = multiRes[unit] || (multiRes[unit] = []);
+        resUnit.push(array(values).reduce((obj, curr, j) => (obj[fields[j].field] = curr, obj), {}));
+      }
     }
 
     // Then resolve fields across units as per the op.
     op = op || Union;
     Object.keys(resolved).forEach(function (field) {
       resolved[field] = Object.keys(resolved[field])
-        .map(function (unit) { return resolved[field][unit]; })
-        .reduce(function (acc, curr) {
-          return acc === undefined ? curr :
-            ops[types[field] + '_' + op](acc, curr);
-        });
+        .map(unit => resolved[field][unit])
+        .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
     });
+
+    entries = Object.keys(multiRes);
+    if (isMulti && entries.length) {
+      resolved[VlMulti] = op === Union
+        ? {[Or]: entries.reduce((acc, k) => (acc.push.apply(acc, multiRes[k]), acc), [])}
+        : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
+    }
 
     return resolved;
   }
@@ -33662,6 +35002,32 @@
     }
   }
 
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  function channel_luminance_value(channelValue) {
+    const val = channelValue / 255;
+    if (val <= 0.03928) {
+      return val / 12.92;
+    }
+    return Math.pow((val + 0.055) / 1.055, 2.4);
+  }
+
+  function luminance(color) {
+    const c = rgb(color),
+          r = channel_luminance_value(c.r),
+          g = channel_luminance_value(c.g),
+          b = channel_luminance_value(c.b);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  function contrast(color1, color2) {
+    const lum1 = luminance(color1),
+          lum2 = luminance(color2),
+          lumL = Math.max(lum1, lum2),
+          lumD = Math.min(lum1, lum2);
+    return (lumL + 0.05) / (lumD + 0.05);
+  }
+
   function data$1(name) {
     const data = this.context.data[name];
     return data ? data.values.value : [];
@@ -33693,7 +35059,7 @@
 
   const formatCache = {};
 
-  function formatter(type, method, specifier) {
+  function formatter$1(type, method, specifier) {
     let k = type + ':' + specifier,
         e = formatCache[k];
     if (!e || e[0] !== method) {
@@ -33703,48 +35069,49 @@
   }
 
   function format$2(_, specifier) {
-    return formatter('format', format$1, specifier)(_);
+    return formatter$1('format', format$1, specifier)(_);
   }
 
-  function timeFormat$1(_, specifier) {
-    return formatter('timeFormat', timeFormat, specifier)(_);
+  function timeFormat$2(_, specifier) {
+    return formatter$1('timeFormat', timeFormat$1, specifier)(_);
   }
 
-  function utcFormat$1(_, specifier) {
-    return formatter('utcFormat', utcFormat, specifier)(_);
+  function utcFormat$2(_, specifier) {
+    return formatter$1('utcFormat', utcFormat$1, specifier)(_);
   }
 
   function timeParse$1(_, specifier) {
-    return formatter('timeParse', timeParse, specifier)(_);
+    return formatter$1('timeParse', timeParse, specifier)(_);
   }
 
   function utcParse$1(_, specifier) {
-    return formatter('utcParse', utcParse, specifier)(_);
+    return formatter$1('utcParse', utcParse, specifier)(_);
   }
 
   var dateObj = new Date(2000, 0, 1);
 
-  function time$2(month, day, specifier) {
+  function time$1(month, day, specifier) {
     if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
+    dateObj.setYear(2000);
     dateObj.setMonth(month);
     dateObj.setDate(day);
-    return timeFormat$1(dateObj, specifier);
+    return timeFormat$2(dateObj, specifier);
   }
 
   function monthFormat(month) {
-    return time$2(month, 1, '%B');
+    return time$1(month, 1, '%B');
   }
 
   function monthAbbrevFormat(month) {
-    return time$2(month, 1, '%b');
+    return time$1(month, 1, '%b');
   }
 
   function dayFormat(day) {
-    return time$2(0, 2 + day, '%A');
+    return time$1(0, 2 + day, '%A');
   }
 
   function dayAbbrevFormat(day) {
-    return time$2(0, 2 + day, '%a');
+    return time$1(0, 2 + day, '%a');
   }
 
   function getScale(name, ctx) {
@@ -33754,7 +35121,7 @@
       : undefined;
   }
 
-  function range$4(name, group) {
+  function range$2(name, group) {
     const s = getScale(name, (group || this).context);
     return s && s.range ? s.range() : [];
   }
@@ -33778,7 +35145,7 @@
     return s ? s.copy() : undefined;
   }
 
-  function scale$2(name, value, group) {
+  function scale$3(name, value, group) {
     const s = getScale(name, (group || this).context);
     return s && value !== undefined ? s(value) : undefined;
   }
@@ -33974,8 +35341,8 @@
     if (!(max - min)) {
       // expand scale if domain has zero span, fix #1479
       scale = (scale.interpolator
-        ? scale$1('sequential')().interpolator(scale.interpolator())
-        : scale$1('linear')().interpolate(scale.interpolate()).range(scale.range())
+        ? scale$2('sequential')().interpolator(scale.interpolator())
+        : scale$2('linear')().interpolate(scale.interpolate()).range(scale.range())
       ).domain([min=0, max=1]);
     } else {
       fraction = scaleFraction(scale, min, max);
@@ -34111,6 +35478,18 @@
   // Expression function context object
   const functionContext = {
     random: function() { return exports.random(); }, // override default
+    cumulativeNormal,
+    cumulativeLogNormal,
+    cumulativeUniform,
+    densityNormal,
+    densityLogNormal,
+    densityUniform,
+    quantileNormal,
+    quantileLogNormal,
+    quantileUniform,
+    sampleNormal,
+    sampleLogNormal,
+    sampleUniform,
     isArray,
     isBoolean,
     isDate,
@@ -34137,12 +35516,19 @@
     lab,
     hcl,
     hsl,
+    luminance,
+    contrast,
     sequence,
     format: format$2,
-    utcFormat: utcFormat$1,
+    utcFormat: utcFormat$2,
     utcParse: utcParse$1,
-    timeFormat: timeFormat$1,
+    utcOffset,
+    utcSequence,
+    timeFormat: timeFormat$2,
     timeParse: timeParse$1,
+    timeOffset,
+    timeSequence,
+    timeUnitSpecifier,
     monthFormat,
     monthAbbrevFormat,
     dayFormat,
@@ -34211,9 +35597,9 @@
   expressionFunction('bandwidth', bandwidth, scaleVisitor);
   expressionFunction('copy', copy$2, scaleVisitor);
   expressionFunction('domain', domain, scaleVisitor);
-  expressionFunction('range', range$4, scaleVisitor);
+  expressionFunction('range', range$2, scaleVisitor);
   expressionFunction('invert', invert, scaleVisitor);
-  expressionFunction('scale', scale$2, scaleVisitor);
+  expressionFunction('scale', scale$3, scaleVisitor);
   expressionFunction('gradient', scaleGradient, scaleVisitor);
   expressionFunction('geoArea', geoArea, scaleVisitor);
   expressionFunction('geoBounds', geoBounds, scaleVisitor);
@@ -34758,7 +36144,7 @@
     return parse$4(spec, context$2(view, transforms, fn));
   }
 
-  function scale$3(name) {
+  function scale$4(name) {
     var scales = this._runtime.scales;
     if (!hasOwnProperty(scales, name)) {
       error('Unrecognized scale or projection: ' + name);
@@ -35031,11 +36417,11 @@
     if (options.container) view.initialize(options.container, options.bind);
   }
 
-  var prototype$1m = inherits(View, Dataflow);
+  var prototype$1s = inherits(View, Dataflow);
 
   // -- DATAFLOW / RENDERING ----
 
-  prototype$1m.evaluate = async function(encode, prerun, postrun) {
+  prototype$1s.evaluate = async function(encode, prerun, postrun) {
     // evaluate dataflow and prerun
     await Dataflow.prototype.evaluate.call(this, encode, prerun);
 
@@ -35061,22 +36447,22 @@
     return this;
   };
 
-  prototype$1m.dirty = function(item) {
+  prototype$1s.dirty = function(item) {
     this._redraw = true;
     this._renderer && this._renderer.dirty(item);
   };
 
   // -- GET / SET ----
 
-  prototype$1m.container = function() {
+  prototype$1s.container = function() {
     return this._el;
   };
 
-  prototype$1m.scenegraph = function() {
+  prototype$1s.scenegraph = function() {
     return this._scenegraph;
   };
 
-  prototype$1m.origin = function() {
+  prototype$1s.origin = function() {
     return this._origin.slice();
   };
 
@@ -35086,14 +36472,14 @@
       : error('Unrecognized signal name: ' + $(name));
   }
 
-  prototype$1m.signal = function(name, value, options) {
+  prototype$1s.signal = function(name, value, options) {
     var op = lookupSignal(this, name);
     return arguments.length === 1
       ? op.value
       : this.update(op, value, options);
   };
 
-  prototype$1m.background = function(_) {
+  prototype$1s.background = function(_) {
     if (arguments.length) {
       this._background = _;
       this._resize = 1;
@@ -35103,23 +36489,23 @@
     }
   };
 
-  prototype$1m.width = function(_) {
+  prototype$1s.width = function(_) {
     return arguments.length ? this.signal('width', _) : this.signal('width');
   };
 
-  prototype$1m.height = function(_) {
+  prototype$1s.height = function(_) {
     return arguments.length ? this.signal('height', _) : this.signal('height');
   };
 
-  prototype$1m.padding = function(_) {
+  prototype$1s.padding = function(_) {
     return arguments.length ? this.signal('padding', _) : this.signal('padding');
   };
 
-  prototype$1m.autosize = function(_) {
+  prototype$1s.autosize = function(_) {
     return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
   };
 
-  prototype$1m.renderer = function(type) {
+  prototype$1s.renderer = function(type) {
     if (!arguments.length) return this._renderType;
     if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
     if (type !== this._renderType) {
@@ -35129,7 +36515,7 @@
     return this;
   };
 
-  prototype$1m.tooltip = function(handler) {
+  prototype$1s.tooltip = function(handler) {
     if (!arguments.length) return this._tooltip;
     if (handler !== this._tooltip) {
       this._tooltip = handler;
@@ -35138,7 +36524,7 @@
     return this;
   };
 
-  prototype$1m.loader = function(loader) {
+  prototype$1s.loader = function(loader) {
     if (!arguments.length) return this._loader;
     if (loader !== this._loader) {
       Dataflow.prototype.loader.call(this, loader);
@@ -35147,14 +36533,14 @@
     return this;
   };
 
-  prototype$1m.resize = function() {
+  prototype$1s.resize = function() {
     // set flag to perform autosize
     this._autosize = 1;
     // touch autosize signal to ensure top-level ViewLayout runs
     return this.touch(lookupSignal(this, 'autosize'));
   };
 
-  prototype$1m._resetRenderer = function() {
+  prototype$1s._resetRenderer = function() {
     if (this._renderer) {
       this._renderer = null;
       this.initialize(this._el, this._elBind);
@@ -35162,11 +36548,11 @@
   };
 
   // -- SIZING ----
-  prototype$1m._resizeView = resizeView;
+  prototype$1s._resizeView = resizeView;
 
   // -- EVENT HANDLING ----
 
-  prototype$1m.addEventListener = function(type, handler, options) {
+  prototype$1s.addEventListener = function(type, handler, options) {
     var callback = handler;
     if (!(options && options.trap === false)) {
       // wrap callback in error handler
@@ -35177,7 +36563,7 @@
     return this;
   };
 
-  prototype$1m.removeEventListener = function(type, handler) {
+  prototype$1s.removeEventListener = function(type, handler) {
     var handlers = this._handler.handlers(type),
         i = handlers.length, h, t;
 
@@ -35193,7 +36579,7 @@
     return this;
   };
 
-  prototype$1m.addResizeListener = function(handler) {
+  prototype$1s.addResizeListener = function(handler) {
     var l = this._resizeListeners;
     if (l.indexOf(handler) < 0) {
       // add handler if it isn't already registered
@@ -35204,7 +36590,7 @@
     return this;
   };
 
-  prototype$1m.removeResizeListener = function(handler) {
+  prototype$1s.removeResizeListener = function(handler) {
     var l = this._resizeListeners,
         i = l.indexOf(handler);
     if (i >= 0) {
@@ -35238,23 +36624,23 @@
     return view;
   }
 
-  prototype$1m.addSignalListener = function(name, handler) {
+  prototype$1s.addSignalListener = function(name, handler) {
     return addOperatorListener(this, name, lookupSignal(this, name), handler);
   };
 
-  prototype$1m.removeSignalListener = function(name, handler) {
+  prototype$1s.removeSignalListener = function(name, handler) {
     return removeOperatorListener(this, lookupSignal(this, name), handler);
   };
 
-  prototype$1m.addDataListener = function(name, handler) {
+  prototype$1s.addDataListener = function(name, handler) {
     return addOperatorListener(this, name, dataref(this, name).values, handler);
   };
 
-  prototype$1m.removeDataListener = function(name, handler) {
+  prototype$1s.removeDataListener = function(name, handler) {
     return removeOperatorListener(this, dataref(this, name).values, handler);
   };
 
-  prototype$1m.preventDefault = function(_) {
+  prototype$1s.preventDefault = function(_) {
     if (arguments.length) {
       this._preventDefault = _;
       return this;
@@ -35263,31 +36649,31 @@
     }
   };
 
-  prototype$1m.timer = timer$1;
-  prototype$1m.events = events$1;
-  prototype$1m.finalize = finalize;
-  prototype$1m.hover = hover;
+  prototype$1s.timer = timer$1;
+  prototype$1s.events = events$1;
+  prototype$1s.finalize = finalize;
+  prototype$1s.hover = hover;
 
   // -- DATA ----
-  prototype$1m.data = data;
-  prototype$1m.change = change;
-  prototype$1m.insert = insert;
-  prototype$1m.remove = remove;
+  prototype$1s.data = data;
+  prototype$1s.change = change;
+  prototype$1s.insert = insert;
+  prototype$1s.remove = remove;
 
   // -- SCALES --
-  prototype$1m.scale = scale$3;
+  prototype$1s.scale = scale$4;
 
   // -- INITIALIZATION ----
-  prototype$1m.initialize = initialize$1;
+  prototype$1s.initialize = initialize$1;
 
   // -- HEADLESS RENDERING ----
-  prototype$1m.toImageURL = renderToImageURL;
-  prototype$1m.toCanvas = renderToCanvas;
-  prototype$1m.toSVG = renderToSVG;
+  prototype$1s.toImageURL = renderToImageURL;
+  prototype$1s.toCanvas = renderToCanvas;
+  prototype$1s.toSVG = renderToSVG;
 
   // -- SAVE / RESTORE STATE ----
-  prototype$1m.getState = getState$1;
-  prototype$1m.setState = setState$1;
+  prototype$1s.getState = getState$1;
+  prototype$1s.setState = setState$1;
 
   function parseAutosize(spec, config) {
     spec = spec || config.autosize;
@@ -35300,15 +36686,15 @@
     spec = spec || config.padding;
     return isObject(spec)
       ? {
-          top:    number$3(spec.top),
-          bottom: number$3(spec.bottom),
-          left:   number$3(spec.left),
-          right:  number$3(spec.right)
+          top:    number$5(spec.top),
+          bottom: number$5(spec.bottom),
+          left:   number$5(spec.left),
+          right:  number$5(spec.right)
         }
-      : paddingObject(number$3(spec));
+      : paddingObject(number$5(spec));
   }
 
-  function number$3(_) {
+  function number$5(_) {
     return +_ || 0;
   }
 
@@ -35460,7 +36846,7 @@
     return false;
   }
 
-  function value(specValue, defaultValue) {
+  function value$1(specValue, defaultValue) {
     return specValue != null ? specValue : defaultValue;
   }
 
@@ -35867,40 +37253,40 @@
     }
   }
 
-  function transform$2(name) {
+  function transform$3(name) {
     return function(params, value, parent) {
       return entry(name, value, params || undefined, parent);
     };
   }
 
-  var Aggregate$1 = transform$2('aggregate');
-  var AxisTicks$1 = transform$2('axisticks');
-  var Bound$1 = transform$2('bound');
-  var Collect$1 = transform$2('collect');
-  var Compare$1 = transform$2('compare');
-  var DataJoin$1 = transform$2('datajoin');
-  var Encode$1 = transform$2('encode');
-  var Expression$1 = transform$2('expression');
-  var Facet$1 = transform$2('facet');
-  var Field$1 = transform$2('field');
-  var Key$1 = transform$2('key');
-  var LegendEntries$1 = transform$2('legendentries');
-  var Load$1 = transform$2('load');
-  var Mark$1 = transform$2('mark');
-  var MultiExtent$1 = transform$2('multiextent');
-  var MultiValues$1 = transform$2('multivalues');
-  var Overlap$1 = transform$2('overlap');
-  var Params$2 = transform$2('params');
-  var PreFacet$1 = transform$2('prefacet');
-  var Projection$1 = transform$2('projection');
-  var Proxy$1 = transform$2('proxy');
-  var Relay$1 = transform$2('relay');
-  var Render$1 = transform$2('render');
-  var Scale$1 = transform$2('scale');
-  var Sieve$1 = transform$2('sieve');
-  var SortItems$1 = transform$2('sortitems');
-  var ViewLayout$1 = transform$2('viewlayout');
-  var Values$1 = transform$2('values');
+  var Aggregate$1 = transform$3('aggregate');
+  var AxisTicks$1 = transform$3('axisticks');
+  var Bound$1 = transform$3('bound');
+  var Collect$1 = transform$3('collect');
+  var Compare$1 = transform$3('compare');
+  var DataJoin$1 = transform$3('datajoin');
+  var Encode$1 = transform$3('encode');
+  var Expression$1 = transform$3('expression');
+  var Facet$1 = transform$3('facet');
+  var Field$1 = transform$3('field');
+  var Key$1 = transform$3('key');
+  var LegendEntries$1 = transform$3('legendentries');
+  var Load$1 = transform$3('load');
+  var Mark$1 = transform$3('mark');
+  var MultiExtent$1 = transform$3('multiextent');
+  var MultiValues$1 = transform$3('multivalues');
+  var Overlap$1 = transform$3('overlap');
+  var Params$2 = transform$3('params');
+  var PreFacet$1 = transform$3('prefacet');
+  var Projection$1 = transform$3('projection');
+  var Proxy$1 = transform$3('proxy');
+  var Relay$1 = transform$3('relay');
+  var Render$1 = transform$3('render');
+  var Scale$1 = transform$3('scale');
+  var Sieve$1 = transform$3('sieve');
+  var SortItems$1 = transform$3('sortitems');
+  var ViewLayout$1 = transform$3('viewlayout');
+  var Values$1 = transform$3('values');
 
   var FIELD_REF_ID = 0;
 
@@ -36168,11 +37554,19 @@
   }
 
   function parseProjection(proj, scope) {
-    var params = {};
+    var config = scope.config.projection || {},
+        params = {};
 
     for (var name in proj) {
       if (name === 'name') continue;
       params[name] = parseParameter$1(proj[name], name, scope);
+    }
+
+    // apply projection defaults from config
+    for (name in config) {
+      if (params[name] == null) {
+        params[name] = parseParameter$1(config[name], name, scope);
+      }
     }
 
     scope.addProjection(proj.name, params);
@@ -36209,6 +37603,7 @@
   const GuideLabelStyle = 'guide-label';
   const GuideTitleStyle = 'guide-title';
   const GroupTitleStyle = 'group-title';
+  const GroupSubtitleStyle = 'group-subtitle';
 
   const Symbols$2 = 'symbol';
   const Gradient$2 = 'gradient';
@@ -36228,6 +37623,7 @@
 
   const Skip$1 = {
     name: 1,
+    style: 1,
     interactive: 1
   };
 
@@ -36340,7 +37736,13 @@
     return object + '[' + field + ']';
   }
 
-  function scale$4(enc, value, scope, params, fields) {
+  function property(property, scope, params, fields) {
+    return isObject(property)
+        ? '(' + entry$1(null, property, scope, params, fields) + ')'
+        : property;
+  }
+
+  function scale$5(enc, value, scope, params, fields) {
     var scale = getScale$1(enc.scale, scope, params, fields),
         interp, func, flag;
 
@@ -36357,8 +37759,13 @@
 
       if (enc.band && (flag = hasBandwidth(enc.scale, scope))) {
         func = scale + '.bandwidth';
-        interp = +enc.band;
-        interp = func + '()' + (interp===1 ? '' : '*' + interp);
+
+        if (enc.band.signal) {
+          interp = func + '()*' + property(enc.band, scope, params, fields);
+        } else {
+          interp = +enc.band;
+          interp = func + '()' + (interp===1 ? '' : '*' + interp);
+        }
 
         // if we don't know the scale type, check for bandwidth
         if (flag < 0) interp = '(' + func + '?' + interp + ':0)';
@@ -36416,12 +37823,6 @@
       + ')';
   }
 
-  function property(property, scope, params, fields) {
-    return isObject(property)
-        ? '(' + entry$1(null, property, scope, params, fields) + ')'
-        : property;
-  }
-
   function entry$1(channel, enc, scope, params, fields) {
     if (enc.gradient != null) {
       return gradient$1(enc, scope, params, fields);
@@ -36434,7 +37835,7 @@
       : undefined;
 
     if (enc.scale != null) {
-      value = scale$4(enc, value, scope, params, fields);
+      value = scale$5(enc, value, scope, params, fields);
     }
 
     if (value === undefined) {
@@ -36529,9 +37930,11 @@
   var LegendTitleRole = 'legend-title';
 
   var TitleRole$1 = 'title';
+  var TitleTextRole = 'title-text';
+  var TitleSubtitleRole = 'title-subtitle';
 
   function encoder(_) {
-    return isObject(_) ? extend({}, _) : {value: _};
+    return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
   }
 
   function addEncode(object, name, value, set) {
@@ -36653,26 +38056,26 @@
   }
 
   function lookup$5(spec, config) {
-    const _ = name => value(spec[name], config[name]);
+    const _ = (name, dflt) => value$1(spec[name], value$1(config[name], dflt));
 
-    _.isVertical = s => Vertical === value(
+    _.isVertical = s => Vertical === value$1(
       spec.direction,
       config.direction || (s ? config.symbolDirection : config.gradientDirection)
     );
 
-    _.gradientLength = () => value(
+    _.gradientLength = () => value$1(
       spec.gradientLength,
       config.gradientLength || config.gradientWidth
     );
 
-    _.gradientThickness = () => value(
+    _.gradientThickness = () => value$1(
       spec.gradientThickness,
       config.gradientThickness || config.gradientHeight
     );
 
-    _.entryColumns = () => value(
+    _.entryColumns = () => value$1(
       spec.columns,
-      value(config.columns, +_.isVertical(true))
+      value$1(config.columns, +_.isVertical(true))
     );
 
     return _;
@@ -36700,6 +38103,35 @@
     $(Right$1),
     $(Center$1)
   );
+
+  function tickBand(_) {
+    let v = _('tickBand'),
+        offset = _('tickOffset'),
+        band, extra;
+
+    if (!v) {
+      // if no tick band entry, fall back on other properties
+      band = _('bandPosition');
+      extra = _('tickExtra');
+    } else if (v.signal) {
+      // if signal, augment code to interpret values
+      band = {signal: `(${v.signal})==='extent'?1:0.5`};
+      extra = {signal: `(${v.signal})==='extent'?true:false`};
+      if (!isObject(offset)) {
+        offset = {signal: `(${v.signal})==='extent'?0:${offset}`};
+      }
+    } else if (v === 'extent') {
+      // if constant, simply set values
+      band = 1;
+      extra = true;
+      offset = 0;
+    } else {
+      band = 0.5;
+      extra = false;
+    }
+
+    return {extra, band, offset};
+  }
 
   var GroupMark = 'group';
   var RectMark = 'rect';
@@ -36821,7 +38253,7 @@
       fontSize:    _('labelFontSize'),
       fontStyle:   _('labelFontStyle'),
       fontWeight:  _('labelFontWeight'),
-      limit:       value(spec.labelLimit, config.gradientLabelLimit)
+      limit:       value$1(spec.labelLimit, config.gradientLabelLimit)
     });
 
     if (vertical) {
@@ -36837,7 +38269,7 @@
     enter[u] = update[u] = {signal: adjust + 'datum.' + Perc, mult: length};
 
     enter[v] = update[v] = thickness;
-    thickness.offset = value(spec.labelOffset, config.gradientLabelOffset) || 0;
+    thickness.offset = value$1(spec.labelOffset, config.gradientLabelOffset) || 0;
 
     spec = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
     if (overlap) {
@@ -36899,18 +38331,18 @@
       }
     };
 
+    var baseFill = null,
+        baseStroke = null;
     if (!spec.fill) {
-      addEncoders(encode, {
-        fill:   config.symbolBaseFillColor,
-        stroke: config.symbolBaseStrokeColor
-      });
+      baseFill = config.symbolBaseFillColor;
+      baseStroke = config.symbolBaseStrokeColor;
     }
 
     addEncoders(encode, {
-      fill:             _('symbolFillColor'),
+      fill:             _('symbolFillColor', baseFill),
       shape:            _('symbolType'),
       size:             _('symbolSize'),
-      stroke:           _('symbolStrokeColor'),
+      stroke:           _('symbolStrokeColor', baseStroke),
       strokeDash:       _('symbolDash'),
       strokeDashOffset: _('symbolDashOffset'),
       strokeWidth:      _('symbolStrokeWidth')
@@ -37066,7 +38498,8 @@
       fontSize:    _('titleFontSize'),
       fontStyle:   _('titleFontStyle'),
       fontWeight:  _('titleFontWeight'),
-      limit:       _('titleLimit')
+      limit:       _('titleLimit'),
+      lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign'),
       baseline:    _('titleBaseline'),
@@ -37101,7 +38534,7 @@
 
   function getRole(spec) {
     var role = spec.role || '';
-    return (!role.indexOf('axis') || !role.indexOf('legend'))
+    return (!role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title'))
       ? role
       : spec.type === GroupMark ? ScopeRole$1 : (role || MarkRole);
   }
@@ -37359,9 +38792,9 @@
     return new DataScope(scope, input, output, values, aggr);
   };
 
-  var prototype$1n = DataScope.prototype;
+  var prototype$1t = DataScope.prototype;
 
-  prototype$1n.countsRef = function(scope, field, sort) {
+  prototype$1t.countsRef = function(scope, field, sort) {
     var ds = this,
         cache = ds.counts || (ds.counts = {}),
         k = fieldKey(field), v, a, p;
@@ -37435,27 +38868,27 @@
     return v;
   }
 
-  prototype$1n.tuplesRef = function() {
+  prototype$1t.tuplesRef = function() {
     return ref(this.values);
   };
 
-  prototype$1n.extentRef = function(scope, field) {
+  prototype$1t.extentRef = function(scope, field) {
     return cache(scope, this, 'extent', 'extent', field, false);
   };
 
-  prototype$1n.domainRef = function(scope, field) {
+  prototype$1t.domainRef = function(scope, field) {
     return cache(scope, this, 'domain', 'values', field, false);
   };
 
-  prototype$1n.valuesRef = function(scope, field, sort) {
+  prototype$1t.valuesRef = function(scope, field, sort) {
     return cache(scope, this, 'vals', 'values', field, sort || true);
   };
 
-  prototype$1n.lookupRef = function(scope, field) {
+  prototype$1t.lookupRef = function(scope, field) {
     return cache(scope, this, 'lookup', 'tupleindex', field, false);
   };
 
-  prototype$1n.indataRef = function(scope, field) {
+  prototype$1t.indataRef = function(scope, field) {
     return cache(scope, this, 'indata', 'tupleindex', field, true, true);
   };
 
@@ -37719,7 +39152,8 @@
     entryRef = ref(scope.add(LegendEntries$1(params = {
       type:    type,
       scale:   scope.scaleRef(scale),
-      count:   scope.objectProperty(spec.tickCount),
+      count:   scope.objectProperty(_('tickCount')),
+      limit:   scope.property(_('symbolLimit')),
       values:  scope.objectProperty(spec.values),
       minstep: scope.property(spec.tickMinStep),
       formatType: scope.property(spec.formatType),
@@ -37837,48 +39271,83 @@
     return getEncoding('fontSize', encode) || getStyle('fontSize', scope, style);
   }
 
-  const angleExpr = `item.orient==="${Left$1}"?-90:item.orient==="${Right$1}"?90:0`,
-        baselineExpr$1 = `item.orient==="${Bottom$1}"?"${Top$1}":"${Bottom$1}"`;
+  const angleExpr = `item.orient==="${Left$1}"?-90:item.orient==="${Right$1}"?90:0`;
 
   function parseTitle(spec, scope) {
     spec = isString(spec) ? {text: spec} : spec;
 
-    var config = scope.config.title,
-        encode = extend({}, spec.encode),
-        dataRef, title;
+    var _ = lookup$5(spec, scope.config.title),
+        encode = spec.encode || {},
+        userEncode = encode.group || {},
+        name = userEncode.name || undefined,
+        interactive = userEncode.interactive,
+        style = userEncode.style,
+        children = [],
+        dataRef, group;
 
     // single-element data source for group title
     dataRef = ref(scope.add(Collect$1(null, [{}])));
 
+    // include title text
+    children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
+
+    // include subtitle text
+    if (spec.subtitle) {
+      children.push(buildSubTitle(spec, _, encode.subtitle, dataRef));
+    }
+
     // build title specification
-    encode.name = spec.name;
-    encode.interactive = spec.interactive;
-    title = buildTitle(spec, config, encode, dataRef);
-    if (spec.zindex) title.zindex = spec.zindex;
+    group = guideGroup(TitleRole$1, style, name, dataRef, interactive,
+                       groupEncode(_, userEncode), children);
+    if (spec.zindex) group.zindex = spec.zindex;
 
     // parse title specification
-    return parseMark(title, scope);
+    return parseMark(group, scope);
   }
 
-  function buildTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
-        zero = {value: 0},
-        title = spec.text,
-        encode;
+  // provide backwards-compatibility for title custom encode;
+  // the top-level encode block has been *deprecated*.
+  function titleEncode(spec) {
+    const encode = spec.encode;
+    return (encode && encode.title) || extend({
+      name: spec.name,
+      interactive: spec.interactive,
+      style: spec.style
+    }, encode);
+  }
 
-    encode = {
-      enter: {opacity: zero},
-      update: {opacity: {value: 1}},
-      exit: {opacity: zero}
-    };
+  function groupEncode(_, userEncode) {
+    var encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
-      text:       title,
       orient:     _('orient'),
       anchor:     _('anchor'),
       align:      {signal: alignExpr},
       angle:      {signal: angleExpr},
-      baseline:   {signal: baselineExpr$1},
+      limit:      _('limit'),
+      frame:      _('frame'),
+      offset:     _('offset') || 0,
+      padding:    _('subtitlePadding')
+    });
+
+    return extendEncode(encode, userEncode, Skip$1);
+  }
+
+  function buildTitle(spec, _, userEncode, dataRef) {
+    var zero = {value: 0},
+        text = spec.text,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
+
+    addEncoders(encode, {
+      text:       text,
+      align:      {signal: 'item.mark.group.align'},
+      angle:      {signal: 'item.mark.group.angle'},
+      limit:      {signal: 'item.mark.group.limit'},
+      baseline:   'top',
       dx:         _('dx'),
       dy:         _('dy'),
       fill:       _('color'),
@@ -37886,16 +39355,47 @@
       fontSize:   _('fontSize'),
       fontStyle:  _('fontStyle'),
       fontWeight: _('fontWeight'),
-      frame:      _('frame'),
-      limit:      _('limit'),
-      offset:     _('offset') || 0
+      lineHeight: _('lineHeight')
     }, { // update
       align:      _('align'),
       angle:      _('angle'),
       baseline:   _('baseline')
     });
 
-    return guideMark(TextMark, TitleRole$1, spec.style || GroupTitleStyle,
+    return guideMark(TextMark, TitleTextRole, GroupTitleStyle,
+                     null, dataRef, encode, userEncode);
+  }
+
+  function buildSubTitle(spec, _, userEncode, dataRef) {
+    var zero = {value: 0},
+        text = spec.subtitle,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
+
+    addEncoders(encode, {
+      text:       text,
+      align:      {signal: 'item.mark.group.align'},
+      angle:      {signal: 'item.mark.group.angle'},
+      limit:      {signal: 'item.mark.group.limit'},
+      baseline:   'top',
+      dx:         _('dx'),
+      dy:         _('dy'),
+      fill:       _('subtitleColor'),
+      font:       _('subtitleFont'),
+      fontSize:   _('subtitleFontSize'),
+      fontStyle:  _('subtitleFontStyle'),
+      fontWeight: _('subtitleFontWeight'),
+      lineHeight: _('subtitleLineHeight')
+    }, { // update
+      align:      _('align'),
+      angle:      _('angle'),
+      baseline:   _('baseline')
+    });
+
+    return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle,
                      null, dataRef, encode, userEncode);
   }
 
@@ -38060,7 +39560,7 @@
     return {scale: spec.scale, range: pos};
   }
 
-  function axisGrid(spec, config, userEncode, dataRef) {
+  function axisGrid(spec, config, userEncode, dataRef, band) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
         vscale = spec.gridScale,
@@ -38085,10 +39585,10 @@
     tickPos = {
       scale:  spec.scale,
       field:  Value,
-      band:   _('bandPosition'),
-      round:  _('tickRound'),
-      extra:  _('tickExtra'),
-      offset: _('tickOffset')
+      band:   band.band,
+      extra:  band.extra,
+      offset: band.offset,
+      round:  _('tickRound')
     };
 
     if (orient === Top$1 || orient === Bottom$1) {
@@ -38136,7 +39636,7 @@
     return offset;
   }
 
-  function axisTicks(spec, config, userEncode, dataRef, size) {
+  function axisTicks(spec, config, userEncode, dataRef, size, band) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
@@ -38162,10 +39662,10 @@
     tickPos = {
       scale:  spec.scale,
       field:  Value,
-      band:   _('bandPosition'),
-      round:  _('tickRound'),
-      extra:  _('tickExtra'),
-      offset: _('tickOffset')
+      band:   band.band,
+      extra:  band.extra,
+      offset: band.offset,
+      round:  _('tickRound')
     };
 
     if (orient === Top$1 || orient === Bottom$1) {
@@ -38189,7 +39689,7 @@
     };
   }
 
-  function axisLabels(spec, config, userEncode, dataRef, size) {
+  function axisLabels(spec, config, userEncode, dataRef, size, band) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
@@ -38212,7 +39712,7 @@
       scale:  scale,
       field:  Value,
       band:   0.5,
-      offset: _('tickOffset')
+      offset: band.offset
     };
 
     if (isXAxis) {
@@ -38330,7 +39830,8 @@
       fontSize:    _('titleFontSize'),
       fontStyle:   _('titleFontStyle'),
       fontWeight:  _('titleFontWeight'),
-      limit:       _('titleLimit')
+      limit:       _('titleLimit'),
+      lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign')
     });
@@ -38354,6 +39855,7 @@
         interactive = axisEncode.interactive,
         style = axisEncode.style,
         _ = lookup$5(spec, config),
+        band = tickBand(_),
         datum, dataRef, ticksRef, size, group, children;
 
     // single-element data source for axis group
@@ -38363,7 +39865,8 @@
       labels: !!_('labels'),
       grid:   !!_('grid'),
       domain: !!_('domain'),
-      title:  spec.title != null
+      title:  spec.title != null,
+      translate: _('translate')
     };
     dataRef = ref(scope.add(Collect$1({}, [datum])));
 
@@ -38371,7 +39874,7 @@
     axisEncode = extendEncode({
       update: {
         offset:       encoder(_('offset') || 0),
-        position:     encoder(value(spec.position, 0)),
+        position:     encoder(value$1(spec.position, 0)),
         titlePadding: encoder(_('titlePadding')),
         minExtent:    encoder(_('minExtent')),
         maxExtent:    encoder(_('maxExtent')),
@@ -38382,7 +39885,7 @@
     // data source for axis ticks
     ticksRef = ref(scope.add(AxisTicks$1({
       scale:   scope.scaleRef(spec.scale),
-      extra:   scope.property(_('tickExtra')),
+      extra:   scope.property(band.extra),
       count:   scope.objectProperty(spec.tickCount),
       values:  scope.objectProperty(spec.values),
       minstep: scope.property(spec.tickMinStep),
@@ -38395,19 +39898,19 @@
 
     // include axis gridlines if requested
     if (datum.grid) {
-      children.push(axisGrid(spec, config, encode.grid, ticksRef));
+      children.push(axisGrid(spec, config, encode.grid, ticksRef, band));
     }
 
     // include axis ticks if requested
     if (datum.ticks) {
       size = _('tickSize');
-      children.push(axisTicks(spec, config, encode.ticks, ticksRef, size));
+      children.push(axisTicks(spec, config, encode.ticks, ticksRef, size, band));
     }
 
     // include axis labels if requested
     if (datum.labels) {
       size = datum.ticks ? size : 0;
-      children.push(axisLabels(spec, config, encode.labels, ticksRef, size));
+      children.push(axisLabels(spec, config, encode.labels, ticksRef, size, band));
     }
 
     // include axis domain path if requested
@@ -38532,7 +40035,7 @@
     });
 
     if (!config) return signals;
-    const out = signals.slice();
+    const out = array(signals).slice();
 
     // add config signals if not already defined
     array(config).forEach(_ => {
@@ -38597,19 +40100,19 @@
     this._markpath = scope._markpath;
   }
 
-  var prototype$1o = Scope$1.prototype = Subscope.prototype;
+  var prototype$1u = Scope$1.prototype = Subscope.prototype;
 
   // ----
 
-  prototype$1o.fork = function() {
+  prototype$1u.fork = function() {
     return new Subscope(this);
   };
 
-  prototype$1o.isSubscope = function() {
+  prototype$1u.isSubscope = function() {
     return this._subid > 0;
   };
 
-  prototype$1o.toRuntime = function() {
+  prototype$1u.toRuntime = function() {
     this.finish();
     return {
       background:  this.background,
@@ -38621,11 +40124,11 @@
     };
   };
 
-  prototype$1o.id = function() {
+  prototype$1u.id = function() {
     return (this._subid ? this._subid + ':' : 0) + this._id++;
   };
 
-  prototype$1o.add = function(op) {
+  prototype$1u.add = function(op) {
     this.operators.push(op);
     op.id = this.id();
     // if pre-registration references exist, resolve them now
@@ -38636,24 +40139,24 @@
     return op;
   };
 
-  prototype$1o.proxy = function(op) {
+  prototype$1u.proxy = function(op) {
     var vref = op instanceof Entry ? ref(op) : op;
     return this.add(Proxy$1({value: vref}));
   };
 
-  prototype$1o.addStream = function(stream) {
+  prototype$1u.addStream = function(stream) {
     this.streams.push(stream);
     stream.id = this.id();
     return stream;
   };
 
-  prototype$1o.addUpdate = function(update) {
+  prototype$1u.addUpdate = function(update) {
     this.updates.push(update);
     return update;
   };
 
   // Apply metadata
-  prototype$1o.finish = function() {
+  prototype$1u.finish = function() {
     var name, ds;
 
     // annotate root
@@ -38693,40 +40196,40 @@
 
   // ----
 
-  prototype$1o.pushState = function(encode, parent, lookup) {
+  prototype$1u.pushState = function(encode, parent, lookup) {
     this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
     this._parent.push(parent);
     this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
     this._markpath.push(-1);
   };
 
-  prototype$1o.popState = function() {
+  prototype$1u.popState = function() {
     this._encode.pop();
     this._parent.pop();
     this._lookup.pop();
     this._markpath.pop();
   };
 
-  prototype$1o.parent = function() {
+  prototype$1u.parent = function() {
     return peek(this._parent);
   };
 
-  prototype$1o.encode = function() {
+  prototype$1u.encode = function() {
     return peek(this._encode);
   };
 
-  prototype$1o.lookup = function() {
+  prototype$1u.lookup = function() {
     return peek(this._lookup);
   };
 
-  prototype$1o.markpath = function() {
+  prototype$1u.markpath = function() {
     var p = this._markpath;
     return ++p[p.length-1];
   };
 
   // ----
 
-  prototype$1o.fieldRef = function(field, name) {
+  prototype$1u.fieldRef = function(field, name) {
     if (isString(field)) return fieldRef(field, name);
     if (!field.signal) {
       error('Unsupported field reference: ' + $(field));
@@ -38744,7 +40247,7 @@
     return f;
   };
 
-  prototype$1o.compareRef = function(cmp) {
+  prototype$1u.compareRef = function(cmp) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -38767,7 +40270,7 @@
       : compareRef(fields, orders);
   };
 
-  prototype$1o.keyRef = function(fields, flat) {
+  prototype$1u.keyRef = function(fields, flat) {
     function check(_) {
       if (isSignal(_)) {
         signal = true;
@@ -38786,7 +40289,7 @@
       : keyRef(fields, flat);
   };
 
-  prototype$1o.sortRef = function(sort) {
+  prototype$1u.sortRef = function(sort) {
     if (!sort) return sort;
 
     // including id ensures stable sorting
@@ -38803,7 +40306,7 @@
 
   // ----
 
-  prototype$1o.event = function(source, type) {
+  prototype$1u.event = function(source, type) {
     var key = source + ':' + type;
     if (!this.events[key]) {
       var id = this.id();
@@ -38819,11 +40322,11 @@
 
   // ----
 
-  prototype$1o.hasOwnSignal = function(name) {
+  prototype$1u.hasOwnSignal = function(name) {
     return hasOwnProperty(this.signals, name);
   };
 
-  prototype$1o.addSignal = function(name, value) {
+  prototype$1u.addSignal = function(name, value) {
     if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + $(name));
     }
@@ -38831,14 +40334,14 @@
     return this.signals[name] = op;
   };
 
-  prototype$1o.getSignal = function(name) {
+  prototype$1u.getSignal = function(name) {
     if (!this.signals[name]) {
       error('Unrecognized signal name: ' + $(name));
     }
     return this.signals[name];
   };
 
-  prototype$1o.signalRef = function(s) {
+  prototype$1u.signalRef = function(s) {
     if (this.signals[s]) {
       return ref(this.signals[s]);
     } else if (!hasOwnProperty(this.lambdas, s)) {
@@ -38847,7 +40350,7 @@
     return ref(this.lambdas[s]);
   };
 
-  prototype$1o.parseLambdas = function() {
+  prototype$1u.parseLambdas = function() {
     var code = Object.keys(this.lambdas);
     for (var i=0, n=code.length; i<n; ++i) {
       var s = code[i],
@@ -38858,11 +40361,11 @@
     }
   };
 
-  prototype$1o.property = function(spec) {
+  prototype$1u.property = function(spec) {
     return spec && spec.signal ? this.signalRef(spec.signal) : spec;
   };
 
-  prototype$1o.objectProperty = function(spec) {
+  prototype$1u.objectProperty = function(spec) {
     return (!spec || !isObject(spec)) ? spec
       : this.signalRef(spec.signal || propertyLambda(spec));
   };
@@ -38903,13 +40406,13 @@
     return code + '}';
   }
 
-  prototype$1o.exprRef = function(code, name) {
+  prototype$1u.exprRef = function(code, name) {
     var params = {expr: parseExpression$1(code, this)};
     if (name) params.expr.$name = name;
     return ref(this.add(Expression$1(params)));
   };
 
-  prototype$1o.addBinding = function(name, bind) {
+  prototype$1u.addBinding = function(name, bind) {
     if (!this.bindings) {
       error('Nested signals do not support binding: ' + $(name));
     }
@@ -38918,108 +40421,60 @@
 
   // ----
 
-  prototype$1o.addScaleProj = function(name, transform) {
+  prototype$1u.addScaleProj = function(name, transform) {
     if (hasOwnProperty(this.scales, name)) {
       error('Duplicate scale or projection name: ' + $(name));
     }
     this.scales[name] = this.add(transform);
   };
 
-  prototype$1o.addScale = function(name, params) {
+  prototype$1u.addScale = function(name, params) {
     this.addScaleProj(name, Scale$1(params));
   };
 
-  prototype$1o.addProjection = function(name, params) {
+  prototype$1u.addProjection = function(name, params) {
     this.addScaleProj(name, Projection$1(params));
   };
 
-  prototype$1o.getScale = function(name) {
+  prototype$1u.getScale = function(name) {
     if (!this.scales[name]) {
       error('Unrecognized scale name: ' + $(name));
     }
     return this.scales[name];
   };
 
-  prototype$1o.projectionRef =
-  prototype$1o.scaleRef = function(name) {
+  prototype$1u.projectionRef =
+  prototype$1u.scaleRef = function(name) {
     return ref(this.getScale(name));
   };
 
-  prototype$1o.projectionType =
-  prototype$1o.scaleType = function(name) {
+  prototype$1u.projectionType =
+  prototype$1u.scaleType = function(name) {
     return this.getScale(name).params.type;
   };
 
   // ----
 
-  prototype$1o.addData = function(name, dataScope) {
+  prototype$1u.addData = function(name, dataScope) {
     if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return (this.data[name] = dataScope);
   };
 
-  prototype$1o.getData = function(name) {
+  prototype$1u.getData = function(name) {
     if (!this.data[name]) {
       error('Undefined data set name: ' + $(name));
     }
     return this.data[name];
   };
 
-  prototype$1o.addDataPipeline = function(name, entries) {
+  prototype$1u.addDataPipeline = function(name, entries) {
     if (hasOwnProperty(this.data, name)) {
       error('Duplicate data set name: ' + $(name));
     }
     return this.addData(name, DataScope.fromEntries(this, entries));
   };
-
-  function defaults(configs) {
-    return (configs || []).reduce((out, config) => {
-      for (var key in config) {
-        if (key === 'signals') {
-          out.signals = mergeNamed(out.signals, config.signals);
-        } else {
-          var r = key === 'legend' ? {'layout': 1}
-            : key === 'style' ? true : null;
-          copy$3(out, key, config[key], r);
-        }
-      }
-      return out;
-    }, defaults$1());
-  }
-
-  function copy$3(output, key, value, recurse) {
-    var k, o;
-    if (isObject(value) && !isArray(value)) {
-      o = isObject(output[key]) ? output[key] : (output[key] = {});
-      for (k in value) {
-        if (recurse && (recurse === true || recurse[k])) {
-          copy$3(o, k, value[k]);
-        } else {
-          o[k] = value[k];
-        }
-      }
-    } else {
-      output[key] = value;
-    }
-  }
-
-  function mergeNamed(a, b) {
-    if (a == null) return b;
-
-    const map = {}, out = [];
-
-    function add(_) {
-      if (!map[_.name]) {
-        map[_.name] = 1;
-        out.push(_);
-      }
-    }
-
-    b.forEach(add);
-    a.forEach(add);
-    return out;
-  }
 
   var defaultFont = 'sans-serif',
       defaultSymbolSize = 30,
@@ -39034,7 +40489,7 @@
    * Users can provide their own (sub-)set of these default values
    * by passing in a config object to the top-level parse method.
    */
-  function defaults$1() {
+  function defaults() {
     return {
       // default padding around visualization
       padding: 0,
@@ -39104,6 +40559,12 @@
           fontSize: 13,
           fontWeight: 'bold'
         },
+        // chart subtitle
+        'group-subtitle': {
+          fill: black,
+          font: defaultFont,
+          fontSize: 12
+        },
         // defaults for styled point marks in Vega-Lite
         point: {
           size: defaultSymbolSize,
@@ -39130,7 +40591,8 @@
       title: {
         orient: 'top',
         anchor: 'middle',
-        offset: 4
+        offset: 4,
+        subtitlePadding: 3
       },
 
       // defaults for axes
@@ -39159,7 +40621,12 @@
 
       // correction for centering bias
       axisBand: {
-        tickOffset: -1
+        tickOffset: -0.5
+      },
+
+      // defaults for cartographic projection
+      projection: {
+        type: 'mercator'
       },
 
       // defaults for legends
@@ -39181,6 +40648,7 @@
         labelLimit: 160,
         labelOffset: 4,
         labelOverlap: true,
+        symbolLimit: 30,
         symbolType: 'circle',
         symbolSize: 100,
         symbolOffset: 0,
@@ -39231,9 +40699,12 @@
   }
 
   function parse$5(spec, config) {
-    if (!isObject(spec)) error('Input Vega specification must be an object.');
-    return parseView(spec, new Scope$1(defaults([config, spec.config])))
-      .toRuntime();
+    if (!isObject(spec)) {
+      error('Input Vega specification must be an object.');
+    }
+
+    config = mergeConfig(defaults(), config, spec.config);
+    return parseView(spec, new Scope$1(config)).toRuntime();
   }
 
   // -- Transforms -----
@@ -39271,6 +40742,7 @@
   exports.accessorFields = accessorFields;
   exports.accessorName = accessorName;
   exports.array = array;
+  exports.bandwidthNRD = bandwidthNRD;
   exports.bin = bin;
   exports.bootstrapCI = bootstrapCI;
   exports.boundClip = boundClip;
@@ -39283,12 +40755,19 @@
   exports.closeTag = closeTag;
   exports.compare = compare;
   exports.constant = constant;
+  exports.cumulativeLogNormal = cumulativeLogNormal;
+  exports.cumulativeNormal = cumulativeNormal;
+  exports.cumulativeUniform = cumulativeUniform;
   exports.debounce = debounce;
   exports.definition = definition;
+  exports.densityLogNormal = densityLogNormal;
+  exports.densityNormal = densityNormal;
+  exports.densityUniform = densityUniform;
   exports.domChild = domChild;
   exports.domClear = domClear;
   exports.domCreate = domCreate;
   exports.domFind = domFind;
+  exports.dotbin = dotbin;
   exports.error = error;
   exports.expressionFunction = expressionFunction;
   exports.extend = extend;
@@ -39331,9 +40810,12 @@
   exports.isTuple = isTuple;
   exports.key = key;
   exports.lerp = lerp;
+  exports.lineHeight = lineHeight;
   exports.loader = loader;
   exports.logger = logger;
   exports.merge = merge;
+  exports.mergeConfig = mergeConfig;
+  exports.multiLineOffset = multiLineOffset;
   exports.one = one;
   exports.openTag = openTag;
   exports.pad = pad;
@@ -39352,12 +40834,17 @@
   exports.peek = peek;
   exports.point = point$4;
   exports.projection = projection$1;
+  exports.quantileLogNormal = quantileLogNormal;
+  exports.quantileNormal = quantileNormal;
+  exports.quantileUniform = quantileUniform;
+  exports.quantiles = quantiles;
   exports.quantizeInterpolator = quantizeInterpolator;
   exports.quarter = quarter;
   exports.quartiles = quartiles;
   exports.randomInteger = integer;
   exports.randomKDE = randomKDE;
   exports.randomLCG = lcg;
+  exports.randomLogNormal = randomLogNormal;
   exports.randomMixture = randomMixture;
   exports.randomNormal = randomNormal;
   exports.randomUniform = randomUniform;
@@ -39376,7 +40863,10 @@
   exports.runtime = parse$4;
   exports.runtimeContext = context$2;
   exports.sampleCurve = sampleCurve;
-  exports.scale = scale$1;
+  exports.sampleLogNormal = sampleLogNormal;
+  exports.sampleNormal = sampleNormal;
+  exports.sampleUniform = sampleUniform;
+  exports.scale = scale$2;
   exports.sceneEqual = sceneEqual;
   exports.sceneFromJSON = sceneFromJSON;
   exports.scenePickVisit = pickVisit;
@@ -39389,8 +40879,15 @@
   exports.splitAccessPath = splitAccessPath;
   exports.stringValue = $;
   exports.textMetrics = textMetrics;
+  exports.timeBin = timeBin;
+  exports.timeFloor = timeFloor;
+  exports.timeFormat = timeFormat$1;
   exports.timeFormatLocale = defaultLocale;
   exports.timeInterval = timeInterval;
+  exports.timeOffset = timeOffset;
+  exports.timeSequence = timeSequence;
+  exports.timeUnitSpecifier = timeUnitSpecifier;
+  exports.timeUnits = timeUnits;
   exports.toBoolean = toBoolean;
   exports.toDate = toDate;
   exports.toNumber = toNumber;
@@ -39402,9 +40899,15 @@
   exports.truthy = truthy;
   exports.tupleid = tupleid;
   exports.typeParsers = typeParsers;
+  exports.utcFloor = utcFloor;
+  exports.utcFormat = utcFormat$1;
+  exports.utcInterval = utcInterval;
+  exports.utcOffset = utcOffset;
+  exports.utcSequence = utcSequence;
   exports.utcquarter = utcquarter;
   exports.version = version;
   exports.visitArray = visitArray;
+  exports.writeConfig = writeConfig;
   exports.zero = zero;
   exports.zoomLinear = zoomLinear;
   exports.zoomLog = zoomLog;
@@ -39413,4 +40916,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

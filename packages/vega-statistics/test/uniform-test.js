@@ -39,8 +39,8 @@ tape('uniform evaluates the cdf', function(t) {
 tape('uniform evaluates the inverse cdf', function(t) {
   var n1 = uniform(-1, 1);
   // extreme values
-  t.ok(isNaN(n1.icdf(-2)));
-  t.ok(isNaN(n1.icdf(2)));
+  t.ok(Number.isNaN(n1.icdf(-2)));
+  t.ok(Number.isNaN(n1.icdf(2)));
   t.equal(n1.icdf(0), -1);
   t.equal(n1.icdf(1), 1);
   // in range values

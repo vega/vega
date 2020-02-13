@@ -74,7 +74,7 @@ function addSignals(scope, signals, config) {
   });
 
   if (!config) return signals;
-  const out = signals.slice();
+  const out = array(signals).slice();
 
   // add config signals if not already defined
   array(config).forEach(_ => {

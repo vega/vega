@@ -66,6 +66,12 @@ function clipToBounds(g, b, origin) {
   return b;
 }
 
+function viewBounds(origin, width, height) {
+  return tempBounds
+    .set(0, 0, width, height)
+    .translate(-origin[0], -origin[1]);
+}
+
 function translate(bounds, group) {
   if (group == null) return bounds;
   var b = tempBounds.clear().union(bounds);
@@ -86,9 +92,9 @@ prototype._render = function(scene) {
   g.save();
   if (this._redraw || b.empty()) {
     this._redraw = false;
-    b = null;
+    b = viewBounds(o, w, h).expand(1);
   } else {
-    b = clipToBounds(g, b, o);
+    b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o, w, h);
   }
 
   this.clear(-o[0], -o[1], w, h);

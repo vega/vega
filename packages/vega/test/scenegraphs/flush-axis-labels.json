@@ -128,6 +128,7 @@
                       "text": "0.0M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -141,6 +142,7 @@
                       "text": "0.1M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -154,6 +156,7 @@
                       "text": "0.2M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -167,6 +170,7 @@
                       "text": "0.3M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -180,6 +184,7 @@
                       "text": "0.4M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -193,6 +198,7 @@
                       "text": "0.5M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -206,6 +212,7 @@
                       "text": "0.6M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -219,6 +226,7 @@
                       "text": "0.7M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -232,6 +240,7 @@
                       "text": "0.8M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -245,6 +254,7 @@
                       "text": "0.9M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -258,6 +268,7 @@
                       "text": "1.0M",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -409,6 +420,7 @@
                       "text": "0",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -422,6 +434,7 @@
                       "text": "100,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -435,6 +448,7 @@
                       "text": "200,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -448,6 +462,7 @@
                       "text": "300,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -461,6 +476,7 @@
                       "text": "400,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -474,6 +490,7 @@
                       "text": "500,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -487,6 +504,7 @@
                       "text": "600,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -500,6 +518,7 @@
                       "text": "700,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -513,6 +532,7 @@
                       "text": "800,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -526,6 +546,7 @@
                       "text": "900,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -539,6 +560,7 @@
                       "text": "1,000,000",
                       "angle": 0,
                       "dx": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -690,6 +712,7 @@
                       "text": "0.0M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -703,6 +726,7 @@
                       "text": "0.1M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -716,6 +740,7 @@
                       "text": "0.2M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -729,6 +754,7 @@
                       "text": "0.3M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -742,6 +768,7 @@
                       "text": "0.4M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -755,6 +782,7 @@
                       "text": "0.5M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -768,6 +796,7 @@
                       "text": "0.6M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -781,6 +810,7 @@
                       "text": "0.7M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -794,6 +824,7 @@
                       "text": "0.8M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -807,6 +838,7 @@
                       "text": "0.9M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -820,6 +852,7 @@
                       "text": "1.0M",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -971,6 +1004,7 @@
                       "text": "0",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -984,6 +1018,7 @@
                       "text": "100,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -997,6 +1032,7 @@
                       "text": "200,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1010,6 +1046,7 @@
                       "text": "300,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1023,6 +1060,7 @@
                       "text": "400,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1036,6 +1074,7 @@
                       "text": "500,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1049,6 +1088,7 @@
                       "text": "600,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1062,6 +1102,7 @@
                       "text": "700,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1075,6 +1116,7 @@
                       "text": "800,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1088,6 +1130,7 @@
                       "text": "900,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -1101,6 +1144,7 @@
                       "text": "1,000,000",
                       "angle": 0,
                       "dy": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
