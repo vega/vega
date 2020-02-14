@@ -49,7 +49,7 @@ export default function($, bitmaps, anchors, offsets) {
           continue;
         } else {
           // Otherwise, find the label width
-          textWidth = textMetrics.width(d.datum);
+          textWidth = textMetrics.width(d.datum, d.datum.text);
         }
       }
 
