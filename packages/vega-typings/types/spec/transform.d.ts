@@ -1,4 +1,3 @@
-import { Data } from './data';
 import {
   Compare,
   ExprRef,
@@ -55,6 +54,7 @@ export type Transforms =
   | IsocontourTransform
   | JoinAggregateTransform
   | KDETransform
+  | KDE2DTransform
   | LabelTransform
   | LinkPathTransform
   | LoessTransform
