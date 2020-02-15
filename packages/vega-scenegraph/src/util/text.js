@@ -35,7 +35,7 @@ function measureWidth(item, text) {
 }
 
 function measure(text) {
-  const key = currentFont + text;
+  const key = `${currentFont}_${text}`;
   let width = widthCache.get(key);
   if (width === undefined) {
     context.font = currentFont;
