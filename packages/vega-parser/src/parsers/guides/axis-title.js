@@ -53,7 +53,11 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit'),
-    lineHeight:  _('titleLineHeight')
+    lineHeight:  _('titleLineHeight'),
+    ariaLabel:   _('titleAriaLabel'),
+    ariaRole:    _('titleAriaRole'),
+    ariaHidden:  _('titleAriaHidden'),
+    tabindex:    _('titletabindex')
   }, { // require update
     align:       _('titleAlign')
   });

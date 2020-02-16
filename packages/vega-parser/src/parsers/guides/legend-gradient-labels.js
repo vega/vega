@@ -41,7 +41,11 @@ export default function(spec, config, userEncode, dataRef) {
     fontSize:    _('labelFontSize'),
     fontStyle:   _('labelFontStyle'),
     fontWeight:  _('labelFontWeight'),
-    limit:       value(spec.labelLimit, config.gradientLabelLimit)
+    limit:       value(spec.labelLimit, config.gradientLabelLimit),
+    ariaLabel:   _('labelAriaLabel'),
+    ariaRole:    _('labelAriaRole'),
+    ariaHidden:  _('labelAriaHidden'),
+    tabindex:    _('labeltabindex')
   });
 
   if (vertical) {

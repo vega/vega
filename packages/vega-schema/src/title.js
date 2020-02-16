@@ -2,7 +2,7 @@ import {
   numberValue, stringValue, textOrSignal, anchorValue,
   alignValue, baselineValue, colorValue, fontWeightValue,
   def, enums, object, anyOf, oneOf, pattern, ref,
-  booleanType, numberType, stringType, orSignal, numberOrSignal
+  booleanType, numberType, stringType, orSignal, numberOrSignal, booleanValue
 } from './util';
 
 // types defined elsewhere
@@ -40,6 +40,10 @@ const title = oneOf(
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
     lineHeight: numberValue,
+    ariaLabel: stringValue,
+    ariaRole: stringValue,
+    ariaHidden: booleanValue,
+    tabindex: numberValue,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
@@ -47,6 +51,10 @@ const title = oneOf(
     subtitleFontWeight: fontWeightValue,
     subtitleLineHeight: numberValue,
     subtitlePadding: numberOrSignal,
+    subtitleAriaLabel: stringValue,
+    subtitleAriaRole: stringValue,
+    subtitleAriaHidden: booleanValue,
+    subtitletabindex: numberValue,
 
     // custom encoders
     encode: anyOf(

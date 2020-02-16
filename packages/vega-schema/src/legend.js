@@ -5,7 +5,7 @@ import {
   alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
   fontWeightValue, numberValue, orientValue, stringValue,
   arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
-  formatTypeType, numberType, stringType, orSignal
+  formatTypeType, numberType, stringType, orSignal, booleanValue
 } from './util';
 
 // types defined elsewhere
@@ -43,18 +43,18 @@ const legendOrientEnum = [
 
 const legendProps = object({
   // LEGEND SCALES
-  size:        stringType,
-  shape:       stringType,
-  fill:        stringType,
-  stroke:      stringType,
-  opacity:     stringType,
-  strokeDash:  stringType,
+  size: stringType,
+  shape: stringType,
+  fill: stringType,
+  stroke: stringType,
+  opacity: stringType,
+  strokeDash: stringType,
   strokeWidth: stringType,
 
   // LEGEND TYPE
-  type:        enums(legendTypeEnum),
-  direction:   enums(legendDirectionEnum),
-  orient:      orSignal(enums(legendOrientEnum, {default: 'right'})),
+  type: enums(legendTypeEnum),
+  direction: enums(legendDirectionEnum),
+  orient: orSignal(enums(legendOrientEnum, { default: "right" })),
 
   // LEGEND CONFIG
   tickCount: tickCountRef,
@@ -71,6 +71,10 @@ const legendProps = object({
   strokeColor: colorValue,
   legendX: numberValue,
   legendY: numberValue,
+  ariaLabel: stringValue,
+  ariaRole: stringValue,
+  ariaHidden: booleanValue,
+  tabindex: numberValue,
 
   // LEGEND TITLE CONFIG
   title: textOrSignal,
@@ -87,6 +91,9 @@ const legendProps = object({
   titleOpacity: numberValue,
   titleOrient: orientValue,
   titlePadding: numberValue,
+  titleAriaLabel: stringValue,
+  titleAriaHidden: booleanValue,
+  titletabindex: numberValue,
 
   // GRADIENT CONFIG
   gradientLength: numberOrSignal,
@@ -128,6 +135,10 @@ const legendProps = object({
   labelOpacity: numberValue,
   labelOverlap: labelOverlapRef,
   labelSeparation: numberOrSignal,
+  labelAriaLabel: stringValue,
+  labelAriaRole: stringValue,
+  labelAriaHidden: booleanValue,
+  labeltabindex: numberValue,
 
   // CUSTOMIZED ENCODERS
   encode: object({

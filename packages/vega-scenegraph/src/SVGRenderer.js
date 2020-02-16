@@ -415,8 +415,10 @@ var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
 var general_extras = {
+  'tabindex': 'tabindex',
   'ariaLabel': 'aria-label',
-  'tabIndex': 'tabindex'
+  'ariaHidden': 'aria-hidden',
+  'ariaRole': 'role'
 }
 
 // Extra configuration for certain mark types
@@ -536,7 +538,7 @@ prototype._update = function(mdef, el, item) {
 
   // apply general SVG properties
   for (const prop in general_extras) {
-    if (item[prop]) {
+    if (item[prop] != null) {
       emit(general_extras[prop], item[prop]);
     }
   }

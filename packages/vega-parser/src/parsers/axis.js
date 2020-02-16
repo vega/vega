@@ -44,6 +44,10 @@ export default function(spec, scope) {
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
+      ariaLabel:    encoder(_('ariaLabel')),
+      ariaRole:     encoder(_('ariaRole')),
+      ariaHidden:   encoder(_('ariaHidden')),
+      tabindex:     encoder(_('tabindex')),
       range:        {signal: `abs(span(range("${spec.scale}")))`}
     }
   }, encode.axis, Skip);

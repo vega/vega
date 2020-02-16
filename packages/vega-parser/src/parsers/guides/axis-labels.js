@@ -88,7 +88,11 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     fontSize:    _('labelFontSize'),
     fontWeight:  _('labelFontWeight'),
     fontStyle:   _('labelFontStyle'),
-    limit:       _('labelLimit')
+    limit:       _('labelLimit'),
+    ariaLabel:   _('labelAriaLabel'),
+    ariaRole:    _('labelAriaRole'),
+    ariaHidden:  _('labelAriaHidden'),
+    tabindex:    _('labeltabindex')
   });
 
   bound   = _('labelBound');

@@ -59,6 +59,10 @@ const axis = object({
   translate: numberType,
   values: arrayOrSignal,
   zindex: numberType,
+  ariaLabel: stringValue,
+  ariaRole: stringValue,
+  ariaHidden: booleanValue,
+  tabindex: numberValue,
 
   // TITLE CONFIG
   title: textOrSignal,
@@ -100,6 +104,10 @@ const axis = object({
   tickCount: tickCountRef,
   tickExtra: booleanOrSignal,
   tickMinStep: numberOrSignal,
+  titleAriaLabel: stringValue,
+  titleAriaRole: stringValue,
+  titleAriaHidden: booleanValue,
+  titletabindex: numberValue,
 
   // GRID CONFIG
   grid: booleanType,
@@ -128,6 +136,10 @@ const axis = object({
   labelOpacity: numberValue,
   labelPadding: numberValue,
   labelSeparation: numberOrSignal,
+  labelAriaLabel: stringValue,
+  labelAriaRole: stringValue,
+  labelAriaHidden: booleanValue,
+  labeltabindex: numberValue,
 
   // CUSTOMIZED ENCODERS
   encode: object({

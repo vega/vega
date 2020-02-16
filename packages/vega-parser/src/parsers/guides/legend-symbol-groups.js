@@ -105,7 +105,11 @@ export default function(spec, config, userEncode, dataRef, columns) {
     fontSize:    _('labelFontSize'),
     fontStyle:   _('labelFontStyle'),
     fontWeight:  _('labelFontWeight'),
-    limit:       _('labelLimit')
+    limit:       _('labelLimit'),
+    ariaLabel:   _('labelAriaLabel'),
+    ariaRole:    _('labelAriaRole'),
+    ariaHidden:  _('labelAriaHidden'),
+    tabindex:    _('labeltabindex')
   });
 
   labels = guideMark(
