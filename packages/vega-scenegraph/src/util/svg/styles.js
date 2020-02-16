@@ -12,5 +12,3 @@ export var styles = {
   'opacity':          'opacity',
   'blend':            'mix-blend-mode'
 };
-
-export var styleProperties = Object.keys(styles);
