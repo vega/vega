@@ -161,9 +161,15 @@ export type TimeInterval =
   | 'week'
   | 'month'
   | 'year';
+
+export interface TimeIntervalStep {
+  interval: TimeInterval;
+  step: number;
+}
+
 export interface TimeScale extends ContinuousScale {
   type: 'time' | 'utc';
-  nice?: boolean | TimeInterval | SignalRef;
+  nice?: boolean | TimeInterval | TimeIntervalStep | SignalRef;
 }
 export interface IdentityScale extends BaseScale {
   type: 'identity';
