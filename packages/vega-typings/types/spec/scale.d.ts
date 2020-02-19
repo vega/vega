@@ -164,7 +164,7 @@ export type TimeInterval =
 
 export interface TimeIntervalStep {
   interval: TimeInterval;
-  step: number
+  step: number;
 }
 
 export interface TimeScale extends ContinuousScale {
