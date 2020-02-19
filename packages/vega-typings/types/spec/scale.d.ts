@@ -162,7 +162,7 @@ export type TimeInterval =
   | 'month'
   | 'year';
 
-export type TimeIntervalStep = { interval: string; step: number };
+export type TimeIntervalStep = { interval: TimeInterval; step: number };
 
 export interface TimeScale extends ContinuousScale {
   type: 'time' | 'utc';
