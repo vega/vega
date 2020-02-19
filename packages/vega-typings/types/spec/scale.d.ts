@@ -10,6 +10,7 @@ export type RangeEnum =
   | 'ramp'
   | 'diverging'
   | 'heatmap';
+
 export type RangeRawArray = (number | SignalRef)[];
 export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray)[];
 export type RangeScheme =
@@ -78,21 +79,23 @@ export type ScaleInterpolate =
       type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
       gamma?: number | SignalRef;
     };
-export interface DataRef {
+export interface ScaleDataRef {
   data: string;
   field: ScaleField;
 }
-export type MultiDataRef =
-  | {
-      data: string;
-      fields: ScaleField[];
-    }
-  | {
-      fields: ((string | number | boolean)[] | DataRef | SignalRef)[];
-    };
-export type ScaleData =
-  | (DataRef & { sort?: SortField })
-  | (MultiDataRef & { sort?: UnionSortField });
+
+export interface ScaleMultiDataRef {
+  fields: ((string | number | boolean)[] | ScaleDataRef | SignalRef)[];
+}
+
+export interface ScaleMultiFieldsRef {
+  data: string;
+  fields: ScaleField[];
+}
+
+export type ScaleData = (ScaleDataRef | ScaleMultiDataRef | ScaleMultiFieldsRef) & {
+  sort?: SortField;
+};
 export type QuantScaleType =
   | 'linear'
   | 'pow'
