@@ -56,14 +56,29 @@ export type UnionSortField =
     };
 export type ScaleField = string | SignalRef;
 
-export type ScaleBins =
-  | (number | SignalRef)[]
-  | SignalRef
-  | {
-      step: number | SignalRef;
-      start?: number | SignalRef;
-      stop?: number | SignalRef;
-    };
+export interface ScaleBinParams {
+  /**
+   * The step size defining the bin interval width.
+   */
+  step: number | SignalRef;
+
+  /**
+   * The starting (lowest-valued) bin boundary.
+   *
+   * __Default value:__ The lowest value of the scale domain will be used.
+   */
+  start?: number | SignalRef;
+
+  /**
+   * The stopping (highest-valued) bin boundary.
+   *
+   * __Default value:__ The highest value of the scale domain will be used.
+   *
+   */
+  stop?: number | SignalRef;
+}
+
+export type ScaleBins = (number | SignalRef)[] | SignalRef | ScaleBinParams;
 
 export type ScaleInterpolateEnum =
   | 'rgb'
