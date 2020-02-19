@@ -65,7 +65,7 @@ export type ScaleBins =
       stop?: number | SignalRef;
     };
 
-export type ScaleInterpolate =
+export type ScaleInterpolateEnum =
   | 'rgb'
   | 'lab'
   | 'hcl'
@@ -73,12 +73,15 @@ export type ScaleInterpolate =
   | 'hsl-long'
   | 'hcl-long'
   | 'cubehelix'
-  | 'cubehelix-long'
-  | SignalRef
-  | {
-      type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
-      gamma?: number | SignalRef;
-    };
+  | 'cubehelix-long';
+
+export interface ScaleInterpolateParams {
+  type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
+  gamma?: number | SignalRef;
+}
+
+export type ScaleInterpolate = ScaleInterpolateEnum | SignalRef | ScaleInterpolateParams;
+
 export interface ScaleDataRef {
   data: string;
   field: ScaleField;
