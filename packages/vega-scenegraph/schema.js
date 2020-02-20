@@ -216,6 +216,7 @@ const ITEM_BASE = {
     "tabindex": { "type": "number" },
     "ariaLabel": { "type": "string" },
     "ariaRole": { "type": "string" },
+    "ariaRoleDescription": { "type": "string" },
     "ariaHidden": { "type": "boolean" },
     "cursor": { "type": "string" },
     "href": { "type": "string", "format": "uri-reference" },

@@ -19,7 +19,8 @@ var keys = [
   'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
-  'tabindex', 'ariaLabel', 'ariaHidden', 'ariaRole'             // screen reader
+  'tabIndex',                                                   // tab order
+  'ariaLabel', 'ariaHidden', 'ariaRole', 'ariaRoleDescription', // screen reader
 ];
 
 export function sceneToJSON(scene, indent) {
