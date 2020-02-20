@@ -93,7 +93,7 @@ const legendProps = object({
   titlePadding: numberValue,
   titleAriaLabel: stringValue,
   titleAriaHidden: booleanValue,
-  titletabindex: numberValue,
+  titleTabindex: numberValue,
 
   // GRADIENT CONFIG
   gradientLength: numberOrSignal,
@@ -138,7 +138,7 @@ const legendProps = object({
   labelAriaLabel: stringValue,
   labelAriaRole: stringValue,
   labelAriaHidden: booleanValue,
-  labeltabindex: numberValue,
+  labelTabindex: numberValue,
 
   // CUSTOMIZED ENCODERS
   encode: object({

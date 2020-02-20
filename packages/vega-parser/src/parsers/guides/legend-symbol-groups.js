@@ -109,7 +109,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     ariaLabel:   _('labelAriaLabel'),
     ariaRole:    _('labelAriaRole'),
     ariaHidden:  _('labelAriaHidden'),
-    tabindex:    _('labeltabindex')
+    tabindex:    _('labelTabindex')
   });
 
   labels = guideMark(

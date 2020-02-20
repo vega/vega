@@ -92,7 +92,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     ariaLabel:   _('labelAriaLabel'),
     ariaRole:    _('labelAriaRole'),
     ariaHidden:  _('labelAriaHidden'),
-    tabindex:    _('labeltabindex')
+    tabindex:    _('labelTabindex')
   });
 
   bound   = _('labelBound');

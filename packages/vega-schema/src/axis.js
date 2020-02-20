@@ -107,7 +107,7 @@ const axis = object({
   titleAriaLabel: stringValue,
   titleAriaRole: stringValue,
   titleAriaHidden: booleanValue,
-  titletabindex: numberValue,
+  titleTabindex: numberValue,
 
   // GRID CONFIG
   grid: booleanType,
@@ -139,7 +139,7 @@ const axis = object({
   labelAriaLabel: stringValue,
   labelAriaRole: stringValue,
   labelAriaHidden: booleanValue,
-  labeltabindex: numberValue,
+  labelTabindex: numberValue,
 
   // CUSTOMIZED ENCODERS
   encode: object({

@@ -54,7 +54,7 @@ const title = oneOf(
     subtitleAriaLabel: stringValue,
     subtitleAriaRole: stringValue,
     subtitleAriaHidden: booleanValue,
-    subtitletabindex: numberValue,
+    subtitleTabindex: numberValue,
 
     // custom encoders
     encode: anyOf(

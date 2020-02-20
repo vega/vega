@@ -135,7 +135,7 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     ariaLabel:  _('subtitleAriaLabel'),
     ariaRole:   _('subtitleAriaRole'),
     ariaHidden: _('subtitleAriaHidden'),
-    tabindex:   _('subtitletabindex')
+    tabindex:   _('subtitleTabindex')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
