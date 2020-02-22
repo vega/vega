@@ -43,7 +43,7 @@ For better readability, we can also add ticks to indicate which label is belong 
 
 In scatter plot, labeling can be done by having text mark that takes in data from the the symbol mark name `"basePoint"`(or what we call base mark). The text mark recieves all the information including position and bounding box of each point in `"basePoint"`. Then, we transform the text mark with label transform so that the labels spaced out nicely near the point it is representing and not colliding into each other.
 
-**Note** the reason that we do not have `x` and `y` channels in the text mark's encoding is that label transform will replace the `x` and `y` channels of the text mark anyway. Label transform will use the position bounding box of each point in `"basePoint"` to decide the position of each label.
+**Note** the reason that we do not have `x` and `y` channels in the text mark's encoding is that the label transform will replace the `x` and `y` channels of the text mark anyway. The label transform will use the position bounding box of each point in `"basePoint"` to decide the position of each label.
 
 ### Label in area chart
 
