@@ -47,7 +47,7 @@ In scatter plot, labeling can be done by having text mark that takes in data fro
 
 ### Label in area chart
 
-Placing labels in area chart is a special case. In area chart, area mark is in a group mark, and we also want our label to be inside area. For this reason, we have to create a text mark outside the group mark and use the group mark as the base mark. Then in property of label, we have to set `markIndex` to the index of the area mark in the group mark, so label-transform will know which mark in the group is the base mark. Then, we have to set `avoidBaseMark` to `false` because we want to place label inside its area. The example of label in area chart is in the [examples](./#examples) section.
+Placing labels in area charts is a special case. In area charts, the area mark is in a group mark, and we also want our labels to be inside area they belong to. For this reason, we have to create a text mark outside the group mark and use the group mark as the base mark. Then in the property of a label, we have to set `markIndex` to the index of the area mark in the group mark, so label-transform will know which mark in the group is the base mark. Then, we have to set `avoidBaseMark` to `false` because we want to place a label inside its area. The example of labels in area chart is in the [examples](./#examples) section.
 
 ### <a name="padding"></a>Example of using padding
 
