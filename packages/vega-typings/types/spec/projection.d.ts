@@ -80,7 +80,7 @@ export interface BaseProjection {
   precision?: number | SignalRef;
 
   /*
-   * GeoJSON data to which the projection should attempt to automatically fit the translate and scale parameters..
+   * GeoJSON data to which the projection should attempt to automatically fit the `translate` and `scale` parameters. If object-valued, this parameter should be a GeoJSON Feature or FeatureCollection. If array-valued, each array member may be a GeoJSON Feature, FeatureCollection, or a sub-array of GeoJSON Features.
    */
   fit?: Fit | Fit[] | SignalRef;
   /*
