@@ -7080,9 +7080,9 @@ validate-npm-package-name@^3.0.0:
     builtins "^1.0.3"
 
 vega-datasets@^1.29.0:
-  version "1.29.0"
-  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.29.0.tgz#0daa4072940e219753bab30638be38e70c7d84f7"
-  integrity sha512-6H7EFQ+dKGEUpAj12vZ73jH34wOolpRmthM2cb5iFPuI1TY150B5MpbWJCC6We7MA49xwG8ZIzsRzLXjpC98kA==
+  version "1.30.2"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.30.2.tgz#d8a88f2b8602835d4547006797059450b5d9c97c"
+  integrity sha512-CRF9WCqEcw9h1+gm7+6p6db0544fAWYlxmfkB+V6SsiaBG/3kP+0Xo+z9xG9Ch15PBhqfkhj1SivwcPQnqm0Qw==
 
 vega-typings@0.12.0:
   version "0.12.0"
