@@ -1,0 +1,32 @@
+{
+  "name": "cohort-analysis",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Roman Mosolov",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "react",
+    "starter"
+  ],
+  "main": "src/index.js",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "^3.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/react-scripts start",
+    "build": "node_modules/.bin/react-scripts build",
+    "eject": "node_modules/.bin/react-scripts eject",
+    "test": "jest"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
