@@ -97,6 +97,7 @@
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
         {"name": "clock"},
-        {"name": "watch"}
+        {"name": "watch"},
+        {"name": "pacman"}
     ]
 }
