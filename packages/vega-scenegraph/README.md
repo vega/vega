@@ -48,7 +48,7 @@ For more information regarding supported mark properties, please see the [Vega m
 
 ## Scenegraph Serialization
 
-The top-level export of this package includes `fromJSON` and `toJSON` methods to support scenegraph serialization. The `fromJSON` method expects a JSON string as input (similar to the examples listed above). It will then add additional parent pointers to the tree structure. For example, each item will have a `mark` property pointing to it's parent mark, and each mark will have a `group` property pointing to it's parent group (if any). The `toJSON` method maps a scenegraph instance to a JSON string, stripping any parent pointers or other non-standard properties.
+The top-level export of this package includes `fromJSON` and `toJSON` methods to support scenegraph serialization. The `fromJSON` method expects a JSON string as input (similar to the examples listed above). It will then add additional parent pointers to the tree structure. For example, each item will have a `mark` property pointing to its parent mark, and each mark will have a `group` property pointing to its parent group (if any). The `toJSON` method maps a scenegraph instance to a JSON string, stripping any parent pointers or other non-standard properties.
 
 ## Test Suite
 

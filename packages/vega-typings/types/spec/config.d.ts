@@ -13,7 +13,14 @@ import {
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
-import { ColorValueRef, NumericValueRef, ScaledValueRef } from './encode.d';
+import {
+  ColorValueRef,
+  Gradient,
+  NumericValueRef,
+  ScaledValueRef,
+  Text,
+  TextDirection,
+} from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
 import { BaseProjection } from './projection';
@@ -63,12 +70,27 @@ export type MarkConfigKeys = 'mark' | Mark['type'];
 
 export interface MarkConfig {
   /**
+   * Width of the marks.
+   */
+  width?: number | SignalRef;
+
+  /**
+   * Height of the marks.
+   */
+  height?: number | SignalRef;
+
+  /**
+   * Whether to keep aspect ratio of image marks.
+   */
+  aspect?: boolean;
+
+  /**
    * Default fill color.
    *
    * __Default value:__ (None)
    *
    */
-  fill?: Color | null | SignalRef;
+  fill?: Color | Gradient | null | SignalRef;
 
   /**
    * Default stroke color.
@@ -76,7 +98,7 @@ export interface MarkConfig {
    * __Default value:__ (None)
    *
    */
-  stroke?: Color | null | SignalRef;
+  stroke?: Color | Gradient | null | SignalRef;
 
   // ---------- Opacity ----------
   /**
@@ -131,17 +153,17 @@ export interface MarkConfig {
   strokeOffset?: number | SignalRef;
 
   /**
-   * The stroke cap for line ending style.
+   * The stroke cap for line ending style. One of `"butt"`, `"round"`, or `"square"`.
    *
-   * __Default value:__ `butt`
+   * __Default value:__ `"butt"`
    *
    */
   strokeCap?: string | SignalRef;
 
   /**
-   * The stroke line join method.
+   * The stroke line join method. One of `"miter"`, `"round"` or `"bevel"`.
    *
-   * __Default value:__ `miter`
+   * __Default value:__ `"miter"`
    *
    */
   strokeJoin?: string | SignalRef;
@@ -151,17 +173,8 @@ export interface MarkConfig {
    */
   strokeMiterLimit?: number | SignalRef;
 
-  // ---------- Orientation: Bar, Tick, Line, Area ----------
   /**
-   * The orientation of a non-stacked bar, tick, area, and line charts.
-   * The value is either horizontal (default) or vertical.
-   * - For bar, rule and tick, this determines whether the size of the bar and tick
-   * should be applied to x or y dimension.
-   * - For area, this property determines the orient property of the Vega output.
-   * - For line, this property determines the sort order of the points in the line
-   * if `config.sortLineBy` is not specified.
-   * For stacked charts, this is always determined by the orientation of the stack;
-   * therefore explicitly specified value will be ignored.
+   * The orientation of the area mark. One of `horizontal` or `vertical` (the default). With a vertical orientation, an area mark is defined by the `x`, `y`, and (`y2` or `height`) properties; with a horizontal orientation, the `y`, `x` and (`x2` or `width`) properties must be specified instead.
    */
   orient?: Orientation | SignalRef;
 
@@ -190,16 +203,18 @@ export interface MarkConfig {
   tension?: number | SignalRef;
 
   /**
-   * The default symbol shape to use. One of: `"circle"` (default), `"square"`, `"cross"`, `"diamond"`, `"triangle-up"`, or `"triangle-down"`, or a custom SVG path.
+   * Shape of the point marks. Supported values include:
+   * - plotting shapes: `"circle"`, `"square"`, `"cross"`, `"diamond"`, `"triangle-up"`, `"triangle-down"`, `"triangle-right"`, or `"triangle-left"`.
+   * - the line symbol `"stroke"`
+   * - centered directional shapes `"arrow"`, `"wedge"`, or `"triangle"`
+   * - a custom [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) (For correct sizing, custom shape paths should be defined within a square bounding box with coordinates ranging from -1 to 1 along both the x and y dimensions.)
    *
    * __Default value:__ `"circle"`
-   *
    */
-  shape?: SymbolShape | SignalRef;
+  shape?: SymbolShape | string | SignalRef;
 
   /**
-   * The pixel area each the point/circle/square.
-   * For example: in the case of circles, the radius is determined in part by the square root of the size value.
+   * The area in pixels of the symbols bounding box. Note that this value sets the area of the symbol; the side lengths will increase with the square root of this value.
    *
    * __Default value:__ `30`
    *
@@ -230,6 +245,13 @@ export interface MarkConfig {
   baseline?: TextBaseline | SignalRef;
 
   /**
+   * The direction of the text. One of `"ltr"` (left-to-right) or `"rtl"` (right-to-left). This property determines on which side is truncated in response to the limit parameter.
+   *
+   * __Default value:__ `"ltr"`
+   */
+  dir?: TextDirection;
+
+  /**
    * The horizontal offset, in pixels, between the text label and its anchor point. The offset is applied after rotation by the _angle_ property.
    */
   dx?: number | SignalRef;
@@ -240,6 +262,13 @@ export interface MarkConfig {
   dy?: number | SignalRef;
 
   /**
+   * The ellipsis string for text truncated in response to the limit parameter.
+   *
+   * __Default value:__ `"…"`
+   */
+  ellipsis?: string;
+
+  /**
    * Polar coordinate radial offset, in pixels, of the text label from the origin determined by the `x` and `y` properties.
    *
    * @minimum 0
@@ -247,7 +276,9 @@ export interface MarkConfig {
   radius?: number | SignalRef;
 
   /**
-   * The maximum length of the text mark in pixels (default 0, indicating no limit). The text value will be automatically truncated if the rendered size exceeds the limit.
+   * The maximum length of the text mark in pixels. The text value will be automatically truncated if the rendered size exceeds the limit.
+   *
+   * __Default value:__ `0` -- indicating no limit
    */
   limit?: number | SignalRef;
 
@@ -274,7 +305,9 @@ export interface MarkConfig {
   /**
    * The font size, in pixels.
    *
-   * @minimum 0
+   * __Default value:__ `11`
+   *
+   *  @minimum 0
    */
   fontSize?: number | SignalRef;
 
@@ -291,7 +324,7 @@ export interface MarkConfig {
   /**
    * Placeholder text if the `text` channel is not specified
    */
-  text?: string | SignalRef;
+  text?: Text | SignalRef;
 
   /**
    * A URL to load upon mouse click. If defined, the mark acts as a hyperlink.
@@ -301,9 +334,51 @@ export interface MarkConfig {
   href?: string | SignalRef;
 
   /**
+   * The tooltip text to show upon mouse hover.
+   */
+  tooltip?: string | SignalRef;
+
+  /**
    * The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.
    */
   cursor?: Cursor | SignalRef;
+
+  // ---------- Corner Radius: Bar, Tick, Rect ----------
+
+  /**
+   * The radius in pixels of rounded rectangle corners.
+   *
+   * __Default value:__ `0`
+   */
+  cornerRadius?: number;
+
+  /**
+   * The radius in pixels of rounded rectangle top right corner.
+   *
+   * __Default value:__ `0`
+   */
+  cornerRadiusTopLeft?: number;
+
+  /**
+   * The radius in pixels of rounded rectangle top left corner.
+   *
+   * __Default value:__ `0`
+   */
+  cornerRadiusTopRight?: number;
+
+  /**
+   * The radius in pixels of rounded rectangle bottom right corner.
+   *
+   * __Default value:__ `0`
+   */
+  cornerRadiusBottomRight?: number;
+
+  /**
+   * The radius in pixels of rounded rectangle bottom left corner.
+   *
+   * __Default value:__ `0`
+   */
+  cornerRadiusBottomLeft?: number;
 }
 
 export type Cursor =
@@ -463,7 +538,7 @@ export type TitleConfig = ExcludeMappedValueRef<BaseTitle>;
 
 export type ProjectionConfig = ExcludeMappedValueRef<BaseProjection>;
 
-export interface RangeConfig {
+export type RangeConfig = {
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
    */
@@ -488,4 +563,6 @@ export interface RangeConfig {
    * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
    */
   symbol?: SymbolShape[];
-}
+} & {
+  [name: string]: RangeScheme | number[] | boolean[] | string[] | SymbolShape[];
+};

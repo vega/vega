@@ -107,7 +107,7 @@ export interface Axis extends BaseAxis {
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
+   * The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups.
    *
    * @TJS-type integer
    * @minimum 0
@@ -497,7 +497,7 @@ export interface BaseAxis {
   labelOpacity?: NumberValue;
 
   /**
-   * The padding, in pixels, between axis and text labels.
+   * The padding in pixels between labels and ticks.
    *
    * __Default value:__ `2`
    */

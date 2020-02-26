@@ -49,7 +49,7 @@ export default function(data, x, y, order) {
   return {
     coef: uncenter(k, coef, -ux, uy),
     predict: predict,
-    rSquared: rSquared(data, x, y, 0, predict)
+    rSquared: rSquared(data, x, y, uy, predict)
   };
 }
 
