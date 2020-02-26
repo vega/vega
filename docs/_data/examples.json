@@ -85,7 +85,9 @@
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
         {"name": "timelines"},
-        {"name": "u-district-cuisine"}
+        {"name": "u-district-cuisine"},
+        {"name": "clock"},
+        {"name": "watch"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
@@ -96,8 +98,6 @@
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
-        {"name": "clock"},
-        {"name": "watch"},
         {"name": "pacman"}
     ]
 }
