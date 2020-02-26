@@ -96,6 +96,7 @@
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
-        {"name": "clock"}
+        {"name": "clock"},
+        {"name": "watch"}
     ]
 }
