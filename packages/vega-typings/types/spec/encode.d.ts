@@ -1,7 +1,6 @@
 import { SignalRef } from '.';
-import { AnchorValue } from './values';
-import { TitleAnchor } from './title';
 import { Color } from './color';
+import { TitleAnchor } from './title';
 
 export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 
@@ -97,6 +96,9 @@ export interface GradientStop {
    */
   color: Color;
 }
+
+export type Gradient = LinearGradient | RadialGradient;
+
 export interface LinearGradient extends BaseGradient {
   /**
    * The type of gradient. Use `"linear"` for a linear gradient.

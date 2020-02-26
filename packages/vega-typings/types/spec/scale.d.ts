@@ -10,6 +10,7 @@ export type RangeEnum =
   | 'ramp'
   | 'diverging'
   | 'heatmap';
+
 export type RangeRawArray = (number | SignalRef)[];
 export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray)[];
 export type RangeScheme =
@@ -55,16 +56,31 @@ export type UnionSortField =
     };
 export type ScaleField = string | SignalRef;
 
-export type ScaleBins =
-  | (number | SignalRef)[]
-  | SignalRef
-  | {
-      step: number | SignalRef;
-      start?: number | SignalRef;
-      stop?: number | SignalRef;
-    };
+export interface ScaleBinParams {
+  /**
+   * The step size defining the bin interval width.
+   */
+  step: number | SignalRef;
 
-export type ScaleInterpolate =
+  /**
+   * The starting (lowest-valued) bin boundary.
+   *
+   * __Default value:__ The lowest value of the scale domain will be used.
+   */
+  start?: number | SignalRef;
+
+  /**
+   * The stopping (highest-valued) bin boundary.
+   *
+   * __Default value:__ The highest value of the scale domain will be used.
+   *
+   */
+  stop?: number | SignalRef;
+}
+
+export type ScaleBins = (number | SignalRef)[] | SignalRef | ScaleBinParams;
+
+export type ScaleInterpolateEnum =
   | 'rgb'
   | 'lab'
   | 'hcl'
@@ -72,27 +88,32 @@ export type ScaleInterpolate =
   | 'hsl-long'
   | 'hcl-long'
   | 'cubehelix'
-  | 'cubehelix-long'
-  | SignalRef
-  | {
-      type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
-      gamma?: number | SignalRef;
-    };
-export interface DataRef {
+  | 'cubehelix-long';
+
+export interface ScaleInterpolateParams {
+  type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
+  gamma?: number | SignalRef;
+}
+
+export type ScaleInterpolate = ScaleInterpolateEnum | SignalRef | ScaleInterpolateParams;
+
+export interface ScaleDataRef {
   data: string;
   field: ScaleField;
 }
-export type MultiDataRef =
-  | {
-      data: string;
-      fields: ScaleField[];
-    }
-  | {
-      fields: ((string | number | boolean)[] | DataRef | SignalRef)[];
-    };
-export type ScaleData =
-  | (DataRef & { sort?: SortField })
-  | (MultiDataRef & { sort?: UnionSortField });
+
+export interface ScaleMultiDataRef {
+  fields: ((string | number | boolean)[] | ScaleDataRef | SignalRef)[];
+}
+
+export interface ScaleMultiFieldsRef {
+  data: string;
+  fields: ScaleField[];
+}
+
+export type ScaleData = (ScaleDataRef | ScaleMultiDataRef | ScaleMultiFieldsRef) & {
+  sort?: SortField;
+};
 export type QuantScaleType =
   | 'linear'
   | 'pow'
@@ -161,9 +182,15 @@ export type TimeInterval =
   | 'week'
   | 'month'
   | 'year';
+
+export interface TimeIntervalStep {
+  interval: TimeInterval;
+  step: number;
+}
+
 export interface TimeScale extends ContinuousScale {
   type: 'time' | 'utc';
-  nice?: boolean | TimeInterval | SignalRef;
+  nice?: boolean | TimeInterval | TimeIntervalStep | SignalRef;
 }
 export interface IdentityScale extends BaseScale {
   type: 'identity';
