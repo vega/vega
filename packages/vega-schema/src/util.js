@@ -6,7 +6,7 @@ const fontWeightEnum = [
 
 const alignEnum = ['left', 'right', 'center'];
 
-const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
+const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic', 'line-top', 'line-bottom'];
 
 const anchorEnum = [null, 'start', 'middle', 'end'];
 

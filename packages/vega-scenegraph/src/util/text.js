@@ -138,10 +138,14 @@ export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
   var baseline = item.baseline,
-      h = fontSize(item);
+      h = fontSize(item),
+      lh = lineHeight(item);
+
   return Math.round(
+    baseline === 'line-top' ? 0.79.h + (lh-h) / 2.0 :
     baseline === 'top'    ?  0.79*h :
     baseline === 'middle' ?  0.30*h :
-    baseline === 'bottom' ? -0.21*h : 0
+    baseline === 'bottom' ? -0.21*h :
+    baseline === 'line-bottom' ? -0.21*h - (lh-h) / 2.0 : 0
   );
 }

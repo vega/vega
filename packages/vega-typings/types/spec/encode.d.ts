@@ -322,7 +322,7 @@ export interface SymbolEncodeEntry extends EncodeEntry {
   angle?: ProductionRule<NumericValueRef>;
 }
 export type Text = string | string[];
-export type TextBaseline = 'alphabetic' | Baseline;
+export type TextBaseline = 'alphabetic' | Baseline | 'line-top' | 'line-bottom';
 export type TextDirection = 'ltr' | 'rtl';
 export type FontWeight =
   | 'normal'
