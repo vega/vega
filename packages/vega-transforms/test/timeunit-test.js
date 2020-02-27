@@ -1,5 +1,6 @@
 var tape = require('tape'),
-    field = require('vega-util').field,
+    util = require('vega-util'),
+    field = util.field,
     vega = require('vega-dataflow'),
     tx = require('../'),
     changeset = vega.changeset,
@@ -214,6 +215,46 @@ tape('TimeUnit supports unit inference', function(t) {
   testDates(t, data, 'month', 3, localDate);
 
   df.update(bins, 366).run();
+  t.equal(s.pulse.add.length, 0);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 4);
+  t.equal(s.value.step, 1);
+  t.deepEqual(s.value.units, ['year', 'month', 'date']);
+  testDates(t, data, 'year-month-date', 1, localDate);
+
+  t.end();
+});
+
+tape('TimeUnit supports unit inference with extent', function(t) {
+  var data = [
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+  ];
+  data.forEach(o => o.date = new Date(o.y, o.m, o.d));
+
+  var df = new vega.Dataflow(),
+      date = field('date'),
+      bins = df.add(12),
+      ext = df.add(util.extent(data, date)),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {
+        field: date,
+        pulse: c,
+        maxbins: bins,
+        extent: ext
+      });
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(s.pulse.add.length, 4);
+  t.equal(s.pulse.rem.length, 0);
+  t.equal(s.pulse.mod.length, 0);
+  t.equal(s.value.step, 1);
+  t.deepEqual(s.value.units, ['year', 'month']);
+  testDates(t, data, 'year-month', 1, localDate);
+
+  df.update(ext, [new Date(2012, 0, 1), new Date(2012, 1, 1)]).run();
   t.equal(s.pulse.add.length, 0);
   t.equal(s.pulse.rem.length, 0);
   t.equal(s.pulse.mod.length, 4);
