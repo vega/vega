@@ -2,7 +2,6 @@ import {points} from './points';
 import rSquared from './r-squared';
 
 export default function(data, x, y) {
-
   const [xv, yv, ux, uy] = points(data, x, y),
         n = xv.length;
 
