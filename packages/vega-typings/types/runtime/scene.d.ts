@@ -78,13 +78,24 @@ export type SceneTextBaseline = 'top' | 'middle' | 'bottom';
 export type SceneTextAlign = 'left' | 'center' | 'right';
 
 export type SceneText = SceneItem & {
-  align: SceneTextAlign;
-  angle: number;
+  align?: SceneTextAlign;
+  angle?: number;
   baseline: SceneTextBaseline;
+  dir?: 'rtl' | 'ltr';
+  dx?: number;
+  dy: number;
+  ellipsis?: string;
   fill: string;
   font: string;
   fontSize: number;
+  fontStyle?: string;
+  fontWeight?: number | string;
+  limit?: number;
+  lineBreak?: string;
+  lineHeight?: number;
+  radius?: number;
   text: string;
+  theta?: number;
 };
 
 export interface SceneLegendItem {
