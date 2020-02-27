@@ -19,7 +19,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       symbolOffset = _('symbolOffset'),
       valueRef = {data: 'value'},
       encode = {},
-      xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
+      xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
       yEncode = height ? encoder(height) : {field: Size},
       index = `datum.${Index}`,
       ncols = `max(1, ${columns})`,
@@ -141,7 +141,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     sort = {field: index};
   }
   // handle zero column case (implies infinite columns)
-  update.column.signal = `${columns}?${update.column.signal}:${index}`;
+  update.column.signal = `(${columns})?${update.column.signal}:${index}`;
 
   // facet legend entries into sub-groups
   dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
