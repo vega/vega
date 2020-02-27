@@ -1,29 +1,29 @@
 import ols from './ols';
-import {visitPoints} from './points';
+import {points, visitPoints} from './points';
 import rSquared from './r-squared';
 
 export default function(data, x, y) {
-  let Y = 0, YL = 0, XY = 0, XYL = 0, X2Y = 0, n = 0;
+  // eslint-disable-next-line no-unused-vars
+  const [xv, yv, ux, uy] = points(data, x, y);
+  let YL = 0, XY = 0, XYL = 0, X2Y = 0, n = 0, dx, ly, xy;
 
-  visitPoints(data, x, y, (dx, dy) => {
-    const ly = Math.log(dy),
-          xy = dx * dy;
-    ++n;
-    Y += (dy - Y) / n;
-    XY += (xy - XY) / n;
-    X2Y += (dx * xy - X2Y) / n;
+  visitPoints(data, x, y, (_, dy) => {
+    dx = xv[n++];
+    ly = Math.log(dy);
+    xy = dx * dy;
+
     YL += (dy * ly - YL) / n;
+    XY += (xy - XY) / n;
     XYL += (xy * ly - XYL) / n;
+    X2Y += (dx * xy - X2Y) / n;
   });
 
-  const coef = ols(XY / Y, YL / Y, XYL / Y, X2Y / Y),
-        predict = x => coef[0] * Math.exp(coef[1] * x);
-
-  coef[0] = Math.exp(coef[0]);
+  const [c0, c1] = ols(XY / uy, YL / uy, XYL / uy, X2Y / uy),
+        predict = x => Math.exp(c0 + c1 * (x - ux));
 
   return {
-    coef: coef,
+    coef: [Math.exp(c0 - c1 * ux), c1],
     predict: predict,
-    rSquared: rSquared(data, x, y, Y, predict)
+    rSquared: rSquared(data, x, y, uy, predict)
   };
 }
