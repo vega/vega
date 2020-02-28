@@ -223,7 +223,7 @@ A convenience method for setting up object-oriented inheritance. Assigns the `pr
 vega.<b>lruCache</b>([<i>maxsize</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/lruCache.js "Source")
 
-Provides a key/value cache, keyed by string, that evicts least recently used (LRU) entries. Supports *has*, *get*, *set*, and *clear* methods. The optional *maxsize* argument (default 10,000) determines the maximum number of elements that can be added before items start getting evicted.
+Provides a key/value cache, keyed by string, that evicts least recently used (LRU) entries. Supports *has*, *get*, *set*, and *clear* methods. The optional *maxsize* argument (default 10,000) determines the maximum number of elements that can be added before items are evicted.
 
 In the internal implementation two caches are used: a current cache and a previous cache. When then current cache fills, it becomes the previous cache and a new, empty current cache is created. Subsequent *get* calls will promote elements in the previous cache to the current cache. Once the current cache fills, the caches are again turned over and all LRU items still residing in the previous cache are dropped.
 
