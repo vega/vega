@@ -10,28 +10,28 @@ import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
 import {array, toSet} from 'vega-util';
 
-var defined = toSet(['width', 'height', 'padding', 'autosize']);
+var defined = toSet(['width', 'height', 'padding', 'autosize', 'background']);
 
 export default function parseView(spec, scope) {
   var config = scope.config,
       op, input, encode, parent, root, signals;
 
-  scope.background = spec.background || config.background;
   scope.eventConfig = config.events;
   root = ref(scope.root = scope.add(operator()));
   scope.addSignal('width', spec.width || 0);
   scope.addSignal('height', spec.height || 0);
   scope.addSignal('padding', parsePadding(spec.padding, config));
   scope.addSignal('autosize', parseAutosize(spec.autosize, config));
+  scope.addSignal('background', spec.background || config.background);
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
   // parse signal definitions, including config entries
   signals = addSignals(scope, spec.signals, config.signals);
 
-  // Store root group item
+  // store root group item
   input = scope.add(Collect());
 
-  // Encode root group item
+  // encode root group item
   encode = extendEncode({
     enter: { x: {value: 0}, y: {value: 0} },
     update: { width: {signal: 'width'}, height: {signal: 'height'} }
@@ -41,7 +41,7 @@ export default function parseView(spec, scope) {
     encoders(encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)}))
   );
 
-  // Perform view layout
+  // perform view layout
   parent = scope.add(ViewLayout({
     layout:       scope.objectProperty(spec.layout),
     legends:      scope.legends,
@@ -51,17 +51,17 @@ export default function parseView(spec, scope) {
   }));
   scope.operators.pop();
 
-  // Parse remainder of specification
+  // parse remainder of specification
   scope.pushState(ref(encode), ref(parent), null);
   parseSpec(spec, scope, signals);
   scope.operators.push(parent);
 
-  // Bound / render / sieve root item
+  // bound / render / sieve root item
   op = scope.add(Bound({mark: root, pulse: ref(parent)}));
   op = scope.add(Render({pulse: ref(op)}));
   op = scope.add(Sieve({pulse: ref(op)}));
 
-  // Track metadata for root item
+  // track metadata for root item
   scope.addData('root', new DataScope(scope, input, input, op));
 
   return scope;
