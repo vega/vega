@@ -68,6 +68,7 @@ export {default as isRegExp} from './src/isRegExp';
 export {default as isString} from './src/isString';
 export {default as key} from './src/key';
 export {default as lerp} from './src/lerp';
+export {default as lruCache} from './src/lruCache';
 export {default as merge} from './src/merge';
 export {default as pad} from './src/pad';
 export {default as peek} from './src/peek';
