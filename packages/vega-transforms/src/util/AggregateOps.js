@@ -33,6 +33,13 @@ export var AggregateOps = {
     rem:  'this.sum -= v;',
     set:  'this.sum'
   }),
+  'product': measure({
+    name: 'product',
+    init: 'this.product = 1;',
+    add:  'this.product *= v;',
+    rem:  'this.product /= v;',
+    set:  'this.valid ? this.product : undefined'
+  }),
   'mean': measure({
     name: 'mean',
     init: 'this.mean = 0;',
