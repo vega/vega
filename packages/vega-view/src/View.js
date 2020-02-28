@@ -1,3 +1,4 @@
+import background from './background';
 import cursor from './cursor';
 import {data, dataref, change, insert, remove} from './data';
 import {initializeEventConfig, events} from './events';
@@ -80,9 +81,6 @@ export default function View(spec, options) {
     view.changeset().insert(root.items)
   );
 
-  // initialize background color
-  view._background = options.background || ctx.background || null;
-
   // initialize view size
   view._width = view.width();
   view._height = view.height();
@@ -92,6 +90,9 @@ export default function View(spec, options) {
   view._resize = 0;
   view._autosize = 1;
   initializeResize(view);
+
+  // initialize background color
+  background(view);
 
   // initialize cursor
   cursor(view);
@@ -165,16 +166,6 @@ prototype.signal = function(name, value, options) {
     : this.update(op, value, options);
 };
 
-prototype.background = function(_) {
-  if (arguments.length) {
-    this._background = _;
-    this._resize = 1;
-    return this;
-  } else {
-    return this._background;
-  }
-};
-
 prototype.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
@@ -189,6 +180,10 @@ prototype.padding = function(_) {
 
 prototype.autosize = function(_) {
   return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
+};
+
+prototype.background = function(_) {
+  return arguments.length ? this.signal('background', _) : this.signal('background');
 };
 
 prototype.renderer = function(type) {
