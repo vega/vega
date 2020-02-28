@@ -709,6 +709,43 @@
     return !f ? lo : f === 1 ? hi : lo + f * (hi - lo);
   }
 
+  const DEFAULT_MAX_SIZE = 10000;
+
+  // adapted from https://github.com/dominictarr/hashlru/ (MIT License)
+  function lruCache(maxsize) {
+    maxsize = +maxsize || DEFAULT_MAX_SIZE;
+
+    let curr, prev, size;
+
+    const clear = () => {
+      curr = {};
+      prev = {};
+      size = 0;
+    };
+
+    const update = (key, value) => {
+      if (++size > maxsize) {
+        prev = curr;
+        curr = {};
+        size = 1;
+      }
+      return (curr[key] = value);
+    };
+
+    clear();
+
+    return {
+      clear,
+      has: key => hasOwnProperty(curr, key) || hasOwnProperty(prev, key),
+      get: key => hasOwnProperty(curr, key) ? curr[key]
+          : hasOwnProperty(prev, key) ? update(key, prev[key])
+          : undefined,
+      set: (key, value) => hasOwnProperty(curr, key)
+          ? (curr[key] = value)
+          : update(key, value)
+    };
+  }
+
   function merge(compare, array0, array1, output) {
     var n0 = array0.length,
         n1 = array1.length;
@@ -1609,7 +1646,7 @@
   const protocol_re = /^([A-Za-z]+:)?\/\//;
 
   // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
-  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
   const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
 
 
@@ -6026,28 +6063,28 @@
   }
 
   function regressionExp(data, x, y) {
-    let Y = 0, YL = 0, XY = 0, XYL = 0, X2Y = 0, n = 0;
+    // eslint-disable-next-line no-unused-vars
+    const [xv, yv, ux, uy] = points(data, x, y);
+    let YL = 0, XY = 0, XYL = 0, X2Y = 0, n = 0, dx, ly, xy;
 
-    visitPoints(data, x, y, (dx, dy) => {
-      const ly = Math.log(dy),
-            xy = dx * dy;
-      ++n;
-      Y += (dy - Y) / n;
-      XY += (xy - XY) / n;
-      X2Y += (dx * xy - X2Y) / n;
+    visitPoints(data, x, y, (_, dy) => {
+      dx = xv[n++];
+      ly = Math.log(dy);
+      xy = dx * dy;
+
       YL += (dy * ly - YL) / n;
+      XY += (xy - XY) / n;
       XYL += (xy * ly - XYL) / n;
+      X2Y += (dx * xy - X2Y) / n;
     });
 
-    const coef = ols(XY / Y, YL / Y, XYL / Y, X2Y / Y),
-          predict = x => coef[0] * Math.exp(coef[1] * x);
-
-    coef[0] = Math.exp(coef[0]);
+    const [c0, c1] = ols(XY / uy, YL / uy, XYL / uy, X2Y / uy),
+          predict = x => Math.exp(c0 + c1 * (x - ux));
 
     return {
-      coef: coef,
+      coef: [Math.exp(c0 - c1 * ux), c1],
       predict: predict,
-      rSquared: rSquared(data, x, y, Y, predict)
+      rSquared: rSquared(data, x, y, uy, predict)
     };
   }
 
@@ -6080,7 +6117,6 @@
   }
 
   function regressionQuad(data, x, y) {
-
     const [xv, yv, ux, uy] = points(data, x, y),
           n = xv.length;
 
@@ -9578,6 +9614,8 @@
       { "name": "interval", "type": "boolean", "default": true },
       { "name": "units", "type": "string", "array": true },
       { "name": "step", "type": "number", "default": 1 },
+      { "name": "maxbins", "type": "number", "default": 40 },
+      { "name": "extent", "type": "date", "array": true},
       { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
       { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
     ]
@@ -9599,7 +9637,7 @@
         step = floor.step,
         flag = pulse.ADD;
 
-    if (_.modified() || pulse.modified(accessorFields(_.field))) {
+    if (_.modified() || pulse.modified(accessorFields(field))) {
       pulse = pulse.reflow(true);
       flag = pulse.SOURCE;
       min = Infinity;
@@ -9632,7 +9670,7 @@
     let {units, step} = _.units
       ? {units: _.units, step: _.step || 1}
       : timeBin({
-        extent:  extent(pulse.materialize(pulse.SOURCE).source, _.field),
+        extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
         maxbins: _.maxbins
       });
 
@@ -14196,7 +14234,8 @@
 
   var symbol$1 = markItemPath('symbol', symbol, intersectPoint);
 
-  var currFontHeight;
+  // memoize text width measurement
+  const widthCache = lruCache();
 
   var textMetrics = {
     height: fontSize,
@@ -14208,32 +14247,38 @@
 
   useCanvas(true);
 
-  // make dumb, simple estimate if no canvas is available
-  function estimateWidth(item, text) {
-    currFontHeight = fontSize(item);
-    return estimate(textValue(item, text));
+  function useCanvas(use) {
+    textMetrics.width = (use && context$1) ? measureWidth : estimateWidth;
   }
 
-  function estimate(text) {
-    return ~~(0.8 * text.length * currFontHeight);
+  // make dumb, simple estimate if no canvas is available
+  function estimateWidth(item, text) {
+    return _estimateWidth(textValue(item, text), fontSize(item));
+  }
+
+  function _estimateWidth(text, currentFontHeight) {
+    return ~~(0.8 * text.length * currentFontHeight);
   }
 
   // measure text width if canvas is available
   function measureWidth(item, text) {
-    return fontSize(item) <= 0 ? 0
-      : (context$1.font = font(item), measure$1(textValue(item, text)));
+    return fontSize(item) <= 0 || !(text = textValue(item, text)) ? 0
+      : _measureWidth(text, font(item));
   }
 
-  function measure$1(text) {
-    return context$1.measureText(text).width;
+  function _measureWidth(text, currentFont) {
+    const key = `(${currentFont}) ${text}`;
+    let width = widthCache.get(key);
+    if (width === undefined) {
+      context$1.font = currentFont;
+      width = context$1.measureText(text).width;
+      widthCache.set(key, width);
+    }
+    return width;
   }
 
   function fontSize(item) {
-    return item.fontSize != null ? item.fontSize : 11;
-  }
-
-  function useCanvas(use) {
-    textMetrics.width = (use && context$1) ? measureWidth : estimateWidth;
+    return item.fontSize != null ? (+item.fontSize || 0) : 11;
   }
 
   function lineHeight(item) {
@@ -14263,20 +14308,22 @@
       : line + '';
   }
 
+  function widthGetter(item) {
+    if (textMetrics.width === measureWidth) {
+      // we are using canvas
+      const currentFont = font(item);
+      return text => _measureWidth(text, currentFont);
+    } else {
+      // we are relying on estimates
+      const currentFontHeight = fontSize(item);
+      return text => _estimateWidth(text, currentFontHeight);
+    }
+  }
+
   function truncate$1(item, line) {
     var limit = +item.limit,
         text = line + '',
-        width;
-
-    if (textMetrics.width === measureWidth) {
-      // we are using canvas
-      context$1.font = font(item);
-      width = measure$1;
-    } else {
-      // we are relying on estimates
-      currFontHeight = fontSize(item);
-      width = estimate;
-    }
+        width = widthGetter(item);
 
     if (width(text) < limit) return text;
 
@@ -30836,6 +30883,25 @@
       if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
       return this.delaunay._step(i, x, y) === i;
     }
+    *neighbors(i) {
+      const ci = this._clip(i);
+      if (ci) for (const j of this.delaunay.neighbors(i)) {
+        const cj = this._clip(j);
+        // find the common edge
+        if (cj) loop: for (let ai = 0, li = ci.length; ai < li; ai += 2) {
+          for (let aj = 0, lj = cj.length; aj < lj; aj += 2) {
+            if (ci[ai] == cj[aj]
+            && ci[ai + 1] == cj[aj + 1]
+            && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj]
+            && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj]
+            ) {
+              yield j;
+              break loop;
+            }
+          }
+        }
+      }
+    }
     _cell(i) {
       const {circumcenters, delaunay: {inedges, halfedges, triangles}} = this;
       const e0 = inedges[i];
@@ -31019,6 +31085,11 @@
   }
 
   class Delaunay {
+    static from(points, fx = pointX, fy = pointY, that) {
+      return new Delaunay("length" in points
+          ? flatArray(points, fx, fy, that)
+          : Float64Array.from(flatIterable(points, fx, fy, that)));
+    }
     constructor(points) {
       this._delaunator = new Delaunator(points);
       this.inedges = new Int32Array(points.length / 2);
@@ -31083,13 +31154,13 @@
       return new Voronoi(this, bounds);
     }
     *neighbors(i) {
-      const {inedges, hull, _hullIndex, halfedges, triangles} = this;
+      const {inedges, hull, _hullIndex, halfedges, triangles, collinear} = this;
 
       // degenerate case with several collinear points
-      if (this.collinear) {
-        const l = this.collinear.indexOf(i);
-        if (l > 0) yield this.collinear[l - 1];
-        if (l < this.collinear.length - 1) yield this.collinear[l + 1];
+      if (collinear) {
+        const l = collinear.indexOf(i);
+        if (l > 0) yield collinear[l - 1];
+        if (l < collinear.length - 1) yield collinear[l + 1];
         return;
       }
 
@@ -31204,12 +31275,6 @@
       return polygon.value();
     }
   }
-
-  Delaunay.from = function(points, fx = pointX, fy = pointY, that) {
-    return new Delaunay("length" in points
-        ? flatArray(points, fx, fy, that)
-        : Float64Array.from(flatIterable(points, fx, fy, that)));
-  };
 
   function flatArray(points, fx, fy, that) {
     const n = points.length;
@@ -32548,7 +32613,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.9.1";
+  var version = "5.9.2";
 
   var Default = 'default';
 
@@ -38681,7 +38746,7 @@
         symbolOffset = _('symbolOffset'),
         valueRef = {data: 'value'},
         encode = {},
-        xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
+        xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
         yEncode = height ? encoder(height) : {field: Size},
         index = `datum.${Index}`,
         ncols = `max(1, ${columns})`,
@@ -38803,7 +38868,7 @@
       sort = {field: index};
     }
     // handle zero column case (implies infinite columns)
-    update.column.signal = `${columns}?${update.column.signal}:${index}`;
+    update.column.signal = `(${columns})?${update.column.signal}:${index}`;
 
     // facet legend entries into sub-groups
     dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
@@ -41189,6 +41254,7 @@
   exports.lineHeight = lineHeight;
   exports.loader = loader;
   exports.logger = logger;
+  exports.lruCache = lruCache;
   exports.merge = merge;
   exports.mergeConfig = mergeConfig;
   exports.multiLineOffset = multiLineOffset;
