@@ -125,6 +125,12 @@ async function sanitize(uri, options) {
     result.rel = options.rel + '';
   }
 
+  // provide control over cross-origin image handling (#2238)
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+  if (options.context === 'image' && options.crossOrigin) {
+    result.crossOrigin = options.crossOrigin + '';
+  }
+
   // return
   return result;
 }
