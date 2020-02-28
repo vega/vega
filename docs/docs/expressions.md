@@ -56,7 +56,7 @@ If the expression is being invoked in response to an event, an _event_ variable 
 <a name="signal" href="#signal">#</a>
 <i>signal names</i>
 
-Any in-scope signal value can be referenced directly by name. For example, if you have defined a signal named `hover` within your Vega specification, you can refer to it directly within an expression (e.g., `hover.value`).
+Any in-scope signal value can be referenced directly by name. For example, if you have defined a signal named `hover` within your Vega specification, you can refer to it directly within an expression (e.g., `hover.value`). Similarly, to lookup an object property whose name is bound to the signal `property_name`, you could use `datum[property_name]`. 
 
 [Back to Top](#reference)
 
