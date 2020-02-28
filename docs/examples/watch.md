@@ -6,6 +6,6 @@ spec: watch
 image: /examples/img/watch.png
 ---
 
-A watch implemented in Vega by [@domoritz](http://github.com/domoritz/) inspired by [Braun's](https://en.wikipedia.org/wiki/Braun_(company)) design and [@mathiastiberghien's](https://github.com/mathiastiberghien)] clock example.
+A watch face by [@domoritz](http://github.com/domoritz/), inspired by [Braun](https://en.wikipedia.org/wiki/Braun_(company))'s design and [@mathiastiberghien](https://github.com/mathiastiberghien)'s clock example.
 
 {% include example spec=page.spec %}
