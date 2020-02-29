@@ -9,6 +9,9 @@ import {DegToRad} from '../util/constants';
 export default function(type, shape, isect) {
 
   function attr(emit, item) {
+    if(item.css){
+      emit('class', item.css)
+    }
     emit('transform', transformItem(item));
     emit('d', shape(null, item));
   }

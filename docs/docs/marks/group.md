@@ -22,5 +22,6 @@ permalink: /docs/marks/group/index.html
 | cornerRadiusBottomRight | {% include type t="Number" %}  | The radius in pixels of a rounded rectangle corner for the bottom right corner. If specified, this property takes precedence over the _cornerRadius_ property. {% include tag ver="5.8" %} |
 | strokeForeground        | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if the group stroke should be drawn on top of group content rather than in the background. {% include tag ver="5.9" %} |
 | strokeOffset            | {% include type t="Number" %}  | The offset in pixels at which to draw the group stroke and fill. If unspecified, the default behavior is to dynamically offset stroked groups such that 1 pixel stroke widths align with the pixel grid. {% include tag ver="5.9" %} |
+| cssForeground            | {% include type t="String" %}  | SVG renderers will add this cssForeground value as a CSS class name of the foreground element of the mark item. Can be usefull for theming applications that are using vega visualizations. {% include tag ver="5.10" %} |
 
 {% include properties.md %}

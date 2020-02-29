@@ -8,6 +8,9 @@ export default function(type, shape, tip) {
 
   function attr(emit, item) {
     var items = item.mark.items;
+    if(item.css){
+      emit('class', item.css)
+    }
     if (items.length) emit('d', shape(null, items));
   }
 

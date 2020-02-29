@@ -195,11 +195,13 @@ const encodeEntry = object({
   cursor: stringValueRef,
   tooltip: anyValueRef,
   zindex: numberValueRef,
+  css: stringValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,
   strokeForeground: booleanValueRef,
   strokeOffset: numberValueRef,
+  cssForeground: stringValueRef,
 
   // Rect-mark properties
   cornerRadius: numberValueRef,

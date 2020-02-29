@@ -5,6 +5,9 @@ import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
 
 function attr(emit, item) {
+  if(item.css){
+    emit('class', item.css)
+  }
   emit('d', rectangle(null, item));
 }
 
