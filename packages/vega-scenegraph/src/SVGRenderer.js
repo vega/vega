@@ -149,8 +149,8 @@ function updateGradient(el, grad, index) {
   if (grad.gradient === 'radial') {
     // SVG radial gradients automatically transform to normalized bbox
     // coordinates, in a way that is cumbersome to replicate in canvas.
-    // So we wrap the radial gradient in a pattern element, allowing us
-    // to mantain a circular gradient that matches what canvas provides.
+    // We wrap the radial gradient in a pattern element, allowing us to
+    // maintain a circular gradient that matches what canvas provides.
     var pt = domChild(el, index++, 'pattern', ns);
     pt.setAttribute('id', patternPrefix + grad.id);
     pt.setAttribute('viewBox', '0,0,1,1');
