@@ -101,8 +101,8 @@ prototype.buildDefs = function() {
     if (def.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
       // coordinates, in a way that is cumbersome to replicate in canvas.
-      // So we wrap the radial gradient in a pattern element, allowing us
-      // to mantain a circular gradient that matches what canvas provides.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
 
       defs += openTag(tag = 'pattern', {
         id: patternPrefix + id,
