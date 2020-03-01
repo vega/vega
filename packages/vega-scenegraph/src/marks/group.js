@@ -2,9 +2,10 @@ import {hasCornerRadius, rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
 import {intersectRect} from '../util/intersect';
 import {visit, pickVisit} from '../util/visit';
+import blend from '../util/canvas/blend';
 import {clipGroup} from '../util/canvas/clip';
-import stroke from '../util/canvas/stroke';
 import fill from '../util/canvas/fill';
+import stroke from '../util/canvas/stroke';
 import {hitPath} from '../util/canvas/pick';
 import clip from '../util/svg/clip';
 import {translateItem} from '../util/svg/transform';
@@ -82,6 +83,7 @@ function draw(context, scene, bounds) {
     // draw group background
     if ((group.stroke || group.fill) && opacity) {
       rectanglePath(context, group, gx, gy);
+      blend(context, group);
       if (group.fill && fill(context, group, opacity)) {
         context.fill();
       }
@@ -108,6 +110,7 @@ function draw(context, scene, bounds) {
     // draw group foreground
     if (fore && group.stroke && opacity) {
       rectanglePath(context, group, gx, gy);
+      blend(context, group);
       if (stroke(context, group, opacity)) {
         context.stroke();
       }

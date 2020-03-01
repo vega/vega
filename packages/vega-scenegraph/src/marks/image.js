@@ -1,4 +1,5 @@
 import {visit} from '../util/visit';
+import blend from '../util/canvas/blend';
 import {pick} from '../util/canvas/pick';
 import {translate} from '../util/svg/transform';
 import {truthy} from 'vega-util';
@@ -105,6 +106,7 @@ function draw(context, scene, bounds) {
     }
 
     if (image.complete || image.toDataURL) {
+      blend(context, item);
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
       context.imageSmoothingEnabled = item.smooth !== false;
       context.drawImage(image, x, y, w, h);
