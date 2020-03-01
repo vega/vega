@@ -174,6 +174,25 @@ var MARK_BASE = {
   "required": [ "marktype" ]
 };
 
+var BLEND_MODES = [
+  null,
+  'multiply',
+  'screen',
+  'overlay',
+  'darken',
+  'lighten',
+  'color-dodge',
+  'color-burn',
+  'hard-light',
+  'soft-light',
+  'difference',
+  'exclusion',
+  'hue',
+  'saturation',
+  'color',
+  'luminosity',
+];
+
 var ITEM_BASE = {
   "type": "object",
   "properties": {
@@ -181,6 +200,7 @@ var ITEM_BASE = {
     "y": { "type": "number" },
     "width": { "type": "number" },
     "height": { "type": "number" },
+    "blend": { "enum": BLEND_MODES, "default": null },
     "opacity": { "type": "number", "default": 1 },
     "fill": { "$ref": "#/refs/paint" },
     "fillOpacity": { "type": "number", "default": 1 },
