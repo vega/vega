@@ -3,7 +3,7 @@ import boundMark from '../bound/boundMark';
 var keys = [
   'marktype', 'name', 'role', 'interactive', 'clip', 'items', 'zindex',
   'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
-  'fill', 'fillOpacity', 'opacity',                             // fill
+  'fill', 'fillOpacity', 'opacity', 'blend',                    // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
   'strokeDash', 'strokeDashOffset',                             // stroke dash
   'strokeForeground', 'strokeOffset',                           // group
