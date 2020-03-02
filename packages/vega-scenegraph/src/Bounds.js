@@ -77,6 +77,14 @@ prototype.round = function() {
   return this;
 };
 
+prototype.scale = function(s) {
+  this.x1 *= s;
+  this.y1 *= s;
+  this.x2 *= s;
+  this.y2 *= s;
+  return this;
+};
+
 prototype.translate = function(dx, dy) {
   this.x1 += dx;
   this.x2 += dx;
