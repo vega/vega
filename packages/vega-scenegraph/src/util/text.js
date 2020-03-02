@@ -70,9 +70,8 @@ export function multiLineOffset(item) {
 }
 
 export function textValue(item, line) {
-  return line == null ? ''
-    : item.limit > 0 ? truncate(item, line)
-    : line + '';
+  const text = line == null ? '' : (line + '').trim();
+  return item.limit > 0 && text.length ? truncate(item, text) : text;
 }
 
 function widthGetter(item) {
@@ -87,9 +86,8 @@ function widthGetter(item) {
   }
 }
 
-function truncate(item, line) {
+function truncate(item, text) {
   var limit = +item.limit,
-      text = line + '',
       width = widthGetter(item);
 
   if (width(text) < limit) return text;
