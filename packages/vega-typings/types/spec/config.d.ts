@@ -7,6 +7,7 @@ import {
   Interpolate,
   Mark,
   Orientation,
+  Padding,
   RangeScheme,
   SymbolShape,
   TextBaseline,
@@ -43,8 +44,9 @@ export type ExcludeMappedValueRef<T> = {
 export interface Config
   extends Partial<Record<MarkConfigKeys, MarkConfig>>,
     Partial<Record<AxisConfigKeys, AxisConfig>> {
-  autosize?: AutoSize;
+  autosize?: AutoSize | SignalRef;
   background?: null | Color | SignalRef;
+  padding?: Padding | SignalRef;
   group?: any; // TODO
   events?: {
     bind?: 'any' | 'container' | 'none';
