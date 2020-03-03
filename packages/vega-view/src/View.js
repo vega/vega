@@ -5,6 +5,7 @@ import {initializeEventConfig, events} from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
+import padding from './padding';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
@@ -175,7 +176,9 @@ prototype.height = function(_) {
 };
 
 prototype.padding = function(_) {
-  return arguments.length ? this.signal('padding', _) : this.signal('padding');
+  return arguments.length
+    ? this.signal('padding', padding(_))
+    : padding(this.signal('padding'));
 };
 
 prototype.autosize = function(_) {
