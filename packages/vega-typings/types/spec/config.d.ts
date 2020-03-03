@@ -249,7 +249,7 @@ export interface MarkConfig {
    *
    * __Default value:__ `"ltr"`
    */
-  dir?: TextDirection;
+  dir?: TextDirection | SignalRef;
 
   /**
    * The horizontal offset, in pixels, between the text label and its anchor point. The offset is applied after rotation by the _angle_ property.
