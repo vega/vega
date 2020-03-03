@@ -1,4 +1,4 @@
-import {def, ref, type, numberType, objectType, stringType} from './util';
+import {def, ref, type, numberOrSignal, objectType, stringType} from './util';
 
 import autosize from './autosize';
 import axis from './axis';
@@ -48,8 +48,8 @@ export default function(definitions) {
           $schema: type('string', {format: 'uri'}),
           config: objectType,
           description: stringType,
-          width: numberType,
-          height: numberType,
+          width: numberOrSignal,
+          height: numberOrSignal,
           padding: def('padding'),
           autosize: def('autosize'),
           background: def('background'),
