@@ -4,16 +4,17 @@ import { Config } from './config';
 import { Encodable, EncodeEntry } from './encode';
 import { Padding } from './padding';
 import { Scope } from './scope';
+import { SignalRef } from './signal';
 
 export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
-  width?: number;
-  height?: number;
   config?: Config;
   description?: string;
-  padding?: Padding;
-  autosize?: AutoSize;
-  background?: Background;
+  width?: number | SignalRef;
+  height?: number | SignalRef;
+  padding?: Padding | SignalRef;
+  autosize?: AutoSize | SignalRef;
+  background?: Background | SignalRef;
   style?: string | string[];
 }
 
