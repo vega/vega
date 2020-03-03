@@ -1,5 +1,5 @@
 import { AutoSize } from './autosize';
-import { Background } from './background';
+import { Color } from './color';
 import { Config } from './config';
 import { Encodable, EncodeEntry } from './encode';
 import { Padding } from './padding';
@@ -14,13 +14,12 @@ export interface Spec extends Scope, Encodable<EncodeEntry> {
   height?: number | SignalRef;
   padding?: Padding | SignalRef;
   autosize?: AutoSize | SignalRef;
-  background?: Background | SignalRef;
+  background?: Color | SignalRef;
   style?: string | string[];
 }
 
 export * from './autosize';
 export * from './axis';
-export * from './background';
 export * from './bind';
 export * from './color';
 export * from './config';
