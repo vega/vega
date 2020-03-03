@@ -5,28 +5,25 @@ import parseSpec from './spec';
 import {encoders, extendEncode} from './encode/encode-util';
 import {GroupMark} from './marks/marktypes';
 import {FrameRole} from './marks/roles';
-import {ref, operator} from '../util';
+import {operator, ref, value} from '../util';
 import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
-import {array, toSet} from 'vega-util';
-
-var defined = toSet(['width', 'height', 'padding', 'autosize', 'background']);
+import {array, extend, hasOwnProperty} from 'vega-util';
 
 export default function parseView(spec, scope) {
   var config = scope.config,
       op, input, encode, parent, root, signals;
 
-  scope.eventConfig = config.events;
+  // add scenegraph root
   root = ref(scope.root = scope.add(operator()));
-  scope.addSignal('width', spec.width || 0);
-  scope.addSignal('height', spec.height || 0);
-  scope.addSignal('padding', parsePadding(spec.padding, config));
-  scope.addSignal('autosize', parseAutosize(spec.autosize, config));
-  scope.addSignal('background', spec.background || config.background);
-  scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
-  // parse signal definitions, including config entries
-  signals = addSignals(scope, spec.signals, config.signals);
+  // parse top-level signal definitions
+  signals = collectSignals(spec, config);
+  signals.forEach(_ => parseSignal(_, scope));
+
+  // assign event and legend configuration
+  scope.eventConfig = config.events;
+  scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
   // store root group item
   input = scope.add(Collect());
@@ -43,11 +40,11 @@ export default function parseView(spec, scope) {
 
   // perform view layout
   parent = scope.add(ViewLayout({
-    layout:       scope.objectProperty(spec.layout),
-    legends:      scope.legends,
-    autosize:     scope.signalRef('autosize'),
-    mark:         root,
-    pulse:        ref(encode)
+    layout:   scope.objectProperty(spec.layout),
+    legends:  scope.legends,
+    autosize: scope.signalRef('autosize'),
+    mark:     root,
+    pulse:    ref(encode)
   }));
   scope.operators.pop();
 
@@ -67,22 +64,57 @@ export default function parseView(spec, scope) {
   return scope;
 }
 
-function addSignals(scope, signals, config) {
-  // signals defined in the spec take priority
-  array(signals).forEach(_ => {
-    if (!defined[_.name]) parseSignal(_, scope)
+function signalObject(name, value) {
+  return value && value.signal
+    ? { name, update: value.signal }
+    : { name, value };
+}
+
+/**
+ * Collect top-level signals, merging values as needed. Signals
+ * defined in the config signals arrays are added only if that
+ * signal is not explicitly defined in the specification.
+ * Built-in signals (autosize, background, padding, width, height)
+ * receive special treatment. They are initialized using the
+ * top-level spec property, or, if undefined in the spec, using
+ * the corresponding top-level config property. If this property
+ * is a signal reference object, the signal expression maps to the
+ * signal 'update' property. If the spec's top-level signal array
+ * contains an entry that matches a built-in signal, that entry
+ * will be merged with the built-in specification, potentially
+ * overwriting existing 'value' or 'update' properties.
+ */
+function collectSignals(spec, config) {
+  const _ = name => value(spec[name], config[name]),
+        signals = [
+          signalObject('background', _('background')),
+          signalObject('autosize', parseAutosize(_('autosize'))),
+          signalObject('padding', parsePadding(_('padding'))),
+          signalObject('width', _('width') || 0),
+          signalObject('height', _('height') || 0)
+        ],
+        pre = signals.reduce((p, s) => (p[s.name] = s, p), {}),
+        map = {};
+
+  // add spec signal array
+  array(spec.signals).forEach(s => {
+    if (hasOwnProperty(pre, s.name)) {
+      // merge if built-in signal
+      s = extend(pre[s.name], s);
+    } else {
+      // otherwise add to signal list
+      signals.push(s);
+    }
+    map[s.name] = s;
   });
 
-  if (!config) return signals;
-  const out = array(signals).slice();
-
-  // add config signals if not already defined
-  array(config).forEach(_ => {
-    if (!scope.hasOwnSignal(_.name)) {
-      parseSignal(_, scope);
-      out.push(_);
+  // add config signal array
+  array(config.signals).forEach(s => {
+    if (!hasOwnProperty(map, s.name) && !hasOwnProperty(pre, s.name)) {
+      // add to signal list if not already defined
+      signals.push(s);
     }
   });
 
-  return out;
+  return signals;
 }
