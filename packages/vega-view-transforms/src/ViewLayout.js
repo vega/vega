@@ -143,15 +143,14 @@ function layoutGroup(view, group, _) {
 }
 
 function viewSizeLayout(view, group, viewBounds, _) {
-  var auto = _.autosize || {},
-      type = auto.type,
-      viewWidth = view._width,
-      viewHeight = view._height,
-      padding = view.padding();
+  const auto = _.autosize || {},
+        type = auto.type;
 
   if (view._autosize < 1 || !type) return;
 
-  var width  = Math.max(0, group.width || 0),
+  let viewWidth = view._width,
+      viewHeight = view._height,
+      width  = Math.max(0, group.width || 0),
       left   = Math.max(0, Math.ceil(-viewBounds.x1)),
       right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
       height = Math.max(0, group.height || 0),
@@ -159,6 +158,7 @@ function viewSizeLayout(view, group, viewBounds, _) {
       bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
   if (auto.contains === Padding) {
+    const padding = view.padding();
     viewWidth -= padding.left + padding.right;
     viewHeight -= padding.top + padding.bottom;
   }
