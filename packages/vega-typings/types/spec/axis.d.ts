@@ -501,7 +501,6 @@ export interface BaseAxis {
    *
    * __Default value:__ `0`
    */
-
   labelOffset?: NumberValue;
 
   /**
