@@ -54,6 +54,7 @@ export interface Config
     view?: boolean | string[];
     window?: boolean | string[];
   };
+  lineBreak?: string | SignalRef;
   style?: {
     [style: string]: MarkConfig;
   };
