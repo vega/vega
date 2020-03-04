@@ -16,7 +16,7 @@ permalink: /docs/marks/text/index.html
 | :------------------ | :----------------------------: | :------------ |
 | align               | {% include type t="String" %}  | The horizontal text alignment. One of `left` (default), `center`, or `right`. |
 | angle               | {% include type t="Number" %}  | The rotation angle of the text in degrees (default `0`). |
-| baseline            | {% include type t="String" %}  | The vertical text baseline. One of `alphabetic` (default), `top`, `middle`, `bottom`. |
+| baseline            | {% include type t="String" %}  | The vertical text baseline. One of `alphabetic` (default), `top`, `middle`, `bottom`, `line-top`, or `line-bottom`. The `line-top` and `line-bottom` values {% include tag ver="5.10" %} operate similarly to `top` and `bottom`, but are calculated relative to the *lineHeight* rather than *fontSize* alone.|
 | dir                 | {% include type t="String" %}  | The direction of the text. One of `ltr` (left-to-right, default) or `rtl` (right-to-left). This property determines on which side is truncated in response to the _limit_ parameter. |
 | dx                  | {% include type t="Number" %}  | The horizontal offset in pixels (before rotation), between the text and anchor point. |
 | dy                  | {% include type t="Number" %}  | The vertical offset in pixels (before rotation), between the text and anchor point. |
