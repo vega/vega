@@ -1,6 +1,6 @@
 import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {extendOffset, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
@@ -37,7 +37,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: band.offset
+    offset: extendOffset(band.offset, _('labelOffset'))
   };
 
   if (isXAxis) {
