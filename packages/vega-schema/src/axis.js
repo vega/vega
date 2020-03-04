@@ -126,6 +126,7 @@ const axis = object({
   labelFontStyle: stringValue,
   labelLimit: numberValue,
   labelOpacity: numberValue,
+  labelOffset: numberValue,
   labelPadding: numberValue,
   labelSeparation: numberOrSignal,
 
