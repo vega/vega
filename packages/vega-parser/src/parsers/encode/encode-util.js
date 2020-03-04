@@ -53,7 +53,13 @@ export function encoders(encode, type, role, style, scope, params) {
 function applyDefaults(encode, type, role, style, config) {
   var defaults = {}, enter = {}, update, key, skip, props;
 
-  // ignore legend and axis
+  // if text mark, apply global lineBreak settings (#2370)
+  key = 'lineBreak';
+  if (type === 'text' && config[key] != null && !has(key, encode)) {
+    applyDefault(defaults, key, config[key]);
+  }
+
+  // ignore legend and axis roles
   if (role == 'legend' || String(role).indexOf('axis') === 0) {
     role = null;
   }
