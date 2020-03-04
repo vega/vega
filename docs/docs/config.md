@@ -236,7 +236,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleAlign      | {% include type t="String" %}   | Horizontal text alignment of axis titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing axis titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
 | titleAngle      | {% include type t="Number" %}   | Angle in degrees of axis titles. |
-| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. |
+| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. |
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
@@ -328,7 +328,7 @@ Properties defining default settings for legends. These properties are defined u
 | tickCount             | {% include type t="Number|String|Object" %} | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary. {% include tag ver="5.7" %} |
 | titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
 | titleAnchor           | {% include type t="String" %}   | The anchor position for placing legend titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
-| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
+| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor            | {% include type t="Color" %}    | Text color of legend titles. |
 | titleFont             | {% include type t="String" %}   | Font name of legend titles. |
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels of legend titles. |
