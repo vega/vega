@@ -24,6 +24,7 @@ be useful for applications that load multiple data sets from the same domain.
 - *target*: The browser `target` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *rel*: The browser `rel` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *http*: HTTP request parameters passed to underlying calls to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API); see [RequestInit](https://fetch.spec.whatwg.org/#requestinit) for allowed properties.
+- *crossOrigin*: Specifies the [`crossOrigin` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) to apply to an Image. Only applies when [sanitize](#load_sanitize) is invoked with the option `"context": "image"`. If this property is defined and maps to a value of `null` or `undefined`, then a `no-cors` fetch will be performed for the Image. This property can be used to override Vega's default behavior of using `crossOrigin="anonymous"`, which allows images loaded from a different host to be included in exported visualization images (and thereby avoid "tainted canvas errors"), so long as the server provides permission via proper CORS headers.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
