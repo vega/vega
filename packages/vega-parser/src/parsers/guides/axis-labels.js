@@ -1,11 +1,10 @@
 import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {extendOffset, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 import {deref} from '../../util';
-import {isObject} from 'vega-util';
 
 function flushExpr(scale, threshold, a, b, c) {
   return {
@@ -38,11 +37,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: {
-      // band.offset could be either a number or a signal ref object
-      ...(isObject(band.offset) ? {...band.offset} : {value: band.offset}),
-      offset: _('labelOffset')
-    }
+    offset: extendOffset(band.offset, _('labelOffset'))
   };
 
   if (isXAxis) {
