@@ -145,7 +145,7 @@ Enables hover event processing and returns this view instance. The optional argu
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color (overriding any background color defined in the input Vega specification) and returns this view instance. This method does not force an immediate update to the view; invoke the [runAsync](#view_runAsync) method when ready.
+Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color (overriding any background color defined in the input Vega specification) and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('background'[, color])`.
 
 <a name="view_width" href="#view_width">#</a>
 view.<b>width</b>([<i>width</i>])
@@ -163,7 +163,7 @@ Gets or sets the view height, in pixels. If no arguments are provided, returns t
 view.<b>padding</b>([<i>padding</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view padding, in pixels. Padding objects take the form `{left: 5, top: 5, right: 5, bottom: 5}`. If no arguments are provided, returns the current padding value. If *padding* is specified, this method sets the padding and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('padding'[, padding])`.
+Gets or sets the view padding, in pixels. Input *padding* objects take the form `{left: 5, top: 5, right: 5, bottom: 5}`; if a numeric *padding* value is provided, it will be expanded to an object with all properties set to that number. If no arguments are provided, returns the current padding value. If *padding* is specified, this method sets the padding and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('padding'[, padding])`.
 
 <a name="view_resize" href="#view_resize">#</a>
 view.<b>resize</b>()

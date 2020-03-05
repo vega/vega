@@ -70,7 +70,7 @@ Signal definitions may use the following properties.
 
 A few signal names are automatically processed and/or reserved:
 
-- Signals for the [specification](../specification) `width`, `height`, `padding`, and `autosize` properties are automatically defined. Specifications may include definitions for these signals: the _value_ property will be ignored, but the _update_ and _on_ properties may be used to dynamically update these view settings.
+- Signals for the [specification](../specification) `width`, `height`, `padding`, `autosize`, and (for version {% include tag ver="5.10" %}) `background` properties are automatically defined. Specifications may include definitions for these signals in the top-level `signals` array, in which case the definitions will be merged with any top-level [specification](../specification) property values, with precedence given to properties defined in the `signals` array.
 - Group mark instances automatically include a `parent` signal bound to the data object for that group. Specifications may **not** define a signal named `parent`.
 - The signal names `datum`, `item`, and `event` are reserved for top-level variables within expressions. Specifications may **not** define signals named `datum`, `item` or `event`.
 - If you define a signal named `cursor`, its value will automatically drive the [CSS mouse cursor](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor) for the Vega view. For more, see the [`cursor` signal documentation](#cursor) below.
