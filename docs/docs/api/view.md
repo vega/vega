@@ -141,6 +141,12 @@ Enables hover event processing and returns this view instance. The optional argu
 
 *This method should be invoked only once, upon view initialization.* Calling this method multiple times will add redundant event listeners to the view. In other words, this method is **not** [idempotent](https://en.wikipedia.org/wiki/Idempotence).
 
+<a name="view_description" href="#view_description">#</a>
+view.<b>description</b>([<i>text</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
+
+Gets or sets descriptive *text* for this view. This description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the view's container element. If no arguments are provided, returns the current description. If *text* is specified, this method sets the description and updates the view container element.
+
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")

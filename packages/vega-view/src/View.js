@@ -1,3 +1,4 @@
+import {ariaLabel} from './aria';
 import background from './background';
 import cursor from './cursor';
 import {data, dataref, change, insert, remove} from './data';
@@ -98,6 +99,9 @@ export default function View(spec, options) {
   // initialize cursor
   cursor(view);
 
+  // initialize view description
+  view.description(spec.description);
+
   // initialize hover proessing, if requested
   if (options.hover) view.hover();
 
@@ -141,6 +145,15 @@ prototype.dirty = function(item) {
 };
 
 // -- GET / SET ----
+
+prototype.description = function(text) {
+  if (arguments.length) {
+    const desc = text != null ? (text + '') : null;
+    if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
+    return this;
+  }
+  return this._desc;
+};
 
 prototype.container = function() {
   return this._el;

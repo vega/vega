@@ -21,7 +21,8 @@ export default function parseView(spec, scope) {
   signals = collectSignals(spec, config);
   signals.forEach(_ => parseSignal(_, scope));
 
-  // assign event and legend configuration
+  // assign description, event and legend configuration
+  scope.description = spec.description || config.description;
   scope.eventConfig = config.events;
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
