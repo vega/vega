@@ -51,8 +51,11 @@ Properties defined in the top-level scope of the configuration object.
 
 | Property      | Type                                 | Description    |
 | :------------ | :----------------------------------: | :------------- |
-| autosize      | {% include type t="String|Object" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [autosize documentation](../specification/#autosize) for more. |
-| background    | {% include type t="Color" %}         | Background color of the view component, or `null` for transparent. |
+| autosize      | {% include type t="String|Object|Signal" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [autosize documentation](../specification/#autosize) for more. Signal support available in versions {% include tag ver="5.10" %}. |
+| background    | {% include type t="Color|Signal" %}         | Background color of the view component, or `null` for transparent. Signal support available in versions {% include tag ver="5.10" %}. |
+| padding       | {% include type t="Number|Object|Signal" %} | The padding in pixels to add around the visualization. If a number, specifies padding for all sides. If an object, the value should have the format `{"left": 5, "top": 5, "right": 5, "bottom": 5}`. Signal support available in versions {% include tag ver="5.10" %}. |
+| width         | {% include type t="Number|Signal" %} | The width in pixels of the data rectangle. {% include tag ver="5.10" %} |
+| height        | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. {% include tag ver="5.10" %} |
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
 | lineBreak     | {% include type t="String|Signal" %} | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the `lineBreak` mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid. {% include tag ver="5.10" %} |
 
