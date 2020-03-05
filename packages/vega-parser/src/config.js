@@ -13,6 +13,9 @@ var defaultFont = 'sans-serif',
  */
 export default function() {
   return {
+    // default visualization description
+    description: 'Vega visualization',
+
     // default padding around visualization
     padding: 0,
 

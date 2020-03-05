@@ -78,6 +78,7 @@ prototype.isSubscope = function() {
 prototype.toRuntime = function() {
   this.finish();
   return {
+    description: this.description,
     operators:   this.operators,
     streams:     this.streams,
     updates:     this.updates,

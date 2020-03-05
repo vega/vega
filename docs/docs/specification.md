@@ -33,7 +33,7 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 | Property        | Type                          | Description                 |
 | :-------------- | :---------------------------: | :-------------------------- |
 | $schema         | {% include type t="URL" %}    | The URL for the Vega schema.|
-| description     | {% include type t="String" %} | A text description of the visualization.|
+| description     | {% include type t="String" %} | A text description of the visualization. In versions {% include tag ver="5.10" %}, the description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the container element of a Vega view.|
 | background      | {% include type t="Color|Signal" %}  | The background color of the entire view (defaults to transparent). If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `background` [signal definition](../signals).|
 | width           | {% include type t="Number|Signal" %} | The width in pixels of the data rectangle. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `width` [signal definition](../signals).|
 | height          | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `height` [signal definition](../signals).|
