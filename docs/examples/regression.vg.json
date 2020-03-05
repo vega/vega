@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A scatter plot with trend line calculated via user-configurable regression methods.",
   "padding": 5,
   "width": 500,
   "height": 500,

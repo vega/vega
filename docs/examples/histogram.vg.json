@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An interactive histogram for visualizing a univariate distribution.",
   "width": 500,
   "height": 100,
   "padding": 5,

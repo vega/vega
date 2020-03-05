@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Interactive cross-filtering among histograms of flight statistics.",
   "width": 500,
   "padding": 5,
 

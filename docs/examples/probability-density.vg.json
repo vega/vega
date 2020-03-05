@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Area chart using density estimation to show a probability density or cumulative distribution.",
   "width": 500,
   "height": 100,
   "padding": 5,

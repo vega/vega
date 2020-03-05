@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A horizon graph, which preserves resolution by layering slices of an area chart.",
   "width": 500,
   "height": 100,
 

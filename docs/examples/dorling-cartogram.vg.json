@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A Dorling cartogram depicting U.S. state obesity rates.",
   "width": 900,
   "height": 520,
   "autosize": "none",

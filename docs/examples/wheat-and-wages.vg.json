@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A recreation of William Playfair's classic chart of wheat prices and wages.",
   "width": 900,
   "height": 465,
   "padding": 5,

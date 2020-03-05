@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A recreation of a New York Times chart showing U.S. budget forecasts versus reality.",
   "width": 700,
   "height": 400,
   "padding": 5,
