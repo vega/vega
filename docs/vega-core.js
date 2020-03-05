@@ -169,6 +169,8 @@
     }
   }
 
+  const isLegalKey = key => key !== '__proto__';
+
   function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (var key in source) {
@@ -182,7 +184,7 @@
           // for legend block, recurse for the layout entry only
           // for style block, recurse for all properties
           // otherwise, no recursion: objects overwrite, no merging
-          var r = key === 'legend' ? {'layout': 1}
+          var r = key === 'legend' ? {layout: 1}
             : key === 'style' ? true
             : null;
           writeConfig(out, key, source[key], r);
@@ -193,13 +195,15 @@
   }
 
   function writeConfig(output, key, value, recurse) {
+    if (!isLegalKey(key)) return;
+
     var k, o;
     if (isObject(value) && !isArray(value)) {
       o = isObject(output[key]) ? output[key] : (output[key] = {});
       for (k in value) {
         if (recurse && (recurse === true || recurse[k])) {
           writeConfig(o, k, value[k]);
-        } else {
+        } else if (isLegalKey(k)) {
           o[k] = value[k];
         }
       }
@@ -1764,6 +1768,12 @@
     // set default result rel, if specified (#1542)
     if (options.rel) {
       result.rel = options.rel + '';
+    }
+
+    // provide control over cross-origin image handling (#2238)
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+    if (options.context === 'image' && options.crossOrigin) {
+      result.crossOrigin = options.crossOrigin + '';
     }
 
     // return
@@ -3453,6 +3463,13 @@
       add:  'this.sum += +v;',
       rem:  'this.sum -= v;',
       set:  'this.sum'
+    }),
+    'product': measure({
+      name: 'product',
+      init: 'this.product = 1;',
+      add:  'this.product *= v;',
+      rem:  'this.product /= v;',
+      set:  'this.valid ? this.product : undefined'
     }),
     'mean': measure({
       name: 'mean',
@@ -9016,6 +9033,14 @@
     return this;
   };
 
+  prototype$G.scale = function(s) {
+    this.x1 *= s;
+    this.y1 *= s;
+    this.x2 *= s;
+    this.y2 *= s;
+    return this;
+  };
+
   prototype$G.translate = function(dx, dy) {
     this.x1 += dx;
     this.x2 += dx;
@@ -9230,27 +9255,28 @@
   };
 
   prototype$H.loadImage = function(uri) {
-    var loader = this,
-        Image = domImage();
+    const loader = this,
+          Image = domImage();
     increment(loader);
 
     return loader._loader
       .sanitize(uri, {context: 'image'})
       .then(function(opt) {
-        var url = opt.href;
+        const url = opt.href;
         if (!url || !Image) throw {url: url};
 
-        var img = new Image();
+        const img = new Image();
 
-        img.onload = function() {
-          decrement(loader);
-        };
+        // set crossOrigin only if cors is defined; empty string sets anonymous mode
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
+        const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
+        if (cors != null) img.crossOrigin = cors;
 
-        img.onerror = function() {
-          decrement(loader);
-        };
-
+        // attempt to load image resource
+        img.onload = () => decrement(loader);
+        img.onerror = () => decrement(loader);
         img.src = url;
+
         return img;
       })
       .catch(function(e) {
@@ -10530,43 +10556,75 @@
     return true;
   }
 
-  function gradient(context, gradient, bounds) {
-    const w = bounds.width(),
-          h = bounds.height(),
-          stop = gradient.stops,
-          n = stop.length;
-
-    const canvasGradient = gradient.gradient === 'radial'
-      ? context.createRadialGradient(
-          bounds.x1 + v(gradient.x1, 0.5) * w,
-          bounds.y1 + v(gradient.y1, 0.5) * h,
-          Math.max(w, h) * v(gradient.r1, 0),
-          bounds.x1 + v(gradient.x2, 0.5) * w,
-          bounds.y1 + v(gradient.y2, 0.5) * h,
-          Math.max(w, h) * v(gradient.r2, 0.5)
-        )
-      : context.createLinearGradient(
-          bounds.x1 + v(gradient.x1, 0) * w,
-          bounds.y1 + v(gradient.y1, 0) * h,
-          bounds.x1 + v(gradient.x2, 1) * w,
-          bounds.y1 + v(gradient.y2, 0) * h
-        );
-
-    for (let i=0; i<n; ++i) {
-      canvasGradient.addColorStop(stop[i].offset, stop[i].color);
-    }
-
-    return canvasGradient;
+  function blend(context, item) {
+    context.globalCompositeOperation = item.blend || 'source-over';
   }
 
   function v(value, dflt) {
     return value == null ? dflt : value;
   }
 
+  function addStops(gradient, stops) {
+    const n = stops.length;
+    for (let i=0; i<n; ++i) {
+      gradient.addColorStop(stops[i].offset, stops[i].color);
+    }
+    return gradient;
+  }
+
+  function gradient(context, spec, bounds) {
+    const w = bounds.width(),
+          h = bounds.height();
+    let gradient;
+
+
+    if (spec.gradient === 'radial') {
+      gradient = context.createRadialGradient(
+        bounds.x1 + v(spec.x1, 0.5) * w,
+        bounds.y1 + v(spec.y1, 0.5) * h,
+        Math.max(w, h) * v(spec.r1, 0),
+        bounds.x1 + v(spec.x2, 0.5) * w,
+        bounds.y1 + v(spec.y2, 0.5) * h,
+        Math.max(w, h) * v(spec.r2, 0.5)
+      );
+    } else { // linear gradient
+      const x1 = v(spec.x1, 0),
+            y1 = v(spec.y1, 0),
+            x2 = v(spec.x2, 1),
+            y2 = v(spec.y2, 0);
+
+      if (x1 === x2 || y1 === y2 || w === h) {
+        // axis aligned: use normal gradient
+        gradient = context.createLinearGradient(
+          bounds.x1 + x1 * w,
+          bounds.y1 + y1 * h,
+          bounds.x1 + x2 * w,
+          bounds.y1 + y2 * h
+        );
+      } else {
+        // not axis aligned: render gradient into a pattern (#2365)
+        // this allows us to use normalized bounding box coordinates
+        const image = domCanvas(Math.ceil(w), Math.ceil(h)),
+              ictx = image.getContext('2d');
+
+        ictx.scale(w, h);
+        ictx.fillStyle = addStops(
+          ictx.createLinearGradient(x1, y1, x2, y2),
+          spec.stops
+        );
+        ictx.fillRect(0, 0, w, h);
+
+        return context.createPattern(image, 'no-repeat');
+      }
+    }
+
+    return addStops(gradient, spec.stops);
+  }
+
   function color(context, item, value) {
-    return isGradient(value) ?
-      gradient(context, value, item.bounds) :
-      value;
+    return isGradient(value)
+      ? gradient(context, value, item.bounds)
+      : value;
   }
 
   function fill(context, item, opacity) {
@@ -10690,6 +10748,8 @@
     if (opacity === 0) return;
 
     if (path(context, items)) return;
+
+    blend(context, item);
 
     if (item.fill && fill(context, item, opacity)) {
       context.fill();
@@ -11030,6 +11090,7 @@
       // draw group background
       if ((group.stroke || group.fill) && opacity) {
         rectanglePath(context, group, gx, gy);
+        blend(context, group);
         if (group.fill && fill(context, group, opacity)) {
           context.fill();
         }
@@ -11056,6 +11117,7 @@
       // draw group foreground
       if (fore && group.stroke && opacity) {
         rectanglePath(context, group, gx, gy);
+        blend(context, group);
         if (stroke(context, group, opacity)) {
           context.stroke();
         }
@@ -11249,6 +11311,7 @@
       }
 
       if (image.complete || image.toDataURL) {
+        blend(context, item);
         context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
         context.imageSmoothingEnabled = item.smooth !== false;
         context.drawImage(image, x, y, w, h);
@@ -11398,6 +11461,7 @@
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
       var opacity = item.opacity == null ? 1 : item.opacity;
       if (opacity && path$2(context, item, opacity)) {
+        blend(context, item);
         context.stroke();
       }
     });
@@ -11492,9 +11556,8 @@
   }
 
   function textValue(item, line) {
-    return line == null ? ''
-      : item.limit > 0 ? truncate$1(item, line)
-      : line + '';
+    const text = line == null ? '' : (line + '').trim();
+    return item.limit > 0 && text.length ? truncate$1(item, text) : text;
   }
 
   function widthGetter(item) {
@@ -11509,9 +11572,8 @@
     }
   }
 
-  function truncate$1(item, line) {
+  function truncate$1(item, text) {
     var limit = +item.limit,
-        text = line + '',
         width = widthGetter(item);
 
     if (width(text) < limit) return text;
@@ -11559,12 +11621,16 @@
   function offset$2(item) {
     // perform our own font baseline calculation
     // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+    // this also ensures consistent layout across renderers
     var baseline = item.baseline,
         h = fontSize(item);
+
     return Math.round(
-      baseline === 'top'    ?  0.79*h :
-      baseline === 'middle' ?  0.30*h :
-      baseline === 'bottom' ? -0.21*h : 0
+      baseline === 'top'         ?  0.79 * h :
+      baseline === 'middle'      ?  0.30 * h :
+      baseline === 'bottom'      ? -0.21 * h :
+      baseline === 'line-top'    ?  0.29 * h + 0.5 * lineHeight(item) :
+      baseline === 'line-bottom' ?  0.29 * h - 0.5 * lineHeight(item) : 0
     );
   }
 
@@ -11675,6 +11741,7 @@
       y += (item.dy || 0) + offset$2(item);
 
       tl = textLines(item);
+      blend(context, item);
       if (isArray(tl)) {
         lh = lineHeight(item);
         for (i=0; i<tl.length; ++i) {
@@ -11801,7 +11868,7 @@
   var keys = [
     'marktype', 'name', 'role', 'interactive', 'clip', 'items', 'zindex',
     'x', 'y', 'width', 'height', 'align', 'baseline',             // layout
-    'fill', 'fillOpacity', 'opacity',                             // fill
+    'fill', 'fillOpacity', 'opacity', 'blend',                    // fill
     'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
     'strokeDash', 'strokeDashOffset',                             // stroke dash
     'strokeForeground', 'strokeOffset',                           // group
@@ -12558,18 +12625,16 @@
   var pixelRatio = devicePixelRatio();
 
   function resize(canvas, width, height, origin, scaleFactor, opt) {
-    var inDOM = typeof HTMLElement !== 'undefined'
-      && canvas instanceof HTMLElement
-      && canvas.parentNode != null;
-
-    var context = canvas.getContext('2d'),
-        ratio = inDOM ? pixelRatio : scaleFactor,
-        key;
+    const inDOM = typeof HTMLElement !== 'undefined'
+                && canvas instanceof HTMLElement
+                && canvas.parentNode != null,
+          context = canvas.getContext('2d'),
+          ratio = inDOM ? pixelRatio : scaleFactor;
 
     canvas.width = width * ratio;
     canvas.height = height * ratio;
 
-    for (key in opt) {
+    for (const key in opt) {
       context[key] = opt[key];
     }
 
@@ -12635,10 +12700,15 @@
     // expand bounds by 1 pixel, then round to pixel boundaries
     b.expand(1).round();
 
+    // align to base pixel grid in case of non-integer scaling (#2425)
+    if (g.pixelRatio % 1) {
+      b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+    }
+
     // to avoid artifacts translate if origin has fractional pixels
     b.translate(-(origin[0] % 1), -(origin[1] % 1));
 
-    // set clipping path
+    // set clip path
     g.beginPath();
     g.rect(b.x1, b.y1, b.width(), b.height());
     g.clip();
@@ -12828,7 +12898,8 @@
     'strokeDash':       'stroke-dasharray',
     'strokeDashOffset': 'stroke-dashoffset',
     'strokeMiterLimit': 'stroke-miterlimit',
-    'opacity':          'opacity'
+    'opacity':          'opacity',
+    'blend':            'mix-blend-mode'
   };
 
   var styleProperties = Object.keys(styles);
@@ -12972,8 +13043,8 @@
     if (grad.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
       // coordinates, in a way that is cumbersome to replicate in canvas.
-      // So we wrap the radial gradient in a pattern element, allowing us
-      // to mantain a circular gradient that matches what canvas provides.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
       var pt = domChild(el, index++, 'pattern', ns);
       pt.setAttribute('id', patternPrefix + grad.id);
       pt.setAttribute('viewBox', '0,0,1,1');
@@ -13515,8 +13586,8 @@
       if (def.gradient === 'radial') {
         // SVG radial gradients automatically transform to normalized bbox
         // coordinates, in a way that is cumbersome to replicate in canvas.
-        // So we wrap the radial gradient in a pattern element, allowing us
-        // to mantain a circular gradient that matches what canvas provides.
+        // We wrap the radial gradient in a pattern element, allowing us to
+        // maintain a circular gradient that matches what canvas provides.
 
         defs += openTag(tag = 'pattern', {
           id: patternPrefix + id,
@@ -14333,29 +14404,29 @@
         x = position || 0;
         y = -offset;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
         bounds.add(0, -s).add(range, 0);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
         break;
       case Left:
         x = -offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
         bounds.add(-s, 0).add(0, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
         break;
       case Right:
         x = width + offset;
         y = position || 0;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-        if (title) s = axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
         bounds.add(0, 0).add(s, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
         break;
       case Bottom:
         x = position || 0;
         y = height + offset;
         s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-        if (title) s = axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
         bounds.add(0, 0).add(range, s);
+        if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
         break;
       default:
         x = item.x;
@@ -14376,32 +14447,21 @@
   }
 
   function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
-    var b = title.bounds, dx = 0, dy = 0;
+    const b = title.bounds;
 
     if (title.auto) {
+      const v = sign * (offset + dl + pad);
+      let dx = 0, dy = 0;
+
       view.dirty(title);
-
-      offset += pad;
-
       isYAxis
-        ? dx = (title.x || 0) - (title.x = sign * (offset + dl))
-        : dy = (title.y || 0) - (title.y = sign * (offset + dl));
-
+        ? dx = (title.x || 0) - (title.x = v)
+        : dy = (title.y || 0) - (title.y = v);
       title.mark.bounds.clear().union(b.translate(-dx, -dy));
       view.dirty(title);
-
-      if (isYAxis) {
-        bounds.add(0, b.y1).add(0, b.y2);
-        offset += b.width();
-      } else {
-        bounds.add(b.x1, 0).add(b.x2, 0);
-        offset += b.height();
-      }
-    } else {
-      bounds.union(b);
     }
 
-    return offset;
+    bounds.union(b);
   }
 
   function gridLayoutGroups(group) {
@@ -15204,15 +15264,14 @@
   }
 
   function viewSizeLayout(view, group, viewBounds, _) {
-    var auto = _.autosize || {},
-        type = auto.type,
-        viewWidth = view._width,
-        viewHeight = view._height,
-        padding = view.padding();
+    const auto = _.autosize || {},
+          type = auto.type;
 
     if (view._autosize < 1 || !type) return;
 
-    var width  = Math.max(0, group.width || 0),
+    let viewWidth = view._width,
+        viewHeight = view._height,
+        width  = Math.max(0, group.width || 0),
         left   = Math.max(0, Math.ceil(-viewBounds.x1)),
         right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
         height = Math.max(0, group.height || 0),
@@ -15220,6 +15279,7 @@
         bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
     if (auto.contains === Padding) {
+      const padding = view.padding();
       viewWidth -= padding.left + padding.right;
       viewHeight -= padding.top + padding.bottom;
     }
@@ -22999,7 +23059,32 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.9.2";
+  var version = "5.10.0";
+
+  // initialize aria role and label attributes
+  function initializeAria(view) {
+    const el = view.container();
+    if (el) {
+      el.setAttribute('role', 'figure');
+      ariaLabel(el, view.description());
+    }
+  }
+
+  // update aria-label if we have a DOM container element
+  function ariaLabel(el, desc) {
+    if (el) desc == null
+      ? el.removeAttribute('aria-label')
+      : el.setAttribute('aria-label', desc);
+  }
+
+  function background$1(view) {
+    // respond to background signal
+    view.add(null, _ => {
+      view._background = _.bg;
+      view._resize = 1;
+      return _.bg;
+    }, { bg: view._signals.background });
+  }
 
   var Default = 'default';
 
@@ -23102,7 +23187,7 @@
         w = width(view),
         h = height(view);
 
-    view._renderer.background(view._background);
+    view._renderer.background(view.background());
     view._renderer.resize(w, h, origin);
     view._handler.origin(origin);
 
@@ -23627,7 +23712,7 @@
     r = r || new constructor(view.loader());
     return r
       .initialize(el, width(view), height(view), offset$3(view), scaleFactor, opt)
-      .background(view._background);
+      .background(view.background());
   }
 
   function trap(view, fn) {
@@ -23657,19 +23742,21 @@
   }
 
   function initialize$1(el, elBind) {
-    var view = this,
-        type = view._renderType,
-        config = view._eventConfig.bind,
-        module = renderModule(type),
-        Handler, Renderer;
+    const view = this,
+          type = view._renderType,
+          config = view._eventConfig.bind,
+          module = renderModule(type);
 
     // containing dom element
     el = view._el = el ? lookup$4(view, el) : null;
 
+    // initialize aria attributes
+    initializeAria(view);
+
     // select appropriate renderer & handler
     if (!module) view.error('Unrecognized renderer type: ' + type);
-    Handler = module.handler || CanvasHandler;
-    Renderer = (el ? module.renderer : module.headless);
+    const Handler = module.handler || CanvasHandler,
+          Renderer = (el ? module.renderer : module.headless);
 
     // initialize renderer and input handler
     view._renderer = !Renderer ? null
@@ -23718,6 +23805,21 @@
       }
     }
     return el;
+  }
+
+  const number$5 = _ => +_ || 0;
+
+  const paddingObject = _ => ({top: _, bottom: _, left: _, right: _});
+
+  function padding(_) {
+    return isObject(_)
+      ? {
+          top:    number$5(_.top),
+          bottom: number$5(_.bottom),
+          left:   number$5(_.left),
+          right:  number$5(_.right)
+        }
+      : paddingObject(number$5(_));
   }
 
   /**
@@ -27220,9 +27322,6 @@
       view.changeset().insert(root.items)
     );
 
-    // initialize background color
-    view._background = options.background || ctx.background || null;
-
     // initialize view size
     view._width = view.width();
     view._height = view.height();
@@ -27233,8 +27332,14 @@
     view._autosize = 1;
     initializeResize(view);
 
+    // initialize background color
+    background$1(view);
+
     // initialize cursor
     cursor(view);
+
+    // initialize view description
+    view.description(spec.description);
 
     // initialize hover proessing, if requested
     if (options.hover) view.hover();
@@ -27280,6 +27385,15 @@
 
   // -- GET / SET ----
 
+  prototype$1s.description = function(text) {
+    if (arguments.length) {
+      const desc = text != null ? (text + '') : null;
+      if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
+      return this;
+    }
+    return this._desc;
+  };
+
   prototype$1s.container = function() {
     return this._el;
   };
@@ -27305,16 +27419,6 @@
       : this.update(op, value, options);
   };
 
-  prototype$1s.background = function(_) {
-    if (arguments.length) {
-      this._background = _;
-      this._resize = 1;
-      return this;
-    } else {
-      return this._background;
-    }
-  };
-
   prototype$1s.width = function(_) {
     return arguments.length ? this.signal('width', _) : this.signal('width');
   };
@@ -27324,11 +27428,17 @@
   };
 
   prototype$1s.padding = function(_) {
-    return arguments.length ? this.signal('padding', _) : this.signal('padding');
+    return arguments.length
+      ? this.signal('padding', padding(_))
+      : padding(this.signal('padding'));
   };
 
   prototype$1s.autosize = function(_) {
     return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
+  };
+
+  prototype$1s.background = function(_) {
+    return arguments.length ? this.signal('background', _) : this.signal('background');
   };
 
   prototype$1s.renderer = function(type) {
@@ -27501,31 +27611,23 @@
   prototype$1s.getState = getState$1;
   prototype$1s.setState = setState$1;
 
-  function parseAutosize(spec, config) {
-    spec = spec || config.autosize;
-    return isObject(spec)
-      ? spec
-      : {type: spec || 'pad'};
+  function parseAutosize(spec) {
+    return isObject(spec) ? spec : {type: spec || 'pad'};
   }
 
-  function parsePadding(spec, config) {
-    spec = spec || config.padding;
-    return isObject(spec)
-      ? {
-          top:    number$5(spec.top),
-          bottom: number$5(spec.bottom),
-          left:   number$5(spec.left),
-          right:  number$5(spec.right)
-        }
-      : paddingObject(number$5(spec));
-  }
+  const number$6 = _ => +_ || 0;
 
-  function number$5(_) {
-    return +_ || 0;
-  }
+  const paddingObject$1 = _ => ({top: _, bottom: _, left: _, right: _});
 
-  function paddingObject(_) {
-    return {top: _, bottom: _, left: _, right: _};
+  function parsePadding(spec) {
+    return !isObject(spec) ? paddingObject$1(number$6(spec))
+      : spec.signal ? spec
+      : {
+          top:    number$6(spec.top),
+          bottom: number$6(spec.bottom),
+          left:   number$6(spec.left),
+          right:  number$6(spec.right)
+        };
   }
 
   var OUTER = 'outer',
@@ -28810,7 +28912,13 @@
   function applyDefaults(encode, type, role, style, config) {
     var defaults = {}, enter = {}, update, key, skip, props;
 
-    // ignore legend and axis
+    // if text mark, apply global lineBreak settings (#2370)
+    key = 'lineBreak';
+    if (type === 'text' && config[key] != null && !has(key, encode)) {
+      applyDefault(defaults, key, config[key]);
+    }
+
+    // ignore legend and axis roles
     if (role == 'legend' || String(role).indexOf('axis') === 0) {
       role = null;
     }
@@ -28957,6 +29065,13 @@
     }
 
     return {extra, band, offset};
+  }
+
+  function extendOffset(value, offset) {
+    return !offset ? value
+      : !value ? offset
+      : !isObject(value) ? { value, offset }
+      : { ...value, offset: extendOffset(value.offset, offset) };
   }
 
   var GroupMark = 'group';
@@ -30539,7 +30654,7 @@
       scale:  scale,
       field:  Value,
       band:   0.5,
-      offset: band.offset
+      offset: extendOffset(band.offset, _('labelOffset'))
     };
 
     if (isXAxis) {
@@ -30798,28 +30913,26 @@
     return scope;
   }
 
-  var defined = toSet(['width', 'height', 'padding', 'autosize']);
-
   function parseView(spec, scope) {
     var config = scope.config,
         op, input, encode, parent, root, signals;
 
-    scope.background = spec.background || config.background;
-    scope.eventConfig = config.events;
+    // add scenegraph root
     root = ref(scope.root = scope.add(operator()));
-    scope.addSignal('width', spec.width || 0);
-    scope.addSignal('height', spec.height || 0);
-    scope.addSignal('padding', parsePadding(spec.padding, config));
-    scope.addSignal('autosize', parseAutosize(spec.autosize, config));
+
+    // parse top-level signal definitions
+    signals = collectSignals(spec, config);
+    signals.forEach(_ => parseSignal(_, scope));
+
+    // assign description, event and legend configuration
+    scope.description = spec.description || config.description;
+    scope.eventConfig = config.events;
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
-    // parse signal definitions, including config entries
-    signals = addSignals(scope, spec.signals, config.signals);
-
-    // Store root group item
+    // store root group item
     input = scope.add(Collect$1());
 
-    // Encode root group item
+    // encode root group item
     encode = extendEncode({
       enter: { x: {value: 0}, y: {value: 0} },
       update: { width: {signal: 'width'}, height: {signal: 'height'} }
@@ -30829,50 +30942,85 @@
       encoders(encode, GroupMark, FrameRole$1, spec.style, scope, {pulse: ref(input)}))
     );
 
-    // Perform view layout
+    // perform view layout
     parent = scope.add(ViewLayout$1({
-      layout:       scope.objectProperty(spec.layout),
-      legends:      scope.legends,
-      autosize:     scope.signalRef('autosize'),
-      mark:         root,
-      pulse:        ref(encode)
+      layout:   scope.objectProperty(spec.layout),
+      legends:  scope.legends,
+      autosize: scope.signalRef('autosize'),
+      mark:     root,
+      pulse:    ref(encode)
     }));
     scope.operators.pop();
 
-    // Parse remainder of specification
+    // parse remainder of specification
     scope.pushState(ref(encode), ref(parent), null);
     parseSpec(spec, scope, signals);
     scope.operators.push(parent);
 
-    // Bound / render / sieve root item
+    // bound / render / sieve root item
     op = scope.add(Bound$1({mark: root, pulse: ref(parent)}));
     op = scope.add(Render$1({pulse: ref(op)}));
     op = scope.add(Sieve$1({pulse: ref(op)}));
 
-    // Track metadata for root item
+    // track metadata for root item
     scope.addData('root', new DataScope(scope, input, input, op));
 
     return scope;
   }
 
-  function addSignals(scope, signals, config) {
-    // signals defined in the spec take priority
-    array(signals).forEach(_ => {
-      if (!defined[_.name]) parseSignal(_, scope);
+  function signalObject(name, value) {
+    return value && value.signal
+      ? { name, update: value.signal }
+      : { name, value };
+  }
+
+  /**
+   * Collect top-level signals, merging values as needed. Signals
+   * defined in the config signals arrays are added only if that
+   * signal is not explicitly defined in the specification.
+   * Built-in signals (autosize, background, padding, width, height)
+   * receive special treatment. They are initialized using the
+   * top-level spec property, or, if undefined in the spec, using
+   * the corresponding top-level config property. If this property
+   * is a signal reference object, the signal expression maps to the
+   * signal 'update' property. If the spec's top-level signal array
+   * contains an entry that matches a built-in signal, that entry
+   * will be merged with the built-in specification, potentially
+   * overwriting existing 'value' or 'update' properties.
+   */
+  function collectSignals(spec, config) {
+    const _ = name => value$1(spec[name], config[name]),
+          signals = [
+            signalObject('background', _('background')),
+            signalObject('autosize', parseAutosize(_('autosize'))),
+            signalObject('padding', parsePadding(_('padding'))),
+            signalObject('width', _('width') || 0),
+            signalObject('height', _('height') || 0)
+          ],
+          pre = signals.reduce((p, s) => (p[s.name] = s, p), {}),
+          map = {};
+
+    // add spec signal array
+    array(spec.signals).forEach(s => {
+      if (hasOwnProperty(pre, s.name)) {
+        // merge if built-in signal
+        s = extend(pre[s.name], s);
+      } else {
+        // otherwise add to signal list
+        signals.push(s);
+      }
+      map[s.name] = s;
     });
 
-    if (!config) return signals;
-    const out = array(signals).slice();
-
-    // add config signals if not already defined
-    array(config).forEach(_ => {
-      if (!scope.hasOwnSignal(_.name)) {
-        parseSignal(_, scope);
-        out.push(_);
+    // add config signal array
+    array(config.signals).forEach(s => {
+      if (!hasOwnProperty(map, s.name) && !hasOwnProperty(pre, s.name)) {
+        // add to signal list if not already defined
+        signals.push(s);
       }
     });
 
-    return out;
+    return signals;
   }
 
   function Scope$1(config) {
@@ -30889,7 +31037,6 @@
     this.streams = [];
     this.updates = [];
     this.operators = [];
-    this.background = null;
     this.eventConfig = null;
 
     this._id = 0;
@@ -30942,7 +31089,7 @@
   prototype$1u.toRuntime = function() {
     this.finish();
     return {
-      background:  this.background,
+      description: this.description,
       operators:   this.operators,
       streams:     this.streams,
       updates:     this.updates,
@@ -31318,6 +31465,9 @@
    */
   function defaults() {
     return {
+      // default visualization description
+      description: 'Vega visualization',
+
       // default padding around visualization
       padding: 0,
 
@@ -31436,6 +31586,7 @@
         labels: true,
         labelAngle: 0,
         labelLimit: 180,
+        labelOffset: 0,
         labelPadding: 2,
         ticks: true,
         tickColor: gray,
