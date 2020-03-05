@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A histogram of film ratings, modified to include null values.",
   "width": 400,
   "height": 200,
   "padding": 5,

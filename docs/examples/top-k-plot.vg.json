@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A top-k bar chart ranking film directors by revenue.",
   "width": 500,
   "height": 410,
   "padding": 5,

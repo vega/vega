@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A small multiples view of 2D density heatmaps of automobile statistics.",
   "width": 250,
   "height": 250,
   "padding": 5,

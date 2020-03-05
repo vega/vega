@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Area charts showing average daily temperatures in Seattle for each hour of the day.",
   "width": 800,
   "padding": 5,
 

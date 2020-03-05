@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A violin plot example showing distributions for iris flower data.",
   "width": 500,
   "padding": 5,
 

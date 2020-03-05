@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A small multiples view of barley yields by site and variety.",
   "width": 200,
   "padding": 5,
 

@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A re-orderable adjacency matrix depicting character co-occurrence in the novel Les Misérables.",
   "width": 770,
   "height": 770,
   "padding": 2,

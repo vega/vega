@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A searchable, stacked area chart of U.S. occupations from 1850 to 2000.",
   "width": 800,
   "height": 500,
   "padding": 5,

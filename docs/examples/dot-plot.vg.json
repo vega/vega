@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A dot plot example depicting the distribution of animal sleep times.",
   "width": 300,
   "padding": 5,
 
