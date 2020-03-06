@@ -55,6 +55,7 @@ export type Transforms =
   | JoinAggregateTransform
   | KDETransform
   | KDE2DTransform
+  | LabelTransform
   | LinkPathTransform
   | LoessTransform
   | LookupTransform
@@ -491,6 +492,20 @@ export interface LoessTransform {
   groupby?: FieldRef[] | SignalRef;
   bandwidth?: number | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
+}
+
+export interface LabelTransform {
+  type: 'label';
+  size: Vector2<number | SignalRef> | SignalRef;
+  sort?: Compare;
+  offset?: number[] | number | SignalRef;
+  anchor?: string[] | string | SignalRef;
+  padding?: number | SignalRef;
+  markIndex?: number;
+  lineAnchor?: 'begin' | 'end' | SignalRef;
+  avoidBaseMark?: boolean | SignalRef;
+  avoidMarks?: string[];
+  as?: Vector7<string | SignalRef> | SignalRef;
 }
 
 export interface LookupTransform {
