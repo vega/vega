@@ -221,6 +221,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
+| labelLineHeight | {% include type t="Number" %}   | Line height in pixels for multi-line label text. {% include tag ver="5.10" %} |
 | labelOffset     | {% include type t="Number" %}   | Position offset in pixels to apply to labels, in addition to *tickOffset*. {% include tag ver="5.10" %} |
 | labelOpacity    | {% include type t="Number" %}   | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
