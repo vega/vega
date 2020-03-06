@@ -2,7 +2,7 @@
 export function initializeAria(view) {
   const el = view.container();
   if (el) {
-    el.setAttribute('role', 'figure');
+    el.setAttribute('role', 'graphics-document');
     ariaLabel(el, view.description());
   }
 }
