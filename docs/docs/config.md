@@ -51,9 +51,14 @@ Properties defined in the top-level scope of the configuration object.
 
 | Property      | Type                                 | Description    |
 | :------------ | :----------------------------------: | :------------- |
-| autosize      | {% include type t="String|Object" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [autosize documentation](../specification/#autosize) for more. |
-| background    | {% include type t="Color" %}         | Background color of the view component, or `null` for transparent. |
+| autosize      | {% include type t="String|Object|Signal" %} | Default automatic sizing setting. Valid string values are `"pad"`, `"fit"` or `"none"`. See the [autosize documentation](../specification/#autosize) for more. Signal support available in versions {% include tag ver="5.10" %}. |
+| background    | {% include type t="Color|Signal" %}         | Background color of the view component, or `null` for transparent. Signal support available in versions {% include tag ver="5.10" %}. |
+| description   | {% include type t="String" %}     | The default text description for visualizations. The description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the container element of a Vega view. {% include tag ver="5.10" %} |
+| padding       | {% include type t="Number|Object|Signal" %} | The padding in pixels to add around the visualization. If a number, specifies padding for all sides. If an object, the value should have the format `{"left": 5, "top": 5, "right": 5, "bottom": 5}`. Signal support available in versions {% include tag ver="5.10" %}. |
+| width         | {% include type t="Number|Signal" %} | The width in pixels of the data rectangle. {% include tag ver="5.10" %} |
+| height        | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. {% include tag ver="5.10" %} |
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
+| lineBreak     | {% include type t="String|Signal" %} | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the `lineBreak` mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid. {% include tag ver="5.10" %} |
 
 ### Usage
 
@@ -216,6 +221,8 @@ Additional property blocks can target more specific axis types based on the orie
 | labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %}   | Font weight of axis tick labels. |
 | labelLimit      | {% include type t="Number" %}   | The maximum allowed length in pixels of axis tick labels. |
+| labelLineHeight | {% include type t="Number" %}   | Line height in pixels for multi-line label text. {% include tag ver="5.10" %} |
+| labelOffset     | {% include type t="Number" %}   | Position offset in pixels to apply to labels, in addition to *tickOffset*. {% include tag ver="5.10" %} |
 | labelOpacity    | {% include type t="Number" %}   | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelSeparation | {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
@@ -236,7 +243,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleAlign      | {% include type t="String" %}   | Horizontal text alignment of axis titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleAnchor_ value. |
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing axis titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with an _orient_ of `"bottom"` these anchor positions map to a left-, center-, or right-aligned title. The anchor point is determined relative to the axis scale range. {% include tag ver="5.0" %} |
 | titleAngle      | {% include type t="Number" %}   | Angle in degrees of axis titles. |
-| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. |
+| titleBaseline   | {% include type t="String" %}   | Vertical text baseline for axis titles. |
 | titleColor      | {% include type t="Color" %}    | Text color of axis titles. |
 | titleFont       | {% include type t="String" %}   | Font name for axis titles. |
 | titleFontSize   | {% include type t="Number" %}   | Font size of axis titles. |
@@ -328,7 +335,7 @@ Properties defining default settings for legends. These properties are defined u
 | tickCount             | {% include type t="Number|String|Object" %} | The desired number of tick values for quantitative legends. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary. {% include tag ver="5.7" %} |
 | titleAlign            | {% include type t="String" %}   | Horizontal text alignment of legend titles. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
 | titleAnchor           | {% include type t="String" %}   | The anchor position for placing legend titles. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
-| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
+| titleBaseline         | {% include type t="String" %}   | Vertical text baseline of legend titles. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor            | {% include type t="Color" %}    | Text color of legend titles. |
 | titleFont             | {% include type t="String" %}   | Font name of legend titles. |
 | titleFontSize         | {% include type t="Number" %}   | Font size in pixels of legend titles. |

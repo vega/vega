@@ -78,3 +78,15 @@ tape('mergeConfig handles empty arguments', function(t) {
   t.deepEqual(vega.mergeConfig(null, undefined, c), c);
   t.end();
 });
+
+tape('mergeConfig must not allow prototype pollution', function(t) {
+  const config = {symbol: {shape: 'triangle-right'}},
+        payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}'),
+        merged = vega.mergeConfig(config, payload, {symbol: payload});
+
+  t.equal(merged.__proto__.vulnerable, undefined);
+  t.equal(merged.symbol.__proto__.vulnerable, undefined);
+  t.equal(Object.prototype.vulnerable, undefined);
+
+  t.end();
+});

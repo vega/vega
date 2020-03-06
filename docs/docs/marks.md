@@ -58,7 +58,7 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | type          | {% include type t="String" %}  | {% include required %} The graphical mark type. Must be one of the [supported mark types](#types).|
-| clip          | [Clip](#clip) | Indicates if the marks should be clipped to a specified shape. If boolean-valued, the clipping region is the enclosing group's width and height (default `false`). If object-valued, should specify either an arbitrary SVG path string or a cartographic projection with which to clip to the sphere of the Earth.|
+| clip          | [Clip](#clip) | Indicates if the marks should be clipped to a specified shape (default `false`). If boolean-valued, the clipping region is the enclosing group's width and height. If object-valued, should specify either an arbitrary SVG path string or a cartographic projection with which to clip to the sphere of the Earth.|
 | description   | {% include type t="String" %}  | An optional description of this mark. Can be used as a comment.|
 | encode        | [Encode](#encode)              | An object containing a set of visual encoding rules for mark properties.|
 | from          | [From](#from)                  | An object describing the data this mark set should visualize. If undefined, a single element data set containing an empty object is assumed. The _from_ property can either specify a data set to use (e.g., `{"data": "table"}`) or provide a faceting directive to subdivide a data set across a set of [`group` marks](../marks/group).|
@@ -74,14 +74,14 @@ There is also a special group mark type (`group`) that can contain other marks, 
 
 ## <a name="clip"></a>Mark Clipping
 
-The `clip` property limits the area in which a set of marks is visible. The default (boolean `false`) is to disable clipping. A boolean `true` value clips the marks to the width and height of the enclosing group mark. The `clip` property can also accept a [signal](../types/#Signal) that should evaluate to a boolean value.
+The `clip` property limits the area in which a set of marks is visible. The default value (boolean `false`) disables clipping. A boolean `true` value clips the marks to the width and height of the enclosing group mark. The `clip` property also accepts a [signal](../types/#Signal) that evaluates to a boolean value.
 
-Alternatively, an object specification can be used to define more sophisticated clipping regions. An object-valued clipping specification can take either a `path` (for arbitrary SVG paths) or a `sphere` property (to clip to the globe, relative to a geographic projection), but not both. Both properties can be signal values to enable dynamic clipping regions.
+An object specification can be used to define more sophisticated clipping regions. An object-valued `clip` must have either a `path` property (for arbitrary SVG paths) or a `sphere` property (to clip to the globe, relative to a geographic projection), but not both. Either property can be a signal value to enable dynamic clipping regions.
 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | path          | {% include type t="String|Signal" %}  | An [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) describing the clipping region. The path is assumed to lie relative to the coordinate system of the enclosing group.|
-| sphere        | {% include type t="String|Signal" %}  | The name of a cartogrpahic [projection](../projections) with which to clip all marks to the projected sphere of the globe. This option is useful in conjunction with map projections that otherwise included projected content (such as graticule lines) outside the bounds of the globe.|
+| sphere        | {% include type t="String|Signal" %}  | The name of a cartographic [projection](../projections) with which to clip all marks to the projected sphere of the globe. This option is useful in conjunction with map projections that otherwise included projected content (such as graticule lines) outside the bounds of the globe.|
 
 
 ## <a name="from"></a>Mark Data Sources (`from`)

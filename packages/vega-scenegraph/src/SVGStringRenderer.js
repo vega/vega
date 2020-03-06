@@ -101,8 +101,8 @@ prototype.buildDefs = function() {
     if (def.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
       // coordinates, in a way that is cumbersome to replicate in canvas.
-      // So we wrap the radial gradient in a pattern element, allowing us
-      // to mantain a circular gradient that matches what canvas provides.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
 
       defs += openTag(tag = 'pattern', {
         id: patternPrefix + id,
@@ -247,12 +247,33 @@ prototype.mark = function(scene) {
         str += escape_text(textValue(item, tl));
       }
     } else if (tag === 'g') {
+      const fore = item.strokeForeground,
+            fill = item.fill,
+            stroke = item.stroke;
+
+      if (fore && stroke) {
+        item.stroke = null;
+      }
+
       str += openTag('path', renderer.attributes(mdef.background, item),
         applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
 
-      str += openTag('g', renderer.attributes(mdef.foreground, item))
+      str += openTag('g', renderer.attributes(mdef.content, item))
         + renderer.markGroup(item)
         + closeTag('g');
+
+      if (fore && stroke) {
+        if (fill) item.fill = null;
+        item.stroke = stroke;
+
+        str += openTag('path', renderer.attributes(mdef.foreground, item),
+          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+
+        if (fill) item.fill = fill;
+      } else {
+        str += openTag('path', renderer.attributes(mdef.foreground, item),
+          applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+      }
     }
 
     str += closeTag(tag);
@@ -286,6 +307,13 @@ function applyStyles(o, mark, tag, defs) {
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
+  }
+
+  if (tag === 'bgfore') {
+    if (mark.interactive === false) {
+      s += 'pointer-events: none; ';
+    }
+    s += 'display: none; ';
   }
 
   if (tag === 'image') {

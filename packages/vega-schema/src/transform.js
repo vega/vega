@@ -64,6 +64,9 @@ function parameterSchema(param) {
     case 'string':
       p = anyOf(stringType, signalRef);
       break;
+    // dates should fall through to number
+    // values should be timestamps or date-valued signals
+    case 'date':
     case 'number':
       p = anyOf(numberType, signalRef);
       break;

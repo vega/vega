@@ -62,7 +62,7 @@ the timeunit transform produces the output
 
 ```js
 [
-  {"date": Date(2018,  0, 11), "unit0": Date(2018,  0,  7), "unit1": Date(2018,  9, 21)},
+  {"date": Date(2018,  0, 11), "unit0": Date(2018,  0,  7), "unit1": Date(2018,  0, 21)},
   {"date": Date(2018,  4, 12), "unit0": Date(2018,  3, 29), "unit1": Date(2018,  4, 13)}},
   {"date": Date(2018,  8,  7), "unit0": Date(2018,  8,  2), "unit1": Date(2018,  8, 16)}},
   {"date": Date(2018, 11, 23), "unit0": Date(2018, 11, 23), "unit1": Date(2019,  0,  6)}}

@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A quantile dot plot conveying the uncertainty of bus arrival times.",
   "width": 400,
   "height": 90,
   "padding": 5,

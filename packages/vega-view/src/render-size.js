@@ -22,7 +22,7 @@ export function resizeRenderer(view) {
       w = width(view),
       h = height(view);
 
-  view._renderer.background(view._background);
+  view._renderer.background(view.background());
   view._renderer.resize(w, h, origin);
   view._handler.origin(origin);
 

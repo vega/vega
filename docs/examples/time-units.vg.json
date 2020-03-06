@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A bar chart of flight statistics, aggregated by the selected time unit.",
   "width": 600,
   "height": 300,
   "padding": 5,

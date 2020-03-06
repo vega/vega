@@ -1,4 +1,4 @@
-import {hasOwnProperty} from 'vega-util';
+import {array, hasOwnProperty, toSet} from 'vega-util';
 import invertRange from './scales/invertRange';
 import invertRangeExtent from './scales/invertRangeExtent';
 
@@ -7,7 +7,12 @@ import {
   Linear, Log, Pow, Sqrt, Symlog,
   Time, UTC, Sequential, Diverging,
   Quantile, Quantize, Threshold,
-  BinOrdinal, Ordinal, Band, Point
+  BinOrdinal, Ordinal, Band, Point,
+  Continuous as C,
+  Discrete as D,
+  Discretizing as Z,
+  Interpolating as I,
+  Temporal as T
 } from './scales/types';
 
 import {
@@ -21,11 +26,14 @@ import {
 
 import * as $ from 'd3-scale';
 
+// scale registry
+const scales = {};
+
 /**
  * Augment scales with their type and needed inverse methods.
  */
-function create(type, constructor) {
-  return function scale() {
+function create(type, constructor, metadata) {
+  const ctr = function scale() {
     var s = constructor();
 
     if (!s.invertRange) {
@@ -37,57 +45,92 @@ function create(type, constructor) {
     s.type = type;
     return s;
   };
+
+  ctr.metadata = toSet(array(metadata));
+
+  return ctr;
 }
 
-export default function scale(type, scale) {
+export function scale(type, scale, metadata) {
   if (arguments.length > 1) {
-    scales[type] = create(type, scale);
+    scales[type] = create(type, scale, metadata);
     return this;
   } else {
-    return hasOwnProperty(scales, type) ? scales[type] : undefined;
+    return isValidScaleType(type) ? scales[type] : undefined;
   }
 }
 
-var scales = {
-  // identity scale
-  [Identity]:      $.scaleIdentity,
+// identity scale
+scale(Identity, $.scaleIdentity);
 
-  // continuous scales
-  [Linear]:        $.scaleLinear,
-  [Log]:           $.scaleLog,
-  [Pow]:           $.scalePow,
-  [Sqrt]:          $.scaleSqrt,
-  [Symlog]:        $.scaleSymlog,
-  [Time]:          $.scaleTime,
-  [UTC]:           $.scaleUtc,
+// continuous scales
+scale(Linear, $.scaleLinear, C);
+scale(Log, $.scaleLog, [C, Log]);
+scale(Pow, $.scalePow, C);
+scale(Sqrt, $.scaleSqrt, C);
+scale(Symlog, $.scaleSymlog, C);
+scale(Time, $.scaleTime, [C, T]);
+scale(UTC, $.scaleUtc, [C, T]);
 
-  // sequential scales
-  [Sequential]:             $.scaleSequential, // backwards compat
-  [Sequential+'-'+Linear]:  $.scaleSequential,
-  [Sequential+'-'+Log]:     $.scaleSequentialLog,
-  [Sequential+'-'+Pow]:     $.scaleSequentialPow,
-  [Sequential+'-'+Sqrt]:    $.scaleSequentialSqrt,
-  [Sequential+'-'+Symlog]:  $.scaleSequentialSymlog,
+// sequential scales
+scale(Sequential, $.scaleSequential, [C, I]); // backwards compat
+scale(`${Sequential}-${Linear}`, $.scaleSequential, [C, I]);
+scale(`${Sequential}-${Log}`, $.scaleSequentialLog, [C, I, Log]);
+scale(`${Sequential}-${Pow}`, $.scaleSequentialPow, [C, I]);
+scale(`${Sequential}-${Sqrt}`, $.scaleSequentialSqrt, [C, I]);
+scale(`${Sequential}-${Symlog}`, $.scaleSequentialSymlog, [C, I]);
 
-  // diverging scales
-  [Diverging+'-'+Linear]:   $.scaleDiverging,
-  [Diverging+'-'+Log]:      $.scaleDivergingLog,
-  [Diverging+'-'+Pow]:      $.scaleDivergingPow,
-  [Diverging+'-'+Sqrt]:     $.scaleDivergingSqrt,
-  [Diverging+'-'+Symlog]:   $.scaleDivergingSymlog,
+// diverging scales
+scale(`${Diverging}-${Linear}`, $.scaleDiverging, [C, I]);
+scale(`${Diverging}-${Log}`, $.scaleDivergingLog, [C, I, Log]);
+scale(`${Diverging}-${Pow}`, $.scaleDivergingPow, [C, I]);
+scale(`${Diverging}-${Sqrt}`, $.scaleDivergingSqrt, [C, I]);
+scale(`${Diverging}-${Symlog}`, $.scaleDivergingSymlog, [C, I]);
 
-  // discretizing scales
-  [Quantile]:      $.scaleQuantile,
-  [Quantize]:      $.scaleQuantize,
-  [Threshold]:     $.scaleThreshold,
+// discretizing scales
+scale(Quantile, $.scaleQuantile, [Z, Quantile]);
+scale(Quantize, $.scaleQuantize, Z);
+scale(Threshold, $.scaleThreshold, Z);
 
-  // discrete scales
-  [BinOrdinal]:    scaleBinOrdinal,
-  [Ordinal]:       $.scaleOrdinal,
-  [Band]:          scaleBand,
-  [Point]:         scalePoint
-};
+// discrete scales
+scale(BinOrdinal, scaleBinOrdinal, [D, Z]);
+scale(Ordinal, $.scaleOrdinal, D);
+scale(Band, scaleBand, D);
+scale(Point, scalePoint, D);
 
-for (var key in scales) {
-  scale(key, scales[key]);
+export function isValidScaleType(type) {
+  return hasOwnProperty(scales, type);
+}
+
+function hasType(key, type) {
+  const s = scales[key];
+  return s && s.metadata[type];
+}
+
+export function isContinuous(key) {
+  return hasType(key, C);
+}
+
+export function isDiscrete(key) {
+  return hasType(key, D);
+}
+
+export function isDiscretizing(key) {
+  return hasType(key, Z);
+}
+
+export function isLogarithmic(key) {
+  return hasType(key, Log);
+}
+
+export function isTemporal(key) {
+  return hasType(key, T);
+}
+
+export function isInterpolating(key) {
+  return hasType(key, I);
+}
+
+export function isQuantile(key) {
+  return hasType(key, Quantile);
 }

@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "5.8.0",
+  "version": "5.10.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
@@ -20,8 +20,8 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "canvas": "^2.6.0",
-    "vega": "5.8.0",
-    "yargs": "14"
+    "canvas": "^2.6.1",
+    "vega": "5.10.0",
+    "yargs": "15"
   }
 }

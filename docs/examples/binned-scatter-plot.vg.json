@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A binned scatter plot example showing aggregate counts per binned cell.",
   "width": 200,
   "height": 200,
   "padding": 5,

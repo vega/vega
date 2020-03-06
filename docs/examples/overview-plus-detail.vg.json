@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Area charts of stock prices, with an interactive overview and filtered detail views.",
   "width": 720,
   "height": 480,
   "padding": 5,

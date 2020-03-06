@@ -10,15 +10,15 @@ export default function(data, x, y) {
   visitPoints(data, x, y, (dx, dy) => {
     const lx = Math.log(dx),
           ly = Math.log(dy);
-    X += lx;
-    Y += ly;
-    XY += lx * ly;
-    X2 += lx * lx;
-    YS += dy;
     ++n;
+    X += (lx - X) / n;
+    Y += (ly - Y) / n;
+    XY += (lx * ly - XY) / n;
+    X2 += (lx * lx - X2) / n;
+    YS += (dy - YS) / n;
   });
 
-  const coef = ols(X / n, Y / n, XY / n, X2 / n),
+  const coef = ols(X, Y, XY, X2),
         predict = x => coef[0] * Math.pow(x, coef[1]);
 
   coef[0] = Math.exp(coef[0]);
@@ -26,6 +26,6 @@ export default function(data, x, y) {
   return {
     coef: coef,
     predict: predict,
-    rSquared: rSquared(data, x, y, YS / n, predict)
+    rSquared: rSquared(data, x, y, YS, predict)
   };
 }

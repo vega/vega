@@ -4,7 +4,7 @@ title: Contour Transform
 permalink: /docs/transforms/contour/index.html
 ---
 
-**Note**: As of Vega {% include tag ver="5.8" %} this transform is _deprecated_ and will be removed in a future major release. For similar but more flexible functionality, please use the [isocontour](../isocontour) and [kde2d](../kde2d) transforms.
+**Note**: As of Vega {% include tag ver="5.8" %} this transform is _deprecated_ and may be removed in a future major release. For similar but more flexible functionality, please use the [isocontour](../isocontour) and [kde2d](../kde2d) transforms.
 
 The **contour** transform models a spatial distribution of data values using a set of discrete levels. Each [contour line](https://en.wikipedia.org/wiki/Contour_line) is an isoline of constant value. A common use case is to convey density estimates for 2D point data, as these can provide a more scalable representation for large numbers of data points.
 

@@ -12,7 +12,11 @@ export const spec: Spec = {
     { "name": "steps", "value": 0,
       "bind": {"input": "range", "min": 0, "max": 500, "step": 1} },
     { "name": "method", "value": "pdf",
-      "bind": {"input": "radio", "options": ["pdf", "cdf"]} },
+      "bind": {
+        "input": "radio", "options": ["pdf", "cdf"],
+        "labels": ["Probability Density", "Cumulative Distribution"]
+      }
+    },
     { "name": "summary",
       "update": "data('summary')[0] || {mean: 0, stdev: 0}" }
   ],

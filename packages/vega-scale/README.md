@@ -9,10 +9,19 @@ This module also provides augmented implementations of `'band'`, `'point'`, and 
 ## API Reference
 
 <a name="scale" href="#scale">#</a>
-vega.<b>scale</b>(<i>type</i>[, <i>scale</i>])
+vega.<b>scale</b>(<i>type</i>[, <i>scale</i>, <i>metadata</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/scales.js "Source")
 
 Registry function for adding and accessing scale constructor functions. The *type* argument is a String indicating the name of the scale type. If the *scale* argument is not specified, this method returns the matching scale constructor in the registry, or `null` if not found. If the *scale* argument is provided, it must be a scale constructor function to add to the registry under the given *type* name.
+
+The *metadata* argument provides additional information to guide appropriate use of scales within Vega. The *metadata* can be either a string or string array. The valid string values are:
+
+* `"continuous"` - the scale is defined over a continuous-valued domain.
+* `"discrete"` - the scale is defined over a discrete domain and range.
+* `"discretizing"` - the scale discretizes a continuous domain to a discrete range.
+* `"interpolating"` - the scale range is defined using a color interpolator.
+* `"log"` - the scale performs a logarithmic transform of the continuous domain.
+* `"temporal"` - the scale domain is defined over date-time values.
 
 By default, the scale registry includes entries for all scale types provided by the [d3-scale](https://github.com/d3/d3-scale) module. Scales created using the constructor returned by this method have an additional `type` property indicating the scale type. All scales supporting either an `invert` or `invertExtent` method are augmented with an additional `invertRange` function that returns an array of corresponding domain values for a given interval in the scale's output range.
 
@@ -86,12 +95,6 @@ range(0);   // 2
 range(0.5); // 5
 range(1);   // 8
 ```
-
-<a name="timeInterval" href="#timeInterval">#</a>
-vega.<b>timeInterval</b>(<i>unit</i>[, <i>type</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/timeInterval.js "Source")
-
-Given a string _unit_, return a corresponding [D3 time interval](https://github.com/d3/d3-time#_interval) function. Valid _unit_ strings are: `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. The optional _type_ indicates the time zone to use, either `"time"` (default, for local time) or `"utc"` (for [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)).
 
 <a name="quantizeInterpolator" href="#quantizeInterpolator">#</a>
 vega.<b>quantizeInterpolator</b>(<i>interpolator</i>, <i>count</i>])

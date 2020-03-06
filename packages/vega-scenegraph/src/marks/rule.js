@@ -1,6 +1,7 @@
 import boundStroke from '../bound/boundStroke';
 import {intersectRule} from '../util/intersect';
 import {visit} from '../util/visit';
+import blend from '../util/canvas/blend';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
 import {translateItem} from '../util/svg/transform';
@@ -42,6 +43,7 @@ function draw(context, scene, bounds) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     var opacity = item.opacity == null ? 1 : item.opacity;
     if (opacity && path(context, item, opacity)) {
+      blend(context, item);
       context.stroke();
     }
   });

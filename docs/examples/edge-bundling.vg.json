@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A network diagram of software dependencies, with edges grouped via hierarchical edge bundling.",
   "padding": 5,
   "width": 720,
   "height": 720,

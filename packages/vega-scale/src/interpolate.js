@@ -1,4 +1,4 @@
-import getScale from './scales';
+import {scale as getScale} from './scales';
 import {constant, peek} from 'vega-util';
 import * as $ from 'd3-interpolate';
 

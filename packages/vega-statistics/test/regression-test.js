@@ -11,9 +11,9 @@ tape('regressionLinear fits a linear regression model', function(t) {
   var data = [NaN, 0, 1, 2].map(v => [v, 2 - v]),
       fit = vega.regressionLinear(data, x, y);
 
-  t.equal(fit.coef[0], 2);
-  t.equal(fit.coef[1], -1);
-  t.equal(fit.rSquared, 1);
+  closeTo(t, fit.coef[0], 2);
+  closeTo(t, fit.coef[1], -1);
+  closeTo(t, fit.rSquared, 1);
   data.filter(d => d === d).forEach(d => closeTo(t, fit.predict(x(d)), y(d)));
 
   t.end();

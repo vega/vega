@@ -79,3 +79,10 @@ export function tickBand(_) {
 
   return {extra, band, offset};
 }
+
+export function extendOffset(value, offset) {
+  return !offset ? value
+    : !value ? offset
+    : !isObject(value) ? { value, offset }
+    : { ...value, offset: extendOffset(value.offset, offset) };
+}

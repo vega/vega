@@ -65,11 +65,35 @@ function testBin(t, b, extent, step) {
   }
 
   // test bins that precede extent
-  t.equal(b({v: f(-1)}), f(0));
+  t.equal(b({v: f(-1)}), -Infinity);
 
   // test very last, inclusive bin
   t.equal(b({v: f(steps)}), f(steps - 1));
+
+  // test bins that exceed extent
+  t.equal(b({v: f(steps+1)}), Infinity);
 }
+
+tape('Bin handles tail aggregation for last bin', function(t) {
+  var df = new vega.Dataflow(),
+      bin = df.add(Bin, {
+        field:   util.field('v'),
+        extent:  [0, 29],
+        maxbins: 10,
+        nice:    false
+      });
+
+  df.run();
+  testBin(t, bin.value, [0, 29], 5);
+
+  // inspired by vega/vega#2181
+  t.equal(bin.value({v:28}), 25);
+  t.equal(bin.value({v:29}), 25);
+  t.equal(bin.value({v:30}), 25);
+  t.equal(bin.value({v:31}), Infinity);
+
+  t.end();
+});
 
 tape('Bin supports point output', function(t) {
   var data = [{v: 5.5}];

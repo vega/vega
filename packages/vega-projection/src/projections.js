@@ -18,6 +18,10 @@ import {
   geoPath
 } from 'd3-geo';
 
+import {
+  geoMollweide
+} from 'd3-geo-projection';
+
 var defaultPath = geoPath();
 
 export var projectionProperties = [
@@ -100,6 +104,7 @@ var projections = {
   gnomonic:             geoGnomonic,
   identity:             geoIdentity,
   mercator:             geoMercator,
+  mollweide:            geoMollweide,
   naturalEarth1:        geoNaturalEarth1,
   orthographic:         geoOrthographic,
   stereographic:        geoStereographic,

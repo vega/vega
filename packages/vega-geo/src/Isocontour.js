@@ -1,6 +1,6 @@
 import {max} from 'd3-array';
 import {ingest, rederive, Transform} from 'vega-dataflow';
-import {identity, inherits, isArray, isFunction} from 'vega-util';
+import {identity, inherits, isArray, isFunction, isNumber} from 'vega-util';
 import contours from './util/contours';
 import quantize from './util/quantize';
 
@@ -48,6 +48,7 @@ Isocontour.Definition = {
     { "name": "zero", "type": "boolean", "default": true },
     { "name": "smooth", "type": "boolean", "default": true },
     { "name": "scale", "type": "number", "expr": true },
+    { "name": "translate", "type": "number", "array": true, "expr": true },
     { "name": "as", "type": "string", "null": true, "default": "contour" }
   ]
 };
@@ -76,10 +77,7 @@ prototype.transform = function(_, pulse) {
     );
 
     // adjust contour path coordinates as needed
-    if (_.scale || grid.x1 || grid.y1 || grid.scale) {
-      var s = _.scale;
-      paths.forEach(transform(grid, isFunction(s) ? s(t, _) : s));
-    }
+    transformPaths(paths, grid, t, _);
 
     // ingest; copy source data properties to output
     paths.forEach(p => {
@@ -100,22 +98,38 @@ function levels(values, f, _) {
     : q(values.map(t => max(f(t).values)));
 }
 
-export function transform(grid, scale) {
+function transformPaths(paths, grid, datum, _) {
+  let s = _.scale || grid.scale,
+      t = _.translate || grid.translate;
+  if (isFunction(s)) s = s(datum, _);
+  if (isFunction(t)) t = t(datum, _);
+  if ((s === 1 || s == null) && !t) return;
+
+  const sx = (isNumber(s) ? s : s[0]) || 1,
+        sy = (isNumber(s) ? s : s[1]) || 1,
+        tx = t && t[0] || 0,
+        ty = t && t[1] || 0;
+
+  paths.forEach(transform(grid, sx, sy, tx, ty));
+}
+
+export function transform(grid, sx, sy, tx, ty) {
   const x1 = grid.x1 || 0,
         y1 = grid.y1 || 0,
-        s = scale != null ? scale : (grid.scale || 1);
+        flip = sx * sy < 0;
 
   function transformPolygon(coordinates) {
     coordinates.forEach(transformRing);
   }
 
   function transformRing(coordinates) {
+    if (flip) coordinates.reverse(); // maintain winding order
     coordinates.forEach(transformPoint);
   }
 
   function transformPoint(coordinates) {
-    coordinates[0] = (coordinates[0] - x1) * s;
-    coordinates[1] = (coordinates[1] - y1) * s;
+    coordinates[0] = (coordinates[0] - x1) * sx + tx;
+    coordinates[1] = (coordinates[1] - y1) * sy + ty;
   }
 
   return function(geometry) {

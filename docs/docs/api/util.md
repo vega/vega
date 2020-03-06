@@ -233,6 +233,27 @@ vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
 
 A convenience method for setting up object-oriented inheritance. Assigns the `prototype` property of the input *child* function, such that the *child* inherits the properties of the *parent* function's prototype via prototypal inheritance. Returns the new child prototype object.
 
+<a name="lruCache" href="#lruCache">#</a>
+vega.<b>lruCache</b>([<i>maxsize</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/lruCache.js "Source")
+
+Provides a key/value cache, keyed by string, that evicts least recently used (LRU) entries. Supports *has*, *get*, *set*, and *clear* methods. The optional *maxsize* argument (default 10,000) determines the maximum number of elements that can be added before items are evicted.
+
+In the internal implementation two caches are used: a current cache and a previous cache. When then current cache fills, it becomes the previous cache and a new, empty current cache is created. Subsequent *get* calls will promote elements in the previous cache to the current cache. Once the current cache fills, the caches are again turned over and all LRU items still residing in the previous cache are dropped.
+
+```js
+var cache = vega.lruCache(1); // use 1-element cache to demonstrate
+cache.set('a', 1); // current cache has a->1
+cache.set('b', 2); // current cache has b->2, previous cache has a->1
+cache.get('a');    // -> 1 (a now in current cache, b in previous cache)
+cache.set('c', 3); // current cache has c->3, previous cache has a->1
+cache.has('c');    // -> true  (c is in the current cache)
+cache.has('b');    // -> false (b has been evicted)
+cache.has('a');    // -> true  (a is in the previous cache)
+cache.get('c');    // -> 3
+cache.clear();
+```
+
 <a name="fastmap" href="#fastmap">#</a>
 vega.<b>fastmap</b>([<i>object</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/fastmap.js "Source")

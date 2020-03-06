@@ -602,7 +602,7 @@
                     },
                     {
                       "x": -7,
-                      "y": 30,
+                      "y": 29.999999999999993,
                       "align": "right",
                       "baseline": "middle",
                       "fill": "#000",
@@ -661,7 +661,7 @@
           "items": [
             {
               "x": 0,
-              "y": 145.8,
+              "y": 145.79999999999998,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
@@ -689,14 +689,14 @@
             },
             {
               "x": 105.26315789473684,
-              "y": 105.30000000000001,
+              "y": 105.3,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
             },
             {
               "x": 131.57894736842104,
-              "y": 97.35,
+              "y": 97.35000000000001,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
@@ -710,7 +710,7 @@
             },
             {
               "x": 184.21052631578945,
-              "y": 81.45,
+              "y": 81.44999999999999,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
@@ -759,21 +759,21 @@
             },
             {
               "x": 368.4210526315789,
-              "y": 30,
+              "y": 29.999999999999993,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
             },
             {
               "x": 394.7368421052632,
-              "y": 25.950000000000003,
+              "y": 25.950000000000006,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
             },
             {
               "x": 421.05263157894734,
-              "y": 15.75,
+              "y": 15.749999999999996,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
@@ -787,14 +787,14 @@
             },
             {
               "x": 473.6842105263158,
-              "y": 6,
+              "y": 6.000000000000005,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
             },
             {
               "x": 500,
-              "y": 3.75,
+              "y": 3.7500000000000036,
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"

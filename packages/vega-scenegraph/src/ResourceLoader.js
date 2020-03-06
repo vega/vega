@@ -1,5 +1,6 @@
 import {image} from 'vega-canvas';
 import {loader} from 'vega-loader';
+import {hasOwnProperty} from 'vega-util';
 
 export default function ResourceLoader(customLoader) {
   this._pending = 0;
@@ -36,27 +37,28 @@ prototype.sanitizeURL = function(uri) {
 };
 
 prototype.loadImage = function(uri) {
-  var loader = this,
-      Image = image();
+  const loader = this,
+        Image = image();
   increment(loader);
 
   return loader._loader
     .sanitize(uri, {context: 'image'})
     .then(function(opt) {
-      var url = opt.href;
+      const url = opt.href;
       if (!url || !Image) throw {url: url};
 
-      var img = new Image();
+      const img = new Image();
 
-      img.onload = function() {
-        decrement(loader);
-      };
+      // set crossOrigin only if cors is defined; empty string sets anonymous mode
+      // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
+      const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
+      if (cors != null) img.crossOrigin = cors;
 
-      img.onerror = function() {
-        decrement(loader);
-      }
-
+      // attempt to load image resource
+      img.onload = () => decrement(loader);
+      img.onerror = () => decrement(loader);
       img.src = url;
+
       return img;
     })
     .catch(function(e) {

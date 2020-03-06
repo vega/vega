@@ -9,7 +9,7 @@ const maxiters = 2,
 // Source: https://github.com/jasondavies/science.js/blob/master/src/stats/loess.js
 // License: https://github.com/jasondavies/science.js/blob/master/LICENSE
 export default function(data, x, y, bandwidth) {
-  const [xv, yv] = points(data, x, y, true),
+  const [xv, yv, ux, uy] = points(data, x, y, true),
         n = xv.length,
         bw = Math.max(2, ~~(bandwidth * n)), // # nearest neighbors
         yhat = new Float64Array(n),
@@ -64,7 +64,7 @@ export default function(data, x, y, bandwidth) {
     }
   }
 
-  return output(xv, yhat);
+  return output(xv, yhat, ux, uy);
 }
 
 // weighting kernel for local regression
@@ -91,21 +91,24 @@ function updateInterval(xv, i, interval) {
 
 // generate smoothed output points
 // average points with repeated x values
-function output(xv, yhat) {
-  const n = xv.length,
-        out = [];
+function output(xv, yhat, ux, uy) {
+  const n = xv.length, out = [];
+  let i = 0, cnt = 0, prev = [], v;
 
-  for (let i=0, cnt=0, prev=[], v; i<n; ++i) {
-    v = xv[i];
+  for (; i<n; ++i) {
+    v = xv[i] + ux;
     if (prev[0] === v) {
       // average output values via online update
       prev[1] += (yhat[i] - prev[1]) / (++cnt);
     } else {
       // add new output point
       cnt = 0;
+      prev[1] += uy;
       prev = [v, yhat[i]];
       out.push(prev);
     }
   }
+  prev[1] += uy;
+
   return out;
 }

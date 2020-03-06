@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Overlaid plots of weekly record, normal, actual, and forecasted temperatures.",
   "width": 250,
   "height": 200,
 

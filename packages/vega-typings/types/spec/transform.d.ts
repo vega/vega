@@ -424,6 +424,7 @@ export interface IsocontourTransform {
   type: 'isocontour';
   field?: string | TransformField;
   scale?: number | TransformField;
+  translate?: number[] | TransformField;
   levels?: number | SignalRef;
   smooth?: boolean | SignalRef;
   nice?: boolean | SignalRef;
@@ -565,7 +566,7 @@ export interface PivotTransform {
 export interface ProjectTransform {
   type: 'project';
   fields?: FieldRef[] | SignalRef;
-  as?: string | null | SignalRef;
+  as?: (string | SignalRef | null)[] | SignalRef;
 }
 
 export interface QuantileTransform {

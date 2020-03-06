@@ -4,6 +4,12 @@ import {
   signalRef, numberValue, enums
 } from './util';
 
+export const blendEnum = [
+  null, 'multiply', 'screen', 'overlay', 'darken', 'lighten',
+  'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference',
+  'exclusion', 'hue', 'saturation', 'color', 'luminosity'
+];
+
 export const fontWeightEnum = [
   null, 'normal', 'bold', 'lighter', 'bolder',
   '100', '200', '300', '400', '500', '600', '700', '800', '900',
@@ -192,12 +198,15 @@ const encodeEntry = object({
   strokeDashOffset: numberValueRef,
   strokeJoin: ref('strokeJoinValue'),
   strokeMiterLimit: numberValueRef,
+  blend: ref('blendValue'),
   cursor: stringValueRef,
   tooltip: anyValueRef,
   zindex: numberValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,
+  strokeForeground: booleanValueRef,
+  strokeOffset: numberValueRef,
 
   // Rect-mark properties
   cornerRadius: numberValueRef,
@@ -266,6 +275,7 @@ export default {
     stringModifiers,
     numberModifiers,
     anyValue: valueSchema(undefined),
+    blendValue: valueSchema(blendEnum),
     numberValue: valueSchema('number'),
     stringValue: valueSchema('string'),
     textValue: valueSchema(textType),

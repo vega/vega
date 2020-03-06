@@ -82,7 +82,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | titleOrient   | {% include type t="String" %}  | The orientation of the title legend, determining where it is placed relative to the legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values. The array entries should be legal values in the backing scale domain.|
-| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark and legend groups. The default value is `0`.|
+| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. The default value is `0`.|
 
 To create themes, new default values for legend properties can be set using a [config](../config/#legends) object. The config object also supports [customized layout](../config/#legends-layout) behavior for collections of legends with the same *orient* value.
 

@@ -44,6 +44,8 @@ Properties for specifying a coordinate axis.
 | labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of axis tick labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of axis tick labels. |
+| labelLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line label text. {% include tag ver="5.10" %} |
+| labelOffset  | {% include type t="Number" %}  | Position offset in pixels to apply to labels, in addition to *tickOffset*. {% include tag ver="5.10" %} |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelPadding  | {% include type t="Number" %}  | The padding in pixels between labels and ticks.|
@@ -83,7 +85,7 @@ Properties for specifying a coordinate axis.
 | titleY        | {% include type t="Number" %}  | Custom Y position of the axis title relative to the axis group, overriding the standard layout. |
 | translate     | {% include type t="Number" %}  | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
 | values        | {% include type t="Array" %}   | Explicitly set the visible axis tick and label values. The array entries should be legal values in the backing scale domain.|
-| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
+| zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups. The default value is `0` and axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) will cause axes and grid lines to be drawn on top of marks.|
 
 To create themes, new default values for many axis properties can be set using a [config](../config) object.
 
@@ -119,6 +121,7 @@ Each axis tick, grid line, and label instance is backed by a data object with th
 
 - `label` - the string label
 - `value` - the data value
+- `index` - *fractional* tick index (`0` for the first tick and `1` for the last tick)
 
 The following example shows how to set custom colors, thickness, text angle, and fonts. The `labels` encoding block also make legend labels responsive to input events, and changes the text color on mouse hover.
 

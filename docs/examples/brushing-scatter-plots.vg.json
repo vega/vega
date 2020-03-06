@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A scatter plot matrix of iris flower data with interactive linked selections.",
   "padding": 10,
   "config": {
     "axis": {

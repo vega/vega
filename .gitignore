@@ -1,10 +1,12 @@
 .sass-cache
 .jekyll-metadata
 .DS_Store
+/.idea
 /build
 /docs/_site
 /docs/Gemfile.lock
 /node_modules
 /packages/*/node_modules
 /packages/*/build
+/packages/*/build-es5
 /packages/*/LICENSE

@@ -73,11 +73,13 @@ const data = oneOf(
   object({
     _url_: stringOrSignal,
     format: orSignal(dataFormat),
+    async: booleanOrSignal,
     ...dataProps
   }),
   object({
     _values_: orSignal(anyType),
     format: orSignal(dataFormat),
+    async: booleanOrSignal,
     ...dataProps
   })
 );

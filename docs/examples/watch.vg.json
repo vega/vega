@@ -1,0 +1,260 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A watch face clock visualization showing the current time.",
+  "width": 400,
+  "height": 400,
+  "signals": [
+    {"name": "centerX", "init": "width/2"},
+    {"name": "centerY", "init": "height/2"},
+    {"name": "radiusRef", "init": "min(width,height)*0.95"},
+    {"name": "sizeFactor", "init": "radiusRef/400"},
+    {"name": "outerRadius", "init": "radiusRef/2"},
+    {"name": "innerRadiusMinutes", "init": "radiusRef/2 - (18 * sizeFactor)"},
+    {"name": "innerRadiusHours", "init": "radiusRef/2 - (36 * sizeFactor)"},
+    {
+      "name": "currentDate",
+      "init": "now()",
+      "on": [{"events": {"type": "timer", "throttle": 10}, "update": "now()"}]
+    },
+    {
+      "name": "currentHour",
+      "init": "hours(currentDate)+minutes(currentDate)/60",
+      "on": [
+        {
+          "events": {"signal": "currentDate"},
+          "update": "hours(currentDate)+minutes(currentDate)/60"
+        }
+      ]
+    },
+    {
+      "name": "currentMinute",
+      "init": "minutes(currentDate)+seconds(currentDate)/60",
+      "on": [
+        {
+          "events": {"signal": "currentDate"},
+          "update": "minutes(currentDate)+seconds(currentDate)/60"
+        }
+      ]
+    },
+    {
+      "name": "currentSecond",
+      "init": "seconds(currentDate)",
+      "on": [
+        {"events": {"signal": "currentDate"}, "update": "seconds(currentDate)+milliseconds(currentDate)/1000"}
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "hours",
+      "transform": [
+        {"type": "sequence", "start": 0, "stop": 12, "step": 1, "as": "hour"},
+        {
+          "type": "formula",
+          "expr": "centerX - cos(PI/2 + (datum.hour * PI/6)) * outerRadius",
+          "as": "x"
+        },
+        {
+          "type": "formula",
+          "expr": "centerY - sin(PI/2 + (datum.hour * PI/6)) * outerRadius",
+          "as": "y"
+        },
+        {
+          "type": "formula",
+          "expr": "centerX - cos(PI/2 + (datum.hour * PI/6)) * innerRadiusHours",
+          "as": "x2"
+        },
+        {
+          "type": "formula",
+          "expr": "centerY - sin(PI/2 + (datum.hour * PI/6)) * innerRadiusHours",
+          "as": "y2"
+        },
+        {
+          "type": "formula",
+          "expr": "centerX - cos(PI/2 + (datum.hour * PI/6)) * (innerRadiusHours - 26 * max(sizeFactor, 0.4))",
+          "as": "xHour"
+        },
+        {
+          "type": "formula",
+          "expr": "centerY - sin(PI/2 + (datum.hour * PI/6)) * (innerRadiusHours - 26 * max(sizeFactor, 0.4))",
+          "as": "yHour"
+        }
+      ]
+    },
+    {
+      "name": "minutes",
+      "transform": [
+        {"type": "sequence", "start": 0, "stop": 60, "step": 1, "as": "minute"},
+        {
+          "type": "formula",
+          "expr": "centerX - cos(PI/2 + (datum.minute * PI/30)) * outerRadius",
+          "as": "x"
+        },
+        {
+          "type": "formula",
+          "expr": "centerY - sin(PI/2 + (datum.minute * PI/30)) * outerRadius",
+          "as": "y"
+        },
+        {
+          "type": "formula",
+          "expr": "centerX - cos(PI/2 + (datum.minute * PI/30)) * innerRadiusMinutes",
+          "as": "x2"
+        },
+        {
+          "type": "formula",
+          "expr": "centerY - sin(PI/2 + (datum.minute * PI/30)) * innerRadiusMinutes",
+          "as": "y2"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "hourScale",
+      "domain": {"data": "hours", "field": "hour"},
+      "range": [0, {"signal": "2*PI"}]
+    },
+    {
+      "name": "minutesScale",
+      "domain": {"data": "minutes", "field": "minute"},
+      "range": [0, {"signal": "2*PI"}]
+    }
+  ],
+  "marks": [
+    {
+      "type": "arc",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "startAngle": {"value": 0},
+          "endAngle": {"signal": "2*PI"},
+          "outerRadius": {"signal": "outerRadius"},
+          "fill": {"value": "black"},
+          "stroke": {"value": "black"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {"data": "minutes"},
+      "encode": {
+        "enter": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "x2": {"field": "x2"},
+          "y2": {"field": "y2"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 0.2)"},
+          "stroke": {"value": "white"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {"data": "hours"},
+      "encode": {
+        "enter": {
+          "size": {"signal": "pow(2*sizeFactor, 4)"},
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "x2": {"field": "x2"},
+          "y2": {"field": "y2"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 2)"},
+          "stroke": {"value": "white"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "hours"},
+      "encode": {
+        "enter": {
+          "x": {"field": "xHour"},
+          "y": {"field": "yHour"},
+          "align": {"value": "center"},
+          "fill": {"value": "white"},
+          "baseline": {"value": "middle"},
+          "text": {"signal": "datum.hour === 0 ? 12 : datum.hour"},
+          "fontSize": {"signal": "28*max(sizeFactor, 0.4)"},
+          "fontWeight": {"value": "100"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 3)"}
+        },
+        "update": {
+          "x2": {"signal": "centerX - cos(PI/2 + (currentHour * PI/6)) * (innerRadiusHours - (50 * sizeFactor))"},
+          "y2": {"signal": "centerY - sin(PI/2 + (currentHour * PI/6)) * (innerRadiusHours - (50 * sizeFactor))"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 2)"}
+        },
+        "update": {
+          "x2": {"signal": "centerX - cos(PI/2 + (currentMinute * PI/30)) * (innerRadiusHours + (innerRadiusMinutes-innerRadiusHours)/2)"},
+          "y2": {"signal": "centerY - sin(PI/2 + (currentMinute * PI/30)) * (innerRadiusHours + (innerRadiusMinutes-innerRadiusHours)/2)"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "stroke": {"value": "goldenrod"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 1.5)"}
+        },
+        "update": {
+          "x2": {"signal": "centerX - cos(PI/2 + (currentSecond * PI/30)) * (innerRadiusHours + (innerRadiusMinutes-innerRadiusHours)/2)"},
+          "y2": {"signal": "centerY - sin(PI/2 + (currentSecond * PI/30)) * (innerRadiusHours + (innerRadiusMinutes-innerRadiusHours)/2)"}
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "stroke": {"value": "goldenrod"},
+          "strokeWidth": {"signal": "pow(2*sizeFactor, 3.5)"},
+          "strokeCap": {"value": "round"}
+        },
+        "update": {
+          "x2": {"signal": "centerX - cos(PI*3/2 + (currentSecond * PI/30)) * (24 * sizeFactor)"},
+          "y2": {"signal": "centerY - sin(PI*3/2 + (currentSecond * PI/30)) * (24 * sizeFactor)"}
+        }
+      }
+    },
+    {
+      "type": "arc",
+      "encode": {
+        "enter": {
+          "x": {"signal": "centerX"},
+          "y": {"signal": "centerY"},
+          "startAngle": {"value": 0},
+          "endAngle": {"signal": "2*PI"},
+          "outerRadius": {"signal": "10*sizeFactor"},
+          "fill": {"value": "goldenrod"},
+          "stroke": {"value": "goldenrod"},
+          "zIndex": {"value": 1}
+        }
+      }
+    }
+  ]
+}

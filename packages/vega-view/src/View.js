@@ -1,9 +1,12 @@
+import {ariaLabel} from './aria';
+import background from './background';
 import cursor from './cursor';
 import {data, dataref, change, insert, remove} from './data';
 import {initializeEventConfig, events} from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
+import padding from './padding';
 import renderToImageURL from './render-to-image-url';
 import renderToCanvas from './render-to-canvas';
 import renderToSVG from './render-to-svg';
@@ -80,9 +83,6 @@ export default function View(spec, options) {
     view.changeset().insert(root.items)
   );
 
-  // initialize background color
-  view._background = options.background || ctx.background || null;
-
   // initialize view size
   view._width = view.width();
   view._height = view.height();
@@ -93,8 +93,14 @@ export default function View(spec, options) {
   view._autosize = 1;
   initializeResize(view);
 
+  // initialize background color
+  background(view);
+
   // initialize cursor
   cursor(view);
+
+  // initialize view description
+  view.description(spec.description);
 
   // initialize hover proessing, if requested
   if (options.hover) view.hover();
@@ -140,6 +146,15 @@ prototype.dirty = function(item) {
 
 // -- GET / SET ----
 
+prototype.description = function(text) {
+  if (arguments.length) {
+    const desc = text != null ? (text + '') : null;
+    if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
+    return this;
+  }
+  return this._desc;
+};
+
 prototype.container = function() {
   return this._el;
 };
@@ -165,16 +180,6 @@ prototype.signal = function(name, value, options) {
     : this.update(op, value, options);
 };
 
-prototype.background = function(_) {
-  if (arguments.length) {
-    this._background = _;
-    this._resize = 1;
-    return this;
-  } else {
-    return this._background;
-  }
-};
-
 prototype.width = function(_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
@@ -184,11 +189,17 @@ prototype.height = function(_) {
 };
 
 prototype.padding = function(_) {
-  return arguments.length ? this.signal('padding', _) : this.signal('padding');
+  return arguments.length
+    ? this.signal('padding', padding(_))
+    : padding(this.signal('padding'));
 };
 
 prototype.autosize = function(_) {
   return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
+};
+
+prototype.background = function(_) {
+  return arguments.length ? this.signal('background', _) : this.signal('background');
 };
 
 prototype.renderer = function(type) {
