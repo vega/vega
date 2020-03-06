@@ -124,6 +124,7 @@ const legendProps = object({
   labelFontStyle: stringValue,
   labelFontWeight: fontWeightValue,
   labelLimit: numberValue,
+  labelLineHeight: numberValue,
   labelOffset: numberValue,
   labelOpacity: numberValue,
   labelOverlap: labelOverlapRef,

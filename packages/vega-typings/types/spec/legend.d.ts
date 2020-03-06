@@ -435,6 +435,11 @@ export interface BaseLegend {
   labelLimit?: NumberValue;
 
   /**
+   * Line height in pixels for multi-line label text.
+   */
+  labelLineHeight?: NumberValue;
+
+  /**
    * Opacity of labels.
    */
   labelOpacity?: NumberValue;

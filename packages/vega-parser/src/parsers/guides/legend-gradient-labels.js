@@ -41,7 +41,8 @@ export default function(spec, config, userEncode, dataRef) {
     fontSize:    _('labelFontSize'),
     fontStyle:   _('labelFontStyle'),
     fontWeight:  _('labelFontWeight'),
-    limit:       value(spec.labelLimit, config.gradientLabelLimit)
+    limit:       value(spec.labelLimit, config.gradientLabelLimit),
+    lineHeight:  _('labelLineHeight')
   });
 
   if (vertical) {

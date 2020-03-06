@@ -105,7 +105,8 @@ export default function(spec, config, userEncode, dataRef, columns) {
     fontSize:    _('labelFontSize'),
     fontStyle:   _('labelFontStyle'),
     fontWeight:  _('labelFontWeight'),
-    limit:       _('labelLimit')
+    limit:       _('labelLimit'),
+    lineHeight:  _('labelLineHeight')
   });
 
   labels = guideMark(
