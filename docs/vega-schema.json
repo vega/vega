@@ -761,6 +761,16 @@
             }
           ]
         },
+        "labelLineHeight": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "labelOpacity": {
           "oneOf": [
             {

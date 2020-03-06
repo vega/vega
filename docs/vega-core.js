@@ -30705,7 +30705,8 @@
       fontSize:    _('labelFontSize'),
       fontWeight:  _('labelFontWeight'),
       fontStyle:   _('labelFontStyle'),
-      limit:       _('labelLimit')
+      limit:       _('labelLimit'),
+      lineHeight:  _('labelLineHeight')
     });
 
     bound   = _('labelBound');
