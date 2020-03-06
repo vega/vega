@@ -1,6 +1,8 @@
 import {markBitmaps, baseBitmaps} from './util/markBitmaps';
 import scaler from './util/scaler';
-import placeAreaLabel from './util/placeAreaLabel';
+import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive';
+import placeAreaLabelReducedSearch from './util/placeAreaLabel/placeReducedSearch';
+import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill';
 import placeMarkLabel from './util/placeMarkLabel';
 
 // 8-bit representation of anchors
@@ -24,8 +26,14 @@ const anchorCode = {
   'bottom-right': BOTTOM + RIGHT
 };
 
+const placeAreaLabel = {
+  'naive': placeAreaLabelNaive,
+  'reduced-search': placeAreaLabelReducedSearch,
+  'floodfill': placeAreaLabelFloodFill
+};
+
 export default function(texts, size, compare, offset, anchor,
-  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding)
+  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method)
 {
   // early exit for empty data
   if (!texts.length) return texts;
@@ -37,7 +45,8 @@ export default function(texts, size, compare, offset, anchor,
         grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
         isGroupArea = grouptype === 'area',
         boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        $ = scaler(size[0], size[1], padding);
+        $ = scaler(size[0], size[1], padding),
+        isNaiveGroupArea = isGroupArea && method === 'naive';
 
   // prepare text mark data for placing
   const data = texts.map(d => ({
@@ -50,33 +59,36 @@ export default function(texts, size, compare, offset, anchor,
     boundary: boundary(d)
   }));
 
-  // sort labels in priority order, if comparator is provided
-  if (compare) {
-    data.sort((a, b) => compare(a.datum, b.datum));
-  }
+  let bitmaps;
+  if (!isNaiveGroupArea) {
+    // sort labels in priority order, if comparator is provided
+    if (compare) {
+      data.sort((a, b) => compare(a.datum, b.datum));
+    }
 
-  // flag indicating if label can be placed inside its base mark
-  let labelInside = false;
-  for (let i=0; i < anchors.length && !labelInside; ++i) {
-    // label inside if anchor is at center
-    // label inside if offset to be inside the mark bound
-    labelInside = anchors[i] === 0x5 || offsets[i] < 0;
-  }
+    // flag indicating if label can be placed inside its base mark
+    let labelInside = false;
+    for (let i=0; i < anchors.length && !labelInside; ++i) {
+      // label inside if anchor is at center
+      // label inside if offset to be inside the mark bound
+      labelInside = anchors[i] === 0x5 || offsets[i] < 0;
+    }
 
-  // extract data information from base mark when base mark is to be avoided
-  // base mark is implicitly avoided if it is a group area
-  if (marktype && (avoidBaseMark || isGroupArea)) {
-    avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
-  }
+    // extract data information from base mark when base mark is to be avoided
+    // base mark is implicitly avoided if it is a group area
+    if (marktype && (avoidBaseMark || isGroupArea)) {
+      avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
+    }
 
-  // generate bitmaps for layout calculation
-  const bitmaps = avoidMarks.length
-    ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
-    : baseBitmaps($, avoidBaseMark && data);
+    // generate bitmaps for layout calculation
+    bitmaps = avoidMarks.length
+      ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
+      : baseBitmaps($, avoidBaseMark && data);
+  }
 
   // generate label placement function
   const place = isGroupArea
-    ? placeAreaLabel($, bitmaps, avoidBaseMark, markIndex)
+    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex)
     : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels

@@ -34,7 +34,7 @@ const Anchors = [
  * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
  *   This parameter  is parallel to the list of anchor points.
  * @param {number} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
- * @param {string} [params.lineAnchor='end'] - For line mark labels only, indicates the anchor
+ * @param {string} [params.lineAnchor='end'] - For group line mark labels only, indicates the anchor
  *   position for labels. One of 'start' or 'end'.
  * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
  *   which mark within the group should be labeled.
@@ -42,6 +42,8 @@ const Anchors = [
  *   layout should avoid overlap.
  * @param {boolean} [params.avoidBaseMark=true] - Boolean flag indicating if labels should avoid
  *   overlap with the underlying base mark being labeled.
+ * @param {string} [params.method='naive'] - For area make labels only, a method for
+ *   place labels. One of 'naive', 'reduced-search', or 'floodfill'.
  * @param {Array<string>} [params.as] - The output fields written by the transform.
  *   The default is ['x', 'y', 'opacity', 'align', 'baseline'].
  */
@@ -62,6 +64,7 @@ Label.Definition = {
     { name: 'markIndex', type: 'number', default: 0 },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
+    { name: 'method', type: 'string', default: 'naive'},
     { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
   ]
 };
@@ -93,7 +96,8 @@ prototype.transform = function (_, pulse) {
     _.avoidBaseMark === false ? false : true,
     _.lineAnchor || 'end',
     _.markIndex || 0,
-    _.padding || 0
+    _.padding || 0,
+    _.method || 'naive'
   ).forEach(l => {
     // write layout results to data stream
     const t = l.datum;
