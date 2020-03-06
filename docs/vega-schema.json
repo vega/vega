@@ -2791,6 +2791,16 @@
                 }
               ]
             },
+            "labelLineHeight": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/refs/numberValue"
+                }
+              ]
+            },
             "labelOffset": {
               "oneOf": [
                 {

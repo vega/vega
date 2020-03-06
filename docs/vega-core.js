@@ -29194,7 +29194,8 @@
       fontSize:    _('labelFontSize'),
       fontStyle:   _('labelFontStyle'),
       fontWeight:  _('labelFontWeight'),
-      limit:       value$1(spec.labelLimit, config.gradientLabelLimit)
+      limit:       value$1(spec.labelLimit, config.gradientLabelLimit),
+      lineHeight:  _('labelLineHeight')
     });
 
     if (vertical) {
@@ -29333,7 +29334,8 @@
       fontSize:    _('labelFontSize'),
       fontStyle:   _('labelFontStyle'),
       fontWeight:  _('labelFontWeight'),
-      limit:       _('labelLimit')
+      limit:       _('labelLimit'),
+      lineHeight:  _('labelLineHeight')
     });
 
     labels = guideMark(
