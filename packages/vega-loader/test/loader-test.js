@@ -32,7 +32,8 @@ tape('loader should sanitize url', function(t) {
       sanityTest(t, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
       sanityTest(t, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
       sanityTest(t, undefined, {}, null),
-      sanityTest(t, null, {}, null)
+      sanityTest(t, null, {}, null),
+      sanityTest(t, 'javascript:alert("hello")', {}, null)
     ])
     .then(function() { t.end(); })
     .catch(function() { t.end(); });

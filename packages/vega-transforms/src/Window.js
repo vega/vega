@@ -3,7 +3,7 @@ import {ValidAggregateOps} from './util/AggregateOps';
 import SortedList from './util/SortedList';
 import {ValidWindowOps} from './util/WindowOps';
 import WindowState from './util/WindowState';
-import {Transform, tupleid} from 'vega-dataflow';
+import {stableCompare, Transform, tupleid} from 'vega-dataflow';
 import {constant, inherits} from 'vega-util';
 import {bisector} from 'd3-array';
 
@@ -50,6 +50,7 @@ prototype.transform = function(_, pulse) {
   var self = this,
       state = self.state,
       mod = _.modified(),
+      cmp = stableCompare(_.sort),
       i, n;
 
   this.stamp = pulse.stamp;
@@ -74,7 +75,7 @@ prototype.transform = function(_, pulse) {
 
   // perform window calculations for each modified partition
   for (i=0, n=self._mlen; i<n; ++i) {
-    processPartition(self._mods[i], state, _);
+    processPartition(self._mods[i], state, cmp, _);
   }
   self._mlen = 0;
   self._mods = [];
@@ -100,11 +101,11 @@ prototype.group = function(key) {
   return group;
 };
 
-function processPartition(list, state, _) {
+function processPartition(list, state, cmp, _) {
   var sort = _.sort,
       range = sort && !_.ignorePeers,
       frame = _.frame || [null, 0],
-      data = list.data(sort),
+      data = list.data(cmp), // use cmp for stable sort
       n = data.length,
       i = 0,
       b = range ? bisector(sort) : null,

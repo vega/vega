@@ -1,0 +1,164 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A quantile-quantile plot example, comparing distributions by quantile values.",
+  "padding": 5,
+
+  "signals": [
+    { "name": "plotWidth", "value": 250 },
+    { "name": "height", "update": "plotWidth" },
+    {
+      "name": "numQuantiles", "value": 100,
+      "bind": {"input": "range", "min": 20, "max": 200, "step": 1}
+    },
+    {
+      "name": "url",
+      "value": "data/normal-2d.json",
+      "bind": {
+        "input": "select",
+        "options": [
+          "data/normal-2d.json",
+          "data/uniform-2d.json"
+        ]
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "points",
+      "url": {"signal": "url"}
+    },
+    {
+      "name": "quantiles",
+      "source": "points",
+      "transform": [
+        {
+          "type": "quantile",
+          "field": "u",
+          "step": {"signal": "1 / (numQuantiles + 1)"}
+        },
+        {
+          "type": "formula",
+          "as": "quniform",
+          "expr": "quantileUniform(datum.prob)"
+        },
+        {
+          "type": "formula",
+          "as": "qnormal",
+          "expr": "quantileNormal(datum.prob)"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "y",
+      "domain": {"data": "points", "field": "u"},
+      "range": "height",
+      "nice": true
+    }
+  ],
+
+  "layout": {
+    "columns": 2,
+    "padding": 10
+  },
+
+  "marks": [
+    {
+      "type": "group",
+      "encode": {
+        "update": {
+          "width": {"signal": "plotWidth"},
+          "height": {"signal": "plotWidth"}
+        }
+      },
+      "signals": [
+        {"name": "width", "update": "plotWidth"}
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "domain": [0, 1],
+          "range": "width"
+        }
+      ],
+      "axes": [
+        {
+          "scale": "y",
+          "orient": "left",
+          "offset": 10,
+          "grid": true,
+          "title": "Empirical Data Quantiles"
+        },
+        {
+          "scale": "x",
+          "orient": "bottom",
+          "grid": true,
+          "title": "Theoretical Uniform Quantiles"
+        }
+      ],
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "quantiles"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": "quniform"},
+              "y": {"scale": "y", "field": "value"},
+              "fill": {"value": "steelblue"},
+              "size": {"value": 16}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "encode": {
+        "update": {
+          "width": {"signal": "plotWidth"},
+          "height": {"signal": "plotWidth"}
+        }
+      },
+      "signals": [
+        {"name": "width", "update": "plotWidth"}
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "domain": [-3, 3],
+          "range": "width"
+        }
+      ],
+      "axes": [
+        {
+          "scale": "y",
+          "orient": "left",
+          "domain": false, "labels": false, "ticks": false, "grid": true
+        },
+        {
+          "scale": "x",
+          "orient": "bottom",
+          "grid": true,
+          "title": "Theoretical Normal Quantiles"
+        }
+      ],
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "quantiles"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": "qnormal"},
+              "y": {"scale": "y", "field": "value"},
+              "fill": {"value": "steelblue"},
+              "size": {"value": 16}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

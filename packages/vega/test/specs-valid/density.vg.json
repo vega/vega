@@ -7,10 +7,14 @@
   "signals": [
     { "name": "bandwidth", "value": 0,
       "bind": {"input": "range", "min": 0, "max": 0.1, "step": 0.001} },
-    { "name": "steps", "value": 100,
-      "bind": {"input": "range", "min": 10, "max": 500, "step": 1} },
+    { "name": "steps", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 500, "step": 1} },
     { "name": "method", "value": "pdf",
-      "bind": {"input": "radio", "options": ["pdf", "cdf"]} },
+      "bind": {
+        "input": "radio", "options": ["pdf", "cdf"],
+        "labels": ["Probability Density", "Cumulative Distribution"]
+      }
+    },
     { "name": "summary",
       "update": "data('summary')[0] || {mean: 0, stdev: 0}" }
   ],

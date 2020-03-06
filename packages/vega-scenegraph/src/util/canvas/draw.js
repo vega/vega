@@ -1,3 +1,4 @@
+import blend from './blend';
 import fill from './fill';
 import stroke from './stroke';
 import {visit} from '../visit';
@@ -25,6 +26,8 @@ function drawPath(path, context, item, items) {
   if (opacity === 0) return;
 
   if (path(context, items)) return;
+
+  blend(context, item);
 
   if (item.fill && fill(context, item, opacity)) {
     context.fill();

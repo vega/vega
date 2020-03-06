@@ -13,7 +13,7 @@ export default function Graticule(params) {
 
 Graticule.Definition = {
   "type": "Graticule",
-  "metadata": {"changes": true},
+  "metadata": {"changes": true, "generates": true},
   "params": [
     { "name": "extent", "type": "array", "array": true, "length": 2,
       "content": {"type": "number", "array": true, "length": 2} },

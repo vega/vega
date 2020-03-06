@@ -37,7 +37,7 @@ var VIEW    = 'view',
     };
 
 function isMarkType(type) {
-  return MARKS.hasOwnProperty(type);
+  return MARKS[type];
 }
 
 function find(s, i, endChar, pushChar, popChar) {

@@ -32,7 +32,7 @@ module.exports = function(type, callback, opt) {
 
   // use a seeded random number generator, if specified
   if (typeof arg.seed !== 'undefined') {
-    if (isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
+    if (Number.isNaN(arg.seed)) throw 'Illegal seed value: must be a valid number.';
     vega.setRandom(vega.randomLCG(arg.seed));
   }
 
@@ -40,7 +40,7 @@ module.exports = function(type, callback, opt) {
   if (arg.format) vega.formatLocale(load(arg.format));
 
   // load custom date/time format locale, if specified
-  if (arg.timeFormat) vega.formatTimeLocale(load(arg.timeFormat));
+  if (arg.timeFormat) vega.timeFormatLocale(load(arg.timeFormat));
 
   // instantiate view and invoke headless render method
   function render(spec) {

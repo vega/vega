@@ -3,18 +3,18 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {domChild, domClear, domCreate, cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
-import {inherits} from 'vega-util';
+import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
-  this._dirtyID = 1;
+  this._dirtyID = 0;
   this._dirty = [];
   this._svg = null;
   this._root = null;
@@ -149,8 +149,8 @@ function updateGradient(el, grad, index) {
   if (grad.gradient === 'radial') {
     // SVG radial gradients automatically transform to normalized bbox
     // coordinates, in a way that is cumbersome to replicate in canvas.
-    // So we wrap the radial gradient in a pattern element, allowing us
-    // to mantain a circular gradient that matches what canvas provides.
+    // We wrap the radial gradient in a pattern element, allowing us to
+    // maintain a circular gradient that matches what canvas provides.
     var pt = domChild(el, index++, 'pattern', ns);
     pt.setAttribute('id', patternPrefix + grad.id);
     pt.setAttribute('viewBox', '0,0,1,1');
@@ -206,6 +206,7 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('width', clip.width);
     mask.setAttribute('height', clip.height);
   }
+  domClear(el, 1);
 
   return index + 1;
 }
@@ -235,7 +236,7 @@ prototype.isDirty = function(item) {
 prototype._dirtyCheck = function() {
   this._dirtyAll = true;
   var items = this._dirty;
-  if (!items.length) return true;
+  if (!items.length || !this._dirtyID) return true;
 
   var id = ++this._dirtyID,
       item, mark, type, mdef, i, n, o;
@@ -348,7 +349,7 @@ prototype.draw = function(el, scene, prev) {
 
 // Recursively process group contents.
 function recurse(renderer, el, group) {
-  el = el.lastChild;
+  el = el.lastChild.previousSibling;
   var prev, idx = 0;
 
   visit(group, function(item) {
@@ -375,31 +376,36 @@ function bind(item, el, sibling, tag, svg) {
       node.__data__ = item;
       node.__values__ = {fill: 'default'};
 
-      // if group, create background and foreground elements
+      // if group, create background, content, and foreground elements
       if (tag === 'g') {
         var bg = domCreate(doc, 'path', ns);
-        bg.setAttribute('class', 'background');
         node.appendChild(bg);
         bg.__data__ = item;
 
-        var fg = domCreate(doc, 'g', ns);
+        var cg = domCreate(doc, 'g', ns);
+        node.appendChild(cg);
+        cg.__data__ = item;
+
+        var fg = domCreate(doc, 'path', ns);
         node.appendChild(fg);
         fg.__data__ = item;
+        fg.__values__ = {fill: 'default'};
       }
     }
   }
 
   // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-  if (node.ownerSVGElement !== svg || hasSiblings(item) && node.previousSibling !== sibling) {
+  if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
     el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
   }
 
   return node;
 }
 
-function hasSiblings(item) {
-  var parent = item.mark || item.group;
-  return parent && parent.items.length > 1;
+function siblingCheck(node, sibling) {
+  return node.parentNode
+    && node.parentNode.childNodes.length > 1
+    && node.previousSibling != sibling; // treat null/undefined the same
 }
 
 
@@ -411,27 +417,88 @@ var element = null, // temp var for current SVG element
 // Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
-    values = el.__values__; // use parent's values hash
+    var fg, bg;
 
-    element = el.childNodes[1];
+    element = fg = el.childNodes[2];
+    values = fg.__values__;
     mdef.foreground(emit, item, this);
 
-    element = el.childNodes[0];
+    values = el.__values__; // use parent's values hash
+    element = el.childNodes[1];
+    mdef.content(emit, item, this);
+
+    element = bg = el.childNodes[0];
     mdef.background(emit, item, this);
 
     var value = item.mark.interactive === false ? 'none' : null;
     if (value !== values.events) {
-      element.style.setProperty('pointer-events', value);
+      fg.style.setProperty('pointer-events', value);
+      bg.style.setProperty('pointer-events', value);
       values.events = value;
+    }
+
+    if (item.strokeForeground && item.stroke) {
+      const fill = item.fill;
+      fg.style.removeProperty('display');
+
+      // set style of background
+      this.style(bg, item);
+      bg.style.removeProperty('stroke');
+
+      // set style of foreground
+      if (fill) item.fill = null;
+      values = fg.__values__;
+      this.style(fg, item);
+      if (fill) item.fill = fill;
+
+      // leave element null to prevent downstream styling
+      element = null;
+    } else {
+      // ensure foreground is ignored
+      fg.style.setProperty('display', 'none');
+      fg.style.setProperty('fill', 'none');
+    }
+  },
+  image: function(mdef, el, item) {
+    if (item.smooth === false) {
+      setStyle(el, 'image-rendering', 'optimizeSpeed');
+      setStyle(el, 'image-rendering', 'pixelated');
+    } else {
+      setStyle(el, 'image-rendering', null);
     }
   },
   text: function(mdef, el, item) {
-    var value;
+    var tl = textLines(item),
+        key, value, doc, lh;
 
-    value = textValue(item);
-    if (value !== values.text) {
-      el.textContent = value;
-      values.text = value;
+    if (isArray(tl)) {
+      // multi-line text
+      value = tl.map(_ => textValue(item, _));
+      key = value.join('\n'); // content cache key
+
+      if (key !== values.text) {
+        domClear(el, 0);
+        doc = el.ownerDocument;
+        lh = lineHeight(item);
+        value.forEach((t, i) => {
+          const ts = domCreate(doc, 'tspan', ns);
+          ts.__data__ = item; // data binding
+          ts.textContent = t;
+          if (i) {
+            ts.setAttribute('x', 0);
+            ts.setAttribute('dy', lh);
+          }
+          el.appendChild(ts);
+        });
+        values.text = key;
+      }
+    } else {
+      // single-line text
+      value = textValue(item, tl);
+      if (value !== values.text) {
+        el.textContent = value;
+        values.text = value;
+      }
     }
 
     setStyle(el, 'font-family', fontFamily(item));
@@ -468,7 +535,7 @@ prototype._update = function(mdef, el, item) {
 
   // apply svg css styles
   // note: element may be modified by 'extra' method
-  this.style(element, item);
+  if (element) this.style(element, item);
 };
 
 function emit(name, value, ns) {

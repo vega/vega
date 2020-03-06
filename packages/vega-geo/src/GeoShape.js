@@ -19,7 +19,7 @@ export default function GeoShape(params) {
 
 GeoShape.Definition = {
   "type": "GeoShape",
-  "metadata": {"modifies": true},
+  "metadata": {"modifies": true, "nomod": true},
   "params": [
     { "name": "projection", "type": "projection" },
     { "name": "field", "type": "field", "default": "datum" },
@@ -33,15 +33,14 @@ var prototype = inherits(GeoShape, Transform);
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ALL),
       shape = this.value,
-      datum = _.field || field('datum'),
       as = _.as || 'shape',
-      flag = out.ADD_MOD;
+      flag = out.ADD;
 
   if (!shape || _.modified()) {
     // parameters updated, reset and reflow
     this.value = shape = shapeGenerator(
       getProjectionPath(_.projection),
-      datum,
+      _.field || field('datum'),
       _.pointRadius
     );
     out.materialize().reflow();

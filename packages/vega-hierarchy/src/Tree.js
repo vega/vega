@@ -1,5 +1,5 @@
 import HierarchyLayout from './HierarchyLayout';
-import {error, inherits} from 'vega-util';
+import {error, hasOwnProperty, inherits} from 'vega-util';
 import {tree, cluster} from 'd3-hierarchy';
 
 var Layouts = {
@@ -40,7 +40,7 @@ var prototype = inherits(Tree, HierarchyLayout);
  */
 prototype.layout = function(method) {
   var m = method || 'tidy';
-  if (Layouts.hasOwnProperty(m)) return Layouts[m]();
+  if (hasOwnProperty(Layouts, m)) return Layouts[m]();
   else error('Unrecognized Tree layout method: ' + m);
 };
 

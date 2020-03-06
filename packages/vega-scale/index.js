@@ -1,5 +1,4 @@
 export {default as bandSpace} from './src/scales/bandSpace';
-export {timeInterval} from './src/scales/timeInterval';
 
 export {
   Identity,
@@ -18,17 +17,7 @@ export {
   BinOrdinal,
   Ordinal,
   Band,
-  Point,
-  isValidScaleType,
-  isTemporal,
-  isQuantile,
-  isSequential,
-  isDiverging,
-  isInterpolating,
-  isContinuous,
-  isLogarithmic,
-  isDiscrete,
-  isDiscretizing
+  Point
 } from './src/scales/types';
 
 export {
@@ -40,7 +29,17 @@ export {
   quantizeInterpolator
 } from './src/interpolate';
 
-export {default as scale} from './src/scales';
+export {
+  scale,
+  isValidScaleType,
+  isContinuous,
+  isDiscrete,
+  isDiscretizing,
+  isInterpolating,
+  isLogarithmic,
+  isQuantile,
+  isTemporal
+} from './src/scales';
 
 export {scheme} from './src/schemes';
 

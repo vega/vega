@@ -1,14 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A configurable map of countries of the world.",
   "width": 900,
   "height": 500,
   "autosize": "none",
-
-  "encode": {
-    "update": {
-      "fill": {"signal": "background"}
-    }
-  },
 
   "signals": [
     {
@@ -24,6 +19,7 @@
           "conicConformal",
           "conicEqualArea",
           "conicEquidistant",
+          "equalEarth",
           "equirectangular",
           "gnomonic",
           "mercator",

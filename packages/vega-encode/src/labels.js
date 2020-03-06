@@ -1,14 +1,15 @@
 import {Symbols, Discrete} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
-
+import {peek} from 'vega-util';
 import {
+  Log,
   Quantile,
   Quantize,
   Threshold,
   tickFormat as spanFormat,
-  Time
+  Time,
+  UTC
 } from 'vega-scale';
-import {peek} from 'vega-util';
 
 const symbols = {
   [Quantile]:  'quantiles',
@@ -23,8 +24,23 @@ const formats = {
 
 export function labelValues(scale, count) {
   return scale.bins ? binValues(scale.bins)
+    : scale.type === Log ? logValues(scale, count)
     : symbols[scale.type] ? thresholdValues(scale[symbols[scale.type]]())
     : tickValues(scale, count);
+}
+
+function logValues(scale, count) {
+  var ticks = tickValues(scale, count),
+      base = scale.base(),
+      logb = Math.log(base),
+      k = Math.max(1, base * count / ticks.length);
+
+  // apply d3-scale's log format filter criteria
+  return ticks.filter(d => {
+    var i = d / Math.pow(base, Math.round(Math.log(d) / logb));
+    if (i * base < base - 0.5) i *= base;
+    return i <= k;
+  });
 }
 
 export function thresholdFormat(scale, specifier) {
@@ -58,10 +74,10 @@ function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, count, type, specifier, formatType) {
-  const format = formats[scale.type] && formatType !== Time
+export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
+  const format = formats[scale.type] && formatType !== Time && formatType !== UTC
     ? thresholdFormat(scale, specifier)
-    : tickFormat(scale, count, specifier, formatType);
+    : tickFormat(scale, count, specifier, formatType, noSkip);
 
   return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
     : type === Discrete ? formatDiscrete(format)
@@ -70,11 +86,15 @@ export function labelFormat(scale, count, type, specifier, formatType) {
 
 function formatRange(format) {
   return function(value, index, array) {
-    var limit = array[index + 1] || array.max || +Infinity,
+    var limit = get(array[index + 1], get(array.max, +Infinity)),
         lo = formatValue(value, format),
         hi = formatValue(limit, format);
-    return lo && hi ? lo + '\u2013' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
+    return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
   };
+}
+
+function get(value, dflt) {
+  return value != null ? value : dflt;
 }
 
 function formatDiscrete(format) {
@@ -90,7 +110,7 @@ function formatPoint(format) {
 }
 
 function formatValue(value, format) {
-  return isFinite(value) ? format(value) : null;
+  return Number.isFinite(value) ? format(value) : null;
 }
 
 export function labelFraction(scale) {

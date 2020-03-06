@@ -1,4 +1,4 @@
-import {Group, LegendRole} from './constants';
+import {Group, AxisRole, LegendRole, TitleRole} from './constants';
 import {Transform} from 'vega-dataflow';
 import {boundClip, Marks} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
@@ -41,9 +41,13 @@ prototype.transform = function(_, pulse) {
       markBounds.union(boundItem(item, bound));
     });
 
-    // force reflow for legends to propagate any layout changes
-    // suppress other types to prevent overall layout jumpiness
-    if (mark.role === LegendRole) pulse.reflow();
+    // force reflow for axes/legends/titles to propagate any layout changes
+    switch (mark.role) {
+      case AxisRole:
+      case LegendRole:
+      case TitleRole:
+        pulse.reflow();
+    }
   }
 
   else {

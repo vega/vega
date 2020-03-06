@@ -55,15 +55,26 @@ function clipToBounds(g, b, origin) {
   // expand bounds by 1 pixel, then round to pixel boundaries
   b.expand(1).round();
 
+  // align to base pixel grid in case of non-integer scaling (#2425)
+  if (g.pixelRatio % 1) {
+    b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+  }
+
   // to avoid artifacts translate if origin has fractional pixels
   b.translate(-(origin[0] % 1), -(origin[1] % 1));
 
-  // set clipping path
+  // set clip path
   g.beginPath();
   g.rect(b.x1, b.y1, b.width(), b.height());
   g.clip();
 
   return b;
+}
+
+function viewBounds(origin, width, height) {
+  return tempBounds
+    .set(0, 0, width, height)
+    .translate(-origin[0], -origin[1]);
 }
 
 function translate(bounds, group) {
@@ -86,9 +97,9 @@ prototype._render = function(scene) {
   g.save();
   if (this._redraw || b.empty()) {
     this._redraw = false;
-    b = null;
+    b = viewBounds(o, w, h).expand(1);
   } else {
-    b = clipToBounds(g, b, o);
+    b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o, w, h);
   }
 
   this.clear(-o[0], -o[1], w, h);

@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A hypothetical outcome plot that uses animated samples to convey uncertainty.",
   "width": 300,
   "height": 200,
 

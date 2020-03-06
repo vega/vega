@@ -1,6 +1,8 @@
 import {context} from './canvas/context';
+import {isArray, lruCache} from 'vega-util';
 
-var currFontHeight;
+// memoize text width measurement
+const widthCache = lruCache();
 
 export var textMetrics = {
   height: fontSize,
@@ -12,57 +14,81 @@ export var textMetrics = {
 
 useCanvas(true);
 
-// make dumb, simple estimate if no canvas is available
-function estimateWidth(item) {
-  currFontHeight = fontSize(item);
-  return estimate(textValue(item));
-}
-
-function estimate(text) {
-  return ~~(0.8 * text.length * currFontHeight);
-}
-
-// measure text width if canvas is available
-function measureWidth(item) {
-  return fontSize(item) <= 0 ? 0
-    : (context.font = font(item), measure(textValue(item)));
-}
-
-function measure(text) {
-  return context.measureText(text).width;
-}
-
-export function fontSize(item) {
-  return item.fontSize != null ? item.fontSize : 11;
-}
-
 function useCanvas(use) {
   textMetrics.width = (use && context) ? measureWidth : estimateWidth;
 }
 
-export function textValue(item) {
-  var s = item.text;
-  if (s == null) {
-    return '';
+// make dumb, simple estimate if no canvas is available
+function estimateWidth(item, text) {
+  return _estimateWidth(textValue(item, text), fontSize(item));
+}
+
+function _estimateWidth(text, currentFontHeight) {
+  return ~~(0.8 * text.length * currentFontHeight);
+}
+
+// measure text width if canvas is available
+function measureWidth(item, text) {
+  return fontSize(item) <= 0 || !(text = textValue(item, text)) ? 0
+    : _measureWidth(text, font(item));
+}
+
+function _measureWidth(text, currentFont) {
+  const key = `(${currentFont}) ${text}`;
+  let width = widthCache.get(key);
+  if (width === undefined) {
+    context.font = currentFont;
+    width = context.measureText(text).width;
+    widthCache.set(key, width);
+  }
+  return width;
+}
+
+export function fontSize(item) {
+  return item.fontSize != null ? (+item.fontSize || 0) : 11;
+}
+
+export function lineHeight(item) {
+  return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
+}
+
+function lineArray(_) {
+  return isArray(_) ? _.length > 1 ? _ : _[0] : _;
+}
+
+export function textLines(item) {
+  return lineArray(
+    item.lineBreak && item.text && !isArray(item.text)
+      ? item.text.split(item.lineBreak)
+      : item.text
+  );
+}
+
+export function multiLineOffset(item) {
+  const tl = textLines(item);
+  return (isArray(tl) ? (tl.length - 1) : 0) * lineHeight(item);
+}
+
+export function textValue(item, line) {
+  const text = line == null ? '' : (line + '').trim();
+  return item.limit > 0 && text.length ? truncate(item, text) : text;
+}
+
+function widthGetter(item) {
+  if (textMetrics.width === measureWidth) {
+    // we are using canvas
+    const currentFont = font(item);
+    return text => _measureWidth(text, currentFont);
   } else {
-    return item.limit > 0 ? truncate(item) : s + '';
+    // we are relying on estimates
+    const currentFontHeight = fontSize(item);
+    return text => _estimateWidth(text, currentFontHeight);
   }
 }
 
-export function truncate(item) {
+function truncate(item, text) {
   var limit = +item.limit,
-      text = item.text + '',
-      width;
-
-  if (textMetrics.width === measureWidth) {
-    // we are using canvas
-    context.font = font(item);
-    width = measure;
-  } else {
-    // we are relying on estimates
-    currFontHeight = fontSize(item);
-    width = estimate;
-  }
+      width = widthGetter(item);
 
   if (width(text) < limit) return text;
 
@@ -109,11 +135,15 @@ export function font(item, quote) {
 export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+  // this also ensures consistent layout across renderers
   var baseline = item.baseline,
       h = fontSize(item);
+
   return Math.round(
-    baseline === 'top'    ?  0.79*h :
-    baseline === 'middle' ?  0.30*h :
-    baseline === 'bottom' ? -0.21*h : 0
+    baseline === 'top'         ?  0.79 * h :
+    baseline === 'middle'      ?  0.30 * h :
+    baseline === 'bottom'      ? -0.21 * h :
+    baseline === 'line-top'    ?  0.29 * h + 0.5 * lineHeight(item) :
+    baseline === 'line-bottom' ?  0.29 * h - 0.5 * lineHeight(item) : 0
   );
 }

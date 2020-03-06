@@ -156,7 +156,7 @@ pre {
   background: #F9F9F9;
   border: 1px solid #eee;
   padding: 8px 10px;
-  overflow-x: scroll;
+  overflow-x: auto;
   max-width: 978px;
 }
 

@@ -109,6 +109,7 @@ function collect(values) {
 function load(scope, data) {
   return Load({
     url:    data.url ? scope.property(data.url) : undefined,
+    async:  data.async ? scope.property(data.async) : undefined,
     values: data.values ? scope.property(data.values) : undefined,
     format: scope.objectProperty(data.format)
   });

@@ -1,6 +1,6 @@
 import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {extendOffset, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
@@ -14,7 +14,7 @@ function flushExpr(scale, threshold, a, b, c) {
   };
 }
 
-export default function(spec, config, userEncode, dataRef, size) {
+export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
@@ -37,7 +37,7 @@ export default function(spec, config, userEncode, dataRef, size) {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: _('tickOffset')
+    offset: extendOffset(band.offset, _('labelOffset'))
   };
 
   if (isXAxis) {
@@ -55,7 +55,7 @@ export default function(spec, config, userEncode, dataRef, size) {
   }
 
   offset = offset && flushOn && flushOffset
-    ? flushExpr(scale, flush, '-' + flushOffset, flushOffset, 0)
+    ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
     : null;
 
   encode = {
@@ -88,7 +88,8 @@ export default function(spec, config, userEncode, dataRef, size) {
     fontSize:    _('labelFontSize'),
     fontWeight:  _('labelFontWeight'),
     fontStyle:   _('labelFontStyle'),
-    limit:       _('labelLimit')
+    limit:       _('labelLimit'),
+    lineHeight:  _('labelLineHeight')
   });
 
   bound   = _('labelBound');

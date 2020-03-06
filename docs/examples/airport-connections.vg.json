@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Interactive map of U.S. airport connections in 2008.",
   "width": 900,
   "height": 560,
   "padding": {"top": 25, "left": 0, "right": 0, "bottom": 0},

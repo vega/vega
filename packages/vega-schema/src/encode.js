@@ -1,10 +1,14 @@
 import {
-  allOf, anyOf, oneOf, ref,
-  array, def, object, pattern, required, type,
-  booleanType, nullType, numberType, stringType, signalRef,
-  numberValue,
-  enums
+  allOf, anyOf, oneOf, ref, array, def, object, pattern, required,
+  type, booleanType, nullType, numberType, stringType, textType,
+  signalRef, numberValue, enums
 } from './util';
+
+export const blendEnum = [
+  null, 'multiply', 'screen', 'overlay', 'darken', 'lighten',
+  'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference',
+  'exclusion', 'hue', 'saturation', 'color', 'luminosity'
+];
 
 export const fontWeightEnum = [
   null, 'normal', 'bold', 'lighter', 'bolder',
@@ -20,8 +24,10 @@ export const directionEnum = ['horizontal', 'vertical'];
 export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
-export function valueSchema(type, nullable) {
-  type = Array.isArray(type) ? {enum: type} : {type: type};
+export function baseValueSchema(type, nullable) {
+  type = Array.isArray(type) ? {enum: type}
+    : type && type.oneOf ? type
+    : {type: type};
 
   var modType = type.type === 'number' ? 'number' : 'string',
       valueType = nullable ? oneOf(type, nullType) : type;
@@ -41,6 +47,11 @@ export function valueSchema(type, nullable) {
     )
   );
 
+  return valueRef;
+}
+
+export function valueSchema(type, nullable) {
+  var valueRef = baseValueSchema(type, nullable);
   return oneOf(
     array(allOf(ruleRef, valueRef)),
     valueRef
@@ -85,6 +96,7 @@ const booleanValueRef = ref('booleanValue');
 const colorValueRef = ref('colorValue');
 const numberValueRef = ref('numberValue');
 const stringValueRef = ref('stringValue');
+const textValueRef = ref('textValue');
 
 const colorRGB = object({
   _r_: numberValueRef,
@@ -112,12 +124,12 @@ const colorHCL = object({
 
 const gradientStops = array(
   object({
-  _offset_: numberType,
-  _color_: stringType
+    _offset_: numberType,
+    _color_: stringType
   })
 );
 
-const gradientLinear = object({
+const linearGradient = object({
   _gradient_: enums(['linear']),
   id: stringType,
   x1: numberType,
@@ -127,7 +139,7 @@ const gradientLinear = object({
   _stops_: ref('gradientStops')
 });
 
-const gradientRadial = object({
+const radialGradient = object({
   _gradient_: enums(['radial']),
   id: stringType,
   x1: numberType,
@@ -139,10 +151,10 @@ const gradientRadial = object({
   _stops_: ref('gradientStops')
 });
 
-const colorValue = oneOf(
-  ref('nullableStringValue'),
-  object({_value_: ref('gradientLinear')}),
-  object({_value_: ref('gradientRadial')}),
+const baseColorValue = oneOf(
+  baseValueSchema('string', true),
+  object({_value_: ref('linearGradient')}),
+  object({_value_: ref('radialGradient')}),
   object({
     _gradient_: scaleRef,
     start: array(numberType, {minItems: 2, maxItems: 2}),
@@ -157,6 +169,11 @@ const colorValue = oneOf(
       ref('colorHCL')
     )
   })
+);
+
+const colorValue = oneOf(
+  array(allOf(ruleRef, ref('baseColorValue'))),
+  ref('baseColorValue')
 );
 
 const encodeEntryRef = def('encodeEntry');
@@ -181,14 +198,24 @@ const encodeEntry = object({
   strokeDashOffset: numberValueRef,
   strokeJoin: ref('strokeJoinValue'),
   strokeMiterLimit: numberValueRef,
+  blend: ref('blendValue'),
   cursor: stringValueRef,
   tooltip: anyValueRef,
   zindex: numberValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,
+  strokeForeground: booleanValueRef,
+  strokeOffset: numberValueRef,
 
-  // Symbol- and text-mark properties
+  // Rect-mark properties
+  cornerRadius: numberValueRef,
+  cornerRadiusTopLeft: numberValueRef,
+  cornerRadiusTopRight: numberValueRef,
+  cornerRadiusBottomRight: numberValueRef,
+  cornerRadiusBottomLeft: numberValueRef,
+
+  // Symbol-, Path- and text-mark properties
   angle: numberValueRef,
 
   // Symbol-mark properties
@@ -197,28 +224,36 @@ const encodeEntry = object({
 
   // Path-mark properties
   path: stringValueRef,
+  scaleX: numberValueRef,
+  scaleY: numberValueRef,
 
   // Arc-mark properties
   innerRadius: numberValueRef,
   outerRadius: numberValueRef,
   startAngle: numberValueRef,
   endAngle: numberValueRef,
+  padAngle: numberValueRef,
 
   // Area- and line-mark properties
   interpolate: stringValueRef,
   tension: numberValueRef,
   orient: ref('directionValue'),
+  defined: booleanValueRef,
 
   // Image-mark properties
   url: stringValueRef,
   align: ref('alignValue'),
   baseline: ref('baselineValue'),
+  aspect: booleanValueRef,
+  smooth: booleanValueRef,
 
   // Text-mark properties
-  text: stringValueRef,
+  text: textValueRef,
   dir: stringValueRef,
   ellipsis: stringValueRef,
   limit: numberValueRef,
+  lineBreak: stringValueRef,
+  lineHeight: numberValueRef,
   dx: numberValueRef,
   dy: numberValueRef,
   radius:numberValueRef,
@@ -240,11 +275,12 @@ export default {
     stringModifiers,
     numberModifiers,
     anyValue: valueSchema(undefined),
+    blendValue: valueSchema(blendEnum),
     numberValue: valueSchema('number'),
     stringValue: valueSchema('string'),
+    textValue: valueSchema(textType),
     booleanValue: valueSchema('boolean'),
     arrayValue: valueSchema('array'),
-    nullableStringValue: valueSchema('string', true),
     fontWeightValue: valueSchema(fontWeightEnum),
     anchorValue: valueSchema(anchorEnum),
     alignValue: valueSchema(alignEnum),
@@ -253,14 +289,15 @@ export default {
     orientValue: valueSchema(orientEnum),
     strokeCapValue: valueSchema(strokeCapEnum),
     strokeJoinValue: valueSchema(strokeJoinEnum),
+    baseColorValue,
     colorRGB,
     colorHSL,
     colorLAB,
     colorHCL,
     colorValue,
     gradientStops,
-    gradientLinear,
-    gradientRadial
+    linearGradient,
+    radialGradient
   },
   defs: {
     rule,

@@ -136,15 +136,18 @@
   "text": {
     "marktype": "text",
     "items": [
-      {"x":0,  "y":40, "text":"A", "align":"left",   "baseline":"top",    "font":"Helvetica", "fill":"black", "fillOpacity":0.5},
-      {"x":10, "y":60, "text":"B", "align":"center", "baseline":"middle", "font":"Helvetica", "fill":"black"},
-      {"x":20, "y":80, "text":"C", "align":"right",  "baseline":"bottom", "font":"Helvetica", "fill":"black", "angle":90},
-      {"x":30, "y":120, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45, "stroke":"blue", "strokeOpacity":0.5},
-      {"text":"E", "dx":1, "dy":2, "fontSize":14, "radius":5, "fontWeight":"bold", "fontStyle":"italic", "stroke":"red"},
-      {"x":10, "y":200, "fill":"green", "opacity":0},
-      {"x":10, "y":200, "stroke":"green", "strokeWidth":0},
-      {"x":100, "y":200, "text":"hello", "dx":50, "angle":-45, "fill":"steelblue"},
-      {"x":10, "y":300, "text":"01234567890123456789", "fill":"black", "limit": 50}
+      {"x":0,  "y":40, "text":" A", "align":"left",   "baseline":"top",    "font":"Arial", "fill":"black", "fillOpacity":0.5},
+      {"x":10, "y":60, "text":"B ", "align":"center", "baseline":"middle", "font":"Arial", "fill":"black"},
+      {"x":20, "y":80, "text":"C ", "align":"right",  "baseline":"bottom", "font":"Arial", "fill":"black", "angle":90},
+      {"x":30, "y":120, "text":"D", "dx":0, "dy":0, "radius":10, "theta":1.57, "angle":45, "stroke":"blue", "strokeOpacity":0.5, "font":"Arial"},
+      {"text":"E", "dx":25, "dy":120, "fontSize":14, "radius":5, "fontWeight":"bold", "fontStyle":"italic", "stroke":"red", "font":"Arial"},
+      {"x":10, "y":200, "fill":"green", "opacity":0, "font":"Arial"},
+      {"x":10, "y":200, "stroke":"green", "strokeWidth":0, "font":"Arial"},
+      {"x":100, "y":200, "text":"hello", "dx":50, "angle":-45, "fill":"steelblue", "font":"Arial"},
+      {"x":10, "y":300, "text":"01234567890123456789", "fill":"black", "limit": 50, "font":"Arial"},
+      {"x":200, "y":200, "text":["Multi","Line","Text"], "lineHeight": 14, "fill":"blue", "font":"Arial"},
+      {"x":50, "y":40, "text":"F", "baseline":"line-top", "lineHeight":20, "fontSize": 10, "font":"Arial", "fill":"black"},
+      {"x":90, "y":40, "text":"G", "baseline":"line-bottom", "lineHeight":20, "fontSize": 10, "font":"Arial", "fill":"black"}
     ]
   },
   "trail": {

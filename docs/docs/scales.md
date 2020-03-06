@@ -31,8 +31,8 @@ Properties shared across scale types.
 | domainRaw     | {% include type t="Array" %}   | An array of raw values that, if non-null, directly overrides the _domain_ property. This is useful for supporting interactions such as panning or zooming a scale. The scale may be initially determined using a data-driven _domain_, then modified in response to user input by setting the _rawDomain_ value.|
 | interpolate   | {% include type t="String|Object" %}  | The interpolation method for range values. By default, continuous scales use a general interpolator for numbers, dates, strings and colors (in RGB space) is used. For color ranges, this property allows interpolation in alternative color spaces. Legal values include `rgb`, `hsl`, `hsl-long`, `lab`, `hcl`, `hcl-long`, `cubehelix` and `cubehelix-long` ('-long' variants use longer paths in polar coordinate spaces). If object-valued, this property accepts an object with a string-valued _type_ property and an optional numeric _gamma_ property applicable to rgb and cubehelix interpolators. For more, see the [d3-interpolate documentation](https://github.com/d3/d3-interpolate).|
 | range         | [Range](#range)                | The range of the scale, representing the set of visual values. For numeric values, the range typically takes the form of a two-element array with minimum and maximum values. For ordinal or quantized data, the range may be an array of desired output values, which are mapped to elements in the specified domain. See the [scale range reference](#range) for more.|
-| reverse       | {% include type t="Boolean" %} | If true, reverses the order of the scale range.|
-| round         | {% include type t="Boolean" %} | If true, rounds numeric output values to integers. Helpful for snapping to the pixel grid.|
+| reverse       | {% include type t="Boolean" %} | A boolean flag (default `false`) that reverses the order of the scale range.|
+| round         | {% include type t="Boolean" %} | A boolean flag (default `false`) that rounds numeric output values to integers. Helpful for snapping to a pixel grid.|
 
 
 ## <a name="types"></a>Scale Types
@@ -68,7 +68,7 @@ All quantitative scales support color-valued ranges, defined either as an array 
 | bins          | [Bins](#bins)                         | {% include tag ver="5.0" %} Bin boundaries over the scale domain, such as those computed by Vega's [`bin` transform](../transforms/bin). If provided, axes and legends will use the bin boundaries to inform the choice of axis tick marks and legend labels. This property can be either an explicit array of bin boundary values or a specification object, see the [scale bins reference](#bins) for more.|
 | clamp         | {% include type t="Boolean" %}        | A boolean indicating if output values should be clamped to the _range_ (default `false`). If clamping is disabled and the scale is passed a value outside the _domain_, the scale may return a value outside the _range_ through extrapolation. If clamping is enabled, the output value of the scale is always within the scale's range.|
 | padding       | {% include type t="Number" %}         | Expands the scale domain to accommodate the specified number of pixels on each of the scale range. The scale range must represent pixels for this parameter to function as intended. Padding adjustment is performed _prior_ to all other adjustments, including the effects of the _zero_, _nice_, _domainMin_, and _domainMax_ properties.|
-| nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values. This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
+| nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values (default `false`). This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
 | zero          | {% include type t="Boolean" %}        | Boolean flag indicating if the scale domain should include zero. The default value is `true` for `linear`, `sqrt` and `pow`, and `false` otherwise.|
 
 ### <a name="linear"></a>Linear Scales
@@ -163,8 +163,8 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
-| domainImplicit| {% include type t="Boolean" %} | A Boolean flag (default `false`) indicating if an ordinal domain should be implicitly extended with new values. If false, the scale will return `undefined` for values not explicitly included in the domain. If true, new values will be appended to the domain and the matching range value will be returned.|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the bands should be centered within the range. A value of 0 or 1 may be used to shift the bands to one side, say to position them adjacent to an axis. For more, see [this explainer for D3 band align](https://observablehq.com/@d3/band-align). |
+| domainImplicit| {% include type t="Boolean" %} | A boolean flag (default `false`) indicating if an ordinal domain should be implicitly extended with new values. If false, the scale will return `undefined` for values not explicitly included in the domain. If true, new values will be appended to the domain and the matching range value will be returned.|
 | padding       | {% include type t="Number" %} | Sets _paddingInner_ and _paddingOuter_ to the same padding value (default `0`). This value must lie in the range [0,1].|
 | paddingInner  | {% include type t="Number" %} | The inner padding (spacing) within each band step, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
 | paddingOuter  | {% include type t="Number" %} | The outer padding (spacing) at the ends of the scale range, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
@@ -180,7 +180,7 @@ This image from the [d3-scale documentation](https://github.com/d3/d3-scale#band
 
 | Property      | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
-| align         | {% include type t="Number" %} | The alignment of elements within each band step, as a fraction of the step size (default `0.5`). This value must lie in the range [0,1].|
+| align         | {% include type t="Number" %} | The alignment of elements within the scale range. This value must lie in the range [0,1]. A value of 0.5 (default) indicates that the points should be centered within the range. A value of 0 or 1 may be used to shift the points to one side, say to position them adjacent to an axis.|
 | padding       | {% include type t="Number" %} | An alias for _paddingOuter_ (default `0`). This value must lie in the range [0,1].|
 | paddingOuter  | {% include type t="Number" %} | The outer padding (spacing) at the ends of the scale range, as a fraction of the step size (default `0`). This value must lie in the range [0,1].|
 
@@ -216,7 +216,7 @@ Quantize scales are particularly useful for creating color or size encodings wit
 
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
-| nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values. This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
+| nice          | {% include type t="Boolean|Number" %} | Extends the domain so that it starts and ends on nice round values (default `false`). This method typically modifies the scale's domain, and may only extend the bounds to the nearest round value. Nicing is useful if the domain is computed from data and may be irregular. For example, for a domain of [0.201479…, 0.996679…], a nice domain might be [0.2, 1.0]. Domain values set via _domainMin_ and _domainMax_ (but **not** _domainRaw_) are subject to nicing. Using a number value for this parameter (representing a desired tick count) allows greater control over the step size used to extend the bounds, guaranteeing that the returned ticks will exactly cover the domain.|
 | zero          | {% include type t="Boolean" %} | Boolean flag indicating if the scale domain should include zero (default `false`).|
 
 This example color-codes a quantized domain using a 7-point color scheme:
@@ -362,7 +362,7 @@ The _sort_ property of a domain [data reference](#dataref) can accept, in additi
 | Property      | Type                           | Description    |
 | :------------ | :----------------------------: | :------------- |
 | field         | {% include type t="Field" %}   | The data field to sort by. If unspecified, defaults to the field specified in the outer data reference.|
-| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops).|
+| op            | {% include type t="String" %}  | An aggregate operation to perform on the field prior to sorting. Examples include `count`, `mean` and `median`. This property is required in cases where the _sort_ field and the data reference _field_ do not match. The input data objects will be aggregated, grouped by data reference _field_ values. For a full list of operations, see the [aggregate transform](../transforms/aggregate/#ops), and also see below for limitations with multi-field domains.|
 | order         | {% include type t="String" %}  | The sort order. One of `ascending` (default) or `descending`.|
 
 This example sorts distinct `category` field values in descending order by the associated median of the `value` field:
@@ -389,8 +389,7 @@ This example sorts a multi-field domain in descending order based on the counts 
 }
 ```
 
-**Note:** For domains drawn from multiple fields, the _sort.field_ property is not allowed and the only legal _op_ is `count`.
-
+**Note:** For multi-field domains, the sort _field_ values may not be undefined across all input data sets, and will exhibit duplicate values when drawing multiple domain values from the same data set. To avoid inaccurate sorting, the only allowed sort _op_ values for multi-domain scales are `count`, `min`, and `max`. Support for `min` and `max` is available in versions {% include tag ver="5.5" %}.
 
 ## <a name="range"></a>Scale Ranges
 

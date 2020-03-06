@@ -1,6 +1,6 @@
 import {DataPrefix, IndexPrefix, ScalePrefix} from './prefix';
 import {Identifier, Literal} from 'vega-expression';
-import {error} from 'vega-util';
+import {error, hasOwnProperty} from 'vega-util';
 
 export function dataVisitor(name, args, scope, params) {
   if (args[0].type !== Literal) {
@@ -10,8 +10,12 @@ export function dataVisitor(name, args, scope, params) {
   const data = args[0].value,
         dataName = DataPrefix + data;
 
-  if (!params.hasOwnProperty(dataName)) {
-    params[dataName] = scope.getData(data).tuplesRef();
+  if (!hasOwnProperty(dataName, params)) {
+    try {
+      params[dataName] = scope.getData(data).tuplesRef();
+    } catch (err) {
+      // if data set does not exist, there's nothing to track
+    }
   }
 }
 
@@ -23,7 +27,7 @@ export function indataVisitor(name, args, scope, params) {
         field = args[1].value,
         indexName = IndexPrefix + field;
 
-  if (!params.hasOwnProperty(indexName)) {
+  if (!hasOwnProperty(indexName, params)) {
     params[indexName] = scope.getData(data).indataRef(scope, field);
   }
 }
@@ -43,7 +47,7 @@ export function scaleVisitor(name, args, scope, params) {
 
 function addScaleDependency(scope, params, name) {
   const scaleName = ScalePrefix + name;
-  if (!params.hasOwnProperty(scaleName)) {
+  if (!hasOwnProperty(params, scaleName)) {
     try {
       params[scaleName] = scope.scaleRef(name);
     } catch (err) {

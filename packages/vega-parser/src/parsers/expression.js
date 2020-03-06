@@ -1,6 +1,6 @@
 import {CallExpression, parse} from 'vega-expression';
 import {codeGenerator, codegenParams, SignalPrefix} from 'vega-functions';
-import {error, isString, stringValue} from 'vega-util';
+import {error, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope, preamble) {
   var params = {}, ast, gen;
@@ -27,7 +27,7 @@ export default function(expr, scope, preamble) {
   // collect signal dependencies
   gen.globals.forEach(function(name) {
     var signalName = SignalPrefix + name;
-    if (!params.hasOwnProperty(signalName) && scope.getSignal(name)) {
+    if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
       params[signalName] = scope.signalRef(name);
     }
   });

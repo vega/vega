@@ -24,6 +24,7 @@ be useful for applications that load multiple data sets from the same domain.
 - *target*: The browser `target` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *rel*: The browser `rel` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *http*: HTTP request parameters passed to underlying calls to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API); see [RequestInit](https://fetch.spec.whatwg.org/#requestinit) for allowed properties.
+- *crossOrigin*: Specifies the [`crossOrigin` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) to apply to an Image. Only applies when [sanitize](#load_sanitize) is invoked with the option `"context": "image"`. If this property is defined and maps to a value of `null` or `undefined`, then a `no-cors` fetch will be performed for the Image. This property can be used to override Vega's default behavior of using `crossOrigin="anonymous"`, which allows images loaded from a different host to be included in exported visualization images (and thereby avoid "tainted canvas errors"), so long as the server provides permission via proper CORS headers.
 
 <a name="load" href="#load">#</a>
 loader.<b>load</b>(<i>uri</i>[, <i>options</i>])
@@ -78,7 +79,7 @@ The *schema* object contents may depend on the data format (see below). Common o
 
 - *type*: The data format type, such as `json`, `csv`, `tsv`, or `topojson`.
 - *property*: For JSON types, specifies a property of the loaded JSON to reference. This is useful if a loaded JSON file contains multiple data sets and one would like to parse data under a specific property.
-- *parse*: When set to `'auto'` (the default), the method will perform type inference (using the [inferTypes](#inferTypes) method) to determine data types of each field. Alternatively, callers can specify parsing rules by providing an object mapping field names to data types (for example: `{'timestamp': 'date', 'price': 'number'}`). The valid data type options are `'boolean'`, `'integer'`, `'number'`, `'date'`, and `'string'`.
+- *parse*: When set to `'auto'`, the method will perform type inference (using the [inferTypes](#inferTypes) method) to determine data types of each field. Alternatively, callers can specify parsing rules by providing an object mapping field names to data types (for example: `{'timestamp': 'date', 'price': 'number'}`). The valid data type options are `'boolean'`, `'integer'`, `'number'`, `'date'`, and `'string'`.
 
 The `'date'` data type also accepts an optional format string (`'date:format'`). If provided, the optional *dateParse* function is used to generate date-time parsers for a date format string. If *dateParse* is unspecified, the [d3-time-format](https://github.com/d3/d3-time-format) library is used by default. Date-time format strings may be quoted (`date:'%A'`), but quoting is not required. In addition, parsing of date-time format strings to UTC time is supported (`'utc:format'`).
 

@@ -6,6 +6,8 @@ import {falsy, inherits, isArray} from 'vega-util';
  * @constructor
  * @param {object} params - The parameters to the encoding functions. This
  *   parameter object will be passed through to all invoked encoding functions.
+ * @param {object} [params.mod=false] - Flag indicating if tuples in the input
+ *   mod set that are unmodified by encoders should be included in the output.
  * @param {object} param.encoders - The encoding functions
  * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
  * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
@@ -19,6 +21,7 @@ var prototype = inherits(Encode, Transform);
 
 prototype.transform = function(_, pulse) {
   var out = pulse.fork(pulse.ADD_REM),
+      fmod = _.mod || false,
       encoders = _.encoders,
       encode = pulse.encode;
 
@@ -42,14 +45,13 @@ prototype.transform = function(_, pulse) {
       set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
   if (pulse.changed(pulse.ADD)) {
-    pulse.visit(pulse.ADD, function(t) {
-      enter(t, _);
-      update(t, _);
-      if (set !== falsy && set !== update) set(t, _);
-    });
+    pulse.visit(pulse.ADD, function(t) { enter(t, _); update(t, _); });
     out.modifies(enter.output);
     out.modifies(update.output);
-    if (set !== falsy && set !== update) out.modifies(set.output);
+    if (set !== falsy && set !== update) {
+      pulse.visit(pulse.ADD, function(t) { set(t, _); });
+      out.modifies(set.output);
+    }
   }
 
   if (pulse.changed(pulse.REM) && exit !== falsy) {
@@ -61,13 +63,13 @@ prototype.transform = function(_, pulse) {
     var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
     if (reenter) {
       pulse.visit(flag, function(t) {
-        var mod = enter(t, _);
+        var mod = enter(t, _) || fmod;
         if (set(t, _) || mod) out.mod.push(t);
       });
       if (out.mod.length) out.modifies(enter.output);
     } else {
       pulse.visit(flag, function(t) {
-        if (set(t, _)) out.mod.push(t);
+        if (set(t, _) || fmod) out.mod.push(t);
       });
     }
     if (out.mod.length) out.modifies(set.output);

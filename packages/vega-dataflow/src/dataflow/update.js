@@ -65,8 +65,9 @@ export function pulse(op, changeset, options) {
 
   var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
       t = op.pulse && op.pulse.source || [];
+
   p.target = op;
-  this._pulses[op.id] = changeset.pulse(p, t);
+  this._input[op.id] = changeset.pulse(p, t);
 
   return this;
 }

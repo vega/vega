@@ -58,22 +58,22 @@ var prototype = inherits(Aggregate, Transform);
 prototype.transform = function(_, pulse) {
   var aggr = this,
       out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      mod;
+      mod = _.modified();
 
-  this.stamp = out.stamp;
+  aggr.stamp = out.stamp;
 
-  if (this.value && ((mod = _.modified()) || pulse.modified(this._inputs))) {
-    this._prev = this.value;
-    this.value = mod ? this.init(_) : {};
-    pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
+  if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
+    aggr._prev = aggr.value;
+    aggr.value = mod ? aggr.init(_) : {};
+    pulse.visit(pulse.SOURCE, t => aggr.add(t));
   } else {
-    this.value = this.value || this.init(_);
-    pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
-    pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+    aggr.value = aggr.value || aggr.init(_);
+    pulse.visit(pulse.REM, t => aggr.rem(t));
+    pulse.visit(pulse.ADD, t => aggr.add(t));
   }
 
   // Indicate output fields and return aggregate tuples.
-  out.modifies(this._outputs);
+  out.modifies(aggr._outputs);
 
   // Should empty cells be dropped?
   aggr._drop = _.drop !== false;
@@ -82,7 +82,7 @@ prototype.transform = function(_, pulse) {
   // and ensure that empty cells are not dropped
   if (_.cross && aggr._dims.length > 1) {
     aggr._drop = false;
-    this.cross();
+    aggr.cross();
   }
 
   return aggr.changes(out);

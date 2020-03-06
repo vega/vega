@@ -13,7 +13,9 @@ The **density** transform generates a new data stream of uniformly-spaced sample
 | distribution        | [Distribution](#distributions)  | {% include required %} An object describing the distribution type and parameters. See the  [distribution reference](#distributions) for more.|
 | extent              | {% include type t="Number[]" %} | A _[min, max]_ domain from which to sample the distribution. This argument is required in most cases, but can be omitted in the case of distributions (namely, `kde`) that can deduce their own extent.|
 | method              | {% include type t="String" %}   | The type of distribution to generate. One of `pdf` (default) or `cdf`.|
-| steps               | {% include type t="Number" %}   | The number of uniformly spaced steps to take along the _extent_ domain (default `100`). A total of _steps + 1_ uniformly-spaced samples are drawn from the distribution.|
+| minsteps            | {% include type t="Number" %}   | The minimum number of samples (default 25) to take along the _extent_ domain for plotting the density. {% include tag ver="5.4" %} |
+| maxsteps            | {% include type t="Number" %}   | The maximum number of samples (default 200) to take along the _extent_ domain for plotting the density. {% include tag ver="5.4" %} |
+| steps               | {% include type t="Number" %}   | The exact number of samples to take along the _extent_ domain for plotting the density. If specified, overrides both _minsteps_ and _maxsteps_ to set an exact number of uniform samples. Potentially useful in conjunction with a fixed extent to ensure consistent sample points for stacked densities.|
 | as                  | {% include type t="String[]" %} | The output fields for the sample value and associated probability. The default is `["value", "density"]`.|
 
 

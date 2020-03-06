@@ -1,0 +1,103 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A bar chart of flight statistics, aggregated by the selected time unit.",
+  "width": 600,
+  "height": 300,
+  "padding": 5,
+  "autosize": {"type": "fit", "resize": true, "contains": "padding"},
+
+  "title": {
+    "text": "U.S. Flight Statistics",
+    "subtitle": "20k Sample, January - March 2001",
+    "subtitleFontStyle": "italic",
+    "frame": "group",
+    "anchor": "start",
+    "offset": 10
+  },
+
+  "signals": [
+    {
+      "name": "timeunit", "value": ["day"],
+      "bind": {"input": "select", "options": [
+        ["year"], ["month"], ["date"], ["day"], ["hours"]
+      ]}
+    },
+    {
+      "name": "measure", "value": "delay",
+      "bind": {"input": "select", "options": ["count", "delay"]}
+    },
+    {
+      "name": "title",
+      "update": "measure == 'delay' ? 'Average Delay (min)' : 'Number of Flights'"
+    }
+  ],
+
+  "data": [
+    {
+      "name": "flights",
+      "url": "data/flights-20k.json",
+      "format": {"type": "json", "parse": "auto"},
+      "transform": [
+        {
+          "type": "timeunit",
+          "field": "date",
+          "units": {"signal": "timeunit"},
+          "signal": "tbin"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["unit0"],
+          "ops": ["count", "average"],
+          "fields": [null, "delay"],
+          "as": ["count", "delay"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "padding": 0.05,
+      "round": true,
+      "domain": {"signal": "timeSequence(tbin.unit, tbin.start, tbin.stop)"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "flights", "field": {"signal": "measure"}},
+      "zero": true,
+      "nice": true
+    }
+  ],
+
+  "axes": [
+    { "orient": "bottom", "scale": "xscale",
+      "formatType": "time", "format": {"signal": "timeUnitSpecifier(tbin.units, {hours: '%H'})"} },
+    { "orient": "left", "scale": "yscale", "tickCount": 7,
+      "title": {"signal": "title"} }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "flights"},
+      "encode": {
+        "update": {
+          "x": {"scale": "xscale", "field": "unit0"},
+          "width": {"scale": "xscale", "band": 1},
+          "y": {"scale": "yscale", "field": {"signal": "measure"}},
+          "y2": {"scale": "yscale", "value": 0},
+          "fill": {"value": "steelblue"},
+          "tooltip": {"signal": "{timeunit: timeFormat(datum.unit0, timeUnitSpecifier(tbin.units)), count: format(datum.count, ',') + ' flights', delay: format(datum.delay, '.1f') + ' min (avg)'}"}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"}
+        }
+      }
+    }
+  ]
+}

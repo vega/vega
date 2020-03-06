@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A population pyramid showing U.S. demographics from 1850 to 2000.",
   "height": 400,
   "padding": 5,
 
@@ -58,7 +59,7 @@
       "name": "c",
       "type": "ordinal",
       "domain": [1, 2],
-      "range": ["#1f77b4", "#e377c2"]
+      "range": ["#d5855a", "#6c4e97"]
     }
   ],
 
@@ -99,7 +100,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Females"}
       ],
 
       "marks": [
@@ -140,7 +141,7 @@
       ],
 
       "axes": [
-        {"orient": "bottom", "scale": "x", "format": "s"}
+        {"orient": "bottom", "scale": "x", "format": "s", "title": "Males"}
       ],
 
       "marks": [

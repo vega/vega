@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An interactive line chart of stock prices, with returns shown relative to a selected date.",
   "width": 650,
   "height": 300,
   "padding": 5,

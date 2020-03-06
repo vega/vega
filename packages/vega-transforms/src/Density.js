@@ -1,7 +1,7 @@
 import parseDist from './util/Distributions';
 import {ingest, Transform} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
-import {extent, range} from 'd3-array';
+import {sampleCurve} from 'vega-statistics';
+import {error, extent, inherits} from 'vega-util';
 
 /**
  * Grid sample points for a probability density. Given a distribution and
@@ -18,7 +18,14 @@ import {extent, range} from 'd3-array';
  *   to sample the distribution. This argument is required in most cases, but
  *   can be omitted if the distribution (e.g., 'kde') supports a 'data' method
  *   that returns numerical sample points from which the extent can be deduced.
- * @param {number} [params.steps=100] - The number of sampling steps.
+ * @param {number} [params.minsteps=25] - The minimum number of curve samples
+ *   for plotting the density.
+ * @param {number} [params.maxsteps=200] - The maximum number of curve samples
+ *   for plotting the density.
+ * @param {number} [params.steps] - The exact number of curve samples for
+ *   plotting the density. If specified, overrides both minsteps and maxsteps
+ *   to set an exact number of uniform samples. Useful in conjunction with
+ *   a fixed extent to ensure consistent sample points for stacked densities.
  */
 export default function Density(params) {
   Transform.call(this, null, params);
@@ -27,6 +34,13 @@ export default function Density(params) {
 var distributions = [
   {
     "key": {"function": "normal"},
+    "params": [
+      { "name": "mean", "type": "number", "default": 0 },
+      { "name": "stdev", "type": "number", "default": 1 }
+    ]
+  },
+  {
+    "key": {"function": "lognormal"},
     "params": [
       { "name": "mean", "type": "number", "default": 0 },
       { "name": "stdev", "type": "number", "default": 1 }
@@ -63,7 +77,9 @@ Density.Definition = {
   "metadata": {"generates": true},
   "params": [
     { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "steps", "type": "number", "default": 100 },
+    { "name": "steps", "type": "number" },
+    { "name": "minsteps", "type": "number", "default": 25 },
+    { "name": "maxsteps", "type": "number", "default": 200 },
     { "name": "method", "type": "string", "default": "pdf",
       "values": ["pdf", "cdf"] },
     { "name": "distribution", "type": "param",
@@ -80,6 +96,8 @@ prototype.transform = function(_, pulse) {
 
   if (!this.value || pulse.changed() || _.modified()) {
     var dist = parseDist(_.distribution, source(pulse)),
+        minsteps = _.steps || _.minsteps || 25,
+        maxsteps = _.steps || _.maxsteps || 200,
         method = _.method || 'pdf';
 
     if (method !== 'pdf' && method !== 'cdf') {
@@ -92,14 +110,12 @@ prototype.transform = function(_, pulse) {
 
     var as = _.as || ['value', 'density'],
         domain = _.extent || extent(dist.data()),
-        step = (domain[1] - domain[0]) / (_.steps || 100),
-        values = range(domain[0], domain[1] + step/2, step)
-          .map(function(v) {
-            var tuple = {};
-            tuple[as[0]] = v;
-            tuple[as[1]] = method(v);
-            return ingest(tuple);
-          });
+        values = sampleCurve(method, domain, minsteps, maxsteps).map(v => {
+          var tuple = {};
+          tuple[as[0]] = v[0];
+          tuple[as[1]] = v[1];
+          return ingest(tuple);
+        });
 
     if (this.value) out.rem = this.value;
     this.value = out.add = out.source = values;

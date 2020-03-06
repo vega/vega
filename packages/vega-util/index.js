@@ -23,6 +23,11 @@ export {
 } from './src/logger';
 
 export {
+  mergeConfig,
+  writeConfig
+} from './src/mergeConfig';
+
+export {
   panLinear,
   panLog,
   panPow,
@@ -50,6 +55,7 @@ export {default as extentIndex} from './src/extentIndex';
 export {default as fastmap} from './src/fastmap';
 export {default as field} from './src/field';
 export {default as flush} from './src/flush';
+export {default as hasOwnProperty} from './src/hasOwnProperty';
 export {default as inherits} from './src/inherits';
 export {default as inrange} from './src/inrange';
 export {default as isArray} from './src/isArray';
@@ -62,6 +68,7 @@ export {default as isRegExp} from './src/isRegExp';
 export {default as isString} from './src/isString';
 export {default as key} from './src/key';
 export {default as lerp} from './src/lerp';
+export {default as lruCache} from './src/lruCache';
 export {default as merge} from './src/merge';
 export {default as pad} from './src/pad';
 export {default as peek} from './src/peek';

@@ -1,3 +1,5 @@
+import {hasOwnProperty} from 'vega-util';
+
 export var transforms = {};
 
 export function definition(type) {
@@ -7,5 +9,5 @@ export function definition(type) {
 
 export function transform(type) {
   type = type && type.toLowerCase();
-  return transforms.hasOwnProperty(type) ? transforms[type] : null;
+  return hasOwnProperty(transforms, type) ? transforms[type] : null;
 }

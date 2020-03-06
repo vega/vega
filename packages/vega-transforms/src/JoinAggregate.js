@@ -31,7 +31,7 @@ prototype.transform = function(_, pulse) {
       cells;
 
   // process all input tuples to calculate aggregates
-  if (aggr.value && (mod || pulse.modified(aggr._inputs))) {
+  if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
     cells = aggr.value = mod ? aggr.init(_) : {};
     pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
   } else {

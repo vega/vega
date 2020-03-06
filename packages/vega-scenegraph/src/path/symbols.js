@@ -1,6 +1,7 @@
 import pathParse from './parse';
 import pathRender from './render';
 import {Tau, HalfSqrt3} from '../util/constants';
+import {hasOwnProperty} from 'vega-util';
 
 var Tan30 = 0.5773502691896257;
 
@@ -137,13 +138,13 @@ var builtins = {
 };
 
 export default function symbols(_) {
-  return builtins.hasOwnProperty(_) ? builtins[_] : customSymbol(_);
+  return hasOwnProperty(builtins, _) ? builtins[_] : customSymbol(_);
 }
 
 var custom = {};
 
 function customSymbol(path) {
-  if (!custom.hasOwnProperty(path)) {
+  if (!hasOwnProperty(custom, path)) {
     var parsed = pathParse(path);
     custom[path] = {
       draw: function(context, size) {

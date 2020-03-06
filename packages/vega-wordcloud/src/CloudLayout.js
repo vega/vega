@@ -64,7 +64,7 @@ export default function() {
             style: fontStyle(d),
             weight: fontWeight(d),
             rotate: rotate(d),
-            size: ~~fontSize(d),
+            size: ~~(fontSize(d) + 1e-14),
             padding: padding(d),
             xoff: 0,
             yoff: 0,

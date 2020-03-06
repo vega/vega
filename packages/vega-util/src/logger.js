@@ -1,6 +1,6 @@
 function log(method, level, input) {
-  var msg = [level].concat([].slice.call(input));
-  console[method](...msg); // eslint-disable-line no-console
+  var args = [level].concat([].slice.call(input));
+  console[method].apply(console, args); // eslint-disable-line no-console
 }
 
 export var None  = 0;

@@ -141,11 +141,17 @@ Enables hover event processing and returns this view instance. The optional argu
 
 *This method should be invoked only once, upon view initialization.* Calling this method multiple times will add redundant event listeners to the view. In other words, this method is **not** [idempotent](https://en.wikipedia.org/wiki/Idempotence).
 
+<a name="view_description" href="#view_description">#</a>
+view.<b>description</b>([<i>text</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
+
+Gets or sets descriptive *text* for this view. This description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the view's container element. If no arguments are provided, returns the current description. If *text* is specified, this method sets the description and updates the view container element.
+
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color (overriding any background color defined in the input Vega specification) and returns this view instance. This method does not force an immediate update to the view; invoke the [runAsync](#view_runAsync) method when ready.
+Gets or sets the view background color. If no arguments are provided, returns the current background color. If *color* is specified, this method sets the background color (overriding any background color defined in the input Vega specification) and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('background'[, color])`.
 
 <a name="view_width" href="#view_width">#</a>
 view.<b>width</b>([<i>width</i>])
@@ -163,7 +169,7 @@ Gets or sets the view height, in pixels. If no arguments are provided, returns t
 view.<b>padding</b>([<i>padding</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Gets or sets the view padding, in pixels. Padding objects take the form `{left: 5, top: 5, right: 5, bottom: 5}`. If no arguments are provided, returns the current padding value. If *padding* is specified, this method sets the padding and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('padding'[, padding])`.
+Gets or sets the view padding, in pixels. Input *padding* objects take the form `{left: 5, top: 5, right: 5, bottom: 5}`; if a numeric *padding* value is provided, it will be expanded to an object with all properties set to that number. If no arguments are provided, returns the current padding value. If *padding* is specified, this method sets the padding and returns this view instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. This method is equivalent to `view.signal('padding'[, padding])`.
 
 <a name="view_resize" href="#view_resize">#</a>
 view.<b>resize</b>()
@@ -401,10 +407,18 @@ Returns the [scale](https://github.com/vega/vega/blob/master/packages/vega-scale
 [projection](https://github.com/vega/vega/blob/master/packages/vega-projection/) instance with the given *name*. The return value is a *live* instance used by the underlying dataflow. Callers should take care not to modify the returned instance!
 
 <a name="view_data" href="#view_data">#</a>
-view.<b>data</b>(<i>name</i>)
+view.<b>data</b>(<i>name</i>[, <i>values</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
-Returns the data set with the given *name*. The returned array of data objects is a *live* array used by the underlying dataflow. Callers that wish to modify the returned array should first make a defensive copy, for example using `view.data('name').slice()`.
+If only one argument is provided, returns the data set with the given *name*. The returned array of data objects is a *live* array used by the underlying dataflow. Callers that wish to modify the returned array should first make a defensive copy, for example using `view.data('name').slice()`.
+
+{% include tag ver="5.5" %} If two arguments are provided, removes the current data and inserts the input *values*, which can be either a single data object or an array of data objects. This call is equivalent to:
+
+```js
+view.change(vega.changeset().remove(vega.truthy).insert(values));
+```
+
+Data updates do not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. Note also that a single argument (getter) call returns the *output* of the data transform pipeline, whereas the two argument (setter) call sets the *input* to the transform pipeline.
 
 <a name="view_addDataListener" href="#view_addDataListener">#</a>
 view.<b>addDataListener</b>(<i>name</i>, <i>handler</i>)

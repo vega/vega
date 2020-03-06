@@ -1,5 +1,5 @@
 import SortedList from './util/SortedList';
-import {Transform, tupleid} from 'vega-dataflow';
+import {stableCompare, Transform, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -33,7 +33,7 @@ prototype.transform = function(_, pulse) {
   out.visit(out.REM, list.remove);
 
   this.modified(mod);
-  this.value = out.source = list.data(sort, mod);
+  this.value = out.source = list.data(stableCompare(sort), mod);
 
   // propagate tree root if defined
   if (pulse.source && pulse.source.root) {

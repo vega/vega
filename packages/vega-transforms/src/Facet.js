@@ -1,6 +1,6 @@
 import Subflow from './Subflow';
 import {Transform, tupleid} from 'vega-dataflow';
-import {fastmap, inherits} from 'vega-util';
+import {fastmap, hasOwnProperty, inherits} from 'vega-util';
 
 /**
  * Facets a dataflow into a set of subflows based on a key.
@@ -31,7 +31,7 @@ prototype.activate = function(flow) {
 
 prototype.subflow = function(key, flow, pulse, parent) {
   var flows = this.value,
-      sf = flows.hasOwnProperty(key) && flows[key],
+      sf = hasOwnProperty(flows, key) && flows[key],
       df, p;
 
   if (!sf) {

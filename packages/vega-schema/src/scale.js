@@ -109,7 +109,12 @@ const sortDomain = oneOf(
 
 const sortMultiDomain = oneOf(
   booleanType,
-  object({op: enums(['count']), order: sortOrderRef})
+  object({op: enums(['count']), order: sortOrderRef}),
+  object({
+    _field_: stringOrSignal,
+    _op_: enums(['count', 'min', 'max']),
+    order: sortOrderRef
+  })
 );
 
 const scaleDataRef = ref('scaleData');

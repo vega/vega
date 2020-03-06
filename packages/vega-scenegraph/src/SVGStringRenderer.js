@@ -3,12 +3,12 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
-import {fontFamily, fontSize, textValue} from './util/text';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles, styleProperties} from './util/svg/styles';
-import {inherits} from 'vega-util';
+import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);
@@ -101,8 +101,8 @@ prototype.buildDefs = function() {
     if (def.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
       // coordinates, in a way that is cumbersome to replicate in canvas.
-      // So we wrap the radial gradient in a pattern element, allowing us
-      // to mantain a circular gradient that matches what canvas provides.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
 
       defs += openTag(tag = 'pattern', {
         id: patternPrefix + id,
@@ -233,14 +233,47 @@ prototype.mark = function(scene) {
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
     if (tag === 'text') {
-      str += escape_text(textValue(item));
+      const tl = textLines(item);
+      if (isArray(tl)) {
+        // multi-line text
+        const attrs = {x: 0, dy: lineHeight(item)};
+        for (let i=0; i<tl.length; ++i) {
+          str += openTag('tspan', i ? attrs: null)
+            + escape_text(textValue(item, tl[i]))
+            + closeTag('tspan');
+        }
+      } else {
+        // single-line text
+        str += escape_text(textValue(item, tl));
+      }
     } else if (tag === 'g') {
+      const fore = item.strokeForeground,
+            fill = item.fill,
+            stroke = item.stroke;
+
+      if (fore && stroke) {
+        item.stroke = null;
+      }
+
       str += openTag('path', renderer.attributes(mdef.background, item),
         applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
 
-      str += openTag('g', renderer.attributes(mdef.foreground, item))
+      str += openTag('g', renderer.attributes(mdef.content, item))
         + renderer.markGroup(item)
         + closeTag('g');
+
+      if (fore && stroke) {
+        if (fill) item.fill = null;
+        item.stroke = stroke;
+
+        str += openTag('path', renderer.attributes(mdef.foreground, item),
+          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+
+        if (fill) item.fill = fill;
+      } else {
+        str += openTag('path', renderer.attributes(mdef.foreground, item),
+          applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+      }
     }
 
     str += closeTag(tag);
@@ -274,6 +307,19 @@ function applyStyles(o, mark, tag, defs) {
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
+  }
+
+  if (tag === 'bgfore') {
+    if (mark.interactive === false) {
+      s += 'pointer-events: none; ';
+    }
+    s += 'display: none; ';
+  }
+
+  if (tag === 'image') {
+    if (o.smooth === false) {
+      s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
+    }
   }
 
   if (tag === 'text') {

@@ -88,7 +88,7 @@ export const spec: Spec = {
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickCount": 20, "zindex": 1},
+    {"orient": "bottom", "scale": "xscale", "tickCount": 20, "labelOverlap": true, "zindex": 1},
     {"orient": "left", "scale": "yscale", "tickCount": 5, "zindex": 1}
   ],
 

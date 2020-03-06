@@ -1,6 +1,6 @@
 import {inferTypes, typeParsers} from './type';
 import {formats} from './formats/index';
-import {error} from 'vega-util';
+import {error, hasOwnProperty} from 'vega-util';
 import {timeParse, utcParse} from 'd3-time-format';
 
 export default function(data, schema, dateParse) {
@@ -12,7 +12,7 @@ export default function(data, schema, dateParse) {
   data = reader(data, schema);
   if (schema.parse) parse(data, schema.parse, dateParse);
 
-  if (data.hasOwnProperty('columns')) delete data.columns;
+  if (hasOwnProperty(data, 'columns')) delete data.columns;
   return data;
 }
 

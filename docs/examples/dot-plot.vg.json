@@ -1,0 +1,152 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A dot plot example depicting the distribution of animal sleep times.",
+  "width": 300,
+  "padding": 5,
+
+  "signals": [
+    {
+      "name": "step", "value": 0.65,
+      "bind": {"input": "range", "min": 0.1, "max": 2, "step": 0.01}
+    },
+    {
+      "name": "offset", "value": "zero",
+      "bind": {"input": "radio", "options": ["zero", "center"]}
+    },
+    {
+      "name": "smooth", "value": true,
+      "bind": {"input": "checkbox"}
+    },
+    {"name": "size", "update": "scale('x', step) - scale('x', 0)"},
+    {"name": "area", "update": "size * size"},
+    {"name": "ddh", "update": "(span(ddext) + 1) * size"},
+    {"name": "hdh", "update": "(span(hdext) + 1) * size"},
+    {"name": "height", "update": "max(ddh, hdh)"}
+  ],
+
+  "data": [
+    {
+      "name": "points",
+      "values": [
+        6.3, 2.1, 9.1, 15.8, 5.2, 10.9, 8.3, 11.0, 3.2, 7.6, 6.3, 8.6, 6.6,
+        9.5, 4.8, 12.0, 3.3, 11.0, 4.7, 10.4, 7.4, 2.1, 7.7, 17.9, 6.1, 8.2,
+        8.4, 11.9, 10.8, 13.8, 14.3, 15.2, 10.0, 11.9, 6.5, 7.5, 10.6, 7.4,
+        8.4, 5.7, 4.9, 3.2, 8.1, 11.0, 4.9, 13.2, 9.7, 12.8
+      ],
+      "transform": [
+        {
+          "type": "dotbin",
+          "field": "data",
+          "smooth": {"signal": "smooth"},
+          "step": {"signal": "step"}
+        },
+        {
+          "type": "stack",
+          "groupby": ["bin"],
+          "offset": {"signal": "offset"},
+          "as": ["d0", "d1"]
+        },
+        {
+          "type": "extent",
+          "field": "d1",
+          "signal": "ddext"
+        },
+        {
+          "type": "extent",
+          "field": "data",
+          "signal": "ext"
+        },
+        {
+          "type": "bin",
+          "field": "data",
+          "step": {"signal": "step"},
+          "extent": {"signal": "ext"}
+        },
+        {
+          "type": "stack",
+          "offset": {"signal": "offset"},
+          "groupby": ["bin0"]
+        },
+        {
+          "type": "extent",
+          "field": "y0",
+          "signal": "hdext"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "domain": [0, 20],
+      "range": "width"
+    },
+    {
+      "name": "ddy",
+      "domain": {"signal": "[0, ddh / size]"},
+      "range": {"signal": "[height, height - ddh]"}
+    },
+    {
+      "name": "hdy",
+      "domain": {"signal": "[0, hdh / size]"},
+      "range": {"signal": "[height, height - hdh]"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "encode": {
+        "update": {
+          "width": {"signal": "width"},
+          "height": {"signal": "height"}
+        }
+      },
+      "axes": [
+        {"scale": "x", "orient": "bottom", "tickCount": 5, "title": "Density Dot Plot"}
+      ],
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "points"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": "bin"},
+              "y": {"scale": "ddy", "signal": "datum.d0 + 0.5"},
+              "size": {"signal": "area"},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "encode": {
+        "update": {
+          "x": {"signal": "width + 10"},
+          "width": {"signal": "width"},
+          "height": {"signal": "height"}
+        }
+      },
+      "axes": [
+        {"scale": "x", "orient": "bottom", "tickCount": 5, "title": "Histogram Dot Plot"}
+      ],
+      "marks": [
+        {
+          "type": "symbol",
+          "from": {"data": "points"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "signal": "(datum.bin0 + datum.bin1) / 2"},
+              "y": {"scale": "hdy", "signal": "datum.y0 + 0.5"},
+              "size": {"signal": "area"},
+              "fill": {"value": "steelblue"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

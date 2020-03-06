@@ -119,6 +119,50 @@ tape('Window processes single partition', function(t) {
   t.end();
 });
 
+tape('Window processes peers correctly', function(t) {
+  var data = [
+    {k:'a', v:1, key:0},
+    {k:'b', v:3, key:1},
+    {k:'a', v:2, key:2},
+    {k:'b', v:4, key:2},
+    {k:'a', v:3, key:3}
+  ];
+
+  var val = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Window, {
+        sort: util.compare('key'),
+        frame: [null, 0],
+        ignorePeers: false,
+        fields: [null, val],
+        ops: ['count', 'sum'],
+        as: ['count', 'sum'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {k: 'a', v: 1, count: 1, sum: 1});
+  match(t, d[1], {k: 'b', v: 3, count: 2, sum: 4});
+  match(t, d[2], {k: 'a', v: 2, count: 4, sum: 10});
+  match(t, d[3], {k: 'b', v: 4, count: 4, sum: 10});
+  match(t, d[4], {k: 'a', v: 3, count: 5, sum: 13});
+
+  // -- test rem
+  df.pulse(col, changeset().remove([data[1], data[3]])).run();
+  d = out.value;
+  t.equal(d.length, data.length - 2);
+  match(t, d[0], {k: 'a', v: 1, count: 1, sum: 1});
+  match(t, d[1], {k: 'a', v: 2, count: 2, sum: 3});
+  match(t, d[2], {k: 'a', v: 3, count: 3, sum: 6});
+
+  t.end();
+});
+
 tape('Window processes multiple partitions', function(t) {
   var data = [
     {k:'a', v:1, key:0},
@@ -357,6 +401,127 @@ tape('Window processes unsorted values', function(t) {
   match(t, d[2], {key: 2, rank: 3, dense_rank: 3});
   match(t, d[3], {key: 3, rank: 4, dense_rank: 4});
   match(t, d[4], {key: 4, rank: 5, dense_rank: 5});
+
+  t.end();
+});
+
+tape('Window processes fill operations', function(t) {
+  var data = [
+    {u: 'a',  v:1, x: null,      key:0},
+    {u: null, v:3, x: true,      key:1},
+    {u: null,      x: false,     key:2},
+    {u: 'b',  v:4, x: undefined, key:3}
+  ];
+
+  var u = util.field('u'),
+      v = util.field('v'),
+      x = util.field('x'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      win = df.add(Window, {
+        sort: util.compare('key'),
+        ignorePeers: true,
+        fields: [u, u, v, v, x, x],
+        ops: [
+          'next_value', 'prev_value',
+          'next_value', 'prev_value',
+          'next_value', 'prev_value'
+        ],
+        as: ['un', 'up', 'vn', 'vp', 'xn', 'xp'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: win});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {
+    u: 'a', v: 1, x: null, key: 0,
+    un: 'a', up: 'a', vn: 1, vp: 1, xn: true, xp: null
+  });
+  match(t, d[1], {
+    u: null, v: 3, x: true, key: 1,
+    un: 'b', up: 'a', vn: 3, vp: 3, xn: true, xp: true
+  });
+  match(t, d[2], {
+    u: null, x: false, key: 2,
+    un: 'b', up: 'a', vn: 4, vp: 3, xn: false, xp: false
+  });
+  match(t, d[3], {
+    u: 'b', v: 4, x: undefined, key: 3,
+    un: 'b', up: 'b', vn: 4, vp: 4, xn: null, xp: false
+  });
+
+  t.end();
+});
+
+tape('Window handles next_value with overwrite', function(t) {
+  var data = [
+    {u: 'a',  v:1, x: null,      key:0},
+    {u: null, v:3, x: true,      key:1},
+    {u: null,      x: false,     key:2},
+    {u: 'b',  v:4, x: undefined, key:3}
+  ];
+
+  var u = util.field('u'),
+      v = util.field('v'),
+      x = util.field('x'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      win = df.add(Window, {
+        sort: util.compare('key'),
+        ignorePeers: true,
+        fields: [u, v, x],
+        ops: ['next_value', 'next_value', 'next_value'],
+        as: ['u', 'v', 'x'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: win});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {key: 0, u: 'a', v: 1, x: true});
+  match(t, d[1], {key: 1, u: 'b', v: 3, x: true});
+  match(t, d[2], {key: 2, u: 'b', v: 4, x: false});
+  match(t, d[3], {key: 3, u: 'b', v: 4, x: null});
+
+  t.end();
+});
+
+tape('Window handles prev_value with overwrite', function(t) {
+  var data = [
+    {u: 'a',  v:1, x: null,      key:0},
+    {u: null, v:3, x: true,      key:1},
+    {u: null,      x: false,     key:2},
+    {u: 'b',  v:4, x: undefined, key:3}
+  ];
+
+  var u = util.field('u'),
+      v = util.field('v'),
+      x = util.field('x'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      win = df.add(Window, {
+        sort: util.compare('key'),
+        ignorePeers: true,
+        fields: [u, v, x],
+        ops: ['prev_value', 'prev_value', 'prev_value'],
+        as: ['u', 'v', 'x'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: win});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {key: 0, u: 'a', v: 1, x: null});
+  match(t, d[1], {key: 1, u: 'a', v: 3, x: true});
+  match(t, d[2], {key: 2, u: 'a', v: 3, x: false});
+  match(t, d[3], {key: 3, u: 'b', v: 4, x: false});
 
   t.end();
 });

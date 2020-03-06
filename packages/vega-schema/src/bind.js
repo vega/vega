@@ -1,5 +1,5 @@
 import {
-  enums, not, object, oneOf, ref,
+  array, enums, not, object, oneOf, ref,
   arrayType, numberType, stringType
 } from './util';
 
@@ -22,6 +22,7 @@ const bind = oneOf(
     _input_: enums([Radio, Select]),
     element: elementRef,
     _options_: arrayType,
+    labels: array(stringType),
     debounce: numberType,
     name: stringType
   }),

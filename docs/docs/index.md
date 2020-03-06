@@ -16,13 +16,13 @@ A **Vega specification** is a [JSON](http://en.wikipedia.org/wiki/JSON) object t
 | :----------------------------- | :----------- |
 | [Specification](specification) | Overview of a full Vega specification, including sizing and metadata.|
 | [Config](config)               | Configure defaults for visual encoding choices.|
-| [Data](data)                   | Define, load and parse data to visualize.|
+| [Data](data)                   | Define, load, and parse data to visualize.|
 | [Transforms](transforms)       | Apply data transforms (filter, sort, aggregate, layout) prior to visualization.|
 | [Triggers](triggers)           | Modify data sets or mark properties in response to signal values.|
 | [Projections](projections)     | Cartographic projections to map (longitude, latitude) data.|
 | [Scales](scales)               | Map data values (numbers, strings) to visual properties (coordinates, colors, sizes).|
-| [Schemes](schemes)             | Color schemes that can server as scale ranges.|
-| [Axes](axes)                   | Visualize scale mappings for spatial encodings using co-ordinate axes.|
+| [Schemes](schemes)             | Color schemes that can be used as scale ranges.|
+| [Axes](axes)                   | Visualize scale mappings for spatial encodings using coordinate axes.|
 | [Legends](legends)             | Visualize scale mappings for color, shape and size encodings.|
 | [Title](title)                 | Specify a chart title for a visualization.|
 | [Marks](marks)                 | Visually encode data with graphical marks such as rectangles, lines, and symbols.|
@@ -43,5 +43,6 @@ Vega also provides a **JavaScript runtime API**, responsible for parsing JSON sp
 | [Locale](api/locale)           | Use number and date formats for a specific locale. |
 | [Extensibility](api/extensibility) | Extend Vega with new projections, scales, color schemes, or data transforms. |
 | [Statistics](api/statistics)   | Statistical methods used by Vega. |
+| [Time](api/time)               | Utility methods for date-time values. |
 | [Util](api/util)               | General JavaScript utilities. |
 | [Debugging](api/debugging)     | A guide to debugging Vega visualizations at runtime. |

@@ -33,13 +33,13 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 | Property        | Type                          | Description                 |
 | :-------------- | :---------------------------: | :-------------------------- |
 | $schema         | {% include type t="URL" %}    | The URL for the Vega schema.|
-| description     | {% include type t="String" %} | A text description of the visualization.|
-| background      | {% include type t="Color" %}  | The background color of the entire view (defaults to transparent).|
-| width           | {% include type t="Number" %} | The width in pixels of the data rectangle.|
-| height          | {% include type t="Number" %} | The height in pixels of the data rectangle.|
-| padding         | {% include type t="Number|Object" %} | The padding in pixels to add around the visualization. If a number, specifies padding for all sides. If an object, the value should have the format `{"left": 5, "top": 5, "right": 5, "bottom": 5}`. Padding is applied _after_ autosize layout completes.|
-| autosize        | {% include type t="String|[Autosize](#autosize)" %} | Sets how the visualization size should be determined. If a string, should be one of `pad` (default), `fit`, `fit-x`, `fit-y`, or `none`. Object values can additionally specify parameters for content sizing and automatic resizing. See the [autosize](#autosize) section below for more.|
-| config          | [Config](../config) | Configuration settings with default values for marks, axes and legends.|
+| description     | {% include type t="String" %} | A text description of the visualization. In versions {% include tag ver="5.10" %}, the description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the container element of a Vega view.|
+| background      | {% include type t="Color|Signal" %}  | The background color of the entire view (defaults to transparent). If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `background` [signal definition](../signals).|
+| width           | {% include type t="Number|Signal" %} | The width in pixels of the data rectangle. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `width` [signal definition](../signals).|
+| height          | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `height` [signal definition](../signals).|
+| padding         | {% include type t="Number|Object|Signal" %} | The padding in pixels to add around the visualization. If a number, specifies padding for all sides. If an object, the value should have the format `{"left": 5, "top": 5, "right": 5, "bottom": 5}`. Padding is applied _after_ autosize layout completes. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `padding` [signal definition](../signals), and should evaluate to either a padding object or number.|
+| autosize        | {% include type t="String|[Autosize](#autosize)|Signal" %} | Sets how the visualization size should be determined. If a string, should be one of `pad` (default), `fit`, `fit-x`, `fit-y`, or `none`. Object values can additionally specify parameters for content sizing and automatic resizing. See the [autosize](#autosize) section below for more. If signal-valued {% include tag ver="5.10" %}, the provided expression is used as the `update` property for the underlying `autosize` [signal definition](../signals), and should evaluate to a complete [autosize](#autosize) object.|
+| config          | [Config](../config) | Configuration settings with default values for marks, axes, and legends.|
 | signals         | {% include array t="[Signal](../signals)" %} | Signals are dynamic variables that parameterize a visualization.|
 | data            | {% include array t="[Data](../data)" %} | Data set definitions and transforms define the data to load and how to process it.|
 | scales          | {% include array t="[Scale](../scales)" %} | Scales map data values (numbers, dates, categories, etc) to visual values (pixels, colors, sizes).|
@@ -49,6 +49,7 @@ Below is a basic outline of a Vega specification. Complete specifications includ
 | title           | {% include type t="[Title](../title)" %} | Title text to describe a visualization.|
 | marks           | {% include array t="[Mark](../marks)" %} | Graphical marks visually encode data using geometric primitives such as rectangles, lines, and plotting symbols.|
 | encode          | [Encode](../marks/#encode) | Encoding directives for the visual properties of the top-level [group mark](../marks/group) representing a chart's data rectangle. For example, this can be used to set a background fill color for the plotting area, rather than the entire view.|
+| usermeta        | {% include type t="Object" %} | Optional metadata  that will be ignored by the Vega parser.|
 
 
 ## <a name="autosize"></a>Autosize
@@ -59,7 +60,7 @@ If an object, the value should have the format `{"type": "pad", "resize": true}`
 | Name          | Type                          | Description    |
 | :------------ | :---------------------------: | :------------- |
 | type          | {% include type t="String" %} | {% include required %} The sizing format type. One of `"pad"` (default), `"fit"`, `"fit-x"`, `"fit-y"`, or `"none"`. See the [autosize types](#autosize-types) documentation for descriptions of each.|
-| resize        | {% include type t="Boolean" %}| A boolean flag indicating if autosize layout should be re-calculated on every view update. The default (`false`) causes layout to be performed once upon initialization and then kept stable. To externally force a resize, use the [View.resize](../api/view/#view_resize) API method.|
+| resize        | {% include type t="Boolean" %}| A boolean flag indicating if autosize layout should be re-calculated on every view update. The default (`false`) causes layout to be performed once upon initialization and in response to changes in the height and/or width signals (see [here](https://github.com/vega/vega/blob/master/packages/vega-view/src/size.js) for more on sizing logic). Otherwise, the layout is kept stable. To externally force a resize, use the [View.resize](../api/view/#view_resize) API method.|
 | contains      | {% include type t="String" %}| Determines how size calculation should be performed, one of `content` (default) or `padding`. The default setting (`content`) interprets the _width_ and _height_ settings as the data rectangle (plotting) dimensions, to which _padding_ is then added. In contrast, the `padding` setting includes the _padding_ within the view size calculations, such that the _width_ and _height_ settings indicate the **total** intended size of the view.|
 
 

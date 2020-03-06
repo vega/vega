@@ -11,7 +11,17 @@ export {default as Pulse} from './src/Pulse';
 export {default as MultiPulse} from './src/MultiPulse';
 export {default as Operator} from './src/Operator';
 export {default as Transform} from './src/Transform';
-export {derive, rederive, ingest, isTuple, replace, tupleid} from './src/Tuple';
+
+// Tuple Methods
+export {
+  derive,
+  ingest,
+  isTuple,
+  rederive,
+  replace,
+  stableCompare,
+  tupleid
+} from './src/Tuple';
 
 // Transform Registry
 export {

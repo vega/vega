@@ -70,7 +70,7 @@ Signal definitions may use the following properties.
 
 A few signal names are automatically processed and/or reserved:
 
-- Signals for the [specification](../specification) `width`, `height`, `padding`, and `autosize` properties are automatically defined. Specifications may include definitions for these signals: the _value_ property will be ignored, but the _update_ and _on_ properties may be used to dynamically update these view settings.
+- Signals for the [specification](../specification) `width`, `height`, `padding`, `autosize`, and (for version {% include tag ver="5.10" %}) `background` properties are automatically defined. Specifications may include definitions for these signals in the top-level `signals` array, in which case the definitions will be merged with any top-level [specification](../specification) property values, with precedence given to properties defined in the `signals` array.
 - Group mark instances automatically include a `parent` signal bound to the data object for that group. Specifications may **not** define a signal named `parent`.
 - The signal names `datum`, `item`, and `event` are reserved for top-level variables within expressions. Specifications may **not** define signals named `datum`, `item` or `event`.
 - If you define a signal named `cursor`, its value will automatically drive the [CSS mouse cursor](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor) for the Vega view. For more, see the [`cursor` signal documentation](#cursor) below.
@@ -137,7 +137,7 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | :------------------ | :----------------------------: | :------------|
 | input               | {% include type t="String" %}  | {% include required %} The type of input element to use. The valid values are `checkbox`, `radio`, `range`, `select`, and any other legal [HTML form input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).|
 | element             | {% include type t="String" %}  | An optional CSS selector string indicating the parent element to which the input element should be added. By default, all input elements are added within the parent container of the Vega view.|
-| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead. |
+| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead for the bound signal. |
 | debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Radio and Select Input Properties
@@ -145,7 +145,8 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | Property            | Type                           | Description  |
 | :------------------ | :----------------------------: | :------------|
 | options             | {% include type t="Array" %}   | {% include required %} An array of options to select from.|
-| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead. |
+| labels              | {% include type t="String[]" %}| {% include tag ver="5.9" %} An array of label strings to represent the *options* values. If unspecified, the *options* value will be coerced to a string and used as the label. |
+| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead for the bound signal. |
 | debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Range Input Properties
@@ -155,7 +156,7 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 | max                 | {% include type t="Number" %}  | For `range` inputs, sets the maximum slider value. Defaults to the larger of the signal value and `100`.|
 | min                 | {% include type t="Number" %}  | For `range` inputs, sets the minimum slider value. Defaults to the smaller of the signal value and `0`.|
 | step                | {% include type t="Number" %}  | For `range` inputs, sets the minimum slider increment. If undefined, the step size will be automatically determined based on the _min_ and _max_ values.|
-| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead. |
+| name                | {% include type t="String" %}  | By default, the signal name is used to label input elements. This `name` property can be used to specify a custom label instead for the bound signal. |
 | debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
 
 ### Other Input Types

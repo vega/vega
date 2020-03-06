@@ -52,7 +52,8 @@ export default function(spec, config, userEncode, dataRef) {
     fontSize:    _('titleFontSize'),
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
-    limit:       _('titleLimit')
+    limit:       _('titleLimit'),
+    lineHeight:  _('titleLineHeight')
   }, { // require update
     align:       _('titleAlign')
   });

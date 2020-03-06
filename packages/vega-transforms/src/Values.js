@@ -1,4 +1,4 @@
-import {Transform} from 'vega-dataflow';
+import {stableCompare, Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -26,7 +26,7 @@ prototype.transform = function(_, pulse) {
 
   if (run) {
     this.value = (_.sort
-      ? pulse.source.slice().sort(_.sort)
+      ? pulse.source.slice().sort(stableCompare(_.sort))
       : pulse.source).map(_.field);
   }
 };

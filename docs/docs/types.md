@@ -12,6 +12,8 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [Array](#Array)
 - [Boolean](#Boolean)
 - [Color](#Color)
+- [Date](#Date)
+- [Gradient](#Gradient)
 - [Number](#Number)
 - [Object](#Object)
 - [String](#String)
@@ -25,6 +27,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [ColorValue](#ColorValue)
 - [FieldValue](#FieldValue)
 - [GradientValue](#GradientValue)
+- [TimeMultiFormat](#TimeMultiFormat)
 {: .column-list }
 
 ## Literal Values
@@ -50,6 +53,69 @@ Accepts boolean values. For example: `true`, `false`.
 **Color**
 
 Accepts a valid CSS color string. For example: `#f304d3`, `#ccc`, `rgb(253, 12, 134)`, `steelblue`.
+
+<br/><a name="Date" href="#Date">#</a>
+**Date**
+
+A valid JavaScript `Date` object or timestamp. As JSON does not support date values natively, within a Vega specification a date-time value can be expressed either as a numeric timestamp (the number of milliseconds since the UNIX epoch, as produced by the [Date.getTime()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) method) or using a signal expression (such as `{"signal": "datetime(2001, 2, 3)"}`).
+
+<br/><a name="Gradient" href="#Gradient">#</a>
+**Gradient** {% include tag ver="5.4" %}
+
+Accepts an object that specifies a gradient color pattern. To define a linear gradient based on a color scale, use a [GradientValue](#GradientValue) instead.
+
+For example:
+
+```json
+{
+  "gradient": "linear",
+  "stops": [
+    {"offset": 0.0, "color": "red"},
+    {"offset": 0.5, "color": "white"},
+    {"offset": 1.0, "color": "blue"}
+  ]
+}
+```
+
+<a name="LinearGradient" href="#LinearGradient">#</a>
+**Linear Gradient**
+
+A linear gradient interpolates colors along a line, from a starting point to an ending point. By default a linear gradient runs horizontally, from left to right. Use the _x1_, _y1_, _x2_, and _y2_ properties to configure the gradient direction. All coordinates are defined in a normalized [0, 1] coordinate space, relative to the bounding box of the item being colored.
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| gradient      | {% include type t="String" %} | {% include required %} The type of gradient. Use `"linear"` for a linear gradient.|
+| x1            | {% include type t="Number" %} | The starting x-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 0).|
+| y1            | {% include type t="Number" %} | The starting y-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 0).|
+| x2            | {% include type t="Number" %} | The ending x-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 1).|
+| y2            | {% include type t="Number" %} | The ending y-coordinate, in normalized [0, 1] coordinates, of the linear gradient (default 0).|
+| stops         | {% include array t="[GradientStop](#GradientStop)" %} | {% include required %} An array of gradient stops defining the gradient color sequence.|
+
+<a name="RadialGradient" href="#RadialGradient">#</a>
+**Radial Gradient**
+
+A radial gradient interpolates colors between two circles, from an inner circle boundary to an outer circle boundary. By default a radial gradient runs from the center point of the coordinate system (zero radius inner circle), out to the maximum extent (0.5 radius outer circle). Use the _x1_, _y1_, _x2_, and _y2_ properties to configure the inner and outer circle center points, and use the _r1_ and _r2_ properties to configure the circle radii. All coordinates are defined in a normalized [0, 1] coordinate space, relative to the bounding box of the item being colored. A value of 1 corresponds to the maximum extent of the bounding box (width or height, whichever is larger).
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| gradient      | {% include type t="String" %} | {% include required %} The type of gradient. Use `"radial"` for a radial gradient.|
+| x1            | {% include type t="Number" %} | The x-coordinate, in normalized [0, 1] coordinates, for the center of the inner circle for the gradient (default 0.5).|
+| y1            | {% include type t="Number" %} | The y-coordinate, in normalized [0, 1] coordinates, for the center of the inner circle for the gradient (default 0.5).|
+| r1            | {% include type t="Number" %} | The radius length, in normalized [0, 1] coordinates, of the inner circle for the gradient (default 0).|
+| x2            | {% include type t="Number" %} | The x-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient (default 0.5).|
+| y2            | {% include type t="Number" %} | The y-coordinate, in normalized [0, 1] coordinates, for the center of the outer circle for the gradient (default 0.5).|
+| r2            | {% include type t="Number" %} | The radius length, in normalized [0, 1] coordinates, of the outer circle for the gradient (default 0.5).|
+| stops         | {% include array t="[GradientStop](#GradientStop)" %} | {% include required %} An array of gradient stops defining the gradient color sequence.|
+
+<a name="GradientStop" href="#GradientStop">#</a>
+**Gradient Stop**
+
+A gradient stop consists of a [Color](#Color) value and an _offset_ progress fraction.
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| offset        | {% include type t="Number" %} | {% include required %} The offset fraction for the color stop, indicating its position within the gradient.|
+| color         | [Color](#Color)               | {% include required %} The color value at this point in the gradient.|
 
 <br/><a name="Number" href="#Number">#</a>
 **Number**
@@ -167,7 +233,7 @@ An _expr_ reference provides an [expression](../expressions) string that should 
 }
 ```
 
-Unlike [signal references](#Signal) that are evaluated once per parameter, _expr_ references behave like [anonymous (or lambda) functions](https://en.wikipedia.org/wiki/Anonymous_function) that are evaluated once per data object.
+Unlike [signal references](#Signal) that are evaluated once per parameter, _expr_ references behave like [anonymous (or lambda) functions](https://en.wikipedia.org/wiki/Anonymous_function) that are evaluated independently per data object.  Note that both signal and _expr_ references will re-run if an upstream dependency changes.
 
 Both _field_ and _expr_ references may include an `as` property that indicates the output field name to use.
 
@@ -187,7 +253,7 @@ The base value must be specified using one of the following properties:
 | signal        | {% include type t="String" %} | A [signal](#Signal) name or expression.|
 | color         | {% include type t="ColorValue" %} | Specifies a color using value references for each color channel. See the [color value](#ColorValue) documentation.|
 | field         | {% include type t="FieldValue" %} | A data field name or descriptor. See the [field value](#FieldValue) documentation.|
-| value         | {% include type t="Any" %} | A constant value.|
+| value         | {% include type t="Any" %} | A constant value. Legal values include numbers, booleans, strings, [colors](#Color), and [gradients](#Gradient).|
 
 These properties are listed here in precedence order. For example, if _signal_ is defined, any _color_, _field_ or _value_ properties will be ignored. In addition, the base value may be left undefined in the case of certain _scale_ values, or to indicate a `null` value.
 
@@ -275,7 +341,7 @@ In addition, `group` and `parent` references may include an optional `level` pro
 <br/><a name="GradientValue" href="#GradientValue">#</a>
 **GradientValue**
 
-Defines a linear gradient to determine colors for a `fill` or `stroke` encoding channel.
+Defines a linear gradient based on a scale range to determine colors for a `fill` or `stroke` encoding channel. To define a gradient directly, without reference to a scale, assign a [Gradient](#Gradient) definition as an encoding's _value_ property.
 
 | Property      | Type            | Description    |
 | :------------ | :-------------: | :------------- |
@@ -299,5 +365,18 @@ Defines a linear gradient to determine colors for a `fill` or `stroke` encoding 
   }
 }
 ```
+
+[Back to top](#reference)
+
+
+<br/><a name="TimeMultiFormat" href="#TimeMultiFormat">#</a>
+**TimeMultiFormat**
+
+An object defining custom multi-format specifications for date-time values. This object must be a legal input to the [timeFormat API method](../api/time/#timeFormat):
+
+- Object keys must be valid [time units](../api/time/#time-units) (e.g., `year`, `month`, etc).
+- Object values must be valid [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) specifier strings.
+
+These values, in conjunction with defaults for unspecified units, will then be used to create a dynamic formatting function that uses different formats depending on the granularity of the input date (e.g., if the date lies on a year, month, date, hour, _etc._ boundary). For more information, see the [timeFormat API documentation](../api/time/#timeFormat).
 
 [Back to top](#reference)

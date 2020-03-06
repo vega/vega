@@ -26,6 +26,7 @@ export const spec: Spec = {
           "conicConformal",
           "conicEqualArea",
           "conicEquidistant",
+          "equalEarth",
           "equirectangular",
           "gnomonic",
           "mercator",

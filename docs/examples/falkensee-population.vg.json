@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An annotated line chart of the population of Falkensee, Germany.",
   "width": 500,
   "height": 250,
   "padding": 5,

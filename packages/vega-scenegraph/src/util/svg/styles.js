@@ -9,7 +9,8 @@ export var styles = {
   'strokeDash':       'stroke-dasharray',
   'strokeDashOffset': 'stroke-dashoffset',
   'strokeMiterLimit': 'stroke-miterlimit',
-  'opacity':          'opacity'
+  'opacity':          'opacity',
+  'blend':            'mix-blend-mode'
 };
 
 export var styleProperties = Object.keys(styles);

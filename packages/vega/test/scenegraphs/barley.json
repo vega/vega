@@ -103,6 +103,7 @@
                       "opacity": 1,
                       "text": "0",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -115,6 +116,7 @@
                       "opacity": 1,
                       "text": "10",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -127,6 +129,7 @@
                       "opacity": 1,
                       "text": "20",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -139,6 +142,7 @@
                       "opacity": 1,
                       "text": "30",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -151,6 +155,7 @@
                       "opacity": 1,
                       "text": "40",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -163,6 +168,7 @@
                       "opacity": 1,
                       "text": "50",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -175,6 +181,7 @@
                       "opacity": 1,
                       "text": "60",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     },
@@ -187,6 +194,7 @@
                       "opacity": 1,
                       "text": "70",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 10
                     }
@@ -467,6 +475,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -479,6 +488,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -491,6 +501,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -503,6 +514,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -515,6 +527,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -527,6 +540,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -539,6 +553,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -551,6 +566,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -563,6 +579,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -575,6 +592,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -700,6 +718,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -712,6 +731,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -724,6 +744,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -736,6 +757,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -748,6 +770,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -760,6 +783,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -772,6 +796,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -784,6 +809,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -796,6 +822,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -808,6 +835,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1219,6 +1247,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1231,6 +1260,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1243,6 +1273,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1255,6 +1286,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1267,6 +1299,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1279,6 +1312,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1291,6 +1325,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1303,6 +1338,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1315,6 +1351,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1327,6 +1364,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1452,6 +1490,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1464,6 +1503,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1476,6 +1516,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1488,6 +1529,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1500,6 +1542,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1512,6 +1555,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1524,6 +1568,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1536,6 +1581,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1548,6 +1594,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1560,6 +1607,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1971,6 +2019,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1983,6 +2032,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -1995,6 +2045,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2007,6 +2058,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2019,6 +2071,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2031,6 +2084,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2043,6 +2097,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2055,6 +2110,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2067,6 +2123,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2079,6 +2136,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2204,6 +2262,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2216,6 +2275,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2228,6 +2288,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2240,6 +2301,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2252,6 +2314,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2264,6 +2327,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2276,6 +2340,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2288,6 +2353,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2300,6 +2366,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2312,6 +2379,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2723,6 +2791,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2735,6 +2804,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2747,6 +2817,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2759,6 +2830,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2771,6 +2843,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2783,6 +2856,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2795,6 +2869,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2807,6 +2882,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2819,6 +2895,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2831,6 +2908,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -2956,6 +3034,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2968,6 +3047,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2980,6 +3060,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -2992,6 +3073,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3004,6 +3086,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3016,6 +3099,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3028,6 +3112,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3040,6 +3125,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3052,6 +3138,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3064,6 +3151,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -3475,6 +3563,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3487,6 +3576,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3499,6 +3589,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3511,6 +3602,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3523,6 +3615,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3535,6 +3628,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3547,6 +3641,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3559,6 +3654,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3571,6 +3667,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3583,6 +3680,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -3708,6 +3806,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3720,6 +3819,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3732,6 +3832,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3744,6 +3845,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3756,6 +3858,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3768,6 +3871,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3780,6 +3884,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3792,6 +3897,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3804,6 +3910,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -3816,6 +3923,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -4227,6 +4335,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4239,6 +4348,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4251,6 +4361,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4263,6 +4374,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4275,6 +4387,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4287,6 +4400,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4299,6 +4413,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4311,6 +4426,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4323,6 +4439,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4335,6 +4452,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -4460,6 +4578,7 @@
                               "opacity": 1,
                               "text": "Trebi",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4472,6 +4591,7 @@
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4484,6 +4604,7 @@
                               "opacity": 1,
                               "text": "No. 457",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4496,6 +4617,7 @@
                               "opacity": 1,
                               "text": "Glabron",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4508,6 +4630,7 @@
                               "opacity": 1,
                               "text": "Peatland",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4520,6 +4643,7 @@
                               "opacity": 1,
                               "text": "Velvet",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4532,6 +4656,7 @@
                               "opacity": 1,
                               "text": "No. 475",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4544,6 +4669,7 @@
                               "opacity": 1,
                               "text": "Manchuria",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4556,6 +4682,7 @@
                               "opacity": 1,
                               "text": "No. 462",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -4568,6 +4695,7 @@
                               "opacity": 1,
                               "text": "Svansota",
                               "angle": 0,
+                              "limit": 180,
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -4871,6 +4999,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "1931",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -4919,6 +5048,7 @@
                                       "fill": "#000",
                                       "opacity": 1,
                                       "text": "1932",
+                                      "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
                                     }
@@ -4958,6 +5088,7 @@
                       "orient": "top",
                       "text": "Year",
                       "angle": 0,
+                      "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"

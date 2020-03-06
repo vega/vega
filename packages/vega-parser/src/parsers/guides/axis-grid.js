@@ -6,7 +6,7 @@ import {AxisGridRole} from '../marks/roles';
 import {addEncoders} from '../encode/encode-util';
 import {extend, isObject} from 'vega-util';
 
-export default function(spec, config, userEncode, dataRef) {
+export default function(spec, config, userEncode, dataRef, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
       vscale = spec.gridScale,
@@ -31,10 +31,10 @@ export default function(spec, config, userEncode, dataRef) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   _('bandPosition'),
-    round:  _('tickRound'),
-    extra:  _('tickExtra'),
-    offset: _('tickOffset')
+    band:   band.band,
+    extra:  band.extra,
+    offset: band.offset,
+    round:  _('tickRound')
   };
 
   if (orient === Top || orient === Bottom) {

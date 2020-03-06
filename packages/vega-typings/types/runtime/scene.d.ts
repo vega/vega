@@ -13,6 +13,24 @@ export class Bounds {
   y1: number;
   x2: number;
   y2: number;
+  clone: () => Bounds;
+  clear: () => Bounds;
+  empty: () => void;
+  equals: (b: Bounds) => boolean;
+  set: (x1: number, y1: number, x2: number, y2: number) => Bounds;
+  add: (x: number, y: number) => Bounds;
+  expand: (d: number) => Bounds;
+  round: () => Bounds;
+  translate: (dx: number, dy: number) => Bounds;
+  rotate: (angle: number, x: number, y: number) => Bounds;
+  rotatedPoints: (angle: number, x: number, y: number) => number[];
+  union: (b: Bounds) => Bounds;
+  encloses: (b: Bounds) => boolean;
+  alignsWith: (b: Bounds) => boolean;
+  intersects: (b: Bounds) => boolean;
+  contains: (x: number, y: number) => boolean;
+  width: () => number;
+  height: () => number;
 }
 
 export interface SceneItem {
@@ -60,13 +78,24 @@ export type SceneTextBaseline = 'top' | 'middle' | 'bottom';
 export type SceneTextAlign = 'left' | 'center' | 'right';
 
 export type SceneText = SceneItem & {
-  align: SceneTextAlign;
-  angle: number;
+  align?: SceneTextAlign;
+  angle?: number;
   baseline: SceneTextBaseline;
+  dir?: 'rtl' | 'ltr';
+  dx?: number;
+  dy: number;
+  ellipsis?: string;
   fill: string;
   font: string;
   fontSize: number;
+  fontStyle?: string;
+  fontWeight?: number | string;
+  limit?: number;
+  lineBreak?: string;
+  lineHeight?: number;
+  radius?: number;
   text: string;
+  theta?: number;
 };
 
 export interface SceneLegendItem {

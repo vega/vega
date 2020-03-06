@@ -116,10 +116,8 @@ export const spec: Spec = {
     {
       "orient": "right", "scale": "y", "format": "%",
       "grid": true, "domain": false, "tickSize": 12,
-      "encode": {
-        "grid": {"enter": {"stroke": {"value": "#ccc"}}},
-        "ticks": {"enter": {"stroke": {"value": "#ccc"}}}
-      }
+      "gridColor": "#ccc",
+      "tickColor": "#ccc"
     }
   ],
 

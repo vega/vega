@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of Cartesian layouts for a node-link diagram of hierarchical data.",
   "width": 600,
   "height": 1600,
   "padding": 5,
@@ -19,6 +20,10 @@
         "input": "select",
         "options": ["line", "curve", "diagonal", "orthogonal"]
       }
+    },
+    {
+      "name": "separation", "value": false,
+      "bind": {"input": "checkbox"}
     }
   ],
 
@@ -36,6 +41,7 @@
           "type": "tree",
           "method": {"signal": "layout"},
           "size": [{"signal": "height"}, {"signal": "width - 100"}],
+          "separation": {"signal": "separation"},
           "as": ["y", "x", "depth", "children"]
         }
       ]

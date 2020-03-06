@@ -16,7 +16,7 @@ Internally, this transform processes a collection of special tree node objects g
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
-| field               | {% include type t="Field" %}   | The data field corresponding to a numeric value for the node. The sum of values for a node and all its descendants is available on the node object as the `value` property. This field determines the size of a node.|
+| field               | {% include type t="Field" %}   | The data field corresponding to a numeric value for the node. The sum of values for a node and all its descendants is available on the node object as the `value` property. This field determines the size of a node. If unspecified, the layout will instead tally the counts of leaf nodes.|
 | sort                | {% include type t="Compare" %} | A comparator for sorting sibling nodes. The inputs to the comparator are tree node objects, not input data objects.|
 | method              | {% include type t="String" %}  | The layout method to use. One of `squarify` (the default), `resquarify`, `binary`, `dice`, `slice`, or `slicedice`. The `resquarify` method will preserve relative node positions once an initial layout has been computed, even if node sizes change.|
 | padding             | {% include type t="Number" %}  | Sets both the _paddingInner_ and _paddingOuter_ parameters to the same value.|

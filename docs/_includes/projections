@@ -1,1 +1,1 @@
-<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@1.0.0"></script>
+<script src="/vega/vega-projections.min.js"></script>

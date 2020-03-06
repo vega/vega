@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {accessorName, inherits} from 'vega-util';
 
 /**
  * Computes extents (min/max) for a data field.
@@ -48,7 +48,10 @@ prototype.transform = function(_, pulse) {
     }
   });
 
-  if (!isFinite(min) || !isFinite(max)) {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    let name = accessorName(field);
+    if (name) name = ` for field "${name}"`;
+    pulse.dataflow.warn(`Infinite extent${name}: [${min}, ${max}]`);
     min = max = undefined;
   }
   this.value = [min, max];

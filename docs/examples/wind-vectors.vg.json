@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A flow map of wind direction and speed over northwest Europe.",
   "width": 800,
   "height": 600,
   "padding": 5,
@@ -12,8 +13,8 @@
       "bind": {"input": "select", "options": ["wedge", "arrow"]}
     },
     {
-      "name": "maxSize", "value": 7000,
-      "bind": {"input": "range", "min": 1000, "max": 20000, "step": 100}
+      "name": "maxSize", "value": 250,
+      "bind": {"input": "range", "min": 50, "max": 700, "step": 10}
     }
   ],
 
@@ -43,7 +44,7 @@
     },
     {
       "name": "size",
-      "domain": {"data": "vectors", "field": "dir"},
+      "domain": {"data": "vectors", "field": "speed"},
       "zero": true,
       "range": [0, {"signal": "maxSize"}]
     },

@@ -18,8 +18,8 @@ tape('Aggregate aggregates tuples', function(t) {
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
+        fields: [val, val, val, val, val],
+        ops: ['count', 'sum', 'min', 'max', 'product'],
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
@@ -33,11 +33,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 3);
   t.equal(d[0].min_v, 1);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 2);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 2);
   t.equal(d[1].sum_v, 7);
   t.equal(d[1].min_v, 3);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 12);
 
   // -- test rems
   df.pulse(col, changeset().remove(data.slice(0, 2))).run();
@@ -48,11 +50,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 2);
   t.equal(d[0].min_v, 2);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 2);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 1);
   t.equal(d[1].sum_v, 4);
   t.equal(d[1].min_v, 4);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 4);
 
   // -- test mods, no groupby change
   df.pulse(col, changeset().modify(data[2], 'v', 3)).run();
@@ -63,11 +67,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 3);
   t.equal(d[0].min_v, 3);
   t.equal(d[0].max_v, 3);
+  t.equal(d[0].product_v, 3);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 1);
   t.equal(d[1].sum_v, 4);
   t.equal(d[1].min_v, 4);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 4);
 
   // -- test mods, groupby change
   df.pulse(col, changeset().modify(data[2], 'k', 'b')).run();
@@ -78,6 +84,7 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 7);
   t.equal(d[0].min_v, 3);
   t.equal(d[0].max_v, 4);
+  t.equal(d[0].product_v, 12);
 
   t.end();
 });
@@ -146,8 +153,8 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
+        fields: [val, val, val, val, val],
+        ops: ['count', 'sum', 'min', 'max', 'product'],
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
@@ -171,6 +178,7 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
   t.equal(d[0].sum_v, 4);
   t.equal(d[0].min_v, 2);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 4);
 
   t.end();
 });
@@ -309,6 +317,7 @@ tape('Aggregate handles empty/invalid data', function(t) {
     'count',
     'valid',
     'sum',
+    'product',
     'mean',
     'variance',
     'stdev',

@@ -15,8 +15,28 @@ import {
 } from 'vega-selections';
 
 import {
-  random
+  random,
+  cumulativeNormal,
+  cumulativeLogNormal,
+  cumulativeUniform,
+  densityNormal,
+  densityLogNormal,
+  densityUniform,
+  quantileNormal,
+  quantileLogNormal,
+  quantileUniform,
+  sampleNormal,
+  sampleLogNormal,
+  sampleUniform
 } from 'vega-statistics';
+
+import {
+  timeOffset,
+  timeSequence,
+  timeUnitSpecifier,
+  utcOffset,
+  utcSequence
+} from 'vega-time';
 
 import {
   isArray,
@@ -62,6 +82,11 @@ import {
   hcl,
   hsl
 } from 'd3-color';
+
+import {
+  luminance,
+  contrast
+} from './luminance';
 
 import {
   data,
@@ -159,14 +184,28 @@ import {SignalPrefix} from './prefix';
 // Expression function context object
 export const functionContext = {
   random: function() { return random(); }, // override default
+  cumulativeNormal,
+  cumulativeLogNormal,
+  cumulativeUniform,
+  densityNormal,
+  densityLogNormal,
+  densityUniform,
+  quantileNormal,
+  quantileLogNormal,
+  quantileUniform,
+  sampleNormal,
+  sampleLogNormal,
+  sampleUniform,
   isArray,
   isBoolean,
   isDate,
+  isDefined: function(_) { return _ !== undefined; },
   isNumber,
   isObject,
   isRegExp,
   isString,
   isTuple,
+  isValid: function(_) { return _ != null && _ === _; },
   toBoolean,
   toDate,
   toNumber,
@@ -183,12 +222,19 @@ export const functionContext = {
   lab,
   hcl,
   hsl,
+  luminance,
+  contrast,
   sequence,
   format,
   utcFormat,
   utcParse,
+  utcOffset,
+  utcSequence,
   timeFormat,
   timeParse,
+  timeOffset,
+  timeSequence,
+  timeUnitSpecifier,
   monthFormat,
   monthAbbrevFormat,
   dayFormat,

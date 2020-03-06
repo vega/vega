@@ -1,6 +1,6 @@
 import cloud from './CloudLayout';
 import {Transform} from 'vega-dataflow';
-import {constant, error, inherits, isFunction} from 'vega-util';
+import {constant, error, extent, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';
 import {random} from 'vega-statistics';
 
@@ -59,7 +59,7 @@ prototype.transform = function(_, pulse) {
   if (range) {
     var fsize = fontSize,
         sizeScale = scale('sqrt')()
-          .domain(extent(fsize, data))
+          .domain(extent(data, fsize))
           .range(range);
     fontSize = function(x) { return sizeScale(fsize(x)); };
   }
@@ -106,19 +106,3 @@ prototype.transform = function(_, pulse) {
 
   return pulse.reflow(mod).modifies(as);
 };
-
-function extent(field, data) {
-  var min = +Infinity,
-      max = -Infinity,
-      i = 0,
-      n = data.length,
-      v;
-
-  for (; i<n; ++i) {
-    v = field(data[i]);
-    if (v < min) min = v;
-    if (v > max) max = v;
-  }
-
-  return [min, max];
-}

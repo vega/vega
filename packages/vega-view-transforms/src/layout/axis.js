@@ -1,8 +1,6 @@
 import {Top, Bottom, Left, Right} from '../constants';
 import {set, tempBounds} from './util';
-import {boundStroke} from 'vega-scenegraph';
-
-const AxisOffset = 0.5;
+import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 export function isYAxis(mark) {
   var orient = mark.items[0].datum.orient;
@@ -22,6 +20,7 @@ export function axisLayout(view, axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       orient = datum.orient,
+      delta = datum.translate != null ? datum.translate : 0.5,
       indices = axisIndices(datum),
       range = item.range,
       offset = item.offset,
@@ -31,6 +30,7 @@ export function axisLayout(view, axis, width, height) {
       title = datum.title && item.items[indices[2]].items[0],
       titlePadding = item.titlePadding,
       bounds = item.bounds,
+      dl = title && multiLineOffset(title),
       x = 0, y = 0, i, s;
 
   tempBounds.clear().union(bounds);
@@ -44,29 +44,29 @@ export function axisLayout(view, axis, width, height) {
       x = position || 0;
       y = -offset;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-      if (title) s = axisTitleLayout(title, s, titlePadding, 0, -1, bounds);
       bounds.add(0, -s).add(range, 0);
+      if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
       break;
     case Left:
       x = -offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-      if (title) s = axisTitleLayout(title, s, titlePadding, 1, -1, bounds);
       bounds.add(-s, 0).add(0, range);
+      if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
       break;
     case Right:
       x = width + offset;
       y = position || 0;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-      if (title) s = axisTitleLayout(title, s, titlePadding, 1, 1, bounds);
       bounds.add(0, 0).add(s, range);
+      if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
       break;
     case Bottom:
       x = position || 0;
       y = height + offset;
       s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-      if (title) s = axisTitleLayout(title, s, titlePadding, 0, 1, bounds);
       bounds.add(0, 0).add(range, s);
+      if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
       break;
     default:
       x = item.x;
@@ -76,7 +76,7 @@ export function axisLayout(view, axis, width, height) {
   // update bounds
   boundStroke(bounds.translate(x, y), item);
 
-  if (set(item, 'x', x + AxisOffset) | set(item, 'y', y + AxisOffset)) {
+  if (set(item, 'x', x + delta) | set(item, 'y', y + delta)) {
     item.bounds = tempBounds;
     view.dirty(item);
     item.bounds = bounds;
@@ -86,29 +86,20 @@ export function axisLayout(view, axis, width, height) {
   return item.mark.bounds.clear().union(bounds);
 }
 
-function axisTitleLayout(title, offset, pad, isYAxis, sign, bounds) {
-  var b = title.bounds, dx = 0, dy = 0;
+function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
+  const b = title.bounds;
 
   if (title.auto) {
-    offset += pad;
+    const v = sign * (offset + dl + pad);
+    let dx = 0, dy = 0;
 
+    view.dirty(title);
     isYAxis
-      ? dx = (title.x || 0) - (title.x = sign * offset)
-      : dy = (title.y || 0) - (title.y = sign * offset);
-
-    b.translate(-dx, -dy);
-    title.mark.bounds.set(b.x1, b.y1, b.x2, b.y2);
-
-    if (isYAxis) {
-      bounds.add(0, b.y1).add(0, b.y2);
-      offset += b.width();
-    } else {
-      bounds.add(b.x1, 0).add(b.x2, 0);
-      offset += b.height();
-    }
-  } else {
-    bounds.union(b);
+      ? dx = (title.x || 0) - (title.x = v)
+      : dy = (title.y || 0) - (title.y = v);
+    title.mark.bounds.clear().union(b.translate(-dx, -dy));
+    view.dirty(title);
   }
 
-  return offset;
+  bounds.union(b);
 }

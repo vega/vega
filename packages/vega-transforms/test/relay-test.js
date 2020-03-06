@@ -87,3 +87,44 @@ tape('Relay relays derived tuples', function(t) {
 
   t.end();
 });
+
+tape('Relay flags modified fields and handles multi-pulse', function(t) {
+  var data1 = [{id: 0, foo: 1}, {id: 1, foo: 2}],
+      data2 = [{id: 4, bar: 3}, {id: 5, bar: 4}];
+
+  var id = util.field('id'),
+      df = new vega.Dataflow(),
+      c1 = df.add(Collect),
+      c2 = df.add(Collect),
+      r = df.add(Relay, {derive: true, pulse:[c1, c2]}),
+      p;
+
+  // test initial insert
+  df.pulse(c1, changeset().insert(data1))
+    .pulse(c2, changeset().insert(data2))
+    .run();
+  p = r.pulse;
+  t.equal(p.add.length, 4);
+  t.equal(p.rem.length, 0);
+  t.equal(p.mod.length, 0);
+  t.notEqual(p.add[0], data1[0]);
+  t.notEqual(p.add[1], data1[1]);
+  t.deepEqual(p.add.map(id), [0, 1, 4, 5]);
+
+  // test tuple modification
+  df.pulse(c1, changeset()
+    .modify(util.truthy, 'id', function(t) { return t.id + 2; }))
+    .run();
+  p = r.pulse;
+  t.ok(p.modified('id'));
+  t.ok(p.modified('foo'));
+  t.notOk(p.modified('bar'));
+  t.equal(p.add.length, 0);
+  t.equal(p.rem.length, 0);
+  t.equal(p.mod.length, 2);
+  t.notEqual(p.mod[0], data1[0]);
+  t.notEqual(p.mod[1], data1[1]);
+  t.deepEqual(p.mod.map(id), [2, 3]);
+
+  t.end();
+});

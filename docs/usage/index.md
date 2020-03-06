@@ -126,11 +126,13 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 
 The `vega-cli` package includes three node.js-based command line utilities &ndash; `vg2pdf`, `vg2png`, and `vg2svg` &ndash; for rendering static visualization images. These commands render to PDF, PNG, or SVG files, respectively.
 
-- **vg2pdf**: `vg2pdf [options] vega_json_file [output_pdf_file]`
-- **vg2png**: `vg2png [options] vega_json_file [output_png_file]`
-- **vg2svg**: `vg2svg [options] vega_json_file [output_svg_file]`
+- **vg2pdf**: `vg2pdf [options] [input_vega_json_file] [output_pdf_file]`
+- **vg2png**: `vg2png [options] [input_vega_json_file] [output_png_file]`
+- **vg2svg**: `vg2svg [options] [input_vega_json_file] [output_svg_file]`
 
-If no output file is given, the resulting PNG or SVG data will be written to standard output, and so can be piped into other applications. The programs also accept the following (optional) parameters:
+If no input Vega JSON file is given, the utilities will attempt to read the file from standard input. If no output file is given, the resulting PDF, PNG, or SVG data will be written to standard output, and so can be piped into other applications.
+
+The programs also accept the following (optional) parameters:
 
 * __-b__, __--base__ - [String] A base directory to use for data and image loading. For web retrieval, use `-b http://host/data/`. For files, use `-b data/` (relative path) or `-b file:///dir/data/` (absolute path).
 * __-h__, __--header__ - [Flag] Includes XML header and DOCTYPE in SVG output (vg2svg only).
@@ -185,7 +187,7 @@ vg2png -s 2 test/specs-valid/bar.vg.json bar.png
 
 ## <a name="node"></a>Server-Side Deployment using Node.js
 
-To use Vega as a component within a larger project, first install it either directly (`yarn add vega` or `npm install vega`) or by including `"vega"` among the dependencies in your package.json file. In node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
+To use Vega as a component within a larger project, first install it either directly (`yarn add vega` or `npm install vega`) or by including `"vega"` among the dependencies in your package.json file. In node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/api/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
 
 <a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas package](https://github.com/Automattic/node-canvas) must be installed. The vega package does not require node-canvas by default, so you must include it as an explicit dependency in your own project if you wish to use it. The vega-cli package, on the other hand, _does_ include node-canvas as an explicit dependency.
 

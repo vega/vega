@@ -7,12 +7,13 @@ import * as vtx from 'vega-view-transforms';
 import * as encode from 'vega-encode';
 import * as geo from 'vega-geo';
 import * as force from 'vega-force';
+import * as label from 'vega-label';
 import * as tree from 'vega-hierarchy';
 import * as reg from 'vega-regression';
 import * as voronoi from 'vega-voronoi';
 import * as wordcloud from 'vega-wordcloud';
 import * as xf from 'vega-crossfilter';
-extend(transforms, tx, vtx, encode, geo, force, tree, reg, voronoi, wordcloud, xf);
+extend(transforms, tx, vtx, encode, geo, force, label, tree, reg, voronoi, wordcloud, xf);
 
 
 // -- Exports -----
@@ -22,6 +23,8 @@ export {
 } from './package.json';
 
 export * from 'vega-statistics';
+
+export * from 'vega-time';
 
 export * from 'vega-util';
 
@@ -52,7 +55,6 @@ export {
   interpolate,
   interpolateColors,
   interpolateRange,
-  timeInterval,
   quantizeInterpolator
 } from 'vega-scale';
 

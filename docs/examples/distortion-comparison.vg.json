@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A map view comparing area distortions between two projections.",
   "width": 900,
   "height": 500,
   "autosize": "none",
@@ -18,6 +19,7 @@
           "conicConformal",
           "conicEqualArea",
           "conicEquidistant",
+          "equalEarth",
           "equirectangular",
           "gnomonic",
           "mercator",
@@ -41,6 +43,7 @@
           "conicConformal",
           "conicEqualArea",
           "conicEquidistant",
+          "equalEarth",
           "equirectangular",
           "gnomonic",
           "mercator",

@@ -10,4 +10,5 @@ export interface Scope {
   axes?: Axis[];
   legends?: Legend[];
   marks?: Mark[];
+  usermeta?: object;
 }

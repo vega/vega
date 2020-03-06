@@ -1,7 +1,10 @@
 import parseDataflow from './dataflow';
 import {parameterExpression, encodeExpression} from './expression';
 import {tupleid} from 'vega-dataflow';
-import {accessor, array, compare, error, field, isArray, isObject, key} from 'vega-util';
+import {
+  accessor, array, compare, error, field,
+  isArray, isObject, hasOwnProperty, key
+} from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
@@ -28,7 +31,7 @@ function parseParameter(spec, ctx, params) {
 
   for (var i=0, n=PARSERS.length, p; i<n; ++i) {
     p = PARSERS[i];
-    if (spec.hasOwnProperty(p.key)) {
+    if (hasOwnProperty(spec, p.key)) {
       return p.parse(spec, ctx, params);
     }
   }
@@ -88,6 +91,8 @@ function getField(_, ctx) {
  * Resolve a comparator function reference.
  */
 function getCompare(_, ctx) {
+  // As of Vega 5.5.3, $tupleid sort is no longer used.
+  // Keep here for now for backwards compatibility.
   var k = 'c:' + _.$compare + '_' + _.$order,
       c = array(_.$compare).map(function(_) {
         return (_ && _.$tupleid) ? tupleid : _;

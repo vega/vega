@@ -1,9 +1,9 @@
 import parseEncode from '../encode';
 import {FrameRole, MarkRole} from '../marks/roles';
-import {array, extend, isArray, isObject} from 'vega-util';
+import {array, extend, hasOwnProperty, isArray, isObject} from 'vega-util';
 
 export function encoder(_) {
-  return isObject(_) ? extend({}, _) : {value: _};
+  return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
 }
 
 export function addEncode(object, name, value, set) {
@@ -30,7 +30,7 @@ export function addEncoders(object, enter, update) {
 
 export function extendEncode(encode, extra, skip) {
   for (var name in extra) {
-    if (skip && skip.hasOwnProperty(name)) continue;
+    if (skip && hasOwnProperty(skip, name)) continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }
   return encode;
@@ -51,9 +51,15 @@ export function encoders(encode, type, role, style, scope, params) {
 }
 
 function applyDefaults(encode, type, role, style, config) {
-  var enter = {}, key, skip, props;
+  var defaults = {}, enter = {}, update, key, skip, props;
 
-  // ignore legend and axis
+  // if text mark, apply global lineBreak settings (#2370)
+  key = 'lineBreak';
+  if (type === 'text' && config[key] != null && !has(key, encode)) {
+    applyDefault(defaults, key, config[key]);
+  }
+
+  // ignore legend and axis roles
   if (role == 'legend' || String(role).indexOf('axis') === 0) {
     role = null;
   }
@@ -69,7 +75,7 @@ function applyDefaults(encode, type, role, style, config) {
       || (key === 'fill' || key === 'stroke')
       && (has('fill', encode) || has('stroke', encode));
 
-    if (!skip) enter[key] = defaultEncode(props[key]);
+    if (!skip) applyDefault(defaults, key, props[key]);
   }
 
   // resolve styles, apply with increasing precedence
@@ -77,21 +83,31 @@ function applyDefaults(encode, type, role, style, config) {
     var props = config.style && config.style[name];
     for (var key in props) {
       if (!has(key, encode)) {
-        enter[key] = defaultEncode(props[key]);
+        applyDefault(defaults, key, props[key]);
       }
     }
   });
 
   encode = extend({}, encode); // defensive copy
+  for (key in defaults) {
+    props = defaults[key];
+    if (props.signal) {
+      (update = update || {})[key] = props;
+    } else {
+      enter[key] = props;
+    }
+  }
+
   encode.enter = extend(enter, encode.enter);
+  if (update) encode.update = extend(update, encode.update);
 
   return encode;
 }
 
-function defaultEncode(value) {
-  return value && value.signal
+function applyDefault(defaults, key, value) {
+  defaults[key] = value && value.signal
     ? {signal: value.signal}
-    : {value: value};
+    : {value: value}
 }
 
 export function has(key, encode) {

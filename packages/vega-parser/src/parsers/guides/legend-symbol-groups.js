@@ -19,7 +19,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
       symbolOffset = _('symbolOffset'),
       valueRef = {data: 'value'},
       encode = {},
-      xSignal = `${columns} ? datum.${Offset} : datum.${Size}`,
+      xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
       yEncode = height ? encoder(height) : {field: Size},
       index = `datum.${Index}`,
       ncols = `max(1, ${columns})`,
@@ -44,18 +44,18 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   };
 
+  var baseFill = null,
+      baseStroke = null;
   if (!spec.fill) {
-    addEncoders(encode, {
-      fill:   config.symbolBaseFillColor,
-      stroke: config.symbolBaseStrokeColor
-    });
+    baseFill = config.symbolBaseFillColor;
+    baseStroke = config.symbolBaseStrokeColor;
   }
 
   addEncoders(encode, {
-    fill:             _('symbolFillColor'),
+    fill:             _('symbolFillColor', baseFill),
     shape:            _('symbolType'),
     size:             _('symbolSize'),
-    stroke:           _('symbolStrokeColor'),
+    stroke:           _('symbolStrokeColor', baseStroke),
     strokeDash:       _('symbolDash'),
     strokeDashOffset: _('symbolDashOffset'),
     strokeWidth:      _('symbolStrokeWidth')
@@ -141,7 +141,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     sort = {field: index};
   }
   // handle zero column case (implies infinite columns)
-  update.column.signal = `${columns}?${update.column.signal}:${index}`;
+  update.column.signal = `(${columns})?${update.column.signal}:${index}`;
 
   // facet legend entries into sub-groups
   dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};

@@ -101,7 +101,8 @@ tape('Dataflow handles errors', function(t) {
 
   t.equal(error, 1);
   t.equal(df._pulse, null);
-  t.equal(Object.keys(df._pulses).length, 0);
+  t.equal(Object.keys(df._input).length, 0);
   t.equal(df._postrun.length, 0);
+  t.equal(df._heap.size(), 0);
   t.end();
 });

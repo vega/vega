@@ -1,12 +1,5 @@
-import numbers from './numbers';
-import {quantile, ascending} from 'd3-array';
+import quantiles from './quantiles';
 
 export default function(array, f) {
-  var values = numbers(array, f);
-
-  return [
-    quantile(values.sort(ascending), 0.25),
-    quantile(values, 0.50),
-    quantile(values, 0.75)
-  ];
+  return quantiles(array, [0.25, 0.50, 0.75], f);
 }

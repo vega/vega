@@ -5,7 +5,7 @@ import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 
-export default function(spec, config, userEncode, dataRef, size) {
+export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
       sign = (orient === Left || orient === Top) ? -1 : 1,
@@ -31,10 +31,10 @@ export default function(spec, config, userEncode, dataRef, size) {
   tickPos = {
     scale:  spec.scale,
     field:  Value,
-    band:   _('bandPosition'),
-    round:  _('tickRound'),
-    extra:  _('tickExtra'),
-    offset: _('tickOffset')
+    band:   band.band,
+    extra:  band.extra,
+    offset: band.offset,
+    round:  _('tickRound')
   };
 
   if (orient === Top || orient === Bottom) {

@@ -1,49 +1,65 @@
 import {random} from './random';
 
-export default function(min, max) {
+export function sampleUniform(min, max) {
   if (max == null) {
     max = (min == null ? 1 : min);
     min = 0;
   }
+  return min + (max - min) * random();
+}
 
-  var dist = {},
-      a, b, d;
+export function densityUniform(value, min, max) {
+  if (max == null) {
+    max = (min == null ? 1 : min);
+    min = 0;
+  }
+  return (value >= min && value <= max) ? 1 / (max - min) : 0;
+}
 
-  dist.min = function(_) {
-    if (arguments.length) {
-      a = _ || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return a;
-    }
-  };
+export function cumulativeUniform(value, min, max) {
+  if (max == null) {
+    max = (min == null ? 1 : min);
+    min = 0;
+  }
+  return value < min ? 0 : value > max ? 1 : (value - min) / (max - min);
+}
 
-  dist.max = function(_) {
-    if (arguments.length) {
-      b = _ || 0;
-      d = b - a;
-      return dist;
-    } else {
-      return b;
-    }
-  };
+export function quantileUniform(p, min, max) {
+  if (max == null) {
+    max = (min == null ? 1 : min);
+    min = 0;
+  }
+  return (p >= 0 && p <= 1) ? min + p * (max - min) : NaN;
+}
 
-  dist.sample = function() {
-    return a + d * random();
-  };
+export default function(min, max) {
+  var a, b,
+      dist = {
+        min: function(_) {
+          if (arguments.length) {
+            a = _ || 0;
+            return dist;
+          } else {
+            return a;
+          }
+        },
+        max: function(_) {
+          if (arguments.length) {
+            b = _ == null ? 1 : _;
+            return dist;
+          } else {
+            return b;
+          }
+        },
+        sample: () => sampleUniform(a, b),
+        pdf: value => densityUniform(value, a, b),
+        cdf: value => cumulativeUniform(value, a, b),
+        icdf: p => quantileUniform(p, a, b)
+      };
 
-  dist.pdf = function(x) {
-    return (x >= a && x <= b) ? 1 / d : 0;
-  };
-
-  dist.cdf = function(x) {
-    return x < a ? 0 : x > b ? 1 : (x - a) / d;
-  };
-
-  dist.icdf = function(p) {
-    return (p >= 0 && p <= 1) ? a + p * d : NaN;
-  };
-
+  if (max == null) {
+    max = (min == null ? 1 : min);
+    min = 0;
+  }
   return dist.min(min).max(max);
 }

@@ -1,6 +1,6 @@
 import {
   def, enums, not, object, oneOf, orSignal, ref, type,
-  anyType, arrayType, booleanType, numberType, stringType
+  anyType, arrayType, booleanType, numberType, stringType, textType
 } from './util';
 
 // types defined elsewhere
@@ -15,6 +15,7 @@ const arrayOrSignal = orSignal(arrayType);
 const booleanOrSignal = orSignal(booleanType);
 const numberOrSignal = orSignal(numberType);
 const stringOrSignal = orSignal(stringType);
+const textOrSignal = orSignal(textType);
 
 const signalNameRef = def('signalName');
 const signalName = type(
@@ -60,7 +61,8 @@ export default {
     arrayOrSignal,
     booleanOrSignal,
     numberOrSignal,
-    stringOrSignal
+    stringOrSignal,
+    textOrSignal
   },
 
   defs: {

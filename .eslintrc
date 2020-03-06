@@ -11,5 +11,6 @@ extends:
     "eslint:recommended"
 
 rules:
+    no-console: 2
     no-cond-assign: 0
     no-fallthrough: ["error", { "commentPattern": "break omitted" }]

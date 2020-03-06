@@ -42,6 +42,8 @@ The valid operations include all [valid aggregate operations](../aggregate/#ops)
 | first_value  | _None_    | Assigns a value from the first data object in the current sliding window frame. This operation must have a corresponding entry in the _fields_ parameter array.|
 | last_value   | _None_    | Assigns a value from the last data object in the current sliding window frame. This operation must have a corresponding entry in the _fields_ parameter array.|
 | nth_value    | {% include type t="Number" %} | Assigns a value from the nth data object in the current sliding window frame. If no such object exists, assigns `null`. Requires a non-negative integer parameter that indicates the offset from the start of the window frame. This operation must have a corresponding entry in the _fields_ parameter array.|
+| prev_value  | _None_    | If the current field value is not null and not undefined, it is returned. Otherwise, the nearest previous non-missing value in the sorted group is returned. This operation is performed relative to the sorted group, not the window frame, and must have a corresponding entry in the _fields_ parameter array. {% include tag ver="5.4" %} |
+| next_value   | _None_    | If the current field value is not null and not undefined, it is returned. Otherwise, the next non-missing value in the sorted group is returned. This operation is performed relative to the sorted group, not the window frame, and must have a corresponding entry in the _fields_ parameter array.{% include tag ver="5.4" %} |
 
 ## Usage
 
@@ -78,5 +80,43 @@ produces as output the augmented input stream:
   {"key":2, "value":2, "rank":3, "drank":3, "sum":10, "mean":2.5},
   {"key":2, "value":4, "rank":3, "drank":3, "sum":10, "mean":2.5},
   {"key":3, "value":3, "rank":5, "drank":4, "sum":13, "mean":2.6}
+]
+```
+
+### Filling in Missing Values
+
+For the following input data:
+
+```json
+[
+  {"key":0, "value":1},
+  {"key":1, "value":null},
+  {"key":2, "value":2},
+  {"key":3 },
+  {"key":4, "value":3}
+]
+```
+
+The window transform
+
+```json
+{
+  "type": "window",
+  "sort": {"field": "key", "order": "ascending"},
+  "ops": ["prev_value"],
+  "fields": ["value"],
+  "as": ["value"]
+}
+```
+
+produces as output the modified input stream:
+
+```json
+[
+  {"key":0, "value":1},
+  {"key":1, "value":1},
+  {"key":2, "value":2},
+  {"key":3, "value":2},
+  {"key":4, "value":3}
 ]
 ```

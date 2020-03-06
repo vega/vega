@@ -1,5 +1,8 @@
 import {Transform} from 'vega-dataflow';
-import {accessorFields, array, error, inherits, isFunction} from 'vega-util';
+import {
+  accessorFields, array, error, hasOwnProperty,
+  inherits, isFunction
+} from 'vega-util';
 import {
   forceSimulation, forceCenter, forceCollide,
   forceManyBody, forceLink, forceX, forceY
@@ -228,7 +231,7 @@ function modified(f, pulse) {
 function getForce(_) {
   var f, p;
 
-  if (!ForceMap.hasOwnProperty(_.force)) {
+  if (!hasOwnProperty(ForceMap, _.force)) {
     error('Unrecognized force: ' + _.force);
   }
   f = ForceMap[_.force]();

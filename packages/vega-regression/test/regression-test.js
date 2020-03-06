@@ -48,3 +48,42 @@ tape('Regression fits linear regression model', function(t) {
 
   t.end();
 });
+
+tape('Regression fits quadratic regression model', function(t) {
+  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
+      x = util.field('x'),
+      y = util.field('y'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      reg = df.add(Regression, {method: 'quad', x: x, y: y, pulse: col}),
+      out = df.add(Collect, {pulse: reg});
+
+  // -- test adds
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d[0].x, 0);
+  t.equal(d[0].y, 1);
+  t.equal(d[d.length-1].x, 3);
+  t.equal(d[d.length-1].y, 10);
+
+  t.end();
+});
+
+tape('Regression outputs model parameters', function(t) {
+  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
+      x = util.field('x'),
+      y = util.field('y'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      reg = df.add(Regression, {method: 'quad', params: true, x: x, y: y, pulse: col}),
+      out = df.add(Collect, {pulse: reg});
+
+  // -- test adds
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, 1);
+  t.deepEqual(d[0].coef, [1, 0, 1]);
+  t.equal(d[0].rSquared, 1);
+
+  t.end();
+});

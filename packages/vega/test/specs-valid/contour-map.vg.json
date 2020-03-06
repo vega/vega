@@ -14,7 +14,7 @@
 
   "title": {
     "text": "Density of U.S. Airports, 2008",
-    "encode": {"update": {"dy": {"value": 12}}}
+    "offset": -15
   },
 
   "data": [
@@ -60,6 +60,7 @@
   "marks": [
     {
       "type": "path",
+      "clip": true,
       "from": {"data": "states"},
       "encode": {
         "enter": {
@@ -73,6 +74,7 @@
     },
     {
       "type": "symbol",
+      "clip": true,
       "from": {"data": "airports"},
       "encode": {
         "enter": {
@@ -101,7 +103,8 @@
               "x": "x",
               "y": "y",
               "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"}
+              "count": {"signal": "count"},
+              "bandwidth": 20
             }
           ]
         }

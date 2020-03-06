@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
-import {voronoi} from 'd3-voronoi';
+import {Delaunay} from 'd3-delaunay';
 
 export default function Voronoi(params) {
   Transform.call(this, null, params);
@@ -20,29 +20,41 @@ Voronoi.Definition = {
   ]
 };
 
-var prototype = inherits(Voronoi, Transform);
+const prototype = inherits(Voronoi, Transform);
 
-var defaultExtent = [[-1e5, -1e5], [1e5, 1e5]];
+const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
 prototype.transform = function(_, pulse) {
-  var as = _.as || 'path',
-      data = pulse.source,
-      diagram, polygons, i, n;
+  const as = _.as || 'path',
+        data = pulse.source;
+
+  // nothing to do if no data
+  if (!data || !data.length) return pulse;
 
   // configure and construct voronoi diagram
-  diagram = voronoi().x(_.x).y(_.y);
-  if (_.size) diagram.size(_.size);
-  else diagram.extent(_.extent || defaultExtent);
+  let s = _.size;
+  s = s ? [0, 0, s[0], s[1]]
+    : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]]
+    : defaultExtent;
 
-  this.value = (diagram = diagram(data));
+  const voronoi = this.value = Delaunay.from(data, _.x, _.y).voronoi(s);
 
   // map polygons to paths
-  polygons = diagram.polygons();
-  for (i=0, n=data.length; i<n; ++i) {
-    data[i][as] = polygons[i]
-      ? 'M' + polygons[i].join('L') + 'Z'
-      : null;
+  for (let i=0, n=data.length; i<n; ++i) {
+    const polygon = voronoi.cellPolygon(i);
+    data[i][as] = polygon ? toPathString(polygon) : null;
   }
 
   return pulse.reflow(_.modified()).modifies(as);
 };
+
+// suppress duplicated end point vertices
+function toPathString(p) {
+  const x = p[0][0],
+        y = p[0][1];
+
+  let n = p.length - 1;
+  for (; p[n][0] === x && p[n][1] === y; --n);
+
+  return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+}
