@@ -182,7 +182,7 @@ export interface BaseAxis {
   /**
    * Horizontal text alignment of axis titles.
    */
-  titleAlign?: AlignValue;
+  titleAlign?: AlignValue | SignalRef;
 
   /**
    * Text anchor position for placing axis titles.
@@ -192,7 +192,7 @@ export interface BaseAxis {
   /**
    * Angle in degrees of axis titles.
    */
-  titleAngle?: NumberValue;
+  titleAngle?: NumberValue | SignalRef;
 
   /**
    * X-coordinate of the axis title relative to the axis group.
@@ -207,52 +207,52 @@ export interface BaseAxis {
   /**
    * Vertical text baseline for axis titles.
    */
-  titleBaseline?: TextBaselineValue;
+  titleBaseline?: TextBaselineValue | SignalRef;
 
   /**
    * Color of the title, can be in hex color code or regular color name.
    */
-  titleColor?: ColorValue;
+  titleColor?: ColorValue | SignalRef;
 
   /**
    * Font of the title. (e.g., `"Helvetica Neue"`).
    */
-  titleFont?: StringValue;
+  titleFont?: StringValue | SignalRef;
 
   /**
    * Font size of the title.
    *
    * @minimum 0
    */
-  titleFontSize?: NumberValue;
+  titleFontSize?: NumberValue | SignalRef;
 
   /**
    * Font style of the title.
    */
-  titleFontStyle?: FontStyleValue;
+  titleFontStyle?: FontStyleValue | SignalRef;
 
   /**
    * Font weight of the title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  titleFontWeight?: FontWeightValue;
+  titleFontWeight?: FontWeightValue | SignalRef;
 
   /**
    * Maximum allowed pixel width of axis titles.
    *
    * @minimum 0
    */
-  titleLimit?: NumberValue;
+  titleLimit?: NumberValue | SignalRef;
 
   /**
    * Line height in pixels for multi-line title text.
    */
-  titleLineHeight?: NumberValue;
+  titleLineHeight?: NumberValue | SignalRef;
 
   /**
    * Opacity of the axis title.
    */
-  titleOpacity?: NumberValue;
+  titleOpacity?: NumberValue | SignalRef;
 
   // ---------- Domain ----------
   /**
@@ -265,31 +265,31 @@ export interface BaseAxis {
   /**
    * An array of alternating [stroke, space] lengths for dashed domain lines.
    */
-  domainDash?: DashArrayValue;
+  domainDash?: DashArrayValue | SignalRef;
 
   /**
    * The pixel offset at which to start drawing with the domain dash array.
    */
-  domainDashOffset?: NumberValue;
+  domainDashOffset?: NumberValue | SignalRef;
 
   /**
    * Color of axis domain line.
    *
    * __Default value:__ `"gray"`.
    */
-  domainColor?: ColorValue;
+  domainColor?: ColorValue | SignalRef;
 
   /**
    * Opacity of the axis domain line.
    */
-  domainOpacity?: NumberValue;
+  domainOpacity?: NumberValue | SignalRef;
 
   /**
    * Stroke width of axis domain line
    *
    * __Default value:__ `1`
    */
-  domainWidth?: NumberValue;
+  domainWidth?: NumberValue | SignalRef;
 
   // ---------- Ticks ----------
   /**
@@ -309,17 +309,17 @@ export interface BaseAxis {
    *
    * __Default value:__ `"gray"`
    */
-  tickColor?: ColorValue;
+  tickColor?: ColorValue | SignalRef;
 
   /**
    * An array of alternating [stroke, space] lengths for dashed tick mark lines.
    */
-  tickDash?: DashArrayValue;
+  tickDash?: DashArrayValue | SignalRef;
 
   /**
    * The pixel offset at which to start drawing with the tick mark dash array.
    */
-  tickDashOffset?: NumberValue;
+  tickDashOffset?: NumberValue | SignalRef;
 
   /**
    * Boolean flag indicating if an extra axis tick should be added for the initial position of the axis. This flag is useful for styling axes for `band` scales such that ticks are placed on band boundaries rather in the middle of a band. Use in conjunction with `"bandPosition": 1` and an axis `"padding"` value of `0`.
@@ -334,7 +334,7 @@ export interface BaseAxis {
   /**
    * Opacity of the ticks.
    */
-  tickOpacity?: NumberValue;
+  tickOpacity?: NumberValue | SignalRef;
 
   /**
    * Boolean flag indicating if pixel position values should be rounded to the nearest integer.
@@ -357,7 +357,7 @@ export interface BaseAxis {
    * __Default value:__ `1`
    * @minimum 0
    */
-  tickWidth?: NumberValue;
+  tickWidth?: NumberValue | SignalRef;
 
   // ---------- Grid ----------
   /**
@@ -370,17 +370,17 @@ export interface BaseAxis {
    *
    * __Default value:__ `"lightGray"`.
    */
-  gridColor?: ColorValue;
+  gridColor?: ColorValue | SignalRef;
 
   /**
    * An array of alternating [stroke, space] lengths for dashed grid lines.
    */
-  gridDash?: DashArrayValue;
+  gridDash?: DashArrayValue | SignalRef;
 
   /**
    * The pixel offset at which to start drawing with the grid dash array.
    */
-  gridDashOffset?: NumberValue;
+  gridDashOffset?: NumberValue | SignalRef;
 
   /**
    * The stroke opacity of grid (value between [0,1])
@@ -389,7 +389,7 @@ export interface BaseAxis {
    * @minimum 0
    * @maximum 1
    */
-  gridOpacity?: NumberValue;
+  gridOpacity?: NumberValue | SignalRef;
 
   /**
    * The grid width, in pixels.
@@ -397,7 +397,7 @@ export interface BaseAxis {
    * __Default value:__ `1`
    * @minimum 0
    */
-  gridWidth?: NumberValue;
+  gridWidth?: NumberValue | SignalRef;
 
   // ---------- Labels ----------
   /**
@@ -439,7 +439,7 @@ export interface BaseAxis {
   /**
    * Line height in pixels for multi-line label text.
    */
-  labelLineHeight?: NumberValue;
+  labelLineHeight?: NumberValue | SignalRef;
 
   /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
@@ -459,53 +459,53 @@ export interface BaseAxis {
    * @minimum -360
    * @maximum 360
    */
-  labelAngle?: NumberValue;
+  labelAngle?: NumberValue | SignalRef;
 
   /**
    * The color of the tick label, can be in hex color code or regular color name.
    */
-  labelColor?: ColorValue;
+  labelColor?: ColorValue | SignalRef;
 
   /**
    * The font of the tick label.
    */
-  labelFont?: StringValue;
+  labelFont?: StringValue | SignalRef;
 
   /**
    * The font size of the label, in pixels.
    *
    * @minimum 0
    */
-  labelFontSize?: NumberValue;
+  labelFontSize?: NumberValue | SignalRef;
 
   /**
    * Font style of the title.
    */
-  labelFontStyle?: FontStyleValue;
+  labelFontStyle?: FontStyleValue | SignalRef;
 
   /**
    * Font weight of axis tick labels.
    */
-  labelFontWeight?: FontWeightValue;
+  labelFontWeight?: FontWeightValue | SignalRef;
 
   /**
    * Maximum allowed pixel width of axis tick labels.
    *
    * __Default value:__ `180`
    */
-  labelLimit?: NumberValue;
+  labelLimit?: NumberValue | SignalRef;
 
   /**
    * The opacity of the labels.
    */
-  labelOpacity?: NumberValue;
+  labelOpacity?: NumberValue | SignalRef;
 
   /**
    * Position offset in pixels to apply to labels, in addition to tickOffset.
    *
    * __Default value:__ `0`
    */
-  labelOffset?: NumberValue;
+  labelOffset?: NumberValue | SignalRef;
 
   /**
    * The padding in pixels between labels and ticks.

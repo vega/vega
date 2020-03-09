@@ -206,28 +206,28 @@ export interface BaseLegend {
   /**
    * The color of the legend title, can be in hex color code or regular color name.
    */
-  titleColor?: ColorValue;
+  titleColor?: ColorValue | SignalRef;
 
   /**
    * The font of the legend title.
    */
-  titleFont?: StringValue;
+  titleFont?: StringValue | SignalRef;
 
   /**
    * The font size of the legend title.
    */
-  titleFontSize?: NumberValue;
+  titleFontSize?: NumberValue | SignalRef;
 
   /**
    * The font style of the legend title.
    */
-  titleFontStyle?: FontStyleValue;
+  titleFontStyle?: FontStyleValue | SignalRef;
 
   /**
    * The font weight of the legend title.
    * This can be either a string (e.g `"bold"`, `"normal"`) or a number (`100`, `200`, `300`, ..., `900` where `"normal"` = `400` and `"bold"` = `700`).
    */
-  titleFontWeight?: FontWeightValue;
+  titleFontWeight?: FontWeightValue | SignalRef;
 
   /**
    * Maximum allowed pixel width of legend titles.
@@ -235,22 +235,22 @@ export interface BaseLegend {
    * __Default value:__ `180`.
    * @minimum 0
    */
-  titleLimit?: NumberValue;
+  titleLimit?: NumberValue | SignalRef;
 
   /**
    * Line height in pixels for multi-line title text.
    */
-  titleLineHeight?: NumberValue;
+  titleLineHeight?: NumberValue | SignalRef;
 
   /**
    * Opacity of the legend title.
    */
-  titleOpacity?: NumberValue;
+  titleOpacity?: NumberValue | SignalRef;
 
   /**
    * Orientation of the legend title.
    */
-  titleOrient?: OrientValue;
+  titleOrient?: OrientValue | SignalRef;
 
   /**
    * The padding, in pixels, between title and legend.
@@ -272,7 +272,7 @@ export interface BaseLegend {
   /**
    * Opacity of the color gradient.
    */
-  gradientOpacity?: NumberValue;
+  gradientOpacity?: NumberValue | SignalRef;
 
   /**
    * The thickness in pixels of the color gradient. This value corresponds to the width of a vertical gradient or the height of a horizontal gradient.
@@ -333,17 +333,17 @@ export interface BaseLegend {
   /**
    * An array of alternating [stroke, space] lengths for dashed symbol strokes.
    */
-  symbolDash?: DashArrayValue;
+  symbolDash?: DashArrayValue | SignalRef;
 
   /**
    * The pixel offset at which to start drawing with the symbol stroke dash array.
    */
-  symbolDashOffset?: NumberValue;
+  symbolDashOffset?: NumberValue | SignalRef;
 
   /**
    * The color of the legend symbol,
    */
-  symbolFillColor?: ColorValue;
+  symbolFillColor?: ColorValue | SignalRef;
 
   /**
    * Horizontal pixel offset for legend symbols.
@@ -355,7 +355,7 @@ export interface BaseLegend {
   /**
    * Opacity of the legend symbols.
    */
-  symbolOpacity?: NumberValue;
+  symbolOpacity?: NumberValue | SignalRef;
 
   /**
    * The size of the legend symbol, in pixels.
@@ -363,12 +363,12 @@ export interface BaseLegend {
    * __Default value:__ `100`.
    * @minimum 0
    */
-  symbolSize?: NumberValue;
+  symbolSize?: NumberValue | SignalRef;
 
   /**
    * Stroke color for legend symbols.
    */
-  symbolStrokeColor?: ColorValue;
+  symbolStrokeColor?: ColorValue | SignalRef;
 
   /**
    * The width of the symbol's stroke.
@@ -376,7 +376,7 @@ export interface BaseLegend {
    * __Default value:__ `1.5`.
    * @minimum 0
    */
-  symbolStrokeWidth?: NumberValue;
+  symbolStrokeWidth?: NumberValue | SignalRef;
 
   /**
    * The symbol shape. One of the plotting shapes `circle` (default), `square`, `cross`, `diamond`, `triangle-up`, `triangle-down`, `triangle-right`, or `triangle-left`, the line symbol `stroke`, or one of the centered directional shapes `arrow`, `wedge`, or `triangle`. Alternatively, a custom [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) can be provided. For correct sizing, custom shape paths should be defined within a square bounding box with coordinates ranging from -1 to 1 along both the x and y dimensions.
@@ -401,12 +401,12 @@ export interface BaseLegend {
   /**
    * The color of the legend label, can be in hex color code or regular color name.
    */
-  labelColor?: ColorValue;
+  labelColor?: ColorValue | SignalRef;
 
   /**
    * The font of the legend label.
    */
-  labelFont?: StringValue;
+  labelFont?: StringValue | SignalRef;
 
   /**
    * The font size of legend label.
@@ -415,29 +415,29 @@ export interface BaseLegend {
    *
    * @minimum 0
    */
-  labelFontSize?: NumberValue;
+  labelFontSize?: NumberValue | SignalRef;
 
   /**
    * The font style of legend label.
    */
-  labelFontStyle?: FontStyleValue;
+  labelFontStyle?: FontStyleValue | SignalRef;
 
   /**
    * The font weight of legend label.
    */
-  labelFontWeight?: FontWeightValue;
+  labelFontWeight?: FontWeightValue | SignalRef;
 
   /**
    * Maximum allowed pixel width of legend tick labels.
    *
    * __Default value:__ `160`.
    */
-  labelLimit?: NumberValue;
+  labelLimit?: NumberValue | SignalRef;
 
   /**
    * Opacity of labels.
    */
-  labelOpacity?: NumberValue;
+  labelOpacity?: NumberValue | SignalRef;
 
   /**
    * Padding in pixels between the legend and legend labels.
