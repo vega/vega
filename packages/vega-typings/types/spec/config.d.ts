@@ -15,6 +15,7 @@ import {
 import { BaseAxis } from './axis';
 import { Color } from './color';
 import {
+  Blend,
   ColorValueRef,
   Gradient,
   NumericValueRef,
@@ -135,6 +136,13 @@ export interface MarkConfig {
    * @maximum 1
    */
   strokeOpacity?: number | SignalRef;
+
+  /**
+   * The color blend mode for drawing an item on its current background. Any valid [CSS mix-blend-mode](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode) value can be used.
+   *
+   * __Default value: `"source-over"`
+   */
+  blend?: Blend;
 
   // ---------- Stroke Style ----------
   /**
