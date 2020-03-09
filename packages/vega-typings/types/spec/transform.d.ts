@@ -102,6 +102,7 @@ export type AggregateOp =
   | 'median'
   | 'min'
   | 'missing'
+  | 'product'
   | 'q1'
   | 'q3'
   | 'ci0'
