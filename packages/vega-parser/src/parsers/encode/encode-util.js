@@ -8,6 +8,7 @@ export function encoder(_) {
 
 export function addEncode(object, name, value, set) {
   if (value != null) {
+    // Always assign signal to update, even if the signal is from the enter block
     if (isObject(value) && !isArray(value)) {
       object.update[name] = value;
     } else {
