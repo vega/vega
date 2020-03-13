@@ -143,10 +143,12 @@ prototype.transform = function(_, pulse) {
   }
 
   // re-calculate mark bounds
-  bounds = items[0].mark.bounds.clear();
-  source.forEach(item => {
-    if (item.opacity) bounds.union(item.bounds);
-  });
+  if (items.length > 0) {
+    bounds = items[0].mark.bounds.clear();
+    source.forEach(item => {
+      if (item.opacity) bounds.union(item.bounds);
+    });
+  }
 
   return pulse;
 };
