@@ -65,7 +65,7 @@ This example generates a heatmap visualization of a 2D sinusoidal function. The 
         {
           "type": "heatmap",
           "color": {
-            "expr": "scale('color', sin(scale * (datum.$x + datum.$y)) * sin(scale * (datum.$x - datum.$y))"
+            "expr": "scale('color', sin(scale * (datum.$x + datum.$y)) * sin(scale * (datum.$x - datum.$y)))"
           },
           "opacity": 1
         }
