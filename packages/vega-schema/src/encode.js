@@ -200,7 +200,6 @@ const encodeEntry = object({
   strokeMiterLimit: numberValueRef,
   blend: ref('blendValue'),
   tabindex: numberValueRef,
-  tabIndex: numberValueRef,
   ariaLabel: stringValueRef,
   ariaRole: stringValueRef,
   ariaRoleDescription: stringValueRef,

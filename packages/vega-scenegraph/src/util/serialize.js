@@ -19,7 +19,7 @@ var keys = [
   'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
-  'tabIndex',                                                   // tab order
+  'tabindex',                                                   // tab order
   'ariaLabel', 'ariaHidden', 'ariaRole', 'ariaRoleDescription', // screen reader
 ];
 
