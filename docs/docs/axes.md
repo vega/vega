@@ -44,7 +44,7 @@ Properties for specifying a coordinate axis.
 | labelFontStyle  | {% include type t="String" %} | Font style of axis tick labels (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | labelFontWeight | {% include type t="String|Number" %} | Font weight of axis tick labels. |
 | labelLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of axis tick labels. |
-| labelLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line label text. {% include tag ver="5.10" %} |
+| labelLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line label text or label text with `"line-top"` or `"line-bottom"` baseline. {% include tag ver="5.10" %} |
 | labelOffset  | {% include type t="Number" %}  | Position offset in pixels to apply to labels, in addition to *tickOffset*. {% include tag ver="5.10" %} |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of axis tick labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label (this often works better for log-scaled axes).|
@@ -78,7 +78,7 @@ Properties for specifying a coordinate axis.
 | titleFontStyle  | {% include type t="String" %} | Font style of the axis title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of axis title. |
 | titleLimit    | {% include type t="Number" %}  | The maximum allowed length in pixels of the axis title. |
-| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
+| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline. {% include tag ver="5.7" %} |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of axis title. {% include tag ver="4.1" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding in pixels between the axis labels and axis title.|
 | titleX        | {% include type t="Number" %}  | Custom X position of the axis title relative to the axis group, overriding the standard layout. |

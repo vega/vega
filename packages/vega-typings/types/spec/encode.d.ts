@@ -408,6 +408,10 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
   fontStyle?: ProductionRule<FontStyleValueRef>;
   limit?: ProductionRule<NumericValueRef>;
   lineBreak?: ProductionRule<StringValueRef>;
+
+  /**
+   * The height, in pixels, of each line of text in a multi-line text mark or a text mark with `"line-top"` or `"line-bottom"` baseline.
+   */
   lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
 }
