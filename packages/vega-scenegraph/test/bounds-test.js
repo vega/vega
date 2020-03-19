@@ -1,7 +1,7 @@
 var tape = require('tape'),
     Bounds = require('../').Bounds;
 
-tape('Bounds should support constuctor without arguments', function(t) {
+tape('Bounds should support constructor without arguments', function(t) {
   var b = new Bounds();
   t.equal(b.x1, +Number.MAX_VALUE);
   t.equal(b.y1, +Number.MAX_VALUE);
