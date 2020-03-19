@@ -197,7 +197,7 @@ export interface BaseLegend {
   titleAnchor?: AnchorValue;
 
   /**
-   * Vertical text baseline for legend titles.
+   * Vertical text baseline for legend titles.  One of `"alphabetic"` (default), `"top"`, `"middle"`, `"bottom"`, `"line-top"`, or `"line-bottom"`. The `"line-top"` and `"line-bottom"` values operate similarly to `"top"` and `"bottom"`, but are calculated relative to the *lineHeight* rather than *fontSize* alone.
    *
    * __Default value:__ `"top"`.
    */

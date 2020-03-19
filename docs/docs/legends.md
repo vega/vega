@@ -42,7 +42,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | gradientStrokeColor | {% include type t="Color" %}  | Stroke color of the color gradient border. |
 | gradientStrokeWidth | {% include type t="Number" %} | Stroke width of the color gradient border. |
 | labelAlign    | {% include type t="String" %}  | Horizontal text alignment for legend labels. |
-| labelBaseline | {% include type t="String" %}  | Vertical text baseline for legend labels. |
+| labelBaseline | {% include type t="String" %}  | Vertical text baseline for legend labels. One of `alphabetic` (default), `top`, `middle`, `bottom`, `line-top`, or `line-bottom`. The `line-top` and `line-bottom` values {% include tag ver="5.10" %} operate similarly to `top` and `bottom`, but are calculated relative to the *lineHeight* rather than *fontSize* alone. |
 | labelColor    | {% include type t="Color" %}   | Text color for legend labels. |
 | labelFont     | {% include type t="String" %}  | Font name for legend labels. |
 | labelFontSize | {% include type t="Number" %}  | Font size in pixels for legend labels. |
@@ -70,7 +70,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | title         | {% include type t="String|String[]" %}  | The title for the legend (none by default). For versions {% include tag ver="5.7" %}, a string array specifies a title with multiple lines of text.|
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing the legend title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the legend title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the legend title. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the legend title. One of `alphabetic` (default), `top`, `middle`, `bottom`, `line-top`, or `line-bottom`. The `line-top` and `line-bottom` values {% include tag ver="5.10" %} operate similarly to `top` and `bottom`, but are calculated relative to the *lineHeight* rather than *fontSize* alone. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor    | {% include type t="Color" %}   | Text color of the legend title. |
 | titleFont     | {% include type t="String" %}  | Font name of the legend title. |
 | titleFontSize | {% include type t="Number" %}  | Font size in pixels of the legend title. |
