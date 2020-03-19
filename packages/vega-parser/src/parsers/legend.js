@@ -150,6 +150,8 @@ function buildLegendEncode(_, config) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
+    ariaRole:     'graphics-object',
+    ariaRoleDescription: 'legend'
   });
 
   return encode;

@@ -44,7 +44,9 @@ export default function(spec, scope) {
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
-      range:        {signal: `abs(span(range("${spec.scale}")))`}
+      range:        {signal: `abs(span(range("${spec.scale}")))`},
+      ariaRole:     encoder('graphics-object'),
+      ariaRoleDescription: encoder('axis')
     }
   }, encode.axis, Skip);
 

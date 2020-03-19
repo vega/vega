@@ -43,15 +43,3 @@ export function cssClass(mark) {
     + (mark.role ? ' role-' + mark.role : '')
     + (mark.name ? ' ' + mark.name : '');
 }
-
-// generate recommended role for guide marks
-// https://www.w3.org/TR/graphics-aria-1.0/
-export function ariaRole(mark) {
-  switch (mark.role) {
-    case 'axis':
-    case 'legend':
-      return 'graphics-object'
-    default:
-      return null
-  }
-}

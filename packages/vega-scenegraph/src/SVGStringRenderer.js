@@ -1,7 +1,7 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
-import {cssClass, ariaRole} from './util/dom';
+import {cssClass} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
@@ -221,8 +221,7 @@ prototype.mark = function(scene) {
   // render opening group tag
   str += openTag('g', {
     'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null,
-    'role': ariaRole(scene)
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
   }, style);
 
   // render contained elements
