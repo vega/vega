@@ -142,7 +142,7 @@ export interface BaseTitle {
   fontWeight?: FontWeightValue;
 
   /**
-   * Line height in pixels for multi-line title text.
+   * Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline.
    */
   lineHeight?: NumberValue;
 

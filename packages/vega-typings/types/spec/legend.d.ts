@@ -238,7 +238,7 @@ export interface BaseLegend {
   titleLimit?: NumberValue;
 
   /**
-   * Line height in pixels for multi-line title text.
+   * Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline.
    */
   titleLineHeight?: NumberValue;
 

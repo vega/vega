@@ -245,7 +245,7 @@ export interface BaseAxis {
   titleLimit?: NumberValue;
 
   /**
-   * Line height in pixels for multi-line title text.
+   * Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline.
    */
   titleLineHeight?: NumberValue;
 
@@ -437,7 +437,7 @@ export interface BaseAxis {
   labelFlushOffset?: number | SignalRef;
 
   /**
-   * Line height in pixels for multi-line label text.
+   * Line height in pixels for multi-line label text or label text with `"line-top"` or `"line-bottom"` baseline.
    */
   labelLineHeight?: NumberValue;
 
