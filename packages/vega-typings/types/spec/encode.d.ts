@@ -257,6 +257,7 @@ export interface EncodeEntry {
   tabindex?: ProductionRule<NumericValueRef>;
   ariaLabel?: ProductionRule<StringValueRef>;
   ariaRole?: ProductionRule<StringValueRef>;
+  ariaRoleDescription?: ProductionRule<StringValueRef>;
   ariaHidden?: ProductionRule<BooleanValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
