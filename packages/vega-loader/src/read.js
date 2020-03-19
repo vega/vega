@@ -31,7 +31,7 @@ function parse(data, types, dateParse) {
     var type = types[field],
         parts, pattern;
 
-    if (type && (type.indexOf('date:') === 0 || type.indexOf('utc:') === 0)) {
+    if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
       parts = type.split(/:(.+)?/, 2);  // split on first :
       pattern = parts[1];
 
