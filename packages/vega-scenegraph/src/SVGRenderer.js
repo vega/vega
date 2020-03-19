@@ -1,7 +1,7 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
-import {domChild, domClear, domCreate, cssClass} from './util/dom';
+import {domChild, domClear, domCreate, cssClass, ariaRole} from './util/dom';
 import {openTag, closeTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
@@ -311,10 +311,14 @@ prototype.draw = function(el, scene, prev) {
       isGroup = mdef.tag === 'g',
       sibling = null,
       i = 0,
-      parent;
+      parent,
+      role;
 
   parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
+  if (role = ariaRole(scene)) {
+    parent.setAttribute('role', role);
+  }
   if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
   }
