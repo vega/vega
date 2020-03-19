@@ -61,7 +61,7 @@ function applyDefaults(encode, type, role, style, config) {
   }
 
   // ignore legend and axis roles
-  if (role == 'legend' || String(role).indexOf('axis') === 0) {
+  if (role == 'legend' || String(role).startsWith('axis')) {
     role = null;
   }
 
