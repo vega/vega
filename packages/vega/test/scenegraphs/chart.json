@@ -200,7 +200,9 @@
                 }
               ],
               "x": -9.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -455,7 +457,9 @@
                 }
               ],
               "x": 349.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -716,7 +720,9 @@
                 }
               ],
               "x": 0.5,
-              "y": -9.5
+              "y": -9.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1058,7 +1064,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 232.5
+              "y": 232.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1518,7 +1526,9 @@
               "y": 0,
               "width": 61,
               "height": 118,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1875,7 +1885,9 @@
               "y": 126,
               "width": 61,
               "height": 105,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2238,7 +2250,9 @@
               "y": 0,
               "width": 52,
               "height": 118,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2601,7 +2615,9 @@
               "y": 126,
               "width": 52,
               "height": 122,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2745,7 +2761,9 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-left"
+              "orient": "top-left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2889,7 +2907,9 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-right"
+              "orient": "top-right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3033,7 +3053,9 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-left"
+              "orient": "bottom-left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3177,7 +3199,9 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-right"
+              "orient": "bottom-right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

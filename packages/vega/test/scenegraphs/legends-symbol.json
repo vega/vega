@@ -320,7 +320,9 @@
               "height": 238,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -638,7 +640,9 @@
               "height": 94,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -956,7 +960,9 @@
               "height": 62,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1274,7 +1280,9 @@
               "height": 66,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1592,7 +1600,9 @@
               "height": 79,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1910,7 +1920,9 @@
               "height": 38,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2228,7 +2240,9 @@
               "height": 56,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

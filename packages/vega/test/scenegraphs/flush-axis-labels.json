@@ -294,7 +294,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -586,7 +588,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -878,7 +882,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1170,7 +1176,9 @@
                 }
               ],
               "x": 300.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

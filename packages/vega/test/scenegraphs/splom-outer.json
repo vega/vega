@@ -183,7 +183,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 405.5
+              "y": 405.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -385,7 +387,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 270.5
+              "y": 270.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -545,7 +549,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 135.5
+              "y": 135.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -705,7 +711,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -886,7 +894,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 525.5
+              "y": 525.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1088,7 +1098,9 @@
                 }
               ],
               "x": 135.5,
-              "y": 525.5
+              "y": 525.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1248,7 +1260,9 @@
                 }
               ],
               "x": 270.5,
-              "y": 525.5
+              "y": 525.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1408,7 +1422,9 @@
                 }
               ],
               "x": 405.5,
-              "y": 525.5
+              "y": 525.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -18776,7 +18792,9 @@
               "y": 0,
               "width": 96,
               "height": 61,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

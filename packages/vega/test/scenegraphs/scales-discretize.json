@@ -519,7 +519,9 @@
               "y": 0,
               "width": 82,
               "height": 118,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -825,7 +827,9 @@
               "y": 126,
               "width": 114,
               "height": 106,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1035,7 +1039,9 @@
               "y": 240,
               "width": 80,
               "height": 66,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

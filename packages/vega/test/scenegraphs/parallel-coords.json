@@ -305,7 +305,9 @@
                 }
               ],
               "x": 2.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -587,7 +589,9 @@
                 }
               ],
               "x": 118.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -848,7 +852,9 @@
                 }
               ],
               "x": 234.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1151,7 +1157,9 @@
                 }
               ],
               "x": 350.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1433,7 +1441,9 @@
                 }
               ],
               "x": 466.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1715,7 +1725,9 @@
                 }
               ],
               "x": 582.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -2060,7 +2072,9 @@
                 }
               ],
               "x": 698.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

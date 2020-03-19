@@ -262,7 +262,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 178.5
+              "y": 178.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -333,7 +335,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 178.5
+              "y": 178.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -509,7 +513,9 @@
                 }
               ],
               "x": -4.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

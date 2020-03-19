@@ -156,7 +156,9 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -310,7 +312,9 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -464,7 +468,9 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -860,7 +866,9 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1014,7 +1022,9 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1168,7 +1178,9 @@
               "y": 260,
               "width": 303,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1311,7 +1323,9 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1454,7 +1468,9 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1597,7 +1613,9 @@
               "y": 416,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1740,7 +1758,9 @@
               "y": 468,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1883,7 +1903,9 @@
               "y": 520,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2026,7 +2048,9 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2169,7 +2193,9 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2312,7 +2338,9 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2455,7 +2483,9 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2598,7 +2628,9 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2741,7 +2773,9 @@
               "y": 260,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2884,7 +2918,9 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3027,7 +3063,9 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3170,7 +3208,9 @@
               "y": 416,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3313,7 +3353,9 @@
               "y": 468,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3456,7 +3498,9 @@
               "y": 520,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

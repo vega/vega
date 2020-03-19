@@ -11081,7 +11081,9 @@
               "y": 0,
               "width": 58,
               "height": 362,
-              "orient": "left"
+              "orient": "left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -11109,7 +11111,8 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 13,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRoleDescription": "title"
                     }
                   ],
                   "zindex": 0

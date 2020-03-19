@@ -262,7 +262,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 80.5
+              "y": 80.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

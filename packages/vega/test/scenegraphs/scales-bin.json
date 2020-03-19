@@ -283,7 +283,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 300.5
+              "y": 300.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -438,7 +440,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1074,7 +1078,9 @@
               "y": 0,
               "width": 80,
               "height": 137,
-              "orient": "right"
+              "orient": "right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

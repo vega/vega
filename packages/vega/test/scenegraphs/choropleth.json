@@ -11105,7 +11105,9 @@
               "y": 266,
               "width": 105,
               "height": 216,
-              "orient": "bottom-right"
+              "orient": "bottom-right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

@@ -44413,7 +44413,9 @@
               "y": 662,
               "width": 105,
               "height": 40,
-              "orient": "bottom-right"
+              "orient": "bottom-right",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

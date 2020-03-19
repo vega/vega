@@ -368,7 +368,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -650,7 +652,9 @@
                 }
               ],
               "x": 0.5,
-              "y": 600.5
+              "y": 600.5,
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1517,7 +1521,9 @@
               "y": 498,
               "width": 168,
               "height": 92,
-              "orient": "bottom-left"
+              "orient": "bottom-left",
+              "ariaRole": "graphics-object",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1545,7 +1551,8 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 18,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRoleDescription": "title"
                     }
                   ],
                   "zindex": 0
