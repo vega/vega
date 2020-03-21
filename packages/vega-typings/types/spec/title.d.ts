@@ -52,6 +52,33 @@ export interface Title extends BaseTitle {
   zindex?: number;
 
   /**
+   * If set to `true`, removes the title from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the title for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the title for accessibility.
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the title.
+   *
+   * __Default value__: `"title"`
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
+   * Indicates that the title can be focused, and where it participates in sequential keyboard navigation.
+   */
+  tabindex?: number | SignalRef;
+
+  /**
    * Mark definitions for custom title encoding.
    */
   encode?: TitleEncode | Encode<TextEncodeEntry>; // second entry is **deprecated**
@@ -195,4 +222,31 @@ export interface BaseTitle {
    * The padding in pixels between title and subtitle text.
    */
   subtitlePadding?: NumberValue;
+
+  /**
+   * If set to `true`, removes the subtitle from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the subtitle for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the subtitle for accessibility.
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the subtitle.
+   *
+   * __Default value__: `"subtitle"`
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
+   * Indicates that the subtitle can be focused, and where it participates in sequential keyboard navigation.
+   */
+  tabindex?: number | SignalRef;
 }

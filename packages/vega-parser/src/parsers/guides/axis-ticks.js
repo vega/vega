@@ -12,7 +12,10 @@ export default function(spec, config, userEncode, dataRef, size, band) {
       encode, enter, exit, update, tickSize, tickPos;
 
   encode = {
-    enter: enter = {opacity: zero},
+    enter: enter = {
+      opacity: zero,
+      ariaHidden: {value: true}
+    },
     update: update = {opacity: one},
     exit: exit = {opacity: zero}
   };

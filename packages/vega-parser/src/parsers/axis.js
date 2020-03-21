@@ -5,7 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
-import {lookup, tickBand} from './guides/guide-util';
+import {lookup, tickBand, axisAriaLabel} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
@@ -45,8 +45,11 @@ export default function(spec, scope) {
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
       range:        {signal: `abs(span(range("${spec.scale}")))`},
-      ariaRole:     encoder('graphics-object'),
-      ariaRoleDescription: encoder('axis')
+      ariaHidden:   encoder(_('ariaHidden')),
+      ariaLabel:    encoder(_('ariaLabel') || axisAriaLabel(spec, scope)),
+      ariaRole:     encoder(_('ariaRole') || 'graphics-object'),
+      ariaRoleDescription: encoder(_('ariaRoleDescription') || 'axis'),
+      tabindex:     encoder(_('tabindex')),
     }
   }, encode.axis, Skip);
 

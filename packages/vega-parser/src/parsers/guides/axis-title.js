@@ -18,7 +18,8 @@ export default function(spec, config, userEncode, dataRef) {
     enter: enter = {
       opacity: zero,
       anchor: encoder(_('titleAnchor')),
-      align: {signal: alignExpr}
+      align: {signal: alignExpr},
+      ariaHidden: {value: true}
     },
     update: update = extend({}, enter, {
       opacity: one,

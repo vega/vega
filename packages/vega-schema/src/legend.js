@@ -2,8 +2,8 @@ import {layoutAlign} from './layout';
 
 import {
   anyOf, allOf, def, enums, object, pattern, required, ref, type,
-  alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
-  fontWeightValue, numberValue, orientValue, stringValue,
+  alignValue, anchorValue, baselineValue, booleanValue, colorValue,
+  dashArrayValue, fontWeightValue, numberValue, orientValue, stringValue,
   arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
   formatTypeType, numberType, stringType, orSignal
 } from './util';
@@ -71,6 +71,11 @@ const legendProps = object({
   strokeColor: colorValue,
   legendX: numberValue,
   legendY: numberValue,
+  ariaHidden: booleanValue,
+  ariaLabel: stringValue,
+  ariaRole: stringValue,
+  ariaRoleDescription: stringValue,
+  tabindex: numberValue,
 
   // LEGEND TITLE CONFIG
   title: textOrSignal,

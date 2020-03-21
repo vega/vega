@@ -11,7 +11,10 @@ export default function(spec, config, userEncode, dataRef) {
       encode, enter, update, u, u2, v;
 
   encode = {
-    enter: enter = {opacity: zero},
+    enter: enter = {
+      opacity: zero,
+      ariaHidden: {value: true}
+    },
     update: update = {opacity: one},
     exit: {opacity: zero}
   };

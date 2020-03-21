@@ -119,7 +119,8 @@ export default function(spec, config, userEncode, dataRef, columns) {
       noBound: {value: !height}, // ignore width/height in bounds calc
       width: zero,
       height: height ? encoder(height) : zero,
-      opacity: zero
+      opacity: zero,
+      ariaHidden: {value: true}
     },
     exit: {opacity: zero},
     update: update = {

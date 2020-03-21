@@ -66,7 +66,7 @@ function groupEncode(_, userEncode) {
     limit:      _('limit'),
     frame:      _('frame'),
     offset:     _('offset') || 0,
-    padding:    _('subtitlePadding')
+    padding:    _('subtitlePadding'),
   });
 
   return extendEncode(encode, userEncode, Skip);
@@ -95,7 +95,11 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('fontStyle'),
     fontWeight: _('fontWeight'),
     lineHeight: _('lineHeight'),
-    ariaRoleDescription: 'title'
+    ariaHidden:   _('ariaHidden'),
+    ariaLabel:    _('ariaLabel'),
+    ariaRole:     _('ariaRole'),
+    ariaRoleDescription: _('ariaRoleDescription') || 'title',
+    tabindex:     _('tabindex'),
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
@@ -129,7 +133,11 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('subtitleFontStyle'),
     fontWeight: _('subtitleFontWeight'),
     lineHeight: _('subtitleLineHeight'),
-    ariaRoleDescription: 'subtitle'
+    ariaHidden:   _('subtitleAriaHidden'),
+    ariaLabel:    _('subtitleAriaLabel'),
+    ariaRole:     _('subtitleAriaRole'),
+    ariaRoleDescription: _('subtitleAriaRoleDescription') || 'subtitle',
+    tabindex:     _('subtitleTabindex'),
   }, { // update
     align:      _('align'),
     angle:      _('angle'),

@@ -19,7 +19,8 @@ export default function(spec, scale, config, userEncode, dataRef) {
 
   enter = {
     opacity: zero,
-    fill: {scale: scale, field: Value}
+    fill: {scale: scale, field: Value},
+    ariaHidden:  {value: true}
   };
   enter[u]  = {signal: adjust + 'datum.' + Perc, mult: length};
   enter[v]  = zero;

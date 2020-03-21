@@ -23,7 +23,8 @@ export default function(spec, config, userEncode, dataRef) {
 
   encode = {
     enter: enter = {
-      opacity: zero
+      opacity: zero,
+      ariaHidden: {value: true}
     },
     update: update = {
       opacity: one,

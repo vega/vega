@@ -1,6 +1,6 @@
 import {
   numberValue, stringValue, textOrSignal, anchorValue,
-  alignValue, baselineValue, colorValue, fontWeightValue,
+  alignValue, baselineValue, booleanValue, colorValue, fontWeightValue,
   def, enums, object, anyOf, oneOf, pattern, ref,
   booleanType, numberType, stringType, orSignal, numberOrSignal
 } from './util';
@@ -40,6 +40,11 @@ const title = oneOf(
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
     lineHeight: numberValue,
+    ariaHidden: booleanValue,
+    ariaLabel: stringValue,
+    ariaRole: stringValue,
+    ariaRoleDescription: stringValue,
+    tabindex: numberValue,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
@@ -47,6 +52,11 @@ const title = oneOf(
     subtitleFontWeight: fontWeightValue,
     subtitleLineHeight: numberValue,
     subtitlePadding: numberOrSignal,
+    subtitleAriaHidden: booleanValue,
+    subtitleAriaLabel: stringValue,
+    subtitleAriaRole: stringValue,
+    subtitleAriaRoleDescription: stringValue,
+    subtitleTabindex: numberValue,
 
     // custom encoders
     encode: anyOf(

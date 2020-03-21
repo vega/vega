@@ -62,7 +62,8 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     enter: enter = {
       opacity: zero,
       x: isXAxis ? tickPos : tickSize,
-      y: isXAxis ? tickSize : tickPos
+      y: isXAxis ? tickSize : tickPos,
+      ariaHidden: {value: true}
     },
     update: {
       opacity: one,

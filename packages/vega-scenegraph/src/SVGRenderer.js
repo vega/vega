@@ -418,11 +418,11 @@ var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
 var general_extras = {
-  'tabindex': 'tabindex',
-  'ariaLabel': 'aria-label',
   'ariaHidden': 'aria-hidden',
+  'ariaLabel': 'aria-label',
   'ariaRole': 'role',
-  'ariaRoleDescription': 'aria-roledescription'
+  'ariaRoleDescription': 'aria-roledescription',
+  'tabindex': 'tabindex'
 }
 
 // Extra configuration for certain mark types

@@ -114,6 +114,35 @@ export interface Axis extends BaseAxis {
   zindex?: number;
 
   /**
+   * If set to `true`, removes the axis from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the axis group for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the axis group for accessibility.
+   *
+   * __Default value__: `"graphics-object"`
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the axis group.
+   *
+   * __Default value__: `"axis"`
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
+   * Indicates that the axis can be focused, and where it participates in sequential keyboard navigation.
+   */
+  tabindex?: number | SignalRef;
+
+  /**
    * Mark definitions for custom axis encoding.
    */
   encode?: AxisEncode;

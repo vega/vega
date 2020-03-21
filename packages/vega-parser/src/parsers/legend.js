@@ -8,7 +8,7 @@ import legendGradientLabels from './guides/legend-gradient-labels';
 import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, lookup} from './guides/guide-util';
+import {getEncoding, getStyle, lookup, legendAriaLabel} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
@@ -47,7 +47,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(_, config), legendEncode, Skip
+    buildLegendEncode(_, config, spec, scope), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -135,7 +135,7 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(_, config) {
+function buildLegendEncode(_, config, spec, scope) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
@@ -150,8 +150,11 @@ function buildLegendEncode(_, config) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-    ariaRole:     'graphics-object',
-    ariaRoleDescription: 'legend'
+    ariaHidden:   _('ariaHidden'),
+    ariaLabel:    _('ariaLabel') || legendAriaLabel(spec, scope),
+    ariaRole:     _('ariaRole') || 'graphics-object',
+    ariaRoleDescription: _('ariaRoleDescription') || 'axis',
+    tabindex:     _('tabindex'),
   });
 
   return encode;

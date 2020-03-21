@@ -86,3 +86,41 @@ export function extendOffset(value, offset) {
     : !isObject(value) ? { value, offset }
     : { ...value, offset: extendOffset(value.offset, offset) };
 }
+
+const DISCRETE_SCALES = new Set(['ordinal', 'band', 'point']);
+
+function domainText(scaleType, scaleName) {
+  return DISCRETE_SCALES.has(scaleType)
+    ? ` with values " + domain('${scaleName}')`
+    : ` from " + domain("${scaleName}")[0] + " to " + domain("${scaleName}")[1]`;
+}
+
+function titleText(title) {
+  if (title) {
+    return isObject(title) ? ` showing " + ${title.signal} + "` : ` showing ${title}`;
+  }
+
+  return '';
+}
+
+export function legendAriaLabel(spec, scope) {
+  const domains = [];
+  for (const legendType of ['fill', 'stroke', 'opacity', 'size', 'shape', 'strokeDash']) {
+    const scaleName = spec[legendType];
+    if (scaleName) {
+      const scale = scope.scales[scaleName];
+      domains.push(`${domainText(scale.params.type, scaleName)} + " as ${legendType}`);
+    }
+  }
+  const signal = `"legend${titleText(spec.title)}${domains.join(',')}"`;
+  return { signal };
+}
+
+export function axisAriaLabel(spec, scope) {
+  const scaleName = spec.scale;
+  const scale = scope.scales[scaleName];
+  const axisType = spec.orient === 'bottom' || spec.orient === 'top' ? 'x' : 'y';
+  const domain = domainText(scale.params.type, scaleName);
+  const signal = `"${axisType} axis${titleText(spec.title)}${domain}`;
+  return { signal };
+}

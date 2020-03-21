@@ -108,6 +108,35 @@ export interface Legend extends BaseLegend {
   zindex?: number;
 
   /**
+   * If set to `true`, removes the legend from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the legend group for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the legend group for accessibility.
+   *
+   * __Default value__: `"graphics-object"`
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the legend group.
+   *
+   * __Default value__: `"legend"`
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
+   * Indicates that the legend can be focused, and where it participates in sequential keyboard navigation.
+   */
+  tabindex?: number | SignalRef;
+
+  /**
    * Mark definitions for custom legend encoding.
    */
   encode?: LegendEncode;
