@@ -44323,7 +44323,8 @@
                               "y": 0,
                               "width": 104,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -44372,7 +44373,8 @@
                               "y": 13,
                               "width": 104,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -44403,7 +44405,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -44414,8 +44417,9 @@
               "width": 105,
               "height": 40,
               "orient": "bottom-right",
+              "ariaLabel": "legend showing Dependencies with values depends on,imported by as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

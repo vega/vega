@@ -40,7 +40,8 @@
                               },
                               "opacity": 1,
                               "stroke": "#ddd",
-                              "strokeWidth": 0
+                              "strokeWidth": 0,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -60,7 +61,8 @@
                               "opacity": 1,
                               "text": "0",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 50,
@@ -71,7 +73,8 @@
                               "opacity": 1,
                               "text": "50",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 100,
@@ -82,7 +85,8 @@
                               "opacity": 1,
                               "text": "100",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -113,7 +117,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -124,8 +129,9 @@
               "width": 100,
               "height": 44,
               "orient": "left",
+              "ariaLabel": "legend showing Gradient from 0 to 100 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -163,7 +169,8 @@
                               },
                               "opacity": 1,
                               "stroke": "#ddd",
-                              "strokeWidth": 0
+                              "strokeWidth": 0,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -183,7 +190,8 @@
                               "opacity": 1,
                               "text": "-100",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 50,
@@ -194,7 +202,8 @@
                               "opacity": 1,
                               "text": "0",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 100,
@@ -205,7 +214,8 @@
                               "opacity": 1,
                               "text": "100",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -236,7 +246,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -247,8 +258,9 @@
               "width": 100,
               "height": 44,
               "orient": "left",
+              "ariaLabel": "legend showing Multi-Stop from -100 to -35 as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -323,7 +335,8 @@
                               "y": 0,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -373,7 +386,8 @@
                               "y": 16,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -423,7 +437,8 @@
                               "y": 32,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -473,7 +488,8 @@
                               "y": 48,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -523,7 +539,8 @@
                               "y": 64,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -573,7 +590,8 @@
                               "y": 80,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -604,7 +622,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -615,8 +634,9 @@
               "width": 70,
               "height": 109,
               "orient": "right",
+              "ariaLabel": "legend showing Sequence from 0 to 100 as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -689,7 +709,8 @@
                               "y": 0,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -737,7 +758,8 @@
                               "y": 13,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -785,7 +807,8 @@
                               "y": 26,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -833,7 +856,8 @@
                               "y": 39,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -881,7 +905,8 @@
                               "y": 52,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -912,7 +937,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -923,8 +949,9 @@
               "width": 48,
               "height": 79,
               "orient": "right",
+              "ariaLabel": "legend showing Stops from -100 to -35 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -997,7 +1024,8 @@
                               "y": 0,
                               "width": 40,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1045,7 +1073,8 @@
                               "y": 0,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1093,7 +1122,8 @@
                               "y": 0,
                               "width": 32,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1124,7 +1154,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1135,8 +1166,9 @@
               "width": 116,
               "height": 27,
               "orient": "none",
+              "ariaLabel": "legend showing Orient None from -100 to -35 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

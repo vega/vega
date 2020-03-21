@@ -75,7 +75,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -123,7 +124,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -171,7 +173,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -219,7 +222,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -267,7 +271,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -315,7 +320,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -363,7 +369,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -411,7 +418,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -459,7 +467,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -507,7 +516,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -555,7 +565,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -603,7 +614,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -651,7 +663,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -699,7 +712,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -747,7 +761,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -795,7 +810,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -843,7 +859,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -891,7 +908,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -939,7 +957,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -987,7 +1006,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1018,7 +1038,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1029,8 +1050,9 @@
               "width": 70,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Category with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1103,7 +1125,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1151,7 +1174,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1199,7 +1223,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1247,7 +1272,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1295,7 +1321,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1343,7 +1370,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1391,7 +1419,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1439,7 +1468,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1487,7 +1517,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1535,7 +1566,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1583,7 +1615,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1631,7 +1664,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1679,7 +1713,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1727,7 +1762,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1775,7 +1811,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1823,7 +1860,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1871,7 +1909,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1919,7 +1958,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1967,7 +2007,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2015,7 +2056,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2046,7 +2088,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -2057,8 +2100,9 @@
               "width": 61,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Ordinal with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -2131,7 +2175,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2179,7 +2224,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2227,7 +2273,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2275,7 +2322,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2323,7 +2371,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2371,7 +2420,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2419,7 +2469,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2467,7 +2518,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2515,7 +2567,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2563,7 +2616,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2611,7 +2665,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2659,7 +2714,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2707,7 +2763,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2755,7 +2812,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2803,7 +2861,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2851,7 +2910,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2899,7 +2959,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2947,7 +3008,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2995,7 +3057,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3043,7 +3106,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -3074,7 +3138,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -3085,8 +3150,9 @@
               "width": 35,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Ramp with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -3159,7 +3225,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3207,7 +3274,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3255,7 +3323,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3303,7 +3372,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3351,7 +3421,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3399,7 +3470,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3447,7 +3519,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3495,7 +3568,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3543,7 +3617,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3591,7 +3666,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3639,7 +3715,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3687,7 +3764,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3735,7 +3813,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3783,7 +3862,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3831,7 +3911,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3879,7 +3960,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3927,7 +4009,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3975,7 +4058,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4023,7 +4107,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4071,7 +4156,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -4102,7 +4188,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -4113,8 +4200,9 @@
               "width": 79,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Diverging with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -4187,7 +4275,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4235,7 +4324,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4283,7 +4373,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4331,7 +4422,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4379,7 +4471,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4427,7 +4520,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4475,7 +4569,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4523,7 +4618,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4571,7 +4667,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4619,7 +4716,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4667,7 +4765,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4715,7 +4814,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4763,7 +4863,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4811,7 +4912,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4859,7 +4961,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4907,7 +5010,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -4955,7 +5059,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5003,7 +5108,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5051,7 +5157,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5099,7 +5206,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -5130,7 +5238,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -5141,8 +5250,9 @@
               "width": 61,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Heatmap with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -5215,7 +5325,8 @@
                               "y": 0,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5263,7 +5374,8 @@
                               "y": 18,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5311,7 +5423,8 @@
                               "y": 36,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5359,7 +5472,8 @@
                               "y": 54,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5407,7 +5521,8 @@
                               "y": 72,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5455,7 +5570,8 @@
                               "y": 90,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5503,7 +5619,8 @@
                               "y": 108,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5551,7 +5668,8 @@
                               "y": 126,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5599,7 +5717,8 @@
                               "y": 144,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5647,7 +5766,8 @@
                               "y": 162,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5695,7 +5815,8 @@
                               "y": 180,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5743,7 +5864,8 @@
                               "y": 198,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5791,7 +5913,8 @@
                               "y": 216,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5839,7 +5962,8 @@
                               "y": 234,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5887,7 +6011,8 @@
                               "y": 252,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5935,7 +6060,8 @@
                               "y": 270,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -5983,7 +6109,8 @@
                               "y": 288,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -6031,7 +6158,8 @@
                               "y": 306,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -6079,7 +6207,8 @@
                               "y": 324,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -6127,7 +6256,8 @@
                               "y": 342,
                               "width": 28,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -6158,7 +6288,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -6169,8 +6300,9 @@
               "width": 52,
               "height": 374,
               "orient": "none",
+              "ariaLabel": "legend showing Custom with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

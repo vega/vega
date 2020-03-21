@@ -27,7 +27,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -35,7 +36,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -43,7 +45,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -51,7 +54,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -59,7 +63,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -67,7 +72,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": -5
+                      "x2": -5,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -89,7 +95,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": -7,
@@ -102,7 +109,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": -7,
@@ -115,7 +123,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": -7,
@@ -128,7 +137,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": -7,
@@ -141,7 +151,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": -7,
@@ -154,7 +165,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -171,7 +183,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 0
+                      "y2": 0,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -193,7 +206,8 @@
                       "angle": -90,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -201,8 +215,11 @@
               ],
               "x": -9.5,
               "y": 0.5,
+              "ariaHidden": null,
+              "ariaLabel": "y axis showing Left Title from 0 to 100",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "axis",
+              "tabindex": null
             }
           ],
           "zindex": 0
@@ -227,7 +244,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     },
                     {
                       "x": -10,
@@ -235,7 +253,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     },
                     {
                       "x": -10,
@@ -243,7 +262,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     },
                     {
                       "x": -10,
@@ -251,7 +271,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     },
                     {
                       "x": -10,
@@ -259,7 +280,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     },
                     {
                       "x": -10,
@@ -267,7 +289,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "x2": -349
+                      "x2": -349,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -284,7 +307,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -292,7 +316,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -300,7 +325,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -308,7 +334,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -316,7 +343,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 0,
@@ -324,7 +352,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 5
+                      "x2": 5,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -346,7 +375,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 7,
@@ -359,7 +389,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 7,
@@ -372,7 +403,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 7,
@@ -385,7 +417,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 7,
@@ -398,7 +431,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 7,
@@ -411,7 +445,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -428,7 +463,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 0
+                      "y2": 0,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -450,7 +486,8 @@
                       "angle": 90,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -458,8 +495,11 @@
               ],
               "x": 349.5,
               "y": 0.5,
+              "ariaHidden": null,
+              "ariaLabel": "y axis showing Right Title from 0 to 100",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "axis",
+              "tabindex": null
             }
           ],
           "zindex": 0
@@ -484,7 +524,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 86,
@@ -492,7 +533,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 128,
@@ -500,7 +542,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 170,
@@ -508,7 +551,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 212,
@@ -516,7 +560,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 254,
@@ -524,7 +569,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 296,
@@ -532,7 +578,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 338,
@@ -540,7 +587,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 2,
@@ -548,7 +596,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": -5
+                      "y2": -5,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -570,7 +619,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 65,
@@ -583,7 +633,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 107,
@@ -596,7 +647,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 149,
@@ -609,7 +661,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 191,
@@ -622,7 +675,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 233,
@@ -635,7 +689,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 275,
@@ -648,7 +703,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 317,
@@ -661,7 +717,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": null,
@@ -674,7 +731,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -691,7 +749,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 339
+                      "x2": 339,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -713,7 +772,8 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -721,8 +781,11 @@
               ],
               "x": 0.5,
               "y": -9.5,
+              "ariaHidden": null,
+              "ariaLabel": "x axis showing Top Title with values 0,1,2,3,4,5,6,7",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "axis",
+              "tabindex": null
             }
           ],
           "zindex": 0
@@ -747,7 +810,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 86,
@@ -755,7 +819,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 128,
@@ -763,7 +828,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 170,
@@ -771,7 +837,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 212,
@@ -779,7 +846,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 254,
@@ -787,7 +855,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 296,
@@ -795,7 +864,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 338,
@@ -803,7 +873,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     },
                     {
                       "x": 2,
@@ -811,7 +882,8 @@
                       "opacity": 1,
                       "stroke": "#ddd",
                       "strokeWidth": 1,
-                      "y2": -232
+                      "y2": -232,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -828,7 +900,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 86,
@@ -836,7 +909,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 128,
@@ -844,7 +918,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 170,
@@ -852,7 +927,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 212,
@@ -860,7 +936,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 254,
@@ -868,7 +945,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 296,
@@ -876,7 +954,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 338,
@@ -884,7 +963,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     },
                     {
                       "x": 2,
@@ -892,7 +972,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "y2": 5
+                      "y2": 5,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -914,7 +995,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 65,
@@ -927,7 +1009,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 107,
@@ -940,7 +1023,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 149,
@@ -953,7 +1037,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 191,
@@ -966,7 +1051,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 233,
@@ -979,7 +1065,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 275,
@@ -992,7 +1079,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": 317,
@@ -1005,7 +1093,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     },
                     {
                       "x": null,
@@ -1018,7 +1107,8 @@
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
-                      "fontSize": 10
+                      "fontSize": 10,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1035,7 +1125,8 @@
                       "opacity": 1,
                       "stroke": "#888",
                       "strokeWidth": 1,
-                      "x2": 339
+                      "x2": 339,
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1057,7 +1148,8 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1065,8 +1157,11 @@
               ],
               "x": 0.5,
               "y": 232.5,
+              "ariaHidden": null,
+              "ariaLabel": "x axis showing Bottom Title with values 0,1,2,3,4,5,6,7",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "axis",
+              "tabindex": null
             }
           ],
           "zindex": 0
@@ -1237,7 +1332,8 @@
                               "y": 0,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1286,7 +1382,8 @@
                               "y": 16,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1335,7 +1432,8 @@
                               "y": 32,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1384,7 +1482,8 @@
                               "y": 48,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1433,7 +1532,8 @@
                               "y": 63,
                               "width": 24,
                               "height": 11.830127018922198,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1482,7 +1582,8 @@
                               "y": 77,
                               "width": 24,
                               "height": 11.830127018922198,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1516,7 +1617,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1527,8 +1629,9 @@
               "width": 61,
               "height": 118,
               "orient": "right",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as stroke, with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1601,7 +1704,8 @@
                               "y": 0,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1649,7 +1753,8 @@
                               "y": 13,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1697,7 +1802,8 @@
                               "y": 26,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1745,7 +1851,8 @@
                               "y": 39,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1793,7 +1900,8 @@
                               "y": 52,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1841,7 +1949,8 @@
                               "y": 65,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1875,7 +1984,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1886,8 +1996,9 @@
               "width": 61,
               "height": 105,
               "orient": "right",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as fill, with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1961,7 +2072,8 @@
                               "y": 0,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2010,7 +2122,8 @@
                               "y": 16,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2059,7 +2172,8 @@
                               "y": 32,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2108,7 +2222,8 @@
                               "y": 48,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2157,7 +2272,8 @@
                               "y": 63,
                               "width": 24,
                               "height": 11.830127018922198,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2206,7 +2322,8 @@
                               "y": 77,
                               "width": 24,
                               "height": 11.830127018922198,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2240,7 +2357,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -2251,8 +2369,9 @@
               "width": 52,
               "height": 118,
               "orient": "left",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -2326,7 +2445,8 @@
                               "y": 0,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2375,7 +2495,8 @@
                               "y": 16,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2424,7 +2545,8 @@
                               "y": 32,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2473,7 +2595,8 @@
                               "y": 48,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2522,7 +2645,8 @@
                               "y": 64,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2571,7 +2695,8 @@
                               "y": 80,
                               "width": 24,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2605,7 +2730,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -2616,8 +2742,9 @@
               "width": 52,
               "height": 122,
               "orient": "left",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -2691,7 +2818,8 @@
                               "y": 0,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2740,7 +2868,8 @@
                               "y": 16,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2762,8 +2891,9 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "top-left",
+              "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -2837,7 +2967,8 @@
                               "y": 0,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2886,7 +3017,8 @@
                               "y": 16,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2908,8 +3040,9 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "top-right",
+              "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -2983,7 +3116,8 @@
                               "y": 0,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3032,7 +3166,8 @@
                               "y": 16,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -3054,8 +3189,9 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "bottom-left",
+              "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -3129,7 +3265,8 @@
                               "y": 0,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -3178,7 +3315,8 @@
                               "y": 16,
                               "width": 56,
                               "height": 12.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -3200,8 +3338,9 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "bottom-right",
+              "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

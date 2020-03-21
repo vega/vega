@@ -77,7 +77,8 @@
                               "width": 90,
                               "height": 23,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -127,7 +128,8 @@
                               "width": 90,
                               "height": 33.70690632574555,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -177,7 +179,8 @@
                               "width": 90,
                               "height": 41.53943276465978,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -227,7 +230,8 @@
                               "width": 90,
                               "height": 47.720486043288986,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -277,7 +281,8 @@
                               "width": 90,
                               "height": 53,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -308,7 +313,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -321,8 +327,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
+              "ariaLabel": "legend showing Vertical from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -397,7 +404,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -447,7 +455,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -497,7 +506,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -547,7 +557,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -597,7 +608,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -628,7 +640,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -641,8 +654,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
+              "ariaLabel": "legend showing Clipped from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -717,7 +731,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -767,7 +782,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -817,7 +833,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -867,7 +884,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -917,7 +935,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -948,7 +967,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -961,8 +981,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
+              "ariaLabel": "legend showing Clipped - Columns from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1037,7 +1058,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1087,7 +1109,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1137,7 +1160,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1187,7 +1211,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1237,7 +1262,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1268,7 +1294,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1281,8 +1308,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
+              "ariaLabel": "legend showing Clipped - Columns + Padding from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1357,7 +1385,8 @@
                               "width": 60,
                               "height": 23,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1407,7 +1436,8 @@
                               "width": 63,
                               "height": 33.70690632574555,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1457,7 +1487,8 @@
                               "width": 55,
                               "height": 41.53943276465978,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1507,7 +1538,8 @@
                               "width": 69,
                               "height": 47.72048604328897,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1557,7 +1589,8 @@
                               "width": 82,
                               "height": 53,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1588,7 +1621,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1601,8 +1635,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
+              "ariaLabel": "legend showing Horizontal from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1677,7 +1712,8 @@
                               "width": 60,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1727,7 +1763,8 @@
                               "width": 63,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1777,7 +1814,8 @@
                               "width": 55,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1827,7 +1865,8 @@
                               "width": 69,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -1877,7 +1916,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1908,7 +1948,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1921,8 +1962,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
+              "ariaLabel": "legend showing Horizontal - Clipped from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1997,7 +2039,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2047,7 +2090,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2097,7 +2141,8 @@
                               "width": 66,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2147,7 +2192,8 @@
                               "width": 90,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -2197,7 +2243,8 @@
                               "width": 82,
                               "height": 12,
                               "fill": "transparent",
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -2228,7 +2275,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -2241,8 +2289,9 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
+              "ariaLabel": "legend showing Horizontal - Columns from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

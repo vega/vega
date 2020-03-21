@@ -238,7 +238,8 @@
                               "y": 0,
                               "width": 82,
                               "height": 10,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -286,7 +287,8 @@
                               "y": 12,
                               "width": 82,
                               "height": 10.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -334,7 +336,8 @@
                               "y": 25,
                               "width": 82,
                               "height": 13.824555320336756,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -382,7 +385,8 @@
                               "y": 41,
                               "width": 82,
                               "height": 16.245966692414832,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -430,7 +434,8 @@
                               "y": 60,
                               "width": 82,
                               "height": 18.94427190999916,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -478,7 +483,8 @@
                               "y": 81,
                               "width": 82,
                               "height": 21,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -509,7 +515,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -520,8 +527,9 @@
               "width": 82,
               "height": 118,
               "orient": "right",
+              "ariaLabel": "legend showing quantize from 0 to 100 as fill, from 0 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -594,7 +602,8 @@
                               "y": 0,
                               "width": 114,
                               "height": 10.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -642,7 +651,8 @@
                               "y": 13,
                               "width": 114,
                               "height": 13.82455532033676,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -690,7 +700,8 @@
                               "y": 29,
                               "width": 114,
                               "height": 16.245966692414832,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -738,7 +749,8 @@
                               "y": 48,
                               "width": 114,
                               "height": 18.94427190999916,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -786,7 +798,8 @@
                               "y": 69,
                               "width": 114,
                               "height": 21,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -817,7 +830,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -828,8 +842,9 @@
               "width": 114,
               "height": 106,
               "orient": "right",
+              "ariaLabel": "legend showing quantile from 19 to 28 as fill, from 19 to 28 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -902,7 +917,8 @@
                               "y": 0,
                               "width": 80,
                               "height": 10.5,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -950,7 +966,8 @@
                               "y": 13,
                               "width": 80,
                               "height": 15.071067811865476,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             },
                             {
                               "items": [
@@ -998,7 +1015,8 @@
                               "y": 31,
                               "width": 80,
                               "height": 18.94427190999916,
-                              "opacity": 1
+                              "opacity": 1,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1029,7 +1047,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1040,8 +1059,9 @@
               "width": 80,
               "height": 66,
               "orient": "right",
+              "ariaLabel": "legend showing threshold from 30 to 70 as fill, from 30 to 70 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

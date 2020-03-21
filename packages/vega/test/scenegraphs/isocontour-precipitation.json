@@ -961,7 +961,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 50
+                              "x2": 50,
+                              "ariaHidden": true
                             },
                             {
                               "x": 50,
@@ -972,7 +973,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 100
+                              "x2": 100,
+                              "ariaHidden": true
                             },
                             {
                               "x": 100,
@@ -983,7 +985,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 150
+                              "x2": 150,
+                              "ariaHidden": true
                             },
                             {
                               "x": 150,
@@ -994,7 +997,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 200
+                              "x2": 200,
+                              "ariaHidden": true
                             },
                             {
                               "x": 200,
@@ -1005,7 +1009,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 250
+                              "x2": 250,
+                              "ariaHidden": true
                             },
                             {
                               "x": 250,
@@ -1016,7 +1021,8 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 300
+                              "x2": 300,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1036,7 +1042,8 @@
                               "opacity": 1,
                               "text": null,
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 50,
@@ -1047,7 +1054,8 @@
                               "opacity": 1,
                               "text": "500",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 100,
@@ -1058,7 +1066,8 @@
                               "opacity": 1,
                               "text": "1,000",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 150,
@@ -1069,7 +1078,8 @@
                               "opacity": 1,
                               "text": "1,500",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 200,
@@ -1080,7 +1090,8 @@
                               "opacity": 1,
                               "text": "2,000",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             },
                             {
                               "x": 250,
@@ -1091,7 +1102,8 @@
                               "opacity": 1,
                               "text": "2,500",
                               "font": "sans-serif",
-                              "fontSize": 10
+                              "fontSize": 10,
+                              "ariaHidden": true
                             }
                           ],
                           "zindex": 0
@@ -1122,7 +1134,8 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaHidden": true
                     }
                   ],
                   "zindex": 0
@@ -1133,8 +1146,9 @@
               "width": 486,
               "height": 24,
               "orient": "bottom",
+              "ariaLabel": "legend showing Annual Precipitation (mm) from 0 to 3000 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "legend"
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
