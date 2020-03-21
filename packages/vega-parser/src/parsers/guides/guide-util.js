@@ -1,6 +1,6 @@
 import {Left, Right, Center, Start, End, Vertical} from './constants';
 import {value} from '../../util';
-import {isObject, stringValue} from 'vega-util';
+import {isObject, stringValue, isArray} from 'vega-util';
 
 export function lookup(spec, config) {
   const _ = (name, dflt) => value(spec[name], value(config[name], dflt));
@@ -96,6 +96,11 @@ function domainText(scaleType, scaleName) {
 }
 
 function titleText(title) {
+  if (isArray(title)) {
+    // only use the first row of multiline titles
+    title = title[0];
+  }
+
   if (title) {
     return isObject(title) ? ` showing " + ${title.signal} + "` : ` showing ${title}`;
   }
