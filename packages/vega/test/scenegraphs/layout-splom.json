@@ -20937,7 +20937,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Species with values setosa,versicolor,virginica as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

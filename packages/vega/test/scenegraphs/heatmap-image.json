@@ -1120,7 +1120,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Avg. Temp (°F) from 35 to 80 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

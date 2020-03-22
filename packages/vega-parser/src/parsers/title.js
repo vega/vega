@@ -98,8 +98,8 @@ function buildTitle(spec, _, userEncode, dataRef) {
     ariaHidden:   _('ariaHidden'),
     ariaLabel:    _('ariaLabel'),
     ariaRole:     _('ariaRole'),
-    ariaRoleDescription: _('ariaRoleDescription') || 'title',
-    tabindex:     _('tabindex'),
+    ariaRoleDescription: _('ariaRoleDescription'),
+    tabindex:     _('tabindex')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
@@ -136,8 +136,8 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     ariaHidden:   _('subtitleAriaHidden'),
     ariaLabel:    _('subtitleAriaLabel'),
     ariaRole:     _('subtitleAriaRole'),
-    ariaRoleDescription: _('subtitleAriaRoleDescription') || 'subtitle',
-    tabindex:     _('subtitleTabindex'),
+    ariaRoleDescription: _('subtitleAriaRoleDescription'),
+    tabindex:     _('subtitleTabindex')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),

@@ -329,7 +329,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Vertical from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -656,7 +656,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Clipped from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -983,7 +983,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Clipped - Columns from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1310,7 +1310,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Clipped - Columns + Padding from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1637,7 +1637,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Horizontal from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1964,7 +1964,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Horizontal - Clipped from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2291,7 +2291,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Horizontal - Columns from -100 to 100 as fill, from -100 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

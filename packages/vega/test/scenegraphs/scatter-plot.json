@@ -4070,7 +4070,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Acceleration from 0 to 24.8 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -4540,7 +4540,7 @@
               "orient": "bottom",
               "ariaLabel": "legend showing Legend 1 from 0 to 24.8 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -4910,7 +4910,7 @@
               "orient": "bottom",
               "ariaLabel": "legend showing Legend 2 from 0 to 24.8 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

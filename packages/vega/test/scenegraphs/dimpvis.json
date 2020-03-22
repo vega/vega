@@ -2222,7 +2222,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Region with values 0,3,4,1,5,2 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

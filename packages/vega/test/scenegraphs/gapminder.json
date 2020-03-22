@@ -1589,7 +1589,7 @@
               "orient": "bottom-left",
               "ariaLabel": "legend showing Region with values South Asia,America,East Asia & Pacific,Europe & Central Asia,Middle East & North Africa,Sub-Saharan Africa as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

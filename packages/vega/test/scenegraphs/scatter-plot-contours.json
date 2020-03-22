@@ -3304,7 +3304,7 @@
               "orient": "right",
               "ariaLabel": "legend with values USA,Japan,Europe as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

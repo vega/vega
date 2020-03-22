@@ -1596,7 +1596,7 @@
               "orient": "top-left",
               "ariaLabel": "legend showing Period with values Nazi Rule,GDR (East Germany) as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

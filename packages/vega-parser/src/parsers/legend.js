@@ -152,9 +152,9 @@ function buildLegendEncode(_, config, spec, scope) {
     y:            _('legendY'),
     ariaHidden:   _('ariaHidden'),
     ariaLabel:    _('ariaLabel') || legendAriaLabel(spec, scope),
-    ariaRole:     _('ariaRole') || 'graphics-object',
-    ariaRoleDescription: _('ariaRoleDescription') || 'axis',
-    tabindex:     _('tabindex'),
+    ariaRole:     _('ariaRole'),
+    ariaRoleDescription: _('ariaRoleDescription'),
+    tabindex:     _('tabindex')
   });
 
   return encode;

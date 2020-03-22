@@ -11127,7 +11127,7 @@
               "orient": "bottom-right",
               "ariaLabel": "legend showing Unemployment from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

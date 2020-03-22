@@ -129,7 +129,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 2 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -280,7 +280,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 3 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -455,7 +455,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 4 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -654,7 +654,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 5 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -877,7 +877,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 6 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1124,7 +1124,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 7 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1395,7 +1395,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 8 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1690,7 +1690,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Quantize 9 from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1841,7 +1841,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Quantile 3 from 19 to 28 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2040,7 +2040,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Quantile 5 from 19 to 28 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2287,7 +2287,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Quantile 7 from 19 to 28 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2414,7 +2414,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Threshold 1 from 50 to undefined as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2565,7 +2565,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Threshold 2 from 30 to 70 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2740,7 +2740,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Threshold 3 from 30 to 70 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2939,7 +2939,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Bin-Ordinal 5 from 0 to 20 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3258,7 +3258,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Bin-Ordinal 10 from 0 to 10 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

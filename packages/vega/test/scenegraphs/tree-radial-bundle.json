@@ -44419,7 +44419,7 @@
               "orient": "bottom-right",
               "ariaLabel": "legend showing Dependencies with values depends on,imported by as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

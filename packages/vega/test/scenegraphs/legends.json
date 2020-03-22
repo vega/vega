@@ -131,7 +131,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Gradient from 0 to 100 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -260,7 +260,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Multi-Stop from -100 to -35 as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -636,7 +636,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Sequence from 0 to 100 as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -951,7 +951,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Stops from -100 to -35 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1168,7 +1168,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Orient None from -100 to -35 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

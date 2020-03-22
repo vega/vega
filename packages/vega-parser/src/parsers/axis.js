@@ -47,9 +47,9 @@ export default function(spec, scope) {
       range:        {signal: `abs(span(range("${spec.scale}")))`},
       ariaHidden:   encoder(_('ariaHidden')),
       ariaLabel:    encoder(_('ariaLabel') || axisAriaLabel(spec, scope)),
-      ariaRole:     encoder(_('ariaRole') || 'graphics-object'),
-      ariaRoleDescription: encoder(_('ariaRoleDescription') || 'axis'),
-      tabindex:     encoder(_('tabindex')),
+      ariaRole:     encoder(_('ariaRole')),
+      ariaRoleDescription: encoder(_('ariaRoleDescription')),
+      tabindex:     encoder(_('tabindex'))
     }
   }, encode.axis, Skip);
 

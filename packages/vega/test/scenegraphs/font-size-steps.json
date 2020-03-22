@@ -1192,7 +1192,7 @@
               "orient": "bottom-right",
               "ariaLabel": "legend with values log,linear as strokeDash",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

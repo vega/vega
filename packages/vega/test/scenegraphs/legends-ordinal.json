@@ -1052,7 +1052,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Category with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2102,7 +2102,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Ordinal with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3152,7 +3152,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Ramp with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -4202,7 +4202,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Diverging with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -5252,7 +5252,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Heatmap with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -6302,7 +6302,7 @@
               "orient": "none",
               "ariaLabel": "legend showing Custom with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

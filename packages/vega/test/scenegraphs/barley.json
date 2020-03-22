@@ -5489,7 +5489,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Year with values 1931,1932 as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

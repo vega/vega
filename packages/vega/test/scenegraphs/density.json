@@ -6524,7 +6524,7 @@
               "orient": "top-left",
               "ariaLabel": "legend with values Normal Estimate,Kernel Density Estimate as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 1

@@ -11102,7 +11102,7 @@
               "orient": "left",
               "ariaLabel": "legend from 0 to 0.15 as fill",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

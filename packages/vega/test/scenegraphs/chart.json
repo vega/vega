@@ -1631,7 +1631,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as stroke, with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1998,7 +1998,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as fill, with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2371,7 +2371,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2744,7 +2744,7 @@
               "orient": "left",
               "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as stroke",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2893,7 +2893,7 @@
               "orient": "top-left",
               "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3042,7 +3042,7 @@
               "orient": "top-right",
               "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3191,7 +3191,7 @@
               "orient": "bottom-left",
               "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3340,7 +3340,7 @@
               "orient": "bottom-right",
               "ariaLabel": "legend with values alpha,beta as shape",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

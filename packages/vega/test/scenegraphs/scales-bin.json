@@ -1132,7 +1132,7 @@
               "orient": "right",
               "ariaLabel": "legend showing Bins from 0 to 10 as fill, from 0 to 100 as size",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis"
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
