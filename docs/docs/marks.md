@@ -144,7 +144,7 @@ Here is an example in which point marks serve as the backing data for a set of t
 
 All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property: individual mark types support standardized encoding channel names, but arbitrary names are also allowed, resulting in new named properties on output scenegraph items. The value of a property definition should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
 
-The `enter` set is invoked when a mark item is first instantiated and also when a visualization is resized. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
+The `enter` set is invoked when a mark item is first instantiated. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
 
 Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
 
