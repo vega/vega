@@ -27,7 +27,7 @@
     "http-server": "^0.12.1",
     "jsdom": "^16.2.0",
     "lerna": "^3.20.2",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.1",
     "rimraf": "^3.0.2",
     "rollup": "^1.32.0",
     "@rollup/plugin-json": "^4.0.2",
