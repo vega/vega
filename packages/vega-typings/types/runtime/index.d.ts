@@ -23,7 +23,7 @@ export interface Loader {
 export class View {
   constructor(runtime: Runtime, config?: any);
   initialize(dom?: Element | string): this;
-  finalize(): void;
+  finalize(): this;
   logLevel(level: number): this;
   renderer(renderer: Renderers): this;
   loader(loader: Loader): this;
