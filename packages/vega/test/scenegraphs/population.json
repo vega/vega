@@ -561,7 +561,7 @@
                       "x": 0.5,
                       "y": 400.5,
                       "ariaHidden": null,
-                      "ariaLabel": "x axis from 0 to 12000000",
+                      "ariaLabel": "x axis from 0.00000 to 12.0000M",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis",
                       "tabindex": null
@@ -1111,7 +1111,7 @@
                       "x": 0.5,
                       "y": 400.5,
                       "ariaHidden": null,
-                      "ariaLabel": "x axis from 0 to 12000000",
+                      "ariaLabel": "x axis from 0.00000 to 12.0000M",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis",
                       "tabindex": null

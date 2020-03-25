@@ -1102,7 +1102,8 @@
                               "angle": 0,
                               "limit": 400,
                               "font": "sans-serif",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "ariaRoleDescription": "subtitle"
                             }
                           ],
                           "zindex": 0
@@ -2222,7 +2223,8 @@
                               "angle": -90,
                               "limit": 100,
                               "font": "sans-serif",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "ariaRoleDescription": "subtitle"
                             }
                           ],
                           "zindex": 0
@@ -3343,7 +3345,8 @@
                               "angle": 90,
                               "limit": 100,
                               "font": "sans-serif",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "ariaRoleDescription": "subtitle"
                             }
                           ],
                           "zindex": 0
@@ -4464,7 +4467,8 @@
                               "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 12,
-                              "fontStyle": "italic"
+                              "fontStyle": "italic",
+                              "ariaRoleDescription": "subtitle"
                             }
                           ],
                           "zindex": 0

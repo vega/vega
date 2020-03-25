@@ -285,7 +285,7 @@
               "x": 0.5,
               "y": 80.5,
               "ariaHidden": null,
-              "ariaLabel": "x axis from Fri Feb 22 1732 00:07:02 GMT-0752 (Pacific Standard Time) to Mon Jun 27 1836 23:07:02 GMT-0752 (Pacific Daylight Time)",
+              "ariaLabel": "x axis from 1732 to 1836",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
               "tabindex": null

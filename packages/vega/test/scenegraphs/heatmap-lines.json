@@ -336,7 +336,7 @@
               "x": 0.5,
               "y": 600.5,
               "ariaHidden": null,
-              "ariaLabel": "x axis showing Month from Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time) to Fri Dec 31 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaLabel": "x axis showing Month from Jan to Dec",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
               "tabindex": null

@@ -11100,7 +11100,7 @@
               "width": 58,
               "height": 362,
               "orient": "left",
-              "ariaLabel": "legend from 0 to 0.15 as fill",
+              "ariaLabel": "legend from 0.0% to 15.0% as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

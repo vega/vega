@@ -480,7 +480,7 @@
               "x": 0.5,
               "y": 0.5,
               "ariaHidden": null,
-              "ariaLabel": "y axis from -1 to 5",
+              "ariaLabel": "y axis from -100.000000% to 500.000000%",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
               "tabindex": null

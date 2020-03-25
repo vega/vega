@@ -822,7 +822,7 @@
               "x": 800.5,
               "y": 0.5,
               "ariaHidden": null,
-              "ariaLabel": "y axis from 0 to 1.000000000000001",
+              "ariaLabel": "y axis from 0.000000% to 100.000000%",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
               "tabindex": null

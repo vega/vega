@@ -930,7 +930,7 @@
                       "x": 0.5,
                       "y": 200.5,
                       "ariaHidden": null,
-                      "ariaLabel": "x axis from Sun Jan 01 2012 00:00:00 GMT-0800 (Pacific Standard Time) to Sun Jan 08 2012 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaLabel": "x axis from [object Object] to [object Object]",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis",
                       "tabindex": null

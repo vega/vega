@@ -336,7 +336,7 @@
               "x": 0.5,
               "y": 500.5,
               "ariaHidden": null,
-              "ariaLabel": "x axis showing Month from Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time) to Fri Dec 31 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaLabel": "x axis showing Month from Jan to Dec",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
               "tabindex": null
@@ -62485,7 +62485,7 @@
               "width": 123,
               "height": 516,
               "orient": "none",
-              "ariaLabel": "legend showing Avg. Temp (°F) from 35 to 80 as fill",
+              "ariaLabel": "legend showing Avg. Temp (°F) from 35.0 to 80.0 as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
