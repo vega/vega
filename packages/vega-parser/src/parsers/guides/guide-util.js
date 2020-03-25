@@ -1,6 +1,7 @@
 import {Left, Right, Center, Start, End, Vertical} from './constants';
 import {value} from '../../util';
 import {isObject, stringValue, isArray} from 'vega-util';
+import {Time, UTC} from 'vega-scale';
 
 export function lookup(spec, config) {
   const _ = (name, dflt) => value(spec[name], value(config[name], dflt));
@@ -89,13 +90,45 @@ export function extendOffset(value, offset) {
 
 const DISCRETE_SCALES = new Set(['ordinal', 'band', 'point']);
 
-function domainText(scaleType, scaleName) {
-  return DISCRETE_SCALES.has(scaleType)
-    ? ` with values " + domain('${scaleName}')`
-    : ` from " + domain("${scaleName}")[0] + " to " + domain("${scaleName}")[1]`;
+function formatType(_, scaleType) {
+  const formatType = _('formatType');
+
+  if (formatType) {
+    return formatType;
+  }
+  if (scaleType === Time) {
+    return 'time'
+  }
+  if (scaleType === UTC) {
+    return 'utc'
+  }
 }
 
-function titleText(title) {
+function wrapFormat(text, format, formatType) {
+  if (format == null) {
+    return text
+  }
+  const func = formatType === "time" ? "timeFormat" : formatType === "utc" ? "utcFormat" : "format";
+  return `${func}(${text}, "${format}")`;
+}
+
+function domainText(scaleType, scaleName, format, formatType) {
+  return DISCRETE_SCALES.has(scaleType)
+    ? ` with values " + domain('${scaleName}')`
+    : ` from " + ${wrapFormat(
+        `domain("${scaleName}")[0]`,
+        format,
+        formatType
+      )} + " to " + ${wrapFormat(
+        `domain("${scaleName}")[1]`,
+        format,
+        formatType
+      )}`;
+}
+
+function titleText(_) {
+  let title = _('title')
+
   if (isArray(title)) {
     // only use the first row of multiline titles
     title = title[0];
@@ -108,24 +141,26 @@ function titleText(title) {
   return '';
 }
 
-export function legendAriaLabel(spec, scope) {
+export function legendAriaLabel(_, scope) {
   const domains = [];
   for (const legendType of ['fill', 'stroke', 'opacity', 'size', 'shape', 'strokeDash']) {
-    const scaleName = spec[legendType];
+    const scaleName = _(legendType);
     if (scaleName) {
-      const scale = scope.scales[scaleName];
-      domains.push(`${domainText(scale.params.type, scaleName)} + " as ${legendType}`);
+      const scaleType = scope.scales[scaleName].params.type;
+      const domain = domainText(scaleType, scaleName, _('format'), formatType(_, scaleType));
+      domains.push(`${domain} + " as ${legendType}`);
     }
   }
-  const signal = `"legend${titleText(spec.title)}${domains.join(',')}"`;
+  const signal = `"legend${titleText(_)}${domains.join(',')}"`;
   return { signal };
 }
 
-export function axisAriaLabel(spec, scope) {
-  const scaleName = spec.scale;
-  const scale = scope.scales[scaleName];
-  const axisType = spec.orient === 'bottom' || spec.orient === 'top' ? 'x' : 'y';
-  const domain = domainText(scale.params.type, scaleName);
-  const signal = `"${axisType} axis${titleText(spec.title)}${domain}`;
+export function axisAriaLabel(_, scope) {
+  const scaleName = _('scale');
+  const scaleType = scope.scales[scaleName].params.type;
+  const orient = _('orient')
+  const axisType = orient === 'bottom' || orient === 'top' ? 'x' : 'y';
+  const domain = domainText(scaleType, scaleName, _('format'), formatType(_, scaleType));
+  const signal = `"${axisType} axis${titleText(_)}${domain}`;
   return { signal };
 }

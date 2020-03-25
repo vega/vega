@@ -122,11 +122,8 @@ export default function() {
       anchor: 'middle',
       offset: 4,
       subtitlePadding: 3,
-      ariaRoleDescription: 'title'
-    },
-
-    subtitle: {
-      ariaRoleDescription: 'subtitle'
+      ariaRoleDescription: 'title',
+      subtitleAriaRoleDescription: 'subtitle'
     },
 
     // defaults for axes

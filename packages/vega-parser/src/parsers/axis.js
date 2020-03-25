@@ -39,14 +39,14 @@ export default function(spec, scope) {
   // encoding properties for axis group item
   axisEncode = extendEncode({
     update: {
-      offset:       encoder(_('offset') || 0),
+      offset:       encoder(_('offset', 0)),
       position:     encoder(value(spec.position, 0)),
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
       range:        {signal: `abs(span(range("${spec.scale}")))`},
       ariaHidden:   encoder(_('ariaHidden')),
-      ariaLabel:    encoder(_('ariaLabel') || axisAriaLabel(spec, scope)),
+      ariaLabel:    encoder(_('ariaLabel', axisAriaLabel(_, scope))),
       ariaRole:     encoder(_('ariaRole')),
       ariaRoleDescription: encoder(_('ariaRoleDescription')),
       tabindex:     encoder(_('tabindex'))

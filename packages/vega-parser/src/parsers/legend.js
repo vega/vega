@@ -151,7 +151,7 @@ function buildLegendEncode(_, config, spec, scope) {
     x:            _('legendX'),
     y:            _('legendY'),
     ariaHidden:   _('ariaHidden'),
-    ariaLabel:    _('ariaLabel') || legendAriaLabel(spec, scope),
+    ariaLabel:    _('ariaLabel', legendAriaLabel(_, scope)),
     ariaRole:     _('ariaRole'),
     ariaRoleDescription: _('ariaRoleDescription'),
     tabindex:     _('tabindex')
