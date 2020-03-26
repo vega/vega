@@ -117,16 +117,15 @@ prototype.transform = function(_, pulse) {
   // skip labels with no content
   source = source.filter(hasBounds);
 
+  // early exit, nothing to do
+  if (!source.length) return;
+
   if (_.sort) {
     source = source.slice().sort(_.sort);
   }
 
   items = reset(source);
   pulse = reflow(pulse, _);
-
-  if (items.length === 0) {
-    return pulse; // early exit, nothing to do
-  }
 
   if (items.length >= 3 && hasOverlap(items, sep)) {
     do {
