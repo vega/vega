@@ -113,8 +113,9 @@ export const WindowOps = {
   },
 
   prev_value: function(field) {
-    let prev = null;
+    let prev;
     return {
+      init: () => prev = null,
       next: w => {
         let v = field(w.data[w.index]);
         return v != null ? (prev = v) : prev;
@@ -122,9 +123,9 @@ export const WindowOps = {
     }
   },
   next_value: function(field) {
-    let v = null,
-        i = -1;
+    let v, i;
     return {
+      init: () => (v = null, i = -1),
       next: w => {
         let d = w.data;
         return w.index <= i ? v
