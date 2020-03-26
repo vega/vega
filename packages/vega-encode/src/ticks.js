@@ -1,7 +1,11 @@
 import {isLogarithmic, Time, UTC} from 'vega-scale';
 import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
-import {error, isNumber, isObject, isString, peek, span} from 'vega-util';
+import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 import {format as numberFormat, formatSpecifier} from 'd3-format';
+
+const defaultFormatter = value => isArray(value)
+  ? value.map(v => String(v))
+  : String(value);
 
 /**
  * Determine the tick count or interval function.
@@ -110,7 +114,7 @@ export function tickFormat(scale, count, specifier, formatType, noSkip) {
         : (type === UTC || formatType === UTC) ? utcFormat(specifier)
         : scale.tickFormat ? scale.tickFormat(count, specifier)
         : specifier ? numberFormat(specifier)
-        : String;
+        : defaultFormatter;
 
   if (isLogarithmic(type)) {
     var logfmt = variablePrecision(specifier);
