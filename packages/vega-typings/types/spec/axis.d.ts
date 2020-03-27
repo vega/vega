@@ -300,7 +300,7 @@ export interface BaseAxis {
   ticks?: BooleanValue;
 
   /**
-   * For band scales, indicates if ticks and grid lines should be placed at the center of a band (default) or at the band extents to indicate intervals.
+   * For band scales, indicates if ticks and grid lines should be placed at the `"center"` of a band (default) or at the band `"extent"`s to indicate intervals
    */
   tickBand?: 'center' | 'extent' | SignalRef;
 
