@@ -81,6 +81,8 @@ function buildTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
+  const ariaHidden = _('ariaHidden');
+
   addEncoders(encode, {
     text:       text,
     align:      {signal: 'item.mark.group.align'},
@@ -95,10 +97,10 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('fontStyle'),
     fontWeight: _('fontWeight'),
     lineHeight: _('lineHeight'),
-    ariaHidden:   _('ariaHidden'),
-    ariaLabel:    _('ariaLabel'),
-    ariaRole:     _('ariaRole'),
-    ariaRoleDescription: _('ariaRoleDescription'),
+    ariaHidden:   ariaHidden,
+    ariaLabel:    ariaHidden == true ? undefined : _('ariaLabel'),
+    ariaRole:     ariaHidden == true ? undefined : _('ariaRole'),
+    ariaRoleDescription: ariaHidden == true ? undefined : _('ariaRoleDescription'),
     tabindex:     _('tabindex')
   }, { // update
     align:      _('align'),
@@ -119,6 +121,8 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
+  const ariaHidden = _('subtitleAriaHidden');
+
   addEncoders(encode, {
     text:       text,
     align:      {signal: 'item.mark.group.align'},
@@ -133,10 +137,10 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('subtitleFontStyle'),
     fontWeight: _('subtitleFontWeight'),
     lineHeight: _('subtitleLineHeight'),
-    ariaHidden:   _('subtitleAriaHidden'),
-    ariaLabel:    _('subtitleAriaLabel'),
-    ariaRole:     _('subtitleAriaRole'),
-    ariaRoleDescription: _('subtitleAriaRoleDescription'),
+    ariaHidden:   ariaHidden,
+    ariaLabel:    ariaHidden == true ? undefined : _('subtitleAriaLabel'),
+    ariaRole:     ariaHidden == true ? undefined : _('subtitleAriaRole'),
+    ariaRoleDescription: ariaHidden == true ? undefined : _('subtitleAriaRoleDescription'),
     tabindex:     _('subtitleTabindex')
   }, { // update
     align:      _('align'),

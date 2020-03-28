@@ -36,6 +36,8 @@ export default function(spec, scope) {
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
+  const ariaHidden = _('ariaHidden');
+
   // encoding properties for axis group item
   axisEncode = extendEncode({
     update: {
@@ -45,10 +47,10 @@ export default function(spec, scope) {
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
       range:        {signal: `abs(span(range("${spec.scale}")))`},
-      ariaHidden:   encoder(_('ariaHidden')),
-      ariaLabel:    encoder(_('ariaLabel', axisAriaLabel(_, scope))),
-      ariaRole:     encoder(_('ariaRole')),
-      ariaRoleDescription: encoder(_('ariaRoleDescription')),
+      ariaHidden:   encoder(ariaHidden),
+      ariaLabel:    encoder(ariaHidden == true ? undefined : _('ariaLabel', axisAriaLabel(_, scope))),
+      ariaRole:     encoder(ariaHidden == true ? undefined : _('ariaRole')),
+      ariaRoleDescription: encoder(ariaHidden == true ? undefined : _('ariaRoleDescription')),
       tabindex:     encoder(_('tabindex'))
     }
   }, encode.axis, Skip);

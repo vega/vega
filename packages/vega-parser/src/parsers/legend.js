@@ -138,6 +138,8 @@ function scaleCount(spec) {
 function buildLegendEncode(_, config, spec, scope) {
   var encode = {enter: {}, update: {}};
 
+  const ariaHidden = _('ariaHidden');
+
   addEncoders(encode, {
     orient:       _('orient'),
     offset:       _('offset'),
@@ -150,10 +152,10 @@ function buildLegendEncode(_, config, spec, scope) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-    ariaHidden:   _('ariaHidden'),
-    ariaLabel:    _('ariaLabel', legendAriaLabel(_, scope)),
-    ariaRole:     _('ariaRole'),
-    ariaRoleDescription: _('ariaRoleDescription'),
+    ariaHidden:   ariaHidden,
+    ariaLabel:    ariaHidden == true ? undefined : _('ariaLabel', legendAriaLabel(_, scope)),
+    ariaRole:     ariaHidden == true ? undefined : _('ariaRole'),
+    ariaRoleDescription: ariaHidden == true ? undefined : _('ariaRoleDescription'),
     tabindex:     _('tabindex')
   });
 
