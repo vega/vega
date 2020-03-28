@@ -61,6 +61,10 @@ export default function() {
       font: defaultFont,
       fontSize: 11
     },
+    trail: {
+      fill: defaultColor,
+      size: defaultStrokeWidth
+    },
 
     // style definitions
     style: {
