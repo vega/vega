@@ -6465,6 +6465,9 @@
           "$ref": "#/defs/treemapTransform"
         },
         {
+          "$ref": "#/defs/labelTransform"
+        },
+        {
           "$ref": "#/defs/loessTransform"
         },
         {
@@ -6599,6 +6602,9 @@
         },
         {
           "$ref": "#/defs/treemapTransform"
+        },
+        {
+          "$ref": "#/defs/labelTransform"
         },
         {
           "$ref": "#/defs/binTransform"
@@ -9055,6 +9061,197 @@
       },
       "required": [
         "type"
+      ],
+      "additionalProperties": false
+    },
+    "labelTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "label"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "size": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "sort": {
+          "$ref": "#/refs/compare"
+        },
+        "anchor": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": [
+            "top-left",
+            "left",
+            "bottom-left",
+            "top",
+            "bottom",
+            "top-right",
+            "right",
+            "bottom-right"
+          ]
+        },
+        "offset": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": [
+            1
+          ]
+        },
+        "padding": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "lineAnchor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "end"
+        },
+        "markIndex": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "avoidBaseMark": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": true
+        },
+        "avoidMarks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "naive"
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 5,
+          "minItems": 5,
+          "default": [
+            "x",
+            "y",
+            "opacity",
+            "align",
+            "baseline"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "size"
       ],
       "additionalProperties": false
     },

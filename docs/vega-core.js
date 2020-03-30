@@ -2034,7 +2034,7 @@
       var type = types[field],
           parts, pattern;
 
-      if (type && (type.indexOf('date:') === 0 || type.indexOf('utc:') === 0)) {
+      if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
         parts = type.split(/:(.+)?/, 2);  // split on first :
         pattern = parts[1];
 
@@ -8549,8 +8549,9 @@
     },
 
     prev_value: function(field) {
-      let prev = null;
+      let prev;
       return {
+        init: () => prev = null,
         next: w => {
           let v = field(w.data[w.index]);
           return v != null ? (prev = v) : prev;
@@ -8558,9 +8559,9 @@
       }
     },
     next_value: function(field) {
-      let v = null,
-          i = -1;
+      let v, i;
       return {
+        init: () => (v = null, i = -1),
         next: w => {
           let d = w.data;
           return w.index <= i ? v
@@ -14296,12 +14297,15 @@
       return pulse;
     }
 
+    // skip labels with no content
+    source = source.filter(hasBounds);
+
+    // early exit, nothing to do
+    if (!source.length) return;
+
     if (_.sort) {
       source = source.slice().sort(_.sort);
     }
-
-    // skip labels with no content
-    source = source.filter(hasBounds);
 
     items = reset(source);
     pulse = reflow(pulse, _);
@@ -16942,6 +16946,10 @@
     }
   }
 
+  const defaultFormatter = value => isArray(value)
+    ? value.map(v => String(v))
+    : String(value);
+
   /**
    * Determine the tick count or interval function.
    * @param {Scale} scale - The scale for which to generate tick values.
@@ -17049,7 +17057,7 @@
           : (type === UTC || formatType === UTC) ? utcFormat(specifier)
           : scale.tickFormat ? scale.tickFormat(count, specifier)
           : specifier ? d3Format.format(specifier)
-          : String;
+          : defaultFormatter;
 
     if (isLogarithmic(type)) {
       var logfmt = variablePrecision(specifier);
@@ -23059,7 +23067,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.10.0";
+  var version = "5.10.1";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -28867,6 +28875,7 @@
 
   function addEncode(object, name, value, set) {
     if (value != null) {
+      // Always assign signal to update, even if the signal is from the enter block
       if (isObject(value) && !isArray(value)) {
         object.update[name] = value;
       } else {
@@ -28919,7 +28928,7 @@
     }
 
     // ignore legend and axis roles
-    if (role == 'legend' || String(role).indexOf('axis') === 0) {
+    if (role == 'legend' || String(role).startsWith('axis')) {
       role = null;
     }
 
@@ -31513,6 +31522,10 @@
         fill: black,
         font: defaultFont,
         fontSize: 11
+      },
+      trail: {
+        fill: defaultColor,
+        size: defaultStrokeWidth
       },
 
       // style definitions
