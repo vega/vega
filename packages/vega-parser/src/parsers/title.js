@@ -66,7 +66,7 @@ function groupEncode(_, userEncode) {
     limit:      _('limit'),
     frame:      _('frame'),
     offset:     _('offset') || 0,
-    padding:    _('subtitlePadding'),
+    padding:    _('subtitlePadding')
   });
 
   return extendEncode(encode, userEncode, Skip);
