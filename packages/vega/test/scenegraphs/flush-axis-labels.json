@@ -1291,7 +1291,9 @@
       "x": 0,
       "y": 0,
       "width": 300,
-      "height": 200
+      "height": 200,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

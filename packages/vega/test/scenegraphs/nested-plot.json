@@ -502,7 +502,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 225
+                      "x2": 225,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -513,7 +515,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 291
+                      "x2": 291,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -524,7 +528,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 219
+                      "x2": 219,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -596,7 +602,9 @@
                       "fill": "#f58518",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 189
+                      "x2": 189,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -682,7 +690,9 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 150
+                      "x2": 150,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -693,7 +703,9 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 266
+                      "x2": 266,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -719,7 +731,9 @@
       "strokeDash": [
         3,
         3
-      ]
+      ],
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

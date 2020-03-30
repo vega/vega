@@ -409,7 +409,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 25,
@@ -419,7 +421,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 25,
@@ -429,7 +433,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             }
           ],
           "zindex": 0
@@ -449,7 +455,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 75,
@@ -460,7 +468,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 75,
@@ -471,7 +481,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             }
           ],
           "zindex": 0
@@ -491,7 +503,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 125,
@@ -502,7 +516,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 125,
@@ -513,7 +529,9 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             }
           ],
           "zindex": 0
@@ -531,7 +549,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 175,
@@ -540,7 +560,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             },
             {
               "x": 175,
@@ -549,7 +571,9 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             }
           ],
           "zindex": 0
@@ -558,7 +582,9 @@
       "x": 0,
       "y": 0,
       "width": 200,
-      "height": 200
+      "height": 200,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

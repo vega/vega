@@ -19,7 +19,9 @@
               "width": 750,
               "height": 500,
               "aspect": false,
-              "smooth": true
+              "smooth": true,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "image"
             }
           ],
           "zindex": 0
@@ -28,7 +30,9 @@
       "x": 0,
       "y": 0,
       "width": 750,
-      "height": 500
+      "height": 500,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

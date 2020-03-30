@@ -449,7 +449,9 @@
                       "width": 27,
                       "height": 15,
                       "fill": "#1f77b4",
-                      "x2": 27
+                      "x2": 27,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -457,7 +459,9 @@
                       "width": 164,
                       "height": 15,
                       "fill": "#aec7e8",
-                      "x2": 164
+                      "x2": 164,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -465,7 +469,9 @@
                       "width": 245,
                       "height": 15,
                       "fill": "#ff7f0e",
-                      "x2": 245
+                      "x2": 245,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -473,7 +479,9 @@
                       "width": 109,
                       "height": 15,
                       "fill": "#ffbb78",
-                      "x2": 109
+                      "x2": 109,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -492,7 +500,9 @@
                       "fill": "white",
                       "text": 0.1,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 159,
@@ -502,7 +512,9 @@
                       "fill": "black",
                       "text": 0.6,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 240,
@@ -512,7 +524,9 @@
                       "fill": "black",
                       "text": 0.9,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 104,
@@ -522,7 +536,9 @@
                       "fill": "black",
                       "text": 0.4,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -545,7 +561,9 @@
                       "width": 191,
                       "height": 15,
                       "fill": "#1f77b4",
-                      "x2": 191
+                      "x2": 191,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -553,7 +571,9 @@
                       "width": 55,
                       "height": 15,
                       "fill": "#aec7e8",
-                      "x2": 55
+                      "x2": 55,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -561,7 +581,9 @@
                       "width": 300,
                       "height": 15,
                       "fill": "#ff7f0e",
-                      "x2": 300
+                      "x2": 300,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -569,7 +591,9 @@
                       "width": 218,
                       "height": 15,
                       "fill": "#ffbb78",
-                      "x2": 218
+                      "x2": 218,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -588,7 +612,9 @@
                       "fill": "white",
                       "text": 0.7,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 50,
@@ -598,7 +624,9 @@
                       "fill": "black",
                       "text": 0.2,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 295,
@@ -608,7 +636,9 @@
                       "fill": "black",
                       "text": 1.1,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 213,
@@ -618,7 +648,9 @@
                       "fill": "black",
                       "text": 0.8,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -641,7 +673,9 @@
                       "width": 164,
                       "height": 15,
                       "fill": "#1f77b4",
-                      "x2": 164
+                      "x2": 164,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -649,7 +683,9 @@
                       "width": 27,
                       "height": 15,
                       "fill": "#aec7e8",
-                      "x2": 27
+                      "x2": 27,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -657,7 +693,9 @@
                       "width": 55,
                       "height": 15,
                       "fill": "#ff7f0e",
-                      "x2": 55
+                      "x2": 55,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "x": 0,
@@ -665,7 +703,9 @@
                       "width": 191,
                       "height": 15,
                       "fill": "#ffbb78",
-                      "x2": 191
+                      "x2": 191,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -684,7 +724,9 @@
                       "fill": "white",
                       "text": 0.6,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 22,
@@ -694,7 +736,9 @@
                       "fill": "black",
                       "text": 0.1,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 50,
@@ -704,7 +748,9 @@
                       "fill": "black",
                       "text": 0.2,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     },
                     {
                       "x": 186,
@@ -714,7 +760,9 @@
                       "fill": "black",
                       "text": 0.7,
                       "font": "sans-serif",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -729,7 +777,9 @@
       "x": 0,
       "y": 0,
       "width": 300,
-      "height": 240
+      "height": 240,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

@@ -36,34 +36,62 @@ export default function() {
     // defaults for top-level group marks
     // accepts mark properties (fill, stroke, etc)
     // covers the data rectangle within group width/height
-    group: null,
+    group: {
+      ariaRole: 'group',
+      ariaRoleDescription: 'group'
+    },
 
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
-    mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
-    image: null,
+    mark: {
+      ariaRole: 'graphics-symbol'
+    },
+    arc: {
+      fill: defaultColor,
+      ariaRoleDescription: 'arc'
+    },
+    area: {
+      fill: defaultColor,
+      ariaRoleDescription: 'area'
+    },
+    image: {
+      ariaRoleDescription: 'image'
+    },
     line: {
       stroke: defaultColor,
-      strokeWidth: defaultStrokeWidth
+      strokeWidth: defaultStrokeWidth,
+      ariaRoleDescription: 'line'
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: {
+      stroke: defaultColor,
+      ariaRoleDescription: 'path'
+    },
+    rect: {
+      fill: defaultColor,
+      ariaRoleDescription: 'rect'
+    },
+    rule: {
+      stroke: black,
+      ariaRoleDescription: 'rule'
+    },
+    shape: {
+      stroke: defaultColor,
+      ariaRoleDescription: 'shape'
+    },
     symbol: {
       fill: defaultColor,
-      size: 64
+      ariaRoleDescription: 'symbol'
     },
     text: {
       fill: black,
       font: defaultFont,
-      fontSize: 11
+      fontSize: 11,
+      ariaRoleDescription: 'text'
     },
     trail: {
       fill: defaultColor,
-      size: defaultStrokeWidth
+      size: defaultStrokeWidth,
+      ariaRoleDescription: 'trail'
     },
 
     // style definitions

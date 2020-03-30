@@ -453,7 +453,9 @@
               "width": 75,
               "height": 84,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 75,
@@ -461,7 +463,9 @@
               "width": 75,
               "height": 129,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 150,
@@ -469,7 +473,9 @@
               "width": 75,
               "height": 297,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 225,
@@ -477,7 +483,9 @@
               "width": 75,
               "height": 168,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 300,
@@ -485,7 +493,9 @@
               "width": 75,
               "height": 114,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 375,
@@ -493,7 +503,9 @@
               "width": 75,
               "height": 249,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 450,
@@ -501,7 +513,9 @@
               "width": 75,
               "height": 207,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 525,
@@ -509,7 +523,9 @@
               "width": 75,
               "height": 72,
               "fill": "#ccc",
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -518,7 +534,9 @@
       "x": 0,
       "y": 0,
       "width": 600,
-      "height": 300
+      "height": 300,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

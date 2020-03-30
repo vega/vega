@@ -1181,7 +1181,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 44,
@@ -1192,7 +1194,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 86,
@@ -1203,7 +1207,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 128,
@@ -1214,7 +1220,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 170,
@@ -1225,7 +1233,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 212,
@@ -1236,7 +1246,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 254,
@@ -1247,7 +1259,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 296,
@@ -1258,7 +1272,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -3349,7 +3365,9 @@
       "x": 0,
       "y": 0,
       "width": 339,
-      "height": 222
+      "height": 222,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

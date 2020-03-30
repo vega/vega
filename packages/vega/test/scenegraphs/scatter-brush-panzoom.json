@@ -586,7 +586,9 @@
               "width": null,
               "height": null,
               "fill": "#333",
-              "fillOpacity": 0.125
+              "fillOpacity": 0.125,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -606,7 +608,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137.5,
@@ -616,7 +620,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -626,7 +632,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -636,7 +644,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -646,7 +656,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 165,
@@ -656,7 +668,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183.33333333333331,
@@ -666,7 +680,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 179.16666666666669,
@@ -676,7 +692,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187.5,
@@ -686,7 +704,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158.33333333333331,
@@ -696,7 +716,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -706,7 +728,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137.5,
@@ -716,7 +740,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127.49999999999999,
@@ -726,7 +752,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -736,7 +764,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -746,7 +776,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 141.66666666666669,
@@ -756,7 +788,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133.33333333333331,
@@ -766,7 +800,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -776,7 +812,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -786,7 +824,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187.5,
@@ -796,7 +836,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -806,7 +848,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -816,7 +860,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -826,7 +872,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -836,7 +884,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -846,7 +896,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38.333333333333336,
@@ -856,7 +908,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 72.5,
@@ -866,7 +920,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -876,7 +932,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -886,7 +944,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 94.16666666666667,
@@ -896,7 +956,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -906,7 +968,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 179.16666666666669,
@@ -916,7 +980,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 166.66666666666669,
@@ -926,7 +992,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -936,7 +1004,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160.83333333333334,
@@ -946,7 +1016,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -956,7 +1028,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -966,7 +1040,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -976,7 +1052,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -986,7 +1064,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -996,7 +1076,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1006,7 +1088,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -1016,7 +1100,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1026,7 +1112,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -1036,7 +1124,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1046,7 +1136,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137.5,
@@ -1056,7 +1148,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -1066,7 +1160,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127.49999999999999,
@@ -1076,7 +1172,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1086,7 +1184,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1096,7 +1196,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 141.66666666666669,
@@ -1106,7 +1208,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -1116,7 +1220,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -1126,7 +1232,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -1136,7 +1244,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1146,7 +1256,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -1156,7 +1268,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71.66666666666667,
@@ -1166,7 +1280,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1176,7 +1292,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -1186,7 +1304,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 63.33333333333333,
@@ -1196,7 +1316,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -1206,7 +1328,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 57.49999999999999,
@@ -1216,7 +1340,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -1226,7 +1352,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -1236,7 +1364,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -1246,7 +1376,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -1256,7 +1388,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -1266,7 +1400,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1276,7 +1412,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71.66666666666667,
@@ -1286,7 +1424,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137.5,
@@ -1296,7 +1436,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -1306,7 +1448,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1316,7 +1460,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127.49999999999999,
@@ -1326,7 +1472,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1336,7 +1484,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 173.33333333333334,
@@ -1346,7 +1496,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 129.16666666666669,
@@ -1356,7 +1508,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133.33333333333331,
@@ -1366,7 +1520,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158.33333333333331,
@@ -1376,7 +1532,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -1386,7 +1544,9 @@
               "stroke": "rgb(175, 209, 231)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1396,7 +1556,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108.33333333333333,
@@ -1406,7 +1568,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -1416,7 +1580,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1426,7 +1592,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93.33333333333333,
@@ -1436,7 +1604,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 63.33333333333333,
@@ -1446,7 +1616,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 72.5,
@@ -1456,7 +1628,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 57.49999999999999,
@@ -1466,7 +1640,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71.66666666666667,
@@ -1476,7 +1652,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -1486,7 +1664,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -1496,7 +1676,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -1506,7 +1688,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -1516,7 +1700,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -1526,7 +1712,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1536,7 +1724,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -1546,7 +1736,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 114.16666666666666,
@@ -1556,7 +1748,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1566,7 +1760,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 165,
@@ -1576,7 +1772,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1586,7 +1784,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 131.66666666666666,
@@ -1596,7 +1796,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1606,7 +1808,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 179.16666666666669,
@@ -1616,7 +1820,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187.5,
@@ -1626,7 +1832,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145.83333333333331,
@@ -1636,7 +1844,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -1646,7 +1856,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1656,7 +1868,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1666,7 +1880,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -1676,7 +1892,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -1686,7 +1904,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38.333333333333336,
@@ -1696,7 +1916,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1706,7 +1928,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 139.16666666666666,
@@ -1716,7 +1940,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 141.66666666666669,
@@ -1726,7 +1952,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1736,7 +1964,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1746,7 +1976,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -1756,7 +1988,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -1766,7 +2000,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 78.33333333333333,
@@ -1776,7 +2012,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1786,7 +2024,9 @@
               "stroke": "rgb(175, 209, 231)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -1796,7 +2036,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 89.16666666666667,
@@ -1806,7 +2048,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1816,7 +2060,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -1826,7 +2072,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 191.66666666666669,
@@ -1836,7 +2084,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40.833333333333336,
@@ -1846,7 +2096,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -1856,7 +2108,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75.83333333333333,
@@ -1866,7 +2120,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93.33333333333333,
@@ -1876,7 +2132,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1886,7 +2144,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -1896,7 +2156,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 101.66666666666666,
@@ -1906,7 +2168,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1916,7 +2180,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -1926,7 +2192,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -1936,7 +2204,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1946,7 +2216,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -1956,7 +2228,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -1966,7 +2240,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -1976,7 +2252,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -1986,7 +2264,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -1996,7 +2276,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -2006,7 +2288,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2016,7 +2300,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -2026,7 +2312,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -2036,7 +2324,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2046,7 +2336,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2056,7 +2348,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -2066,7 +2360,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2076,7 +2372,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69.16666666666667,
@@ -2086,7 +2384,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -2096,7 +2396,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -2106,7 +2408,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43.333333333333336,
@@ -2116,7 +2420,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50.83333333333333,
@@ -2126,7 +2432,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -2136,7 +2444,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -2146,7 +2456,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -2156,7 +2468,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -2166,7 +2480,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77.5,
@@ -2176,7 +2492,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -2186,7 +2504,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -2196,7 +2516,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -2206,7 +2528,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -2216,7 +2540,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -2226,7 +2552,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 141.66666666666669,
@@ -2236,7 +2564,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -2246,7 +2576,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2256,7 +2588,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123.33333333333334,
@@ -2266,7 +2600,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2276,7 +2612,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -2286,7 +2624,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2296,7 +2636,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -2306,7 +2648,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2316,7 +2660,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2326,7 +2672,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 107.5,
@@ -2336,7 +2684,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -2346,7 +2696,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69.16666666666667,
@@ -2356,7 +2708,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -2366,7 +2720,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -2376,7 +2732,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2386,7 +2744,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59.166666666666664,
@@ -2396,7 +2756,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -2406,7 +2768,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -2416,7 +2780,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -2426,7 +2792,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -2436,7 +2804,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -2446,7 +2816,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -2456,7 +2828,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 81.66666666666667,
@@ -2466,7 +2840,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -2476,7 +2852,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44.166666666666664,
@@ -2486,7 +2864,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71.66666666666667,
@@ -2496,7 +2876,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 67.5,
@@ -2506,7 +2888,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -2516,7 +2900,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65.83333333333333,
@@ -2526,7 +2912,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69.16666666666667,
@@ -2536,7 +2924,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -2546,7 +2936,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2556,7 +2948,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -2566,7 +2960,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 126.66666666666666,
@@ -2576,7 +2972,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -2586,7 +2984,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -2596,7 +2996,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 67.5,
@@ -2606,7 +3008,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -2616,7 +3020,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43.333333333333336,
@@ -2626,7 +3032,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -2636,7 +3044,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -2646,7 +3056,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44.166666666666664,
@@ -2656,7 +3068,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -2666,7 +3080,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -2676,7 +3092,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2686,7 +3104,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -2696,7 +3116,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59.166666666666664,
@@ -2706,7 +3128,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -2716,7 +3140,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -2726,7 +3152,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -2736,7 +3164,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 85,
@@ -2746,7 +3176,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2756,7 +3188,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -2766,7 +3200,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 90,
@@ -2776,7 +3212,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -2786,7 +3224,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2796,7 +3236,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -2806,7 +3248,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108.33333333333333,
@@ -2816,7 +3260,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2826,7 +3272,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -2836,7 +3284,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -2846,7 +3296,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48.333333333333336,
@@ -2856,7 +3308,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2866,7 +3320,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -2876,7 +3332,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -2886,7 +3344,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2896,7 +3356,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -2906,7 +3368,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108.33333333333333,
@@ -2916,7 +3380,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -2926,7 +3392,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -2936,7 +3404,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -2946,7 +3416,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 81.66666666666667,
@@ -2956,7 +3428,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2966,7 +3440,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 141.66666666666669,
@@ -2976,7 +3452,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158.33333333333331,
@@ -2986,7 +3464,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 124.16666666666667,
@@ -2996,7 +3476,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -3006,7 +3488,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -3016,7 +3500,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -3026,7 +3512,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 74.16666666666667,
@@ -3036,7 +3524,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52.5,
@@ -3046,7 +3536,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69.16666666666667,
@@ -3056,7 +3548,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -3066,7 +3560,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -3076,7 +3572,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -3086,7 +3584,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -3096,7 +3596,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -3106,7 +3608,9 @@
               "stroke": "rgb(175, 209, 231)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3116,7 +3620,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.00000000000001,
@@ -3126,7 +3632,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43.333333333333336,
@@ -3136,7 +3644,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -3146,7 +3656,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -3156,7 +3668,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -3166,7 +3680,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -3176,7 +3692,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115.83333333333334,
@@ -3186,7 +3704,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -3196,7 +3716,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -3206,7 +3728,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -3216,7 +3740,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -3226,7 +3752,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -3236,7 +3764,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3246,7 +3776,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -3256,7 +3788,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -3266,7 +3800,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -3276,7 +3812,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -3286,7 +3824,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120.83333333333333,
@@ -3296,7 +3836,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137.5,
@@ -3306,7 +3848,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115.83333333333334,
@@ -3316,7 +3860,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 116.66666666666667,
@@ -3326,7 +3872,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -3336,7 +3884,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -3346,7 +3896,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -3356,7 +3908,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -3366,7 +3920,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79.16666666666666,
@@ -3376,7 +3932,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -3386,7 +3944,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -3396,7 +3956,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80.83333333333333,
@@ -3406,7 +3968,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 85.83333333333333,
@@ -3416,7 +3980,9 @@
               "stroke": "rgb(91, 163, 207)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 104.16666666666667,
@@ -3426,7 +3992,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -3436,7 +4004,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110.83333333333334,
@@ -3446,7 +4016,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59.166666666666664,
@@ -3456,7 +4028,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -3466,7 +4040,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -3476,7 +4052,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -3486,7 +4064,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -3496,7 +4076,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3506,7 +4088,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -3516,7 +4100,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108.33333333333333,
@@ -3526,7 +4112,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 107.5,
@@ -3536,7 +4124,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 114.99999999999999,
@@ -3546,7 +4136,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112.5,
@@ -3556,7 +4148,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 129.16666666666669,
@@ -3566,7 +4160,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118.33333333333333,
@@ -3576,7 +4172,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 104.16666666666667,
@@ -3586,7 +4184,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3596,7 +4196,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59.166666666666664,
@@ -3606,7 +4208,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -3616,7 +4220,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -3626,7 +4232,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -3636,7 +4244,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 64.16666666666667,
@@ -3646,7 +4256,9 @@
               "stroke": "rgb(91, 163, 207)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 104.16666666666667,
@@ -3656,7 +4268,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59.166666666666664,
@@ -3666,7 +4280,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3676,7 +4292,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -3686,7 +4304,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -3696,7 +4316,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -3706,7 +4328,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 57.49999999999999,
@@ -3716,7 +4340,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3726,7 +4352,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -3736,7 +4364,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 95.83333333333334,
@@ -3746,7 +4376,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3756,7 +4388,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 63.33333333333333,
@@ -3766,7 +4400,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -3776,7 +4412,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -3786,7 +4424,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -3796,7 +4436,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3806,7 +4448,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -3816,7 +4460,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3826,7 +4472,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3836,7 +4484,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -3846,7 +4496,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3856,7 +4508,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -3866,7 +4520,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -3876,7 +4532,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -3886,7 +4544,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -3896,7 +4556,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -3906,7 +4568,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -3916,7 +4580,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3926,7 +4592,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3936,7 +4604,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -3946,7 +4616,9 @@
               "stroke": "rgb(91, 163, 207)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -3956,7 +4628,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -3966,7 +4640,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -3976,7 +4652,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -3986,7 +4664,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51.66666666666667,
@@ -3996,7 +4676,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110.00000000000001,
@@ -4006,7 +4688,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -4016,7 +4700,9 @@
               "stroke": "rgb(175, 209, 231)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4026,7 +4712,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -4036,7 +4724,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -4046,7 +4736,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4056,7 +4748,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4066,7 +4760,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -4076,7 +4772,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -4086,7 +4784,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4096,7 +4796,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48.333333333333336,
@@ -4106,7 +4808,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53.333333333333336,
@@ -4116,7 +4820,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -4126,7 +4832,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -4136,7 +4844,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -4146,7 +4856,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51.66666666666667,
@@ -4156,7 +4868,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -4166,7 +4880,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52.5,
@@ -4176,7 +4892,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -4186,7 +4904,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54.166666666666664,
@@ -4196,7 +4916,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61.66666666666667,
@@ -4206,7 +4928,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -4216,7 +4940,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -4226,7 +4952,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -4236,7 +4964,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83.33333333333334,
@@ -4246,7 +4976,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61.66666666666667,
@@ -4256,7 +4988,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 66.66666666666666,
@@ -4266,7 +5000,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -4276,7 +5012,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 63.33333333333333,
@@ -4286,7 +5024,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96.66666666666667,
@@ -4296,7 +5036,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -4306,7 +5048,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -4316,7 +5060,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87.5,
@@ -4326,7 +5072,9 @@
               "stroke": "rgb(27, 105, 173)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4336,7 +5084,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -4346,7 +5096,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4356,7 +5108,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4366,7 +5120,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4376,7 +5132,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -4386,7 +5144,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4396,7 +5156,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -4406,7 +5168,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -4416,7 +5180,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 0,
@@ -4426,7 +5192,9 @@
               "stroke": null,
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61.66666666666667,
@@ -4436,7 +5204,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -4446,7 +5216,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56.666666666666664,
@@ -4456,7 +5228,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52.5,
@@ -4466,7 +5240,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -4476,7 +5252,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73.33333333333333,
@@ -4486,7 +5264,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62.5,
@@ -4496,7 +5276,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58.333333333333336,
@@ -4506,7 +5288,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -4516,7 +5300,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -4526,7 +5312,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55.833333333333336,
@@ -4536,7 +5324,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91.66666666666666,
@@ -4546,7 +5336,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70.83333333333334,
@@ -4556,7 +5348,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76.66666666666667,
@@ -4566,7 +5360,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93.33333333333333,
@@ -4576,7 +5372,9 @@
               "stroke": "rgb(56, 135, 192)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -4586,7 +5384,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4596,7 +5396,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -4606,7 +5408,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71.66666666666667,
@@ -4616,7 +5420,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43.333333333333336,
@@ -4626,7 +5432,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -4636,7 +5444,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65.83333333333333,
@@ -4646,7 +5456,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 68.33333333333333,
@@ -4656,7 +5468,9 @@
               "stroke": "rgb(134, 188, 220)",
               "strokeWidth": 2,
               "size": 30,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -4672,7 +5486,9 @@
               "width": null,
               "height": null,
               "fill": "transparent",
-              "stroke": null
+              "stroke": null,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -5003,7 +5819,9 @@
       "width": 200,
       "height": 200,
       "fill": "transparent",
-      "stroke": "#ddd"
+      "stroke": "#ddd",
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

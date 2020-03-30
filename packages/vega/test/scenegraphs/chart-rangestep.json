@@ -1127,7 +1127,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1139,7 +1141,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1151,7 +1155,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1163,7 +1169,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1175,7 +1183,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1187,7 +1197,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1199,7 +1211,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "zindex": 0,
@@ -1211,7 +1225,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -2556,7 +2572,9 @@
       "x": 0,
       "y": 0,
       "width": 320,
-      "height": 200
+      "height": 200,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0

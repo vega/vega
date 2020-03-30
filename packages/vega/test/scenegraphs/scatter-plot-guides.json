@@ -671,7 +671,9 @@
               "y": 300,
               "width": 400,
               "height": 35,
-              "fill": "transparent"
+              "fill": "transparent",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -687,7 +689,9 @@
               "width": null,
               "height": 300,
               "fill": "#ddd",
-              "fillOpacity": 0
+              "fillOpacity": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -706,8 +710,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -716,8 +721,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -726,8 +732,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -736,8 +743,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -746,8 +754,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
@@ -756,8 +765,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 367,
@@ -766,8 +776,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -776,8 +787,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -786,8 +798,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -796,8 +809,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -806,8 +820,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 267,
@@ -816,8 +831,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -826,8 +842,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -836,8 +853,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -846,8 +864,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -856,8 +875,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -866,8 +886,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -876,8 +897,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -886,8 +908,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -896,8 +919,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145,
@@ -906,8 +930,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -916,8 +941,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -926,8 +952,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 188,
@@ -936,8 +963,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -946,8 +974,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -956,8 +985,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 333,
@@ -966,8 +996,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 350,
@@ -976,8 +1007,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 322,
@@ -986,8 +1018,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -996,8 +1029,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1006,8 +1040,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1016,8 +1051,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1026,8 +1062,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1036,8 +1073,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1046,8 +1084,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1056,8 +1095,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1066,8 +1106,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -1076,8 +1117,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1086,8 +1128,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 255,
@@ -1096,8 +1139,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1106,8 +1150,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -1116,8 +1161,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -1126,8 +1172,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1136,8 +1183,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1146,8 +1194,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1156,8 +1205,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1166,8 +1216,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1176,8 +1227,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -1186,8 +1238,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1196,8 +1249,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -1206,8 +1260,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -1216,8 +1271,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -1226,8 +1282,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -1236,8 +1293,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -1246,8 +1304,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -1256,8 +1315,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1266,8 +1326,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1276,8 +1337,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 90,
@@ -1286,8 +1348,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1296,8 +1359,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -1306,8 +1370,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -1316,8 +1381,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1326,8 +1392,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1336,8 +1403,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 255,
@@ -1346,8 +1414,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1356,8 +1425,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 347,
@@ -1366,8 +1436,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 258,
@@ -1376,8 +1447,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 267,
@@ -1386,8 +1458,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -1396,8 +1469,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1406,8 +1480,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1416,8 +1491,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -1426,8 +1502,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -1436,8 +1513,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1446,8 +1524,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -1456,8 +1535,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -1466,8 +1546,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145,
@@ -1476,8 +1557,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -1486,8 +1568,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -1496,8 +1579,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -1506,8 +1590,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1516,8 +1601,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1526,8 +1612,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1536,8 +1623,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1546,8 +1634,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1556,8 +1645,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -1566,8 +1656,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 228,
@@ -1576,8 +1667,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1586,8 +1678,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
@@ -1596,8 +1689,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1606,8 +1700,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 263,
@@ -1616,8 +1711,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1626,8 +1722,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -1636,8 +1733,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -1646,8 +1744,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1656,8 +1755,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1666,8 +1766,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1676,8 +1777,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1686,8 +1788,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1696,8 +1799,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1706,8 +1810,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -1716,8 +1821,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1726,8 +1832,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 278,
@@ -1736,8 +1843,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -1746,8 +1854,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -1756,8 +1865,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1766,8 +1876,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1776,8 +1887,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1786,8 +1898,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 157,
@@ -1796,8 +1909,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1806,8 +1920,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -1816,8 +1931,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 178,
@@ -1826,8 +1942,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1836,8 +1953,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -1846,8 +1964,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 383,
@@ -1856,8 +1975,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 82,
@@ -1866,8 +1986,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1876,8 +1997,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 152,
@@ -1886,8 +2008,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -1896,8 +2019,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1906,8 +2030,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1916,8 +2041,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 203,
@@ -1926,8 +2052,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -1936,8 +2063,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1946,8 +2074,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1956,8 +2085,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1966,8 +2096,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -1976,8 +2107,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1986,8 +2118,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -1996,8 +2129,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2006,8 +2140,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2016,8 +2151,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2026,8 +2162,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2036,8 +2173,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2046,8 +2184,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2056,8 +2195,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2066,8 +2206,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2076,8 +2217,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2086,8 +2228,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -2096,8 +2239,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -2106,8 +2250,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2116,8 +2261,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -2126,8 +2272,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 102,
@@ -2136,8 +2283,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2146,8 +2294,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2156,8 +2305,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2166,8 +2316,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2176,8 +2327,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 155,
@@ -2186,8 +2338,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -2196,8 +2349,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2206,8 +2360,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2216,8 +2371,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -2226,8 +2382,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -2236,8 +2393,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -2246,8 +2404,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2256,8 +2415,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2266,8 +2426,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 247,
@@ -2276,8 +2437,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2286,8 +2448,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2296,8 +2459,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2306,8 +2470,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2316,8 +2481,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2326,8 +2492,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2336,8 +2503,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 215,
@@ -2346,8 +2514,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2356,8 +2525,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -2366,8 +2536,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2376,8 +2547,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2386,8 +2558,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -2396,8 +2569,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2406,8 +2580,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2416,8 +2591,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2426,8 +2602,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2436,8 +2613,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2446,8 +2624,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2456,8 +2635,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2466,8 +2646,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 163,
@@ -2476,8 +2657,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -2486,8 +2668,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -2496,8 +2679,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -2506,8 +2690,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 135,
@@ -2516,8 +2701,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -2526,8 +2712,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 132,
@@ -2536,8 +2723,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -2546,8 +2734,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2556,8 +2745,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2566,8 +2756,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -2576,8 +2767,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 253,
@@ -2586,8 +2778,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2596,8 +2789,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2606,8 +2800,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 135,
@@ -2616,8 +2811,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2626,8 +2822,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -2636,8 +2833,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -2646,8 +2844,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2656,8 +2855,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -2666,8 +2866,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2676,8 +2877,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2686,8 +2888,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2696,8 +2899,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2706,8 +2910,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2716,8 +2921,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2726,8 +2932,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2736,8 +2943,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -2746,8 +2954,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 170,
@@ -2756,8 +2965,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2766,8 +2976,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2776,8 +2987,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 180,
@@ -2786,8 +2998,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -2796,8 +3009,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -2806,8 +3020,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2816,8 +3031,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -2826,8 +3042,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2836,8 +3053,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -2846,8 +3064,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -2856,8 +3075,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 97,
@@ -2866,8 +3086,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -2876,8 +3097,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2886,8 +3108,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2896,8 +3119,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2906,8 +3130,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2916,8 +3141,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -2926,8 +3152,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2936,8 +3163,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2946,8 +3174,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2956,8 +3185,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 163,
@@ -2966,8 +3196,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -2976,8 +3207,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -2986,8 +3218,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -2996,8 +3229,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 248,
@@ -3006,8 +3240,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -3016,8 +3251,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3026,8 +3262,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3036,8 +3273,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 148,
@@ -3046,8 +3284,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -3056,8 +3295,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -3066,8 +3306,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3076,8 +3317,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -3086,8 +3328,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -3096,8 +3339,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3106,8 +3350,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3116,8 +3361,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3126,8 +3372,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110,
@@ -3136,8 +3383,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -3146,8 +3394,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3156,8 +3405,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -3166,8 +3416,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3176,8 +3427,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -3186,8 +3438,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 232,
@@ -3196,8 +3449,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3206,8 +3460,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -3216,8 +3471,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3226,8 +3482,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3236,8 +3493,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -3246,8 +3504,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3256,8 +3515,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3266,8 +3526,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3276,8 +3537,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3286,8 +3548,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -3296,8 +3559,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -3306,8 +3570,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -3316,8 +3581,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 232,
@@ -3326,8 +3592,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -3336,8 +3603,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -3346,8 +3614,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -3356,8 +3625,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -3366,8 +3636,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3376,8 +3647,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -3386,8 +3658,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3396,8 +3669,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3406,8 +3680,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -3416,8 +3691,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 172,
@@ -3426,8 +3702,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -3436,8 +3713,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3446,8 +3724,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 222,
@@ -3456,8 +3735,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -3466,8 +3746,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -3476,8 +3757,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3486,8 +3768,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3496,8 +3779,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3506,8 +3790,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3516,8 +3801,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3526,8 +3812,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -3536,8 +3823,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 215,
@@ -3546,8 +3834,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 230,
@@ -3556,8 +3845,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 225,
@@ -3566,8 +3856,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 258,
@@ -3576,8 +3867,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 237,
@@ -3586,8 +3878,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -3596,8 +3889,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -3606,8 +3900,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -3616,8 +3911,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3626,8 +3922,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -3636,8 +3933,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -3646,8 +3944,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 128,
@@ -3656,8 +3955,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -3666,8 +3966,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -3676,8 +3977,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3686,8 +3988,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3696,8 +3999,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3706,8 +4010,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3716,8 +4021,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -3726,8 +4032,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3736,8 +4043,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3746,8 +4054,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3756,8 +4065,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3766,8 +4076,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -3776,8 +4087,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -3786,8 +4098,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3796,8 +4109,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3806,8 +4120,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3816,8 +4131,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3826,8 +4142,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3836,8 +4153,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3846,8 +4164,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -3856,8 +4175,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3866,8 +4186,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3876,8 +4197,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -3886,8 +4208,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3896,8 +4219,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3906,8 +4230,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3916,8 +4241,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3926,8 +4252,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3936,8 +4263,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3946,8 +4274,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3956,8 +4285,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3966,8 +4296,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3976,8 +4307,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3986,8 +4318,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 103,
@@ -3996,8 +4329,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 220,
@@ -4006,8 +4340,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -4016,8 +4351,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4026,8 +4362,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -4036,8 +4373,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4046,8 +4384,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4056,8 +4395,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -4066,8 +4406,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -4076,8 +4417,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4086,8 +4428,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 97,
@@ -4096,8 +4439,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 107,
@@ -4106,8 +4450,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -4116,8 +4461,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -4126,8 +4472,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -4136,8 +4483,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 103,
@@ -4146,8 +4494,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -4156,8 +4505,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -4166,8 +4516,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -4176,8 +4527,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -4186,8 +4538,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -4196,8 +4549,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -4206,8 +4560,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -4216,8 +4571,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -4226,8 +4582,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -4236,8 +4593,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -4246,8 +4604,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -4256,8 +4615,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 193,
@@ -4266,8 +4626,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -4276,8 +4637,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -4286,8 +4648,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -4296,8 +4659,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4306,8 +4670,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -4316,8 +4681,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4326,8 +4692,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4336,8 +4703,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4346,8 +4714,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -4356,8 +4725,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4366,8 +4736,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -4376,8 +4747,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -4386,8 +4758,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -4396,8 +4769,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -4406,8 +4780,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -4416,8 +4791,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -4426,8 +4802,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -4436,8 +4813,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -4446,8 +4824,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -4456,8 +4835,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -4466,8 +4846,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -4476,8 +4857,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -4486,8 +4868,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -4496,8 +4879,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -4506,8 +4890,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -4516,8 +4901,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -4526,8 +4912,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -4536,8 +4923,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -4546,8 +4934,9 @@
               "opacity": 0.7,
               "stroke": "#ff7f0e",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4556,8 +4945,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -4566,8 +4956,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -4576,8 +4967,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -4586,8 +4978,9 @@
               "opacity": 0.7,
               "stroke": "#2ca02c",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -4596,8 +4989,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 132,
@@ -4606,8 +5000,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137,
@@ -4616,8 +5011,9 @@
               "opacity": 0.7,
               "stroke": "#1f77b4",
               "strokeWidth": 2,
-              "size": 64,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -4633,7 +5029,9 @@
               "y": 0,
               "width": null,
               "height": 300,
-              "fill": "transparent"
+              "fill": "transparent",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -4649,7 +5047,9 @@
               "width": 1,
               "height": 300,
               "fill": "firebrick",
-              "fillOpacity": 0
+              "fillOpacity": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -4665,7 +5065,9 @@
               "width": 1,
               "height": 300,
               "fill": "firebrick",
-              "fillOpacity": 0
+              "fillOpacity": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -4900,7 +5302,9 @@
       "x": 0,
       "y": 0,
       "width": 400,
-      "height": 300
+      "height": 300,
+      "ariaRole": "group",
+      "ariaRoleDescription": "group"
     }
   ],
   "zindex": 0
