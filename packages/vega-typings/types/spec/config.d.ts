@@ -252,6 +252,32 @@ export interface MarkConfig {
   angle?: number | SignalRef;
 
   /**
+   * The start angle in radians for arc marks.
+   */
+  startAngle?: number | SignalRef;
+
+  /**
+   * The start angle in radians for arc marks.
+   */
+  endAngle?: number | SignalRef;
+
+  /**
+   * The inner radius in pixels of arc marks.
+   *
+   * @minimum 0
+   * __Default value:__ `0`
+   */
+  innerRadius?: number | SignalRef;
+
+  /**
+   * The outer radius in pixels of arc marks.
+   *
+   * @minimum 0
+   * __Default value:__ `0`
+   */
+  outerRadius?: number | SignalRef;
+
+  /**
    * The vertical alignment of the text. One of `"top"`, `"bottom"`, `"middle"`, `"alphabetic"`.
    *
    * __Default value:__ `"middle"`
