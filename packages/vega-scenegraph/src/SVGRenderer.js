@@ -540,6 +540,13 @@ prototype._update = function(mdef, el, item) {
   // apply svg attributes
   mdef.attr(emit, item, this);
 
+  // optimization: if ariaHidden is true, we can remove other aria properties
+  if (item.ariaHidden) {
+    delete item.ariaLabel;
+    delete item.ariaRole;
+    delete item.ariaRoleDescription;
+  }
+
   // apply general SVG properties
   for (const prop in general_extras) {
     if (item[prop] != null) {
