@@ -387,7 +387,7 @@ export interface MarkConfig {
   // ---------- Corner Radius: Bar, Tick, Rect ----------
 
   /**
-   * The radius in pixels of rounded rectangle corners.
+   * The radius in pixels of rounded rectangle or arc corners.
    *
    * __Default value:__ `0`
    */
