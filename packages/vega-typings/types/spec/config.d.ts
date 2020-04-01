@@ -76,6 +76,9 @@ export type DefaultsConfig = Record<'prevent' | 'allow', boolean | EventType[]>;
 
 export type MarkConfigKeys = 'mark' | Mark['type'];
 
+export type StrokeCap = 'butt' | 'round' | 'square';
+export type StrokeJoin = 'miter' | 'round' | 'bevel';
+
 export interface MarkConfig {
   /**
    * Width of the marks.
@@ -173,7 +176,7 @@ export interface MarkConfig {
    * __Default value:__ `"butt"`
    *
    */
-  strokeCap?: string | SignalRef;
+  strokeCap?: StrokeCap | SignalRef;
 
   /**
    * The stroke line join method. One of `"miter"`, `"round"` or `"bevel"`.
@@ -181,7 +184,7 @@ export interface MarkConfig {
    * __Default value:__ `"miter"`
    *
    */
-  strokeJoin?: string | SignalRef;
+  strokeJoin?: StrokeJoin | SignalRef;
 
   /**
    * The miter limit at which to bevel a line join.
