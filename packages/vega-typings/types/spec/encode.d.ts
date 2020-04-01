@@ -1,3 +1,4 @@
+import { StrokeCap, StrokeJoin, Cursor } from './config.d';
 import { SignalRef } from '.';
 import { Color } from './color';
 import { TitleAnchor } from './title';
@@ -246,11 +247,11 @@ export interface EncodeEntry {
   strokeOpacity?: ProductionRule<NumericValueRef>;
   strokeDash?: ProductionRule<ScaledValueRef<number[]>>;
   strokeDashOffset?: ProductionRule<NumericValueRef>;
-  strokeCap?: ProductionRule<StringValueRef>;
-  strokeJoin?: ProductionRule<StringValueRef>;
+  strokeCap?: ProductionRule<ScaledValueRef<StrokeCap>>;
+  strokeJoin?: ProductionRule<ScaledValueRef<StrokeJoin>>;
   strokeMiterLimit?: ProductionRule<NumericValueRef>;
   blend?: ProductionRule<ScaledValueRef<Blend>>;
-  cursor?: ProductionRule<StringValueRef>;
+  cursor?: ProductionRule<ScaledValueRef<Cursor>>;
   tooltip?: ProductionRule<StringValueRef>;
   zindex?: ProductionRule<NumericValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
