@@ -148,7 +148,9 @@ export interface AxisEncode {
 
 export interface BaseAxis {
   /**
-   * Translation offset in pixels applied to the axis group mark x and y. If specified, overrides the default behavior of a 0.5 offset to pixel-align stroked lines.
+   * Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case translate can be changed (for example, to zero).
+   *
+   * __Default value:__ `0.5`
    */
   translate?: number;
 
