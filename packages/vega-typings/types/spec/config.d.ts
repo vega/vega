@@ -29,17 +29,15 @@ import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
 
-export type ExcludeValueRefKeepSignal<T> =
-  | Exclude<T, ScaledValueRef<any> | NumericValueRef | ColorValueRef>
-  | KeepSignal<T>;
-
 export type KeepSignal<T> = T extends SignalRef ? SignalRef : never;
 
 /**
  * Config properties cannot be scaled or reference fields but they can reference signals.
  */
 export type ExcludeMappedValueRef<T> = {
-  [P in keyof T]: ExcludeValueRefKeepSignal<T[P]>;
+  [P in keyof T]:
+    | Exclude<T[P], ScaledValueRef<any> | NumericValueRef | ColorValueRef>
+    | KeepSignal<T[P]>;
 };
 
 export interface Config
