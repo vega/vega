@@ -4,7 +4,8 @@ import {extendOffset, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
-import {deref} from '../../util';
+import {deref, isSignal} from '../../util';
+import {resolveAxisOrientConditional, resolveXYAxisOrientConditional, xyAxisConditionalEncoding, xyAxisSignalRef} from './axis-util';
 
 function flushExpr(scale, threshold, a, b, c) {
   return {
@@ -17,7 +18,7 @@ function flushExpr(scale, threshold, a, b, c) {
 export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
+      sign = resolveAxisOrientConditional([Left, Top], orient, -1, 1),
       isXAxis = (orient === Top || orient === Bottom),
       scale = spec.scale,
       flush = deref(_('labelFlush')),
@@ -25,8 +26,9 @@ export default function(spec, config, userEncode, dataRef, size, band) {
       flushOn = flush === 0 || !!flush,
       labelAlign = _('labelAlign'),
       labelBaseline = _('labelBaseline'),
-      encode, enter, tickSize, tickPos, align, baseline, offset,
-      bound, overlap;
+      encode, enter, tickSize, tickPos, align,
+      xLabelAlign, yLabelAlign, xLabelBaseline, yLabelBaseline,
+      baseline, offset, bound, overlap, offsetExpr;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -40,30 +42,34 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     offset: extendOffset(band.offset, _('labelOffset'))
   };
 
-  if (isXAxis) {
-    align = labelAlign || (flushOn
-      ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-      : 'center');
-    baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
-    offset = !labelAlign;
-  } else {
-    align = labelAlign || (orient === Right ? 'left' : 'right');
-    baseline = labelBaseline || (flushOn
-      ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-      : 'middle');
-    offset = !labelBaseline;
-  }
+  xLabelAlign = flushOn ? flushExpr(scale, flush, '"left"', '"right"', '"center"') : 'center';
+  yLabelAlign = resolveAxisOrientConditional(Right, orient, 'left', 'right');
+  align = labelAlign || resolveXYAxisOrientConditional('x', orient, xLabelAlign, yLabelAlign);
 
-  offset = offset && flushOn && flushOffset
-    ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
-    : null;
+  xLabelBaseline = resolveAxisOrientConditional('top', orient, 'bottom', 'top');
+  yLabelBaseline = flushOn ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"') : 'middle';
+  baseline = labelBaseline || resolveXYAxisOrientConditional('x', orient, xLabelBaseline, yLabelBaseline);
+
+  offsetExpr = flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0);
+  offset = resolveXYAxisOrientConditional(
+    'x',
+    orient,
+    !labelAlign && flushOn && flushOffset ? offsetExpr : null,
+    !labelBaseline && flushOn && flushOffset ? offsetExpr : null
+  );
+
+  enter = {
+    opacity: zero,
+    x: isSignal(orient) ?
+        xyAxisConditionalEncoding('x', orient.signal, tickPos, tickSize) :
+        isXAxis ? tickPos : tickSize,
+    y: isSignal(orient) ?
+        xyAxisConditionalEncoding('x', orient.signal, tickSize, tickPos) :
+        isXAxis ? tickSize : tickPos
+  };
 
   encode = {
-    enter: enter = {
-      opacity: zero,
-      x: isXAxis ? tickPos : tickSize,
-      y: isXAxis ? tickSize : tickPos
-    },
+    enter: enter,
     update: {
       opacity: one,
       text: {field: Label},
@@ -77,8 +83,18 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     }
   };
 
+  if (isSignal(orient)) {
+    addEncoders(encode, {
+      dx: xyAxisSignalRef('x', orient.signal, offset, null),
+      dy: xyAxisSignalRef('y', orient.signal, offset, null)
+    });
+  } else {
+    addEncoders(encode, {
+      [isXAxis ? 'dx' : 'dy'] : offset,
+    });
+  }
+
   addEncoders(encode, {
-    [isXAxis ? 'dx' : 'dy']: offset,
     align:       align,
     baseline:    baseline,
     angle:       _('labelAngle'),
@@ -91,7 +107,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     limit:       _('labelLimit'),
     lineHeight:  _('labelLineHeight')
   });
-
+    
   bound   = _('labelBound');
   overlap = _('labelOverlap');
 

@@ -118,7 +118,7 @@ function titleCaption(item) {
 
 function axisCaption(item) {
   const datum = item.datum,
-        orient = datum.orient,
+        orient = item.orient,
         title = datum.title ? extractTitle(item) : null,
         ctx = item.context,
         scale = ctx.scales[datum.scale].value,
