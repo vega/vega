@@ -478,7 +478,7 @@ export type AxisConfig = ExcludeMappedValueRef<BaseAxis>;
 /**
  * Legend config without signals so we can use it in Vega-Lite.
  */
-export interface LegendConfig extends BaseLegend {
+export interface LegendConfig extends ExcludeMappedValueRef<BaseLegend> {
   /**
    * The default direction (`"horizontal"` or `"vertical"`) for gradient legends.
    *
