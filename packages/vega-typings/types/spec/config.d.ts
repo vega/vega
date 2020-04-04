@@ -73,9 +73,9 @@ export interface Config
 /**
  *  The defaults object should have a single property: either "prevent" (to indicate which events should have default behavior suppressed) or "allow" (to indicate only those events whose default behavior should be allowed).
  */
-type PreventDefaultConfig = Record<'prevent', boolean | EventType[]>;
-type AllowDefaultConfig = Record<'allow', boolean | EventType[]>;
-export type DefaultsConfig = PreventDefaultConfig | AllowDefaultConfig;
+export type DefaultsConfig =
+  | Record<'prevent', boolean | EventType[]>
+  | Record<'allow', boolean | EventType[]>;
 
 export type MarkConfigKeys = 'mark' | Mark['type'];
 
