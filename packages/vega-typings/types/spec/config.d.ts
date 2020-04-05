@@ -254,13 +254,20 @@ export interface MarkConfig {
 
   /**
    * The start angle in radians for arc marks.
+   * A value of `0` indicates up (north), increasing values proceed clockwise.
    */
   startAngle?: number | SignalRef;
 
   /**
-   * The start angle in radians for arc marks.
+   * The end angle in radians for arc marks.
+   * A value of `0` indicates up (north), increasing values proceed clockwise.
    */
   endAngle?: number | SignalRef;
+
+  /**
+   * The angular padding applied to sides of the arc, in radians.
+   */
+  padAngle?: number | SignalRef;
 
   /**
    * The inner radius in pixels of arc marks.
