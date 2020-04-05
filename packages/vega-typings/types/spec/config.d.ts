@@ -70,7 +70,12 @@ export interface Config
   signals?: (InitSignal | NewSignal)[];
 }
 
-export type DefaultsConfig = Record<'prevent' | 'allow', boolean | EventType[]>;
+/**
+ *  The defaults object should have a single property: either "prevent" (to indicate which events should have default behavior suppressed) or "allow" (to indicate only those events whose default behavior should be allowed).
+ */
+export type DefaultsConfig =
+  | Record<'prevent', boolean | EventType[]>
+  | Record<'allow', boolean | EventType[]>;
 
 export type MarkConfigKeys = 'mark' | Mark['type'];
 
