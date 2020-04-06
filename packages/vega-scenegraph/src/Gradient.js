@@ -1,4 +1,4 @@
-var gradient_id = 0;
+let gradient_id = 0;
 
 export const patternPrefix = 'p_';
 
@@ -7,13 +7,13 @@ export function isGradient(value) {
 }
 
 export function gradientRef(g, defs, base) {
-  let id = g.id,
-      type = g.gradient,
-      prefix = type === 'radial' ? patternPrefix : '';
+  let id = g.id;
+  const type = g.gradient;
+  let prefix = type === 'radial' ? patternPrefix : '';
 
   // check id, assign default values as needed
   if (!id) {
-    id = g.id = 'gradient_' + (gradient_id++);
+    id = g.id = 'gradient_' + gradient_id++;
     if (type === 'radial') {
       g.x1 = get(g.x1, 0.5);
       g.y1 = get(g.y1, 0.5);
@@ -41,18 +41,19 @@ function get(val, def) {
   return val != null ? val : def;
 }
 
-export default function(p0, p1) {
-  var stops = [], gradient;
-  return gradient = {
+export default function (p0, p1) {
+  const stops = [];
+  let gradient;
+  return (gradient = {
     gradient: 'linear',
     x1: p0 ? p0[0] : 0,
     y1: p0 ? p0[1] : 0,
     x2: p1 ? p1[0] : 1,
     y2: p1 ? p1[1] : 0,
     stops: stops,
-    stop: function(offset, color) {
+    stop: function (offset, color) {
       stops.push({offset: offset, color: color});
       return gradient;
     }
-  };
+  });
 }

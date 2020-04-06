@@ -1,7 +1,4 @@
-import {
-  Index, Label, Offset, Size, Value, zero, one,
-  Skip, GuideLabelStyle, LegendScales
-} from './constants';
+import {Index, Label, Offset, Size, Value, zero, one, Skip, GuideLabelStyle, LegendScales} from './constants';
 import guideGroup from './guide-group';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
@@ -10,108 +7,110 @@ import {ScopeRole, LegendSymbolRole, LegendLabelRole} from '../marks/roles';
 import {addEncoders, encoder, extendEncode} from '../encode/encode-util';
 
 // userEncode is top-level, includes entries, symbols, labels
-export default function(spec, config, userEncode, dataRef, columns) {
-  var _ = lookup(spec, config),
-      entries = userEncode.entries,
-      interactive = !!(entries && entries.interactive),
-      name = entries ? entries.name : undefined,
-      height = _('clipHeight'),
-      symbolOffset = _('symbolOffset'),
-      valueRef = {data: 'value'},
-      encode = {},
-      xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
-      yEncode = height ? encoder(height) : {field: Size},
-      index = `datum.${Index}`,
-      ncols = `max(1, ${columns})`,
-      enter, update, labelOffset, symbols, labels, nrows, sort;
+export default function (spec, config, userEncode, dataRef, columns) {
+  const _ = lookup(spec, config);
+  const entries = userEncode.entries;
+  const interactive = !!(entries && entries.interactive);
+  const name = entries ? entries.name : undefined;
+  const height = _('clipHeight');
+  const symbolOffset = _('symbolOffset');
+  const valueRef = {data: 'value'};
+  let encode = {};
+  const xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`;
+  const yEncode = height ? encoder(height) : {field: Size};
+  const index = `datum.${Index}`;
+  const ncols = `max(1, ${columns})`;
+  let enter;
+  let update;
+  let nrows;
+  let sort;
 
   yEncode.mult = 0.5;
 
   // -- LEGEND SYMBOLS --
   encode = {
-    enter:  enter = {
+    enter: (enter = {
       opacity: zero,
       x: {signal: xSignal, mult: 0.5, offset: symbolOffset},
       y: yEncode
-    },
-    update: update = {
+    }),
+    update: (update = {
       opacity: one,
       x: enter.x,
       y: enter.y
-    },
+    }),
     exit: {
       opacity: zero
     }
   };
 
-  var baseFill = null,
-      baseStroke = null;
+  let baseFill = null;
+  let baseStroke = null;
   if (!spec.fill) {
     baseFill = config.symbolBaseFillColor;
     baseStroke = config.symbolBaseStrokeColor;
   }
 
-  addEncoders(encode, {
-    fill:             _('symbolFillColor', baseFill),
-    shape:            _('symbolType'),
-    size:             _('symbolSize'),
-    stroke:           _('symbolStrokeColor', baseStroke),
-    strokeDash:       _('symbolDash'),
-    strokeDashOffset: _('symbolDashOffset'),
-    strokeWidth:      _('symbolStrokeWidth')
-  }, { // update
-    opacity:          _('symbolOpacity')
-  });
+  addEncoders(
+    encode,
+    {
+      fill: _('symbolFillColor', baseFill),
+      shape: _('symbolType'),
+      size: _('symbolSize'),
+      stroke: _('symbolStrokeColor', baseStroke),
+      strokeDash: _('symbolDash'),
+      strokeDashOffset: _('symbolDashOffset'),
+      strokeWidth: _('symbolStrokeWidth')
+    },
+    {
+      // update
+      opacity: _('symbolOpacity')
+    }
+  );
 
-  LegendScales.forEach(function(scale) {
+  LegendScales.forEach(function (scale) {
     if (spec[scale]) {
       update[scale] = enter[scale] = {scale: spec[scale], field: Value};
     }
   });
 
-  symbols = guideMark(
-    SymbolMark, LegendSymbolRole, null,
-    Value, valueRef, encode, userEncode.symbols
-  );
+  const symbols = guideMark(SymbolMark, LegendSymbolRole, null, Value, valueRef, encode, userEncode.symbols);
   if (height) symbols.clip = true;
 
   // -- LEGEND LABELS --
-  labelOffset = encoder(symbolOffset);
+  const labelOffset = encoder(symbolOffset);
   labelOffset.offset = _('labelOffset');
 
   encode = {
-    enter:  enter = {
+    enter: (enter = {
       opacity: zero,
       x: {signal: xSignal, offset: labelOffset},
       y: yEncode
-    },
-    update: update = {
+    }),
+    update: (update = {
       opacity: one,
       text: {field: Label},
       x: enter.x,
       y: enter.y
-    },
+    }),
     exit: {
       opacity: zero
     }
   };
 
   addEncoders(encode, {
-    align:       _('labelAlign'),
-    baseline:    _('labelBaseline'),
-    fill:        _('labelColor'),
+    align: _('labelAlign'),
+    baseline: _('labelBaseline'),
+    fill: _('labelColor'),
     fillOpacity: _('labelOpacity'),
-    font:        _('labelFont'),
-    fontSize:    _('labelFontSize'),
-    fontStyle:   _('labelFontStyle'),
-    fontWeight:  _('labelFontWeight'),
-    limit:       _('labelLimit')
+    font: _('labelFont'),
+    fontSize: _('labelFontSize'),
+    fontStyle: _('labelFontStyle'),
+    fontWeight: _('labelFontWeight'),
+    limit: _('labelLimit')
   });
 
-  labels = guideMark(
-    TextMark, LegendLabelRole, GuideLabelStyle,
-    Value, valueRef, encode, userEncode.labels
-  );
+  const labels = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, valueRef, encode, userEncode.labels);
 
   // -- LEGEND ENTRY GROUPS --
   encode = {
@@ -122,11 +121,11 @@ export default function(spec, config, userEncode, dataRef, columns) {
       opacity: zero
     },
     exit: {opacity: zero},
-    update: update = {
+    update: (update = {
       opacity: one,
       row: {signal: null},
       column: {signal: null}
-    }
+    })
   };
 
   // annotate and sort groups to ensure correct ordering
@@ -146,10 +145,10 @@ export default function(spec, config, userEncode, dataRef, columns) {
   // facet legend entries into sub-groups
   dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
 
-  spec = guideGroup(
-    ScopeRole, null, name, dataRef, interactive,
-    extendEncode(encode, entries, Skip), [symbols, labels]
-  );
+  spec = guideGroup(ScopeRole, null, name, dataRef, interactive, extendEncode(encode, entries, Skip), [
+    symbols,
+    labels
+  ]);
   spec.sort = sort;
   return spec;
 }
@@ -159,14 +158,14 @@ export function legendSymbolLayout(spec, config) {
 
   // layout parameters for legend entries
   return {
-    align:   _('gridAlign'),
+    align: _('gridAlign'),
     columns: _.entryColumns(),
-    center:  {
+    center: {
       row: true,
       column: false
     },
     padding: {
-      row:    _('rowPadding'),
+      row: _('rowPadding'),
       column: _('columnPadding')
     }
   };

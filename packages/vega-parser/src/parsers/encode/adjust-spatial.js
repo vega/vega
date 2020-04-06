@@ -1,10 +1,10 @@
 import {toSet} from 'vega-util';
 
-var Skip = toSet(['rule']),
-    Swap = toSet(['group', 'image', 'rect']);
+const Skip = toSet(['rule']);
+const Swap = toSet(['group', 'image', 'rect']);
 
-export default function(encode, marktype) {
-  var code = '';
+export default function (encode, marktype) {
+  let code = '';
 
   if (Skip[marktype]) return code;
 

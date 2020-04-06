@@ -1,21 +1,21 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    geo = require('../'),
-    Graticule = geo.graticule,
-    Projection = geo.projection;
+const tape = require('tape');
+const vega = require('vega-dataflow');
+const geo = require('../');
+const Graticule = geo.graticule;
+const Projection = geo.projection;
 
-tape('Projection transform fits parameters to GeoJSON data', function(t) {
-  var df = new vega.Dataflow(),
-      gr = df.add(Graticule),
-      pr = df.add(Projection, {
-        type: 'orthographic',
-        size: [500, 500],
-        fit: [gr, {type: 'Sphere'}]
-      });
+tape('Projection transform fits parameters to GeoJSON data', function (t) {
+  const df = new vega.Dataflow();
+  const gr = df.add(Graticule);
+  const pr = df.add(Projection, {
+    type: 'orthographic',
+    size: [500, 500],
+    fit: [gr, {type: 'Sphere'}]
+  });
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);
@@ -23,18 +23,18 @@ tape('Projection transform fits parameters to GeoJSON data', function(t) {
   t.end();
 });
 
-tape('Projection transform handles fit input with null data', function(t) {
-  var df = new vega.Dataflow(),
-      gr = df.add(Graticule),
-      pr = df.add(Projection, {
-        type: 'orthographic',
-        size: [500, 500],
-        fit: [[null], gr, {type: 'Sphere'}]
-      });
+tape('Projection transform handles fit input with null data', function (t) {
+  const df = new vega.Dataflow();
+  const gr = df.add(Graticule);
+  const pr = df.add(Projection, {
+    type: 'orthographic',
+    size: [500, 500],
+    fit: [[null], gr, {type: 'Sphere'}]
+  });
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);

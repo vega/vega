@@ -23,23 +23,23 @@ export default function Pivot(params) {
 }
 
 Pivot.Definition = {
-  "type": "Pivot",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "field", "type": "field", "required": true },
-    { "name": "value", "type": "field", "required": true },
-    { "name": "op", "type": "enum", "values": ValidAggregateOps, "default": "sum" },
-    { "name": "limit", "type": "number", "default": 0 },
-    { "name": "key", "type": "field" }
+  type: 'Pivot',
+  metadata: {generates: true, changes: true},
+  params: [
+    {name: 'groupby', type: 'field', array: true},
+    {name: 'field', type: 'field', required: true},
+    {name: 'value', type: 'field', required: true},
+    {name: 'op', type: 'enum', values: ValidAggregateOps, default: 'sum'},
+    {name: 'limit', type: 'number', default: 0},
+    {name: 'key', type: 'field'}
   ]
 };
 
-var prototype = inherits(Pivot, Aggregate);
+const prototype = inherits(Pivot, Aggregate);
 
 prototype._transform = prototype.transform;
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   return this._transform(aggregateParams(_, pulse), pulse);
 };
 
@@ -47,22 +47,28 @@ prototype.transform = function(_, pulse) {
 // First collect all unique pivot field values.
 // Then generate aggregate fields for each output pivot field.
 function aggregateParams(_, pulse) {
-  var key    = _.field,
-      value  = _.value,
-      op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
-      fields = accessorFields(key).concat(accessorFields(value)),
-      keys   = pivotKeys(key, _.limit || 0, pulse);
+  const key = _.field;
+  const value = _.value;
+  const op = (_.op === 'count' ? '__count__' : _.op) || 'sum';
+  const fields = accessorFields(key).concat(accessorFields(value));
+  const keys = pivotKeys(key, _.limit || 0, pulse);
 
   // if data stream content changes, pivot fields may change
   // flag parameter modification to ensure re-initialization
   if (pulse.changed()) _.set('__pivot__', null, null, true);
 
   return {
-    key:      _.key,
-    groupby:  _.groupby,
-    ops:      keys.map(function() { return op; }),
-    fields:   keys.map(function(k) { return get(k, key, value, fields); }),
-    as:       keys.map(function(k) { return k + ''; }),
+    key: _.key,
+    groupby: _.groupby,
+    ops: keys.map(function () {
+      return op;
+    }),
+    fields: keys.map(function (k) {
+      return get(k, key, value, fields);
+    }),
+    as: keys.map(function (k) {
+      return k + '';
+    }),
     modified: _.modified.bind(_)
   };
 }
@@ -71,7 +77,9 @@ function aggregateParams(_, pulse) {
 // Output NaN for non-existent values; aggregator will ignore!
 function get(k, key, value, fields) {
   return accessor(
-    function(d) { return key(d) === k ? value(d) : NaN; },
+    function (d) {
+      return key(d) === k ? value(d) : NaN;
+    },
     fields,
     k + ''
   );
@@ -79,11 +87,11 @@ function get(k, key, value, fields) {
 
 // Collect (and optionally limit) all unique pivot values.
 function pivotKeys(key, limit, pulse) {
-  var map = {},
-      list = [];
+  const map = {};
+  const list = [];
 
-  pulse.visit(pulse.SOURCE, function(t) {
-    var k = key(t);
+  pulse.visit(pulse.SOURCE, function (t) {
+    const k = key(t);
     if (!map[k]) {
       map[k] = 1;
       list.push(k);
@@ -91,11 +99,16 @@ function pivotKeys(key, limit, pulse) {
   });
 
   // TODO? Move this comparator to vega-util?
-  list.sort(function(u, v) {
-    return (u<v||u==null) && v!=null ? -1
-      : (u>v||v==null) && u!=null ? 1
-      : ((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))!==u && v===v ? -1
-      : v!==v && u===u ? 1 : 0;
+  list.sort(function (u, v) {
+    return (u < v || u == null) && v != null
+      ? -1
+      : (u > v || v == null) && u != null
+      ? 1
+      : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v
+      ? -1
+      : v !== v && u === u
+      ? 1
+      : 0;
   });
 
   return limit ? list.slice(0, limit) : list;

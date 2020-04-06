@@ -1,18 +1,8 @@
-import {
-  codegen,
-  constants,
-  functions
-} from 'vega-expression';
+import {codegen, constants, functions} from 'vega-expression';
 
-import {
-  isTuple
-} from 'vega-dataflow';
+import {isTuple} from 'vega-dataflow';
 
-import {
-  selectionTest,
-  selectionResolve,
-  selectionVisitor
-} from 'vega-selections';
+import {selectionTest, selectionResolve, selectionVisitor} from 'vega-selections';
 
 import {
   random,
@@ -30,13 +20,7 @@ import {
   sampleUniform
 } from 'vega-statistics';
 
-import {
-  timeOffset,
-  timeSequence,
-  timeUnitSpecifier,
-  utcOffset,
-  utcSequence
-} from 'vega-time';
+import {timeOffset, timeSequence, timeUnitSpecifier, utcOffset, utcSequence} from 'vega-time';
 
 import {
   isArray,
@@ -72,31 +56,15 @@ import {
   truncate
 } from 'vega-util';
 
-import {
-  range as sequence
-} from 'd3-array';
+import {range as sequence} from 'd3-array';
 
-import {
-  rgb,
-  lab,
-  hcl,
-  hsl
-} from 'd3-color';
+import {rgb, lab, hcl, hsl} from 'd3-color';
 
-import {
-  luminance,
-  contrast
-} from './luminance';
+import {luminance, contrast} from './luminance';
 
-import {
-  data,
-  indata,
-  setdata
-} from './data';
+import {data, indata, setdata} from './data';
 
-import {
-  default as encode
-} from './encode';
+import {default as encode} from './encode';
 
 import {
   format,
@@ -110,80 +78,39 @@ import {
   dayAbbrevFormat
 } from './format';
 
-import {
-  geoArea,
-  geoBounds,
-  geoCentroid
-} from './geo';
+import {geoArea, geoBounds, geoCentroid} from './geo';
 
-import {
-  default as inScope
-} from './inscope';
+import {default as inScope} from './inscope';
 
-import {
-  default as intersect
-} from './intersect';
+import {default as intersect} from './intersect';
 
-import {
-  warn,
-  info,
-  debug
-} from './log';
+import {warn, info, debug} from './log';
 
-import {
-  default as merge
-} from './merge';
+import {default as merge} from './merge';
 
-import {
-  default as modify
-} from './modify';
+import {default as modify} from './modify';
 
-import {
-  pinchDistance,
-  pinchAngle
-} from './pinch';
+import {pinchDistance, pinchAngle} from './pinch';
 
-import {
-  range,
-  domain,
-  bandwidth,
-  bandspace,
-  copy,
-  scale,
-  invert
-} from './scale';
+import {range, domain, bandwidth, bandspace, copy, scale, invert} from './scale';
 
-import {
-  default as scaleGradient
-} from './scale-gradient';
+import {default as scaleGradient} from './scale-gradient';
 
-import {
-  geoShape,
-  pathShape
-} from './shape';
+import {geoShape, pathShape} from './shape';
 
-import {
-  treePath,
-  treeAncestors
-} from './tree';
+import {treePath, treeAncestors} from './tree';
 
-import {
-  containerSize,
-  screen,
-  windowSize
-} from './window';
+import {containerSize, screen, windowSize} from './window';
 
-import {
-  dataVisitor,
-  indataVisitor,
-  scaleVisitor
-} from './visitors';
+import {dataVisitor, indataVisitor, scaleVisitor} from './visitors';
 
 import {SignalPrefix} from './prefix';
 
 // Expression function context object
 export const functionContext = {
-  random: function() { return random(); }, // override default
+  random: function () {
+    return random();
+  }, // override default
   cumulativeNormal,
   cumulativeLogNormal,
   cumulativeUniform,
@@ -199,13 +126,17 @@ export const functionContext = {
   isArray,
   isBoolean,
   isDate,
-  isDefined: function(_) { return _ !== undefined; },
+  isDefined: function (_) {
+    return _ !== undefined;
+  },
   isNumber,
   isObject,
   isRegExp,
   isString,
   isTuple,
-  isValid: function(_) { return _ != null && _ === _; },
+  isValid: function (_) {
+    return _ != null && _ === _;
+  },
   toBoolean,
   toDate,
   toNumber,
@@ -268,16 +199,18 @@ export const functionContext = {
   modify
 };
 
-const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
-      eventPrefix = 'event.vega.', // event function prefix
-      thisPrefix = 'this.', // function context prefix
-      astVisitors = {}; // AST visitors for dependency analysis
+const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y']; // event functions
+const eventPrefix = 'event.vega.'; // event function prefix
+const thisPrefix = 'this.'; // function context prefix
+const astVisitors = {}; // AST visitors for dependency analysis
 
 // Build expression function registry
 function buildFunctions(codegen) {
   const fn = functions(codegen);
-  eventFunctions.forEach(name => fn[name] = eventPrefix + name);
-  for (let name in functionContext) { fn[name] = thisPrefix + name; }
+  eventFunctions.forEach(name => (fn[name] = eventPrefix + name));
+  for (const name in functionContext) {
+    fn[name] = thisPrefix + name;
+  }
   return fn;
 }
 
@@ -322,13 +255,15 @@ expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
 
 // Export code generator and parameters
 export const codegenParams = {
-  blacklist:  ['_'],
-  whitelist:  ['datum', 'event', 'item'],
-  fieldvar:   'datum',
-  globalvar:  function(id) { return '_[' + stringValue(SignalPrefix + id) + ']'; },
-  functions:  buildFunctions,
-  constants:  constants,
-  visitors:   astVisitors
+  blacklist: ['_'],
+  whitelist: ['datum', 'event', 'item'],
+  fieldvar: 'datum',
+  globalvar: function (id) {
+    return '_[' + stringValue(SignalPrefix + id) + ']';
+  },
+  functions: buildFunctions,
+  constants: constants,
+  visitors: astVisitors
 };
 
-export var codeGenerator = codegen(codegenParams);
+export const codeGenerator = codegen(codegenParams);

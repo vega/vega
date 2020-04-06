@@ -1,7 +1,7 @@
-const vega = require('vega'),
-      path = require('path'),
-      args = require('./args'),
-      read = require('./read');
+const vega = require('vega');
+const path = require('path');
+const args = require('./args');
+const read = require('./read');
 
 function load(file) {
   return require(path.resolve(file));
@@ -9,12 +9,12 @@ function load(file) {
 
 const Levels = {
   error: vega.Error,
-  warn:  vega.Warn,
-  info:  vega.Info,
+  warn: vega.Warn,
+  info: vega.Info,
   debug: vega.Debug
 };
 
-module.exports = function(type, callback, opt) {
+module.exports = function (type, callback, opt) {
   // parse command line arguments
   const arg = args(type);
 
@@ -45,19 +45,16 @@ module.exports = function(type, callback, opt) {
   // instantiate view and invoke headless render method
   function render(spec) {
     const view = new vega.View(vega.parse(spec, config), {
-        loader: vega.loader({baseURL: base}),   // load files from base path
-        logger: vega.logger(loglevel, 'error'), // route all logging to stderr
-        renderer: 'none'                        // no primary renderer needed
-      }).finalize();                            // clear any timers, etc
+      loader: vega.loader({baseURL: base}), // load files from base path
+      logger: vega.logger(loglevel, 'error'), // route all logging to stderr
+      renderer: 'none' // no primary renderer needed
+    }).finalize(); // clear any timers, etc
 
-    return (type === 'svg'
-        ? view.toSVG(scale)
-        : view.toCanvas(scale, opt)
-      ).then(_ => callback(_, arg));
+    return (type === 'svg' ? view.toSVG(scale) : view.toCanvas(scale, opt)).then(_ => callback(_, arg));
   }
 
   // read input from file or stdin
   read(arg._[0] || null)
     .then(text => render(JSON.parse(text)))
     .catch(err => console.error(err)); // eslint-disable-line no-console
-}
+};

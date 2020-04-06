@@ -22,43 +22,43 @@ export default function Aggregate(params) {
 
   this._adds = []; // array of added output tuples
   this._mods = []; // array of modified output tuples
-  this._alen = 0;  // number of active added tuples
-  this._mlen = 0;  // number of active modified tuples
-  this._drop = true;   // should empty aggregation cells be removed
+  this._alen = 0; // number of active added tuples
+  this._mlen = 0; // number of active modified tuples
+  this._drop = true; // should empty aggregation cells be removed
   this._cross = false; // produce full cross-product of group-by values
 
-  this._dims = [];   // group-by dimension accessors
+  this._dims = []; // group-by dimension accessors
   this._dnames = []; // group-by dimension names
 
   this._measures = []; // collection of aggregation monoids
   this._countOnly = false; // flag indicating only count aggregation
   this._counts = null; // collection of count fields
-  this._prev = null;   // previous aggregation cells
+  this._prev = null; // previous aggregation cells
 
-  this._inputs = null;  // array of dependent input tuple field names
+  this._inputs = null; // array of dependent input tuple field names
   this._outputs = null; // array of output tuple field names
 }
 
 Aggregate.Definition = {
-  "type": "Aggregate",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-    { "name": "fields", "type": "field", "null": true, "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true },
-    { "name": "drop", "type": "boolean", "default": true },
-    { "name": "cross", "type": "boolean", "default": false },
-    { "name": "key", "type": "field" }
+  type: 'Aggregate',
+  metadata: {generates: true, changes: true},
+  params: [
+    {name: 'groupby', type: 'field', array: true},
+    {name: 'ops', type: 'enum', array: true, values: ValidAggregateOps},
+    {name: 'fields', type: 'field', null: true, array: true},
+    {name: 'as', type: 'string', null: true, array: true},
+    {name: 'drop', type: 'boolean', default: true},
+    {name: 'cross', type: 'boolean', default: false},
+    {name: 'key', type: 'field'}
   ]
 };
 
-var prototype = inherits(Aggregate, Transform);
+const prototype = inherits(Aggregate, Transform);
 
-prototype.transform = function(_, pulse) {
-  var aggr = this,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      mod = _.modified();
+prototype.transform = function (_, pulse) {
+  const aggr = this;
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  const mod = _.modified();
 
   aggr.stamp = out.stamp;
 
@@ -88,19 +88,24 @@ prototype.transform = function(_, pulse) {
   return aggr.changes(out);
 };
 
-prototype.cross = function() {
-  var aggr = this,
-      curr = aggr.value,
-      dims = aggr._dnames,
-      vals = dims.map(function() { return {}; }),
-      n = dims.length;
+prototype.cross = function () {
+  const aggr = this;
+  const curr = aggr.value;
+  const dims = aggr._dnames;
+  const vals = dims.map(function () {
+    return {};
+  });
+  const n = dims.length;
 
   // collect all group-by domain values
   function collect(cells) {
-    var key, i, t, v;
+    let key;
+    let i;
+    let t;
+    let v;
     for (key in cells) {
       t = cells[key].tuple;
-      for (i=0; i<n; ++i) {
+      for (i = 0; i < n; ++i) {
         vals[i][(v = t[dims[i]])] = v;
       }
     }
@@ -110,9 +115,10 @@ prototype.cross = function() {
 
   // iterate over key cross-product, create cells as needed
   function generate(base, tuple, index) {
-    var name = dims[index],
-        v = vals[index++],
-        k, key;
+    const name = dims[index];
+    const v = vals[index++];
+    let k;
+    let key;
 
     for (k in v) {
       tuple[name] = v[k];
@@ -124,17 +130,19 @@ prototype.cross = function() {
   generate('', {}, 0);
 };
 
-prototype.init = function(_) {
+prototype.init = function (_) {
   // initialize input and output fields
-  var inputs = (this._inputs = []),
-      outputs = (this._outputs = []),
-      inputMap = {};
+  const inputs = (this._inputs = []);
+  const outputs = (this._outputs = []);
+  const inputMap = {};
 
   function inputVisit(get) {
-    var fields = array(accessorFields(get)),
-        i = 0, n = fields.length, f;
-    for (; i<n; ++i) {
-      if (!inputMap[f=fields[i]]) {
+    const fields = array(accessorFields(get));
+    let i = 0;
+    const n = fields.length;
+    let f;
+    for (; i < n; ++i) {
+      if (!inputMap[(f = fields[i])]) {
         inputMap[f] = 1;
         inputs.push(f);
       }
@@ -143,8 +151,8 @@ prototype.init = function(_) {
 
   // initialize group-by dimensions
   this._dims = array(_.groupby);
-  this._dnames = this._dims.map(function(d) {
-    var dname = accessorName(d);
+  this._dnames = this._dims.map(function (d) {
+    const dname = accessorName(d);
     inputVisit(d);
     outputs.push(dname);
     return dname;
@@ -156,18 +164,23 @@ prototype.init = function(_) {
   this._counts = [];
   this._measures = [];
 
-  var fields = _.fields || [null],
-      ops = _.ops || ['count'],
-      as = _.as || [],
-      n = fields.length,
-      map = {},
-      field, op, m, mname, outname, i;
+  const fields = _.fields || [null];
+  const ops = _.ops || ['count'];
+  const as = _.as || [];
+  const n = fields.length;
+  const map = {};
+  let field;
+  let op;
+  let m;
+  let mname;
+  let outname;
+  let i;
 
   if (n !== ops.length) {
     error('Unmatched number of fields and aggregate ops.');
   }
 
-  for (i=0; i<n; ++i) {
+  for (i = 0; i < n; ++i) {
     field = fields[i];
     op = ops[i];
 
@@ -186,7 +199,7 @@ prototype.init = function(_) {
     m = map[mname];
     if (!m) {
       inputVisit(field);
-      m = (map[mname] = []);
+      m = map[mname] = [];
       m.field = field;
       this._measures.push(m);
     }
@@ -195,7 +208,7 @@ prototype.init = function(_) {
     m.push(createMeasure(op, outname));
   }
 
-  this._measures = this._measures.map(function(m) {
+  this._measures = this._measures.map(function (m) {
     return compileMeasures(m, m.field);
   });
 
@@ -206,8 +219,8 @@ prototype.init = function(_) {
 
 prototype.cellkey = groupkey();
 
-prototype.cell = function(key, t) {
-  var cell = this.value[key];
+prototype.cell = function (key, t) {
+  let cell = this.value[key];
   if (!cell) {
     cell = this.value[key] = this.newcell(key, t);
     this._adds[this._alen++] = cell;
@@ -221,22 +234,23 @@ prototype.cell = function(key, t) {
   return cell;
 };
 
-prototype.newcell = function(key, t) {
-  var cell = {
-    key:   key,
-    num:   0,
-    agg:   null,
+prototype.newcell = function (key, t) {
+  const cell = {
+    key: key,
+    num: 0,
+    agg: null,
     tuple: this.newtuple(t, this._prev && this._prev[key]),
     stamp: this.stamp,
     store: false
   };
 
   if (!this._countOnly) {
-    var measures = this._measures,
-        n = measures.length, i;
+    const measures = this._measures;
+    const n = measures.length;
+    let i;
 
     cell.agg = Array(n);
-    for (i=0; i<n; ++i) {
+    for (i = 0; i < n; ++i) {
       cell.agg[i] = new measures[i](cell);
     }
   }
@@ -248,12 +262,14 @@ prototype.newcell = function(key, t) {
   return cell;
 };
 
-prototype.newtuple = function(t, p) {
-  var names = this._dnames,
-      dims = this._dims,
-      x = {}, i, n;
+prototype.newtuple = function (t, p) {
+  const names = this._dnames;
+  const dims = this._dims;
+  const x = {};
+  let i;
+  let n;
 
-  for (i=0, n=dims.length; i<n; ++i) {
+  for (i = 0, n = dims.length; i < n; ++i) {
     x[names[i]] = dims[i](t);
   }
 
@@ -262,42 +278,46 @@ prototype.newtuple = function(t, p) {
 
 // -- Process Tuples -----
 
-prototype.add = function(t) {
-  var key = this.cellkey(t),
-      cell = this.cell(key, t),
-      agg, i, n;
+prototype.add = function (t) {
+  const key = this.cellkey(t);
+  const cell = this.cell(key, t);
+  let i;
+  let n;
 
   cell.num += 1;
   if (this._countOnly) return;
 
   if (cell.store) cell.data.add(t);
 
-  agg = cell.agg;
-  for (i=0, n=agg.length; i<n; ++i) {
+  const agg = cell.agg;
+  for (i = 0, n = agg.length; i < n; ++i) {
     agg[i].add(agg[i].get(t), t);
   }
 };
 
-prototype.rem = function(t) {
-  var key = this.cellkey(t),
-      cell = this.cell(key, t),
-      agg, i, n;
+prototype.rem = function (t) {
+  const key = this.cellkey(t);
+  const cell = this.cell(key, t);
+  let i;
+  let n;
 
   cell.num -= 1;
   if (this._countOnly) return;
 
   if (cell.store) cell.data.rem(t);
 
-  agg = cell.agg;
-  for (i=0, n=agg.length; i<n; ++i) {
+  const agg = cell.agg;
+  for (i = 0, n = agg.length; i < n; ++i) {
     agg[i].rem(agg[i].get(t), t);
   }
 };
 
-prototype.celltuple = function(cell) {
-  var tuple = cell.tuple,
-      counts = this._counts,
-      agg, i, n;
+prototype.celltuple = function (cell) {
+  const tuple = cell.tuple;
+  const counts = this._counts;
+  let agg;
+  let i;
+  let n;
 
   // consolidate stored values
   if (cell.store) {
@@ -305,12 +325,12 @@ prototype.celltuple = function(cell) {
   }
 
   // update tuple properties
-  for (i=0, n=counts.length; i<n; ++i) {
+  for (i = 0, n = counts.length; i < n; ++i) {
     tuple[counts[i]] = cell.num;
   }
   if (!this._countOnly) {
     agg = cell.agg;
-    for (i=0, n=agg.length; i<n; ++i) {
+    for (i = 0, n = agg.length; i < n; ++i) {
       agg[i].set(tuple);
     }
   }
@@ -318,27 +338,31 @@ prototype.celltuple = function(cell) {
   return tuple;
 };
 
-prototype.changes = function(out) {
-  var adds = this._adds,
-      mods = this._mods,
-      prev = this._prev,
-      drop = this._drop,
-      add = out.add,
-      rem = out.rem,
-      mod = out.mod,
-      cell, key, i, n;
+prototype.changes = function (out) {
+  const adds = this._adds;
+  const mods = this._mods;
+  const prev = this._prev;
+  const drop = this._drop;
+  const add = out.add;
+  const rem = out.rem;
+  const mod = out.mod;
+  let cell;
+  let key;
+  let i;
+  let n;
 
-  if (prev) for (key in prev) {
-    cell = prev[key];
-    if (!drop || cell.num) rem.push(cell.tuple);
-  }
+  if (prev)
+    for (key in prev) {
+      cell = prev[key];
+      if (!drop || cell.num) rem.push(cell.tuple);
+    }
 
-  for (i=0, n=this._alen; i<n; ++i) {
+  for (i = 0, n = this._alen; i < n; ++i) {
     add.push(this.celltuple(adds[i]));
     adds[i] = null; // for garbage collection
   }
 
-  for (i=0, n=this._mlen; i<n; ++i) {
+  for (i = 0, n = this._mlen; i < n; ++i) {
     cell = mods[i];
     (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
     mods[i] = null; // for garbage collection

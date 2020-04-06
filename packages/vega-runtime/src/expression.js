@@ -3,10 +3,11 @@
  */
 export default function expression(args, code, ctx) {
   // wrap code in return statement if expression does not terminate
-  if (code[code.length-1] !== ';') {
+  if (code[code.length - 1] !== ';') {
     code = 'return(' + code + ');';
   }
-  var fn = Function.apply(null, args.concat(code));
+  // eslint-disable-next-line prefer-spread
+  const fn = Function.apply(null, args.concat(code));
   return ctx && ctx.functions ? fn.bind(ctx.functions) : fn;
 }
 

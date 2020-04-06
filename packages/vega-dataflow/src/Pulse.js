@@ -4,19 +4,19 @@ import {isArray, visitArray} from 'vega-util';
 /**
  * Sentinel value indicating pulse propagation should stop.
  */
-export var StopPropagation = {};
+export const StopPropagation = {};
 
 // Pulse visit type flags
-var ADD       = (1 << 0),
-    REM       = (1 << 1),
-    MOD       = (1 << 2),
-    ADD_REM   = ADD | REM,
-    ADD_MOD   = ADD | MOD,
-    ALL       = ADD | REM | MOD,
-    REFLOW    = (1 << 3),
-    SOURCE    = (1 << 4),
-    NO_SOURCE = (1 << 5),
-    NO_FIELDS = (1 << 6);
+const ADD = 1 << 0;
+const REM = 1 << 1;
+const MOD = 1 << 2;
+const ADD_REM = ADD | REM;
+const ADD_MOD = ADD | MOD;
+const ALL = ADD | REM | MOD;
+const REFLOW = 1 << 3;
+const SOURCE = 1 << 4;
+const NO_SOURCE = 1 << 5;
+const NO_FIELDS = 1 << 6;
 
 /**
  * A Pulse enables inter-operator communication during a run of the
@@ -51,7 +51,7 @@ export default function Pulse(dataflow, stamp, encode) {
   this.encode = encode || null;
 }
 
-var prototype = Pulse.prototype;
+const prototype = Pulse.prototype;
 
 /**
  * Sentinel value indicating pulse propagation should stop.
@@ -123,7 +123,7 @@ prototype.NO_FIELDS = NO_FIELDS;
  * @return {Pulse} - The forked pulse instance.
  * @see init
  */
-prototype.fork = function(flags) {
+prototype.fork = function (flags) {
   return new Pulse(this.dataflow).init(this, flags);
 };
 
@@ -134,8 +134,8 @@ prototype.fork = function(flags) {
  * @return {Pulse} - The cloned pulse instance.
  * @see init
  */
-prototype.clone = function() {
-  var p = this.fork(ALL);
+prototype.clone = function () {
+  const p = this.fork(ALL);
   p.add = p.add.slice();
   p.rem = p.rem.slice();
   p.mod = p.mod.slice();
@@ -153,8 +153,8 @@ prototype.clone = function() {
  *   tuples in its add array, it is returned directly. If the current
  *   pulse does not have a backing source, it is returned directly.
  */
-prototype.addAll = function() {
-  var p = this;
+prototype.addAll = function () {
+  let p = this;
   if (!this.source || this.source.length === this.add.length) {
     return p;
   } else {
@@ -177,8 +177,8 @@ prototype.addAll = function() {
  *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
  * @return {Pulse} - Returns this Pulse instance.
  */
-prototype.init = function(src, flags) {
-  var p = this;
+prototype.init = function (src, flags) {
+  const p = this;
   p.stamp = src.stamp;
   p.encode = src.encode;
 
@@ -225,7 +225,7 @@ prototype.init = function(src, flags) {
  * Schedules a function to run after pulse propagation completes.
  * @param {function} func - The function to run.
  */
-prototype.runAfter = function(func) {
+prototype.runAfter = function (func) {
   this.dataflow.runAfter(func);
 };
 
@@ -236,11 +236,9 @@ prototype.runAfter = function(func) {
  * @return {boolean} - Returns true if one or more queried tuple types have
  *   changed, false otherwise.
  */
-prototype.changed = function(flags) {
-  var f = flags || ALL;
-  return ((f & ADD) && this.add.length)
-      || ((f & REM) && this.rem.length)
-      || ((f & MOD) && this.mod.length);
+prototype.changed = function (flags) {
+  const f = flags || ALL;
+  return (f & ADD && this.add.length) || (f & REM && this.rem.length) || (f & MOD && this.mod.length);
 };
 
 /**
@@ -250,11 +248,11 @@ prototype.changed = function(flags) {
  *   pulse, and invokes reflow on that derived pulse.
  * @return {Pulse} - The reflowed pulse instance.
  */
-prototype.reflow = function(fork) {
+prototype.reflow = function (fork) {
   if (fork) return this.fork(ALL).reflow();
 
-  var len = this.add.length,
-      src = this.source && this.source.length;
+  const len = this.add.length;
+  const src = this.source && this.source.length;
   if (src && src !== len) {
     this.mod = this.source;
     if (len) this.filter(MOD, filter(this, ADD));
@@ -268,10 +266,10 @@ prototype.reflow = function(fork) {
  * @param {string|Array<string>} _ - The field(s) to mark as modified.
  * @return {Pulse} - This pulse instance.
  */
-prototype.modifies = function(_) {
-  var hash = this.fields || (this.fields = {});
+prototype.modifies = function (_) {
+  const hash = this.fields || (this.fields = {});
   if (isArray(_)) {
-    _.forEach(f => hash[f] = true);
+    _.forEach(f => (hash[f] = true));
   } else {
     hash[_] = true;
   }
@@ -287,11 +285,16 @@ prototype.modifies = function(_) {
  * @return {boolean} - Returns true if any of the provided fields has been
  *   marked as modified, false otherwise.
  */
-prototype.modified = function(_, nomod) {
-  var fields = this.fields;
-  return !((nomod || this.mod.length) && fields) ? false
-    : !arguments.length ? !!fields
-    : isArray(_) ? _.some(function(f) { return fields[f]; })
+prototype.modified = function (_, nomod) {
+  const fields = this.fields;
+  return !((nomod || this.mod.length) && fields)
+    ? false
+    : !arguments.length
+    ? !!fields
+    : isArray(_)
+    ? _.some(function (f) {
+        return fields[f];
+      })
     : fields[_];
 };
 
@@ -310,8 +313,8 @@ prototype.modified = function(_, nomod) {
  *   should be included in the tuple set, and falsy (or null) otherwise.
  * @return {Pulse} - Returns this pulse instance.
  */
-prototype.filter = function(flags, filter) {
-  var p = this;
+prototype.filter = function (flags, filter) {
+  const p = this;
   if (flags & ADD) p.addF = addFilter(p.addF, filter);
   if (flags & REM) p.remF = addFilter(p.remF, filter);
   if (flags & MOD) p.modF = addFilter(p.modF, filter);
@@ -320,7 +323,11 @@ prototype.filter = function(flags, filter) {
 };
 
 function addFilter(a, b) {
-  return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
+  return a
+    ? function (t, i) {
+        return a(t, i) && b(t, i);
+      }
+    : b;
 }
 
 /**
@@ -330,22 +337,22 @@ function addFilter(a, b) {
  * @param {number} flags - Flags indicating the tuple set(s) to materialize.
  * @return {Pulse} - Returns this pulse instance.
  */
-prototype.materialize = function(flags) {
+prototype.materialize = function (flags) {
   flags = flags || ALL;
-  var p = this;
-  if ((flags & ADD) && p.addF) {
+  const p = this;
+  if (flags & ADD && p.addF) {
     p.add = materialize(p.add, p.addF);
     p.addF = null;
   }
-  if ((flags & REM) && p.remF) {
+  if (flags & REM && p.remF) {
     p.rem = materialize(p.rem, p.remF);
     p.remF = null;
   }
-  if ((flags & MOD) && p.modF) {
+  if (flags & MOD && p.modF) {
     p.mod = materialize(p.mod, p.modF);
     p.modF = null;
   }
-  if ((flags & SOURCE) && p.srcF) {
+  if (flags & SOURCE && p.srcF) {
     p.source = p.source.filter(p.srcF);
     p.srcF = null;
   }
@@ -353,15 +360,21 @@ prototype.materialize = function(flags) {
 };
 
 function materialize(data, filter) {
-  var out = [];
-  visitArray(data, filter, function(_) { out.push(_); });
+  const out = [];
+  visitArray(data, filter, function (_) {
+    out.push(_);
+  });
   return out;
 }
 
 function filter(pulse, flags) {
-  var map = {};
-  pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-  return function(t) { return map[tupleid(t)] ? null : t; };
+  const map = {};
+  pulse.visit(flags, function (t) {
+    map[tupleid(t)] = 1;
+  });
+  return function (t) {
+    return map[tupleid(t)] ? null : t;
+  };
 }
 
 /**
@@ -372,8 +385,11 @@ function filter(pulse, flags) {
  * @param {function(object):*} - Visitor function invoked per-tuple.
  * @return {Pulse} - Returns this pulse instance.
  */
-prototype.visit = function(flags, visitor) {
-  var p = this, v = visitor, src, sum;
+prototype.visit = function (flags, visitor) {
+  const p = this;
+  const v = visitor;
+  let src;
+  let sum;
 
   if (flags & SOURCE) {
     visitArray(p.source, p.srcF, v);
@@ -384,7 +400,7 @@ prototype.visit = function(flags, visitor) {
   if (flags & REM) visitArray(p.rem, p.remF, v);
   if (flags & MOD) visitArray(p.mod, p.modF, v);
 
-  if ((flags & REFLOW) && (src = p.source)) {
+  if (flags & REFLOW && (src = p.source)) {
     sum = p.add.length + p.mod.length;
     if (sum === src.length) {
       // do nothing

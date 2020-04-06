@@ -15,10 +15,11 @@ export default function Relay(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Relay, Transform);
+const prototype = inherits(Relay, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out, lut;
+prototype.transform = function (_, pulse) {
+  let out;
+  let lut;
 
   if (this.value) {
     lut = this.value;
@@ -31,19 +32,20 @@ prototype.transform = function(_, pulse) {
     out = pulse.fork(pulse.NO_SOURCE);
 
     pulse.visit(pulse.REM, t => {
-      var id = tupleid(t);
+      const id = tupleid(t);
       out.rem.push(lut[id]);
       lut[id] = null;
     });
 
     pulse.visit(pulse.ADD, t => {
-      var dt = derive(t);
+      const dt = derive(t);
       lut[tupleid(t)] = dt;
       out.add.push(dt);
     });
 
     pulse.visit(pulse.MOD, t => {
-      var dt = lut[tupleid(t)], k;
+      const dt = lut[tupleid(t)];
+      let k;
       for (k in t) {
         dt[k] = t[k];
         // down stream writes may overwrite re-derived tuples

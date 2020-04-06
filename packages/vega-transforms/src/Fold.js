@@ -16,29 +16,29 @@ export default function Fold(params) {
 }
 
 Fold.Definition = {
-  "type": "Fold",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
+  type: 'Fold',
+  metadata: {generates: true},
+  params: [
+    {name: 'fields', type: 'field', array: true, required: true},
+    {name: 'as', type: 'string', array: true, length: 2, default: ['key', 'value']}
   ]
 };
 
-var prototype = inherits(Fold, Transform);
+const prototype = inherits(Fold, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      fields = _.fields,
-      fnames = fields.map(accessorName),
-      as = _.as || ['key', 'value'],
-      k = as[0],
-      v = as[1],
-      n = fields.length;
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE);
+  const fields = _.fields;
+  const fnames = fields.map(accessorName);
+  const as = _.as || ['key', 'value'];
+  const k = as[0];
+  const v = as[1];
+  const n = fields.length;
 
   out.rem = this.value;
 
-  pulse.visit(pulse.SOURCE, function(t) {
-    for (var i=0, d; i<n; ++i) {
+  pulse.visit(pulse.SOURCE, function (t) {
+    for (let i = 0, d; i < n; ++i) {
       d = derive(t);
       d[k] = fnames[i];
       d[v] = fields[i](t);

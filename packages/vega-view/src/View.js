@@ -21,10 +21,7 @@ import trap from './trap';
 
 import {asyncCallback, Dataflow} from 'vega-dataflow';
 import {error, extend, inherits, hasOwnProperty, stringValue} from 'vega-util';
-import {
-  CanvasHandler, Scenegraph,
-  renderModule, RenderType
-} from 'vega-scenegraph';
+import {CanvasHandler, Scenegraph, renderModule, RenderType} from 'vega-scenegraph';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
@@ -37,7 +34,7 @@ import {
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 export default function View(spec, options) {
-  var view = this;
+  const view = this;
   options = options || {};
 
   Dataflow.call(view);
@@ -49,12 +46,11 @@ export default function View(spec, options) {
   view._elBind = null;
   view._renderType = options.renderer || RenderType.Canvas;
   view._scenegraph = new Scenegraph();
-  var root = view._scenegraph.root;
+  const root = view._scenegraph.root;
 
   // initialize renderer, handler and event management
   view._renderer = null;
-  view._tooltip = options.tooltip || defaultTooltip,
-  view._redraw = true;
+  (view._tooltip = options.tooltip || defaultTooltip), (view._redraw = true);
   view._handler = new CanvasHandler().scene(root);
   view._preventDefault = false;
   view._timers = [];
@@ -65,10 +61,10 @@ export default function View(spec, options) {
   view._eventConfig = initializeEventConfig(spec.eventConfig);
 
   // initialize dataflow graph
-  var ctx = runtime(view, spec, options.functions);
+  const ctx = runtime(view, spec, options.functions);
   view._runtime = ctx;
   view._signals = ctx.signals;
-  view._bind = (spec.bindings || []).map(function(_) {
+  view._bind = (spec.bindings || []).map(function (_) {
     return {
       state: null,
       param: extend({}, _)
@@ -78,10 +74,7 @@ export default function View(spec, options) {
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
   root.source = ctx.data.root.input;
-  view.pulse(
-    ctx.data.root.input,
-    view.changeset().insert(root.items)
-  );
+  view.pulse(ctx.data.root.input, view.changeset().insert(root.items));
 
   // initialize view size
   view._width = view.width();
@@ -109,11 +102,11 @@ export default function View(spec, options) {
   if (options.container) view.initialize(options.container, options.bind);
 }
 
-var prototype = inherits(View, Dataflow);
+const prototype = inherits(View, Dataflow);
 
 // -- DATAFLOW / RENDERING ----
 
-prototype.evaluate = async function(encode, prerun, postrun) {
+prototype.evaluate = async function (encode, prerun, postrun) {
   // evaluate dataflow and prerun
   await Dataflow.prototype.evaluate.call(this, encode, prerun);
 
@@ -139,31 +132,31 @@ prototype.evaluate = async function(encode, prerun, postrun) {
   return this;
 };
 
-prototype.dirty = function(item) {
+prototype.dirty = function (item) {
   this._redraw = true;
   this._renderer && this._renderer.dirty(item);
 };
 
 // -- GET / SET ----
 
-prototype.description = function(text) {
+prototype.description = function (text) {
   if (arguments.length) {
-    const desc = text != null ? (text + '') : null;
-    if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
+    const desc = text != null ? text + '' : null;
+    if (desc !== this._desc) ariaLabel(this._el, (this._desc = desc));
     return this;
   }
   return this._desc;
 };
 
-prototype.container = function() {
+prototype.container = function () {
   return this._el;
 };
 
-prototype.scenegraph = function() {
+prototype.scenegraph = function () {
   return this._scenegraph;
 };
 
-prototype.origin = function() {
+prototype.origin = function () {
   return this._origin.slice();
 };
 
@@ -173,36 +166,32 @@ function lookupSignal(view, name) {
     : error('Unrecognized signal name: ' + stringValue(name));
 }
 
-prototype.signal = function(name, value, options) {
-  var op = lookupSignal(this, name);
-  return arguments.length === 1
-    ? op.value
-    : this.update(op, value, options);
+prototype.signal = function (name, value, options) {
+  const op = lookupSignal(this, name);
+  return arguments.length === 1 ? op.value : this.update(op, value, options);
 };
 
-prototype.width = function(_) {
+prototype.width = function (_) {
   return arguments.length ? this.signal('width', _) : this.signal('width');
 };
 
-prototype.height = function(_) {
+prototype.height = function (_) {
   return arguments.length ? this.signal('height', _) : this.signal('height');
 };
 
-prototype.padding = function(_) {
-  return arguments.length
-    ? this.signal('padding', padding(_))
-    : padding(this.signal('padding'));
+prototype.padding = function (_) {
+  return arguments.length ? this.signal('padding', padding(_)) : padding(this.signal('padding'));
 };
 
-prototype.autosize = function(_) {
+prototype.autosize = function (_) {
   return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
 };
 
-prototype.background = function(_) {
+prototype.background = function (_) {
   return arguments.length ? this.signal('background', _) : this.signal('background');
 };
 
-prototype.renderer = function(type) {
+prototype.renderer = function (type) {
   if (!arguments.length) return this._renderType;
   if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
   if (type !== this._renderType) {
@@ -212,7 +201,7 @@ prototype.renderer = function(type) {
   return this;
 };
 
-prototype.tooltip = function(handler) {
+prototype.tooltip = function (handler) {
   if (!arguments.length) return this._tooltip;
   if (handler !== this._tooltip) {
     this._tooltip = handler;
@@ -221,7 +210,7 @@ prototype.tooltip = function(handler) {
   return this;
 };
 
-prototype.loader = function(loader) {
+prototype.loader = function (loader) {
   if (!arguments.length) return this._loader;
   if (loader !== this._loader) {
     Dataflow.prototype.loader.call(this, loader);
@@ -230,14 +219,14 @@ prototype.loader = function(loader) {
   return this;
 };
 
-prototype.resize = function() {
+prototype.resize = function () {
   // set flag to perform autosize
   this._autosize = 1;
   // touch autosize signal to ensure top-level ViewLayout runs
   return this.touch(lookupSignal(this, 'autosize'));
 };
 
-prototype._resetRenderer = function() {
+prototype._resetRenderer = function () {
   if (this._renderer) {
     this._renderer = null;
     this.initialize(this._el, this._elBind);
@@ -249,8 +238,8 @@ prototype._resizeView = resizeView;
 
 // -- EVENT HANDLING ----
 
-prototype.addEventListener = function(type, handler, options) {
-  var callback = handler;
+prototype.addEventListener = function (type, handler, options) {
+  let callback = handler;
   if (!(options && options.trap === false)) {
     // wrap callback in error handler
     callback = trap(this, handler);
@@ -260,9 +249,11 @@ prototype.addEventListener = function(type, handler, options) {
   return this;
 };
 
-prototype.removeEventListener = function(type, handler) {
-  var handlers = this._handler.handlers(type),
-      i = handlers.length, h, t;
+prototype.removeEventListener = function (type, handler) {
+  const handlers = this._handler.handlers(type);
+  let i = handlers.length;
+  let h;
+  let t;
 
   // search registered handlers, remove if match found
   while (--i >= 0) {
@@ -276,8 +267,8 @@ prototype.removeEventListener = function(type, handler) {
   return this;
 };
 
-prototype.addResizeListener = function(handler) {
-  var l = this._resizeListeners;
+prototype.addResizeListener = function (handler) {
+  const l = this._resizeListeners;
   if (l.indexOf(handler) < 0) {
     // add handler if it isn't already registered
     // note: error trapping handled elsewhere, so
@@ -287,9 +278,9 @@ prototype.addResizeListener = function(handler) {
   return this;
 };
 
-prototype.removeResizeListener = function(handler) {
-  var l = this._resizeListeners,
-      i = l.indexOf(handler);
+prototype.removeResizeListener = function (handler) {
+  const l = this._resizeListeners;
+  const i = l.indexOf(handler);
   if (i >= 0) {
     l.splice(i, 1);
   }
@@ -297,18 +288,20 @@ prototype.removeResizeListener = function(handler) {
 };
 
 function findOperatorHandler(op, handler) {
-  var t = op._targets || [],
-      h = t.filter(function(op) {
-            var u = op._update;
-            return u && u.handler === handler;
-          });
+  const t = op._targets || [];
+  const h = t.filter(function (op) {
+    const u = op._update;
+    return u && u.handler === handler;
+  });
   return h.length ? h[0] : null;
 }
 
 function addOperatorListener(view, name, op, handler) {
-  var h = findOperatorHandler(op, handler);
+  let h = findOperatorHandler(op, handler);
   if (!h) {
-    h = trap(this, function() { handler(name, op.value); });
+    h = trap(this, function () {
+      handler(name, op.value);
+    });
     h.handler = handler;
     view.on(op, null, h);
   }
@@ -316,28 +309,28 @@ function addOperatorListener(view, name, op, handler) {
 }
 
 function removeOperatorListener(view, op, handler) {
-  var h = findOperatorHandler(op, handler);
+  const h = findOperatorHandler(op, handler);
   if (h) op._targets.remove(h);
   return view;
 }
 
-prototype.addSignalListener = function(name, handler) {
+prototype.addSignalListener = function (name, handler) {
   return addOperatorListener(this, name, lookupSignal(this, name), handler);
 };
 
-prototype.removeSignalListener = function(name, handler) {
+prototype.removeSignalListener = function (name, handler) {
   return removeOperatorListener(this, lookupSignal(this, name), handler);
 };
 
-prototype.addDataListener = function(name, handler) {
+prototype.addDataListener = function (name, handler) {
   return addOperatorListener(this, name, dataref(this, name).values, handler);
 };
 
-prototype.removeDataListener = function(name, handler) {
+prototype.removeDataListener = function (name, handler) {
   return removeOperatorListener(this, dataref(this, name).values, handler);
 };
 
-prototype.preventDefault = function(_) {
+prototype.preventDefault = function (_) {
   if (arguments.length) {
     this._preventDefault = _;
     return this;

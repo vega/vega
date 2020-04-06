@@ -1,21 +1,21 @@
-import { Padding } from 'vega'
+import { Padding } from 'vega';
 
-let padding: Padding
-
-// $ExpectError
-padding = null
+let padding: Padding;
 
 // $ExpectError
-padding = "baz"
+padding = null;
 
 // $ExpectError
-padding = true
+padding = 'baz';
 
 // $ExpectError
-padding = [0, 1, 2, 3]
+padding = true;
 
 // $ExpectError
-padding = {"top": "foo", "bottom": 0, "left": 0, "right": 0}
+padding = [0, 1, 2, 3];
 
 // $ExpectError
-padding = {"bottom": 0, "left": 0, "right": 0, "top": 0, "extra": 1}
+padding = { top: 'foo', bottom: 0, left: 0, right: 0 };
+
+// $ExpectError
+padding = { bottom: 0, left: 0, right: 0, top: 0, extra: 1 };

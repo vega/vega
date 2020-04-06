@@ -19,48 +19,48 @@ export default function GeoJSON(params) {
 }
 
 GeoJSON.Definition = {
-  "type": "GeoJSON",
-  "metadata": {},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "length": 2 },
-    { "name": "geojson", "type": "field" },
+  type: 'GeoJSON',
+  metadata: {},
+  params: [
+    {name: 'fields', type: 'field', array: true, length: 2},
+    {name: 'geojson', type: 'field'}
   ]
 };
 
-var prototype = inherits(GeoJSON, Transform);
+const prototype = inherits(GeoJSON, Transform);
 
-prototype.transform = function(_, pulse) {
-  var features = this._features,
-      points = this._points,
-      fields = _.fields,
-      lon = fields && fields[0],
-      lat = fields && fields[1],
-      geojson = _.geojson || (!fields && identity),
-      flag = pulse.ADD,
-      mod;
+prototype.transform = function (_, pulse) {
+  let features = this._features;
+  let points = this._points;
+  const fields = _.fields;
+  const lon = fields && fields[0];
+  const lat = fields && fields[1];
+  const geojson = _.geojson || (!fields && identity);
+  let flag = pulse.ADD;
 
-  mod = _.modified()
-    || pulse.changed(pulse.REM)
-    || pulse.modified(accessorFields(geojson))
-    || (lon && (pulse.modified(accessorFields(lon))))
-    || (lat && (pulse.modified(accessorFields(lat))));
+  const mod =
+    _.modified() ||
+    pulse.changed(pulse.REM) ||
+    pulse.modified(accessorFields(geojson)) ||
+    (lon && pulse.modified(accessorFields(lon))) ||
+    (lat && pulse.modified(accessorFields(lat)));
 
   if (!this.value || mod) {
     flag = pulse.SOURCE;
-    this._features = (features = []);
-    this._points = (points = []);
+    this._features = features = [];
+    this._points = points = [];
   }
 
   if (geojson) {
-    pulse.visit(flag, function(t) {
+    pulse.visit(flag, function (t) {
       features.push(geojson(t));
     });
   }
 
   if (lon && lat) {
-    pulse.visit(flag, function(t) {
-      var x = lon(t),
-          y = lat(t);
+    pulse.visit(flag, function (t) {
+      let x = lon(t);
+      let y = lat(t);
       if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
         points.push([x, y]);
       }

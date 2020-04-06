@@ -1,15 +1,15 @@
 import {truthy} from 'vega-util';
 
-var SKIP = {skip: true};
+const SKIP = {skip: true};
 
 export function getState(options) {
-  var ctx = this,
-      state = {};
+  const ctx = this;
+  const state = {};
 
   if (options.signals) {
-    var signals = (state.signals = {});
-    Object.keys(ctx.signals).forEach(function(key) {
-      var op = ctx.signals[key];
+    const signals = (state.signals = {});
+    Object.keys(ctx.signals).forEach(function (key) {
+      const op = ctx.signals[key];
       if (options.signals(key, op)) {
         signals[key] = op.value;
       }
@@ -17,9 +17,9 @@ export function getState(options) {
   }
 
   if (options.data) {
-    var data = (state.data = {});
-    Object.keys(ctx.data).forEach(function(key) {
-      var dataset = ctx.data[key];
+    const data = (state.data = {});
+    Object.keys(ctx.data).forEach(function (key) {
+      const dataset = ctx.data[key];
       if (options.data(key, dataset)) {
         data[key] = dataset.input.value;
       }
@@ -27,7 +27,7 @@ export function getState(options) {
   }
 
   if (ctx.subcontext && options.recurse !== false) {
-    state.subcontext = ctx.subcontext.map(function(ctx) {
+    state.subcontext = ctx.subcontext.map(function (ctx) {
       return ctx.getState(options);
     });
   }
@@ -36,24 +36,21 @@ export function getState(options) {
 }
 
 export function setState(state) {
-  var ctx = this,
-      df = ctx.dataflow,
-      data = state.data,
-      signals = state.signals;
+  const ctx = this;
+  const df = ctx.dataflow;
+  const data = state.data;
+  const signals = state.signals;
 
-  Object.keys(signals || {}).forEach(function(key) {
+  Object.keys(signals || {}).forEach(function (key) {
     df.update(ctx.signals[key], signals[key], SKIP);
   });
 
-  Object.keys(data || {}).forEach(function(key) {
-    df.pulse(
-      ctx.data[key].input,
-      df.changeset().remove(truthy).insert(data[key])
-    );
+  Object.keys(data || {}).forEach(function (key) {
+    df.pulse(ctx.data[key].input, df.changeset().remove(truthy).insert(data[key]));
   });
 
-  (state.subcontext  || []).forEach(function(substate, i) {
-    var subctx = ctx.subcontext[i];
+  (state.subcontext || []).forEach(function (substate, i) {
+    const subctx = ctx.subcontext[i];
     if (subctx) subctx.setState(substate);
   });
 }

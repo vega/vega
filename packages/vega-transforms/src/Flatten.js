@@ -21,36 +21,39 @@ export default function Flatten(params) {
 }
 
 Flatten.Definition = {
-  "type": "Flatten",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "index", "type": "string" },
-    { "name": "as", "type": "string", "array": true }
+  type: 'Flatten',
+  metadata: {generates: true},
+  params: [
+    {name: 'fields', type: 'field', array: true, required: true},
+    {name: 'index', type: 'string'},
+    {name: 'as', type: 'string', array: true}
   ]
 };
 
-var prototype = inherits(Flatten, Transform);
+const prototype = inherits(Flatten, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      fields = _.fields,
-      as = fieldNames(fields, _.as || []),
-      index = _.index || null,
-      m = as.length;
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE);
+  const fields = _.fields;
+  const as = fieldNames(fields, _.as || []);
+  const index = _.index || null;
+  const m = as.length;
 
   // remove any previous results
   out.rem = this.value;
 
   // generate flattened tuples
-  pulse.visit(pulse.SOURCE, function(t) {
-    var arrays = fields.map(f => f(t)),
-        maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
-        i = 0, j, d, v;
+  pulse.visit(pulse.SOURCE, function (t) {
+    const arrays = fields.map(f => f(t));
+    const maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0);
+    let i = 0;
+    let j;
+    let d;
+    let v;
 
-    for (; i<maxlen; ++i) {
+    for (; i < maxlen; ++i) {
       d = derive(t);
-      for (j=0; j<m; ++j) {
+      for (j = 0; j < m; ++j) {
         d[as[j]] = (v = arrays[j][i]) == null ? null : v;
       }
       if (index) {

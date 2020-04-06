@@ -7,29 +7,30 @@ import {AxisTitleRole} from '../marks/roles';
 import {addEncode, addEncoders} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
-export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      horizontal = (orient === Top || orient === Bottom),
-      encode, enter, update, titlePos;
+export default function (spec, config, userEncode, dataRef) {
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  const sign = orient === Left || orient === Top ? -1 : 1;
+  const horizontal = orient === Top || orient === Bottom;
+  let enter;
+  let update;
 
-  encode = {
-    enter: enter = {
+  const encode = {
+    enter: (enter = {
       opacity: zero,
       anchor: encoder(_('titleAnchor')),
       align: {signal: alignExpr}
-    },
-    update: update = extend({}, enter, {
+    }),
+    update: (update = extend({}, enter, {
       opacity: one,
       text: encoder(spec.title)
-    }),
+    })),
     exit: {
       opacity: zero
     }
   };
 
-  titlePos = {
+  const titlePos = {
     signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
@@ -43,28 +44,35 @@ export default function(spec, config, userEncode, dataRef) {
     enter.baseline = {value: 'bottom'};
   }
 
-  addEncoders(encode, {
-    angle:       _('titleAngle'),
-    baseline:    _('titleBaseline'),
-    fill:        _('titleColor'),
-    fillOpacity: _('titleOpacity'),
-    font:        _('titleFont'),
-    fontSize:    _('titleFontSize'),
-    fontStyle:   _('titleFontStyle'),
-    fontWeight:  _('titleFontWeight'),
-    limit:       _('titleLimit'),
-    lineHeight:  _('titleLineHeight')
-  }, { // require update
-    align:       _('titleAlign')
-  });
+  addEncoders(
+    encode,
+    {
+      angle: _('titleAngle'),
+      baseline: _('titleBaseline'),
+      fill: _('titleColor'),
+      fillOpacity: _('titleOpacity'),
+      font: _('titleFont'),
+      fontSize: _('titleFontSize'),
+      fontStyle: _('titleFontStyle'),
+      fontWeight: _('titleFontWeight'),
+      limit: _('titleLimit'),
+      lineHeight: _('titleLineHeight')
+    },
+    {
+      // require update
+      align: _('titleAlign')
+    }
+  );
 
-  !addEncode(encode, 'x', _('titleX'), 'update')
-    && !horizontal && !has('x', userEncode)
-    && (encode.enter.auto = {value: true});
+  !addEncode(encode, 'x', _('titleX'), 'update') &&
+    !horizontal &&
+    !has('x', userEncode) &&
+    (encode.enter.auto = {value: true});
 
-  !addEncode(encode, 'y', _('titleY'), 'update')
-    && horizontal && !has('y', userEncode)
-    && (encode.enter.auto = {value: true});
+  !addEncode(encode, 'y', _('titleY'), 'update') &&
+    horizontal &&
+    !has('y', userEncode) &&
+    (encode.enter.auto = {value: true});
 
   return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
 }

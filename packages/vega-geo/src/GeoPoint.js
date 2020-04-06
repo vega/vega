@@ -17,28 +17,28 @@ export default function GeoPoint(params) {
 }
 
 GeoPoint.Definition = {
-  "type": "GeoPoint",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection", "required": true },
-    { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+  type: 'GeoPoint',
+  metadata: {modifies: true},
+  params: [
+    {name: 'projection', type: 'projection', required: true},
+    {name: 'fields', type: 'field', array: true, required: true, length: 2},
+    {name: 'as', type: 'string', array: true, length: 2, default: ['x', 'y']}
   ]
 };
 
-var prototype = inherits(GeoPoint, Transform);
+const prototype = inherits(GeoPoint, Transform);
 
-prototype.transform = function(_, pulse) {
-  var proj = _.projection,
-      lon = _.fields[0],
-      lat = _.fields[1],
-      as = _.as || ['x', 'y'],
-      x = as[0],
-      y = as[1],
-      mod;
+prototype.transform = function (_, pulse) {
+  const proj = _.projection;
+  const lon = _.fields[0];
+  const lat = _.fields[1];
+  const as = _.as || ['x', 'y'];
+  const x = as[0];
+  const y = as[1];
+  let mod;
 
   function set(t) {
-    var xy = proj([lon(t), lat(t)]);
+    const xy = proj([lon(t), lat(t)]);
     if (xy) {
       t[x] = xy[0];
       t[y] = xy[1];

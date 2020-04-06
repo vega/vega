@@ -15,32 +15,44 @@ export default function PreFacet(params) {
   Facet.call(this, params);
 }
 
-var prototype = inherits(PreFacet, Facet);
+const prototype = inherits(PreFacet, Facet);
 
-prototype.transform = function(_, pulse) {
-  var self = this,
-      flow = _.subflow,
-      field = _.field;
+prototype.transform = function (_, pulse) {
+  const self = this;
+  const flow = _.subflow;
+  const field = _.field;
 
-  if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
+  if (_.modified('field') || (field && pulse.modified(accessorFields(field)))) {
     error('PreFacet does not support field modification.');
   }
 
   this._targets.active = 0; // reset list of active subflows
 
-  pulse.visit(pulse.MOD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.mod(_); }) : sf.mod(t);
+  pulse.visit(pulse.MOD, function (t) {
+    const sf = self.subflow(tupleid(t), flow, pulse, t);
+    field
+      ? field(t).forEach(function (_) {
+          sf.mod(_);
+        })
+      : sf.mod(t);
   });
 
-  pulse.visit(pulse.ADD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.add(ingest(_)); }) : sf.add(t);
+  pulse.visit(pulse.ADD, function (t) {
+    const sf = self.subflow(tupleid(t), flow, pulse, t);
+    field
+      ? field(t).forEach(function (_) {
+          sf.add(ingest(_));
+        })
+      : sf.add(t);
   });
 
-  pulse.visit(pulse.REM, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.rem(_); }) : sf.rem(t);
+  pulse.visit(pulse.REM, function (t) {
+    const sf = self.subflow(tupleid(t), flow, pulse, t);
+    field
+      ? field(t).forEach(function (_) {
+          sf.rem(_);
+        })
+      : sf.rem(t);
   });
 
   return pulse;

@@ -11,22 +11,14 @@ export const MINUTES = 'minutes';
 export const SECONDS = 'seconds';
 export const MILLISECONDS = 'milliseconds';
 
-const UNITS = [
-  YEAR,
-  QUARTER,
-  MONTH,
-  WEEK,
-  DATE,
-  DAY,
-  HOURS,
-  MINUTES,
-  SECONDS,
-  MILLISECONDS
-].reduce((o, u, i) => (o[u] = 1 + i, o), {});
+const UNITS = [YEAR, QUARTER, MONTH, WEEK, DATE, DAY, HOURS, MINUTES, SECONDS, MILLISECONDS].reduce(
+  (o, u, i) => ((o[u] = 1 + i), o),
+  {}
+);
 
 export function timeUnits(units) {
-  const u = array(units).slice(),
-        m = {};
+  const u = array(units).slice();
+  const m = {};
 
   // check validity
   if (!u.length) error('Missing time unit.');

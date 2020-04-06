@@ -1,28 +1,28 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Nest = require('../').nest;
+const tape = require('tape');
+const field = require('vega-util').field;
+const vega = require('vega-dataflow');
+const Collect = require('vega-transforms').collect;
+const Nest = require('../').nest;
 
-tape('Nest tuples', function(t) {
-  var dataA = {id: 'A', job: 'Doctor'},
-      nodeA = {key: dataA.job, values: [dataA]},
-      childA = {data: dataA, height: 0, depth: 2};
+tape('Nest tuples', function (t) {
+  const dataA = {id: 'A', job: 'Doctor'};
+  const nodeA = {key: dataA.job, values: [dataA]};
+  const childA = {data: dataA, height: 0, depth: 2};
 
-  var dataB = {id: 'B', job: 'Lawyer'},
-      nodeB = {key: dataB.job, values: [dataB]},
-      childB = {data: dataB, height: 0, depth: 2};
+  const dataB = {id: 'B', job: 'Lawyer'};
+  const nodeB = {key: dataB.job, values: [dataB]};
+  const childB = {data: dataB, height: 0, depth: 2};
 
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  const df = new vega.Dataflow();
+  const collect = df.add(Collect);
+  const nest = df.add(Nest, {keys: [field('job')], pulse: collect});
+  const out = df.add(Collect, {pulse: nest});
 
   // -- test adds
   df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
 
-  var expected = [dataA, dataB];
+  let expected = [dataA, dataB];
   expected.root = {
     data: {values: [nodeA, nodeB]},
     height: 2,
@@ -39,7 +39,7 @@ tape('Nest tuples', function(t) {
   };
 
   // test and remove circular properties first
-  var d = out.value;
+  let d = out.value;
   t.equal(d.root.children[0].parent, d.root);
   t.equal(d.root.children[1].parent, d.root);
   t.equal(d.root.lookup['1'].parent, d.root.children[0]);
@@ -50,7 +50,6 @@ tape('Nest tuples', function(t) {
   delete d.root.lookup['2'].parent;
   t.deepEqual(d, expected);
 
-
   // -- test data removals
   df.pulse(collect, vega.changeset().remove([dataA])).run();
 
@@ -60,9 +59,7 @@ tape('Nest tuples', function(t) {
     height: 2,
     depth: 0,
     parent: null,
-    children: [
-      {data: nodeB, height: 1, depth: 1, children: [childB]}
-    ],
+    children: [{data: nodeB, height: 1, depth: 1, children: [childB]}],
     lookup: {
       [vega.tupleid(dataB)]: childB
     }
@@ -79,16 +76,16 @@ tape('Nest tuples', function(t) {
   t.end();
 });
 
-tape('Nest empty data', function(t) {
+tape('Nest empty data', function (t) {
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  const df = new vega.Dataflow();
+  const collect = df.add(Collect);
+  const nest = df.add(Nest, {keys: [field('job')], pulse: collect});
+  const out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, vega.changeset().insert([])).run();
   t.equal(out.value.length, 0);
-  var root = out.value.root;
+  const root = out.value.root;
   t.equal(root.children, undefined);
   t.deepEqual(root.lookup, {});
 

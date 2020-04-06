@@ -14,9 +14,13 @@ import {error, inherits, isArray} from 'vega-util';
  * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
  */
 export default function MultiPulse(dataflow, stamp, pulses, encode) {
-  var p = this,
-      c = 0,
-      pulse, hash, i, n, f;
+  const p = this;
+  let c = 0;
+  let pulse;
+  let hash;
+  let i;
+  let n;
+  let f;
 
   this.dataflow = dataflow;
   this.stamp = stamp;
@@ -24,13 +28,15 @@ export default function MultiPulse(dataflow, stamp, pulses, encode) {
   this.encode = encode || null;
   this.pulses = pulses;
 
-  for (i=0, n=pulses.length; i<n; ++i) {
+  for (i = 0, n = pulses.length; i < n; ++i) {
     pulse = pulses[i];
     if (pulse.stamp !== stamp) continue;
 
     if (pulse.fields) {
       hash = p.fields || (p.fields = {});
-      for (f in pulse.fields) { hash[f] = 1; }
+      for (f in pulse.fields) {
+        hash[f] = 1;
+      }
     }
 
     if (pulse.changed(p.ADD)) c |= p.ADD;
@@ -41,60 +47,71 @@ export default function MultiPulse(dataflow, stamp, pulses, encode) {
   this.changes = c;
 }
 
-var prototype = inherits(MultiPulse, Pulse);
+const prototype = inherits(MultiPulse, Pulse);
 
 /**
  * Creates a new pulse based on the values of this pulse.
  * The dataflow, time stamp and field modification values are copied over.
  * @return {Pulse}
  */
-prototype.fork = function(flags) {
-  var p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
+prototype.fork = function (flags) {
+  const p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
   if (flags !== undefined) {
     if (flags & p.ADD) {
-      this.visit(p.ADD, function(t) { return p.add.push(t); });
+      this.visit(p.ADD, function (t) {
+        return p.add.push(t);
+      });
     }
     if (flags & p.REM) {
-      this.visit(p.REM, function(t) { return p.rem.push(t); });
+      this.visit(p.REM, function (t) {
+        return p.rem.push(t);
+      });
     }
     if (flags & p.MOD) {
-      this.visit(p.MOD, function(t) { return p.mod.push(t); });
+      this.visit(p.MOD, function (t) {
+        return p.mod.push(t);
+      });
     }
   }
   return p;
 };
 
-prototype.changed = function(flags) {
+prototype.changed = function (flags) {
   return this.changes & flags;
 };
 
-prototype.modified = function(_) {
-  var p = this, fields = p.fields;
-  return !(fields && (p.changes & p.MOD)) ? 0
-    : isArray(_) ? _.some(function(f) { return fields[f]; })
+prototype.modified = function (_) {
+  const p = this;
+  const fields = p.fields;
+  return !(fields && p.changes & p.MOD)
+    ? 0
+    : isArray(_)
+    ? _.some(function (f) {
+        return fields[f];
+      })
     : fields[_];
 };
 
-prototype.filter = function() {
+prototype.filter = function () {
   error('MultiPulse does not support filtering.');
 };
 
-prototype.materialize = function() {
+prototype.materialize = function () {
   error('MultiPulse does not support materialization.');
 };
 
-prototype.visit = function(flags, visitor) {
-  var p = this,
-      pulses = p.pulses,
-      n = pulses.length,
-      i = 0;
+prototype.visit = function (flags, visitor) {
+  const p = this;
+  const pulses = p.pulses;
+  const n = pulses.length;
+  let i = 0;
 
   if (flags & p.SOURCE) {
-    for (; i<n; ++i) {
+    for (; i < n; ++i) {
       pulses[i].visit(flags, visitor);
     }
   } else {
-    for (; i<n; ++i) {
+    for (; i < n; ++i) {
       if (pulses[i].stamp === p.stamp) {
         pulses[i].visit(flags, visitor);
       }

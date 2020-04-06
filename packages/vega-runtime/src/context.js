@@ -6,7 +6,7 @@ import {canonicalType, isCollect} from './util';
  * Enables lookup of parsed operators, event streams, accessors, etc.
  * Provides a 'fork' method for creating child contexts for subflows.
  */
-export default function(df, transforms, functions) {
+export default function (df, transforms, functions) {
   return new Context(df, transforms, functions);
 }
 
@@ -42,21 +42,21 @@ function ContextFork(ctx) {
 }
 
 Context.prototype = ContextFork.prototype = {
-  fork: function() {
-    var ctx = new ContextFork(this);
+  fork: function () {
+    const ctx = new ContextFork(this);
     (this.subcontext || (this.subcontext = [])).push(ctx);
     return ctx;
   },
-  get: function(id) {
+  get: function (id) {
     return this.nodes[id];
   },
-  set: function(id, node) {
-    return this.nodes[id] = node;
+  set: function (id, node) {
+    return (this.nodes[id] = node);
   },
-  add: function(spec, op) {
-    var ctx = this,
-        df = ctx.dataflow,
-        data;
+  add: function (spec, op) {
+    const ctx = this;
+    const df = ctx.dataflow;
+    let data;
 
     ctx.set(spec.id, op);
 
@@ -75,12 +75,12 @@ Context.prototype = ContextFork.prototype = {
     }
 
     if (spec.parent) {
-      var p = ctx.get(spec.parent.$ref);
+      let p = ctx.get(spec.parent.$ref);
       if (p) {
         df.connect(p, [op]);
         op.targets().add(p);
       } else {
-        (ctx.unresolved = ctx.unresolved || []).push(function() {
+        (ctx.unresolved = ctx.unresolved || []).push(function () {
           p = ctx.get(spec.parent.$ref);
           df.connect(p, [op]);
           op.targets().add(p);
@@ -97,27 +97,31 @@ Context.prototype = ContextFork.prototype = {
     }
 
     if (spec.data) {
-      for (var name in spec.data) {
+      for (const name in spec.data) {
         data = ctx.data[name] || (ctx.data[name] = {});
-        spec.data[name].forEach(function(role) { data[role] = op; });
+        spec.data[name].forEach(function (role) {
+          data[role] = op;
+        });
       }
     }
   },
-  resolve: function() {
-    (this.unresolved || []).forEach(function(fn) { fn(); });
+  resolve: function () {
+    (this.unresolved || []).forEach(function (fn) {
+      fn();
+    });
     delete this.unresolved;
     return this;
   },
-  operator: function(spec, update) {
+  operator: function (spec, update) {
     this.add(spec, this.dataflow.add(spec.value, update));
   },
-  transform: function(spec, type) {
+  transform: function (spec, type) {
     this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)]));
   },
-  stream: function(spec, stream) {
+  stream: function (spec, stream) {
     this.set(spec.id, stream);
   },
-  update: function(spec, stream, target, update, params) {
+  update: function (spec, stream, target, update, params) {
     this.dataflow.on(stream, target, update, params, spec.options);
   },
   getState: getState,

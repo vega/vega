@@ -12,20 +12,20 @@ import {array} from 'vega-util';
  *   used as the downstream event value.
  * @return {EventStream}
  */
-export default function(source, type, filter, apply) {
-  var df = this,
-      s = stream(filter, apply),
-      send = function(e) {
-        e.dataflow = df;
-        try {
-          s.receive(e);
-        } catch (error) {
-          df.error(error);
-        } finally {
-          df.run();
-        }
-      },
-      sources;
+export default function (source, type, filter, apply) {
+  const df = this;
+  const s = stream(filter, apply);
+  const send = function (e) {
+    e.dataflow = df;
+    try {
+      s.receive(e);
+    } catch (error) {
+      df.error(error);
+    } finally {
+      df.run();
+    }
+  };
+  let sources;
 
   if (typeof source === 'string' && typeof document !== 'undefined') {
     sources = document.querySelectorAll(source);
@@ -33,7 +33,7 @@ export default function(source, type, filter, apply) {
     sources = array(source);
   }
 
-  for (var i=0, n=sources.length; i<n; ++i) {
+  for (let i = 0, n = sources.length; i < n; ++i) {
     sources[i].addEventListener(type, send);
   }
 

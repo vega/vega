@@ -1,13 +1,13 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 function parse(str) {
-  return function() {
+  return function () {
     return JSON.parse(JSON.stringify(vega.parse(str)));
   };
 }
 
-tape('Parser should allow literal boolean expressions', function(t) {
+tape('Parser should allow literal boolean expressions', function (t) {
   t.deepEqual(parse('true')(), {
     type: 'Literal',
     value: true,
@@ -17,7 +17,7 @@ tape('Parser should allow literal boolean expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow literal number expressions', function(t) {
+tape('Parser should allow literal number expressions', function (t) {
   t.deepEqual(parse('3')(), {
     type: 'Literal',
     value: 3,
@@ -38,7 +38,7 @@ tape('Parser should allow literal number expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow literal string expressions', function(t) {
+tape('Parser should allow literal string expressions', function (t) {
   t.deepEqual(parse("'a'")(), {
     type: 'Literal',
     value: 'a',
@@ -52,19 +52,19 @@ tape('Parser should allow literal string expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow literal regular expressions', function(t) {
+tape('Parser should allow literal regular expressions', function (t) {
   t.deepEqual(parse('/a/')(), {
     type: 'Literal',
     value: {},
     raw: '/a/',
-    regex: { pattern: 'a', flags: ''}
+    regex: {pattern: 'a', flags: ''}
   });
   // Empty regex
   t.deepEqual(parse('//')(), {
     type: 'Literal',
     value: {},
     raw: '/(?:)/',
-    regex: { pattern: '', flags: ''}
+    regex: {pattern: '', flags: ''}
   });
   t.doesNotThrow(parse('/[0-9]+/gi'));
   t.doesNotThrow(parse('/a\\u{41}/u'));
@@ -81,7 +81,7 @@ tape('Parser should allow literal regular expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow literal array expressions', function(t) {
+tape('Parser should allow literal array expressions', function (t) {
   t.deepEqual(parse('[]')(), {
     type: 'ArrayExpression',
     elements: []
@@ -90,15 +90,12 @@ tape('Parser should allow literal array expressions', function(t) {
   t.doesNotThrow(parse('["a","b","c"]'));
   t.deepEqual(parse('[0,,]')(), {
     type: 'ArrayExpression',
-    elements: [
-      {type: 'Literal', value: 0, raw: '0'},
-      null
-    ]
+    elements: [{type: 'Literal', value: 0, raw: '0'}, null]
   });
   t.end();
 });
 
-tape('Parser should allow literal object expressions', function(t) {
+tape('Parser should allow literal object expressions', function (t) {
   t.deepEqual(parse('{}')(), {
     type: 'ObjectExpression',
     properties: []
@@ -116,7 +113,7 @@ tape('Parser should allow literal object expressions', function(t) {
         type: 'Property',
         kind: 'init',
         key: {type: 'Identifier', name: 'b'},
-        value: {type: 'Literal', value: "c", raw: '"c"'}
+        value: {type: 'Literal', value: 'c', raw: '"c"'}
       }
     ]
   });
@@ -131,7 +128,7 @@ tape('Parser should allow literal object expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow unary expressions', function(t) {
+tape('Parser should allow unary expressions', function (t) {
   t.deepEqual(parse('+"1"')(), {
     type: 'UnaryExpression',
     operator: '+',
@@ -149,7 +146,7 @@ tape('Parser should allow unary expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow binary expressions', function(t) {
+tape('Parser should allow binary expressions', function (t) {
   t.deepEqual(parse('1+2')(), {
     type: 'BinaryExpression',
     operator: '+',
@@ -171,7 +168,7 @@ tape('Parser should allow binary expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow logical expressions', function(t) {
+tape('Parser should allow logical expressions', function (t) {
   t.deepEqual(parse('1 && 2')(), {
     type: 'LogicalExpression',
     operator: '&&',
@@ -182,13 +179,13 @@ tape('Parser should allow logical expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow comparison expressions', function(t) {
+tape('Parser should allow comparison expressions', function (t) {
   t.deepEqual(parse('1 < 2')(), {
     type: 'BinaryExpression',
     operator: '<',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
-  })
+  });
   t.doesNotThrow(parse('1 > 2'));
   t.doesNotThrow(parse('1 <= 2'));
   t.doesNotThrow(parse('1 >= 2'));
@@ -199,12 +196,12 @@ tape('Parser should allow comparison expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow complex expressions', function(t) {
+tape('Parser should allow complex expressions', function (t) {
   t.doesNotThrow(parse('1 + 2 - 3 / 4 * a.a + 4 & 3'));
   t.end();
 });
 
-tape('Parser should allow ternary conditional expressions', function(t) {
+tape('Parser should allow ternary conditional expressions', function (t) {
   t.deepEqual(parse('a ? b : c')(), {
     type: 'ConditionalExpression',
     test: {type: 'Identifier', name: 'a'},
@@ -215,7 +212,7 @@ tape('Parser should allow ternary conditional expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow identifier expressions', function(t) {
+tape('Parser should allow identifier expressions', function (t) {
   t.deepEqual(parse('a')(), {
     type: 'Identifier',
     name: 'a'
@@ -244,7 +241,7 @@ tape('Parser should allow identifier expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow member expressions', function(t) {
+tape('Parser should allow member expressions', function (t) {
   t.deepEqual(parse('a[0]')(), {
     type: 'MemberExpression',
     computed: true,
@@ -256,7 +253,7 @@ tape('Parser should allow member expressions', function(t) {
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'b', member: true}
-  })
+  });
   t.doesNotThrow(parse('a["b"]'));
   t.doesNotThrow(parse('a["two words"]'));
   t.deepEqual(parse('a.true')(), {
@@ -264,7 +261,7 @@ tape('Parser should allow member expressions', function(t) {
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'true', member: true}
-  })
+  });
   t.doesNotThrow(parse('a.function'));
   t.doesNotThrow(parse('a.null'));
 
@@ -273,7 +270,7 @@ tape('Parser should allow member expressions', function(t) {
   t.end();
 });
 
-tape('Parser should allow call expressions', function(t) {
+tape('Parser should allow call expressions', function (t) {
   t.deepEqual(parse('a()')(), {
     type: 'CallExpression',
     callee: {type: 'Identifier', name: 'a'},
@@ -287,58 +284,58 @@ tape('Parser should allow call expressions', function(t) {
       {type: 'Literal', value: 1, raw: '1'},
       {type: 'Literal', value: 2, raw: '2'}
     ]
-  })
+  });
   t.doesNotThrow(parse('A()'));
   t.doesNotThrow(parse('A(0,1,2)'));
   t.doesNotThrow(parse('foo.bar(0,1,2)'));
   t.end();
 });
 
-tape('Parser should not allow illegal identifier expressions', function(t) {
+tape('Parser should not allow illegal identifier expressions', function (t) {
   t.throws(parse('3a'));
   t.throws(parse('#e'));
   t.throws(parse('@e'));
   t.end();
 });
 
-tape('Parser should not allow illegal member expressions', function(t) {
+tape('Parser should not allow illegal member expressions', function (t) {
   t.throws(parse('a.3'));
   t.end();
 });
 
-tape('Parser should not allow single-line comments', function(t) {
+tape('Parser should not allow single-line comments', function (t) {
   t.throws(parse('3 // comment'));
   t.end();
 });
 
-tape('Parser should not allow multi-line comments', function(t) {
+tape('Parser should not allow multi-line comments', function (t) {
   t.throws(parse('/* comment */ 3'));
   t.throws(parse('3 /* comment */'));
   t.end();
 });
 
-tape('Parser should not allow empty statements', function(t) {
+tape('Parser should not allow empty statements', function (t) {
   t.throws(parse(''));
   t.throws(parse(' '));
   t.end();
 });
 
-tape('Parser should not allow debugger statements', function(t) {
+tape('Parser should not allow debugger statements', function (t) {
   t.throws(parse('debugger'));
   t.end();
 });
 
-tape('Parser should not allow continue statements', function(t) {
+tape('Parser should not allow continue statements', function (t) {
   t.throws(parse('continue'));
   t.end();
 });
 
-tape('Parser should not allow break statements', function(t) {
+tape('Parser should not allow break statements', function (t) {
   t.throws(parse('break'));
   t.end();
 });
 
-tape('Parser should not allow reserved keywords', function(t) {
+tape('Parser should not allow reserved keywords', function (t) {
   // future reserved words
   t.throws(parse('class'));
   t.throws(parse('enum'));
@@ -359,13 +356,13 @@ tape('Parser should not allow reserved keywords', function(t) {
   t.end();
 });
 
-tape('Parser should not allow object get/set expressions', function(t) {
+tape('Parser should not allow object get/set expressions', function (t) {
   t.throws(parse('{get b() {}}'));
   t.throws(parse('{set b(x) {}}'));
   t.end();
 });
 
-tape('Parser should not allow assignment expressions', function(t) {
+tape('Parser should not allow assignment expressions', function (t) {
   t.throws(parse('index = 3'));
   t.throws(parse('index += 3'));
   t.throws(parse('index -= 3'));
@@ -381,139 +378,139 @@ tape('Parser should not allow assignment expressions', function(t) {
   t.end();
 });
 
-tape('Parser should not allow postfix update expressions', function(t) {
+tape('Parser should not allow postfix update expressions', function (t) {
   t.throws(parse('index++'));
   t.throws(parse('index--'));
   t.end();
 });
 
-tape('Parser should not allow prefix update expressions', function(t) {
+tape('Parser should not allow prefix update expressions', function (t) {
   t.throws(parse('++index'));
   t.throws(parse('--index'));
   t.end();
 });
 
-tape('Parser should not allow sequence expressions', function(t) {
+tape('Parser should not allow sequence expressions', function (t) {
   t.throws(parse('(3, 4)'));
   t.throws(parse('("a", 3+4)'));
   t.end();
 });
 
-tape('Parser should not allow multiple statements', function(t) {
+tape('Parser should not allow multiple statements', function (t) {
   t.throws(parse('3; 4'));
   t.throws(parse('"a"; 3+4'));
   t.end();
 });
 
-tape('Parser should not allow variable statements', function(t) {
+tape('Parser should not allow variable statements', function (t) {
   t.throws(parse('var x = 4'));
   t.end();
 });
 
-tape('Parser should not allow return statements', function(t) {
+tape('Parser should not allow return statements', function (t) {
   t.throws(parse('return 4'));
   t.end();
 });
 
-tape('Parser should not allow function declarations', function(t) {
+tape('Parser should not allow function declarations', function (t) {
   t.throws(parse('function f() {}'));
   t.throws(parse('function f() { 1 }'));
   t.throws(parse('function f() { return 1; }'));
   t.end();
 });
 
-tape('Parser should not allow function expressions', function(t) {
+tape('Parser should not allow function expressions', function (t) {
   t.throws(parse('function() {}'));
   t.throws(parse('function() { 1 }'));
   t.throws(parse('function() { return 1; }'));
   t.end();
 });
 
-tape('Parser should not allow new statements', function(t) {
+tape('Parser should not allow new statements', function (t) {
   t.throws(parse('new Date()'));
   t.throws(parse('new Array(3)'));
   t.end();
 });
 
-tape('Parser should not allow block statements', function(t) {
+tape('Parser should not allow block statements', function (t) {
   t.throws(parse('{3+4}'));
   t.throws(parse('{"a"}'));
   t.end();
 });
 
-tape('Parser should not allow labeled statements', function(t) {
+tape('Parser should not allow labeled statements', function (t) {
   t.throws(parse('label: 3'));
   t.end();
 });
 
-tape('Parser should not allow with statements', function(t) {
+tape('Parser should not allow with statements', function (t) {
   t.throws(parse('with({a:1,b:2}) { a }'));
   t.end();
 });
 
-tape('Parser should not allow try/catch statements', function(t) {
+tape('Parser should not allow try/catch statements', function (t) {
   t.throws(parse('try { 3 } catch (err) { 4 }'));
   t.throws(parse('try { undefined() } catch (err) { 4 }'));
   t.end();
 });
 
-tape('Parser should not allow if statements', function(t) {
+tape('Parser should not allow if statements', function (t) {
   t.throws(parse('if (1<2) 4; else 5'));
   t.throws(parse('if (2<1) 4; else 5'));
   t.end();
 });
 
-tape('Parser should not allow switch statements', function(t) {
+tape('Parser should not allow switch statements', function (t) {
   t.throws(parse('switch("a") { default: 3; }'));
   t.throws(parse('switch("a") { case "a": 4; break; default: 3; }'));
   t.end();
 });
 
-tape('Parser should not allow for statements', function(t) {
+tape('Parser should not allow for statements', function (t) {
   t.throws(parse('for (; index>5; ) { index; }'));
   t.end();
 });
 
-tape('Parser should not allow for-in statements', function(t) {
+tape('Parser should not allow for-in statements', function (t) {
   t.throws(parse('for (i in self) { 3; }'));
   t.end();
 });
 
-tape('Parser should not allow while statements', function(t) {
+tape('Parser should not allow while statements', function (t) {
   t.throws(parse('while (1 < 2) { 3; }'));
   t.throws(parse('while (1 > 2) { 3; }'));
   t.end();
 });
 
-tape('Parser should not allow do-while statements', function(t) {
+tape('Parser should not allow do-while statements', function (t) {
   t.throws(parse('do { 3 } while (1 < 2)'));
   t.throws(parse('do { 3 } while (1 > 2)'));
   t.end();
 });
 
-tape('Parser should not allow octal literals or escape sequences', function(t) {
+tape('Parser should not allow octal literals or escape sequences', function (t) {
   // octal literals are not allowed in strict mode.
   t.throws(parse('"\\01"'));
   t.throws(parse('012'));
   t.end();
 });
 
-tape('Parser should not allow void expressions', function(t) {
+tape('Parser should not allow void expressions', function (t) {
   t.throws(parse('void(0)'));
   t.end();
 });
 
-tape('Parser should not allow delete expressions', function(t) {
+tape('Parser should not allow delete expressions', function (t) {
   t.throws(parse('delete a.x'));
   t.end();
 });
 
-tape('Parser should not allow typeof expressions', function(t) {
+tape('Parser should not allow typeof expressions', function (t) {
   t.throws(parse('typeof "hello"'));
   t.end();
 });
 
-tape('Parser should parse escape sequences', function(t) {
+tape('Parser should parse escape sequences', function (t) {
   t.deepEqual(parse('"\\\n\\b\\f\\n\\r\\t\\v\\z\\u0023\\u{41}\\u{2F804}"')(), {
     type: 'Literal',
     value: '\b\f\n\r\t\vz\u0023\u0041\uD87E\uDC04',
@@ -533,12 +530,12 @@ tape('Parser should parse escape sequences', function(t) {
   t.end();
 });
 
-tape('Parser should ignore whitespace', function(t) {
-  var tree = {
-    type: "BinaryExpression",
-    operator: "+",
-    left: {type: "Literal", value: 1, raw: "1"},
-    right: {type: "Literal", value: 2, raw: "2"}
+tape('Parser should ignore whitespace', function (t) {
+  const tree = {
+    type: 'BinaryExpression',
+    operator: '+',
+    left: {type: 'Literal', value: 1, raw: '1'},
+    right: {type: 'Literal', value: 2, raw: '2'}
   };
   t.deepEqual(parse('1+ 2')(), tree);
   t.deepEqual(parse('1+\n2')(), tree);

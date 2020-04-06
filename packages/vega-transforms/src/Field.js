@@ -17,7 +17,11 @@ export default function Field(params) {
 inherits(Field, Operator);
 
 function update(_) {
-  return (this.value && !_.modified()) ? this.value
-    : isArray(_.name) ? array(_.name).map(function(f) { return field(f); })
+  return this.value && !_.modified()
+    ? this.value
+    : isArray(_.name)
+    ? array(_.name).map(function (f) {
+        return field(f);
+      })
     : field(_.name, _.as);
 }

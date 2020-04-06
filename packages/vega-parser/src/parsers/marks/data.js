@@ -3,8 +3,12 @@ import {ref} from '../../util';
 import {Collect} from '../../transforms';
 import {array, error, extend} from 'vega-util';
 
-export default function(from, group, scope) {
-  var facet, key, op, dataRef, parent;
+export default function (from, group, scope) {
+  let facet;
+  let key;
+  let op;
+  let dataRef;
+  let parent;
 
   // if no source data, generate singleton datum
   if (!from) {
@@ -12,7 +16,7 @@ export default function(from, group, scope) {
   }
 
   // if faceted, process facet specification
-  else if (facet = from.facet) {
+  else if ((facet = from.facet)) {
     if (!group) error('Only group marks can be faceted.');
 
     // use pre-faceted source data, if available
@@ -21,10 +25,16 @@ export default function(from, group, scope) {
     } else {
       // generate facet aggregates if no direct data specification
       if (!from.data) {
-        op = parseTransform(extend({
-          type:    'aggregate',
-          groupby: array(facet.groupby)
-        }, facet.aggregate), scope);
+        op = parseTransform(
+          extend(
+            {
+              type: 'aggregate',
+              groupby: array(facet.groupby)
+            },
+            facet.aggregate
+          ),
+          scope
+        );
         op.params.key = scope.keyRef(facet.groupby);
         op.params.pulse = getDataRef(facet, scope);
         dataRef = parent = ref(scope.add(op));
@@ -49,7 +59,5 @@ export default function(from, group, scope) {
 }
 
 export function getDataRef(from, scope) {
-  return from.$ref ? from
-    : from.data && from.data.$ref ? from.data
-    : ref(scope.getData(from.data).output);
+  return from.$ref ? from : from.data && from.data.$ref ? from.data : ref(scope.getData(from.data).output);
 }

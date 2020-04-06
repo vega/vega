@@ -15,28 +15,28 @@ export default function Sequence(params) {
 }
 
 Sequence.Definition = {
-  "type": "Sequence",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "start", "type": "number", "required": true },
-    { "name": "stop", "type": "number", "required": true },
-    { "name": "step", "type": "number", "default": 1 },
-    { "name": "as", "type": "string", "default": "data" }
+  type: 'Sequence',
+  metadata: {generates: true, changes: true},
+  params: [
+    {name: 'start', type: 'number', required: true},
+    {name: 'stop', type: 'number', required: true},
+    {name: 'step', type: 'number', default: 1},
+    {name: 'as', type: 'string', default: 'data'}
   ]
 };
 
-var prototype = inherits(Sequence, Transform);
+const prototype = inherits(Sequence, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (this.value && !_.modified()) return;
 
-  var out = pulse.materialize().fork(pulse.MOD),
-      as = _.as || 'data';
+  const out = pulse.materialize().fork(pulse.MOD);
+  const as = _.as || 'data';
 
   out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
 
-  this.value = range(_.start, _.stop, _.step || 1).map(function(v) {
-    var t = {};
+  this.value = range(_.start, _.stop, _.step || 1).map(function (v) {
+    const t = {};
     t[as] = v;
     return ingest(t);
   });

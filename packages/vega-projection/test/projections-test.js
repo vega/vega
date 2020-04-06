@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('default projections are registered', function(t) {
+tape('default projections are registered', function (t) {
   [
     'albers',
     'albersusa',
@@ -18,11 +18,10 @@ tape('default projections are registered', function(t) {
     'orthographic',
     'stereographic',
     'transversemercator'
-  ].forEach(function(name) {
+  ].forEach(function (name) {
     const p = vega.projection(name);
     t.notEqual(p, null);
   });
 
   t.end();
 });
-

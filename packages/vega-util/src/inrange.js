@@ -3,8 +3,10 @@
  * of the given range. The left and right flags control the use
  * of inclusive (true) or exclusive (false) comparisons.
  */
-export default function(value, range, left, right) {
-  var r0 = range[0], r1 = range[range.length-1], t;
+export default function (value, range, left, right) {
+  let r0 = range[0];
+  let r1 = range[range.length - 1];
+  let t;
   if (r0 > r1) {
     t = r0;
     r0 = r1;
@@ -13,6 +15,5 @@ export default function(value, range, left, right) {
   left = left === undefined || left;
   right = right === undefined || right;
 
-  return (left ? r0 <= value : r0 < value) &&
-    (right ? value <= r1 : value < r1);
+  return (left ? r0 <= value : r0 < value) && (right ? value <= r1 : value < r1);
 }

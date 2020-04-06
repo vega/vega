@@ -15,30 +15,29 @@ export default function Sample(params) {
 }
 
 Sample.Definition = {
-  "type": "Sample",
-  "metadata": {},
-  "params": [
-    { "name": "size", "type": "number", "default": 1000 }
-  ]
+  type: 'Sample',
+  metadata: {},
+  params: [{name: 'size', type: 'number', default: 1000}]
 };
 
-var prototype = inherits(Sample, Transform);
+const prototype = inherits(Sample, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      mod = _.modified('size'),
-      num = _.size,
-      res = this.value,
-      cnt = this.count,
-      cap = 0,
-      map = res.reduce(function(m, t) {
-        m[tupleid(t)] = 1;
-        return m;
-      }, {});
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE);
+  const mod = _.modified('size');
+  const num = _.size;
+  let res = this.value;
+  let cnt = this.count;
+  let cap = 0;
+  const map = res.reduce(function (m, t) {
+    m[tupleid(t)] = 1;
+    return m;
+  }, {});
 
   // sample reservoir update function
   function update(t) {
-    var p, idx;
+    let p;
+    let idx;
 
     if (res.length < num) {
       res.push(t);
@@ -55,8 +54,8 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.rem.length) {
     // find all tuples that should be removed, add to output
-    pulse.visit(pulse.REM, function(t) {
-      var id = tupleid(t);
+    pulse.visit(pulse.REM, function (t) {
+      const id = tupleid(t);
       if (map[id]) {
         map[id] = -1;
         out.rem.push(t);
@@ -65,13 +64,15 @@ prototype.transform = function(_, pulse) {
     });
 
     // filter removed tuples out of the sample reservoir
-    res = res.filter(function(t) { return map[tupleid(t)] !== -1; });
+    res = res.filter(function (t) {
+      return map[tupleid(t)] !== -1;
+    });
   }
 
   if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
     // replenish sample if backing data source is available
     cap = cnt = res.length;
-    pulse.visit(pulse.SOURCE, function(t) {
+    pulse.visit(pulse.SOURCE, function (t) {
       // update, but skip previously sampled tuples
       if (!map[tupleid(t)]) update(t);
     });
@@ -79,7 +80,8 @@ prototype.transform = function(_, pulse) {
   }
 
   if (mod && res.length > num) {
-    for (var i=0, n=res.length-num; i<n; ++i) {
+    const n = res.length - num;
+    for (let i = 0; i < n; ++i) {
       map[tupleid(res[i])] = -1;
       out.rem.push(res[i]);
     }
@@ -88,7 +90,7 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.mod.length) {
     // propagate modified tuples in the sample reservoir
-    pulse.visit(pulse.MOD, function(t) {
+    pulse.visit(pulse.MOD, function (t) {
       if (map[tupleid(t)]) out.mod.push(t);
     });
   }
@@ -100,7 +102,9 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.add.length || cap < 0) {
     // output newly added tuples
-    out.add = res.filter(function(t) { return !map[tupleid(t)]; });
+    out.add = res.filter(function (t) {
+      return !map[tupleid(t)];
+    });
   }
 
   this.count = cnt;

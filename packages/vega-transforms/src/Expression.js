@@ -18,12 +18,8 @@ export default function Expression(params) {
 inherits(Expression, Operator);
 
 function update(_) {
-  var expr = _.expr;
+  const expr = _.expr;
   return this.value && !_.modified('expr')
     ? this.value
-    : accessor(
-        datum => expr(datum, _),
-        accessorFields(expr),
-        accessorName(expr)
-      );
+    : accessor(datum => expr(datum, _), accessorFields(expr), accessorName(expr));
 }

@@ -1,11 +1,32 @@
 import {layoutAlign} from './layout';
 
 import {
-  anyOf, allOf, def, enums, object, pattern, required, ref, type,
-  alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
-  fontWeightValue, numberValue, orientValue, stringValue,
-  arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
-  formatTypeType, numberType, stringType, orSignal
+  anyOf,
+  allOf,
+  def,
+  enums,
+  object,
+  pattern,
+  required,
+  ref,
+  type,
+  alignValue,
+  anchorValue,
+  baselineValue,
+  colorValue,
+  dashArrayValue,
+  fontWeightValue,
+  numberValue,
+  orientValue,
+  stringValue,
+  arrayOrSignal,
+  numberOrSignal,
+  textOrSignal,
+  formatTypeOrSignal,
+  formatTypeType,
+  numberType,
+  stringType,
+  orSignal
 } from './util';
 
 // types defined elsewhere
@@ -20,7 +41,8 @@ const guideEncode = pattern(
     name: stringType,
     interactive: type('boolean', {default: false}),
     style: styleRef
-  }), {
+  }),
+  {
     '^(?!interactive|name|style).+$': encodeEntryRef
   }
 );
@@ -43,18 +65,18 @@ const legendOrientEnum = [
 
 const legendProps = object({
   // LEGEND SCALES
-  size:        stringType,
-  shape:       stringType,
-  fill:        stringType,
-  stroke:      stringType,
-  opacity:     stringType,
-  strokeDash:  stringType,
+  size: stringType,
+  shape: stringType,
+  fill: stringType,
+  stroke: stringType,
+  opacity: stringType,
+  strokeDash: stringType,
   strokeWidth: stringType,
 
   // LEGEND TYPE
-  type:        enums(legendTypeEnum),
-  direction:   enums(legendDirectionEnum),
-  orient:      orSignal(enums(legendOrientEnum, {default: 'right'})),
+  type: enums(legendTypeEnum),
+  direction: enums(legendDirectionEnum),
+  orient: orSignal(enums(legendOrientEnum, {default: 'right'})),
 
   // LEGEND CONFIG
   tickCount: tickCountRef,

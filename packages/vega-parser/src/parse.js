@@ -3,7 +3,7 @@ import Scope from './Scope';
 import defaults from './config';
 import {error, isObject, mergeConfig} from 'vega-util';
 
-export default function(spec, config) {
+export default function (spec, config) {
   if (!isObject(spec)) {
     error('Input Vega specification must be an object.');
   }

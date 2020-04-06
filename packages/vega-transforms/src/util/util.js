@@ -3,26 +3,33 @@ import {accessorName} from 'vega-util';
 // use either provided alias or accessor field name
 export function fieldNames(fields, as) {
   if (!fields) return null;
-  return fields.map(function(f, i) {
+  return fields.map(function (f, i) {
     return as[i] || accessorName(f);
   });
 }
 
 export function partition(data, groupby, field) {
-  var groups = [],
-      get = function(f) { return f(t); },
-      map, i, n, t, k, g;
+  const groups = [];
+  const get = function (f) {
+    return f(t);
+  };
+  let map;
+  let i;
+  let n;
+  let t;
+  let k;
+  let g;
 
   // partition data points into groups
   if (groupby == null) {
     groups.push(data.map(field));
   } else {
-    for (map={}, i=0, n=data.length; i<n; ++i) {
+    for (map = {}, i = 0, n = data.length; i < n; ++i) {
       t = data[i];
       k = groupby.map(get);
       g = map[k];
       if (!g) {
-        map[k] = (g = []);
+        map[k] = g = [];
         g.dims = k;
         groups.push(g);
       }

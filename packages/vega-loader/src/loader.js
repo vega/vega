@@ -8,7 +8,6 @@ const protocol_re = /^([A-Za-z]+:)?\/\//;
 const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
 const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
 
-
 // Special treatment in node.js for the file: protocol
 const fileProtocol = 'file://';
 
@@ -23,8 +22,8 @@ const fileProtocol = 'file://';
  *   param {object} [options] - Optional default loading options to use.
  *   return {object} - A new loader instance.
  */
-export default function(fetch, fs) {
-  return function(options) {
+export default function (fetch, fs) {
+  return function (options) {
     return {
       options: options || {},
       sanitize: sanitize,
@@ -47,12 +46,10 @@ export default function(fetch, fs) {
  * @return {Promise} - A promise that resolves to the loaded content.
  */
 async function load(uri, options) {
-  const opt = await this.sanitize(uri, options),
-        url = opt.href;
+  const opt = await this.sanitize(uri, options);
+  const url = opt.href;
 
-  return opt.localFile
-    ? this.file(url)
-    : this.http(url, options);
+  return opt.localFile ? this.file(url) : this.http(url, options);
 }
 
 /**
@@ -68,10 +65,12 @@ async function load(uri, options) {
 async function sanitize(uri, options) {
   options = extend({}, this.options, options);
 
-  const fileAccess = this.fileAccess,
-        result = {href: null};
+  const fileAccess = this.fileAccess;
+  const result = {href: null};
 
-  let isFile, loadFile, base;
+  let isFile;
+  let loadFile;
+  let base;
 
   const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
 
@@ -84,16 +83,17 @@ async function sanitize(uri, options) {
   // if relative url (no protocol/host), prepend baseURL
   if ((base = options.baseURL) && !hasProtocol) {
     // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-    if (!uri.startsWith('/') && base[base.length-1] !== '/') {
+    if (!uri.startsWith('/') && base[base.length - 1] !== '/') {
       uri = '/' + uri;
     }
     uri = base + uri;
   }
 
   // should we load from file system?
-  loadFile = (isFile = uri.startsWith(fileProtocol))
-    || options.mode === 'file'
-    || options.mode !== 'http' && !hasProtocol && fileAccess;
+  loadFile =
+    (isFile = uri.startsWith(fileProtocol)) ||
+    options.mode === 'file' ||
+    (options.mode !== 'http' && !hasProtocol && fileAccess);
 
   if (isFile) {
     // strip file protocol
@@ -145,9 +145,9 @@ async function sanitize(uri, options) {
  */
 function fileLoader(fs) {
   return fs
-    ? function(filename) {
-        return new Promise(function(accept, reject) {
-          fs.readFile(filename, function(error, data) {
+    ? function (filename) {
+        return new Promise(function (accept, reject) {
+          fs.readFile(filename, function (error, data) {
             if (error) reject(error);
             else accept(data);
           });
@@ -173,14 +173,15 @@ async function fileReject() {
  */
 function httpLoader(fetch) {
   return fetch
-    ? async function(url, options) {
-        const opt = extend({}, this.options.http, options),
-              type = options && options.response,
-              response = await fetch(url, opt);
+    ? async function (url, options) {
+        const opt = extend({}, this.options.http, options);
+        const type = options && options.response;
+        const response = await fetch(url, opt);
 
         return !response.ok
           ? error(response.status + '' + response.statusText)
-          : isFunction(response[type]) ? response[type]()
+          : isFunction(response[type])
+          ? response[type]()
           : response.text();
       }
     : httpReject;

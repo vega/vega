@@ -4,11 +4,13 @@
  * Remove all external event listeners.
  * Remove any currently displayed tooltip.
  */
-export default function() {
-  var tooltip = this._tooltip,
-      timers = this._timers,
-      listeners = this._eventListeners,
-      n, m, e;
+export default function () {
+  const tooltip = this._tooltip;
+  const timers = this._timers;
+  const listeners = this._eventListeners;
+  let n;
+  let m;
+  let e;
 
   n = timers.length;
   while (--n >= 0) {

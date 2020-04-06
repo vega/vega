@@ -3,10 +3,12 @@ import has from './hasOwnProperty';
 const DEFAULT_MAX_SIZE = 10000;
 
 // adapted from https://github.com/dominictarr/hashlru/ (MIT License)
-export default function(maxsize) {
+export default function (maxsize) {
   maxsize = +maxsize || DEFAULT_MAX_SIZE;
 
-  let curr, prev, size;
+  let curr;
+  let prev;
+  let size;
 
   const clear = () => {
     curr = {};
@@ -28,11 +30,7 @@ export default function(maxsize) {
   return {
     clear,
     has: key => has(curr, key) || has(prev, key),
-    get: key => has(curr, key) ? curr[key]
-        : has(prev, key) ? update(key, prev[key])
-        : undefined,
-    set: (key, value) => has(curr, key)
-        ? (curr[key] = value)
-        : update(key, value)
+    get: key => (has(curr, key) ? curr[key] : has(prev, key) ? update(key, prev[key]) : undefined),
+    set: (key, value) => (has(curr, key) ? (curr[key] = value) : update(key, value))
   };
 }

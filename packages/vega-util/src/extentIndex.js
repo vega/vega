@@ -1,7 +1,11 @@
-export default function(array, f) {
-  var i = -1,
-      n = array.length,
-      a, b, c, u, v;
+export default function (array, f) {
+  let i = -1;
+  const n = array.length;
+  let a;
+  let b;
+  let c;
+  let u;
+  let v;
 
   if (f == null) {
     while (++i < n) {

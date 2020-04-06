@@ -4,17 +4,16 @@ import {error} from 'vega-util';
 /**
  * Parse an event stream specification.
  */
-export default function(spec, ctx) {
-  var filter = spec.filter != null ? eventExpression(spec.filter, ctx) : undefined,
-      stream = spec.stream != null ? ctx.get(spec.stream) : undefined,
-      args;
+export default function (spec, ctx) {
+  const filter = spec.filter != null ? eventExpression(spec.filter, ctx) : undefined;
+  let stream = spec.stream != null ? ctx.get(spec.stream) : undefined;
+  let args;
 
   if (spec.source) {
     stream = ctx.events(spec.source, spec.type, filter);
-  }
-  else if (spec.merge) {
+  } else if (spec.merge) {
     args = spec.merge.map(ctx.get.bind(ctx));
-    stream = args[0].merge.apply(args[0], args.slice(1));
+    stream = args[0].merge(...args.slice(1));
   }
 
   if (spec.between) {

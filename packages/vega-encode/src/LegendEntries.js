@@ -27,23 +27,27 @@ export default function LegendEntries(params) {
   Transform.call(this, [], params);
 }
 
-var prototype = inherits(LegendEntries, Transform);
+const prototype = inherits(LegendEntries, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (this.value != null && !_.modified()) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      items = this.value,
-      type  = _.type || Symbols,
-      scale = _.scale,
-      limit = +_.limit,
-      count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-      lskip = !!_.values || type === Symbols,
-      format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
-      values = _.values || labelValues(scale, count, type),
-      domain, fraction, size, offset, ellipsis;
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  let items = this.value;
+  const type = _.type || Symbols;
+  const scale = _.scale;
+  const limit = +_.limit;
+  const count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep);
+  const lskip = !!_.values || type === Symbols;
+  const format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip);
+  let values = _.values || labelValues(scale, count, type);
+  let domain;
+  let fraction;
+  let size;
+  let offset;
+  let ellipsis;
 
   if (items) out.rem = items;
 
@@ -56,44 +60,43 @@ prototype.transform = function(_, pulse) {
       items = values;
     }
 
-    if (isFunction(size = _.size)) {
+    if (isFunction((size = _.size))) {
       // if first value maps to size zero, remove from list (vega#717)
       if (!_.values && scale(items[0]) === 0) {
         items = items.slice(1);
       }
       // compute size offset for legend entries
-      offset = items.reduce(function(max, value) {
+      offset = items.reduce(function (max, value) {
         return Math.max(max, size(value, _));
       }, 0);
     } else {
-      size = constant(offset = size || 8);
+      size = constant((offset = size || 8));
     }
 
-    items = items.map(function(value, index) {
+    items = items.map(function (value, index) {
       return ingest({
-        index:  index,
-        label:  format(value, index, items),
-        value:  value,
+        index: index,
+        label: format(value, index, items),
+        value: value,
         offset: offset,
-        size:   size(value, _)
+        size: size(value, _)
       });
     });
 
     if (ellipsis) {
       ellipsis = values[items.length];
-      items.push(ingest({
-        index:    items.length,
-        label:    `\u2026${values.length-items.length} entries`,
-        value:    ellipsis,
-        offset:   offset,
-        size:     size(ellipsis, _)
-      }));
+      items.push(
+        ingest({
+          index: items.length,
+          label: `\u2026${values.length - items.length} entries`,
+          value: ellipsis,
+          offset: offset,
+          size: size(ellipsis, _)
+        })
+      );
     }
-  }
-
-  else if (type === Gradient) {
-    domain = scale.domain(),
-    fraction = scaleFraction(scale, domain[0], peek(domain));
+  } else if (type === Gradient) {
+    (domain = scale.domain()), (fraction = scaleFraction(scale, domain[0], peek(domain)));
 
     // if automatic label generation produces 2 or fewer values,
     // use the domain end points instead (fixes vega/vega#1364)
@@ -101,27 +104,25 @@ prototype.transform = function(_, pulse) {
       values = [domain[0], peek(domain)];
     }
 
-    items = values.map(function(value, index) {
+    items = values.map(function (value, index) {
       return ingest({
         index: index,
         label: format(value, index, values),
         value: value,
-        perc:  fraction(value)
+        perc: fraction(value)
       });
     });
-  }
-
-  else {
+  } else {
     size = values.length - 1;
     fraction = labelFraction(scale);
 
-    items = values.map(function(value, index) {
+    items = values.map(function (value, index) {
       return ingest({
         index: index,
         label: format(value, index, values),
         value: value,
-        perc:  index ? fraction(value) : 0,
-        perc2: index === size ? 1 : fraction(values[index+1])
+        perc: index ? fraction(value) : 0,
+        perc2: index === size ? 1 : fraction(values[index + 1])
       });
     });
   }

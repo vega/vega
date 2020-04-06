@@ -4,30 +4,30 @@ import SVGHandler from './SVGHandler';
 import SVGRenderer from './SVGRenderer';
 import SVGStringRenderer from './SVGStringRenderer';
 
-var Canvas = 'canvas';
-var PNG = 'png';
-var SVG = 'svg';
-var None = 'none';
+const Canvas = 'canvas';
+const PNG = 'png';
+const SVG = 'svg';
+const None = 'none';
 
-export var RenderType = {
+export const RenderType = {
   Canvas: Canvas,
-  PNG:    PNG,
-  SVG:    SVG,
-  None:   None
+  PNG: PNG,
+  SVG: SVG,
+  None: None
 };
 
-var modules = {};
+const modules = {};
 
 modules[Canvas] = modules[PNG] = {
   renderer: CanvasRenderer,
   headless: CanvasRenderer,
-  handler:  CanvasHandler
+  handler: CanvasHandler
 };
 
 modules[SVG] = {
   renderer: SVGRenderer,
   headless: SVGStringRenderer,
-  handler:  SVGHandler
+  handler: SVGHandler
 };
 
 modules[None] = {};

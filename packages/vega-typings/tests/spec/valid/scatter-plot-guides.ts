@@ -1,296 +1,319 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "Scatter plot with interactive legend and x-axis.",
-  "width": 400,
-  "height": 300,
-  "padding": 5,
-  "autosize": "pad",
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  description: 'Scatter plot with interactive legend and x-axis.',
+  width: 400,
+  height: 300,
+  padding: 5,
+  autosize: 'pad',
 
-  "signals": [
+  signals: [
     {
-      "name": "clear", "value": true,
-      "on": [
+      name: 'clear',
+      value: true,
+      on: [
         {
-          "events": "mouseup[!event.item]",
-          "update": "true",
-          "force": true
-        }
-      ]
+          events: 'mouseup[!event.item]',
+          update: 'true',
+          force: true,
+        },
+      ],
     },
     {
-      "name": "shift", "value": false,
-      "on": [
+      name: 'shift',
+      value: false,
+      on: [
         {
-          "events": "@legendSymbol:click, @legendLabel:click",
-          "update": "event.shiftKey",
-          "force":  true
-        }
-      ]
+          events: '@legendSymbol:click, @legendLabel:click',
+          update: 'event.shiftKey',
+          force: true,
+        },
+      ],
     },
     {
-      "name": "clicked", "value": null,
-      "on": [
+      name: 'clicked',
+      value: null,
+      on: [
         {
-          "events": "@legendSymbol:click, @legendLabel:click",
-          "update": "{value: datum.value}",
-          "force":  true
-        }
-      ]
+          events: '@legendSymbol:click, @legendLabel:click',
+          update: '{value: datum.value}',
+          force: true,
+        },
+      ],
     },
     {
-      "name": "brush", "value": 0,
-      "on": [
+      name: 'brush',
+      value: 0,
+      on: [
         {
-          "events": {"signal": "clear"},
-          "update": "clear ? [0, 0] : brush"
+          events: { signal: 'clear' },
+          update: 'clear ? [0, 0] : brush',
         },
         {
-          "events": "@xaxis:mousedown",
-          "update": "[x(), x()]"
+          events: '@xaxis:mousedown',
+          update: '[x(), x()]',
         },
         {
-          "events": "[@xaxis:mousedown, window:mouseup] > window:mousemove!",
-          "update": "[brush[0], clamp(x(), 0, width)]"
+          events: '[@xaxis:mousedown, window:mouseup] > window:mousemove!',
+          update: '[brush[0], clamp(x(), 0, width)]',
         },
         {
-          "events": {"signal": "delta"},
-          "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
-        }
-      ]
+          events: { signal: 'delta' },
+          update: 'clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)',
+        },
+      ],
     },
     {
-      "name": "anchor", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+      name: 'anchor',
+      value: null,
+      on: [{ events: '@brush:mousedown', update: 'slice(brush)' }],
     },
     {
-      "name": "xdown", "value": 0,
-      "on": [{"events": "@brush:mousedown", "update": "x()"}]
+      name: 'xdown',
+      value: 0,
+      on: [{ events: '@brush:mousedown', update: 'x()' }],
     },
     {
-      "name": "delta", "value": 0,
-      "on": [
+      name: 'delta',
+      value: 0,
+      on: [
         {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
-          "update": "x() - xdown"
-        }
-      ]
+          events: '[@brush:mousedown, window:mouseup] > window:mousemove!',
+          update: 'x() - xdown',
+        },
+      ],
     },
     {
-      "name": "domain",
-      "on": [
+      name: 'domain',
+      on: [
         {
-          "events": {"signal": "brush"},
-          "update": "span(brush) ? invert('x', brush) : null"
-        }
-      ]
-    }
+          events: { signal: 'brush' },
+          update: "span(brush) ? invert('x', brush) : null",
+        },
+      ],
+    },
   ],
 
-  "data": [
+  data: [
     {
-      "name": "source",
-      "url": "data/cars.json",
-      "transform": [
+      name: 'source',
+      url: 'data/cars.json',
+      transform: [
         {
-          "type": "filter",
-          "expr": "datum['Horsepower'] != null && datum['Miles_per_Gallon'] != null && datum['Origin'] != null"
-        }
-      ]
+          type: 'filter',
+          expr:
+            "datum['Horsepower'] != null && datum['Miles_per_Gallon'] != null && datum['Origin'] != null",
+        },
+      ],
     },
     {
-      "name": "selected",
-      "on": [
-        {"trigger": "clear", "remove": true},
-        {"trigger": "!shift", "remove": true},
-        {"trigger": "!shift && clicked", "insert": "clicked"},
-        {"trigger": "shift && clicked", "toggle": "clicked"}
-      ]
-    }
+      name: 'selected',
+      on: [
+        { trigger: 'clear', remove: true },
+        { trigger: '!shift', remove: true },
+        { trigger: '!shift && clicked', insert: 'clicked' },
+        { trigger: 'shift && clicked', toggle: 'clicked' },
+      ],
+    },
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "x",
-      "type": "linear",
-      "round": true,
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "source", "field": "Horsepower"},
-      "range": "width"
+      name: 'x',
+      type: 'linear',
+      round: true,
+      nice: true,
+      zero: true,
+      domain: { data: 'source', field: 'Horsepower' },
+      range: 'width',
     },
     {
-      "name": "y",
-      "type": "linear",
-      "round": true,
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "source", "field": "Miles_per_Gallon"},
-      "range": "height"
+      name: 'y',
+      type: 'linear',
+      round: true,
+      nice: true,
+      zero: true,
+      domain: { data: 'source', field: 'Miles_per_Gallon' },
+      range: 'height',
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "range": {"scheme": "category10"},
-      "domain": {"data": "source", "field": "Origin"}
-    }
+      name: 'color',
+      type: 'ordinal',
+      range: { scheme: 'category10' },
+      domain: { data: 'source', field: 'Origin' },
+    },
   ],
 
-  "axes": [
+  axes: [
     {
-      "scale": "x",
-      "grid": true,
-      "domain": false,
-      "orient": "bottom",
-      "tickCount": 5,
-      "title": "Horsepower"
+      scale: 'x',
+      grid: true,
+      domain: false,
+      orient: 'bottom',
+      tickCount: 5,
+      title: 'Horsepower',
     },
     {
-      "scale": "y",
-      "grid": true,
-      "domain": false,
-      "orient": "left",
-      "titlePadding": 5,
-      "title": "Miles_per_Gallon"
-    }
+      scale: 'y',
+      grid: true,
+      domain: false,
+      orient: 'left',
+      titlePadding: 5,
+      title: 'Miles_per_Gallon',
+    },
   ],
 
-  "legends": [
+  legends: [
     {
-      "stroke": "color",
-      "title": "Origin",
-      "encode": {
-        "symbols": {
-          "name": "legendSymbol",
-          "interactive": true,
-          "update": {
-            "fill": {"value": "transparent"},
-            "strokeWidth": {"value": 2},
-            "opacity": [
-              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 0.7},
-              {"value": 0.15}
+      stroke: 'color',
+      title: 'Origin',
+      encode: {
+        symbols: {
+          name: 'legendSymbol',
+          interactive: true,
+          update: {
+            fill: { value: 'transparent' },
+            strokeWidth: { value: 2 },
+            opacity: [
+              {
+                test: "!length(data('selected')) || indata('selected', 'value', datum.value)",
+                value: 0.7,
+              },
+              { value: 0.15 },
             ],
-            "size": {"value": 64}
-          }
+            size: { value: 64 },
+          },
         },
-        "labels": {
-          "name": "legendLabel",
-          "interactive": true,
-          "update": {
-            "opacity": [
-              {"test": "!length(data('selected')) || indata('selected', 'value', datum.value)", "value": 1},
-              {"value": 0.25}
-            ]
-          }
-        }
-      }
-    }
+        labels: {
+          name: 'legendLabel',
+          interactive: true,
+          update: {
+            opacity: [
+              {
+                test: "!length(data('selected')) || indata('selected', 'value', datum.value)",
+                value: 1,
+              },
+              { value: 0.25 },
+            ],
+          },
+        },
+      },
+    },
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "rect",
-      "name": "xaxis",
-      "interactive": true,
-      "encode": {
-        "enter": {
-          "x": {"value": 0},
-          "height": {"value": 35},
-          "fill": {"value": "transparent"},
-          "cursor": {"value": "ew-resize"}
+      type: 'rect',
+      name: 'xaxis',
+      interactive: true,
+      encode: {
+        enter: {
+          x: { value: 0 },
+          height: { value: 35 },
+          fill: { value: 'transparent' },
+          cursor: { value: 'ew-resize' },
         },
-        "update": {
-          "y": {"signal": "height"},
-          "width": {"signal": "span(range('x'))"}
-        }
-      }
+        update: {
+          y: { signal: 'height' },
+          width: { signal: "span(range('x'))" },
+        },
+      },
     },
     {
-      "type": "rect",
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "y": {"value": 0},
-          "height": {"signal":"height"},
-          "fill": {"value": "#ddd"}
+      type: 'rect',
+      interactive: false,
+      encode: {
+        enter: {
+          y: { value: 0 },
+          height: { signal: 'height' },
+          fill: { value: '#ddd' },
         },
-        "update": {
-          "x": {"signal": "brush[0]"},
-          "x2": {"signal": "brush[1]"},
-          "fillOpacity": {"signal": "domain ? 0.2 : 0"}
-        }
-      }
+        update: {
+          x: { signal: 'brush[0]' },
+          x2: { signal: 'brush[1]' },
+          fillOpacity: { signal: 'domain ? 0.2 : 0' },
+        },
+      },
     },
     {
-      "name": "marks",
-      "type": "symbol",
-      "from": {"data": "source"},
-      "interactive": false,
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "Horsepower"},
-          "y": {"scale": "y", "field": "Miles_per_Gallon"},
-          "shape": {"value": "circle"},
-          "strokeWidth": {"value": 2},
-          "opacity": [
-            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "value": 0.7 },
-            {"value": 0.15}
+      name: 'marks',
+      type: 'symbol',
+      from: { data: 'source' },
+      interactive: false,
+      encode: {
+        update: {
+          x: { scale: 'x', field: 'Horsepower' },
+          y: { scale: 'y', field: 'Miles_per_Gallon' },
+          shape: { value: 'circle' },
+          strokeWidth: { value: 2 },
+          opacity: [
+            {
+              test:
+                "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))",
+              value: 0.7,
+            },
+            { value: 0.15 },
           ],
-          "stroke": [
-            {"test": "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))", "scale": "color", "field": "Origin"},
-            {"value": "#ccc"}
+          stroke: [
+            {
+              test:
+                "(!domain || inrange(datum.Horsepower, domain)) && (!length(data('selected')) || indata('selected', 'value', datum.Origin))",
+              scale: 'color',
+              field: 'Origin',
+            },
+            { value: '#ccc' },
           ],
-          "fill": {"value": "transparent"}
-        }
-      }
+          fill: { value: 'transparent' },
+        },
+      },
     },
     {
-      "type": "rect",
-      "name": "brush",
-      "encode": {
-        "enter": {
-          "y": {"value": 0},
-          "height": {"signal":"height"},
-          "fill": {"value": "transparent"}
+      type: 'rect',
+      name: 'brush',
+      encode: {
+        enter: {
+          y: { value: 0 },
+          height: { signal: 'height' },
+          fill: { value: 'transparent' },
         },
-        "update": {
-          "x": {"signal": "brush[0]"},
-          "x2": {"signal": "brush[1]"}
-        }
-      }
+        update: {
+          x: { signal: 'brush[0]' },
+          x2: { signal: 'brush[1]' },
+        },
+      },
     },
     {
-      "type": "rect",
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "y": {"value": 0},
-          "height": {"signal": "height"},
-          "width": {"value": 1},
-          "fill": {"value": "firebrick"}
+      type: 'rect',
+      interactive: false,
+      encode: {
+        enter: {
+          y: { value: 0 },
+          height: { signal: 'height' },
+          width: { value: 1 },
+          fill: { value: 'firebrick' },
         },
-        "update": {
-          "fillOpacity": {"signal": "domain ? 1 : 0"},
-          "x": {"signal": "brush[0]"}
-        }
-      }
+        update: {
+          fillOpacity: { signal: 'domain ? 1 : 0' },
+          x: { signal: 'brush[0]' },
+        },
+      },
     },
     {
-      "type": "rect",
-      "interactive": false,
-      "encode": {
-        "enter":{
-          "y": {"value": 0},
-          "height": {"signal": "height"},
-          "width": {"value": 1},
-          "fill": {"value": "firebrick"}
+      type: 'rect',
+      interactive: false,
+      encode: {
+        enter: {
+          y: { value: 0 },
+          height: { signal: 'height' },
+          width: { value: 1 },
+          fill: { value: 'firebrick' },
         },
-        "update": {
-          "fillOpacity": {"signal": "domain ? 1 : 0"},
-          "x": {"signal": "brush[1]"}
-        }
-      }
-    }
-  ]
+        update: {
+          fillOpacity: { signal: 'domain ? 1 : 0' },
+          x: { signal: 'brush[1]' },
+        },
+      },
+    },
+  ],
 };

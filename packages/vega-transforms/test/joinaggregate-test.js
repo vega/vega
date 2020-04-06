@@ -1,32 +1,34 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    JoinAggregate = tx.joinaggregate;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const tx = require('../');
+const changeset = vega.changeset;
+const Collect = tx.collect;
+const JoinAggregate = tx.joinaggregate;
 
-tape('JoinAggregate extends tuples with aggregate values', function(t) {
-  var data = [
-    {k:'a', v:1}, {k:'b', v:3},
-    {k:'a', v:2}, {k:'b', v:4}
+tape('JoinAggregate extends tuples with aggregate values', function (t) {
+  const data = [
+    {k: 'a', v: 1},
+    {k: 'b', v: 3},
+    {k: 'a', v: 2},
+    {k: 'b', v: 4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(JoinAggregate, {
-        groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  const key = util.field('k');
+  const val = util.field('v');
+  const df = new vega.Dataflow();
+  const col = df.add(Collect);
+  const agg = df.add(JoinAggregate, {
+    groupby: [key],
+    fields: [val, val, val, val],
+    ops: ['count', 'sum', 'min', 'max'],
+    pulse: col
+  });
+  const out = df.add(Collect, {pulse: agg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
 
   t.equal(d.length, 4);
   t.equal(d[0].k, 'a');
@@ -96,16 +98,20 @@ tape('JoinAggregate extends tuples with aggregate values', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles count aggregates', function(t) {
-  var data = [
-    {foo:0, bar:1},
-    {foo:2, bar:3},
-    {foo:4, bar:5}
+tape('JoinAggregate handles count aggregates', function (t) {
+  let data = [
+    {foo: 0, bar: 1},
+    {foo: 2, bar: 3},
+    {foo: 4, bar: 5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
-      df, col, agg, out, d;
+  const foo = util.field('foo');
+  const bar = util.field('bar');
+  let df;
+  let col;
+  let agg;
+  let out;
+  let d;
 
   // counts only
   df = new vega.Dataflow();
@@ -148,9 +154,9 @@ tape('JoinAggregate handles count aggregates', function(t) {
   out = df.add(Collect, {pulse: agg});
 
   data = [
-    {foo:0, bar:1},
-    {foo:2, bar:3},
-    {foo:4, bar:5}
+    {foo: 0, bar: 1},
+    {foo: 2, bar: 3},
+    {foo: 4, bar: 5}
   ];
 
   df.pulse(col, changeset().insert(data)).run();
@@ -179,36 +185,38 @@ tape('JoinAggregate handles count aggregates', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles distinct aggregates', function(t) {
-  var data = [
-    {foo:null},
-    {foo:null},
-    {foo:undefined},
-    {foo:undefined},
-    {foo:NaN},
-    {foo:NaN},
-    {foo:0},
-    {foo:0}
+tape('JoinAggregate handles distinct aggregates', function (t) {
+  const data = [
+    {foo: null},
+    {foo: null},
+    {foo: undefined},
+    {foo: undefined},
+    {foo: NaN},
+    {foo: NaN},
+    {foo: 0},
+    {foo: 0}
   ];
 
-  var foo = util.field('foo'),
-      df, col, agg, out, d, i, n;
+  const foo = util.field('foo');
+  let d;
+  let i;
+  let n;
 
   // counts only
-  df = new vega.Dataflow();
-  col = df.add(Collect);
-  agg = df.add(JoinAggregate, {
+  const df = new vega.Dataflow();
+  const col = df.add(Collect);
+  const agg = df.add(JoinAggregate, {
     fields: [foo],
     ops: ['distinct'],
     pulse: col
   });
-  out = df.add(Collect, {pulse: agg});
+  const out = df.add(Collect, {pulse: agg});
 
   df.pulse(col, changeset().insert(data)).run();
   d = out.value;
   n = data.length;
   t.equal(d.length, n);
-  for (i=0; i<n; ++i) {
+  for (i = 0; i < n; ++i) {
     t.equal(d[i].distinct_foo, 4);
   }
 
@@ -216,7 +224,7 @@ tape('JoinAggregate handles distinct aggregates', function(t) {
   d = out.value;
   n = data.length - 1;
   t.equal(d.length, n);
-  for (i=0; i<n; ++i) {
+  for (i = 0; i < n; ++i) {
     t.equal(d[i].distinct_foo, 4);
   }
 
@@ -224,7 +232,7 @@ tape('JoinAggregate handles distinct aggregates', function(t) {
   d = out.value;
   n = data.length - 2;
   t.equal(d.length, n);
-  for (i=0; i<n; ++i) {
+  for (i = 0; i < n; ++i) {
     t.equal(d[i].distinct_foo, 3);
   }
 

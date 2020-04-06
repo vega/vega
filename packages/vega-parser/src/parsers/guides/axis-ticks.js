@@ -5,36 +5,38 @@ import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 
-export default function(spec, config, userEncode, dataRef, size, band) {
-  var _ = lookup(spec, config),
-      orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      encode, enter, exit, update, tickSize, tickPos;
+export default function (spec, config, userEncode, dataRef, size, band) {
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  const sign = orient === Left || orient === Top ? -1 : 1;
+  let enter;
+  let exit;
+  let update;
 
-  encode = {
-    enter: enter = {opacity: zero},
-    update: update = {opacity: one},
-    exit: exit = {opacity: zero}
+  const encode = {
+    enter: (enter = {opacity: zero}),
+    update: (update = {opacity: one}),
+    exit: (exit = {opacity: zero})
   };
 
   addEncoders(encode, {
-    stroke:           _('tickColor'),
-    strokeDash:       _('tickDash'),
+    stroke: _('tickColor'),
+    strokeDash: _('tickDash'),
     strokeDashOffset: _('tickDashOffset'),
-    strokeOpacity:    _('tickOpacity'),
-    strokeWidth:      _('tickWidth')
+    strokeOpacity: _('tickOpacity'),
+    strokeWidth: _('tickWidth')
   });
 
-  tickSize = encoder(size);
+  const tickSize = encoder(size);
   tickSize.mult = sign;
 
-  tickPos = {
-    scale:  spec.scale,
-    field:  Value,
-    band:   band.band,
-    extra:  band.extra,
+  const tickPos = {
+    scale: spec.scale,
+    field: Value,
+    band: band.band,
+    extra: band.extra,
     offset: band.offset,
-    round:  _('tickRound')
+    round: _('tickRound')
   };
 
   if (orient === Top || orient === Bottom) {

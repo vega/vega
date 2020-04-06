@@ -6,38 +6,47 @@ import {LegendBandRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
-export default function(spec, scale, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      vertical = _.isVertical(),
-      thickness = _.gradientThickness(),
-      length = _.gradientLength(),
-      encode, enter, u, v, uu, vv, adjust = '';
+export default function (spec, scale, config, userEncode, dataRef) {
+  const _ = lookup(spec, config);
+  const vertical = _.isVertical();
+  const thickness = _.gradientThickness();
+  const length = _.gradientLength();
+  let u;
+  let v;
+  let uu;
+  let vv;
+  let adjust = '';
 
   vertical
-    ? (u = 'y', uu = 'y2', v = 'x', vv = 'width', adjust = '1-')
-    : (u = 'x', uu = 'x2', v = 'y', vv = 'height');
+    ? ((u = 'y'), (uu = 'y2'), (v = 'x'), (vv = 'width'), (adjust = '1-'))
+    : ((u = 'x'), (uu = 'x2'), (v = 'y'), (vv = 'height'));
 
-  enter = {
+  const enter = {
     opacity: zero,
     fill: {scale: scale, field: Value}
   };
-  enter[u]  = {signal: adjust + 'datum.' + Perc, mult: length};
-  enter[v]  = zero;
+  enter[u] = {signal: adjust + 'datum.' + Perc, mult: length};
+  enter[v] = zero;
   enter[uu] = {signal: adjust + 'datum.' + Perc2, mult: length};
   enter[vv] = encoder(thickness);
 
-  encode = {
+  const encode = {
     enter: enter,
     update: extend({}, enter, {opacity: one}),
     exit: {opacity: zero}
   };
 
-  addEncoders(encode, {
-    stroke:      _('gradientStrokeColor'),
-    strokeWidth: _('gradientStrokeWidth')
-  }, { // update
-    opacity:     _('gradientOpacity')
-  });
+  addEncoders(
+    encode,
+    {
+      stroke: _('gradientStrokeColor'),
+      strokeWidth: _('gradientStrokeWidth')
+    },
+    {
+      // update
+      opacity: _('gradientOpacity')
+    }
+  );
 
   return guideMark(RectMark, LegendBandRole, null, Value, dataRef, encode, userEncode);
 }

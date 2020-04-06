@@ -5,52 +5,59 @@ function compare(a, b) {
 export function zorder(scene) {
   if (!scene.zdirty) return scene.zitems;
 
-  var items = scene.items,
-      output = [], item, i, n;
+  const items = scene.items;
+  const output = [];
+  let item;
+  let i;
+  let n;
 
-  for (i=0, n=items.length; i<n; ++i) {
+  for (i = 0, n = items.length; i < n; ++i) {
     item = items[i];
     item.index = i;
     if (item.zindex) output.push(item);
   }
 
   scene.zdirty = false;
-  return scene.zitems = output.sort(compare);
+  return (scene.zitems = output.sort(compare));
 }
 
 export function visit(scene, visitor) {
-  var items = scene.items, i, n;
+  let items = scene.items;
+  let i;
+  let n;
   if (!items || !items.length) return;
 
-  var zitems = zorder(scene);
+  const zitems = zorder(scene);
 
   if (zitems && zitems.length) {
-    for (i=0, n=items.length; i<n; ++i) {
+    for (i = 0, n = items.length; i < n; ++i) {
       if (!items[i].zindex) visitor(items[i]);
     }
     items = zitems;
   }
 
-  for (i=0, n=items.length; i<n; ++i) {
+  for (i = 0, n = items.length; i < n; ++i) {
     visitor(items[i]);
   }
 }
 
 export function pickVisit(scene, visitor) {
-  var items = scene.items, hit, i;
+  let items = scene.items;
+  let hit;
+  let i;
   if (!items || !items.length) return null;
 
-  var zitems = zorder(scene);
+  const zitems = zorder(scene);
   if (zitems && zitems.length) items = zitems;
 
-  for (i=items.length; --i >= 0;) {
-    if (hit = visitor(items[i])) return hit;
+  for (i = items.length; --i >= 0; ) {
+    if ((hit = visitor(items[i]))) return hit;
   }
 
   if (items === zitems) {
-    for (items=scene.items, i=items.length; --i >= 0;) {
+    for (items = scene.items, i = items.length; --i >= 0; ) {
       if (!items[i].zindex) {
-        if (hit = visitor(items[i])) return hit;
+        if ((hit = visitor(items[i]))) return hit;
       }
     }
   }

@@ -15,7 +15,7 @@ export default function SVGStringRenderer(loader) {
 
   this._text = {
     head: '',
-    bg:   '',
+    bg: '',
     root: '',
     foot: '',
     defs: '',
@@ -28,35 +28,36 @@ export default function SVGStringRenderer(loader) {
   };
 }
 
-var prototype = inherits(SVGStringRenderer, Renderer);
-var base = Renderer.prototype;
+const prototype = inherits(SVGStringRenderer, Renderer);
+const base = Renderer.prototype;
 
-prototype.resize = function(width, height, origin, scaleFactor) {
+prototype.resize = function (width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
-  var o = this._origin,
-      t = this._text;
+  const o = this._origin;
+  const t = this._text;
 
-  var attr = {
-    class:   'marks',
-    width:   this._width * this._scale,
-    height:  this._height * this._scale,
+  const attr = {
+    class: 'marks',
+    width: this._width * this._scale,
+    height: this._height * this._scale,
     viewBox: '0 0 ' + this._width + ' ' + this._height
   };
-  for (var key in metadata) {
+  for (const key in metadata) {
     attr[key] = metadata[key];
   }
 
   t.head = openTag('svg', attr);
 
-  var bg = this._bgcolor;
+  let bg = this._bgcolor;
   if (bg === 'transparent' || bg === 'none') bg = null;
 
   if (bg) {
-    t.bg = openTag('rect', {
-      width:  this._width,
-      height: this._height,
-      style:  'fill: ' + bg + ';'
-    }) + closeTag('rect');
+    t.bg =
+      openTag('rect', {
+        width: this._width,
+        height: this._height,
+        style: 'fill: ' + bg + ';'
+      }) + closeTag('rect');
   } else {
     t.bg = '';
   }
@@ -70,29 +71,33 @@ prototype.resize = function(width, height, origin, scaleFactor) {
   return this;
 };
 
-prototype.background = function() {
-  var rv = base.background.apply(this, arguments);
+prototype.background = function (...args) {
+  const rv = base.background.apply(this, args);
   if (arguments.length && this._text.head) {
     this.resize(this._width, this._height, this._origin, this._scale);
   }
   return rv;
 };
 
-prototype.svg = function() {
-  var t = this._text;
+prototype.svg = function () {
+  const t = this._text;
   return t.head + t.bg + t.defs + t.root + t.body + t.foot;
 };
 
-prototype._render = function(scene) {
+prototype._render = function (scene) {
   this._text.body = this.mark(scene);
   this._text.defs = this.buildDefs();
   return this;
 };
 
-prototype.buildDefs = function() {
-  var all = this._defs,
-      defs = '',
-      i, id, def, tag, stops;
+prototype.buildDefs = function () {
+  const all = this._defs;
+  let defs = '';
+  let i;
+  let id;
+  let def;
+  let tag;
+  let stops;
 
   for (id in all.gradient) {
     def = all.gradient[id];
@@ -104,7 +109,7 @@ prototype.buildDefs = function() {
       // We wrap the radial gradient in a pattern element, allowing us to
       // maintain a circular gradient that matches what canvas provides.
 
-      defs += openTag(tag = 'pattern', {
+      defs += openTag((tag = 'pattern'), {
         id: patternPrefix + id,
         viewBox: '0,0,1,1',
         width: '100%',
@@ -112,25 +117,26 @@ prototype.buildDefs = function() {
         preserveAspectRatio: 'xMidYMid slice'
       });
 
-      defs += openTag('rect', {
-        width: '1',
-        height: '1',
-        fill: 'url(#' + id + ')'
-      }) + closeTag('rect');
+      defs +=
+        openTag('rect', {
+          width: '1',
+          height: '1',
+          fill: 'url(#' + id + ')'
+        }) + closeTag('rect');
 
       defs += closeTag(tag);
 
-      defs += openTag(tag = 'radialGradient', {
+      defs += openTag((tag = 'radialGradient'), {
         id: id,
         fx: def.x1,
         fy: def.y1,
         fr: def.r1,
         cx: def.x2,
         cy: def.y2,
-         r: def.r2
+        r: def.r2
       });
     } else {
-      defs += openTag(tag = 'linearGradient', {
+      defs += openTag((tag = 'linearGradient'), {
         id: id,
         x1: def.x1,
         x2: def.x2,
@@ -139,11 +145,12 @@ prototype.buildDefs = function() {
       });
     }
 
-    for (i=0; i<stops.length; ++i) {
-      defs += openTag('stop', {
-        offset: stops[i].offset,
-        'stop-color': stops[i].color
-      }) + closeTag('stop');
+    for (i = 0; i < stops.length; ++i) {
+      defs +=
+        openTag('stop', {
+          offset: stops[i].offset,
+          'stop-color': stops[i].color
+        }) + closeTag('stop');
     }
 
     defs += closeTag(tag);
@@ -155,46 +162,48 @@ prototype.buildDefs = function() {
     defs += openTag('clipPath', {id: id});
 
     if (def.path) {
-      defs += openTag('path', {
-        d: def.path
-      }) + closeTag('path');
+      defs +=
+        openTag('path', {
+          d: def.path
+        }) + closeTag('path');
     } else {
-      defs += openTag('rect', {
-        x: 0,
-        y: 0,
-        width: def.width,
-        height: def.height
-      }) + closeTag('rect');
+      defs +=
+        openTag('rect', {
+          x: 0,
+          y: 0,
+          width: def.width,
+          height: def.height
+        }) + closeTag('rect');
     }
 
     defs += closeTag('clipPath');
   }
 
-  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
+  return defs.length > 0 ? openTag('defs') + defs + closeTag('defs') : '';
 };
 
-var object;
+let object;
 
 function emit(name, value, ns, prefixed) {
   object[prefixed || name] = value;
 }
 
-prototype.attributes = function(attr, item) {
+prototype.attributes = function (attr, item) {
   object = {};
   attr(emit, item, this);
   return object;
 };
 
-prototype.href = function(item) {
-  var that = this,
-      href = item.href,
-      attr;
+prototype.href = function (item) {
+  const that = this;
+  const href = item.href;
+  let attr;
 
   if (href) {
-    if (attr = that._hrefs && that._hrefs[href]) {
+    if ((attr = that._hrefs && that._hrefs[href])) {
       return attr;
     } else {
-      that.sanitizeURL(href).then(function(attr) {
+      that.sanitizeURL(href).then(function (attr) {
         // rewrite to use xlink namespace
         // note that this will be deprecated in SVG 2.0
         attr['xlink:href'] = attr.href;
@@ -206,30 +215,34 @@ prototype.href = function(item) {
   return null;
 };
 
-prototype.mark = function(scene) {
-  var renderer = this,
-      mdef = marks[scene.marktype],
-      tag  = mdef.tag,
-      defs = this._defs,
-      str = '',
-      style;
+prototype.mark = function (scene) {
+  const renderer = this;
+  const mdef = marks[scene.marktype];
+  const tag = mdef.tag;
+  const defs = this._defs;
+  let str = '';
+  let style;
 
   if (tag !== 'g' && scene.interactive === false) {
     style = 'style="pointer-events: none;"';
   }
 
   // render opening group tag
-  str += openTag('g', {
-    'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
-  }, style);
+  str += openTag(
+    'g',
+    {
+      class: cssClass(scene),
+      'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
+    },
+    style
+  );
 
   // render contained elements
   function process(item) {
-    var href = renderer.href(item);
+    const href = renderer.href(item);
     if (href) str += openTag('a', href);
 
-    style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
+    style = tag !== 'g' ? applyStyles(item, scene, tag, defs) : null;
     str += openTag(tag, renderer.attributes(mdef.attr, item), style);
 
     if (tag === 'text') {
@@ -237,42 +250,41 @@ prototype.mark = function(scene) {
       if (isArray(tl)) {
         // multi-line text
         const attrs = {x: 0, dy: lineHeight(item)};
-        for (let i=0; i<tl.length; ++i) {
-          str += openTag('tspan', i ? attrs: null)
-            + escape_text(textValue(item, tl[i]))
-            + closeTag('tspan');
+        for (let i = 0; i < tl.length; ++i) {
+          str += openTag('tspan', i ? attrs : null) + escape_text(textValue(item, tl[i])) + closeTag('tspan');
         }
       } else {
         // single-line text
         str += escape_text(textValue(item, tl));
       }
     } else if (tag === 'g') {
-      const fore = item.strokeForeground,
-            fill = item.fill,
-            stroke = item.stroke;
+      const fore = item.strokeForeground;
+      const fill = item.fill;
+      const stroke = item.stroke;
 
       if (fore && stroke) {
         item.stroke = null;
       }
 
-      str += openTag('path', renderer.attributes(mdef.background, item),
-        applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+      str +=
+        openTag('path', renderer.attributes(mdef.background, item), applyStyles(item, scene, 'bgrect', defs)) +
+        closeTag('path');
 
-      str += openTag('g', renderer.attributes(mdef.content, item))
-        + renderer.markGroup(item)
-        + closeTag('g');
+      str += openTag('g', renderer.attributes(mdef.content, item)) + renderer.markGroup(item) + closeTag('g');
 
       if (fore && stroke) {
         if (fill) item.fill = null;
         item.stroke = stroke;
 
-        str += openTag('path', renderer.attributes(mdef.foreground, item),
-          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+        str +=
+          openTag('path', renderer.attributes(mdef.foreground, item), applyStyles(item, scene, 'bgrect', defs)) +
+          closeTag('path');
 
         if (fill) item.fill = fill;
       } else {
-        str += openTag('path', renderer.attributes(mdef.foreground, item),
-          applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+        str +=
+          openTag('path', renderer.attributes(mdef.foreground, item), applyStyles({}, scene, 'bgfore', defs)) +
+          closeTag('path');
       }
     }
 
@@ -290,11 +302,11 @@ prototype.mark = function(scene) {
   return str + closeTag('g');
 };
 
-prototype.markGroup = function(scene) {
-  var renderer = this,
-      str = '';
+prototype.markGroup = function (scene) {
+  const renderer = this;
+  let str = '';
 
-  visit(scene, function(item) {
+  visit(scene, function (item) {
     str += renderer.mark(item);
   });
 
@@ -303,7 +315,12 @@ prototype.markGroup = function(scene) {
 
 function applyStyles(o, mark, tag, defs) {
   if (o == null) return '';
-  var i, n, prop, name, value, s = '';
+  let i;
+  let n;
+  let prop;
+  let name;
+  let value;
+  let s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
@@ -330,7 +347,7 @@ function applyStyles(o, mark, tag, defs) {
     if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
   }
 
-  for (i=0, n=styleProperties.length; i<n; ++i) {
+  for (i = 0, n = styleProperties.length; i < n; ++i) {
     prop = styleProperties[i];
     name = styles[prop];
     value = o[prop];
@@ -354,7 +371,5 @@ function applyStyles(o, mark, tag, defs) {
 }
 
 function escape_text(s) {
-  return s.replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

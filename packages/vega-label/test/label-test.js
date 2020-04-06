@@ -1,37 +1,35 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Bounds = require('vega-scenegraph').Bounds,
-    Collect = require('vega-transforms').collect,
-    Label = require('../').label;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const Bounds = require('vega-scenegraph').Bounds;
+const Collect = require('vega-transforms').collect;
+const Label = require('../').label;
 
 function closeTo(t, a, b) {
   t.equal(a && a.toFixed(14), b && b.toFixed(14));
 }
 
-tape('Label performs label layout over input points', function(t) {
+tape('Label performs label layout over input points', function (t) {
   function data() {
     return [
       {text: 'foo', x: 20, y: 15, fontSize: 10},
       {text: 'bar', x: 30, y: 15, fontSize: 10}
-    ]
+    ];
   }
 
-  var df = new vega.Dataflow(),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      lb = df.add(Label, {
-        size: [50, 30],
-        anchor: [an],
-        offset: [2],
-        pulse: c0
-      });
+  const df = new vega.Dataflow();
+  const an = df.add('left');
+  const c0 = df.add(Collect);
+  const lb = df.add(Label, {
+    size: [50, 30],
+    anchor: [an],
+    offset: [2],
+    pulse: c0
+  });
 
-  df.update(an, 'left')
-    .pulse(c0, vega.changeset().insert(data()))
-    .run();
+  df.update(an, 'left').pulse(c0, vega.changeset().insert(data())).run();
   t.equal(lb.stamp, df.stamp());
-  var out = c0.value;
+  let out = c0.value;
   t.equal(out.length, data().length);
   closeTo(t, out[0].x, 18);
   closeTo(t, out[0].y, 15);
@@ -40,9 +38,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   t.equal(out[0].opacity, 0);
   closeTo(t, out[1].x, 32);
@@ -51,9 +47,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[1].baseline, 'middle');
   t.equal(out[1].opacity, 1);
 
-  df.update(an, 'top')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20);
   closeTo(t, out[0].y, 13);
@@ -62,9 +56,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20);
   closeTo(t, out[0].y, 17);
@@ -73,9 +65,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'top-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top-left').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 - 2 * Math.SQRT1_2);
@@ -84,9 +74,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'top-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top-right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 + 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 - 2 * Math.SQRT1_2);
@@ -95,9 +83,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom-left').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 + 2 * Math.SQRT1_2);
@@ -106,9 +92,7 @@ tape('Label performs label layout over input points', function(t) {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom-right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 + 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 + 2 * Math.SQRT1_2);
@@ -120,21 +104,31 @@ tape('Label performs label layout over input points', function(t) {
   t.end();
 });
 
-tape('Label performs label layout with base mark reactive geometry', function(t) {
+tape('Label performs label layout with base mark reactive geometry', function (t) {
   function data() {
     return [
       {
-        text: 'foo', fontSize: 10,
+        text: 'foo',
+        fontSize: 10,
         datum: {
-          x: 20, y: 15, width: 2, height: 2, fill: 'black',
+          x: 20,
+          y: 15,
+          width: 2,
+          height: 2,
+          fill: 'black',
           bounds: new Bounds().set(20, 15, 22, 17),
           mark: {marktype: 'rect'}
         }
       },
       {
-        text: 'bar', fontSize: 10,
+        text: 'bar',
+        fontSize: 10,
         datum: {
-          x: 30, y: 15, width: 2, height: 2, fill: 'black',
+          x: 30,
+          y: 15,
+          width: 2,
+          height: 2,
+          fill: 'black',
           bounds: new Bounds().set(30, 15, 32, 17),
           mark: {marktype: 'rect'}
         }
@@ -142,21 +136,19 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
     ];
   }
 
-  var df = new vega.Dataflow(),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      lb = df.add(Label, {
-        size: [50, 30],
-        anchor: [an],
-        offset: [2],
-        pulse: c0
-      });
+  const df = new vega.Dataflow();
+  const an = df.add('left');
+  const c0 = df.add(Collect);
+  const lb = df.add(Label, {
+    size: [50, 30],
+    anchor: [an],
+    offset: [2],
+    pulse: c0
+  });
 
-  df.update(an, 'left')
-    .pulse(c0, vega.changeset().insert(data()))
-    .run();
+  df.update(an, 'left').pulse(c0, vega.changeset().insert(data())).run();
   t.equal(lb.stamp, df.stamp());
-  var out = c0.value;
+  let out = c0.value;
   t.equal(out.length, data().length);
   closeTo(t, out[0].x, 18);
   closeTo(t, out[0].y, 16);
@@ -165,9 +157,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   t.equal(out[0].opacity, 0);
   closeTo(t, out[1].x, 34);
@@ -176,9 +166,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[1].baseline, 'middle');
   t.equal(out[1].opacity, 1);
 
-  df.update(an, 'top')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 21);
   closeTo(t, out[0].y, 13);
@@ -187,9 +175,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 21);
   closeTo(t, out[0].y, 19);
@@ -198,9 +184,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'top-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top-left').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 - 2 * Math.SQRT1_2);
@@ -209,9 +193,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'top-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'top-right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 22 + 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 15 - 2 * Math.SQRT1_2);
@@ -220,9 +202,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom-left').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 17 + 2 * Math.SQRT1_2);
@@ -231,9 +211,7 @@ tape('Label performs label layout with base mark reactive geometry', function(t)
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
-  df.update(an, 'bottom-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
-    .run();
+  df.update(an, 'bottom-right').pulse(c0, vega.changeset().remove(util.truthy).insert(data())).run();
   out = c0.value;
   closeTo(t, out[0].x, 22 + 2 * Math.SQRT1_2);
   closeTo(t, out[0].y, 17 + 2 * Math.SQRT1_2);

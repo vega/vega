@@ -1,5 +1,1 @@
-export {
-  projection,
-  projectionProperties,
-  getProjectionPath
-} from './src/projections';
+export {projection, projectionProperties, getProjectionPath} from './src/projections';

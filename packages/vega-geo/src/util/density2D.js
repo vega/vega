@@ -12,30 +12,30 @@ function number(_) {
 }
 
 // Implementation adapted from d3/d3-contour. Thanks!
-export default function() {
-  var x = d => d[0],
-      y = d => d[1],
-      weight = one,
-      bandwidth = [-1, -1],
-      dx = 960,
-      dy = 500,
-      k = 2; // log2(cellSize)
+export default function () {
+  let x = d => d[0];
+  let y = d => d[1];
+  let weight = one;
+  let bandwidth = [-1, -1];
+  let dx = 960;
+  let dy = 500;
+  let k = 2; // log2(cellSize)
 
   function density(data, counts) {
-    const rx = radius(bandwidth[0], data, x) >> k, // blur x-radius
-          ry = radius(bandwidth[1], data, y) >> k, // blur y-radius
-          ox = rx ? rx + 2 : 0, // x-offset padding for blur
-          oy = ry ? ry + 2 : 0, // y-offset padding for blur
-          n = 2 * ox + (dx >> k), // grid width
-          m = 2 * oy + (dy >> k), // grid height
-          values0 = new Float32Array(n * m),
-          values1 = new Float32Array(n * m);
+    const rx = radius(bandwidth[0], data, x) >> k; // blur x-radius
+    const ry = radius(bandwidth[1], data, y) >> k; // blur y-radius
+    const ox = rx ? rx + 2 : 0; // x-offset padding for blur
+    const oy = ry ? ry + 2 : 0; // y-offset padding for blur
+    const n = 2 * ox + (dx >> k); // grid width
+    const m = 2 * oy + (dy >> k); // grid height
+    const values0 = new Float32Array(n * m);
+    const values1 = new Float32Array(n * m);
 
     let values = values0;
 
     data.forEach(d => {
-      const xi = ox + (+x(d) >> k),
-            yi = oy + (+y(d) >> k);
+      const xi = ox + (+x(d) >> k);
+      const yi = oy + (+y(d) >> k);
 
       if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
         values0[xi + yi * n] += +weight(d);
@@ -63,8 +63,8 @@ export default function() {
 
     // scale density estimates
     // density in points per square pixel or probability density
-    let s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
-    for (let i=0, sz=n*m; i<sz; ++i) values[i] *= s;
+    const s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
+    for (let i = 0, sz = n * m; i < sz; ++i) values[i] *= s;
 
     return {
       values: values,
@@ -78,38 +78,39 @@ export default function() {
     };
   }
 
-  density.x = function(_) {
-    return arguments.length ? (x = number(_), density) : x;
+  density.x = function (_) {
+    return arguments.length ? ((x = number(_)), density) : x;
   };
 
-  density.y = function(_) {
-    return arguments.length ? (y = number(_), density) : y;
+  density.y = function (_) {
+    return arguments.length ? ((y = number(_)), density) : y;
   };
 
-  density.weight = function(_) {
-    return arguments.length ? (weight = number(_), density) : weight;
+  density.weight = function (_) {
+    return arguments.length ? ((weight = number(_)), density) : weight;
   };
 
-  density.size = function(_) {
+  density.size = function (_) {
     if (!arguments.length) return [dx, dy];
-    var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
+    const _0 = Math.ceil(_[0]);
+    const _1 = Math.ceil(_[1]);
     if (!(_0 >= 0) && !(_0 >= 0)) error('invalid size');
-    return dx = _0, dy = _1, density;
+    return (dx = _0), (dy = _1), density;
   };
 
-  density.cellSize = function(_) {
+  density.cellSize = function (_) {
     if (!arguments.length) return 1 << k;
     if (!((_ = +_) >= 1)) error('invalid cell size');
     k = Math.floor(Math.log(_) / Math.LN2);
     return density;
   };
 
-  density.bandwidth = function(_) {
+  density.bandwidth = function (_) {
     if (!arguments.length) return bandwidth;
     _ = array(_);
     if (_.length === 1) _ = [+_[0], +_[0]];
     if (_.length !== 2) error('invalid bandwidth');
-    return bandwidth = _, density;
+    return (bandwidth = _), density;
   };
 
   return density;

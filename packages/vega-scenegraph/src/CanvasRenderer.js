@@ -14,11 +14,11 @@ export default function CanvasRenderer(loader) {
   this._dirty = new Bounds();
 }
 
-var prototype = inherits(CanvasRenderer, Renderer),
-    base = Renderer.prototype,
-    tempBounds = new Bounds();
+const prototype = inherits(CanvasRenderer, Renderer);
+const base = Renderer.prototype;
+const tempBounds = new Bounds();
 
-prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
+prototype.initialize = function (el, width, height, origin, scaleFactor, options) {
   this._options = options;
   this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
 
@@ -30,24 +30,23 @@ prototype.initialize = function(el, width, height, origin, scaleFactor, options)
   return base.initialize.call(this, el, width, height, origin, scaleFactor);
 };
 
-prototype.resize = function(width, height, origin, scaleFactor) {
+prototype.resize = function (width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
-  resize(this._canvas, this._width, this._height,
-    this._origin, this._scale, this._options && this._options.context);
+  resize(this._canvas, this._width, this._height, this._origin, this._scale, this._options && this._options.context);
   this._redraw = true;
   return this;
 };
 
-prototype.canvas = function() {
+prototype.canvas = function () {
   return this._canvas;
 };
 
-prototype.context = function() {
+prototype.context = function () {
   return this._canvas ? this._canvas.getContext('2d') : null;
 };
 
-prototype.dirty = function(item) {
-  var b = translate(item.bounds, item.mark.group);
+prototype.dirty = function (item) {
+  const b = translate(item.bounds, item.mark.group);
   this._dirty.union(b);
 };
 
@@ -57,7 +56,9 @@ function clipToBounds(g, b, origin) {
 
   // align to base pixel grid in case of non-integer scaling (#2425)
   if (g.pixelRatio % 1) {
-    b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+    b.scale(g.pixelRatio)
+      .round()
+      .scale(1 / g.pixelRatio);
   }
 
   // to avoid artifacts translate if origin has fractional pixels
@@ -72,26 +73,24 @@ function clipToBounds(g, b, origin) {
 }
 
 function viewBounds(origin, width, height) {
-  return tempBounds
-    .set(0, 0, width, height)
-    .translate(-origin[0], -origin[1]);
+  return tempBounds.set(0, 0, width, height).translate(-origin[0], -origin[1]);
 }
 
 function translate(bounds, group) {
   if (group == null) return bounds;
-  var b = tempBounds.clear().union(bounds);
+  const b = tempBounds.clear().union(bounds);
   for (; group != null; group = group.mark.group) {
     b.translate(group.x || 0, group.y || 0);
   }
   return b;
 }
 
-prototype._render = function(scene) {
-  var g = this.context(),
-      o = this._origin,
-      w = this._width,
-      h = this._height,
-      b = this._dirty;
+prototype._render = function (scene) {
+  const g = this.context();
+  const o = this._origin;
+  const w = this._width;
+  const h = this._height;
+  let b = this._dirty;
 
   // setup
   g.save();
@@ -114,15 +113,15 @@ prototype._render = function(scene) {
   return this;
 };
 
-prototype.draw = function(ctx, scene, bounds) {
-  var mark = marks[scene.marktype];
+prototype.draw = function (ctx, scene, bounds) {
+  const mark = marks[scene.marktype];
   if (scene.clip) clip(ctx, scene);
   mark.draw.call(this, ctx, scene, bounds);
   if (scene.clip) ctx.restore();
 };
 
-prototype.clear = function(x, y, w, h) {
-  var g = this.context();
+prototype.clear = function (x, y, w, h) {
+  const g = this.context();
   g.clearRect(x, y, w, h);
   if (this._bgcolor != null) {
     g.fillStyle = this._bgcolor;

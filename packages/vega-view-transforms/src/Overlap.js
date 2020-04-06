@@ -30,20 +30,20 @@ export default function Overlap(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Overlap, Transform);
+const prototype = inherits(Overlap, Transform);
 
-var methods = {
-  parity: function(items) {
-    return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
+const methods = {
+  parity: function (items) {
+    return items.filter((item, i) => (i % 2 ? (item.opacity = 0) : 1));
   },
-  greedy: function(items, sep) {
-    var a;
+  greedy: function (items, sep) {
+    let a;
     return items.filter((b, i) => {
       if (!i || !intersect(a.bounds, b.bounds, sep)) {
         a = b;
         return 1;
       } else {
-        return b.opacity = 0;
+        return (b.opacity = 0);
       }
     });
   }
@@ -52,28 +52,23 @@ var methods = {
 // compute bounding box intersection
 // including padding pixels of separation
 function intersect(a, b, sep) {
-  return sep > Math.max(
-    b.x1 - a.x2,
-    a.x1 - b.x2,
-    b.y1 - a.y2,
-    a.y1 - b.y2
-  );
+  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
 }
 
 function hasOverlap(items, pad) {
-  for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
-    if (intersect(a, b = items[i].bounds, pad)) return true;
+  for (let i = 1, n = items.length, a = items[0].bounds, b; i < n; a = b, ++i) {
+    if (intersect(a, (b = items[i].bounds), pad)) return true;
   }
 }
 
 function hasBounds(item) {
-  var b = item.bounds;
+  const b = item.bounds;
   return b.width() > 1 && b.height() > 1;
 }
 
 function boundTest(scale, orient, tolerance) {
-  var range = scale.range(),
-      b = new Bounds();
+  const range = scale.range();
+  const b = new Bounds();
 
   if (orient === Top || orient === Bottom) {
     b.set(range[0], -Infinity, range[1], +Infinity);
@@ -87,7 +82,7 @@ function boundTest(scale, orient, tolerance) {
 
 // reset all items to be fully opaque
 function reset(source) {
-  source.forEach(item => item.opacity = 1);
+  source.forEach(item => (item.opacity = 1));
   return source;
 }
 
@@ -97,11 +92,11 @@ function reflow(pulse, _) {
   return pulse.reflow(_.modified()).modifies('opacity');
 }
 
-prototype.transform = function(_, pulse) {
-  var reduce = methods[_.method] || methods.parity,
-      source = pulse.materialize(pulse.SOURCE).source,
-      sep = _.separation || 0,
-      items, test, bounds;
+prototype.transform = function (_, pulse) {
+  const reduce = methods[_.method] || methods.parity;
+  let source = pulse.materialize(pulse.SOURCE).source;
+  const sep = _.separation || 0;
+  let items;
 
   if (!source || !source.length) return;
 
@@ -139,14 +134,14 @@ prototype.transform = function(_, pulse) {
   }
 
   if (_.boundScale && _.boundTolerance >= 0) {
-    test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
+    const test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
     source.forEach(item => {
       if (!test(item)) item.opacity = 0;
     });
   }
 
   // re-calculate mark bounds
-  bounds = items[0].mark.bounds.clear();
+  const bounds = items[0].mark.bounds.clear();
   source.forEach(item => {
     if (item.opacity) bounds.union(item.bounds);
   });

@@ -1,31 +1,43 @@
 import {textMetrics} from 'vega-scenegraph';
 
-const Aligns = ['right', 'center', 'left'],
-      Baselines = ['bottom', 'middle', 'top'];
+const Aligns = ['right', 'center', 'left'];
+const Baselines = ['bottom', 'middle', 'top'];
 
-export default function($, bitmaps, anchors, offsets) {
-  const width = $.width,
-        height = $.height,
-        bm0 = bitmaps[0],
-        bm1 = bitmaps[1],
-        n = offsets.length;
+export default function ($, bitmaps, anchors, offsets) {
+  const width = $.width;
+  const height = $.height;
+  const bm0 = bitmaps[0];
+  const bm1 = bitmaps[1];
+  const n = offsets.length;
 
-  return function(d) {
-    const boundary = d.boundary,
-          textHeight = d.datum.fontSize;
+  return function (d) {
+    const boundary = d.boundary;
+    const textHeight = d.datum.fontSize;
 
     // can not be placed if the mark is not visible in the graph bound
     if (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height) {
       return false;
     }
 
-    let textWidth = 0,
-        dx, dy, isInside, sizeFactor, insideFactor,
-        x1, x2, y1, y2, xc, yc,
-        _x1, _x2, _y1, _y2;
+    let textWidth = 0;
+    let dx;
+    let dy;
+    let isInside;
+    let sizeFactor;
+    let insideFactor;
+    let x1;
+    let x2;
+    let y1;
+    let y2;
+    let xc;
+    let yc;
+    let _x1;
+    let _x2;
+    let _y1;
+    let _y2;
 
     // for each anchor and offset
-    for (let i=0; i<n; ++i) {
+    for (let i = 0; i < n; ++i) {
       dx = (anchors[i] & 0x3) - 1;
       dy = ((anchors[i] >>> 0x2) & 0x3) - 1;
 
@@ -74,7 +86,7 @@ export default function($, bitmaps, anchors, offsets) {
     }
 
     return false;
-  }
+  };
 }
 
 // Test if a label with the given dimensions can be added without overlap
@@ -88,6 +100,5 @@ function test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside) 
 }
 
 function isInMarkBound(x1, y1, x2, y2, boundary) {
-  return boundary[0] <= x1 && x2 <= boundary[2]
-      && boundary[3] <= y1 && y2 <= boundary[5];
+  return boundary[0] <= x1 && x2 <= boundary[2] && boundary[3] <= y1 && y2 <= boundary[5];
 }

@@ -3,40 +3,43 @@ import {set, tempBounds} from './util';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 export function isYAxis(mark) {
-  var orient = mark.items[0].datum.orient;
+  const orient = mark.items[0].datum.orient;
   return orient === Left || orient === Right;
 }
 
 function axisIndices(datum) {
-  var index = +datum.grid;
+  let index = +datum.grid;
   return [
-    datum.ticks  ? index++ : -1, // ticks index
+    datum.ticks ? index++ : -1, // ticks index
     datum.labels ? index++ : -1, // labels index
-    index + (+datum.domain)      // title index
+    index + +datum.domain // title index
   ];
 }
 
 export function axisLayout(view, axis, width, height) {
-  var item = axis.items[0],
-      datum = item.datum,
-      orient = datum.orient,
-      delta = datum.translate != null ? datum.translate : 0.5,
-      indices = axisIndices(datum),
-      range = item.range,
-      offset = item.offset,
-      position = item.position,
-      minExtent = item.minExtent,
-      maxExtent = item.maxExtent,
-      title = datum.title && item.items[indices[2]].items[0],
-      titlePadding = item.titlePadding,
-      bounds = item.bounds,
-      dl = title && multiLineOffset(title),
-      x = 0, y = 0, i, s;
+  const item = axis.items[0];
+  const datum = item.datum;
+  const orient = datum.orient;
+  const delta = datum.translate != null ? datum.translate : 0.5;
+  const indices = axisIndices(datum);
+  const range = item.range;
+  const offset = item.offset;
+  const position = item.position;
+  const minExtent = item.minExtent;
+  const maxExtent = item.maxExtent;
+  const title = datum.title && item.items[indices[2]].items[0];
+  const titlePadding = item.titlePadding;
+  const bounds = item.bounds;
+  const dl = title && multiLineOffset(title);
+  let x = 0;
+  let y = 0;
+  let i;
+  let s;
 
   tempBounds.clear().union(bounds);
   bounds.clear();
-  if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
-  if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
+  if ((i = indices[0]) > -1) bounds.union(item.items[i].bounds);
+  if ((i = indices[1]) > -1) bounds.union(item.items[i].bounds);
 
   // position axis group and title
   switch (orient) {
@@ -91,12 +94,11 @@ function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
 
   if (title.auto) {
     const v = sign * (offset + dl + pad);
-    let dx = 0, dy = 0;
+    let dx = 0;
+    let dy = 0;
 
     view.dirty(title);
-    isYAxis
-      ? dx = (title.x || 0) - (title.x = v)
-      : dy = (title.y || 0) - (title.y = v);
+    isYAxis ? (dx = (title.x || 0) - (title.x = v)) : (dy = (title.y || 0) - (title.y = v));
     title.mark.bounds.clear().union(b.translate(-dx, -dy));
     view.dirty(title);
   }

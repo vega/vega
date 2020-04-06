@@ -40,40 +40,40 @@ export default function KDE(params) {
 }
 
 KDE.Definition = {
-  "type": "KDE",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "field", "type": "field", "required": true },
-    { "name": "cumulative", "type": "boolean", "default": false },
-    { "name": "counts", "type": "boolean", "default": false },
-    { "name": "bandwidth", "type": "number", "default": 0 },
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "steps", "type": "number" },
-    { "name": "minsteps", "type": "number", "default": 25 },
-    { "name": "maxsteps", "type": "number", "default": 200 },
-    { "name": "as", "type": "string", "array": true, "default": ["value", "density"] }
+  type: 'KDE',
+  metadata: {generates: true},
+  params: [
+    {name: 'groupby', type: 'field', array: true},
+    {name: 'field', type: 'field', required: true},
+    {name: 'cumulative', type: 'boolean', default: false},
+    {name: 'counts', type: 'boolean', default: false},
+    {name: 'bandwidth', type: 'number', default: 0},
+    {name: 'extent', type: 'number', array: true, length: 2},
+    {name: 'resolve', type: 'enum', values: ['shared', 'independent'], default: 'independent'},
+    {name: 'steps', type: 'number'},
+    {name: 'minsteps', type: 'number', default: 25},
+    {name: 'maxsteps', type: 'number', default: 200},
+    {name: 'as', type: 'string', array: true, default: ['value', 'density']}
   ]
 };
 
-var prototype = inherits(KDE, Transform);
+const prototype = inherits(KDE, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
   if (!this.value || pulse.changed() || _.modified()) {
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby, _.field),
-          names = (_.groupby || []).map(accessorName),
-          bandwidth = _.bandwidth,
-          method = _.cumulative ? 'cdf' : 'pdf',
-          as = _.as || ['value', 'density'],
-          values = [];
+    const source = pulse.materialize(pulse.SOURCE).source;
+    const groups = partition(source, _.groupby, _.field);
+    const names = (_.groupby || []).map(accessorName);
+    const bandwidth = _.bandwidth;
+    const method = _.cumulative ? 'cdf' : 'pdf';
+    const as = _.as || ['value', 'density'];
+    const values = [];
 
-    let domain = _.extent,
-        minsteps = _.steps || _.minsteps || 25,
-        maxsteps = _.steps || _.maxsteps || 200;
+    let domain = _.extent;
+    let minsteps = _.steps || _.minsteps || 25;
+    let maxsteps = _.steps || _.maxsteps || 200;
 
     if (method !== 'pdf' && method !== 'cdf') {
       error('Invalid density method: ' + method);
@@ -85,13 +85,13 @@ prototype.transform = function(_, pulse) {
     }
 
     groups.forEach(g => {
-      const density = randomKDE(g, bandwidth)[method],
-            scale = _.counts ? g.length : 1,
-            local = domain || extent(g);
+      const density = randomKDE(g, bandwidth)[method];
+      const scale = _.counts ? g.length : 1;
+      const local = domain || extent(g);
 
       sampleCurve(density, local, minsteps, maxsteps).forEach(v => {
         const t = {};
-        for (let i=0; i<names.length; ++i) {
+        for (let i = 0; i < names.length; ++i) {
           t[names[i]] = g.dims[i];
         }
         t[as[0]] = v[0];

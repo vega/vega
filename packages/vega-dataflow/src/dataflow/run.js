@@ -26,9 +26,9 @@ import {id, isArray, Info, Debug} from 'vega-util';
  *   evaluation completes.
  */
 export async function evaluate(encode, prerun, postrun) {
-  const df = this,
-        level = df.logLevel(),
-        async = [];
+  const df = this;
+  const level = df.logLevel();
+  const async = [];
 
   // if the pulse value is set, this is a re-entrant call
   if (df._pulse) return reentrant(df);
@@ -48,8 +48,12 @@ export async function evaluate(encode, prerun, postrun) {
   }
 
   // increment timestamp clock
-  let stamp = ++df._clock,
-      count = 0, op, next, dt, error;
+  const stamp = ++df._clock;
+  let count = 0;
+  let op;
+  let next;
+  let dt;
+  let error;
 
   // set the current pulse
   df._pulse = new Pulse(df, stamp, encode);
@@ -69,7 +73,10 @@ export async function evaluate(encode, prerun, postrun) {
       op = df._heap.pop();
 
       // re-queue if rank changed
-      if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
+      if (op.rank !== op.qrank) {
+        df._enqueue(op, true);
+        continue;
+      }
 
       // otherwise, evaluate the operator
       next = op.run(df._getPulse(op, encode));
@@ -118,7 +125,7 @@ export async function evaluate(encode, prerun, postrun) {
   if (df._postrun.length) {
     const pr = df._postrun.sort((a, b) => b.priority - a.priority);
     df._postrun = [];
-    for (let i=0; i<pr.length; ++i) {
+    for (let i = 0; i < pr.length; ++i) {
       await asyncCallback(df, pr[i].callback);
     }
   }
@@ -128,9 +135,17 @@ export async function evaluate(encode, prerun, postrun) {
 
   // handle non-blocking asynchronous callbacks
   if (async.length) {
-    Promise.all(async).then(cb => df.runAsync(null, () => {
-      cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
-    }));
+    Promise.all(async).then(cb =>
+      df.runAsync(null, () => {
+        cb.forEach(f => {
+          try {
+            f(df);
+          } catch (err) {
+            df.error(err);
+          }
+        });
+      })
+    );
   }
 
   return df;
@@ -160,9 +175,8 @@ export async function runAsync(encode, prerun, postrun) {
   while (this._running) await this._running;
 
   // run dataflow, manage running promise
-  const clear = () => this._running = null;
-  (this._running = this.evaluate(encode, prerun, postrun))
-    .then(clear, clear);
+  const clear = () => (this._running = null);
+  (this._running = this.evaluate(encode, prerun, postrun)).then(clear, clear);
 
   return this._running;
 }
@@ -187,8 +201,7 @@ export async function runAsync(encode, prerun, postrun) {
  * @return {Dataflow} - This dataflow instance.
  */
 export function run(encode, prerun, postrun) {
-  return this._pulse ? reentrant(this)
-    : (this.evaluate(encode, prerun, postrun), this);
+  return this._pulse ? reentrant(this) : (this.evaluate(encode, prerun, postrun), this);
 }
 
 /**
@@ -220,7 +233,11 @@ export function runAfter(callback, enqueue, priority) {
     });
   } else {
     // pulse propagation already complete, invoke immediately
-    try { callback(this); } catch (err) { this.error(err); }
+    try {
+      callback(this);
+    } catch (err) {
+      this.error(err);
+    }
   }
 }
 
@@ -244,7 +261,7 @@ function reentrant(df) {
  *   dataflow graph is dynamically modified and the operator rank changes.
  */
 export function enqueue(op, force) {
-  var q = op.stamp < this._clock;
+  const q = op.stamp < this._clock;
   if (q) op.stamp = this._clock;
   if (q || force) {
     op.qrank = op.rank;
@@ -265,11 +282,16 @@ export function enqueue(op, force) {
  *   annotate the returned pulse. See {@link run} for more information.
  */
 export function getPulse(op, encode) {
-  var s = op.source,
-      stamp = this._clock;
+  const s = op.source;
+  const stamp = this._clock;
 
   return s && isArray(s)
-    ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)
+    ? new MultiPulse(
+        this,
+        stamp,
+        s.map(_ => _.pulse),
+        encode
+      )
     : this._input[op.id] || singlePulse(this._pulse, s && s.pulse);
 }
 

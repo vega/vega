@@ -2,13 +2,13 @@ import Parameters from './Parameters';
 import UniqueList from './util/UniqueList';
 import {array, error, id, isArray} from 'vega-util';
 
-var OP_ID = 0;
-var PULSE = 'pulse';
-var NO_PARAMS = new Parameters();
+let OP_ID = 0;
+const PULSE = 'pulse';
+const NO_PARAMS = new Parameters();
 
 // Boolean Flags
-var SKIP     = 1,
-    MODIFIED = 2;
+const SKIP = 1;
+const MODIFIED = 2;
 
 /**
  * An Operator is a processing node in a dataflow graph.
@@ -41,14 +41,14 @@ export default function Operator(init, update, params, react) {
   if (params) this.parameters(params, react);
 }
 
-var prototype = Operator.prototype;
+const prototype = Operator.prototype;
 
 /**
  * Returns a list of target operators dependent on this operator.
  * If this list does not exist, it is created and then returned.
  * @return {UniqueList}
  */
-prototype.targets = function() {
+prototype.targets = function () {
   return this._targets || (this._targets = UniqueList(id));
 };
 
@@ -58,7 +58,7 @@ prototype.targets = function() {
  * @return {Number} Returns 1 if the operator value has changed
  *   according to strict equality, returns 0 otherwise.
  */
-prototype.set = function(value) {
+prototype.set = function (value) {
   if (this.value !== value) {
     this.value = value;
     return 1;
@@ -68,10 +68,10 @@ prototype.set = function(value) {
 };
 
 function flag(bit) {
-  return function(state) {
-    var f = this.flags;
+  return function (state) {
+    const f = this.flags;
     if (arguments.length === 0) return !!(f & bit);
-    this.flags = state ? (f | bit) : (f & ~bit);
+    this.flags = state ? f | bit : f & ~bit;
     return this;
   };
 }
@@ -111,13 +111,16 @@ prototype.modified = flag(MODIFIED);
  *   deregister dependencies and suppress all future update invocations.
  * @return {Operator[]} - An array of upstream dependencies.
  */
-prototype.parameters = function(params, react, initonly) {
+prototype.parameters = function (params, react, initonly) {
   react = react !== false;
-  var self = this,
-      argval = (self._argval = self._argval || new Parameters()),
-      argops = (self._argops = self._argops || []),
-      deps = [],
-      name, value, n, i;
+  const self = this;
+  const argval = (self._argval = self._argval || new Parameters());
+  const argops = (self._argops = self._argops || []);
+  const deps = [];
+  let name;
+  let value;
+  let n;
+  let i;
 
   function add(name, index, value) {
     if (value instanceof Operator) {
@@ -125,7 +128,7 @@ prototype.parameters = function(params, react, initonly) {
         if (react) value.targets().add(self);
         deps.push(value);
       }
-      argops.push({op:value, name:name, index:index});
+      argops.push({op: value, name: name, index: index});
     } else {
       argval.set(name, index, value);
     }
@@ -135,7 +138,7 @@ prototype.parameters = function(params, react, initonly) {
     value = params[name];
 
     if (name === PULSE) {
-      array(value).forEach(function(op) {
+      array(value).forEach(function (op) {
         if (!(op instanceof Operator)) {
           error('Pulse parameters must be operator instances.');
         } else if (op !== self) {
@@ -145,8 +148,8 @@ prototype.parameters = function(params, react, initonly) {
       });
       self.source = value;
     } else if (isArray(value)) {
-      argval.set(name, -1, Array(n = value.length));
-      for (i=0; i<n; ++i) add(name, i, value[i]);
+      argval.set(name, -1, Array((n = value.length)));
+      for (i = 0; i < n; ++i) add(name, i, value[i]);
     } else {
       add(name, -1, value);
     }
@@ -163,12 +166,17 @@ prototype.parameters = function(params, react, initonly) {
  * Visits each operator dependency to pull the latest value.
  * @return {Parameters} A Parameters object to pass to the update function.
  */
-prototype.marshall = function(stamp) {
-  var argval = this._argval || NO_PARAMS,
-      argops = this._argops, item, i, n, op, mod;
+prototype.marshall = function (stamp) {
+  const argval = this._argval || NO_PARAMS;
+  const argops = this._argops;
+  let item;
+  let i;
+  let n;
+  let op;
+  let mod;
 
   if (argops) {
-    for (i=0, n=argops.length; i<n; ++i) {
+    for (i = 0, n = argops.length; i < n; ++i) {
       item = argops[i];
       op = item.op;
       mod = op.modified() && op.stamp === stamp;
@@ -176,7 +184,7 @@ prototype.marshall = function(stamp) {
     }
 
     if (argops.initonly) {
-      for (i=0; i<n; ++i) {
+      for (i = 0; i < n; ++i) {
         item = argops[i];
         item.op.targets().remove(this);
       }
@@ -198,11 +206,11 @@ prototype.marshall = function(stamp) {
  * @return The output pulse or StopPropagation. A falsy return value
  *   (including undefined) will let the input pulse pass through.
  */
-prototype.evaluate = function(pulse) {
-  var update = this._update;
+prototype.evaluate = function (pulse) {
+  const update = this._update;
   if (update) {
-    var params = this.marshall(pulse.stamp),
-        v = update.call(this, params, pulse);
+    const params = this.marshall(pulse.stamp);
+    const v = update.call(this, params, pulse);
 
     params.clear();
     if (v !== this.value) {
@@ -222,9 +230,9 @@ prototype.evaluate = function(pulse) {
  * @param {Pulse} pulse - the current dataflow pulse.
  * @return the output pulse for this operator (or StopPropagation)
  */
-prototype.run = function(pulse) {
+prototype.run = function (pulse) {
   if (pulse.stamp < this.stamp) return pulse.StopPropagation;
-  var rv;
+  let rv;
   if (this.skip()) {
     this.skip(false);
     rv = 0;

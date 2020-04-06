@@ -4,43 +4,46 @@ import {array8, array16, array32} from './arrays';
  * Maintains CrossFilter state.
  */
 export default function Bitmaps() {
-
-  var width = 8,
-      data = [],
-      seen = array32(0),
-      curr = array(0, width),
-      prev = array(0, width);
+  let width = 8;
+  let data = [];
+  let seen = array32(0);
+  let curr = array(0, width);
+  let prev = array(0, width);
 
   return {
+    data: function () {
+      return data;
+    },
 
-    data: function() { return data; },
-
-    seen: function() {
+    seen: function () {
       return (seen = lengthen(seen, data.length));
     },
 
-    add: function(array) {
-      for (var i=0, j=data.length, n=array.length, t; i<n; ++i) {
+    add: function (array) {
+      for (let i = 0, j = data.length, n = array.length, t; i < n; ++i) {
         t = array[i];
         t._index = j++;
         data.push(t);
       }
     },
 
-    remove: function(num, map) { // map: index -> boolean (true => remove)
-      var n = data.length,
-          copy = Array(n - num),
-          reindex = data, // reuse old data array for index map
-          t, i, j;
+    remove: function (num, map) {
+      // map: index -> boolean (true => remove)
+      const n = data.length;
+      const copy = Array(n - num);
+      const reindex = data; // reuse old data array for index map
+      let t;
+      let i;
+      let j;
 
       // seek forward to first removal
-      for (i=0; !map[i] && i<n; ++i) {
+      for (i = 0; !map[i] && i < n; ++i) {
         copy[i] = data[i];
         reindex[i] = i;
       }
 
       // condense arrays
-      for (j=i; i<n; ++i) {
+      for (j = i; i < n; ++i) {
         t = data[i];
         if (!map[i]) {
           reindex[i] = j;
@@ -58,24 +61,36 @@ export default function Bitmaps() {
       return reindex;
     },
 
-    size: function() { return data.length; },
+    size: function () {
+      return data.length;
+    },
 
-    curr: function() { return curr; },
+    curr: function () {
+      return curr;
+    },
 
-    prev: function() { return prev; },
+    prev: function () {
+      return prev;
+    },
 
-    reset: function(k) { prev[k] = curr[k]; },
+    reset: function (k) {
+      prev[k] = curr[k];
+    },
 
-    all: function() {
+    all: function () {
       return width < 0x101 ? 0xff : width < 0x10001 ? 0xffff : 0xffffffff;
     },
 
-    set: function(k, one) { curr[k] |= one; },
+    set: function (k, one) {
+      curr[k] |= one;
+    },
 
-    clear: function(k, one) { curr[k] &= ~one; },
+    clear: function (k, one) {
+      curr[k] &= ~one;
+    },
 
-    resize: function(n, m) {
-      var k = curr.length;
+    resize: function (n, m) {
+      const k = curr.length;
       if (n > k || m > width) {
         width = Math.max(m, width);
         curr = array(n, width, curr);
@@ -93,7 +108,7 @@ function lengthen(array, length, copy) {
 }
 
 function array(n, m, array) {
-  var copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
+  const copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
   if (array) copy.set(array);
   return copy;
 }

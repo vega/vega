@@ -6,15 +6,19 @@ import property from './property';
 import expression from './expression';
 import {stringValue} from 'vega-util';
 
-export default function(channel, enc, scope, params, fields) {
+export default function (channel, enc, scope, params, fields) {
   if (enc.gradient != null) {
     return gradient(enc, scope, params, fields);
   }
 
-  var value = enc.signal ? expression(enc.signal, scope, params, fields)
-    : enc.color ? color(enc.color, scope, params, fields)
-    : enc.field != null ? field(enc.field, scope, params, fields)
-    : enc.value !== undefined ? stringValue(enc.value)
+  let value = enc.signal
+    ? expression(enc.signal, scope, params, fields)
+    : enc.color
+    ? color(enc.color, scope, params, fields)
+    : enc.field != null
+    ? field(enc.field, scope, params, fields)
+    : enc.value !== undefined
+    ? stringValue(enc.value)
     : undefined;
 
   if (enc.scale != null) {
@@ -26,8 +30,7 @@ export default function(channel, enc, scope, params, fields) {
   }
 
   if (enc.exponent != null) {
-    value = 'Math.pow(' + value + ','
-      + property(enc.exponent, scope, params, fields) + ')';
+    value = 'Math.pow(' + value + ',' + property(enc.exponent, scope, params, fields) + ')';
   }
 
   if (enc.mult != null) {

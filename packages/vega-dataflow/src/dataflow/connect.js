@@ -6,10 +6,12 @@
  * @param {Array<Operator>} - The source operators that should propagate
  *   to the target operator.
  */
-export default function(target, sources) {
-  var targetRank = target.rank, i, n;
+export default function (target, sources) {
+  const targetRank = target.rank;
+  let i;
+  let n;
 
-  for (i=0, n=sources.length; i<n; ++i) {
+  for (i = 0, n = sources.length; i < n; ++i) {
     if (targetRank < sources[i].rank) {
       this.rerank(target);
       return;

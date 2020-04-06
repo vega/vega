@@ -11,14 +11,15 @@ import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
 import {array, extend, hasOwnProperty} from 'vega-util';
 
 export default function parseView(spec, scope) {
-  var config = scope.config,
-      op, input, encode, parent, root, signals;
+  const config = scope.config;
+  let op;
+  let encode;
 
   // add scenegraph root
-  root = ref(scope.root = scope.add(operator()));
+  const root = ref((scope.root = scope.add(operator())));
 
   // parse top-level signal definitions
-  signals = collectSignals(spec, config);
+  const signals = collectSignals(spec, config);
   signals.forEach(_ => parseSignal(_, scope));
 
   // assign description, event and legend configuration
@@ -27,26 +28,29 @@ export default function parseView(spec, scope) {
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
 
   // store root group item
-  input = scope.add(Collect());
+  const input = scope.add(Collect());
 
   // encode root group item
-  encode = extendEncode({
-    enter: { x: {value: 0}, y: {value: 0} },
-    update: { width: {signal: 'width'}, height: {signal: 'height'} }
-  }, spec.encode);
-
-  encode = scope.add(Encode(
-    encoders(encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)}))
+  encode = extendEncode(
+    {
+      enter: {x: {value: 0}, y: {value: 0}},
+      update: {width: {signal: 'width'}, height: {signal: 'height'}}
+    },
+    spec.encode
   );
 
+  encode = scope.add(Encode(encoders(encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)})));
+
   // perform view layout
-  parent = scope.add(ViewLayout({
-    layout:   scope.objectProperty(spec.layout),
-    legends:  scope.legends,
-    autosize: scope.signalRef('autosize'),
-    mark:     root,
-    pulse:    ref(encode)
-  }));
+  const parent = scope.add(
+    ViewLayout({
+      layout: scope.objectProperty(spec.layout),
+      legends: scope.legends,
+      autosize: scope.signalRef('autosize'),
+      mark: root,
+      pulse: ref(encode)
+    })
+  );
   scope.operators.pop();
 
   // parse remainder of specification
@@ -66,9 +70,7 @@ export default function parseView(spec, scope) {
 }
 
 function signalObject(name, value) {
-  return value && value.signal
-    ? { name, update: value.signal }
-    : { name, value };
+  return value && value.signal ? {name, update: value.signal} : {name, value};
 }
 
 /**
@@ -86,16 +88,16 @@ function signalObject(name, value) {
  * overwriting existing 'value' or 'update' properties.
  */
 function collectSignals(spec, config) {
-  const _ = name => value(spec[name], config[name]),
-        signals = [
-          signalObject('background', _('background')),
-          signalObject('autosize', parseAutosize(_('autosize'))),
-          signalObject('padding', parsePadding(_('padding'))),
-          signalObject('width', _('width') || 0),
-          signalObject('height', _('height') || 0)
-        ],
-        pre = signals.reduce((p, s) => (p[s.name] = s, p), {}),
-        map = {};
+  const _ = name => value(spec[name], config[name]);
+  const signals = [
+    signalObject('background', _('background')),
+    signalObject('autosize', parseAutosize(_('autosize'))),
+    signalObject('padding', parsePadding(_('padding'))),
+    signalObject('width', _('width') || 0),
+    signalObject('height', _('height') || 0)
+  ];
+  const pre = signals.reduce((p, s) => ((p[s.name] = s), p), {});
+  const map = {};
 
   // add spec signal array
   array(spec.signals).forEach(s => {

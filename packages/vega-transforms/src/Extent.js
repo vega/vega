@@ -12,33 +12,28 @@ export default function Extent(params) {
 }
 
 Extent.Definition = {
-  "type": "Extent",
-  "metadata": {},
-  "params": [
-    { "name": "field", "type": "field", "required": true }
-  ]
+  type: 'Extent',
+  metadata: {},
+  params: [{name: 'field', type: 'field', required: true}]
 };
 
-var prototype = inherits(Extent, Transform);
+const prototype = inherits(Extent, Transform);
 
-prototype.transform = function(_, pulse) {
-  var extent = this.value,
-      field = _.field,
-      min = extent[0],
-      max = extent[1],
-      mod;
+prototype.transform = function (_, pulse) {
+  const extent = this.value;
+  const field = _.field;
+  let min = extent[0];
+  let max = extent[1];
 
-  mod = pulse.changed()
-     || pulse.modified(field.fields)
-     || _.modified('field');
+  const mod = pulse.changed() || pulse.modified(field.fields) || _.modified('field');
 
   if (mod || min == null) {
     min = +Infinity;
     max = -Infinity;
   }
 
-  pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-    var v = field(t);
+  pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function (t) {
+    let v = field(t);
     if (v != null) {
       // coerce to number
       v = +v;

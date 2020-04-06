@@ -13,40 +13,38 @@ export default function Filter(params) {
 }
 
 Filter.Definition = {
-  "type": "Filter",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true }
-  ]
+  type: 'Filter',
+  metadata: {changes: true},
+  params: [{name: 'expr', type: 'expr', required: true}]
 };
 
-var prototype = inherits(Filter, Transform);
+const prototype = inherits(Filter, Transform);
 
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      cache = this.value, // cache ids of filtered tuples
-      output = pulse.fork(),
-      add = output.add,
-      rem = output.rem,
-      mod = output.mod,
-      test = _.expr,
-      isMod = true;
+prototype.transform = function (_, pulse) {
+  const df = pulse.dataflow;
+  const cache = this.value; // cache ids of filtered tuples
+  const output = pulse.fork();
+  const add = output.add;
+  const rem = output.rem;
+  const mod = output.mod;
+  const test = _.expr;
+  let isMod = true;
 
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t);
+  pulse.visit(pulse.REM, function (t) {
+    const id = tupleid(t);
     if (!cache.has(id)) rem.push(t);
     else cache.delete(id);
   });
 
-  pulse.visit(pulse.ADD, function(t) {
+  pulse.visit(pulse.ADD, function (t) {
     if (test(t, _)) add.push(t);
     else cache.set(tupleid(t), 1);
   });
 
   function revisit(t) {
-    var id = tupleid(t),
-        b = test(t, _),
-        s = cache.get(id);
+    const id = tupleid(t);
+    const b = test(t, _);
+    const s = cache.get(id);
     if (b && s) {
       cache.delete(id);
       add.push(t);

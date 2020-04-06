@@ -3,9 +3,7 @@ import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 import {format as numberFormat, formatSpecifier} from 'd3-format';
 
-const defaultFormatter = value => isArray(value)
-  ? value.map(v => String(v))
-  : String(value);
+const defaultFormatter = value => (isArray(value) ? value.map(v => String(v)) : String(value));
 
 /**
  * Determine the tick count or interval function.
@@ -15,7 +13,7 @@ const defaultFormatter = value => isArray(value)
  * @return {*} - The tick count or interval function.
  */
 export function tickCount(scale, count, minStep) {
-  var step;
+  let step;
 
   if (isNumber(count)) {
     if (scale.bins) {
@@ -32,9 +30,12 @@ export function tickCount(scale, count, minStep) {
   }
 
   if (isString(count)) {
-    count = scale.type === Time ? timeInterval(count)
-      : scale.type == UTC ? utcInterval(count)
-      : error('Only time and utc scales accept interval strings.');
+    count =
+      scale.type === Time
+        ? timeInterval(count)
+        : scale.type == UTC
+        ? utcInterval(count)
+        : error('Only time and utc scales accept interval strings.');
     if (step) count = count.every(step);
   }
 
@@ -50,9 +51,9 @@ export function tickCount(scale, count, minStep) {
  * @return {Array<*>} - The filtered tick values.
  */
 export function validTicks(scale, ticks, count) {
-  var range = scale.range(),
-      lo = Math.floor(range[0]),
-      hi = Math.ceil(peek(range));
+  let range = scale.range();
+  let lo = Math.floor(range[0]);
+  let hi = Math.ceil(peek(range));
 
   if (lo > hi) {
     range = hi;
@@ -60,15 +61,17 @@ export function validTicks(scale, ticks, count) {
     lo = range;
   }
 
-  ticks = ticks.filter(function(v) {
+  ticks = ticks.filter(function (v) {
     v = scale(v);
     return lo <= v && v <= hi;
   });
 
   if (count > 0 && ticks.length > 1) {
-    var endpoints = [ticks[0], peek(ticks)];
+    const endpoints = [ticks[0], peek(ticks)];
     while (ticks.length > count && ticks.length >= 3) {
-      ticks = ticks.filter(function(_, i) { return !(i % 2); });
+      ticks = ticks.filter(function (_, i) {
+        return !(i % 2);
+      });
     }
     if (ticks.length < 3) {
       ticks = endpoints;
@@ -88,9 +91,7 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? validTicks(scale, scale.bins)
-    : scale.ticks ? scale.ticks(count)
-    : scale.domain();
+  return scale.bins ? validTicks(scale, scale.bins) : scale.ticks ? scale.ticks(count) : scale.domain();
 }
 
 /**
@@ -109,15 +110,20 @@ export function tickValues(scale, count) {
  * @return {function(*):string} - The generated label formatter.
  */
 export function tickFormat(scale, count, specifier, formatType, noSkip) {
-  var type = scale.type,
-      format = (type === Time || formatType === Time) ? timeFormat(specifier)
-        : (type === UTC || formatType === UTC) ? utcFormat(specifier)
-        : scale.tickFormat ? scale.tickFormat(count, specifier)
-        : specifier ? numberFormat(specifier)
-        : defaultFormatter;
+  const type = scale.type;
+  let format =
+    type === Time || formatType === Time
+      ? timeFormat(specifier)
+      : type === UTC || formatType === UTC
+      ? utcFormat(specifier)
+      : scale.tickFormat
+      ? scale.tickFormat(count, specifier)
+      : specifier
+      ? numberFormat(specifier)
+      : defaultFormatter;
 
   if (isLogarithmic(type)) {
-    var logfmt = variablePrecision(specifier);
+    const logfmt = variablePrecision(specifier);
     format = noSkip || scale.bins ? logfmt : filter(format, logfmt);
   }
 
@@ -125,20 +131,24 @@ export function tickFormat(scale, count, specifier, formatType, noSkip) {
 }
 
 function filter(sourceFormat, targetFormat) {
-  return _ => sourceFormat(_) ? targetFormat(_) : '';
+  return _ => (sourceFormat(_) ? targetFormat(_) : '');
 }
 
 function variablePrecision(specifier) {
-  var s = formatSpecifier(specifier || ',');
+  const s = formatSpecifier(specifier || ',');
 
   if (s.precision == null) {
     s.precision = 12;
     switch (s.type) {
-      case '%': s.precision -= 2; break;
-      case 'e': s.precision -= 1; break;
+      case '%':
+        s.precision -= 2;
+        break;
+      case 'e':
+        s.precision -= 1;
+        break;
     }
     return trimZeroes(
-      numberFormat(s),          // number format
+      numberFormat(s), // number format
       numberFormat('.1f')(1)[1] // decimal point character
     );
   } else {
@@ -147,25 +157,30 @@ function variablePrecision(specifier) {
 }
 
 function trimZeroes(format, decimalChar) {
-  return function(x) {
-    var str = format(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
+  return function (x) {
+    const str = format(x);
+    const dec = str.indexOf(decimalChar);
+    let idx;
 
     if (dec < 0) return str;
 
     idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
-    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+    const end = idx < str.length ? str.slice(idx) : '';
+    while (--idx > dec)
+      if (str[idx] !== '0') {
+        ++idx;
+        break;
+      }
 
     return str.slice(0, idx) + end;
   };
 }
 
 function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
+  let i = str.lastIndexOf('e');
+  let c;
   if (i > 0) return i;
-  for (i=str.length; --i > dec;) {
+  for (i = str.length; --i > dec; ) {
     c = str.charCodeAt(i);
     if (c >= 48 && c <= 57) return i + 1; // is digit
   }

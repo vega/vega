@@ -1,78 +1,64 @@
 import {
-  array, enums, object, oneOf, orSignal, ref,
-  arrayType, nullType, booleanType, numberType, stringType, signalRef,
-  stringOrSignal, numberOrSignal, booleanOrSignal, booleanOrNumberOrSignal
+  array,
+  enums,
+  object,
+  oneOf,
+  orSignal,
+  ref,
+  arrayType,
+  nullType,
+  booleanType,
+  numberType,
+  stringType,
+  signalRef,
+  stringOrSignal,
+  numberOrSignal,
+  booleanOrSignal,
+  booleanOrNumberOrSignal
 } from './util';
 
 import {
-  Linear, Log, Pow, Sqrt, Symlog, Time, UTC, Sequential,
-  Quantile, Quantize, Threshold, Identity,
-  Ordinal, Point, Band, BinOrdinal
+  Linear,
+  Log,
+  Pow,
+  Sqrt,
+  Symlog,
+  Time,
+  UTC,
+  Sequential,
+  Quantile,
+  Quantize,
+  Threshold,
+  Identity,
+  Ordinal,
+  Point,
+  Band,
+  BinOrdinal
 } from 'vega-scale';
 
-export const timeIntervals = [
-  'millisecond',
-  'second',
-  'minute',
-  'hour',
-  'day',
-  'week',
-  'month',
-  'year'
-];
+export const timeIntervals = ['millisecond', 'second', 'minute', 'hour', 'day', 'week', 'month', 'year'];
 
-export const rangeConstantEnum = [
-  'width',
-  'height',
-  'symbol',
-  'category',
-  'ordinal',
-  'ramp',
-  'diverging',
-  'heatmap'
-];
+export const rangeConstantEnum = ['width', 'height', 'symbol', 'category', 'ordinal', 'ramp', 'diverging', 'heatmap'];
 
-export const sortOrderEnum = [
-  'ascending',
-  'descending'
-];
+export const sortOrderEnum = ['ascending', 'descending'];
 
 const rangeConstant = enums(rangeConstantEnum);
 
-const arrayAllTypes = array(oneOf(
-  nullType,
-  booleanType,
-  stringType,
-  numberType,
-  signalRef,
-  array(numberOrSignal)
-));
+const arrayAllTypes = array(oneOf(nullType, booleanType, stringType, numberType, signalRef, array(numberOrSignal)));
 
 const scheme = object({
-  _scheme_: oneOf(
-    stringType,
-    array(oneOf(stringType, signalRef)), signalRef),
+  _scheme_: oneOf(stringType, array(oneOf(stringType, signalRef)), signalRef),
   count: numberOrSignal,
   extent: oneOf(array(numberOrSignal, {numItems: 2}), signalRef)
 });
 
-const schemeRange = oneOf(
-  rangeConstant,
-  arrayAllTypes,
-  scheme,
-  signalRef
-);
+const schemeRange = oneOf(rangeConstant, arrayAllTypes, scheme, signalRef);
 
 const rangeStep = object({
   _step_: numberOrSignal
 });
 
-const bandRange = oneOf(
-  rangeConstant,
-  arrayAllTypes,
-  rangeStep,
-  signalRef
-);
+const bandRange = oneOf(rangeConstant, arrayAllTypes, rangeStep, signalRef);
 
 const scaleBinsRef = ref('scaleBins');
 const scaleBins = oneOf(

@@ -1,21 +1,21 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    DataJoin = encode.datajoin;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const encode = require('../');
+const changeset = vega.changeset;
+const Collect = require('vega-transforms').collect;
+const DataJoin = encode.datajoin;
 
-tape('DataJoin joins tuples and items', function(t) {
-  var data = [
+tape('DataJoin joins tuples and items', function (t) {
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
   ];
 
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      dj = df.add(DataJoin, {key:util.field('key'), pulse:c0});
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const dj = df.add(DataJoin, {key: util.field('key'), pulse: c0});
 
   // Insert data, check for resulting items
   df.pulse(c0, changeset().insert(data)).run();
@@ -29,7 +29,7 @@ tape('DataJoin joins tuples and items', function(t) {
   // Redundant add should not change output size
   // Fake changeset to test invalid insert
   df.pulse(c0, {
-    pulse: function(p) {
+    pulse: function (p) {
       p.add.push(data[0]);
       return p;
     }
@@ -63,14 +63,15 @@ tape('DataJoin joins tuples and items', function(t) {
   t.end();
 });
 
-tape('DataJoin garbage collects if requested', function(t) {
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      dj = df.add(DataJoin, {clean:true, pulse:c0}),
-      n = df.cleanThreshold + 1;
+tape('DataJoin garbage collects if requested', function (t) {
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const dj = df.add(DataJoin, {clean: true, pulse: c0});
+  const n = df.cleanThreshold + 1;
 
   function generate() {
-    for (var data = [], i=0; i<n; ++i) {
+    const data = [];
+    for (let i = 0; i < n; ++i) {
       data.push({index: i});
     }
     return data;

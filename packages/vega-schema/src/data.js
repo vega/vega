@@ -1,6 +1,17 @@
 import {
-  array, def, orSignal, anyOf, enums, oneOf, object, type,
-  anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
+  array,
+  def,
+  orSignal,
+  anyOf,
+  enums,
+  oneOf,
+  object,
+  type,
+  anyType,
+  stringType,
+  stringOrSignal,
+  booleanOrSignal,
+  signalRef
 } from './util';
 
 // types defined elsewhere
@@ -9,10 +20,7 @@ const onTriggerRef = def('onTrigger');
 
 const parseDef = oneOf(
   enums(['auto']),
-  object(null, oneOf(
-    enums(['boolean', 'number', 'date', 'string']),
-    type('string', {pattern: '^(date|utc):.*$'})
-  )),
+  object(null, oneOf(enums(['boolean', 'number', 'date', 'string']), type('string', {pattern: '^(date|utc):.*$'}))),
   signalRef
 );
 
@@ -22,10 +30,13 @@ const paramField = object({
 });
 
 const dataFormat = anyOf(
-  object({
-    type: stringOrSignal,
-    parse: parseDef
-  }, undefined),
+  object(
+    {
+      type: stringOrSignal,
+      parse: parseDef
+    },
+    undefined
+  ),
   object({
     type: enums(['json']),
     parse: parseDef,

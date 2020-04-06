@@ -13,19 +13,7 @@ export {default as Operator} from './src/Operator';
 export {default as Transform} from './src/Transform';
 
 // Tuple Methods
-export {
-  derive,
-  ingest,
-  isTuple,
-  rederive,
-  replace,
-  stableCompare,
-  tupleid
-} from './src/Tuple';
+export {derive, ingest, isTuple, rederive, replace, stableCompare, tupleid} from './src/Tuple';
 
 // Transform Registry
-export {
-  definition,
-  transform,
-  transforms
-} from './src/register';
+export {definition, transform, transforms} from './src/register';

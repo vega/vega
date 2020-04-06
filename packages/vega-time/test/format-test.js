@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+const tape = require('tape');
+const vega = require('../');
+const {local, utc} = require('./util');
 
-tape('timeUnitSpecifier produces specifier for single time units', function(t) {
+tape('timeUnitSpecifier produces specifier for single time units', function (t) {
   t.equal(vega.timeUnitSpecifier('year'), '%Y');
   t.equal(vega.timeUnitSpecifier('quarter'), 'Q%q');
   t.equal(vega.timeUnitSpecifier('month'), '%b');
@@ -16,7 +16,7 @@ tape('timeUnitSpecifier produces specifier for single time units', function(t) {
   t.end();
 });
 
-tape('timeUnitSpecifier produces specifier for multiple time units', function(t) {
+tape('timeUnitSpecifier produces specifier for multiple time units', function (t) {
   t.equal(vega.timeUnitSpecifier(['year', 'quarter']), '%Y Q%q');
   t.equal(vega.timeUnitSpecifier(['year', 'month']), '%Y-%m');
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date']), '%Y-%m-%d');
@@ -30,14 +30,14 @@ tape('timeUnitSpecifier produces specifier for multiple time units', function(t)
   t.end();
 });
 
-tape('timeUnitSpecifier supports configurable specifiers', function(t) {
-  var specs = {
-    'year': '%y',
-    'month': 'M%m',
+tape('timeUnitSpecifier supports configurable specifiers', function (t) {
+  const specs = {
+    year: '%y',
+    month: 'M%m',
     'year-month': '%y-%b',
     'year-month-date': '%y-%b-%d',
-    'hours': '%H ',
-    'minutes': '%Mmin ',
+    hours: '%H ',
+    minutes: '%Mmin ',
     'hours-minutes': null
   };
   t.equal(vega.timeUnitSpecifier(['year'], specs), '%y');
@@ -48,8 +48,8 @@ tape('timeUnitSpecifier supports configurable specifiers', function(t) {
   t.end();
 });
 
-tape('timeFormat supports specifier strings', function(t) {
-  var d = local(2001, 0, 1);
+tape('timeFormat supports specifier strings', function (t) {
+  const d = local(2001, 0, 1);
   t.equal(vega.timeFormat('%Y')(d), '2001');
   t.equal(vega.timeFormat('%m')(d), '01');
   t.equal(vega.timeFormat('%d')(d), '01');
@@ -58,8 +58,8 @@ tape('timeFormat supports specifier strings', function(t) {
   t.end();
 });
 
-tape('timeFormat supports specifier objects', function(t) {
-  var f = vega.timeFormat();
+tape('timeFormat supports specifier objects', function (t) {
+  let f = vega.timeFormat();
   t.equal(f(local(2001, 0, 1)), '2001');
   t.equal(f(local(2001, 1, 1)), 'February');
   t.equal(f(local(2001, 1, 2)), 'Fri 02');
@@ -84,8 +84,8 @@ tape('timeFormat supports specifier objects', function(t) {
   t.end();
 });
 
-tape('utcFormat supports specifier strings', function(t) {
-  var d = utc(2001, 0, 1);
+tape('utcFormat supports specifier strings', function (t) {
+  const d = utc(2001, 0, 1);
   t.equal(vega.utcFormat('%Y')(d), '2001');
   t.equal(vega.utcFormat('%m')(d), '01');
   t.equal(vega.utcFormat('%d')(d), '01');
@@ -94,8 +94,8 @@ tape('utcFormat supports specifier strings', function(t) {
   t.end();
 });
 
-tape('utcFormat supports specifier objects', function(t) {
-  var f = vega.utcFormat();
+tape('utcFormat supports specifier objects', function (t) {
+  let f = vega.utcFormat();
   t.equal(f(utc(2001, 0, 1)), '2001');
   t.equal(f(utc(2001, 1, 1)), 'February');
   t.equal(f(utc(2001, 1, 2)), 'Fri 02');

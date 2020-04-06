@@ -1,6 +1,16 @@
 import {
-  array, enums, object, anyOf, oneOf, def, ref,
-  booleanType, numberType, nullType, stringType, signalRef
+  array,
+  enums,
+  object,
+  anyOf,
+  oneOf,
+  def,
+  ref,
+  booleanType,
+  numberType,
+  nullType,
+  stringType,
+  signalRef
 } from './util';
 
 // types defined elsewhere
@@ -16,14 +26,14 @@ function req(key) {
 
 function transformSchema(name, def) {
   function parameters(list) {
-    list.forEach(function(param) {
+    list.forEach(function (param) {
       if (param.type === 'param') {
         const schema = {
           oneOf: param.params.map(subParameterSchema)
         };
         props[param.name] = param.array ? array(schema) : schema;
       } else if (param.params) {
-        parameters(param.params)
+        parameters(param.params);
       } else {
         const key = param.required ? req(param.name) : param.name;
         props[key] = parameterSchema(param);
@@ -42,7 +52,7 @@ function transformSchema(name, def) {
 }
 
 function parameterSchema(param) {
-  var p = {};
+  let p = {};
 
   switch (param.type) {
     case 'projection':
@@ -104,14 +114,14 @@ function parameterSchema(param) {
 }
 
 function subParameterSchema(sub) {
-  var props = {},
-      key = sub.key;
+  const props = {};
+  const key = sub.key;
 
-  for (var name in key) {
+  for (const name in key) {
     props[req(name)] = enums([key[name]]);
   }
 
-  sub.params.forEach(function(param) {
+  sub.params.forEach(function (param) {
     const key = param.required ? req(param.name) : param.name;
     props[key] = parameterSchema(param);
   });
@@ -119,20 +129,20 @@ function subParameterSchema(sub) {
   return object(props);
 }
 
-export default function(definitions) {
-  var transforms = [],
-      marks = [],
-      defs = {
-        transform: {oneOf: transforms},
-        transformMark: {oneOf: marks}
-      };
+export default function (definitions) {
+  const transforms = [];
+  const marks = [];
+  const defs = {
+    transform: {oneOf: transforms},
+    transformMark: {oneOf: marks}
+  };
 
-  for (var i=0, n=definitions.length; i<n; ++i) {
-    var d = definitions[i],
-        name = d.type.toLowerCase(),
-        key = name + 'Transform',
-        ref = def(key),
-        md = d.metadata;
+  for (let i = 0, n = definitions.length; i < n; ++i) {
+    const d = definitions[i];
+    const name = d.type.toLowerCase();
+    const key = name + 'Transform';
+    const ref = def(key);
+    const md = d.metadata;
 
     defs[key] = transformSchema(name, d);
     if (!(md.generates || md.changes)) marks.push(ref);

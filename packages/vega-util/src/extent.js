@@ -2,8 +2,12 @@
  * Return an array with minimum and maximum values, in the
  * form [min, max]. Ignores null, undefined, and NaN values.
  */
-export default function(array, f) {
-  var i = 0, n, v, min, max;
+export default function (array, f) {
+  let i = 0;
+  let n;
+  let v;
+  let min;
+  let max;
 
   if (array && (n = array.length)) {
     if (f == null) {
@@ -12,7 +16,7 @@ export default function(array, f) {
       min = max = v;
 
       // visit all other values
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         v = array[i];
         // skip null/undefined; NaN will fail all comparisons
         if (v != null) {
@@ -26,7 +30,7 @@ export default function(array, f) {
       min = max = v;
 
       // visit all other values
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         v = f(array[i]);
         // skip null/undefined; NaN will fail all comparisons
         if (v != null) {

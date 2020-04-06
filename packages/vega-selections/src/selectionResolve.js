@@ -9,11 +9,24 @@ import {array, toNumber} from 'vega-util';
  * @returns {object} An object of selected fields and values.
  */
 export function selectionResolve(name, op, isMulti) {
-  var data = this.context.data[name],
-    entries = data ? data.values.value : [],
-    resolved = {}, multiRes = {}, types = {},
-    entry, fields, values, unit, field, res, resUnit, type, union,
-    n = entries.length, i = 0, j, m;
+  const data = this.context.data[name];
+  let entries = data ? data.values.value : [];
+  const resolved = {};
+  const multiRes = {};
+  const types = {};
+  let entry;
+  let fields;
+  let values;
+  let unit;
+  let field;
+  let res;
+  let resUnit;
+  let type;
+  let union;
+  const n = entries.length;
+  let i = 0;
+  let j;
+  let m;
 
   // First union all entries within the same unit.
   for (; i < n; ++i) {
@@ -39,7 +52,7 @@ export function selectionResolve(name, op, isMulti) {
     // a more human-friendly one.
     if (isMulti) {
       resUnit = multiRes[unit] || (multiRes[unit] = []);
-      resUnit.push(array(values).reduce((obj, curr, j) => (obj[fields[j].field] = curr, obj), {}));
+      resUnit.push(array(values).reduce((obj, curr, j) => ((obj[fields[j].field] = curr), obj), {}));
     }
   }
 
@@ -48,35 +61,41 @@ export function selectionResolve(name, op, isMulti) {
   Object.keys(resolved).forEach(function (field) {
     resolved[field] = Object.keys(resolved[field])
       .map(unit => resolved[field][unit])
-      .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
+      .reduce((acc, curr) => (acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr)));
   });
 
   entries = Object.keys(multiRes);
   if (isMulti && entries.length) {
-    resolved[VlMulti] = op === Union
-      ? {[Or]: entries.reduce((acc, k) => (acc.push.apply(acc, multiRes[k]), acc), [])}
-      : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
+    resolved[VlMulti] =
+      op === Union
+        ? {[Or]: entries.reduce((acc, k) => (acc.push(...multiRes[k]), acc), [])}
+        : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
   }
 
   return resolved;
 }
 
-var ops = {
-  E_union: function(base, value) {
+const ops = {
+  E_union: function (base, value) {
     if (!base.length) return value;
 
-    var i = 0, n = value.length;
-    for (; i<n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+    let i = 0;
+    const n = value.length;
+    for (; i < n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
     return base;
   },
 
-  E_intersect: function(base, value) {
-    return !base.length ? value :
-      base.filter(function (v) { return value.indexOf(v) >= 0; });
+  E_intersect: function (base, value) {
+    return !base.length
+      ? value
+      : base.filter(function (v) {
+          return value.indexOf(v) >= 0;
+        });
   },
 
-  R_union: function(base, value) {
-    var lo = toNumber(value[0]), hi = toNumber(value[1]);
+  R_union: function (base, value) {
+    let lo = toNumber(value[0]);
+    let hi = toNumber(value[1]);
     if (lo > hi) {
       lo = value[1];
       hi = value[0];
@@ -88,8 +107,9 @@ var ops = {
     return base;
   },
 
-  R_intersect: function(base, value) {
-    var lo = toNumber(value[0]), hi = toNumber(value[1]);
+  R_intersect: function (base, value) {
+    let lo = toNumber(value[0]);
+    let hi = toNumber(value[1]);
     if (lo > hi) {
       lo = value[1];
       hi = value[0];

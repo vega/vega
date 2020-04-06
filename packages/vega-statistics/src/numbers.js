@@ -1,4 +1,4 @@
-export default function*(values, valueof) {
+export default function* (values, valueof) {
   if (valueof === undefined) {
     for (let value of values) {
       if (value != null && (value = +value) >= value) {

@@ -6,12 +6,16 @@ import {LegendGradientRole} from '../marks/roles';
 import {addEncoders, encoder} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
-export default function(spec, scale, config, userEncode) {
-  var _ = lookup(spec, config),
-      vertical = _.isVertical(),
-      thickness = _.gradientThickness(),
-      length = _.gradientLength(),
-      encode, enter, start, stop, width, height;
+export default function (spec, scale, config, userEncode) {
+  const _ = lookup(spec, config);
+  const vertical = _.isVertical();
+  const thickness = _.gradientThickness();
+  const length = _.gradientLength();
+  let enter;
+  let start;
+  let stop;
+  let width;
+  let height;
 
   if (vertical) {
     start = [0, 1];
@@ -25,14 +29,14 @@ export default function(spec, scale, config, userEncode) {
     height = thickness;
   }
 
-  encode = {
-    enter: enter = {
+  const encode = {
+    enter: (enter = {
       opacity: zero,
       x: zero,
       y: zero,
       width: encoder(width),
       height: encoder(height)
-    },
+    }),
     update: extend({}, enter, {
       opacity: one,
       fill: {gradient: scale, start: start, stop: stop}
@@ -42,12 +46,17 @@ export default function(spec, scale, config, userEncode) {
     }
   };
 
-  addEncoders(encode, {
-    stroke:      _('gradientStrokeColor'),
-    strokeWidth: _('gradientStrokeWidth')
-  }, { // update
-    opacity:     _('gradientOpacity')
-  });
+  addEncoders(
+    encode,
+    {
+      stroke: _('gradientStrokeColor'),
+      strokeWidth: _('gradientStrokeWidth')
+    },
+    {
+      // update
+      opacity: _('gradientOpacity')
+    }
+  );
 
   return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
 }

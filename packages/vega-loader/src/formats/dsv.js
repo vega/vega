@@ -2,7 +2,7 @@ import {dsvFormat} from 'd3-dsv';
 import {extend, stringValue} from 'vega-util';
 
 export function delimitedFormat(delimiter) {
-  const parse = function(data, format) {
+  const parse = function (data, format) {
     const delim = {delimiter: delimiter};
     return dsv(data, format ? extend(format, delim) : delim);
   };
@@ -14,9 +14,7 @@ export function delimitedFormat(delimiter) {
 
 export default function dsv(data, format) {
   if (format.header) {
-    data = format.header
-      .map(stringValue)
-      .join(format.delimiter) + '\n' + data;
+    data = format.header.map(stringValue).join(format.delimiter) + '\n' + data;
   }
   return dsvFormat(format.delimiter).parse(data + '');
 }

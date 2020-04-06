@@ -4,7 +4,7 @@ import {isArray, lruCache} from 'vega-util';
 // memoize text width measurement
 const widthCache = lruCache();
 
-export var textMetrics = {
+export const textMetrics = {
   height: fontSize,
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
@@ -15,7 +15,7 @@ export var textMetrics = {
 useCanvas(true);
 
 function useCanvas(use) {
-  textMetrics.width = (use && context) ? measureWidth : estimateWidth;
+  textMetrics.width = use && context ? measureWidth : estimateWidth;
 }
 
 // make dumb, simple estimate if no canvas is available
@@ -29,8 +29,7 @@ function _estimateWidth(text, currentFontHeight) {
 
 // measure text width if canvas is available
 function measureWidth(item, text) {
-  return fontSize(item) <= 0 || !(text = textValue(item, text)) ? 0
-    : _measureWidth(text, font(item));
+  return fontSize(item) <= 0 || !(text = textValue(item, text)) ? 0 : _measureWidth(text, font(item));
 }
 
 function _measureWidth(text, currentFont) {
@@ -45,28 +44,24 @@ function _measureWidth(text, currentFont) {
 }
 
 export function fontSize(item) {
-  return item.fontSize != null ? (+item.fontSize || 0) : 11;
+  return item.fontSize != null ? +item.fontSize || 0 : 11;
 }
 
 export function lineHeight(item) {
-  return item.lineHeight != null ? item.lineHeight : (fontSize(item) + 2);
+  return item.lineHeight != null ? item.lineHeight : fontSize(item) + 2;
 }
 
 function lineArray(_) {
-  return isArray(_) ? _.length > 1 ? _ : _[0] : _;
+  return isArray(_) ? (_.length > 1 ? _ : _[0]) : _;
 }
 
 export function textLines(item) {
-  return lineArray(
-    item.lineBreak && item.text && !isArray(item.text)
-      ? item.text.split(item.lineBreak)
-      : item.text
-  );
+  return lineArray(item.lineBreak && item.text && !isArray(item.text) ? item.text.split(item.lineBreak) : item.text);
 }
 
 export function multiLineOffset(item) {
   const tl = textLines(item);
-  return (isArray(tl) ? (tl.length - 1) : 0) * lineHeight(item);
+  return (isArray(tl) ? tl.length - 1 : 0) * lineHeight(item);
 }
 
 export function textValue(item, line) {
@@ -87,28 +82,29 @@ function widthGetter(item) {
 }
 
 function truncate(item, text) {
-  var limit = +item.limit,
-      width = widthGetter(item);
+  let limit = +item.limit;
+  const width = widthGetter(item);
 
   if (width(text) < limit) return text;
 
-  var ellipsis = item.ellipsis || '\u2026',
-      rtl = item.dir === 'rtl',
-      lo = 0,
-      hi = text.length, mid;
+  const ellipsis = item.ellipsis || '\u2026';
+  const rtl = item.dir === 'rtl';
+  let lo = 0;
+  let hi = text.length;
+  let mid;
 
   limit -= width(ellipsis);
 
   if (rtl) {
     while (lo < hi) {
-      mid = (lo + hi >>> 1);
+      mid = (lo + hi) >>> 1;
       if (width(text.slice(mid)) > limit) lo = mid + 1;
       else hi = mid;
     }
     return ellipsis + text.slice(lo);
   } else {
     while (lo < hi) {
-      mid = 1 + (lo + hi >>> 1);
+      mid = 1 + ((lo + hi) >>> 1);
       if (width(text.slice(0, mid)) < limit) lo = mid;
       else hi = mid - 1;
     }
@@ -117,33 +113,40 @@ function truncate(item, text) {
 }
 
 export function fontFamily(item, quote) {
-  var font = item.font;
-  return (quote && font
-    ? String(font).replace(/"/g, '\'')
-    : font) || 'sans-serif';
+  const font = item.font;
+  return (quote && font ? String(font).replace(/"/g, "'") : font) || 'sans-serif';
 }
 
 export function font(item, quote) {
-  return '' +
+  return (
+    '' +
     (item.fontStyle ? item.fontStyle + ' ' : '') +
     (item.fontVariant ? item.fontVariant + ' ' : '') +
     (item.fontWeight ? item.fontWeight + ' ' : '') +
-    fontSize(item) + 'px ' +
-    fontFamily(item, quote);
+    fontSize(item) +
+    'px ' +
+    fontFamily(item, quote)
+  );
 }
 
 export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
   // this also ensures consistent layout across renderers
-  var baseline = item.baseline,
-      h = fontSize(item);
+  const baseline = item.baseline;
+  const h = fontSize(item);
 
   return Math.round(
-    baseline === 'top'         ?  0.79 * h :
-    baseline === 'middle'      ?  0.30 * h :
-    baseline === 'bottom'      ? -0.21 * h :
-    baseline === 'line-top'    ?  0.29 * h + 0.5 * lineHeight(item) :
-    baseline === 'line-bottom' ?  0.29 * h - 0.5 * lineHeight(item) : 0
+    baseline === 'top'
+      ? 0.79 * h
+      : baseline === 'middle'
+      ? 0.3 * h
+      : baseline === 'bottom'
+      ? -0.21 * h
+      : baseline === 'line-top'
+      ? 0.29 * h + 0.5 * lineHeight(item)
+      : baseline === 'line-bottom'
+      ? 0.29 * h - 0.5 * lineHeight(item)
+      : 0
   );
 }

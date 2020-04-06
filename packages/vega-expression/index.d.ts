@@ -4,7 +4,7 @@ export function parse(expression: string): any;
 
 export function codegen(params: {
   constants?: object;
-  functions?: { [fn: string]: Function };
+  functions?: {[fn: string]: Function};
   blacklist?: string[];
   whitelist?: string[];
   fieldvar?: string;

@@ -16,14 +16,16 @@ export function rank(op) {
  * @param {Operator} op - The operator to re-rank.
  */
 export function rerank(op) {
-  var queue = [op],
-      cur, list, i;
+  const queue = [op];
+  let cur;
+  let list;
+  let i;
 
   while (queue.length) {
-    this.rank(cur = queue.pop());
-    if (list = cur._targets) {
-      for (i=list.length; --i >= 0;) {
-        queue.push(cur = list[i]);
+    this.rank((cur = queue.pop()));
+    if ((list = cur._targets)) {
+      for (i = list.length; --i >= 0; ) {
+        queue.push((cur = list[i]));
         if (cur === op) error('Cycle detected in dataflow graph.');
       }
     }

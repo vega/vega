@@ -5,15 +5,11 @@ export function screen() {
 }
 
 export function windowSize() {
-  return _window
-    ? [_window.innerWidth, _window.innerHeight]
-    : [undefined, undefined];
+  return _window ? [_window.innerWidth, _window.innerHeight] : [undefined, undefined];
 }
 
 export function containerSize() {
-  const view = this.context.dataflow,
-        el = view.container && view.container();
-  return el
-    ? [el.clientWidth, el.clientHeight]
-    : [undefined, undefined];
+  const view = this.context.dataflow;
+  const el = view.container && view.container();
+  return el ? [el.clientWidth, el.clientHeight] : [undefined, undefined];
 }

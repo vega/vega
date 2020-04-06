@@ -3,36 +3,41 @@ import peek from './peek';
 import toNumber from './toNumber';
 
 function exp(sign) {
-  return function(x) { return sign * Math.exp(x); };
+  return function (x) {
+    return sign * Math.exp(x);
+  };
 }
 
 function log(sign) {
-  return function(x) { return Math.log(sign * x); };
+  return function (x) {
+    return Math.log(sign * x);
+  };
 }
 
 function symlog(c) {
-  return function(x) { return Math.sign(x) * Math.log1p(Math.abs(x / c)); };
+  return function (x) {
+    return Math.sign(x) * Math.log1p(Math.abs(x / c));
+  };
 }
 
 function symexp(c) {
-  return function(x) { return Math.sign(x) * Math.expm1(Math.abs(x)) * c; };
+  return function (x) {
+    return Math.sign(x) * Math.expm1(Math.abs(x)) * c;
+  };
 }
 
 function pow(exponent) {
-  return function(x) {
+  return function (x) {
     return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
   };
 }
 
 function pan(domain, delta, lift, ground) {
-  var d0 = lift(domain[0]),
-      d1 = lift(peek(domain)),
-      dd = (d1 - d0) * delta;
+  const d0 = lift(domain[0]);
+  const d1 = lift(peek(domain));
+  const dd = (d1 - d0) * delta;
 
-  return [
-    ground(d0 - dd),
-    ground(d1 - dd)
-  ];
+  return [ground(d0 - dd), ground(d1 - dd)];
 }
 
 export function panLinear(domain, delta) {
@@ -40,12 +45,12 @@ export function panLinear(domain, delta) {
 }
 
 export function panLog(domain, delta) {
-  var sign = Math.sign(domain[0]);
+  const sign = Math.sign(domain[0]);
   return pan(domain, delta, log(sign), exp(sign));
 }
 
 export function panPow(domain, delta, exponent) {
-  return pan(domain, delta, pow(exponent), pow(1/exponent));
+  return pan(domain, delta, pow(exponent), pow(1 / exponent));
 }
 
 export function panSymlog(domain, delta, constant) {
@@ -53,14 +58,11 @@ export function panSymlog(domain, delta, constant) {
 }
 
 function zoom(domain, anchor, scale, lift, ground) {
-  var d0 = lift(domain[0]),
-      d1 = lift(peek(domain)),
-      da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
+  const d0 = lift(domain[0]);
+  const d1 = lift(peek(domain));
+  const da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
 
-  return [
-    ground(da + (d0 - da) * scale),
-    ground(da + (d1 - da) * scale)
-  ];
+  return [ground(da + (d0 - da) * scale), ground(da + (d1 - da) * scale)];
 }
 
 export function zoomLinear(domain, anchor, scale) {
@@ -68,12 +70,12 @@ export function zoomLinear(domain, anchor, scale) {
 }
 
 export function zoomLog(domain, anchor, scale) {
-  var sign = Math.sign(domain[0]);
+  const sign = Math.sign(domain[0]);
   return zoom(domain, anchor, scale, log(sign), exp(sign));
 }
 
 export function zoomPow(domain, anchor, scale, exponent) {
-  return zoom(domain, anchor, scale, pow(exponent), pow(1/exponent));
+  return zoom(domain, anchor, scale, pow(exponent), pow(1 / exponent));
 }
 
 export function zoomSymlog(domain, anchor, scale, constant) {

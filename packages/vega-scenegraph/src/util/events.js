@@ -1,4 +1,4 @@
-export var Events = [
+export const Events = [
   'keydown',
   'keypress',
   'keyup',
@@ -19,8 +19,8 @@ export var Events = [
   'touchend'
 ];
 
-export var TooltipShowEvent = 'mousemove';
+export const TooltipShowEvent = 'mousemove';
 
-export var TooltipHideEvent = 'mouseout';
+export const TooltipHideEvent = 'mouseout';
 
-export var HrefEvent = 'click';
+export const HrefEvent = 'click';

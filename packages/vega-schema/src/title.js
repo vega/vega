@@ -1,8 +1,24 @@
 import {
-  numberValue, stringValue, textOrSignal, anchorValue,
-  alignValue, baselineValue, colorValue, fontWeightValue,
-  def, enums, object, anyOf, oneOf, pattern, ref,
-  booleanType, numberType, stringType, orSignal, numberOrSignal
+  numberValue,
+  stringValue,
+  textOrSignal,
+  anchorValue,
+  alignValue,
+  baselineValue,
+  colorValue,
+  fontWeightValue,
+  def,
+  enums,
+  object,
+  anyOf,
+  oneOf,
+  pattern,
+  ref,
+  booleanType,
+  numberType,
+  stringType,
+  orSignal,
+  numberOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -15,7 +31,7 @@ const titleOrientEnum = ['none', 'left', 'right', 'top', 'bottom'];
 const titleFrameEnum = ['group', 'bounds'];
 
 const titleEncode = pattern({
-  '^(?!interactive|name|style).+$': encodeEntryRef,
+  '^(?!interactive|name|style).+$': encodeEntryRef
 });
 
 const title = oneOf(

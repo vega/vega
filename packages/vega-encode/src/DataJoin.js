@@ -12,7 +12,7 @@ export default function DataJoin(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(DataJoin, Transform);
+const prototype = inherits(DataJoin, Transform);
 
 function defaultItemCreate() {
   return ingest({});
@@ -22,12 +22,12 @@ function isExit(t) {
   return t.exit;
 }
 
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      item = _.item || defaultItemCreate,
-      key = _.key || tupleid,
-      map = this.value;
+prototype.transform = function (_, pulse) {
+  const df = pulse.dataflow;
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  const item = _.item || defaultItemCreate;
+  const key = _.key || tupleid;
+  let map = this.value;
 
   // prevent transient (e.g., hover) requests from
   // cascading across marks derived from marks
@@ -42,12 +42,14 @@ prototype.transform = function(_, pulse) {
   if (!map) {
     pulse = pulse.addAll();
     this.value = map = fastmap().test(isExit);
-    map.lookup = function(t) { return map.get(key(t)); };
+    map.lookup = function (t) {
+      return map.get(key(t));
+    };
   }
 
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.ADD, function (t) {
+    const k = key(t);
+    let x = map.get(k);
 
     if (x) {
       if (x.exit) {
@@ -65,9 +67,9 @@ prototype.transform = function(_, pulse) {
     x.exit = false;
   });
 
-  pulse.visit(pulse.MOD, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.MOD, function (t) {
+    const k = key(t);
+    const x = map.get(k);
 
     if (x) {
       x.datum = t;
@@ -75,9 +77,9 @@ prototype.transform = function(_, pulse) {
     }
   });
 
-  pulse.visit(pulse.REM, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.REM, function (t) {
+    const k = key(t);
+    const x = map.get(k);
 
     if (t === x.datum && !x.exit) {
       out.rem.push(x);

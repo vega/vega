@@ -1,17 +1,17 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    Load = tx.load;
+const tape = require('tape');
+const vega = require('vega-dataflow');
+const tx = require('../');
+const Load = tx.load;
 
-tape('Load requests external data', function(t) {
-  var df = new vega.Dataflow(),
-      u = df.add('url'),
-      f = df.add('format'),
-      count = 0;
+tape('Load requests external data', function (t) {
+  const df = new vega.Dataflow();
+  const u = df.add('url');
+  const f = df.add('format');
+  let count = 0;
 
-  df.add(Load, {url:u, format:f});
+  df.add(Load, {url: u, format: f});
 
-  df.request = async function(url, format) {
+  df.request = async function (url, format) {
     t.equal(url, u.value);
     t.equal(format, f.value);
     return {

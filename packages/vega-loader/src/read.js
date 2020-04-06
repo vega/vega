@@ -3,7 +3,7 @@ import {formats} from './formats/index';
 import {error, hasOwnProperty} from 'vega-util';
 import {timeParse, utcParse} from 'd3-time-format';
 
-export default function(data, schema, dateParse) {
+export default function (data, schema, dateParse) {
   schema = schema || {};
 
   const reader = formats(schema.type || 'json');
@@ -21,22 +21,30 @@ function parse(data, types, dateParse) {
 
   dateParse = dateParse || timeParse;
 
-  var fields = data.columns || Object.keys(data[0]),
-      parsers, datum, field, i, j, n, m;
+  let fields = data.columns || Object.keys(data[0]);
+  let datum;
+  let field;
+  let i;
+  let j;
+  let n;
+  let m;
 
   if (types === 'auto') types = inferTypes(data, fields);
 
   fields = Object.keys(types);
-  parsers = fields.map(function(field) {
-    var type = types[field],
-        parts, pattern;
+  const parsers = fields.map(function (field) {
+    const type = types[field];
+    let parts;
+    let pattern;
 
     if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
-      parts = type.split(/:(.+)?/, 2);  // split on first :
+      parts = type.split(/:(.+)?/, 2); // split on first :
       pattern = parts[1];
 
-      if ((pattern[0] === '\'' && pattern[pattern.length-1] === '\'') ||
-          (pattern[0] === '"'  && pattern[pattern.length-1] === '"')) {
+      if (
+        (pattern[0] === "'" && pattern[pattern.length - 1] === "'") ||
+        (pattern[0] === '"' && pattern[pattern.length - 1] === '"')
+      ) {
         pattern = pattern.slice(1, -1);
       }
 
@@ -50,9 +58,9 @@ function parse(data, types, dateParse) {
     return typeParsers[type];
   });
 
-  for (i=0, n=data.length, m=fields.length; i<n; ++i) {
+  for (i = 0, n = data.length, m = fields.length; i < n; ++i) {
     datum = data[i];
-    for (j=0; j<m; ++j) {
+    for (j = 0; j < m; ++j) {
       field = fields[j];
       datum[field] = parsers[j](datum[field]);
     }

@@ -31,7 +31,8 @@ export function ingest(target, data, format) {
  */
 export async function request(url, format) {
   const df = this;
-  let status = 0, data;
+  let status = 0;
+  let data;
 
   try {
     data = await df.loader().load(url, {
@@ -53,25 +54,33 @@ export async function request(url, format) {
 }
 
 export async function preload(target, url, format) {
-  const df = this,
-        pending = df._pending || loadPending(df);
+  const df = this;
+  const pending = df._pending || loadPending(df);
 
   pending.requests += 1;
 
   const res = await df.request(url, format);
-  df.pulse(target, df.changeset().remove(truthy).insert(res.data || []));
+  df.pulse(
+    target,
+    df
+      .changeset()
+      .remove(truthy)
+      .insert(res.data || [])
+  );
 
   pending.done();
   return res;
 }
 
 function loadPending(df) {
-  var pending = new Promise(function(a) { accept = a; }),
-      accept;
+  const pending = new Promise(function (a) {
+    accept = a;
+  });
+  let accept;
 
   pending.requests = 0;
 
-  pending.done = function() {
+  pending.done = function () {
     if (--pending.requests === 0) {
       df._pending = null;
       accept(df);

@@ -11,9 +11,11 @@ import clip from '../util/svg/clip';
 import {translateItem} from '../util/svg/transform';
 
 function offset(item) {
-  var sw = (sw = item.strokeWidth) != null ? sw : 1;
-  return item.strokeOffset != null ? item.strokeOffset
-    : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
+  let sw = (sw = item.strokeWidth) != null ? sw : 1;
+  return item.strokeOffset != null
+    ? item.strokeOffset
+    : item.stroke && sw > 0.5 && sw < 1.5
+    ? 0.5 - Math.abs(sw - 1)
     : 0;
 }
 
@@ -22,7 +24,7 @@ function attr(emit, item) {
 }
 
 function emitRectangle(emit, item) {
-  var off = offset(item);
+  const off = offset(item);
   emit('d', rectangle(null, item, off, off));
 }
 
@@ -41,14 +43,14 @@ function foreground(emit, item) {
 }
 
 function content(emit, item, renderer) {
-  var url = item.clip ? clip(renderer, item, item) : null;
+  const url = item.clip ? clip(renderer, item, item) : null;
   emit('clip-path', url);
 }
 
 function bound(bounds, group) {
   if (!group.clip && group.items) {
-    var items = group.items;
-    for (var j=0, m=items.length; j<m; ++j) {
+    const items = group.items;
+    for (let j = 0, m = items.length; j < m; ++j) {
       bounds.union(items[j].bounds);
     }
   }
@@ -63,22 +65,22 @@ function bound(bounds, group) {
 }
 
 function rectanglePath(context, group, x, y) {
-  var off = offset(group);
+  const off = offset(group);
   context.beginPath();
   rectangle(context, group, (x || 0) + off, (y || 0) + off);
 }
 
-var hitBackground = hitPath(rectanglePath);
-var hitForeground = hitPath(rectanglePath, false);
+const hitBackground = hitPath(rectanglePath);
+const hitForeground = hitPath(rectanglePath, false);
 
 function draw(context, scene, bounds) {
-  var renderer = this;
+  const renderer = this;
 
-  visit(scene, function(group) {
-    var gx = group.x || 0,
-        gy = group.y || 0,
-        fore = group.strokeForeground,
-        opacity = group.opacity == null ? 1 : group.opacity;
+  visit(scene, function (group) {
+    const gx = group.x || 0;
+    const gy = group.y || 0;
+    const fore = group.strokeForeground;
+    const opacity = group.opacity == null ? 1 : group.opacity;
 
     // draw group background
     if ((group.stroke || group.fill) && opacity) {
@@ -99,7 +101,7 @@ function draw(context, scene, bounds) {
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
-    visit(group, function(item) {
+    visit(group, function (item) {
       renderer.draw(context, item, bounds);
     });
 
@@ -119,27 +121,29 @@ function draw(context, scene, bounds) {
 }
 
 function pick(context, scene, x, y, gx, gy) {
-  if (scene.bounds && !scene.bounds.contains(gx, gy) || !scene.items) {
+  if ((scene.bounds && !scene.bounds.contains(gx, gy)) || !scene.items) {
     return null;
   }
 
-  var handler = this,
-      cx = x * context.pixelRatio,
-      cy = y * context.pixelRatio;
+  const handler = this;
+  const cx = x * context.pixelRatio;
+  const cy = y * context.pixelRatio;
 
-  return pickVisit(scene, function(group) {
-    var hit, fore, ix, dx, dy, dw, dh, b, c;
+  return pickVisit(scene, function (group) {
+    let hit;
+    let dx;
+    let dy;
 
     // first hit test bounding box
-    b = group.bounds;
+    const b = group.bounds;
     if (b && !b.contains(gx, gy)) return;
 
     // passed bounds check, test rectangular clip
     dx = group.x || 0;
     dy = group.y || 0;
-    dw = dx + (group.width || 0);
-    dh = dy + (group.height || 0);
-    c = group.clip;
+    const dw = dx + (group.width || 0);
+    const dh = dy + (group.height || 0);
+    const c = group.clip;
     if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
 
     // adjust coordinate system
@@ -154,26 +158,22 @@ function pick(context, scene, x, y, gx, gy) {
       return null;
     }
 
-    fore = group.strokeForeground;
-    ix = scene.interactive !== false;
+    const fore = group.strokeForeground;
+    const ix = scene.interactive !== false;
 
     // hit test against group foreground
-    if (ix && fore && group.stroke
-        && hitForeground(context, group, cx, cy)) {
+    if (ix && fore && group.stroke && hitForeground(context, group, cx, cy)) {
       context.restore();
       return group;
     }
 
     // hit test against contained marks
-    hit = pickVisit(group, function(mark) {
-      return pickMark(mark, dx, dy)
-        ? handler.pick(mark, x, y, dx, dy)
-        : null;
+    hit = pickVisit(group, function (mark) {
+      return pickMark(mark, dx, dy) ? handler.pick(mark, x, y, dx, dy) : null;
     });
 
     // hit test against group background
-    if (!hit && ix && (group.fill || (!fore && group.stroke))
-        && hitBackground(context, group, cx, cy)) {
+    if (!hit && ix && (group.fill || (!fore && group.stroke)) && hitBackground(context, group, cx, cy)) {
       hit = group;
     }
 
@@ -184,20 +184,19 @@ function pick(context, scene, x, y, gx, gy) {
 }
 
 function pickMark(mark, x, y) {
-  return (mark.interactive !== false || mark.marktype === 'group')
-    && mark.bounds && mark.bounds.contains(x, y);
+  return (mark.interactive !== false || mark.marktype === 'group') && mark.bounds && mark.bounds.contains(x, y);
 }
 
 export default {
-  type:       'group',
-  tag:        'g',
-  nested:     false,
-  attr:       attr,
-  bound:      bound,
-  draw:       draw,
-  pick:       pick,
-  isect:      intersectRect,
-  content:    content,
+  type: 'group',
+  tag: 'g',
+  nested: false,
+  attr: attr,
+  bound: bound,
+  draw: draw,
+  pick: pick,
+  isect: intersectRect,
+  content: content,
   background: background,
   foreground: foreground
 };

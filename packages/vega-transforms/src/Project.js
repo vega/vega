@@ -19,23 +19,25 @@ export default function Project(params) {
 }
 
 Project.Definition = {
-  "type": "Project",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true }
+  type: 'Project',
+  metadata: {generates: true, changes: true},
+  params: [
+    {name: 'fields', type: 'field', array: true},
+    {name: 'as', type: 'string', null: true, array: true}
   ]
 };
 
-var prototype = inherits(Project, Transform);
+const prototype = inherits(Project, Transform);
 
-prototype.transform = function(_, pulse) {
-  var fields = _.fields,
-      as = fieldNames(_.fields, _.as || []),
-      derive = fields
-        ? function(s, t) { return project(s, t, fields, as); }
-        : rederive,
-      out, lut;
+prototype.transform = function (_, pulse) {
+  const fields = _.fields;
+  const as = fieldNames(_.fields, _.as || []);
+  const derive = fields
+    ? function (s, t) {
+        return project(s, t, fields, as);
+      }
+    : rederive;
+  let lut;
 
   if (this.value) {
     lut = this.value;
@@ -44,21 +46,21 @@ prototype.transform = function(_, pulse) {
     lut = this.value = {};
   }
 
-  out = pulse.fork(pulse.NO_SOURCE);
+  const out = pulse.fork(pulse.NO_SOURCE);
 
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t);
+  pulse.visit(pulse.REM, function (t) {
+    const id = tupleid(t);
     out.rem.push(lut[id]);
     lut[id] = null;
   });
 
-  pulse.visit(pulse.ADD, function(t) {
-    var dt = derive(t, ingest({}));
+  pulse.visit(pulse.ADD, function (t) {
+    const dt = derive(t, ingest({}));
     lut[tupleid(t)] = dt;
     out.add.push(dt);
   });
 
-  pulse.visit(pulse.MOD, function(t) {
+  pulse.visit(pulse.MOD, function (t) {
     out.mod.push(derive(t, lut[tupleid(t)]));
   });
 
@@ -66,7 +68,7 @@ prototype.transform = function(_, pulse) {
 };
 
 function project(s, t, fields, as) {
-  for (var i=0, n=fields.length; i<n; ++i) {
+  for (let i = 0, n = fields.length; i < n; ++i) {
     t[as[i]] = fields[i](s);
   }
   return t;

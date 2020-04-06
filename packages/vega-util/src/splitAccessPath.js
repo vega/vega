@@ -1,12 +1,14 @@
 import error from './error';
 
-export default function(p) {
-  var path = [],
-      q = null,
-      b = 0,
-      n = p.length,
-      s = '',
-      i, j, c;
+export default function (p) {
+  const path = [];
+  let q = null;
+  let b = 0;
+  const n = p.length;
+  let s = '';
+  let i;
+  let j;
+  let c;
 
   p = p + '';
 
@@ -16,7 +18,7 @@ export default function(p) {
     i = j + 1;
   }
 
-  for (i=j=0; j<n; ++j) {
+  for (i = j = 0; j < n; ++j) {
     c = p[j];
     if (c === '\\') {
       s += p.substring(i, j);

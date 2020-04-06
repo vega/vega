@@ -1,6 +1,16 @@
 import {
-  allOf, array, def, enums, not, object, oneOf, ref,
-  booleanType, stringType, booleanOrSignal, stringOrSignal
+  allOf,
+  array,
+  def,
+  enums,
+  not,
+  object,
+  oneOf,
+  ref,
+  booleanType,
+  stringType,
+  booleanOrSignal,
+  stringOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -50,44 +60,49 @@ const from = object({
 });
 
 const markclipRef = ref('markclip');
-const markclip = oneOf(
-  booleanOrSignal,
-  object({_path_: stringOrSignal}),
-  object({_sphere_: stringOrSignal})
-);
+const markclip = oneOf(booleanOrSignal, object({_path_: stringOrSignal}), object({_sphere_: stringOrSignal}));
 
 const styleRef = ref('style');
 const style = oneOf(stringType, array(stringType));
 
 const markRef = def('mark');
-const mark = object({
-  _type_: marktypeRef,
-  role: stringType,
-  name: stringType,
-  style: styleRef,
-  key: stringType,
-  clip: markclipRef,
-  sort: compareRef,
-  interactive: booleanOrSignal,
-  encode: def('encode'),
-  transform: array(def('transformMark')),
-  on: def('onMarkTrigger')
-}, undefined);
+const mark = object(
+  {
+    _type_: marktypeRef,
+    role: stringType,
+    name: stringType,
+    style: styleRef,
+    key: stringType,
+    clip: markclipRef,
+    sort: compareRef,
+    interactive: booleanOrSignal,
+    encode: def('encode'),
+    transform: array(def('transformMark')),
+    on: def('onMarkTrigger')
+  },
+  undefined
+);
 
 const markGroup = allOf(
-  object({
-    _type_: enums(['group']),
-    from: oneOf(fromRef, facetRef)
-  }, undefined),
+  object(
+    {
+      _type_: enums(['group']),
+      from: oneOf(fromRef, facetRef)
+    },
+    undefined
+  ),
   markRef,
   def('scope')
 );
 
 const markVisual = allOf(
-  object({
-    type: not(enums(['group'])),
-    from: fromRef
-  }, undefined),
+  object(
+    {
+      type: not(enums(['group'])),
+      from: fromRef
+    },
+    undefined
+  ),
   markRef
 );
 

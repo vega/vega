@@ -15,10 +15,10 @@ export default function Mark(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Mark, Transform);
+const prototype = inherits(Mark, Transform);
 
-prototype.transform = function(_, pulse) {
-  var mark = this.value;
+prototype.transform = function (_, pulse) {
+  let mark = this.value;
 
   // acquire mark on first invocation, bind context and group
   if (!mark) {
@@ -32,8 +32,10 @@ prototype.transform = function(_, pulse) {
   }
 
   // initialize entering items
-  var Init = mark.marktype === Group ? GroupItem : Item;
-  pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
+  const Init = mark.marktype === Group ? GroupItem : Item;
+  pulse.visit(pulse.ADD, function (item) {
+    Init.call(item, mark);
+  });
 
   // update clipping and/or interactive status
   if (_.modified('clip') || _.modified('interactive')) {
@@ -49,8 +51,7 @@ prototype.transform = function(_, pulse) {
 };
 
 function lookup(_) {
-  var g = _.groups, p = _.parent;
-  return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
-    : g && p ? g.lookup(p)
-    : null;
+  const g = _.groups;
+  const p = _.parent;
+  return g && g.size === 1 ? g.get(Object.keys(g.object)[0]) : g && p ? g.lookup(p) : null;
 }

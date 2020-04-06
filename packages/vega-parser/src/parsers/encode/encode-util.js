@@ -21,16 +21,16 @@ export function addEncode(object, name, value, set) {
 }
 
 export function addEncoders(object, enter, update) {
-  for (let name in enter) {
+  for (const name in enter) {
     addEncode(object, name, enter[name]);
   }
-  for (let name in update) {
+  for (const name in update) {
     addEncode(object, name, update[name], 'update');
   }
 }
 
 export function extendEncode(encode, extra, skip) {
-  for (var name in extra) {
+  for (const name in extra) {
     if (skip && hasOwnProperty(skip, name)) continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }
@@ -38,7 +38,8 @@ export function extendEncode(encode, extra, skip) {
 }
 
 export function encoders(encode, type, role, style, scope, params) {
-  var enc, key;
+  let enc;
+  let key;
   params = params || {};
   params.encoders = {$encode: (enc = {})};
 
@@ -52,7 +53,12 @@ export function encoders(encode, type, role, style, scope, params) {
 }
 
 function applyDefaults(encode, type, role, style, config) {
-  var defaults = {}, enter = {}, update, key, skip, props;
+  const defaults = {};
+  const enter = {};
+  let update;
+  let key;
+  let skip;
+  let props;
 
   // if text mark, apply global lineBreak settings (#2370)
   key = 'lineBreak';
@@ -66,23 +72,19 @@ function applyDefaults(encode, type, role, style, config) {
   }
 
   // resolve mark config
-  props = role === FrameRole ? config.group
-    : (role === MarkRole) ? extend({}, config.mark, config[type])
-    : null;
+  props = role === FrameRole ? config.group : role === MarkRole ? extend({}, config.mark, config[type]) : null;
 
   for (key in props) {
     // do not apply defaults if relevant fields are defined
-    skip = has(key, encode)
-      || (key === 'fill' || key === 'stroke')
-      && (has('fill', encode) || has('stroke', encode));
+    skip = has(key, encode) || ((key === 'fill' || key === 'stroke') && (has('fill', encode) || has('stroke', encode)));
 
     if (!skip) applyDefault(defaults, key, props[key]);
   }
 
   // resolve styles, apply with increasing precedence
-  array(style).forEach(function(name) {
-    var props = config.style && config.style[name];
-    for (var key in props) {
+  array(style).forEach(function (name) {
+    const props = config.style && config.style[name];
+    for (const key in props) {
       if (!has(key, encode)) {
         applyDefault(defaults, key, props[key]);
       }
@@ -106,14 +108,9 @@ function applyDefaults(encode, type, role, style, config) {
 }
 
 function applyDefault(defaults, key, value) {
-  defaults[key] = value && value.signal
-    ? {signal: value.signal}
-    : {value: value}
+  defaults[key] = value && value.signal ? {signal: value.signal} : {value: value};
 }
 
 export function has(key, encode) {
-  return encode && (
-    (encode.enter && encode.enter[key]) ||
-    (encode.update && encode.update[key])
-  );
+  return encode && ((encode.enter && encode.enter[key]) || (encode.update && encode.update[key]));
 }

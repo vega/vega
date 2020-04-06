@@ -4,14 +4,14 @@ import {Scope, View} from '../util';
 import {selector} from 'vega-event-selector';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
-var preamble = 'var datum=event.item&&event.item.datum;';
+const preamble = 'var datum=event.item&&event.item.datum;';
 
-export default function(spec, scope, target) {
-  var events = spec.events,
-      update = spec.update,
-      encode = spec.encode,
-      sources = [],
-      entry = {target: target};
+export default function (spec, scope, target) {
+  let events = spec.events;
+  let update = spec.update;
+  const encode = spec.encode;
+  let sources = [];
+  const entry = {target: target};
 
   if (!events) {
     error('Signal update missing events specification.');
@@ -23,8 +23,7 @@ export default function(spec, scope, target) {
   }
 
   // separate event streams from signal updates
-  events = array(events)
-    .filter(s => s.signal || s.scale ? (sources.push(s), 0) : 1);
+  events = array(events).filter(s => (s.signal || s.scale ? (sources.push(s), 0) : 1));
 
   // merge internal operator listeners
   if (sources.length > 1) {
@@ -42,11 +41,15 @@ export default function(spec, scope, target) {
   }
 
   // resolve update value
-  entry.update = isString(update) ? parseExpression(update, scope, preamble)
-    : update.expr != null ? parseExpression(update.expr, scope, preamble)
-    : update.value != null ? update.value
-    : update.signal != null ? {
-        $expr:   '_.value',
+  entry.update = isString(update)
+    ? parseExpression(update, scope, preamble)
+    : update.expr != null
+    ? parseExpression(update.expr, scope, preamble)
+    : update.value != null
+    ? update.value
+    : update.signal != null
+    ? {
+        $expr: '_.value',
         $params: {value: scope.signalRef(update.signal)}
       }
     : error('Invalid signal update specification.');
@@ -55,23 +58,23 @@ export default function(spec, scope, target) {
     entry.options = {force: true};
   }
 
-  sources.forEach(function(source) {
+  sources.forEach(function (source) {
     scope.addUpdate(extend(streamSource(source, scope), entry));
   });
 }
 
 function streamSource(stream, scope) {
   return {
-    source: stream.signal ? scope.signalRef(stream.signal)
-          : stream.scale ? scope.scaleRef(stream.scale)
-          : parseStream(stream, scope)
+    source: stream.signal
+      ? scope.signalRef(stream.signal)
+      : stream.scale
+      ? scope.scaleRef(stream.scale)
+      : parseStream(stream, scope)
   };
 }
 
 function mergeSources(sources) {
   return {
-    signal: '['
-      + sources.map(s => s.scale ? 'scale("' + s.scale + '")' : s.signal)
-      + ']'
+    signal: '[' + sources.map(s => (s.scale ? 'scale("' + s.scale + '")' : s.signal)) + ']'
   };
 }

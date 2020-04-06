@@ -1,74 +1,82 @@
-var tape = require('tape'),
-    d3 = require('d3-array'),
-    stats = require('../'),
-    gaussian = stats.randomNormal();
+const tape = require('tape');
+const d3 = require('d3-array');
+const stats = require('../');
+const gaussian = stats.randomNormal();
 
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
 
 function closeTo(t, a, b, delta) {
-  t.equal(Math.abs(a-b) < delta, true);
+  t.equal(Math.abs(a - b) < delta, true);
 }
 
 function check(t, u, s, values) {
-  var sum = values.reduce(function(a,b) { return a+b; }, 0);
-  var avg = sum / values.length;
-  var dev = values.reduce(function(a,b) { return a+(b-avg)*(b-avg); }, 0);
-  dev = dev / (values.length-1);
+  const sum = values.reduce(function (a, b) {
+    return a + b;
+  }, 0);
+  const avg = sum / values.length;
+  let dev = values.reduce(function (a, b) {
+    return a + (b - avg) * (b - avg);
+  }, 0);
+  dev = dev / (values.length - 1);
 
   // mean within 99.9% confidence interval
-  closeTo(t, u, avg, 4*dev/Math.sqrt(values.length));
+  closeTo(t, u, avg, (4 * dev) / Math.sqrt(values.length));
 }
 
 function samples(dist, n) {
-  var a = Array(n);
+  const a = Array(n);
   while (--n >= 0) a[n] = dist.sample();
   return a;
 }
 
-tape('kde generates samples', function(t) {
-  var kde = stats.randomKDE(d3.range(0, 1000)
-    .map(gaussian.sample));
+tape('kde generates samples', function (t) {
+  let kde = stats.randomKDE(d3.range(0, 1000).map(gaussian.sample));
   check(t, 0, 1, samples(kde, 1000));
 
-  kde = stats.randomKDE(d3.range(0, 1000)
-    .map(function() { return 5 * gaussian.sample(); }));
+  kde = stats.randomKDE(
+    d3.range(0, 1000).map(function () {
+      return 5 * gaussian.sample();
+    })
+  );
   check(t, 0, 5, samples(kde, 1000));
 
   t.end();
 });
 
-tape('kde approximates the pdf', function(t) {
-  var data = d3.range(0, 1000).map(gaussian.sample),
-      kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(function(x) {
-        return Math.abs(kde.pdf(x) - gaussian.pdf(x));
-      });
+tape('kde approximates the pdf', function (t) {
+  const data = d3.range(0, 1000).map(gaussian.sample);
+  const kde = stats.randomKDE(data);
+  const domain = d3.range(-5, 5.1, 0.5);
+  const error = domain.map(function (x) {
+    return Math.abs(kde.pdf(x) - gaussian.pdf(x));
+  });
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
+  t.ok(d3.sum(error) / domain.length < 0.01);
   t.end();
 });
 
-tape('kde approximates the cdf', function(t) {
-  var data = d3.range(0, 1000).map(gaussian.sample),
-      kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(function(x) {
-        return Math.abs(kde.cdf(x) - gaussian.cdf(x));
-      });
+tape('kde approximates the cdf', function (t) {
+  const data = d3.range(0, 1000).map(gaussian.sample);
+  const kde = stats.randomKDE(data);
+  const domain = d3.range(-5, 5.1, 0.5);
+  const error = domain.map(function (x) {
+    return Math.abs(kde.cdf(x) - gaussian.cdf(x));
+  });
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
+  t.ok(d3.sum(error) / domain.length < 0.01);
   t.end();
 });
 
-tape('kde does not support the inverse cdf', function(t) {
-  t.throws(function() { stats.randomKDE([1,1,1]).icdf(0.5); });
+tape('kde does not support the inverse cdf', function (t) {
+  t.throws(function () {
+    stats.randomKDE([1, 1, 1]).icdf(0.5);
+  });
   t.end();
 });
 
-tape('kde auto-selects positive bandwidth values', function(t) {
-  var a = [377, 347, 347, 347, 347, 347];
+tape('kde auto-selects positive bandwidth values', function (t) {
+  const a = [377, 347, 347, 347, 347, 347];
   t.ok(stats.randomKDE(a).bandwidth() > 0);
   t.ok(stats.randomKDE(a.slice(1)).bandwidth() > 0);
   t.ok(stats.randomKDE([-1, -1, -1]).bandwidth() > 0);

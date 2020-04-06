@@ -3,20 +3,20 @@ import pathRender from './render';
 import {Tau, HalfSqrt3} from '../util/constants';
 import {hasOwnProperty} from 'vega-util';
 
-var Tan30 = 0.5773502691896257;
+const Tan30 = 0.5773502691896257;
 
-var builtins = {
-  'circle': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+const builtins = {
+  circle: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
       context.moveTo(r, 0);
       context.arc(0, 0, r, 0, Tau);
     }
   },
-  'cross': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          s = r / 2.5;
+  cross: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const s = r / 2.5;
       context.moveTo(-r, -s);
       context.lineTo(-r, s);
       context.lineTo(-s, s);
@@ -32,9 +32,9 @@ var builtins = {
       context.closePath();
     }
   },
-  'diamond': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+  diamond: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
       context.moveTo(-r, 0);
       context.lineTo(0, -r);
       context.lineTo(r, 0);
@@ -42,19 +42,19 @@ var builtins = {
       context.closePath();
     }
   },
-  'square': {
-    draw: function(context, size) {
-      var w = Math.sqrt(size),
-          x = -w / 2;
+  square: {
+    draw: function (context, size) {
+      const w = Math.sqrt(size);
+      const x = -w / 2;
       context.rect(x, x, w, w);
     }
   },
-  'arrow': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          s = r / 7,
-          t = r / 2.5,
-          v = r / 8;
+  arrow: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const s = r / 7;
+      const t = r / 2.5;
+      const v = r / 8;
       context.moveTo(-s, r);
       context.lineTo(s, r);
       context.lineTo(s, -v);
@@ -65,23 +65,23 @@ var builtins = {
       context.closePath();
     }
   },
-  'wedge': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r,
-          o = (h - r * Tan30),
-          b = r / 4;
+  wedge: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
+      const o = h - r * Tan30;
+      const b = r / 4;
       context.moveTo(0, -h - o);
       context.lineTo(-b, h - o);
       context.lineTo(b, h - o);
       context.closePath();
     }
   },
-  'triangle': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r,
-          o = (h - r * Tan30);
+  triangle: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
+      const o = h - r * Tan30;
       context.moveTo(0, -h - o);
       context.lineTo(-r, h - o);
       context.lineTo(r, h - o);
@@ -89,9 +89,9 @@ var builtins = {
     }
   },
   'triangle-up': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
       context.moveTo(0, -h);
       context.lineTo(-r, h);
       context.lineTo(r, h);
@@ -99,9 +99,9 @@ var builtins = {
     }
   },
   'triangle-down': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
       context.moveTo(0, h);
       context.lineTo(-r, -h);
       context.lineTo(r, -h);
@@ -109,9 +109,9 @@ var builtins = {
     }
   },
   'triangle-right': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
       context.moveTo(h, 0);
       context.lineTo(-h, -r);
       context.lineTo(-h, r);
@@ -119,18 +119,18 @@ var builtins = {
     }
   },
   'triangle-left': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
+      const h = HalfSqrt3 * r;
       context.moveTo(-h, 0);
       context.lineTo(h, -r);
       context.lineTo(h, r);
       context.closePath();
     }
   },
-  'stroke': {
-    draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+  stroke: {
+    draw: function (context, size) {
+      const r = Math.sqrt(size) / 2;
       context.moveTo(-r, 0);
       context.lineTo(r, 0);
     }
@@ -141,13 +141,13 @@ export default function symbols(_) {
   return hasOwnProperty(builtins, _) ? builtins[_] : customSymbol(_);
 }
 
-var custom = {};
+const custom = {};
 
 function customSymbol(path) {
   if (!hasOwnProperty(custom, path)) {
-    var parsed = pathParse(path);
+    const parsed = pathParse(path);
     custom[path] = {
-      draw: function(context, size) {
+      draw: function (context, size) {
         pathRender(context, parsed, 0, 0, Math.sqrt(size) / 2);
       }
     };

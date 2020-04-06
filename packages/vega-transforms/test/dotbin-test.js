@@ -1,13 +1,13 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('../'),
-    changeset = vega.changeset,
-    Collect = transforms.collect,
-    DotBin = transforms.dotbin;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const transforms = require('../');
+const changeset = vega.changeset;
+const Collect = transforms.collect;
+const DotBin = transforms.dotbin;
 
-tape('DotBin assigns dot plot bin positions', function(t) {
-  var data = [
+tape('DotBin assigns dot plot bin positions', function (t) {
+  const data = [
     {key: 'a', value: 1},
     {key: 'a', value: 1},
     {key: 'a', value: 2},
@@ -17,16 +17,16 @@ tape('DotBin assigns dot plot bin positions', function(t) {
     {key: 'b', value: 5.5}
   ];
 
-  var df = new vega.Dataflow(),
-      gb = df.add([]),
-      c0 = df.add(Collect),
-      db = df.add(DotBin, {
-        field: util.field('value'),
-        groupby: gb,
-        step: 1.5,
-        pulse: c0,
-        as: 'x'
-      });
+  const df = new vega.Dataflow();
+  const gb = df.add([]);
+  const c0 = df.add(Collect);
+  const db = df.add(DotBin, {
+    field: util.field('value'),
+    groupby: gb,
+    step: 1.5,
+    pulse: c0,
+    as: 'x'
+  });
 
   // Insert data
   df.pulse(c0, changeset().insert(data)).run();
@@ -34,7 +34,7 @@ tape('DotBin assigns dot plot bin positions', function(t) {
   t.equal(db.pulse.rem.length, 0);
   t.equal(db.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.deepEqual(d[0], {key: 'a', value: 1, x: 1.5});
   t.deepEqual(d[1], {key: 'a', value: 1, x: 1.5});
   t.deepEqual(d[2], {key: 'a', value: 2, x: 1.5});
@@ -59,7 +59,10 @@ tape('DotBin assigns dot plot bin positions', function(t) {
   t.deepEqual(d[6], {key: 'b', value: 5.5, x: 5.25});
 
   // Remove values
-  df.pulse(c0, changeset().remove(t => t.value == 2 || t.value == 5.5)).run();
+  df.pulse(
+    c0,
+    changeset().remove(t => t.value == 2 || t.value == 5.5)
+  ).run();
   t.equal(db.pulse.add.length, 0);
   t.equal(db.pulse.rem.length, 2);
   t.equal(db.pulse.mod.length, 5); // reflow: non-adds/rems should be in mod

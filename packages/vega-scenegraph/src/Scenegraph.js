@@ -15,15 +15,15 @@ export default function Scenegraph(scene) {
   }
 }
 
-var prototype = Scenegraph.prototype;
+const prototype = Scenegraph.prototype;
 
-prototype.toJSON = function(indent) {
+prototype.toJSON = function (indent) {
   return sceneToJSON(this.root, indent || 0);
 };
 
-prototype.mark = function(markdef, group, index) {
+prototype.mark = function (markdef, group, index) {
   group = group || this.root.items[0];
-  var mark = createMark(markdef, group);
+  const mark = createMark(markdef, group);
   group.items[index] = mark;
   if (mark.zindex) mark.group.zdirty = true;
   return mark;
@@ -31,14 +31,14 @@ prototype.mark = function(markdef, group, index) {
 
 function createMark(def, group) {
   return {
-    bounds:      new Bounds(),
-    clip:        !!def.clip,
-    group:       group,
+    bounds: new Bounds(),
+    clip: !!def.clip,
+    group: group,
     interactive: def.interactive === false ? false : true,
-    items:       [],
-    marktype:    def.marktype,
-    name:        def.name || undefined,
-    role:        def.role || undefined,
-    zindex:      def.zindex || 0
+    items: [],
+    marktype: def.marktype,
+    name: def.name || undefined,
+    role: def.role || undefined,
+    zindex: def.zindex || 0
   };
 }

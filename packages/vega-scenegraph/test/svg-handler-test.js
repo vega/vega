@@ -1,17 +1,19 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    Renderer = vega.SVGRenderer,
-    Handler = vega.SVGHandler,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
+const tape = require('tape');
+const fs = require('fs');
+const vega = require('../');
+const Renderer = vega.SVGRenderer;
+const Handler = vega.SVGHandler;
+const jsdom = require('jsdom');
+const doc = new jsdom.JSDOM().window.document;
 
-var res = './test/resources/';
+const res = './test/resources/';
 
-var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.sceneFromJSON(marks[name]); }
+const marks = JSON.parse(load('marks.json'));
+for (const name in marks) {
+  vega.sceneFromJSON(marks[name]);
+}
 
-var events = [
+const events = [
   'keydown',
   'keypress',
   'keyup',
@@ -42,30 +44,32 @@ function loadScene(file) {
 
 function render(scene, w, h) {
   global.document = doc;
-  var r = new Renderer()
-    .initialize(doc.body, w, h)
-    .render(scene);
+  const r = new Renderer().initialize(doc.body, w, h).render(scene);
   delete global.document;
   return r.element();
 }
 
 function event(name, x, y) {
-  var evt = doc.createEvent('MouseEvents');
+  const evt = doc.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
   evt.clientX = x || 0;
   evt.clientY = y || 0;
   return evt;
 }
 
-tape('SVGHandler should add/remove event callbacks', function(t) {
-  var array = function(_) { return _ || []; },
-      object = function(_) { return _ || {}; },
-      handler = new Handler(),
-      h = handler._handlers,
-      f = function() {},
-      atype = 'click',
-      btype = 'click.foo',
-      ctype = 'mouseover';
+tape('SVGHandler should add/remove event callbacks', function (t) {
+  const array = function (_) {
+    return _ || [];
+  };
+  const object = function (_) {
+    return _ || {};
+  };
+  const handler = new Handler();
+  const h = handler._handlers;
+  const f = function () {};
+  const atype = 'click';
+  const btype = 'click.foo';
+  const ctype = 'mouseover';
 
   // add event callbacks
   handler.on(atype, f);
@@ -107,24 +111,24 @@ tape('SVGHandler should add/remove event callbacks', function(t) {
   t.end();
 });
 
-tape('SVGHandler should handle input events', function(t) {
-  var scene = loadScene('scenegraph-rect.json');
-  var handler = new Handler()
-    .initialize(render(scene, 400, 200))
-    .scene(scene);
+tape('SVGHandler should handle input events', function (t) {
+  const scene = loadScene('scenegraph-rect.json');
+  const handler = new Handler().initialize(render(scene, 400, 200)).scene(scene);
 
   t.equal(handler.scene(), scene);
 
-  var svg = handler.canvas();
-  var count = 0;
-  var increment = function() { count++; };
+  const svg = handler.canvas();
+  let count = 0;
+  const increment = function () {
+    count++;
+  };
 
-  events.forEach(function(name) {
+  events.forEach(function (name) {
     handler.on(name, increment);
   });
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(function (name) {
     svg.dispatchEvent(event(name));
   });
 
@@ -149,7 +153,7 @@ tape('SVGHandler should handle input events', function(t) {
   handler.off('nonevent');
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(function (name) {
     handler.off(name, increment);
   });
 

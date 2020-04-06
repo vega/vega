@@ -17,9 +17,9 @@ import {isFunction} from 'vega-util';
  *   listen for changes to upstream operators included as parameters.
  * @return {Operator} - The added operator.
  */
-export default function(init, update, params, react) {
-  var shift = 1,
-    op;
+export default function (init, update, params, react) {
+  let shift = 1;
+  let op;
 
   if (init instanceof Operator) {
     op = init;

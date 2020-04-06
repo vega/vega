@@ -13,18 +13,18 @@ export default function Projection(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype = inherits(Projection, Transform);
+const prototype = inherits(Projection, Transform);
 
-prototype.transform = function(_, pulse) {
-  var proj = this.value;
+prototype.transform = function (_, pulse) {
+  let proj = this.value;
 
   if (!proj || _.modified('type')) {
-    this.value = (proj = create(_.type));
-    projectionProperties.forEach(function(prop) {
+    this.value = proj = create(_.type);
+    projectionProperties.forEach(function (prop) {
       if (_[prop] != null) set(proj, prop, _[prop]);
     });
   } else {
-    projectionProperties.forEach(function(prop) {
+    projectionProperties.forEach(function (prop) {
       if (_.modified(prop)) set(proj, prop, _[prop]);
     });
   }
@@ -36,24 +36,24 @@ prototype.transform = function(_, pulse) {
 };
 
 function fit(proj, _) {
-  var data = collectGeoJSON(_.fit);
-  _.extent ? proj.fitExtent(_.extent, data)
-    : _.size ? proj.fitSize(_.size, data) : 0;
+  const data = collectGeoJSON(_.fit);
+  _.extent ? proj.fitExtent(_.extent, data) : _.size ? proj.fitSize(_.size, data) : 0;
 }
 
 function create(type) {
-  var constructor = projection((type || 'mercator').toLowerCase());
+  const constructor = projection((type || 'mercator').toLowerCase());
   if (!constructor) error('Unrecognized projection type: ' + type);
   return constructor();
 }
 
 function set(proj, key, value) {
-   if (isFunction(proj[key])) proj[key](value);
+  if (isFunction(proj[key])) proj[key](value);
 }
 
 export function collectGeoJSON(data) {
   data = array(data);
-  return data.length === 1 ? data[0]
+  return data.length === 1
+    ? data[0]
     : {
         type: FeatureCollection,
         features: data.reduce((a, f) => a.concat(featurize(f)), [])
@@ -63,7 +63,7 @@ export function collectGeoJSON(data) {
 function featurize(f) {
   return f.type === FeatureCollection
     ? f.features
-    : array(f).filter(d => d != null).map(
-        d => d.type === Feature ? d : {type: Feature, geometry: d}
-      );
+    : array(f)
+        .filter(d => d != null)
+        .map(d => (d.type === Feature ? d : {type: Feature, geometry: d}));
 }

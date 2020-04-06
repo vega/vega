@@ -14,25 +14,23 @@ export default function Cross(params) {
 }
 
 Cross.Definition = {
-  "type": "Cross",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "filter", "type": "expr" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
+  type: 'Cross',
+  metadata: {generates: true},
+  params: [
+    {name: 'filter', type: 'expr'},
+    {name: 'as', type: 'string', array: true, length: 2, default: ['a', 'b']}
   ]
 };
 
-var prototype = inherits(Cross, Transform);
+const prototype = inherits(Cross, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      data = this.value,
-      as = _.as || ['a', 'b'],
-      a = as[0], b = as[1],
-      reset = !data
-          || pulse.changed(pulse.ADD_REM)
-          || _.modified('as')
-          || _.modified('filter');
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE);
+  let data = this.value;
+  const as = _.as || ['a', 'b'];
+  const a = as[0];
+  const b = as[1];
+  const reset = !data || pulse.changed(pulse.ADD_REM) || _.modified('as') || _.modified('filter');
 
   if (reset) {
     if (data) out.rem = data;
@@ -47,15 +45,16 @@ prototype.transform = function(_, pulse) {
 };
 
 function cross(input, a, b, filter) {
-  var data = [],
-      t = {},
-      n = input.length,
-      i = 0,
-      j, left;
+  const data = [];
+  let t = {};
+  const n = input.length;
+  let i = 0;
+  let j;
+  let left;
 
-  for (; i<n; ++i) {
+  for (; i < n; ++i) {
     t[a] = left = input[i];
-    for (j=0; j<n; ++j) {
+    for (j = 0; j < n; ++j) {
       t[b] = input[j];
       if (filter(t)) {
         data.push(ingest(t));

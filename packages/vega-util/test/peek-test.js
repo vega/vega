@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('peek returns last element of a sequence', function(t) {
+tape('peek returns last element of a sequence', function (t) {
   t.equal(vega.peek([1]), 1);
-  t.equal(vega.peek([1,2,3]), 3);
+  t.equal(vega.peek([1, 2, 3]), 3);
   t.equal(vega.peek([]), undefined);
   t.equal(vega.peek('1'), '1');
   t.equal(vega.peek('123'), '3');

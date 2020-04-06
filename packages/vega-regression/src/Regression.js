@@ -1,18 +1,23 @@
 import partition from './partition';
 import {ingest, Transform} from 'vega-dataflow';
 import {
-  regressionLinear, regressionLog, regressionExp,
-  regressionPow, regressionQuad, regressionPoly, sampleCurve
+  regressionLinear,
+  regressionLog,
+  regressionExp,
+  regressionPow,
+  regressionQuad,
+  regressionPoly,
+  sampleCurve
 } from 'vega-statistics';
 import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
 
 const Methods = {
   linear: regressionLinear,
-  log:    regressionLog,
-  exp:    regressionExp,
-  pow:    regressionPow,
-  quad:   regressionQuad,
-  poly:   regressionPoly
+  log: regressionLog,
+  exp: regressionExp,
+  pow: regressionPow,
+  quad: regressionQuad,
+  poly: regressionPoly
 };
 
 function degreesOfFreedom(method, order) {
@@ -35,35 +40,35 @@ export default function Regression(params) {
 }
 
 Regression.Definition = {
-  "type": "Regression",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "string", "default": "linear", "values": Object.keys(Methods) },
-    { "name": "order", "type": "number", "default": 3 },
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "params", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "array": true }
+  type: 'Regression',
+  metadata: {generates: true},
+  params: [
+    {name: 'x', type: 'field', required: true},
+    {name: 'y', type: 'field', required: true},
+    {name: 'groupby', type: 'field', array: true},
+    {name: 'method', type: 'string', default: 'linear', values: Object.keys(Methods)},
+    {name: 'order', type: 'number', default: 3},
+    {name: 'extent', type: 'number', array: true, length: 2},
+    {name: 'params', type: 'boolean', default: false},
+    {name: 'as', type: 'string', array: true}
   ]
 };
 
-var prototype = inherits(Regression, Transform);
+const prototype = inherits(Regression, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
   if (!this.value || pulse.changed() || _.modified()) {
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby),
-          names = (_.groupby || []).map(accessorName),
-          method = _.method || 'linear',
-          order = _.order || 3,
-          dof = degreesOfFreedom(method, order),
-          as = _.as || [accessorName(_.x), accessorName(_.y)],
-          fit = Methods[method],
-          values = [];
+    const source = pulse.materialize(pulse.SOURCE).source;
+    const groups = partition(source, _.groupby);
+    const names = (_.groupby || []).map(accessorName);
+    const method = _.method || 'linear';
+    const order = _.order || 3;
+    const dof = degreesOfFreedom(method, order);
+    const as = _.as || [accessorName(_.x), accessorName(_.y)];
+    const fit = Methods[method];
+    const values = [];
 
     let domain = _.extent;
 
@@ -89,24 +94,26 @@ prototype.transform = function(_, pulse) {
 
       if (_.params) {
         // if parameter vectors requested return those
-        values.push(ingest({
-          keys: g.dims,
-          coef: model.coef,
-          rSquared: model.rSquared
-        }));
+        values.push(
+          ingest({
+            keys: g.dims,
+            coef: model.coef,
+            rSquared: model.rSquared
+          })
+        );
         return;
       }
 
-      const dom = domain || extent(g, _.x),
-            add = p => {
-              const t = {};
-              for (let i=0; i<names.length; ++i) {
-                t[names[i]] = g.dims[i];
-              }
-              t[as[0]] = p[0];
-              t[as[1]] = p[1];
-              values.push(ingest(t));
-            };
+      const dom = domain || extent(g, _.x);
+      const add = p => {
+        const t = {};
+        for (let i = 0; i < names.length; ++i) {
+          t[names[i]] = g.dims[i];
+        }
+        t[as[0]] = p[0];
+        t[as[1]] = p[1];
+        values.push(ingest(t));
+      };
 
       if (method === 'linear') {
         // for linear regression we only need the end points

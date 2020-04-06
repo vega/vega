@@ -1,7 +1,9 @@
 import {Epsilon, HalfPi, Tau} from '../util/constants';
 
-var bounds, lx, ly,
-    circleThreshold = Tau - 1e-8;
+let bounds;
+let lx;
+let ly;
+const circleThreshold = Tau - 1e-8;
 
 export default function context(_) {
   bounds = _;
@@ -10,13 +12,21 @@ export default function context(_) {
 
 function noop() {}
 
-function add(x, y) { bounds.add(x, y); }
+function add(x, y) {
+  bounds.add(x, y);
+}
 
-function addL(x, y) { add(lx = x, ly = y); }
+function addL(x, y) {
+  add((lx = x), (ly = y));
+}
 
-function addX(x) { add(x, bounds.y1); }
+function addX(x) {
+  add(x, bounds.y1);
+}
 
-function addY(y) { add(bounds.x1, y); }
+function addY(y) {
+  add(bounds.x1, y);
+}
 
 context.beginPath = noop;
 
@@ -26,12 +36,12 @@ context.moveTo = addL;
 
 context.lineTo = addL;
 
-context.rect = function(x, y, w, h) {
+context.rect = function (x, y, w, h) {
   add(x + w, y + h);
   addL(x, y);
 };
 
-context.quadraticCurveTo = function(x1, y1, x2, y2) {
+context.quadraticCurveTo = function (x1, y1, x2, y2) {
   quadExtrema(lx, x1, x2, addX);
   quadExtrema(ly, y1, y2, addY);
   addL(x2, y2);
@@ -42,18 +52,20 @@ function quadExtrema(x0, x1, x2, cb) {
   if (0 < t && t < 1) cb(x0 + (x1 - x0) * t);
 }
 
-context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
+context.bezierCurveTo = function (x1, y1, x2, y2, x3, y3) {
   cubicExtrema(lx, x1, x2, x3, addX);
   cubicExtrema(ly, y1, y2, y3, addY);
   addL(x3, y3);
 };
 
 function cubicExtrema(x0, x1, x2, x3, cb) {
-  const a = x3 - x0 + 3 * x1 - 3 * x2,
-        b = x0 + x2 - 2 * x1,
-        c = x0 - x1;
+  const a = x3 - x0 + 3 * x1 - 3 * x2;
+  const b = x0 + x2 - 2 * x1;
+  const c = x0 - x1;
 
-  let t0 = 0, t1 = 0, r;
+  let t0 = 0;
+  let t1 = 0;
+  let r;
 
   // solve for parameter t
   if (Math.abs(a) > Epsilon) {
@@ -66,7 +78,7 @@ function cubicExtrema(x0, x1, x2, x3, cb) {
     }
   } else {
     // linear equation
-    t0 = 0.5 * c / b;
+    t0 = (0.5 * c) / b;
   }
 
   // calculate position
@@ -75,11 +87,13 @@ function cubicExtrema(x0, x1, x2, x3, cb) {
 }
 
 function cubic(t, x0, x1, x2, x3) {
-  const s = 1 - t, s2 = s * s, t2 = t * t;
-  return (s2 * s * x0) + (3 * s2 * t * x1) + (3 * s * t2 * x2) + (t2 * t * x3);
+  const s = 1 - t;
+  const s2 = s * s;
+  const t2 = t * t;
+  return s2 * s * x0 + 3 * s2 * t * x1 + 3 * s * t2 * x2 + t2 * t * x3;
 }
 
-context.arc = function(cx, cy, r, sa, ea, ccw) {
+context.arc = function (cx, cy, r, sa, ea, ccw) {
   // store last point on path
   lx = r * Math.cos(ea) + cx;
   ly = r * Math.sin(ea) + cy;
@@ -90,7 +104,8 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
     add(cx + r, cy + r);
   } else {
     const update = a => add(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
-    let s, i;
+    let s;
+    let i;
 
     // sample end points
     update(sa);
@@ -98,21 +113,25 @@ context.arc = function(cx, cy, r, sa, ea, ccw) {
 
     // sample interior points aligned with 90 degrees
     if (ea !== sa) {
-      sa = sa % Tau; if (sa < 0) sa += Tau;
-      ea = ea % Tau; if (ea < 0) ea += Tau;
+      sa = sa % Tau;
+      if (sa < 0) sa += Tau;
+      ea = ea % Tau;
+      if (ea < 0) ea += Tau;
 
       if (ea < sa) {
         ccw = !ccw; // flip direction
-        s = sa; sa = ea; ea = s; // swap end-points
+        s = sa;
+        sa = ea;
+        ea = s; // swap end-points
       }
 
       if (ccw) {
         ea -= Tau;
         s = sa - (sa % HalfPi);
-        for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
+        for (i = 0; i < 4 && s > ea; ++i, s -= HalfPi) update(s);
       } else {
         s = sa - (sa % HalfPi) + HalfPi;
-        for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
+        for (i = 0; i < 4 && s < ea; ++i, s = s + HalfPi) update(s);
       }
     }
   }

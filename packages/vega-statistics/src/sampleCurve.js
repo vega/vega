@@ -1,18 +1,18 @@
 // subdivide up to accuracy of 0.1 degrees
-const MIN_RADIANS = 0.1 * Math.PI / 180;
+const MIN_RADIANS = (0.1 * Math.PI) / 180;
 
 // Adaptively sample an interpolated function over a domain extent
-export default function(f, extent, minSteps, maxSteps) {
+export default function (f, extent, minSteps, maxSteps) {
   minSteps = minSteps || 25;
   maxSteps = Math.max(minSteps, maxSteps || 200);
 
-  const point = x => [x, f(x)],
-        minX = extent[0],
-        maxX = extent[1],
-        span = maxX - minX,
-        stop = span / maxSteps,
-        prev = [point(minX)],
-        next = [];
+  const point = x => [x, f(x)];
+  const minX = extent[0];
+  const maxX = extent[1];
+  const span = maxX - minX;
+  const stop = span / maxSteps;
+  const prev = [point(minX)];
+  const next = [];
 
   if (minSteps === maxSteps) {
     // no adaptation, sample uniform grid directly and return
@@ -25,13 +25,13 @@ export default function(f, extent, minSteps, maxSteps) {
     // sample minimum points on uniform grid
     // then move on to perform adaptive refinement
     next.push(point(maxX));
-    for (let i = minSteps; --i > 0;) {
+    for (let i = minSteps; --i > 0; ) {
       next.push(point(minX + (i / minSteps) * span));
     }
   }
 
-  let p0 = prev[0],
-      p1 = next[next.length - 1];
+  let p0 = prev[0];
+  let p1 = next[next.length - 1];
 
   while (p1) {
     // midpoint for potential curve subdivision
@@ -56,7 +56,7 @@ export default function(f, extent, minSteps, maxSteps) {
 }
 
 function angleDelta(p, q, r) {
-  const a0 = Math.atan2(r[1] - p[1], r[0] - p[0]),
-        a1 = Math.atan2(q[1] - p[1], q[0] - p[0]);
+  const a0 = Math.atan2(r[1] - p[1], r[0] - p[0]);
+  const a1 = Math.atan2(q[1] - p[1], q[0] - p[0]);
   return Math.abs(a0 - a1);
 }

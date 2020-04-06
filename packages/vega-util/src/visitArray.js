@@ -1,9 +1,11 @@
-export default function(array, filter, visitor) {
+export default function (array, filter, visitor) {
   if (array) {
-    var i = 0, n = array.length, t;
+    let i = 0;
+    const n = array.length;
+    let t;
     if (filter) {
-      for (; i<n; ++i) {
-        if (t = filter(array[i])) visitor(t, i, array);
+      for (; i < n; ++i) {
+        if ((t = filter(array[i]))) visitor(t, i, array);
       }
     } else {
       array.forEach(visitor);

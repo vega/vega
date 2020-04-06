@@ -5,29 +5,40 @@ import {collision, outOfBounds} from './common';
 const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
 
-export default function($, bitmaps, avoidBaseMark, markIndex) {
-  let width = $.width,
-      height = $.height,
-      bm0 = bitmaps[0], // where labels have been placed
-      bm1 = bitmaps[1], // area outlines
-      bm2 = $.bitmap(); // flood-fill visitations
+export default function ($, bitmaps, avoidBaseMark, markIndex) {
+  const width = $.width;
+  const height = $.height;
+  const bm0 = bitmaps[0]; // where labels have been placed
+  const bm1 = bitmaps[1]; // area outlines
+  const bm2 = $.bitmap(); // flood-fill visitations
 
   // try to place a label within an input area mark
-  return function(d) {
-    const items = d.datum.datum.items[markIndex].items, // area points
-          n = items.length, // number of points
-          textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum), // label height
-          stack = []; // flood fill stack
+  return function (d) {
+    const items = d.datum.datum.items[markIndex].items; // area points
+    const n = items.length; // number of points
+    const textHeight = d.datum.fontSize; // label width
+    const textWidth = textMetrics.width(d.datum); // label height
+    const stack = []; // flood fill stack
 
-    let maxSize = avoidBaseMark ? textHeight : 0,
-        labelPlaced = false,
-        labelPlaced2 = false,
-        maxAreaWidth = 0,
-        x1, x2, y1, y2, x, y, _x, _y, lo, hi, mid, areaWidth;
+    let maxSize = avoidBaseMark ? textHeight : 0;
+    let labelPlaced = false;
+    let labelPlaced2 = false;
+    let maxAreaWidth = 0;
+    let x1;
+    let x2;
+    let y1;
+    let y2;
+    let x;
+    let y;
+    let _x;
+    let _y;
+    let lo;
+    let hi;
+    let mid;
+    let areaWidth;
 
     // for each area sample point
-    for (let i=0; i<n; ++i) {
+    for (let i = 0; i < n; ++i) {
       x1 = items[i].x;
       y1 = items[i].y;
       x2 = items[i].x2 === undefined ? x1 : items[i].x2;
@@ -46,7 +57,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
         // mark point in flood fill bitmap
         // add search points for all (in bound) directions
         bm2.set(_x, _y);
-        for (let j=0; j<4; ++j) {
+        for (let j = 0; j < 4; ++j) {
           x = _x + X_DIR[j];
           y = _y + Y_DIR[j];
           if (!bm2.outOfBounds(x, y, x, y)) stack.push([x, y]);

@@ -1,14 +1,37 @@
 import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
 import {
-  error, inherits, isArray, isFunction, isString, peek, stringValue,
-  toSet, zoomLinear, zoomLog, zoomPow, zoomSymlog
+  error,
+  inherits,
+  isArray,
+  isFunction,
+  isString,
+  peek,
+  stringValue,
+  toSet,
+  zoomLinear,
+  zoomLog,
+  zoomPow,
+  zoomSymlog
 } from 'vega-util';
 
 import {
-  Ordinal, Band, Point, Sequential, Diverging,
-  Linear, Log, Pow, Sqrt, Symlog, Time, UTC,
-  Quantile, Quantize, Threshold, BinOrdinal,
+  Ordinal,
+  Band,
+  Point,
+  Sequential,
+  Diverging,
+  Linear,
+  Log,
+  Pow,
+  Sqrt,
+  Symlog,
+  Time,
+  UTC,
+  Quantile,
+  Quantize,
+  Threshold,
+  BinOrdinal,
   isContinuous,
   isInterpolating,
   isLogarithmic,
@@ -24,29 +47,42 @@ import {
 
 import {range as sequence} from 'd3-array';
 
-import {
-  interpolate,
-  interpolateRound
-} from 'd3-interpolate';
+import {interpolate, interpolateRound} from 'd3-interpolate';
 
-var DEFAULT_COUNT = 5;
+const DEFAULT_COUNT = 5;
 
 function includeZero(scale) {
   const type = scale.type;
-  return !scale.bins && (
-    type === Linear || type === Pow || type === Sqrt
-  );
+  return !scale.bins && (type === Linear || type === Pow || type === Sqrt);
 }
 
 function includePad(type) {
   return isContinuous(type) && type !== Sequential;
 }
 
-var SKIP = toSet([
-  'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
-  'domain', 'domainMin', 'domainMid', 'domainMax',
-  'domainRaw', 'domainImplicit', 'nice', 'zero', 'bins',
-  'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma'
+const SKIP = toSet([
+  'set',
+  'modified',
+  'clear',
+  'type',
+  'scheme',
+  'schemeExtent',
+  'schemeCount',
+  'domain',
+  'domainMin',
+  'domainMid',
+  'domainMax',
+  'domainRaw',
+  'domainImplicit',
+  'nice',
+  'zero',
+  'bins',
+  'range',
+  'rangeStep',
+  'round',
+  'reverse',
+  'interpolate',
+  'interpolateGamma'
 ]);
 
 /**
@@ -59,67 +95,63 @@ export default function Scale(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype = inherits(Scale, Transform);
+const prototype = inherits(Scale, Transform);
 
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      scale = this.value,
-      key = scaleKey(_);
+prototype.transform = function (_, pulse) {
+  const df = pulse.dataflow;
+  let scale = this.value;
+  let key = scaleKey(_);
 
   if (!scale || key !== scale.type) {
     this.value = scale = getScale(key)();
   }
 
-  for (key in _) if (!SKIP[key]) {
-    // padding is a scale property for band/point but not others
-    if (key === 'padding' && includePad(scale.type)) continue;
-    // invoke scale property setter, raise warning if not found
-    isFunction(scale[key])
-      ? scale[key](_[key])
-      : df.warn('Unsupported scale property: ' + key);
-  }
+  for (key in _)
+    if (!SKIP[key]) {
+      // padding is a scale property for band/point but not others
+      if (key === 'padding' && includePad(scale.type)) continue;
+      // invoke scale property setter, raise warning if not found
+      isFunction(scale[key]) ? scale[key](_[key]) : df.warn('Unsupported scale property: ' + key);
+    }
 
-  configureRange(scale, _,
-    configureBins(scale, _, configureDomain(scale, _, df))
-  );
+  configureRange(scale, _, configureBins(scale, _, configureDomain(scale, _, df)));
 
   return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 };
 
 function scaleKey(_) {
-  var t = _.type, d = '', n;
+  const t = _.type;
+  let d = '';
+  let n;
 
   // backwards compatibility pre Vega 5.
   if (t === Sequential) return Sequential + '-' + Linear;
 
   if (isContinuousColor(_)) {
-    n = _.rawDomain ? _.rawDomain.length
-      : _.domain ? _.domain.length + +(_.domainMid != null)
-      : 0;
-    d = n === 2 ? Sequential + '-'
-      : n === 3 ? Diverging + '-'
-      : '';
+    n = _.rawDomain ? _.rawDomain.length : _.domain ? _.domain.length + +(_.domainMid != null) : 0;
+    d = n === 2 ? Sequential + '-' : n === 3 ? Diverging + '-' : '';
   }
 
-  return ((d + t) || Linear).toLowerCase();
+  return (d + t || Linear).toLowerCase();
 }
 
 function isContinuousColor(_) {
   const t = _.type;
-  return isContinuous(t) && t !== Time && t !== UTC && (
-    _.scheme || _.range && _.range.length && _.range.every(isString)
+  return (
+    isContinuous(t) && t !== Time && t !== UTC && (_.scheme || (_.range && _.range.length && _.range.every(isString)))
   );
 }
 
 function configureDomain(scale, _, df) {
   // check raw domain, if provided use that and exit early
-  var raw = rawDomain(scale, _.domainRaw, df);
+  const raw = rawDomain(scale, _.domainRaw, df);
   if (raw > -1) return raw;
 
-  var domain = _.domain,
-      type = scale.type,
-      zero = _.zero || (_.zero === undefined && includeZero(scale)),
-      n, mid;
+  let domain = _.domain;
+  const type = scale.type;
+  const zero = _.zero || (_.zero === undefined && includeZero(scale));
+  let n;
+  let mid;
 
   if (!domain) return 0;
 
@@ -130,7 +162,7 @@ function configureDomain(scale, _, df) {
 
   // adjust domain based on zero, min, max settings
   if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
-    n = ((domain = domain.slice()).length - 1) || 1;
+    n = (domain = domain.slice()).length - 1 || 1;
     if (zero) {
       if (domain[0] > 0) domain[0] = 0;
       if (domain[n] < 0) domain[n] = 0;
@@ -175,17 +207,22 @@ function rawDomain(scale, raw, df) {
 }
 
 function padDomain(type, domain, range, pad, exponent, constant) {
-  var span = Math.abs(peek(range) - range[0]),
-      frac = span / (span - 2 * pad),
-      d = type === Log    ? zoomLog(domain, null, frac)
-        : type === Sqrt   ? zoomPow(domain, null, frac, 0.5)
-        : type === Pow    ? zoomPow(domain, null, frac, exponent || 1)
-        : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1)
-        : zoomLinear(domain, null, frac);
+  const span = Math.abs(peek(range) - range[0]);
+  const frac = span / (span - 2 * pad);
+  const d =
+    type === Log
+      ? zoomLog(domain, null, frac)
+      : type === Sqrt
+      ? zoomPow(domain, null, frac, 0.5)
+      : type === Pow
+      ? zoomPow(domain, null, frac, exponent || 1)
+      : type === Symlog
+      ? zoomSymlog(domain, null, frac, constant || 1)
+      : zoomLinear(domain, null, frac);
 
   domain = domain.slice();
   domain[0] = d[0];
-  domain[domain.length-1] = d[1];
+  domain[domain.length - 1] = d[1];
   return domain;
 }
 
@@ -193,9 +230,11 @@ function domainCheck(type, domain, df) {
   if (isLogarithmic(type)) {
     // sum signs of domain values
     // if all pos or all neg, abs(sum) === domain.length
-    var s = Math.abs(domain.reduce(function(s, v) {
-      return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
-    }, 0));
+    const s = Math.abs(
+      domain.reduce(function (s, v) {
+        return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
+      }, 0)
+    );
 
     if (s !== domain.length) {
       df.warn('Log scale domain includes zero: ' + stringValue(domain));
@@ -209,12 +248,12 @@ function configureBins(scale, _, count) {
 
   if (bins && !isArray(bins)) {
     // generate bin boundary array
-    let domain = scale.domain(),
-        lo = domain[0],
-        hi = peek(domain),
-        start = bins.start == null ? lo : bins.start,
-        stop = bins.stop == null ? hi : bins.stop,
-        step = bins.step;
+    const domain = scale.domain();
+    const lo = domain[0];
+    const hi = peek(domain);
+    let start = bins.start == null ? lo : bins.start;
+    let stop = bins.stop == null ? hi : bins.stop;
+    const step = bins.step;
 
     if (!step) error('Scale bins parameter missing step property.');
     if (start < lo) start = step * Math.ceil(lo / step);
@@ -247,9 +286,9 @@ function configureBins(scale, _, count) {
 }
 
 function configureRange(scale, _, count) {
-  var type = scale.type,
-      round = _.round || false,
-      range = _.range;
+  const type = scale.type;
+  const round = _.round || false;
+  let range = _.range;
 
   // if range step specified, calculate full range extent
   if (_.rangeStep != null) {
@@ -270,9 +309,7 @@ function configureRange(scale, _, count) {
 
   // given a range array for an interpolating scale, convert to interpolator
   if (range && isInterpolating(type)) {
-    return scale.interpolator(
-      interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
-    );
+    return scale.interpolator(interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma));
   }
 
   // configure rounding / interpolation
@@ -293,15 +330,15 @@ function configureRangeStep(type, _, count) {
   }
 
   // calculate full range based on requested step size and padding
-  var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-      inner = type === Point ? 1
-            : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
+  const outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0;
+  const inner = type === Point ? 1 : (_.paddingInner != null ? _.paddingInner : _.padding) || 0;
   return [0, _.rangeStep * bandSpace(count, inner, outer)];
 }
 
 function configureScheme(type, _, count) {
-  var extent = _.schemeExtent,
-      name, scheme;
+  const extent = _.schemeExtent;
+  let name;
+  let scheme;
 
   if (isArray(_.scheme)) {
     scheme = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
@@ -312,24 +349,29 @@ function configureScheme(type, _, count) {
   }
 
   // determine size for potential discrete range
-  count = (type === Threshold) ? count + 1
-    : (type === BinOrdinal) ? count - 1
-    : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
-    : count;
+  count =
+    type === Threshold
+      ? count + 1
+      : type === BinOrdinal
+      ? count - 1
+      : type === Quantile || type === Quantize
+      ? +_.schemeCount || DEFAULT_COUNT
+      : count;
 
   // adjust and/or quantize scheme as appropriate
-  return isInterpolating(type) ? adjustScheme(scheme, extent, _.reverse)
-    : isFunction(scheme) ? quantizeInterpolator(adjustScheme(scheme, extent), count)
-    : type === Ordinal ? scheme : scheme.slice(0, count);
+  return isInterpolating(type)
+    ? adjustScheme(scheme, extent, _.reverse)
+    : isFunction(scheme)
+    ? quantizeInterpolator(adjustScheme(scheme, extent), count)
+    : type === Ordinal
+    ? scheme
+    : scheme.slice(0, count);
 }
 
 function adjustScheme(scheme, extent, reverse) {
-  return (isFunction(scheme) && (extent || reverse))
-    ? interpolateRange(scheme, flip(extent || [0, 1], reverse))
-    : scheme;
+  return isFunction(scheme) && (extent || reverse) ? interpolateRange(scheme, flip(extent || [0, 1], reverse)) : scheme;
 }
 
 function flip(array, reverse) {
   return reverse ? array.slice().reverse() : array;
 }
-

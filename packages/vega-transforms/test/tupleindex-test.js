@@ -1,25 +1,25 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    TupleIndex = tx.tupleindex;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const tx = require('../');
+const changeset = vega.changeset;
+const Collect = tx.collect;
+const TupleIndex = tx.tupleindex;
 
-tape('TupleIndex maintains an index of tuples', function(t) {
-  var data = [
-    {'id': 1, 'value': 'foo'},
-    {'id': 3, 'value': 'bar'},
-    {'id': 5, 'value': 'baz'}
+tape('TupleIndex maintains an index of tuples', function (t) {
+  const data = [
+    {id: 1, value: 'foo'},
+    {id: 3, value: 'bar'},
+    {id: 5, value: 'baz'}
   ];
 
-  var id = util.field('id'),
-      va = util.field('value'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      fi = df.add(null), // populate with field accessor later
-      ti = df.add(TupleIndex, {field:fi, pulse:c0}),
-      map;
+  const id = util.field('id');
+  const va = util.field('value');
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const fi = df.add(null); // populate with field accessor later
+  const ti = df.add(TupleIndex, {field: fi, pulse: c0});
+  let map;
 
   df.update(fi, id).run(); // initialize
 
@@ -82,14 +82,15 @@ tape('TupleIndex maintains an index of tuples', function(t) {
   t.end();
 });
 
-tape('TupleIndex does not leak memory', function(t) {
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      ti = df.add(TupleIndex, {field: util.field('id'), pulse: c0}),
-      n = df.cleanThreshold + 1;
+tape('TupleIndex does not leak memory', function (t) {
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const ti = df.add(TupleIndex, {field: util.field('id'), pulse: c0});
+  const n = df.cleanThreshold + 1;
 
   function generate() {
-    for (var data = [], i=0; i<n; ++i) {
+    const data = [];
+    for (let i = 0; i < n; ++i) {
       data.push({id: i});
     }
     return data;

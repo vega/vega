@@ -1,15 +1,15 @@
-var tape = require('tape'),
-    vega = require('../'),
-    x = d => d[0],
-    y = d => d[1];
+const tape = require('tape');
+const vega = require('../');
+const x = d => d[0];
+const y = d => d[1];
 
 function closeTo(t, a, b) {
   return t.equal(a.toFixed(9), b.toFixed(9));
 }
 
-tape('regressionLinear fits a linear regression model', function(t) {
-  var data = [NaN, 0, 1, 2].map(v => [v, 2 - v]),
-      fit = vega.regressionLinear(data, x, y);
+tape('regressionLinear fits a linear regression model', function (t) {
+  const data = [NaN, 0, 1, 2].map(v => [v, 2 - v]);
+  const fit = vega.regressionLinear(data, x, y);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], -1);
@@ -19,9 +19,9 @@ tape('regressionLinear fits a linear regression model', function(t) {
   t.end();
 });
 
-tape('regressionLog fits a logarithmic regression model', function(t) {
-  var data = [1, 2, NaN, 3].map(v => [v, 2 + 3 * Math.log(v)]),
-      fit = vega.regressionLog(data, x, y);
+tape('regressionLog fits a logarithmic regression model', function (t) {
+  const data = [1, 2, NaN, 3].map(v => [v, 2 + 3 * Math.log(v)]);
+  const fit = vega.regressionLog(data, x, y);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], 3);
@@ -31,9 +31,9 @@ tape('regressionLog fits a logarithmic regression model', function(t) {
   t.end();
 });
 
-tape('regressionExp fits an exponential regression model', function(t) {
-  var data = [1, NaN, 2, 3].map(v => [v, 2 * Math.exp(3 * v)]),
-      fit = vega.regressionExp(data, x, y);
+tape('regressionExp fits an exponential regression model', function (t) {
+  const data = [1, NaN, 2, 3].map(v => [v, 2 * Math.exp(3 * v)]);
+  const fit = vega.regressionExp(data, x, y);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], 3);
@@ -43,9 +43,9 @@ tape('regressionExp fits an exponential regression model', function(t) {
   t.end();
 });
 
-tape('regressionPow fits a power regression model', function(t) {
-  var data = [1, 2, 3, NaN].map(v => [v, 2 * Math.pow(v, 3)]),
-      fit = vega.regressionPow(data, x, y);
+tape('regressionPow fits a power regression model', function (t) {
+  const data = [1, 2, 3, NaN].map(v => [v, 2 * Math.pow(v, 3)]);
+  const fit = vega.regressionPow(data, x, y);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], 3);
@@ -55,9 +55,9 @@ tape('regressionPow fits a power regression model', function(t) {
   t.end();
 });
 
-tape('regressionQuad fits a quadratic regression model', function(t) {
-  var data = [1, NaN, 2, 3].map(v => [v, 2 + 3 * v - v * v]),
-      fit = vega.regressionQuad(data, x, y);
+tape('regressionQuad fits a quadratic regression model', function (t) {
+  const data = [1, NaN, 2, 3].map(v => [v, 2 + 3 * v - v * v]);
+  const fit = vega.regressionQuad(data, x, y);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], 3);
@@ -68,9 +68,9 @@ tape('regressionQuad fits a quadratic regression model', function(t) {
   t.end();
 });
 
-tape('regressionPoly fits a polynomial regression model', function(t) {
-  var data = [1, 2, NaN, 3, 4].map(v => [v, 2 + 3 * v - v * v + 0.5 * v * v * v]),
-      fit = vega.regressionPoly(data, x, y, 3);
+tape('regressionPoly fits a polynomial regression model', function (t) {
+  const data = [1, 2, NaN, 3, 4].map(v => [v, 2 + 3 * v - v * v + 0.5 * v * v * v]);
+  const fit = vega.regressionPoly(data, x, y, 3);
 
   closeTo(t, fit.coef[0], 2);
   closeTo(t, fit.coef[1], 3);

@@ -1,41 +1,42 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('ChangeSet adds/removes/modifies tuples', function(t) {
-  var data = [
+tape('ChangeSet adds/removes/modifies tuples', function (t) {
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  const extra = {key: 'd', value: 6};
+  let pulse;
 
   // add tuples
   // should also assign tuple ids to each object
-  pulse = vega.changeset()
-    .insert(data)
-    .pulse(new vega.Pulse(), []);
+  pulse = vega.changeset().insert(data).pulse(new vega.Pulse(), []);
   t.deepEqual(pulse.add, data);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, []);
   t.ok(data.every(vega.tupleid));
 
   // modify tuple directly
-  pulse = vega.changeset()
-    .modify(data[0], 'value', 5)
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().modify(data[0], 'value', 5).pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, [data[0]]);
   t.equal(data[0].value, 5);
 
   // modify tuples by predicate
-  pulse = vega.changeset()
+  pulse = vega
+    .changeset()
     .modify(
-      function(t) { return t.key === 'b'; },
+      function (t) {
+        return t.key === 'b';
+      },
       'value',
-      function(t) { return t.value + 2; }
+      function (t) {
+        return t.value + 2;
+      }
     )
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
@@ -44,16 +45,17 @@ tape('ChangeSet adds/removes/modifies tuples', function(t) {
   t.equal(data[1].value, 4);
 
   // remove tuple directly
-  pulse = vega.changeset()
-    .remove(data[0])
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().remove(data[0]).pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, [data[0]]);
   t.deepEqual(pulse.mod, []);
 
   // remove tuples by predicate
-  pulse = vega.changeset()
-    .remove(function(t) { return t.value < 5; })
+  pulse = vega
+    .changeset()
+    .remove(function (t) {
+      return t.value < 5;
+    })
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, data.slice(1));
@@ -61,9 +63,12 @@ tape('ChangeSet adds/removes/modifies tuples', function(t) {
 
   // perform all three operations at once
   // here, no tuples are implicated in more than one set
-  pulse = vega.changeset()
+  pulse = vega
+    .changeset()
     .insert(extra)
-    .remove(function(t) { return t.value === 3; })
+    .remove(function (t) {
+      return t.value === 3;
+    })
     .modify(data[1], 'key', 'e')
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, [extra]);
@@ -75,20 +80,18 @@ tape('ChangeSet adds/removes/modifies tuples', function(t) {
   t.end();
 });
 
-tape('ChangeSet handles conflicting changes', function(t) {
-  var data = [
+tape('ChangeSet handles conflicting changes', function (t) {
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  const extra = {key: 'd', value: 6};
+  let pulse;
 
   // perform initial add, ingest tuples
-  pulse = vega.changeset()
-    .insert(data)
-    .pulse(new vega.Pulse(), []);
+  pulse = vega.changeset().insert(data).pulse(new vega.Pulse(), []);
   t.deepEqual(pulse.add, data);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, []);
@@ -96,19 +99,13 @@ tape('ChangeSet handles conflicting changes', function(t) {
 
   // add + mod
   // behavior: add if not already added, modify only if already present
-  pulse = vega.changeset()
-    .insert(data)
-    .modify(data[1], 'key', 'e')
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().insert(data).modify(data[1], 'key', 'e').pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, [data[1]]);
   t.equal(data[1].key, 'e');
 
-  pulse = vega.changeset()
-    .insert(extra)
-    .modify(extra, 'key', 'f')
-    .pulse(new vega.Pulse(), []);
+  pulse = vega.changeset().insert(extra).modify(extra, 'key', 'f').pulse(new vega.Pulse(), []);
   t.deepEqual(pulse.add, [extra]);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, []);
@@ -116,21 +113,25 @@ tape('ChangeSet handles conflicting changes', function(t) {
 
   // rem + mod
   // tuple should be removed, unmodified
-  pulse = vega.changeset()
-    .remove(data[0])
-    .modify(data[0], 'key', 'f')
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().remove(data[0]).modify(data[0], 'key', 'f').pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, [data[0]]);
   t.deepEqual(pulse.mod, []);
   t.equal(data[0].key, 'a'); // unchanged
 
-  pulse = vega.changeset()
-    .remove(function(t) { return t.value < 3; })
+  pulse = vega
+    .changeset()
+    .remove(function (t) {
+      return t.value < 3;
+    })
     .modify(
-      function(t) { return t.key === 'a'; },
+      function (t) {
+        return t.key === 'a';
+      },
       'value',
-      function(t) { return t.value + 2; }
+      function (t) {
+        return t.value + 2;
+      }
     )
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
@@ -141,29 +142,36 @@ tape('ChangeSet handles conflicting changes', function(t) {
   // add + rem
   // add + rem + mod
   // operations should cancel
-  pulse = vega.changeset()
-    .insert(data)
-    .remove(data)
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().insert(data).remove(data).pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, []);
 
-  pulse = vega.changeset()
+  pulse = vega
+    .changeset()
     .insert(data[0])
-    .remove(function() { return true; })
+    .remove(function () {
+      return true;
+    })
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
   t.deepEqual(pulse.rem, data.slice(1));
   t.deepEqual(pulse.mod, []);
 
-  pulse = vega.changeset()
+  pulse = vega
+    .changeset()
     .insert(data[2])
-    .remove(function() { return true; })
+    .remove(function () {
+      return true;
+    })
     .modify(
-      function(t) { return t.value > 1; },
+      function (t) {
+        return t.value > 1;
+      },
       'value',
-      function(t) { return t.value + 2; }
+      function (t) {
+        return t.value + 2;
+      }
     )
     .pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, []);
@@ -174,39 +182,36 @@ tape('ChangeSet handles conflicting changes', function(t) {
   t.end();
 });
 
-tape('ChangeSet handles reflow', function(t) {
-  var data = [
+tape('ChangeSet handles reflow', function (t) {
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  const extra = {key: 'd', value: 6};
+  let pulse;
 
   // initial add
-  pulse = vega.changeset()
-    .insert(data)
-    .pulse(new vega.Pulse(), []);
+  pulse = vega.changeset().insert(data).pulse(new vega.Pulse(), []);
   t.deepEqual(pulse.add, data);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, []);
   t.ok(data.every(vega.tupleid));
 
   // add, modify and reflow tuples
-  pulse = vega.changeset()
-    .insert(extra)
-    .modify(data[0], 'key', 'd')
-    .reflow()
-    .pulse(new vega.Pulse(), data);
+  pulse = vega.changeset().insert(extra).modify(data[0], 'key', 'd').reflow().pulse(new vega.Pulse(), data);
   t.deepEqual(pulse.add, [extra]);
   t.deepEqual(pulse.rem, []);
   t.deepEqual(pulse.mod, data);
   t.equal(data[0].key, 'd');
 
   // remove, modify and reflow tuples
-  pulse = vega.changeset()
-    .remove(function(t) { return t.value < 2; })
+  pulse = vega
+    .changeset()
+    .remove(function (t) {
+      return t.value < 2;
+    })
     .modify(data[2], 'key', 'f')
     .reflow()
     .pulse(new vega.Pulse(), data);

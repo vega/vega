@@ -5,8 +5,8 @@ import {translate} from '../util/svg/transform';
 import {truthy} from 'vega-util';
 
 function getImage(item, renderer) {
-  var image = item.image;
-  if (!image || item.url && item.url !== image.url) {
+  let image = item.image;
+  if (!image || (item.url && item.url !== image.url)) {
     image = {complete: false, width: 0, height: 0};
     renderer.loadImage(item.url).then(image => {
       item.image = image;
@@ -17,16 +17,22 @@ function getImage(item, renderer) {
 }
 
 function imageWidth(item, image) {
-  return item.width != null ? item.width
-    : !image || !image.width ? 0
-    : item.aspect !== false && item.height ? item.height * image.width / image.height
+  return item.width != null
+    ? item.width
+    : !image || !image.width
+    ? 0
+    : item.aspect !== false && item.height
+    ? (item.height * image.width) / image.height
     : image.width;
 }
 
 function imageHeight(item, image) {
-  return item.height != null ? item.height
-    : !image || !image.height ? 0
-    : item.aspect !== false && item.width ? item.width * image.height / image.width
+  return item.height != null
+    ? item.height
+    : !image || !image.height
+    ? 0
+    : item.aspect !== false && item.width
+    ? (item.width * image.height) / image.width
     : image.height;
 }
 
@@ -39,12 +45,12 @@ function imageYOffset(baseline, h) {
 }
 
 function attr(emit, item, renderer) {
-  var image = getImage(item, renderer),
-      x = item.x || 0,
-      y = item.y || 0,
-      w = imageWidth(item, image),
-      h = imageHeight(item, image),
-      a = item.aspect === false ? 'none' : 'xMidYMid';
+  const image = getImage(item, renderer);
+  let x = item.x || 0;
+  let y = item.y || 0;
+  const w = imageWidth(item, image);
+  const h = imageHeight(item, image);
+  const a = item.aspect === false ? 'none' : 'xMidYMid';
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
@@ -61,11 +67,11 @@ function attr(emit, item, renderer) {
 }
 
 function bound(bounds, item) {
-  var image = item.image,
-      x = item.x || 0,
-      y = item.y || 0,
-      w = imageWidth(item, image),
-      h = imageHeight(item, image);
+  const image = item.image;
+  let x = item.x || 0;
+  let y = item.y || 0;
+  const w = imageWidth(item, image);
+  const h = imageHeight(item, image);
 
   x -= imageXOffset(item.align, w);
   y -= imageYOffset(item.baseline, h);
@@ -74,17 +80,20 @@ function bound(bounds, item) {
 }
 
 function draw(context, scene, bounds) {
-  var renderer = this;
+  const renderer = this;
 
-  visit(scene, function(item) {
+  visit(scene, function (item) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-    var image = getImage(item, renderer),
-        x = item.x || 0,
-        y = item.y || 0,
-        w = imageWidth(item, image),
-        h = imageHeight(item, image),
-        opacity, ar0, ar1, t;
+    const image = getImage(item, renderer);
+    let x = item.x || 0;
+    let y = item.y || 0;
+    let w = imageWidth(item, image);
+    let h = imageHeight(item, image);
+    let opacity;
+    let ar0;
+    let ar1;
+    let t;
 
     x -= imageXOffset(item.align, w);
     y -= imageYOffset(item.baseline, h);
@@ -115,15 +124,15 @@ function draw(context, scene, bounds) {
 }
 
 export default {
-  type:     'image',
-  tag:      'image',
-  nested:   false,
-  attr:     attr,
-  bound:    bound,
-  draw:     draw,
-  pick:     pick(),
-  isect:    truthy, // bounds check is sufficient
-  get:      getImage,
-  xOffset:  imageXOffset,
-  yOffset:  imageYOffset
+  type: 'image',
+  tag: 'image',
+  nested: false,
+  attr: attr,
+  bound: bound,
+  draw: draw,
+  pick: pick(),
+  isect: truthy, // bounds check is sufficient
+  get: getImage,
+  xOffset: imageXOffset,
+  yOffset: imageYOffset
 };

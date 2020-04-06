@@ -1,23 +1,28 @@
 import parseExpression from './expression';
 import {operator} from '../util';
 
-export default function(spec, scope, name) {
-  var remove = spec.remove,
-      insert = spec.insert,
-      toggle = spec.toggle,
-      modify = spec.modify,
-      values = spec.values,
-      op = scope.add(operator()),
-      update, expr;
+export default function (spec, scope, name) {
+  const remove = spec.remove;
+  const insert = spec.insert;
+  const toggle = spec.toggle;
+  const modify = spec.modify;
+  const values = spec.values;
+  const op = scope.add(operator());
 
-  update = 'if(' + spec.trigger + ',modify("'
-    + name + '",'
-    + [insert, remove, toggle, modify, values]
-        .map(function(_) { return _ == null ? 'null' : _; })
-        .join(',')
-    + '),0)';
+  const update =
+    'if(' +
+    spec.trigger +
+    ',modify("' +
+    name +
+    '",' +
+    [insert, remove, toggle, modify, values]
+      .map(function (_) {
+        return _ == null ? 'null' : _;
+      })
+      .join(',') +
+    '),0)';
 
-  expr = parseExpression(update, scope);
+  const expr = parseExpression(update, scope);
   op.update = expr.$expr;
   op.params = expr.$params;
 }

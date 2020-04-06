@@ -1,17 +1,17 @@
-var defaultFont = 'sans-serif',
-    defaultSymbolSize = 30,
-    defaultStrokeWidth = 2,
-    defaultColor = '#4c78a8',
-    black = '#000',
-    gray = '#888',
-    lightGray = '#ddd';
+const defaultFont = 'sans-serif';
+const defaultSymbolSize = 30;
+const defaultStrokeWidth = 2;
+const defaultColor = '#4c78a8';
+const black = '#000';
+const gray = '#888';
+const lightGray = '#ddd';
 
 /**
  * Standard configuration defaults for Vega specification parsing.
  * Users can provide their own (sub-)set of these default values
  * by passing in a config object to the top-level parse method.
  */
-export default function() {
+export default function () {
   return {
     // default visualization description
     description: 'Vega visualization',
@@ -41,17 +41,17 @@ export default function() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
+    arc: {fill: defaultColor},
+    area: {fill: defaultColor},
     image: null,
     line: {
       stroke: defaultColor,
       strokeWidth: defaultStrokeWidth
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: {stroke: defaultColor},
+    rect: {fill: defaultColor},
+    rule: {stroke: black},
+    shape: {stroke: defaultColor},
     symbol: {
       fill: defaultColor,
       size: 64
@@ -191,8 +191,8 @@ export default function() {
       layout: {
         offset: 18,
         direction: 'horizontal',
-        left:   { direction: 'vertical' },
-        right:  { direction: 'vertical' }
+        left: {direction: 'vertical'},
+        right: {direction: 'vertical'}
       }
     },
 

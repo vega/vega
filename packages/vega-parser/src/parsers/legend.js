@@ -1,7 +1,4 @@
-import {
-  GuideLabelStyle, Skip,
-  Symbols, Gradient, Discrete, LegendScales
-} from './guides/constants';
+import {GuideLabelStyle, Skip, Symbols, Gradient, Discrete, LegendScales} from './guides/constants';
 import legendGradient from './guides/legend-gradient';
 import legendGradientDiscrete from './guides/legend-gradient-discrete';
 import legendGradientLabels from './guides/legend-gradient-labels';
@@ -19,51 +16,58 @@ import {Collect, LegendEntries} from '../transforms';
 import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
-export default function(spec, scope) {
-  var config = scope.config.legend,
-      encode = spec.encode || {},
-      legendEncode = encode.legend || {},
-      name = legendEncode.name || undefined,
-      interactive = legendEncode.interactive,
-      style = legendEncode.style,
-      _ = lookup(spec, config),
-      entryEncode, entryLayout, params, children,
-      type, datum, dataRef, entryRef, group;
+export default function (spec, scope) {
+  const config = scope.config.legend;
+  const encode = spec.encode || {};
+  let legendEncode = encode.legend || {};
+  const name = legendEncode.name || undefined;
+  const interactive = legendEncode.interactive;
+  const style = legendEncode.style;
+  const _ = lookup(spec, config);
+  let entryLayout;
+  let params;
+  let children;
 
   // resolve 'canonical' scale name
-  var scale = LegendScales.reduce(function(a, b) { return a || spec[b]; }, 0);
+  const scale = LegendScales.reduce(function (a, b) {
+    return a || spec[b];
+  }, 0);
   if (!scale) error('Missing valid scale for legend.');
 
   // resolve legend type (symbol, gradient, or discrete gradient)
-  type = legendType(spec, scope.scaleType(scale));
+  const type = legendType(spec, scope.scaleType(scale));
 
   // single-element data source for legend group
-  datum = {
-    title:  spec.title != null,
-    type:   type,
-    vgrad:  type !== 'symbol' &&  _.isVertical()
+  const datum = {
+    title: spec.title != null,
+    type: type,
+    vgrad: type !== 'symbol' && _.isVertical()
   };
-  dataRef = ref(scope.add(Collect(null, [datum])));
+  const dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend group
-  legendEncode = extendEncode(
-    buildLegendEncode(_, config), legendEncode, Skip
-  );
+  legendEncode = extendEncode(buildLegendEncode(_, config), legendEncode, Skip);
 
   // encoding properties for legend entry sub-group
-  entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
+  const entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
 
   // data source for legend values
-  entryRef = ref(scope.add(LegendEntries(params = {
-    type:    type,
-    scale:   scope.scaleRef(scale),
-    count:   scope.objectProperty(_('tickCount')),
-    limit:   scope.property(_('symbolLimit')),
-    values:  scope.objectProperty(spec.values),
-    minstep: scope.property(spec.tickMinStep),
-    formatType: scope.property(spec.formatType),
-    formatSpecifier: scope.property(spec.format)
-  })));
+  const entryRef = ref(
+    scope.add(
+      LegendEntries(
+        (params = {
+          type: type,
+          scale: scope.scaleRef(scale),
+          count: scope.objectProperty(_('tickCount')),
+          limit: scope.property(_('symbolLimit')),
+          values: scope.objectProperty(spec.values),
+          minstep: scope.property(spec.tickMinStep),
+          formatType: scope.property(spec.formatType),
+          formatSpecifier: scope.property(spec.format)
+        })
+      )
+    )
+  );
 
   // continuous gradient legend
   if (type === Gradient) {
@@ -72,9 +76,7 @@ export default function(spec, scope) {
       legendGradientLabels(spec, config, encode.labels, entryRef)
     ];
     // adjust default tick count based on the gradient length
-    params.count = params.count || scope.signalRef(
-      `max(2,2*floor((${deref(_.gradientLength())})/100))`
-    );
+    params.count = params.count || scope.signalRef(`max(2,2*floor((${deref(_.gradientLength())})/100))`);
   }
 
   // discrete gradient legend
@@ -89,18 +91,13 @@ export default function(spec, scope) {
   else {
     // determine legend symbol group layout
     entryLayout = legendSymbolLayout(spec, config);
-    children = [
-      legendSymbolGroups(spec, config, encode, entryRef, deref(entryLayout.columns))
-    ];
+    children = [legendSymbolGroups(spec, config, encode, entryRef, deref(entryLayout.columns))];
     // pass symbol size information to legend entry generator
     params.size = sizeExpression(spec, scope, children[0].marks);
   }
 
   // generate legend marks
-  children = [
-    guideGroup(LegendEntryRole, null, null, dataRef, interactive,
-               entryEncode, children, entryLayout)
-  ];
+  children = [guideGroup(LegendEntryRole, null, null, dataRef, interactive, entryEncode, children, entryLayout)];
 
   // include legend title if defined
   if (datum.title) {
@@ -108,7 +105,7 @@ export default function(spec, scope) {
   }
 
   // build legend specification
-  group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
+  const group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse legend specification
@@ -116,60 +113,51 @@ export default function(spec, scope) {
 }
 
 function legendType(spec, scaleType) {
-  var type = spec.type || Symbols;
+  let type = spec.type || Symbols;
 
   if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
-    type = isContinuous(scaleType) ? Gradient
-      : isDiscretizing(scaleType) ? Discrete
-      : Symbols;
+    type = isContinuous(scaleType) ? Gradient : isDiscretizing(scaleType) ? Discrete : Symbols;
   }
 
-  return type !== Gradient ? type
-    : isDiscretizing(scaleType) ? Discrete
-    : Gradient;
+  return type !== Gradient ? type : isDiscretizing(scaleType) ? Discrete : Gradient;
 }
 
 function scaleCount(spec) {
-  return LegendScales.reduce(function(count, type) {
+  return LegendScales.reduce(function (count, type) {
     return count + (spec[type] ? 1 : 0);
   }, 0);
 }
 
 function buildLegendEncode(_, config) {
-  var encode = {enter: {}, update: {}};
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    orient:       _('orient'),
-    offset:       _('offset'),
-    padding:      _('padding'),
+    orient: _('orient'),
+    offset: _('offset'),
+    padding: _('padding'),
     titlePadding: _('titlePadding'),
     cornerRadius: _('cornerRadius'),
-    fill:         _('fillColor'),
-    stroke:       _('strokeColor'),
-    strokeWidth:  config.strokeWidth,
-    strokeDash:   config.strokeDash,
-    x:            _('legendX'),
-    y:            _('legendY'),
+    fill: _('fillColor'),
+    stroke: _('strokeColor'),
+    strokeWidth: config.strokeWidth,
+    strokeDash: config.strokeDash,
+    x: _('legendX'),
+    y: _('legendY')
   });
 
   return encode;
 }
 
 function sizeExpression(spec, scope, marks) {
-  var size = deref(getChannel('size', spec, marks)),
-      strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
-      fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
+  const size = deref(getChannel('size', spec, marks));
+  const strokeWidth = deref(getChannel('strokeWidth', spec, marks));
+  const fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
-  return parseExpression(
-    `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
-    scope
-  );
+  return parseExpression(`max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`, scope);
 }
 
 function getChannel(name, spec, marks) {
-  return spec[name]
-    ? `scale("${spec[name]}",datum)`
-    : getEncoding(name, marks[0].encode);
+  return spec[name] ? `scale("${spec[name]}",datum)` : getEncoding(name, marks[0].encode);
 }
 
 function getFontSize(encode, scope, style) {

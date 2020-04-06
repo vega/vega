@@ -1,19 +1,67 @@
 import {
-  allOf, anyOf, oneOf, ref, array, def, object, pattern, required,
-  type, booleanType, nullType, numberType, stringType, textType,
-  signalRef, numberValue, enums
+  allOf,
+  anyOf,
+  oneOf,
+  ref,
+  array,
+  def,
+  object,
+  pattern,
+  required,
+  type,
+  booleanType,
+  nullType,
+  numberType,
+  stringType,
+  textType,
+  signalRef,
+  numberValue,
+  enums
 } from './util';
 
 export const blendEnum = [
-  null, 'multiply', 'screen', 'overlay', 'darken', 'lighten',
-  'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference',
-  'exclusion', 'hue', 'saturation', 'color', 'luminosity'
+  null,
+  'multiply',
+  'screen',
+  'overlay',
+  'darken',
+  'lighten',
+  'color-dodge',
+  'color-burn',
+  'hard-light',
+  'soft-light',
+  'difference',
+  'exclusion',
+  'hue',
+  'saturation',
+  'color',
+  'luminosity'
 ];
 
 export const fontWeightEnum = [
-  null, 'normal', 'bold', 'lighter', 'bolder',
-  '100', '200', '300', '400', '500', '600', '700', '800', '900',
-  100, 200, 300, 400, 500, 600, 700, 800, 900
+  null,
+  'normal',
+  'bold',
+  'lighter',
+  'bolder',
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  100,
+  200,
+  300,
+  400,
+  500,
+  600,
+  700,
+  800,
+  900
 ];
 
 export const alignEnum = ['left', 'right', 'center'];
@@ -25,14 +73,12 @@ export const strokeCapEnum = ['butt', 'round', 'square'];
 export const strokeJoinEnum = ['miter', 'round', 'bevel'];
 
 export function baseValueSchema(type, nullable) {
-  type = Array.isArray(type) ? {enum: type}
-    : type && type.oneOf ? type
-    : {type: type};
+  type = Array.isArray(type) ? {enum: type} : type && type.oneOf ? type : {type: type};
 
-  var modType = type.type === 'number' ? 'number' : 'string',
-      valueType = nullable ? oneOf(type, nullType) : type;
+  const modType = type.type === 'number' ? 'number' : 'string';
+  const valueType = nullable ? oneOf(type, nullType) : type;
 
-  var valueRef = allOf(
+  const valueRef = allOf(
     ref(modType + 'Modifiers'),
     anyOf(
       oneOf(
@@ -51,17 +97,17 @@ export function baseValueSchema(type, nullable) {
 }
 
 export function valueSchema(type, nullable) {
-  var valueRef = baseValueSchema(type, nullable);
-  return oneOf(
-    array(allOf(ruleRef, valueRef)),
-    valueRef
-  );
+  const valueRef = baseValueSchema(type, nullable);
+  return oneOf(array(allOf(ruleRef, valueRef)), valueRef);
 }
 
 const ruleRef = def('rule');
-const rule = object({
-  test: stringType
-}, undefined);
+const rule = object(
+  {
+    test: stringType
+  },
+  undefined
+);
 
 const fieldRef = ref('field');
 const field = oneOf(
@@ -75,19 +121,25 @@ const field = oneOf(
 const scaleRef = ref('scale');
 const scale = fieldRef;
 
-const stringModifiers = object({
-  scale: scaleRef
-}, undefined);
+const stringModifiers = object(
+  {
+    scale: scaleRef
+  },
+  undefined
+);
 
-const numberModifiers = object({
-  exponent: numberValue,
-  mult: numberValue,
-  offset: numberValue,
-  round: type('boolean', {default: false}),
-  scale: scaleRef,
-  band: oneOf(numberType, booleanType),
-  extra: booleanType
-}, undefined);
+const numberModifiers = object(
+  {
+    exponent: numberValue,
+    mult: numberValue,
+    offset: numberValue,
+    round: type('boolean', {default: false}),
+    scale: scaleRef,
+    band: oneOf(numberType, booleanType),
+    extra: booleanType
+  },
+  undefined
+);
 
 // defined below
 const anyValueRef = ref('anyValue');
@@ -98,29 +150,41 @@ const numberValueRef = ref('numberValue');
 const stringValueRef = ref('stringValue');
 const textValueRef = ref('textValue');
 
-const colorRGB = object({
-  _r_: numberValueRef,
-  _g_: numberValueRef,
-  _b_: numberValueRef
-}, undefined);
+const colorRGB = object(
+  {
+    _r_: numberValueRef,
+    _g_: numberValueRef,
+    _b_: numberValueRef
+  },
+  undefined
+);
 
-const colorHSL = object({
-  _h_: numberValueRef,
-  _s_: numberValueRef,
-  _l_: numberValueRef
-}, undefined);
+const colorHSL = object(
+  {
+    _h_: numberValueRef,
+    _s_: numberValueRef,
+    _l_: numberValueRef
+  },
+  undefined
+);
 
-const colorLAB = object({
-  _l_: numberValueRef,
-  _a_: numberValueRef,
-  _b_: numberValueRef
-}, undefined);
+const colorLAB = object(
+  {
+    _l_: numberValueRef,
+    _a_: numberValueRef,
+    _b_: numberValueRef
+  },
+  undefined
+);
 
-const colorHCL = object({
-  _h_: numberValueRef,
-  _c_: numberValueRef,
-  _l_: numberValueRef
-}, undefined);
+const colorHCL = object(
+  {
+    _h_: numberValueRef,
+    _c_: numberValueRef,
+    _l_: numberValueRef
+  },
+  undefined
+);
 
 const gradientStops = array(
   object({
@@ -158,111 +222,106 @@ const baseColorValue = oneOf(
   object({
     _gradient_: scaleRef,
     start: array(numberType, {minItems: 2, maxItems: 2}),
-    stop:  array(numberType, {minItems: 2, maxItems: 2}),
+    stop: array(numberType, {minItems: 2, maxItems: 2}),
     count: numberType
   }),
   object({
-    _color_: oneOf(
-      ref('colorRGB'),
-      ref('colorHSL'),
-      ref('colorLAB'),
-      ref('colorHCL')
-    )
+    _color_: oneOf(ref('colorRGB'), ref('colorHSL'), ref('colorLAB'), ref('colorHCL'))
   })
 );
 
-const colorValue = oneOf(
-  array(allOf(ruleRef, ref('baseColorValue'))),
-  ref('baseColorValue')
-);
+const colorValue = oneOf(array(allOf(ruleRef, ref('baseColorValue'))), ref('baseColorValue'));
 
 const encodeEntryRef = def('encodeEntry');
-const encodeEntry = object({
-  // Common Properties
-  x: numberValueRef,
-  x2: numberValueRef,
-  xc: numberValueRef,
-  width: numberValueRef,
-  y: numberValueRef,
-  y2: numberValueRef,
-  yc: numberValueRef,
-  height: numberValueRef,
-  opacity: numberValueRef,
-  fill: colorValueRef,
-  fillOpacity: numberValueRef,
-  stroke: colorValueRef,
-  strokeOpacity: numberValueRef,
-  strokeWidth: numberValueRef,
-  strokeCap: ref('strokeCapValue'),
-  strokeDash: arrayValueRef,
-  strokeDashOffset: numberValueRef,
-  strokeJoin: ref('strokeJoinValue'),
-  strokeMiterLimit: numberValueRef,
-  blend: ref('blendValue'),
-  cursor: stringValueRef,
-  tooltip: anyValueRef,
-  zindex: numberValueRef,
+const encodeEntry = object(
+  {
+    // Common Properties
+    x: numberValueRef,
+    x2: numberValueRef,
+    xc: numberValueRef,
+    width: numberValueRef,
+    y: numberValueRef,
+    y2: numberValueRef,
+    yc: numberValueRef,
+    height: numberValueRef,
+    opacity: numberValueRef,
+    fill: colorValueRef,
+    fillOpacity: numberValueRef,
+    stroke: colorValueRef,
+    strokeOpacity: numberValueRef,
+    strokeWidth: numberValueRef,
+    strokeCap: ref('strokeCapValue'),
+    strokeDash: arrayValueRef,
+    strokeDashOffset: numberValueRef,
+    strokeJoin: ref('strokeJoinValue'),
+    strokeMiterLimit: numberValueRef,
+    blend: ref('blendValue'),
+    cursor: stringValueRef,
+    tooltip: anyValueRef,
+    zindex: numberValueRef,
 
-  // Group-mark properties
-  clip: booleanValueRef,
-  strokeForeground: booleanValueRef,
-  strokeOffset: numberValueRef,
+    // Group-mark properties
+    clip: booleanValueRef,
+    strokeForeground: booleanValueRef,
+    strokeOffset: numberValueRef,
 
-  // Rect-mark properties
-  cornerRadius: numberValueRef,
-  cornerRadiusTopLeft: numberValueRef,
-  cornerRadiusTopRight: numberValueRef,
-  cornerRadiusBottomRight: numberValueRef,
-  cornerRadiusBottomLeft: numberValueRef,
+    // Rect-mark properties
+    cornerRadius: numberValueRef,
+    cornerRadiusTopLeft: numberValueRef,
+    cornerRadiusTopRight: numberValueRef,
+    cornerRadiusBottomRight: numberValueRef,
+    cornerRadiusBottomLeft: numberValueRef,
 
-  // Symbol-, Path- and text-mark properties
-  angle: numberValueRef,
+    // Symbol-, Path- and text-mark properties
+    angle: numberValueRef,
 
-  // Symbol-mark properties
-  size: numberValueRef,
-  shape: stringValueRef,
+    // Symbol-mark properties
+    size: numberValueRef,
+    shape: stringValueRef,
 
-  // Path-mark properties
-  path: stringValueRef,
-  scaleX: numberValueRef,
-  scaleY: numberValueRef,
+    // Path-mark properties
+    path: stringValueRef,
+    scaleX: numberValueRef,
+    scaleY: numberValueRef,
 
-  // Arc-mark properties
-  innerRadius: numberValueRef,
-  outerRadius: numberValueRef,
-  startAngle: numberValueRef,
-  endAngle: numberValueRef,
-  padAngle: numberValueRef,
+    // Arc-mark properties
+    innerRadius: numberValueRef,
+    outerRadius: numberValueRef,
+    startAngle: numberValueRef,
+    endAngle: numberValueRef,
+    padAngle: numberValueRef,
 
-  // Area- and line-mark properties
-  interpolate: stringValueRef,
-  tension: numberValueRef,
-  orient: ref('directionValue'),
-  defined: booleanValueRef,
+    // Area- and line-mark properties
+    interpolate: stringValueRef,
+    tension: numberValueRef,
+    orient: ref('directionValue'),
+    defined: booleanValueRef,
 
-  // Image-mark properties
-  url: stringValueRef,
-  align: ref('alignValue'),
-  baseline: ref('baselineValue'),
-  aspect: booleanValueRef,
-  smooth: booleanValueRef,
+    // Image-mark properties
+    url: stringValueRef,
+    align: ref('alignValue'),
+    baseline: ref('baselineValue'),
+    aspect: booleanValueRef,
+    smooth: booleanValueRef,
 
-  // Text-mark properties
-  text: textValueRef,
-  dir: stringValueRef,
-  ellipsis: stringValueRef,
-  limit: numberValueRef,
-  lineBreak: stringValueRef,
-  lineHeight: numberValueRef,
-  dx: numberValueRef,
-  dy: numberValueRef,
-  radius:numberValueRef,
-  theta: numberValueRef,
-  font: stringValueRef,
-  fontSize: numberValueRef,
-  fontWeight: ref('fontWeightValue'),
-  fontStyle: stringValueRef
-}, true);
+    // Text-mark properties
+    text: textValueRef,
+    dir: stringValueRef,
+    ellipsis: stringValueRef,
+    limit: numberValueRef,
+    lineBreak: stringValueRef,
+    lineHeight: numberValueRef,
+    dx: numberValueRef,
+    dy: numberValueRef,
+    radius: numberValueRef,
+    theta: numberValueRef,
+    font: stringValueRef,
+    fontSize: numberValueRef,
+    fontWeight: ref('fontWeightValue'),
+    fontStyle: stringValueRef
+  },
+  true
+);
 
 const encode = pattern({
   '^.+$': encodeEntryRef

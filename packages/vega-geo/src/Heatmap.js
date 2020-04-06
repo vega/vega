@@ -2,10 +2,7 @@ import {max} from 'd3-array';
 import {rgb} from 'd3-color';
 import {canvas} from 'vega-canvas';
 import {Transform} from 'vega-dataflow';
-import {
-  accessorFields, constant, extend, identity,
-  inherits, isFunction, toSet, zero
-} from 'vega-util';
+import {accessorFields, constant, extend, identity, inherits, isFunction, toSet, zero} from 'vega-util';
 
 /**
  * Render a heatmap image for input raster grid data.
@@ -31,34 +28,36 @@ export default function Heatmap(params) {
 }
 
 Heatmap.Definition = {
-  "type": "heatmap",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "color", "type": "string", "expr": true},
-    { "name": "opacity", "type": "number", "expr": true},
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "as", "type": "string", "default": "image" }
+  type: 'heatmap',
+  metadata: {modifies: true},
+  params: [
+    {name: 'field', type: 'field'},
+    {name: 'color', type: 'string', expr: true},
+    {name: 'opacity', type: 'number', expr: true},
+    {name: 'resolve', type: 'enum', values: ['shared', 'independent'], default: 'independent'},
+    {name: 'as', type: 'string', default: 'image'}
   ]
 };
 
-var prototype = inherits(Heatmap, Transform);
+const prototype = inherits(Heatmap, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (!pulse.changed() && !_.modified()) {
     return pulse.StopPropagation;
   }
 
-  var source = pulse.materialize(pulse.SOURCE).source,
-      shared = _.resolve === 'shared',
-      field = _.field || identity,
-      opacity = opacity_(_.opacity, _),
-      color = color_(_.color, _),
-      as = _.as || 'image',
-      obj = {
-        $x: 0, $y: 0, $value: 0,
-        $max: shared ? max(source.map(t => max(field(t).values))) : 0
-      };
+  const source = pulse.materialize(pulse.SOURCE).source;
+  const shared = _.resolve === 'shared';
+  const field = _.field || identity;
+  const opacity = opacity_(_.opacity, _);
+  const color = color_(_.color, _);
+  const as = _.as || 'image';
+  const obj = {
+    $x: 0,
+    $y: 0,
+    $value: 0,
+    $max: shared ? max(source.map(t => max(field(t).values))) : 0
+  };
 
   source.forEach(t => {
     const v = field(t);
@@ -70,10 +69,7 @@ prototype.transform = function(_, pulse) {
 
     // generate canvas image
     // optimize color/opacity if not pixel-dependent
-    t[as] = toCanvas(v, o,
-      color.dep ? color : constant(color(o)),
-      opacity.dep ? opacity : constant(opacity(o))
-    );
+    t[as] = toCanvas(v, o, color.dep ? color : constant(color(o)), opacity.dep ? opacity : constant(opacity(o)));
   });
 
   return pulse.reflow(true).modifies(as);
@@ -102,7 +98,7 @@ function opacity_(opacity, _) {
     f = constant(opacity);
   } else {
     // default to [0, max] opacity gradient
-    f = obj => (obj.$value / obj.$max) || 0;
+    f = obj => obj.$value / obj.$max || 0;
     f.dep = true;
   }
   return f;
@@ -117,30 +113,30 @@ function dependency(f) {
 
 // render raster grid to canvas
 function toCanvas(grid, obj, color, opacity) {
-  const n = grid.width,
-        m = grid.height,
-        x1 = grid.x1 || 0,
-        y1 = grid.y1 || 0,
-        x2 = grid.x2 || n,
-        y2 = grid.y2 || m,
-        val = grid.values,
-        value = val ? i => val[i] : zero,
-        can = canvas(x2 - x1, y2 - y1),
-        ctx = can.getContext('2d'),
-        img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
-        pix = img.data;
+  const n = grid.width;
+  const m = grid.height;
+  const x1 = grid.x1 || 0;
+  const y1 = grid.y1 || 0;
+  const x2 = grid.x2 || n;
+  const y2 = grid.y2 || m;
+  const val = grid.values;
+  const value = val ? i => val[i] : zero;
+  const can = canvas(x2 - x1, y2 - y1);
+  const ctx = can.getContext('2d');
+  const img = ctx.getImageData(0, 0, x2 - x1, y2 - y1);
+  const pix = img.data;
 
-  for (let j=y1, k=0; j<y2; ++j) {
+  for (let j = y1, k = 0; j < y2; ++j) {
     obj.$y = j - y1;
-    for (let i=x1, r=j*n; i<x2; ++i, k+=4) {
+    for (let i = x1, r = j * n; i < x2; ++i, k += 4) {
       obj.$x = i - x1;
       obj.$value = value(i + r);
 
       const v = color(obj);
-      pix[k+0] = v.r;
-      pix[k+1] = v.g;
-      pix[k+2] = v.b;
-      pix[k+3] = ~~(255 * opacity(obj));
+      pix[k + 0] = v.r;
+      pix[k + 1] = v.g;
+      pix[k + 2] = v.b;
+      pix[k + 3] = ~~(255 * opacity(obj));
     }
   }
 

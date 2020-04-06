@@ -4,10 +4,22 @@ import invertRangeExtent from './scales/invertRangeExtent';
 
 import {
   Identity,
-  Linear, Log, Pow, Sqrt, Symlog,
-  Time, UTC, Sequential, Diverging,
-  Quantile, Quantize, Threshold,
-  BinOrdinal, Ordinal, Band, Point,
+  Linear,
+  Log,
+  Pow,
+  Sqrt,
+  Symlog,
+  Time,
+  UTC,
+  Sequential,
+  Diverging,
+  Quantile,
+  Quantize,
+  Threshold,
+  BinOrdinal,
+  Ordinal,
+  Band,
+  Point,
   Continuous as C,
   Discrete as D,
   Discretizing as Z,
@@ -15,14 +27,9 @@ import {
   Temporal as T
 } from './scales/types';
 
-import {
-  band as scaleBand,
-  point as scalePoint
-} from './scales/scaleBand';
+import {band as scaleBand, point as scalePoint} from './scales/scaleBand';
 
-import {
-  scaleBinOrdinal
-} from './scales/scaleBinOrdinal';
+import {scaleBinOrdinal} from './scales/scaleBinOrdinal';
 
 import * as $ from 'd3-scale';
 
@@ -34,12 +41,10 @@ const scales = {};
  */
 function create(type, constructor, metadata) {
   const ctr = function scale() {
-    var s = constructor();
+    const s = constructor();
 
     if (!s.invertRange) {
-      s.invertRange = s.invert ? invertRange(s)
-        : s.invertExtent ? invertRangeExtent(s)
-        : undefined;
+      s.invertRange = s.invert ? invertRange(s) : s.invertExtent ? invertRangeExtent(s) : undefined;
     }
 
     s.type = type;

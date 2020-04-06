@@ -12,16 +12,16 @@ import text from './text';
 import trail from './trail';
 
 export default {
-  arc:     arc,
-  area:    area,
-  group:   group,
-  image:   image,
-  line:    line,
-  path:    path,
-  rect:    rect,
-  rule:    rule,
-  shape:   shape,
-  symbol:  symbol,
-  text:    text,
-  trail:   trail
+  arc: arc,
+  area: area,
+  group: group,
+  image: image,
+  line: line,
+  path: path,
+  rect: rect,
+  rule: rule,
+  shape: shape,
+  symbol: symbol,
+  text: text,
+  trail: trail
 };

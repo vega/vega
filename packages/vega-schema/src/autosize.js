@@ -1,17 +1,8 @@
 import {enums, object, oneOf, booleanType, signalRef} from './util';
 
-const autosizeEnum = [
-  'pad',
-  'fit',
-  'fit-x',
-  'fit-y',
-  'none'
-];
+const autosizeEnum = ['pad', 'fit', 'fit-x', 'fit-y', 'none'];
 
-const containsEnum = [
-  'content',
-  'padding'
-];
+const containsEnum = ['content', 'padding'];
 
 const autosizeType = enums(autosizeEnum, {default: 'pad'});
 

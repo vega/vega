@@ -2,28 +2,32 @@ import {Top, Bottom, Left, Right, Start, End, Group} from '../constants';
 import {set, tempBounds} from './util';
 
 export function titleLayout(view, mark, width, height, viewBounds) {
-  var group = mark.items[0],
-      frame = group.frame,
-      orient = group.orient,
-      anchor = group.anchor,
-      offset = group.offset,
-      padding = group.padding,
-      title = group.items[0].items[0],
-      subtitle = group.items[1] && group.items[1].items[0],
-      end = (orient === Left || orient === Right) ? height : width,
-      start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
+  const group = mark.items[0];
+  const frame = group.frame;
+  const orient = group.orient;
+  const anchor = group.anchor;
+  const offset = group.offset;
+  const padding = group.padding;
+  const title = group.items[0].items[0];
+  const subtitle = group.items[1] && group.items[1].items[0];
+  let end = orient === Left || orient === Right ? height : width;
+  let start = 0;
+  let x = 0;
+  let y = 0;
+  let sx = 0;
+  let sy = 0;
 
   if (frame !== Group) {
-    orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
-      : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
-      : (start = viewBounds.x1, end = viewBounds.x2);
+    orient === Left
+      ? ((start = viewBounds.y2), (end = viewBounds.y1))
+      : orient === Right
+      ? ((start = viewBounds.y1), (end = viewBounds.y2))
+      : ((start = viewBounds.x1), (end = viewBounds.x2));
   } else if (orient === Left) {
-    start = height, end = 0;
+    (start = height), (end = 0);
   }
 
-  pos = (anchor === Start) ? start
-    : (anchor === End) ? end
-    : (start + end) / 2;
+  const pos = anchor === Start ? start : anchor === End ? end : (start + end) / 2;
 
   if (subtitle && subtitle.text) {
     // position subtitle

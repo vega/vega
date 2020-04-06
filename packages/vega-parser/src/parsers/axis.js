@@ -13,54 +13,62 @@ import {Skip} from './guides/constants';
 import {ref, value} from '../util';
 import {Collect, AxisTicks} from '../transforms';
 
-export default function(spec, scope) {
-  var config = axisConfig(spec, scope),
-      encode = spec.encode || {},
-      axisEncode = encode.axis || {},
-      name = axisEncode.name || undefined,
-      interactive = axisEncode.interactive,
-      style = axisEncode.style,
-      _ = lookup(spec, config),
-      band = tickBand(_),
-      datum, dataRef, ticksRef, size, group, children;
+export default function (spec, scope) {
+  const config = axisConfig(spec, scope);
+  const encode = spec.encode || {};
+  let axisEncode = encode.axis || {};
+  const name = axisEncode.name || undefined;
+  const interactive = axisEncode.interactive;
+  const style = axisEncode.style;
+  const _ = lookup(spec, config);
+  const band = tickBand(_);
+  let size;
 
   // single-element data source for axis group
-  datum = {
+  const datum = {
     orient: spec.orient,
-    ticks:  !!_('ticks'),
+    ticks: !!_('ticks'),
     labels: !!_('labels'),
-    grid:   !!_('grid'),
+    grid: !!_('grid'),
     domain: !!_('domain'),
-    title:  spec.title != null,
+    title: spec.title != null,
     translate: _('translate')
   };
-  dataRef = ref(scope.add(Collect({}, [datum])));
+  const dataRef = ref(scope.add(Collect({}, [datum])));
 
   // encoding properties for axis group item
-  axisEncode = extendEncode({
-    update: {
-      offset:       encoder(_('offset') || 0),
-      position:     encoder(value(spec.position, 0)),
-      titlePadding: encoder(_('titlePadding')),
-      minExtent:    encoder(_('minExtent')),
-      maxExtent:    encoder(_('maxExtent')),
-      range:        {signal: `abs(span(range("${spec.scale}")))`}
-    }
-  }, encode.axis, Skip);
+  axisEncode = extendEncode(
+    {
+      update: {
+        offset: encoder(_('offset') || 0),
+        position: encoder(value(spec.position, 0)),
+        titlePadding: encoder(_('titlePadding')),
+        minExtent: encoder(_('minExtent')),
+        maxExtent: encoder(_('maxExtent')),
+        range: {signal: `abs(span(range("${spec.scale}")))`}
+      }
+    },
+    encode.axis,
+    Skip
+  );
 
   // data source for axis ticks
-  ticksRef = ref(scope.add(AxisTicks({
-    scale:   scope.scaleRef(spec.scale),
-    extra:   scope.property(band.extra),
-    count:   scope.objectProperty(spec.tickCount),
-    values:  scope.objectProperty(spec.values),
-    minstep: scope.property(spec.tickMinStep),
-    formatType: scope.property(spec.formatType),
-    formatSpecifier: scope.property(spec.format)
-  })));
+  const ticksRef = ref(
+    scope.add(
+      AxisTicks({
+        scale: scope.scaleRef(spec.scale),
+        extra: scope.property(band.extra),
+        count: scope.objectProperty(spec.tickCount),
+        values: scope.objectProperty(spec.values),
+        minstep: scope.property(spec.tickMinStep),
+        formatType: scope.property(spec.formatType),
+        formatSpecifier: scope.property(spec.format)
+      })
+    )
+  );
 
   // generate axis marks
-  children = [];
+  const children = [];
 
   // include axis gridlines if requested
   if (datum.grid) {
@@ -90,7 +98,7 @@ export default function(spec, scope) {
   }
 
   // build axis specification
-  group = guideGroup(AxisRole, style, name, dataRef, interactive, axisEncode, children);
+  const group = guideGroup(AxisRole, style, name, dataRef, interactive, axisEncode, children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse axis specification

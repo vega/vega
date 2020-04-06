@@ -1,174 +1,192 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 800,
-  "height": 500,
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 800,
+  height: 500,
+  padding: 5,
 
-  "signals": [
+  signals: [
     {
-      "name": "sex", "value": "all",
-      "bind": {"input": "radio", "options": ["men", "women", "all"]}
+      name: 'sex',
+      value: 'all',
+      bind: { input: 'radio', options: ['men', 'women', 'all'] },
     },
     {
-      "name": "query", "value": "",
-      "on": [
-        {"events": "area:click!", "update": "datum.job"},
-        {"events": "dblclick!", "update": "''"}
+      name: 'query',
+      value: '',
+      on: [
+        { events: 'area:click!', update: 'datum.job' },
+        { events: 'dblclick!', update: "''" },
       ],
-      "bind": {"input": "text", "placeholder": "search", "autocomplete": "off"}
-    }
+      bind: { input: 'text', placeholder: 'search', autocomplete: 'off' },
+    },
   ],
 
-  "data": [
+  data: [
     {
-      "name": "jobs",
-      "url": "data/jobs.json",
-      "transform": [
+      name: 'jobs',
+      url: 'data/jobs.json',
+      transform: [
         {
-          "type": "filter",
-          "expr": "(sex === 'all' || datum.sex === sex) && (!query || test(regexp(query,'i'), datum.job))"
+          type: 'filter',
+          expr:
+            "(sex === 'all' || datum.sex === sex) && (!query || test(regexp(query,'i'), datum.job))",
         },
         {
-          "type": "stack",
-          "field": "perc",
-          "groupby": ["year"],
-          "sort": {
-            "field": ["job", "sex"],
-            "order": ["descending", "descending"]
-          }
-        }
-      ]
+          type: 'stack',
+          field: 'perc',
+          groupby: ['year'],
+          sort: {
+            field: ['job', 'sex'],
+            order: ['descending', 'descending'],
+          },
+        },
+      ],
     },
     {
-      "name": "series",
-      "source": "jobs",
-      "transform": [
+      name: 'series',
+      source: 'jobs',
+      transform: [
         {
-          "type": "aggregate",
-          "groupby": ["job", "sex"],
-          "fields": ["perc", "perc"],
-          "ops": ["sum", "argmax"],
-          "as": ["sum", "argmax"]
-        }
-      ]
-    }
+          type: 'aggregate',
+          groupby: ['job', 'sex'],
+          fields: ['perc', 'perc'],
+          ops: ['sum', 'argmax'],
+          as: ['sum', 'argmax'],
+        },
+      ],
+    },
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "x",
-      "type": "linear",
-      "range": "width",
-      "zero": false, "round": true,
-      "domain": {"data": "jobs", "field": "year"}
+      name: 'x',
+      type: 'linear',
+      range: 'width',
+      zero: false,
+      round: true,
+      domain: { data: 'jobs', field: 'year' },
     },
     {
-      "name": "y",
-      "type": "linear",
-      "range": "height", "round": true, "zero": true,
-      "domain": {"data": "jobs", "field": "y1"}
+      name: 'y',
+      type: 'linear',
+      range: 'height',
+      round: true,
+      zero: true,
+      domain: { data: 'jobs', field: 'y1' },
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "domain": ["men", "women"],
-      "range": ["#33f", "#f33"]
+      name: 'color',
+      type: 'ordinal',
+      domain: ['men', 'women'],
+      range: ['#33f', '#f33'],
     },
     {
-      "name": "alpha",
-      "type": "linear", "zero": true,
-      "domain": {"data": "series", "field": "sum"},
-      "range": [0.4, 0.8]
+      name: 'alpha',
+      type: 'linear',
+      zero: true,
+      domain: { data: 'series', field: 'sum' },
+      range: [0.4, 0.8],
     },
     {
-      "name": "font",
-      "type": "sqrt",
-      "range": [0, 20], "round": true, "zero": true,
-      "domain": {"data": "series", "field": "argmax.perc"}
+      name: 'font',
+      type: 'sqrt',
+      range: [0, 20],
+      round: true,
+      zero: true,
+      domain: { data: 'series', field: 'argmax.perc' },
     },
     {
-      "name": "opacity",
-      "type": "quantile",
-      "range": [0, 0, 0, 0, 0, 0.1, 0.2, 0.4, 0.7, 1.0],
-      "domain": {"data": "series", "field": "argmax.perc"}
+      name: 'opacity',
+      type: 'quantile',
+      range: [0, 0, 0, 0, 0, 0.1, 0.2, 0.4, 0.7, 1.0],
+      domain: { data: 'series', field: 'argmax.perc' },
     },
     {
-      "name": "align",
-      "type": "quantize",
-      "range": ["left", "center", "right"], "zero": false,
-      "domain": [1730, 2130]
+      name: 'align',
+      type: 'quantize',
+      range: ['left', 'center', 'right'],
+      zero: false,
+      domain: [1730, 2130],
     },
     {
-      "name": "offset",
-      "type": "quantize",
-      "range": [6, 0, -6], "zero": false,
-      "domain": [1730, 2130]
-    }
+      name: 'offset',
+      type: 'quantize',
+      range: [6, 0, -6],
+      zero: false,
+      domain: [1730, 2130],
+    },
   ],
 
-  "axes": [
+  axes: [
     {
-      "orient": "bottom", "scale": "x", "format": "d",
-      "tickCount": 15, "zindex": 1
+      orient: 'bottom',
+      scale: 'x',
+      format: 'd',
+      tickCount: 15,
+      zindex: 1,
     },
     {
-      "orient": "right", "scale": "y", "format": "%",
-      "grid": true, "domain": false, "tickSize": 12,
-      "gridColor": "#ccc",
-      "tickColor": "#ccc"
-    }
+      orient: 'right',
+      scale: 'y',
+      format: '%',
+      grid: true,
+      domain: false,
+      tickSize: 12,
+      gridColor: '#ccc',
+      tickColor: '#ccc',
+    },
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "group",
-      "from": {
-        "data": "series",
-        "facet": {
-          "name": "facet",
-          "data": "jobs",
-          "groupby": ["job", "sex"]
-        }
+      type: 'group',
+      from: {
+        data: 'series',
+        facet: {
+          name: 'facet',
+          data: 'jobs',
+          groupby: ['job', 'sex'],
+        },
       },
 
-      "marks": [
+      marks: [
         {
-          "type": "area",
-          "from": {"data": "facet"},
-          "encode": {
-            "update": {
-              "x": {"scale": "x", "field": "year"},
-              "y": {"scale": "y", "field": "y0"},
-              "y2": {"scale": "y", "field": "y1"},
-              "fill": {"scale": "color", "field": "sex"},
-              "fillOpacity": {"scale": "alpha", "field": {"parent": "sum"}}
+          type: 'area',
+          from: { data: 'facet' },
+          encode: {
+            update: {
+              x: { scale: 'x', field: 'year' },
+              y: { scale: 'y', field: 'y0' },
+              y2: { scale: 'y', field: 'y1' },
+              fill: { scale: 'color', field: 'sex' },
+              fillOpacity: { scale: 'alpha', field: { parent: 'sum' } },
             },
-            "hover": {
-              "fillOpacity": {"value": 0.2}
-            }
-          }
-        }
-      ]
+            hover: {
+              fillOpacity: { value: 0.2 },
+            },
+          },
+        },
+      ],
     },
     {
-      "type": "text",
-      "from": {"data": "series"},
-      "interactive": false,
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "argmax.year"},
-          "dx": {"scale": "offset", "field": "argmax.year"},
-          "y": {"signal": "scale('y', 0.5 * (datum.argmax.y0 + datum.argmax.y1))"},
-          "fill": {"value": "#000"},
-          "fillOpacity": {"scale": "opacity", "field": "argmax.perc"},
-          "fontSize": {"scale": "font", "field": "argmax.perc", "offset": 5},
-          "text": {"field": "job"},
-          "align": {"scale": "align", "field": "argmax.year"},
-          "baseline": {"value": "middle"}
-        }
-      }
-    }
-  ]
+      type: 'text',
+      from: { data: 'series' },
+      interactive: false,
+      encode: {
+        update: {
+          x: { scale: 'x', field: 'argmax.year' },
+          dx: { scale: 'offset', field: 'argmax.year' },
+          y: { signal: "scale('y', 0.5 * (datum.argmax.y0 + datum.argmax.y1))" },
+          fill: { value: '#000' },
+          fillOpacity: { scale: 'opacity', field: 'argmax.perc' },
+          fontSize: { scale: 'font', field: 'argmax.perc', offset: 5 },
+          text: { field: 'job' },
+          align: { scale: 'align', field: 'argmax.year' },
+          baseline: { value: 'middle' },
+        },
+      },
+    },
+  ],
 };

@@ -4,8 +4,12 @@ import rSquared from './r-squared';
 
 // Adapted from d3-regression by Harry Stevens
 // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE
-export default function(data, x, y) {
-  let X = 0, Y = 0, XY = 0, X2 = 0, n = 0;
+export default function (data, x, y) {
+  let X = 0;
+  let Y = 0;
+  let XY = 0;
+  let X2 = 0;
+  let n = 0;
 
   visitPoints(data, x, y, (dx, dy) => {
     ++n;
@@ -15,8 +19,8 @@ export default function(data, x, y) {
     X2 += (dx * dx - X2) / n;
   });
 
-  const coef = ols(X, Y, XY, X2),
-        predict = x => coef[0] + coef[1] * x;
+  const coef = ols(X, Y, XY, X2);
+  const predict = x => coef[0] + coef[1] * x;
 
   return {
     coef: coef,

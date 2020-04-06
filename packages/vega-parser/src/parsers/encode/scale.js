@@ -4,17 +4,20 @@ import property from './property';
 import {ScalePrefix} from 'vega-functions';
 import {hasOwnProperty, isString, stringValue} from 'vega-util';
 
-export default function(enc, value, scope, params, fields) {
-  var scale = getScale(enc.scale, scope, params, fields),
-      interp, func, flag;
+export default function (enc, value, scope, params, fields) {
+  const scale = getScale(enc.scale, scope, params, fields);
+  let interp;
+  let func;
+  let flag;
 
   if (enc.range != null) {
     // pull value from scale range
     interp = +enc.range;
     func = scale + '.range()';
-    value = (interp === 0) ? (func + '[0]')
-      : '($=' + func + ',' + ((interp === 1) ? '$[$.length-1]'
-      : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
+    value =
+      interp === 0
+        ? func + '[0]'
+        : '($=' + func + ',' + (interp === 1 ? '$[$.length-1]' : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
   } else {
     // run value through scale and/or pull scale bandwidth
     if (value !== undefined) value = scale + '(' + value + ')';
@@ -26,7 +29,7 @@ export default function(enc, value, scope, params, fields) {
         interp = func + '()*' + property(enc.band, scope, params, fields);
       } else {
         interp = +enc.band;
-        interp = func + '()' + (interp===1 ? '' : '*' + interp);
+        interp = func + '()' + (interp === 1 ? '' : '*' + interp);
       }
 
       // if we don't know the scale type, check for bandwidth
@@ -48,12 +51,12 @@ export default function(enc, value, scope, params, fields) {
 
 function hasBandwidth(name, scope) {
   if (!isString(name)) return -1;
-  var type = scope.scaleType(name);
+  const type = scope.scaleType(name);
   return type === 'band' || type === 'point' ? 1 : 0;
 }
 
 export function getScale(name, scope, params, fields) {
-  var scaleName;
+  let scaleName;
 
   if (isString(name)) {
     // direct scale lookup; add scale as parameter
@@ -67,10 +70,10 @@ export function getScale(name, scope, params, fields) {
     for (scaleName in scope.scales) {
       params[ScalePrefix + scaleName] = scope.scaleRef(scaleName);
     }
-    scaleName = stringValue(ScalePrefix) + '+'
-      + (name.signal
-        ? '(' + expression(name.signal, scope, params, fields) + ')'
-        : field(name, scope, params, fields));
+    scaleName =
+      stringValue(ScalePrefix) +
+      '+' +
+      (name.signal ? '(' + expression(name.signal, scope, params, fields) + ')' : field(name, scope, params, fields));
   }
 
   return '_[' + scaleName + ']';

@@ -1,12 +1,14 @@
 import expression from './expression';
 import {error, isString, isObject, splitAccessPath, stringValue} from 'vega-util';
 
-export default function(ref, scope, params, fields) {
+export default function (ref, scope, params, fields) {
   return resolve(isObject(ref) ? ref : {datum: ref}, scope, params, fields);
 }
 
 function resolve(ref, scope, params, fields) {
-  var object, level, field;
+  let object;
+  let level;
+  let field;
 
   if (ref.signal) {
     object = 'datum';

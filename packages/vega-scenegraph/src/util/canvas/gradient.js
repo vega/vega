@@ -6,17 +6,16 @@ function v(value, dflt) {
 
 function addStops(gradient, stops) {
   const n = stops.length;
-  for (let i=0; i<n; ++i) {
+  for (let i = 0; i < n; ++i) {
     gradient.addColorStop(stops[i].offset, stops[i].color);
   }
   return gradient;
 }
 
-export default function(context, spec, bounds) {
-  const w = bounds.width(),
-        h = bounds.height();
+export default function (context, spec, bounds) {
+  const w = bounds.width();
+  const h = bounds.height();
   let gradient;
-
 
   if (spec.gradient === 'radial') {
     gradient = context.createRadialGradient(
@@ -27,11 +26,12 @@ export default function(context, spec, bounds) {
       bounds.y1 + v(spec.y2, 0.5) * h,
       Math.max(w, h) * v(spec.r2, 0.5)
     );
-  } else { // linear gradient
-    const x1 = v(spec.x1, 0),
-          y1 = v(spec.y1, 0),
-          x2 = v(spec.x2, 1),
-          y2 = v(spec.y2, 0);
+  } else {
+    // linear gradient
+    const x1 = v(spec.x1, 0);
+    const y1 = v(spec.y1, 0);
+    const x2 = v(spec.x2, 1);
+    const y2 = v(spec.y2, 0);
 
     if (x1 === x2 || y1 === y2 || w === h) {
       // axis aligned: use normal gradient
@@ -44,14 +44,11 @@ export default function(context, spec, bounds) {
     } else {
       // not axis aligned: render gradient into a pattern (#2365)
       // this allows us to use normalized bounding box coordinates
-      const image = canvas(Math.ceil(w), Math.ceil(h)),
-            ictx = image.getContext('2d');
+      const image = canvas(Math.ceil(w), Math.ceil(h));
+      const ictx = image.getContext('2d');
 
       ictx.scale(w, h);
-      ictx.fillStyle = addStops(
-        ictx.createLinearGradient(x1, y1, x2, y2),
-        spec.stops
-      );
+      ictx.fillStyle = addStops(ictx.createLinearGradient(x1, y1, x2, y2), spec.stops);
       ictx.fillRect(0, 0, w, h);
 
       return context.createPattern(image, 'no-repeat');

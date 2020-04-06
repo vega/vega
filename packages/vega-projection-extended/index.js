@@ -96,6 +96,6 @@ import {projection} from 'vega-projection';
   'wagner7',
   'wiechel',
   'winkel3'
-].forEach(function(p) {
+].forEach(function (p) {
   projection(p, d3['geo' + p[0].toUpperCase() + p.slice(1)]);
 });

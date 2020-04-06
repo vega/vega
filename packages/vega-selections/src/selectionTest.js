@@ -1,21 +1,23 @@
 import {Intersect} from './constants';
 import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
 
-var TYPE_ENUM = 'E',
-    TYPE_RANGE_INC = 'R',
-    TYPE_RANGE_EXC = 'R-E',
-    TYPE_RANGE_LE = 'R-LE',
-    TYPE_RANGE_RE = 'R-RE',
-    UNIT_INDEX = 'index:unit';
+const TYPE_ENUM = 'E';
+const TYPE_RANGE_INC = 'R';
+const TYPE_RANGE_EXC = 'R-E';
+const TYPE_RANGE_LE = 'R-LE';
+const TYPE_RANGE_RE = 'R-RE';
+const UNIT_INDEX = 'index:unit';
 
 // TODO: revisit date coercion?
 function testPoint(datum, entry) {
-  var fields = entry.fields,
-      values = entry.values,
-      n = fields.length,
-      i = 0, dval, f;
+  const fields = entry.fields;
+  const values = entry.values;
+  const n = fields.length;
+  let i = 0;
+  let dval;
+  let f;
 
-  for (; i<n; ++i) {
+  for (; i < n; ++i) {
     f = fields[i];
     f.getter = field.getter || field(f.field);
     dval = f.getter(datum);
@@ -27,7 +29,7 @@ function testPoint(datum, entry) {
     if (f.type === TYPE_ENUM) {
       // Enumerated fields can either specify individual values (single/multi selections)
       // or an array of values (interval selections).
-      if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+      if (isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
         return false;
       }
     } else {
@@ -36,7 +38,8 @@ function testPoint(datum, entry) {
       } else if (f.type === TYPE_RANGE_RE) {
         // Discrete selection of bins test within the range [bin_start, bin_end).
         if (!inrange(dval, values[i], true, false)) return false;
-      } else if (f.type === TYPE_RANGE_EXC) { // 'R-E'/'R-LE' included for completeness.
+      } else if (f.type === TYPE_RANGE_EXC) {
+        // 'R-E'/'R-LE' included for completeness.
         if (!inrange(dval, values[i], false, false)) return false;
       } else if (f.type === TYPE_RANGE_LE) {
         if (!inrange(dval, values[i], false, true)) return false;
@@ -62,21 +65,25 @@ function testPoint(datum, entry) {
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
 export function selectionTest(name, datum, op) {
-  var data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-      intersect = op === Intersect,
-      n = entries.length,
-      i = 0,
-      entry, miss, count, unit, b;
+  const data = this.context.data[name];
+  const entries = data ? data.values.value : [];
+  const unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined;
+  const intersect = op === Intersect;
+  const n = entries.length;
+  let i = 0;
+  let entry;
+  let miss;
+  let count;
+  let unit;
+  let b;
 
-  for (; i<n; ++i) {
+  for (; i < n; ++i) {
     entry = entries[i];
 
     if (unitIdx && intersect) {
       // multi selections union within the same unit and intersect across units.
       miss = miss || {};
-      count = miss[unit=entry.unit] || 0;
+      count = miss[(unit = entry.unit)] || 0;
 
       // if we've already matched this unit, skip.
       if (count === -1) continue;

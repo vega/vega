@@ -1,11 +1,31 @@
 import {timeIntervals} from './scale';
 import {
-  numberValue, stringValue, booleanValue, colorValue, alignValue,
-  anchorValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrSignal, arrayOrSignal, numberOrSignal,
-  textOrSignal, booleanOrNumberOrSignal, formatTypeOrSignal,
-  def, enums, object, oneOf, orSignal, ref,
-  booleanType, formatTypeType, numberType, stringType, signalRef
+  numberValue,
+  stringValue,
+  booleanValue,
+  colorValue,
+  alignValue,
+  anchorValue,
+  baselineValue,
+  fontWeightValue,
+  dashArrayValue,
+  booleanOrSignal,
+  arrayOrSignal,
+  numberOrSignal,
+  textOrSignal,
+  booleanOrNumberOrSignal,
+  formatTypeOrSignal,
+  def,
+  enums,
+  object,
+  oneOf,
+  orSignal,
+  ref,
+  booleanType,
+  formatTypeType,
+  numberType,
+  stringType,
+  signalRef
 } from './util';
 
 // types defined elsewhere
@@ -13,19 +33,12 @@ const guideEncodeRef = def('guideEncode');
 
 const overlapEnum = ['parity', 'greedy'];
 
-const labelOverlap = oneOf(
-  booleanType,
-  enums(overlapEnum),
-  signalRef
-);
+const labelOverlap = oneOf(booleanType, enums(overlapEnum), signalRef);
 const labelOverlapRef = ref('labelOverlap');
 
 const tickBandEnum = ['center', 'extent'];
 
-const tickBand = oneOf(
-  enums(tickBandEnum),
-  signalRef
-);
+const tickBand = oneOf(enums(tickBandEnum), signalRef);
 const tickBandRef = ref('tickBand');
 
 const tickCount = oneOf(
@@ -39,12 +52,7 @@ const tickCount = oneOf(
 );
 const tickCountRef = ref('tickCount');
 
-const axisOrientEnum = [
-  'top',
-  'bottom',
-  'left',
-  'right'
-];
+const axisOrientEnum = ['top', 'bottom', 'left', 'right'];
 
 const axis = object({
   _orient_: enums(axisOrientEnum),

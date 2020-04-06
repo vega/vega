@@ -24,7 +24,7 @@ import title from './title';
 import transform from './transform';
 
 function extend(target, source) {
-  for (var key in source) {
+  for (const key in source) {
     target[key] = source[key];
   }
 }
@@ -34,8 +34,8 @@ function addModule(schema, module) {
   if (module.defs) extend(schema.defs, module.defs);
 }
 
-export default function(definitions) {
-  var schema = {
+export default function (definitions) {
+  const schema = {
     $schema: 'http://json-schema.org/draft-06/schema#',
     title: 'Vega Visualization Specification Language',
     defs: {},
@@ -82,7 +82,7 @@ export default function(definitions) {
     stream,
     title,
     transform(definitions)
-  ].forEach(function(module) {
+  ].forEach(function (module) {
     addModule(schema, module);
   });
 

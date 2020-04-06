@@ -1,63 +1,76 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 function regexEqual(x, y) {
-  return (x instanceof RegExp) && (y instanceof RegExp) &&
-    (x.source === y.source) && (x.global === y.global) &&
-    (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
+  return (
+    x instanceof RegExp &&
+    y instanceof RegExp &&
+    x.source === y.source &&
+    x.global === y.global &&
+    x.ignoreCase === y.ignoreCase &&
+    x.multiline === y.multiline
+  );
 }
 
-tape('Evaluate expressions without white or black list', function(t) {
-  var codegen = vega.codegen({
+tape('Evaluate expressions without white or black list', function (t) {
+  const codegen = vega.codegen({
     globalvar: 'global'
   });
 
   function evaluate(str) {
-    var value = codegen(vega.parse(str));
-    var fn = Function('"use strict"; return (' + value.code + ')');
+    const value = codegen(vega.parse(str));
+    const fn = Function('"use strict"; return (' + value.code + ')');
     return fn();
   }
 
-  evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+  evaluate.fn = function (str) {
+    return function () {
+      return evaluate(str);
+    };
   };
 
   // should access globals object
-  var unicode = 'd\u00A9';
+  const unicode = 'd\u00A9';
   global._val_ = 5;
   global[unicode] = 3.14;
   t.equal(evaluate('global._val_+1'), 6);
-  t.equal(evaluate('global["'+unicode+'"]'),3.14);
+  t.equal(evaluate('global["' + unicode + '"]'), 3.14);
   delete global._val_;
   delete global[unicode];
 
   // should return string input to codegen
-  var value = codegen('d');
+  const value = codegen('d');
   t.equal(value.code, 'd');
 
   // should not allow unknown ast node type
-  t.throws(function() { codegen({}); });
-  t.throws(function() { codegen({type: 'foo'}); });
+  t.throws(function () {
+    codegen({});
+  });
+  t.throws(function () {
+    codegen({type: 'foo'});
+  });
 
   t.end();
 });
 
-tape('Evaluate expressions with black list', function(t) {
-  var codegen = vega.codegen({
+tape('Evaluate expressions with black list', function (t) {
+  const codegen = vega.codegen({
     blacklist: ['a', 'b', 'c'],
     globalvar: 'global',
-    fieldvar:  'd'
+    fieldvar: 'd'
   });
 
   function evaluate(str) {
-    var d = {a: 2, föö: 5};
-    var value = codegen(vega.parse(str));
-    var fn = Function('d', '"use strict";return(' + value.code + ')');
+    const d = {a: 2, föö: 5};
+    const value = codegen(vega.parse(str));
+    const fn = Function('d', '"use strict";return(' + value.code + ')');
     return fn(d);
   }
 
-  evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+  evaluate.fn = function (str) {
+    return function () {
+      return evaluate(str);
+    };
   };
 
   // should not allow blacklisted ids
@@ -73,25 +86,27 @@ tape('Evaluate expressions with black list', function(t) {
   t.end();
 });
 
-tape('Evaluate expressions with white list', function(t) {
-  var codegen = vega.codegen({
+tape('Evaluate expressions with white list', function (t) {
+  const codegen = vega.codegen({
     whitelist: ['datum', 'event', 'signals'],
     globalvar: 'global'
   });
 
   function evaluate(str) {
-    var datum = {a: 2, föö: 5};
-    var evt = {type: 'mousemove'};
-    var value = codegen(vega.parse(str));
+    const datum = {a: 2, föö: 5};
+    const evt = {type: 'mousemove'};
+    const value = codegen(vega.parse(str));
     if (value.globals.length > 0) {
       throw Error('Found non-whitelisted global identifier.');
     }
-    var fn = Function('datum', 'event', 'signals', 'return (' + value.code + ')');
+    const fn = Function('datum', 'event', 'signals', 'return (' + value.code + ')');
     return fn(datum, evt);
   }
 
-  evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+  evaluate.fn = function (str) {
+    return function () {
+      return evaluate(str);
+    };
   };
 
   // Simple evaluation
@@ -134,8 +149,8 @@ tape('Evaluate expressions with white list', function(t) {
 
   // should eval array expressions
   t.deepEqual(evaluate('[]'), []);
-  t.deepEqual(evaluate('[1,2,3]'), [1,2,3]);
-  t.deepEqual(evaluate('["a","b"]'), ['a','b']);
+  t.deepEqual(evaluate('[1,2,3]'), [1, 2, 3]);
+  t.deepEqual(evaluate('["a","b"]'), ['a', 'b']);
 
   // should eval unary expressions
   t.equal(evaluate('-3'), -3);
@@ -166,31 +181,31 @@ tape('Evaluate expressions with white list', function(t) {
 
   // Function evaluation
   // should eval math functions', function() {
-  t.equal(evaluate('isNaN(1/0)'), Number.isNaN(1/0));
+  t.equal(evaluate('isNaN(1/0)'), Number.isNaN(1 / 0));
   t.equal(evaluate('isNaN("1")'), Number.isNaN('1'));
   t.equal(evaluate('isFinite(1)'), Number.isFinite(1));
-  t.equal(evaluate('isFinite(1/0)'), Number.isFinite(1/0));
+  t.equal(evaluate('isFinite(1/0)'), Number.isFinite(1 / 0));
   t.equal(evaluate('isFinite(null)'), Number.isFinite(null));
   t.equal(evaluate('isFinite("0")'), Number.isFinite('0'));
   t.equal(evaluate('abs(-3)'), Math.abs(-3));
   t.equal(evaluate('acos(1)'), Math.acos(1));
   t.equal(evaluate('asin(1)'), Math.asin(1));
   t.equal(evaluate('atan(1)'), Math.atan(1));
-  t.equal(evaluate('atan2(1,2)'), Math.atan2(1,2));
+  t.equal(evaluate('atan2(1,2)'), Math.atan2(1, 2));
   t.equal(evaluate('ceil(0.5)'), Math.ceil(0.5));
   t.equal(evaluate('cos(1)'), Math.cos(1));
   t.equal(evaluate('exp(1)'), Math.exp(1));
   t.equal(evaluate('floor(0.5)'), Math.floor(0.5));
   t.equal(evaluate('log(2)'), Math.log(2));
-  t.equal(evaluate('max(0,1)'), Math.max(0,1));
-  t.equal(evaluate('min(0,1)'), Math.min(0,1));
-  t.equal(evaluate('pow(2,3)'), Math.pow(2,3));
+  t.equal(evaluate('max(0,1)'), Math.max(0, 1));
+  t.equal(evaluate('min(0,1)'), Math.min(0, 1));
+  t.equal(evaluate('pow(2,3)'), Math.pow(2, 3));
   t.equal(evaluate('round(0.5)'), Math.round(0.5));
   t.equal(evaluate('sin(1)'), Math.sin(1));
   t.equal(evaluate('sqrt(2)'), Math.sqrt(2));
   t.equal(evaluate('tan(1)'), Math.tan(1));
-  for (var i=0; i<5; ++i) {
-    var r = evaluate('random()');
+  for (let i = 0; i < 5; ++i) {
+    const r = evaluate('random()');
     t.equal(r >= 0 && r <= 1, true);
   }
 
@@ -218,12 +233,12 @@ tape('Evaluate expressions with white list', function(t) {
   t.equal(evaluate('lower("abc")'), 'abc'.toLowerCase());
   t.equal(evaluate('slice("123",1)'), '123'.slice(1));
   t.equal(evaluate('slice("123",-1)'), '123'.slice(-1));
-  t.equal(evaluate('slice("123",0,1)'), '123'.slice(0,1));
+  t.equal(evaluate('slice("123",0,1)'), '123'.slice(0, 1));
   t.deepEqual(evaluate('split("1 2 3"," ")'), '1 2 3'.split(' '));
-  t.equal(evaluate('substring("123",0,1)'), '123'.substring(0,1));
+  t.equal(evaluate('substring("123",0,1)'), '123'.substring(0, 1));
   t.equal(evaluate('trim(" 123 ")'), ' 123 '.trim());
   t.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
-  t.equal(evaluate('parseInt("42")'),parseInt('42'));
+  t.equal(evaluate('parseInt("42")'), parseInt('42'));
   t.equal(evaluate('indexof("hello world", "l")'), 2);
   t.equal(evaluate('lastindexof("hello world", "l")'), 9);
   t.equal(evaluate('replace("hello world", /hello/, "goodbye")'), 'goodbye world');
@@ -233,13 +248,13 @@ tape('Evaluate expressions with white list', function(t) {
   t.equal(evaluate('test(/ain/, "france")'), /ain/.test('france'));
 
   // should eval datetime functions
-  var d = new Date(2001,1,1),
-      u = Date.UTC(2009, 9, 1, 10);
+  let d = new Date(2001, 1, 1);
+  const u = Date.UTC(2009, 9, 1, 10);
 
   t.equal(Math.abs(Date.now() - evaluate('now()')) <= 5, true);
   t.equal(evaluate('+datetime(2001,1,1)'), +d);
   t.equal(evaluate('time(datetime(2001,1,1))'), +d);
-  t.equal(evaluate('timezoneoffset(datetime(2001,1,1))'),d.getTimezoneOffset());
+  t.equal(evaluate('timezoneoffset(datetime(2001,1,1))'), d.getTimezoneOffset());
 
   t.equal(evaluate('day(datetime(2001,1,1))'), d.getDay());
   t.equal(evaluate('year(datetime(2001,1,1))'), d.getFullYear());
@@ -257,10 +272,10 @@ tape('Evaluate expressions with white list', function(t) {
   t.equal(evaluate('utcseconds(datetime(2001,1,1))'), d.getUTCSeconds());
   t.equal(evaluate('utcmilliseconds(datetime(2001,1,1))'), d.getUTCMilliseconds());
 
-  for (var date=1; date<=7; ++date) {
+  for (let date = 1; date <= 7; ++date) {
     d = new Date(2001, 1, date);
-    t.equal(evaluate('date(datetime(2001,1,'+date+'))'), d.getDate());
-    t.equal(evaluate('utcdate(datetime(2001,1,'+date+'))'), d.getUTCDate());
+    t.equal(evaluate('date(datetime(2001,1,' + date + '))'), d.getDate());
+    t.equal(evaluate('utcdate(datetime(2001,1,' + date + '))'), d.getUTCDate());
   }
 
   t.equal(evaluate('utc(2009,9,1,10)'), u);

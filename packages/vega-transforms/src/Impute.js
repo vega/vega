@@ -2,7 +2,7 @@ import {ingest, Transform} from 'vega-dataflow';
 import {accessorName, error, inherits} from 'vega-util';
 import {mean, min, max, median} from 'd3-array';
 
-var Methods = {
+const Methods = {
   value: 'value',
   median: median,
   mean: mean,
@@ -10,7 +10,7 @@ var Methods = {
   max: max
 };
 
-var Empty = [];
+const Empty = [];
 
 /**
  * Impute missing values.
@@ -36,64 +36,77 @@ export default function Impute(params) {
 }
 
 Impute.Definition = {
-  "type": "Impute",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "key", "type": "field", "required": true },
-    { "name": "keyvals", "array": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "enum", "default": "value",
-      "values": ["value", "mean", "median", "max", "min"] },
-    { "name": "value", "default": 0 }
+  type: 'Impute',
+  metadata: {changes: true},
+  params: [
+    {name: 'field', type: 'field', required: true},
+    {name: 'key', type: 'field', required: true},
+    {name: 'keyvals', array: true},
+    {name: 'groupby', type: 'field', array: true},
+    {name: 'method', type: 'enum', default: 'value', values: ['value', 'mean', 'median', 'max', 'min']},
+    {name: 'value', default: 0}
   ]
 };
 
-var prototype = inherits(Impute, Transform);
+const prototype = inherits(Impute, Transform);
 
 function getValue(_) {
-  var m = _.method || Methods.value, v;
+  const m = _.method || Methods.value;
+  let v;
 
   if (Methods[m] == null) {
     error('Unrecognized imputation method: ' + m);
   } else if (m === Methods.value) {
     v = _.value !== undefined ? _.value : 0;
-    return function() { return v; };
+    return function () {
+      return v;
+    };
   } else {
     return Methods[m];
   }
 }
 
 function getField(_) {
-  var f = _.field;
-  return function(t) { return t ? f(t) : NaN; };
+  const f = _.field;
+  return function (t) {
+    return t ? f(t) : NaN;
+  };
 }
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      impute = getValue(_),
-      field = getField(_),
-      fName = accessorName(_.field),
-      kName = accessorName(_.key),
-      gNames = (_.groupby || []).map(accessorName),
-      groups = partition(pulse.source, _.groupby, _.key, _.keyvals),
-      curr = [],
-      prev = this.value,
-      m = groups.domain.length,
-      group, value, gVals, kVal, g, i, j, l, n, t;
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.ALL);
+  const impute = getValue(_);
+  const field = getField(_);
+  const fName = accessorName(_.field);
+  const kName = accessorName(_.key);
+  const gNames = (_.groupby || []).map(accessorName);
+  const groups = partition(pulse.source, _.groupby, _.key, _.keyvals);
+  const curr = [];
+  const prev = this.value;
+  const m = groups.domain.length;
+  let group;
+  let value;
+  let gVals;
+  let kVal;
+  let g;
+  let i;
+  let j;
+  let l;
+  let n;
+  let t;
 
-  for (g=0, l=groups.length; g<l; ++g) {
+  for (g = 0, l = groups.length; g < l; ++g) {
     group = groups[g];
     gVals = group.values;
     value = NaN;
 
     // add tuples for missing values
-    for (j=0; j<m; ++j) {
+    for (j = 0; j < m; ++j) {
       if (group[j] != null) continue;
       kVal = groups.domain[j];
 
       t = {_impute: true};
-      for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
+      for (i = 0, n = gVals.length; i < n; ++i) t[gNames[i]] = gVals[i];
       t[kName] = kVal;
       t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
 
@@ -110,27 +123,38 @@ prototype.transform = function(_, pulse) {
 };
 
 function partition(data, groupby, key, keyvals) {
-  var get = function(f) { return f(t); },
-      groups = [],
-      domain = keyvals ? keyvals.slice() : [],
-      kMap = {},
-      gMap = {}, gVals, gKey,
-      group, i, j, k, n, t;
+  const get = function (f) {
+    return f(t);
+  };
+  const groups = [];
+  const domain = keyvals ? keyvals.slice() : [];
+  const kMap = {};
+  const gMap = {};
+  let gVals;
+  let gKey;
+  let group;
+  let i;
+  let j;
+  let k;
+  let n;
+  let t;
 
-  domain.forEach(function(k, i) { kMap[k] = i + 1; });
+  domain.forEach(function (k, i) {
+    kMap[k] = i + 1;
+  });
 
-  for (i=0, n=data.length; i<n; ++i) {
+  for (i = 0, n = data.length; i < n; ++i) {
     t = data[i];
     k = key(t);
     j = kMap[k] || (kMap[k] = domain.push(k));
 
     gKey = (gVals = groupby ? groupby.map(get) : Empty) + '';
     if (!(group = gMap[gKey])) {
-      group = (gMap[gKey] = []);
+      group = gMap[gKey] = [];
       groups.push(group);
       group.values = gVals;
     }
-    group[j-1] = t;
+    group[j - 1] = t;
   }
 
   groups.domain = domain;

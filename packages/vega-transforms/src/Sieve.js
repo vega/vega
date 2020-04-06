@@ -12,11 +12,9 @@ export default function Sieve(params) {
   this.modified(true); // always treat as modified
 }
 
-var prototype = inherits(Sieve, Transform);
+const prototype = inherits(Sieve, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   this.value = pulse.source;
-  return pulse.changed()
-    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-    : pulse.StopPropagation;
+  return pulse.changed() ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS) : pulse.StopPropagation;
 };

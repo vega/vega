@@ -27,36 +27,36 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
 }
 
-export default function() {
-  var x = rectangleX,
-      y = rectangleY,
-      width = rectangleWidth,
-      height = rectangleHeight,
-      crTL = number(0),
-      crTR = crTL,
-      crBL = crTL,
-      crBR = crTL,
-      context = null;
+export default function () {
+  let x = rectangleX;
+  let y = rectangleY;
+  let width = rectangleWidth;
+  let height = rectangleHeight;
+  let crTL = number(0);
+  let crTR = crTL;
+  let crBL = crTL;
+  let crBR = crTL;
+  let context = null;
 
   function rectangle(_, x0, y0) {
-    var buffer,
-        x1 = x0 != null ? x0 : +x.call(this, _),
-        y1 = y0 != null ? y0 : +y.call(this, _),
-        w  = +width.call(this, _),
-        h  = +height.call(this, _),
-        s  = Math.min(w, h) / 2,
-        tl = clamp(+crTL.call(this, _), 0, s),
-        tr = clamp(+crTR.call(this, _), 0, s),
-        bl = clamp(+crBL.call(this, _), 0, s),
-        br = clamp(+crBR.call(this, _), 0, s);
+    let buffer;
+    const x1 = x0 != null ? x0 : +x.call(this, _);
+    const y1 = y0 != null ? y0 : +y.call(this, _);
+    const w = +width.call(this, _);
+    const h = +height.call(this, _);
+    const s = Math.min(w, h) / 2;
+    const tl = clamp(+crTL.call(this, _), 0, s);
+    const tr = clamp(+crTR.call(this, _), 0, s);
+    const bl = clamp(+crBL.call(this, _), 0, s);
+    const br = clamp(+crBR.call(this, _), 0, s);
 
     if (!context) context = buffer = path();
 
     if (tl <= 0 && tr <= 0 && bl <= 0 && br <= 0) {
       context.rect(x1, y1, w, h);
     } else {
-      var x2 = x1 + w,
-          y2 = y1 + h;
+      const x2 = x1 + w;
+      const y2 = y1 + h;
       context.moveTo(x1 + tl, y1);
       context.lineTo(x2 - tr, y1);
       context.bezierCurveTo(x2 - C * tr, y1, x2, y1 + C * tr, x2, y1 + tr);
@@ -75,7 +75,7 @@ export default function() {
     }
   }
 
-  rectangle.x = function(_) {
+  rectangle.x = function (_) {
     if (arguments.length) {
       x = number(_);
       return rectangle;
@@ -84,7 +84,7 @@ export default function() {
     }
   };
 
-  rectangle.y = function(_) {
+  rectangle.y = function (_) {
     if (arguments.length) {
       y = number(_);
       return rectangle;
@@ -93,7 +93,7 @@ export default function() {
     }
   };
 
-  rectangle.width = function(_) {
+  rectangle.width = function (_) {
     if (arguments.length) {
       width = number(_);
       return rectangle;
@@ -102,7 +102,7 @@ export default function() {
     }
   };
 
-  rectangle.height = function(_) {
+  rectangle.height = function (_) {
     if (arguments.length) {
       height = number(_);
       return rectangle;
@@ -111,7 +111,7 @@ export default function() {
     }
   };
 
-  rectangle.cornerRadius = function(tl, tr, br, bl) {
+  rectangle.cornerRadius = function (tl, tr, br, bl) {
     if (arguments.length) {
       crTL = number(tl);
       crTR = tr != null ? number(tr) : crTL;
@@ -123,7 +123,7 @@ export default function() {
     }
   };
 
-  rectangle.context = function(_) {
+  rectangle.context = function (_) {
     if (arguments.length) {
       context = _ == null ? null : _;
       return rectangle;

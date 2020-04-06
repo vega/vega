@@ -14,21 +14,18 @@ export default function Collect(params) {
 }
 
 Collect.Definition = {
-  "type": "Collect",
-  "metadata": {"source": true},
-  "params": [
-    { "name": "sort", "type": "compare" }
-  ]
+  type: 'Collect',
+  metadata: {source: true},
+  params: [{name: 'sort', type: 'compare'}]
 };
 
-var prototype = inherits(Collect, Transform);
+const prototype = inherits(Collect, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
-      sort = _.sort,
-      mod = pulse.changed() || (sort &&
-            (_.modified('sort') || pulse.modified(sort.fields)));
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.ALL);
+  const list = SortedList(tupleid, this.value, out.materialize(out.ADD).add);
+  const sort = _.sort;
+  const mod = pulse.changed() || (sort && (_.modified('sort') || pulse.modified(sort.fields)));
 
   out.visit(out.REM, list.remove);
 

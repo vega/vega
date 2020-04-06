@@ -6,47 +6,57 @@ import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill';
 import placeMarkLabel from './util/placeMarkLabel';
 
 // 8-bit representation of anchors
-const TOP    = 0x0,
-      MIDDLE = 0x4,
-      BOTTOM = 0x8,
-      LEFT   = 0x0,
-      CENTER = 0x1,
-      RIGHT  = 0x2;
+const TOP = 0x0;
+const MIDDLE = 0x4;
+const BOTTOM = 0x8;
+const LEFT = 0x0;
+const CENTER = 0x1;
+const RIGHT = 0x2;
 
 // Mapping from text anchor to number representation
 const anchorCode = {
-  'top-left':     TOP + LEFT,
-  'top':          TOP + CENTER,
-  'top-right':    TOP + RIGHT,
-  'left':         MIDDLE + LEFT,
-  'middle':       MIDDLE + CENTER,
-  'right':        MIDDLE + RIGHT,
-  'bottom-left':  BOTTOM + LEFT,
-  'bottom':       BOTTOM + CENTER,
+  'top-left': TOP + LEFT,
+  top: TOP + CENTER,
+  'top-right': TOP + RIGHT,
+  left: MIDDLE + LEFT,
+  middle: MIDDLE + CENTER,
+  right: MIDDLE + RIGHT,
+  'bottom-left': BOTTOM + LEFT,
+  bottom: BOTTOM + CENTER,
   'bottom-right': BOTTOM + RIGHT
 };
 
 const placeAreaLabel = {
-  'naive': placeAreaLabelNaive,
+  naive: placeAreaLabelNaive,
   'reduced-search': placeAreaLabelReducedSearch,
-  'floodfill': placeAreaLabelFloodFill
+  floodfill: placeAreaLabelFloodFill
 };
 
-export default function(texts, size, compare, offset, anchor,
-  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method)
-{
+export default function (
+  texts,
+  size,
+  compare,
+  offset,
+  anchor,
+  avoidMarks,
+  avoidBaseMark,
+  lineAnchor,
+  markIndex,
+  padding,
+  method
+) {
   // early exit for empty data
   if (!texts.length) return texts;
 
-  const positions = Math.max(offset.length, anchor.length),
-        offsets = getOffsets(offset, positions),
-        anchors = getAnchors(anchor, positions),
-        marktype = markType(texts[0].datum),
-        grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
-        isGroupArea = grouptype === 'area',
-        boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        $ = scaler(size[0], size[1], padding),
-        isNaiveGroupArea = isGroupArea && method === 'naive';
+  const positions = Math.max(offset.length, anchor.length);
+  const offsets = getOffsets(offset, positions);
+  const anchors = getAnchors(anchor, positions);
+  const marktype = markType(texts[0].datum);
+  const grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype;
+  const isGroupArea = grouptype === 'area';
+  const boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex);
+  const $ = scaler(size[0], size[1], padding);
+  const isNaiveGroupArea = isGroupArea && method === 'naive';
 
   // prepare text mark data for placing
   const data = texts.map(d => ({
@@ -68,7 +78,7 @@ export default function(texts, size, compare, offset, anchor,
 
     // flag indicating if label can be placed inside its base mark
     let labelInside = false;
-    for (let i=0; i < anchors.length && !labelInside; ++i) {
+    for (let i = 0; i < anchors.length && !labelInside; ++i) {
       // label inside if anchor is at center
       // label inside if offset to be inside the mark bound
       labelInside = anchors[i] === 0x5 || offsets[i] < 0;
@@ -92,24 +102,24 @@ export default function(texts, size, compare, offset, anchor,
     : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels
-  data.forEach(d => d.opacity = +place(d));
+  data.forEach(d => (d.opacity = +place(d)));
 
   return data;
 }
 
 function getOffsets(_, count) {
-  const offsets = new Float64Array(count),
-        n = _.length;
-  for (let i=0; i<n; ++i) offsets[i] = _[i] || 0;
-  for (let i=n; i<count; ++i) offsets[i] = offsets[n - 1];
+  const offsets = new Float64Array(count);
+  const n = _.length;
+  for (let i = 0; i < n; ++i) offsets[i] = _[i] || 0;
+  for (let i = n; i < count; ++i) offsets[i] = offsets[n - 1];
   return offsets;
 }
 
 function getAnchors(_, count) {
-  const anchors = new Int8Array(count),
-        n = _.length;
-  for (let i=0; i<n; ++i) anchors[i] |= anchorCode[_[i]];
-  for (let i=n; i<count; ++i) anchors[i] = anchors[n - 1];
+  const anchors = new Int8Array(count);
+  const n = _.length;
+  for (let i = 0; i < n; ++i) anchors[i] |= anchorCode[_[i]];
+  for (let i = n; i < count; ++i) anchors[i] = anchors[n - 1];
   return anchors;
 }
 
@@ -129,22 +139,14 @@ function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
 
   if (!marktype) {
     return xy; // no reactive geometry
-  }
-
-  else if (marktype === 'line' || marktype === 'area') {
+  } else if (marktype === 'line' || marktype === 'area') {
     return d => xy(d.datum);
-  }
-
-  else if (grouptype === 'line') {
+  } else if (grouptype === 'line') {
     return d => {
       const items = d.datum.items[markIndex].items;
-      return xy(items.length
-        ? items[lineAnchor === 'start' ? 0 : items.length - 1]
-        : {x: NaN, y: NaN});
+      return xy(items.length ? items[lineAnchor === 'start' ? 0 : items.length - 1] : {x: NaN, y: NaN});
     };
-  }
-
-  else {
+  } else {
     return d => {
       const b = d.datum.bounds;
       return [b.x1, (b.x1 + b.x2) / 2, b.x2, b.y1, (b.y1 + b.y2) / 2, b.y2];

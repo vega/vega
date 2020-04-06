@@ -5,23 +5,26 @@ import {RuleMark} from '../marks/marktypes';
 import {AxisDomainRole} from '../marks/roles';
 import {addEncoders} from '../encode/encode-util';
 
-export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      orient = spec.orient,
-      encode, enter, update, u, u2, v;
+export default function (spec, config, userEncode, dataRef) {
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  let enter;
+  let update;
+  let u;
+  let v;
 
-  encode = {
-    enter: enter = {opacity: zero},
-    update: update = {opacity: one},
+  const encode = {
+    enter: (enter = {opacity: zero}),
+    update: (update = {opacity: one}),
     exit: {opacity: zero}
   };
 
   addEncoders(encode, {
-    stroke:           _('domainColor'),
-    strokeDash:       _('domainDash'),
+    stroke: _('domainColor'),
+    strokeDash: _('domainDash'),
     strokeDashOffset: _('domainDashOffset'),
-    strokeWidth:      _('domainWidth'),
-    strokeOpacity:    _('domainOpacity')
+    strokeWidth: _('domainWidth'),
+    strokeOpacity: _('domainOpacity')
   });
 
   if (orient === Top || orient === Bottom) {
@@ -31,7 +34,7 @@ export default function(spec, config, userEncode, dataRef) {
     u = 'y';
     v = 'x';
   }
-  u2 = u + '2';
+  const u2 = u + '2';
 
   enter[v] = zero;
   update[u] = enter[u] = position(spec, 0);

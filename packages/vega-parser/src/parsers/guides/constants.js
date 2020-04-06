@@ -10,13 +10,13 @@ export const Start = 'start';
 export const Middle = 'middle';
 export const End = 'end';
 
-export const Index  = 'index';
-export const Label  = 'label';
+export const Index = 'index';
+export const Label = 'label';
 export const Offset = 'offset';
-export const Perc   = 'perc';
-export const Perc2  = 'perc2';
-export const Size   = 'size';
-export const Value  = 'value';
+export const Perc = 'perc';
+export const Perc2 = 'perc2';
+export const Size = 'size';
+export const Value = 'value';
 
 export const GuideLabelStyle = 'guide-label';
 export const GuideTitleStyle = 'guide-title';
@@ -29,15 +29,7 @@ export const Discrete = 'discrete';
 
 // Encoding channels supported by legends
 // In priority order of 'canonical' scale
-export const LegendScales = [
-  'size',
-  'shape',
-  'fill',
-  'stroke',
-  'strokeWidth',
-  'strokeDash',
-  'opacity'
-];
+export const LegendScales = ['size', 'shape', 'fill', 'stroke', 'strokeWidth', 'strokeDash', 'opacity'];
 
 export const Skip = {
   name: 1,

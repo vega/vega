@@ -38,35 +38,37 @@ export default function Contour(params) {
 }
 
 Contour.Definition = {
-  "type": "Contour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "values", "type": "number", "array": true },
-    { "name": "x", "type": "field" },
-    { "name": "y", "type": "field" },
-    { "name": "weight", "type": "field" },
-    { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number" },
-    { "name": "count", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "smooth", "type": "boolean", "default": true }
+  type: 'Contour',
+  metadata: {generates: true},
+  params: [
+    {name: 'size', type: 'number', array: true, length: 2, required: true},
+    {name: 'values', type: 'number', array: true},
+    {name: 'x', type: 'field'},
+    {name: 'y', type: 'field'},
+    {name: 'weight', type: 'field'},
+    {name: 'cellSize', type: 'number'},
+    {name: 'bandwidth', type: 'number'},
+    {name: 'count', type: 'number'},
+    {name: 'nice', type: 'boolean', default: false},
+    {name: 'thresholds', type: 'number', array: true},
+    {name: 'smooth', type: 'boolean', default: true}
   ]
 };
 
-var prototype = inherits(Contour, Transform);
+const prototype = inherits(Contour, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (this.value && !pulse.changed() && !_.modified()) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      contour = contours().smooth(_.smooth !== false),
-      values = _.values,
-      thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
-      size = _.size, grid, post;
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  const contour = contours().smooth(_.smooth !== false);
+  let values = _.values;
+  let thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values);
+  let size = _.size;
+  let grid;
+  let post;
 
   if (!values) {
     values = pulse.materialize(pulse.SOURCE).source;

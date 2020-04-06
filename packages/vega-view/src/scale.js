@@ -1,7 +1,7 @@
 import {error, hasOwnProperty} from 'vega-util';
 
 export function scale(name) {
-  var scales = this._runtime.scales;
+  const scales = this._runtime.scales;
   if (!hasOwnProperty(scales, name)) {
     error('Unrecognized scale or projection: ' + name);
   }

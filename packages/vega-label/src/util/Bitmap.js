@@ -1,17 +1,17 @@
-const DIV = 5,   // bit shift from x, y index to bit vector array index
-      MOD = 31,  // bit mask for index lookup within a bit vector
-      SIZE = 32, // individual bit vector size
-      RIGHT0 = new Uint32Array(SIZE + 1), // left-anchored bit vectors, full -> 0
-      RIGHT1 = new Uint32Array(SIZE + 1); // right-anchored bit vectors, 0 -> full
+const DIV = 5; // bit shift from x, y index to bit vector array index
+const MOD = 31; // bit mask for index lookup within a bit vector
+const SIZE = 32; // individual bit vector size
+const RIGHT0 = new Uint32Array(SIZE + 1); // left-anchored bit vectors, full -> 0
+const RIGHT1 = new Uint32Array(SIZE + 1); // right-anchored bit vectors, 0 -> full
 
 RIGHT1[0] = 0;
 RIGHT0[0] = ~RIGHT1[0];
-for (let i=1; i <= SIZE; ++i) {
+for (let i = 1; i <= SIZE; ++i) {
   RIGHT1[i] = (RIGHT1[i - 1] << 1) | 1;
   RIGHT0[i] = ~RIGHT1[i];
 }
 
-export default function(w, h) {
+export default function (w, h) {
   const array = new Uint32Array(~~((w * h + SIZE) / SIZE));
 
   function _set(index, mask) {
@@ -41,7 +41,11 @@ export default function(w, h) {
     },
 
     getRange: (x, y, x2, y2) => {
-      let r = y2, start, end, indexStart, indexEnd;
+      let r = y2;
+      let start;
+      let end;
+      let indexStart;
+      let indexEnd;
       for (; r >= y; --r) {
         start = r * w + x;
         end = r * w + x2;
@@ -63,7 +67,11 @@ export default function(w, h) {
     },
 
     setRange: (x, y, x2, y2) => {
-      let start, end, indexStart, indexEnd, i;
+      let start;
+      let end;
+      let indexStart;
+      let indexEnd;
+      let i;
       for (; y <= y2; ++y) {
         start = y * w + x;
         end = y * w + x2;
@@ -80,7 +88,11 @@ export default function(w, h) {
     },
 
     clearRange: (x, y, x2, y2) => {
-      let start, end, indexStart, indexEnd, i;
+      let start;
+      let end;
+      let indexStart;
+      let indexEnd;
+      let i;
       for (; y <= y2; ++y) {
         start = y * w + x;
         end = y * w + x2;

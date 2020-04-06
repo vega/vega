@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('../'),
-    canvas = require('canvas');
+const tape = require('tape');
+const vega = require('../');
+const canvas = require('canvas');
 
-tape('Canvas loader loads node canvas', function(t) {
-  var c = vega.canvas(10, 20);
+tape('Canvas loader loads node canvas', function (t) {
+  let c = vega.canvas(10, 20);
   t.ok(c);
   t.ok(c.getContext);
   t.equal(c.width, 10);

@@ -1,8 +1,9 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('key creates a key accessor', function(t) {
-  var _ = {a:1, b:2, c:3, d:{0:5, e:4}}, k;
+tape('key creates a key accessor', function (t) {
+  const _ = {a: 1, b: 2, c: 3, d: {0: 5, e: 4}};
+  let k;
 
   k = vega.key();
   t.equal(typeof k, 'function');
@@ -43,8 +44,9 @@ tape('key creates a key accessor', function(t) {
   t.end();
 });
 
-tape('key respects the "flat" argument', function(t) {
-  var _ = {"d.e": 1, "d[e]": 2, d:{0:5, e:4}}, k;
+tape('key respects the "flat" argument', function (t) {
+  const _ = {'d.e': 1, 'd[e]': 2, d: {0: 5, e: 4}};
+  let k;
 
   k = vega.key('d.e', false);
   t.equal(typeof k, 'function');

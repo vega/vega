@@ -22,24 +22,24 @@ export default function AxisTicks(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(AxisTicks, Transform);
+const prototype = inherits(AxisTicks, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (this.value && !_.modified()) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      ticks = this.value,
-      scale = _.scale,
-      tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
-      count = tickCount(scale, tally, _.minstep),
-      format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values),
-      values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  let ticks = this.value;
+  const scale = _.scale;
+  const tally = _.count == null ? (_.values ? _.values.length : 10) : _.count;
+  const count = tickCount(scale, tally, _.minstep);
+  const format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values);
+  const values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;
 
-  ticks = values.map(function(value, i) {
+  ticks = values.map(function (value, i) {
     return ingest({
       index: i / (values.length - 1 || 1),
       value: value,
@@ -50,11 +50,13 @@ prototype.transform = function(_, pulse) {
   if (_.extra && ticks.length) {
     // add an extra tick pegged to the initial domain value
     // this is used to generate axes with 'binned' domains
-    ticks.push(ingest({
-      index: -1,
-      extra: {value: ticks[0].value},
-      label: ''
-    }));
+    ticks.push(
+      ingest({
+        index: -1,
+        extra: {value: ticks[0].value},
+        label: ''
+      })
+    );
   }
 
   out.source = ticks;

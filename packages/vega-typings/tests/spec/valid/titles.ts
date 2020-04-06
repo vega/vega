@@ -1,314 +1,325 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  padding: 5,
 
-  "config": {
-    "title": {
-      "frame": "group",
-      "limit": {"signal": "item.orient==='left' || item.orient==='right' ? plotHeight : plotWidth"}
-    }
+  config: {
+    title: {
+      frame: 'group',
+      limit: { signal: "item.orient==='left' || item.orient==='right' ? plotHeight : plotWidth" },
+    },
   },
 
-  "signals": [
+  signals: [
     {
-      "name": "titleText",
-      "value": "Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart",
-      "bind": {"input": "text"}
+      name: 'titleText',
+      value:
+        'Bar Chart, Such a Great Bar Chart, Only the Best Bar Chart, A Truly Magnificent Bar Chart',
+      bind: { input: 'text' },
     },
     {
-      "name": "subtitleText",
-      "value": "A Subtle Subtitle",
-      "bind": {"input": "text"}
+      name: 'subtitleText',
+      value: 'A Subtle Subtitle',
+      bind: { input: 'text' },
     },
     {
-      "name": "titleAnchor",
-      "value": "middle",
-      "bind": {"input": "select", "options": ["start", "middle", "end"]}
+      name: 'titleAnchor',
+      value: 'middle',
+      bind: { input: 'select', options: ['start', 'middle', 'end'] },
     },
     {
-      "name": "titleOffset",
-      "value": 5,
-      "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
+      name: 'titleOffset',
+      value: 5,
+      bind: { input: 'range', min: 0, max: 10, step: 1 },
     },
     {
-      "name": "subtitlePadding",
-      "value": 2,
-      "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
+      name: 'subtitlePadding',
+      value: 2,
+      bind: { input: 'range', min: 0, max: 10, step: 1 },
     },
     {
-      "name": "plotWidth",
-      "value": 400
+      name: 'plotWidth',
+      value: 400,
     },
     {
-      "name": "plotHeight",
-      "value": 100
-    }
+      name: 'plotHeight',
+      value: 100,
+    },
   ],
 
-  "data": [
+  data: [
     {
-      "name": "table",
-      "values": [
-        {"u": 1,  "v": 28}, {"u": 2,  "v": 55},
-        {"u": 3,  "v": 43}, {"u": 4,  "v": 91},
-        {"u": 5,  "v": 81}, {"u": 6,  "v": 53},
-        {"u": 7,  "v": 19}, {"u": 8,  "v": 87},
-        {"u": 9,  "v": 52}, {"u": 10, "v": 48},
-        {"u": 11, "v": 24}, {"u": 12, "v": 49},
-        {"u": 13, "v": 87}, {"u": 14, "v": 66},
-        {"u": 15, "v": 17}, {"u": 16, "v": 27},
-        {"u": 17, "v": 68}, {"u": 18, "v": 16},
-        {"u": 19, "v": 49}, {"u": 20, "v": 15}
-      ]
-    }
+      name: 'table',
+      values: [
+        { u: 1, v: 28 },
+        { u: 2, v: 55 },
+        { u: 3, v: 43 },
+        { u: 4, v: 91 },
+        { u: 5, v: 81 },
+        { u: 6, v: 53 },
+        { u: 7, v: 19 },
+        { u: 8, v: 87 },
+        { u: 9, v: 52 },
+        { u: 10, v: 48 },
+        { u: 11, v: 24 },
+        { u: 12, v: 49 },
+        { u: 13, v: 87 },
+        { u: 14, v: 66 },
+        { u: 15, v: 17 },
+        { u: 16, v: 27 },
+        { u: 17, v: 68 },
+        { u: 18, v: 16 },
+        { u: 19, v: 49 },
+        { u: 20, v: 15 },
+      ],
+    },
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "xscale",
-      "type": "band",
-      "range": [0, {"signal": "plotWidth"}],
-      "domain": {"data": "table", "field": "u"}
+      name: 'xscale',
+      type: 'band',
+      range: [0, { signal: 'plotWidth' }],
+      domain: { data: 'table', field: 'u' },
     },
     {
-      "name": "yscale",
-      "type": "linear",
-      "range": [{"signal": "plotHeight"}, 0],
-      "domain": {"data": "table", "field": "v"},
-      "zero": true,
-      "nice": true
-    }
+      name: 'yscale',
+      type: 'linear',
+      range: [{ signal: 'plotHeight' }, 0],
+      domain: { data: 'table', field: 'v' },
+      zero: true,
+      nice: true,
+    },
   ],
 
-  "layout": {
-    "columns": 1
+  layout: {
+    columns: 1,
   },
 
-  "marks": [
+  marks: [
     {
-      "type": "group",
+      type: 'group',
 
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotHeight"}
-        }
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotHeight' },
+        },
       },
 
-      "signals": [
-        { "name": "width", "update": "plotWidth" },
-        { "name": "height", "update": "plotHeight" }
+      signals: [
+        { name: 'width', update: 'plotWidth' },
+        { name: 'height', update: 'plotHeight' },
       ],
 
-      "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
+      axes: [
+        { orient: 'bottom', scale: 'xscale', title: 'X-Axis', zindex: 1 },
+        { orient: 'left', scale: 'yscale', title: 'Y-Axis', zindex: 1 },
       ],
 
-      "title": {
-        "orient": "top",
-        "text": {"signal": "titleText"},
-        "anchor": {"signal": "titleAnchor"},
-        "offset": {"signal": "titleOffset"},
-        "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"}
+      title: {
+        orient: 'top',
+        text: { signal: 'titleText' },
+        anchor: { signal: 'titleAnchor' },
+        offset: { signal: 'titleOffset' },
+        subtitle: { signal: 'subtitleText' },
+        subtitlePadding: { signal: 'subtitlePadding' },
       },
 
-      "marks": [
+      marks: [
         {
-          "type": "rect",
-          "from": {"data": "table"},
-          "encode": {
-            "enter": {
-              "x": {"scale": "xscale", "field": "u", "offset": 1},
-              "width": {"scale": "xscale", "band": 1, "offset": -1},
-              "y": {"scale": "yscale", "field": "v"},
-              "y2": {"scale": "yscale", "value": 0}
+          type: 'rect',
+          from: { data: 'table' },
+          encode: {
+            enter: {
+              x: { scale: 'xscale', field: 'u', offset: 1 },
+              width: { scale: 'xscale', band: 1, offset: -1 },
+              y: { scale: 'yscale', field: 'v' },
+              y2: { scale: 'yscale', value: 0 },
             },
-            "update": {
-              "fill": {"value": "steelblue"}
+            update: {
+              fill: { value: 'steelblue' },
             },
-            "hover": {
-              "fill": {"value": "red"}
-            }
-          }
-        }
-      ]
+            hover: {
+              fill: { value: 'red' },
+            },
+          },
+        },
+      ],
     },
     {
-      "type": "group",
+      type: 'group',
 
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotHeight"}
-        }
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotHeight' },
+        },
       },
 
-      "signals": [
-        { "name": "width", "update": "plotWidth" },
-        { "name": "height", "update": "plotHeight" }
+      signals: [
+        { name: 'width', update: 'plotWidth' },
+        { name: 'height', update: 'plotHeight' },
       ],
 
-      "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
+      axes: [
+        { orient: 'bottom', scale: 'xscale', title: 'X-Axis', zindex: 1 },
+        { orient: 'left', scale: 'yscale', title: 'Y-Axis', zindex: 1 },
       ],
 
-      "title": {
-        "orient": "left",
-        "text": {"signal": "titleText"},
-        "anchor": {"signal": "titleAnchor"},
-        "offset": {"signal": "titleOffset"},
-        "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"},
-        "encode": {
-          "enter": {
-            "fill": {"value": "purple"}
-          }
-        }
+      title: {
+        orient: 'left',
+        text: { signal: 'titleText' },
+        anchor: { signal: 'titleAnchor' },
+        offset: { signal: 'titleOffset' },
+        subtitle: { signal: 'subtitleText' },
+        subtitlePadding: { signal: 'subtitlePadding' },
+        encode: {
+          enter: {
+            fill: { value: 'purple' },
+          },
+        },
       },
 
-      "marks": [
+      marks: [
         {
-          "type": "rect",
-          "from": {"data": "table"},
-          "encode": {
-            "enter": {
-              "x": {"scale": "xscale", "field": "u", "offset": 1},
-              "width": {"scale": "xscale", "band": 1, "offset": -1},
-              "y": {"scale": "yscale", "field": "v"},
-              "y2": {"scale": "yscale", "value": 0}
+          type: 'rect',
+          from: { data: 'table' },
+          encode: {
+            enter: {
+              x: { scale: 'xscale', field: 'u', offset: 1 },
+              width: { scale: 'xscale', band: 1, offset: -1 },
+              y: { scale: 'yscale', field: 'v' },
+              y2: { scale: 'yscale', value: 0 },
             },
-            "update": {
-              "fill": {"value": "steelblue"}
+            update: {
+              fill: { value: 'steelblue' },
             },
-            "hover": {
-              "fill": {"value": "red"}
-            }
-          }
-        }
-      ]
+            hover: {
+              fill: { value: 'red' },
+            },
+          },
+        },
+      ],
     },
     {
-      "type": "group",
+      type: 'group',
 
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotHeight"}
-        }
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotHeight' },
+        },
       },
 
-      "signals": [
-        { "name": "width", "update": "plotWidth" },
-        { "name": "height", "update": "plotHeight" }
+      signals: [
+        { name: 'width', update: 'plotWidth' },
+        { name: 'height', update: 'plotHeight' },
       ],
 
-      "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
+      axes: [
+        { orient: 'bottom', scale: 'xscale', title: 'X-Axis', zindex: 1 },
+        { orient: 'left', scale: 'yscale', title: 'Y-Axis', zindex: 1 },
       ],
 
-      "title": {
-        "orient": "right",
-        "text": {"signal": "titleText"},
-        "anchor": {"signal": "titleAnchor"},
-        "offset": {"signal": "titleOffset"},
-        "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"},
-        "encode": {
-          "title": {
-            "enter": {
-              "fontStyle": {"value": "italic"}
-            }
-          }
-        }
+      title: {
+        orient: 'right',
+        text: { signal: 'titleText' },
+        anchor: { signal: 'titleAnchor' },
+        offset: { signal: 'titleOffset' },
+        subtitle: { signal: 'subtitleText' },
+        subtitlePadding: { signal: 'subtitlePadding' },
+        encode: {
+          title: {
+            enter: {
+              fontStyle: { value: 'italic' },
+            },
+          },
+        },
       },
 
-      "marks": [
+      marks: [
         {
-          "type": "rect",
-          "from": {"data": "table"},
-          "encode": {
-            "enter": {
-              "x": {"scale": "xscale", "field": "u", "offset": 1},
-              "width": {"scale": "xscale", "band": 1, "offset": -1},
-              "y": {"scale": "yscale", "field": "v"},
-              "y2": {"scale": "yscale", "value": 0}
+          type: 'rect',
+          from: { data: 'table' },
+          encode: {
+            enter: {
+              x: { scale: 'xscale', field: 'u', offset: 1 },
+              width: { scale: 'xscale', band: 1, offset: -1 },
+              y: { scale: 'yscale', field: 'v' },
+              y2: { scale: 'yscale', value: 0 },
             },
-            "update": {
-              "fill": {"value": "steelblue"}
+            update: {
+              fill: { value: 'steelblue' },
             },
-            "hover": {
-              "fill": {"value": "red"}
-            }
-          }
-        }
-      ]
+            hover: {
+              fill: { value: 'red' },
+            },
+          },
+        },
+      ],
     },
     {
-      "type": "group",
+      type: 'group',
 
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotHeight"}
-        }
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotHeight' },
+        },
       },
 
-      "signals": [
-        { "name": "width", "update": "plotWidth" },
-        { "name": "height", "update": "plotHeight" }
+      signals: [
+        { name: 'width', update: 'plotWidth' },
+        { name: 'height', update: 'plotHeight' },
       ],
 
-      "axes": [
-        {"orient": "bottom", "scale": "xscale", "title": "X-Axis", "zindex": 1},
-        {"orient": "left", "scale": "yscale", "title": "Y-Axis", "zindex": 1}
+      axes: [
+        { orient: 'bottom', scale: 'xscale', title: 'X-Axis', zindex: 1 },
+        { orient: 'left', scale: 'yscale', title: 'Y-Axis', zindex: 1 },
       ],
 
-      "title": {
-        "orient": "bottom",
-        "text": {"signal": "titleText"},
-        "anchor": {"signal": "titleAnchor"},
-        "offset": {"signal": "titleOffset"},
-        "subtitle": {"signal": "subtitleText"},
-        "subtitlePadding": {"signal": "subtitlePadding"},
-        "encode": {
-          "subtitle": {
-            "interactive": true,
-            "update": {
-              "fontStyle": {"value": "italic"}
+      title: {
+        orient: 'bottom',
+        text: { signal: 'titleText' },
+        anchor: { signal: 'titleAnchor' },
+        offset: { signal: 'titleOffset' },
+        subtitle: { signal: 'subtitleText' },
+        subtitlePadding: { signal: 'subtitlePadding' },
+        encode: {
+          subtitle: {
+            interactive: true,
+            update: {
+              fontStyle: { value: 'italic' },
             },
-            "hover": {
-              "fontStyle": {"value": "normal"}
-            }
-          }
-        }
+            hover: {
+              fontStyle: { value: 'normal' },
+            },
+          },
+        },
       },
 
-      "marks": [
+      marks: [
         {
-          "type": "rect",
-          "from": {"data": "table"},
-          "encode": {
-            "enter": {
-              "x": {"scale": "xscale", "field": "u", "offset": 1},
-              "width": {"scale": "xscale", "band": 1, "offset": -1},
-              "y": {"scale": "yscale", "field": "v"},
-              "y2": {"scale": "yscale", "value": 0}
+          type: 'rect',
+          from: { data: 'table' },
+          encode: {
+            enter: {
+              x: { scale: 'xscale', field: 'u', offset: 1 },
+              width: { scale: 'xscale', band: 1, offset: -1 },
+              y: { scale: 'yscale', field: 'v' },
+              y2: { scale: 'yscale', value: 0 },
             },
-            "update": {
-              "fill": {"value": "steelblue"}
+            update: {
+              fill: { value: 'steelblue' },
             },
-            "hover": {
-              "fill": {"value": "red"}
-            }
-          }
-        }
-      ]
-    }
-  ]
+            hover: {
+              fill: { value: 'red' },
+            },
+          },
+        },
+      ],
+    },
+  ],
 };

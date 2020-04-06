@@ -2,24 +2,9 @@ import labelLayout from './LabelLayout';
 import {Transform} from 'vega-dataflow';
 import {array, error, inherits, isFunction} from 'vega-util';
 
-const Output = [
-  'x',
-  'y',
-  'opacity',
-  'align',
-  'baseline'
-];
+const Output = ['x', 'y', 'opacity', 'align', 'baseline'];
 
-const Anchors = [
-  'top-left',
-  'left',
-  'bottom-left',
-  'top',
-  'bottom',
-  'top-right',
-  'right',
-  'bottom-right'
-];
+const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
 
 /**
  * Compute text label layout to annotate marks.
@@ -53,19 +38,19 @@ export default function Label(params) {
 
 Label.Definition = {
   type: 'Label',
-  metadata: { modifies: true },
+  metadata: {modifies: true},
   params: [
-    { name: 'size', type: 'number', array: true, length: 2, required: true },
-    { name: 'sort', type: 'compare' },
-    { name: 'anchor', type: 'string', array: true, default: Anchors },
-    { name: 'offset', type: 'number', array: true, default: [1] },
-    { name: 'padding', type: 'number', default: 0 },
-    { name: 'lineAnchor', type: 'string', values: ['start', 'end'], default: 'end' },
-    { name: 'markIndex', type: 'number', default: 0 },
-    { name: 'avoidBaseMark', type: 'boolean', default: true },
-    { name: 'avoidMarks', type: 'data', array: true },
-    { name: 'method', type: 'string', default: 'naive'},
-    { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
+    {name: 'size', type: 'number', array: true, length: 2, required: true},
+    {name: 'sort', type: 'compare'},
+    {name: 'anchor', type: 'string', array: true, default: Anchors},
+    {name: 'offset', type: 'number', array: true, default: [1]},
+    {name: 'padding', type: 'number', default: 0},
+    {name: 'lineAnchor', type: 'string', values: ['start', 'end'], default: 'end'},
+    {name: 'markIndex', type: 'number', default: 0},
+    {name: 'avoidBaseMark', type: 'boolean', default: true},
+    {name: 'avoidMarks', type: 'data', array: true},
+    {name: 'method', type: 'string', default: 'naive'},
+    {name: 'as', type: 'string', array: true, length: Output.length, default: Output}
   ]
 };
 

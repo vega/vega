@@ -1,6 +1,18 @@
 import {
-  def, enums, not, object, oneOf, orSignal, ref, type,
-  anyType, arrayType, booleanType, numberType, stringType, textType
+  def,
+  enums,
+  not,
+  object,
+  oneOf,
+  orSignal,
+  ref,
+  type,
+  anyType,
+  arrayType,
+  booleanType,
+  numberType,
+  stringType,
+  textType
 } from './util';
 
 // types defined elsewhere
@@ -18,10 +30,7 @@ const stringOrSignal = orSignal(stringType);
 const textOrSignal = orSignal(textType);
 
 const signalNameRef = def('signalName');
-const signalName = type(
-  'string',
-  not(enums(ReservedNameEnum))
-);
+const signalName = type('string', not(enums(ReservedNameEnum)));
 
 const signalNew = object({
   _name_: signalNameRef,
@@ -49,11 +58,7 @@ const signalPush = object({
   on: onEventsRef
 });
 
-const signalDef = oneOf(
-  signalPush,
-  signalNew,
-  signalInit
-);
+const signalDef = oneOf(signalPush, signalNew, signalInit);
 
 export default {
   refs: {

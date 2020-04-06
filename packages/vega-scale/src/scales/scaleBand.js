@@ -3,25 +3,25 @@ import {range as sequence, bisectRight} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 
 export function band() {
-  var scale = ordinal().unknown(undefined),
-      domain = scale.domain,
-      ordinalRange = scale.range,
-      range = [0, 1],
-      step,
-      bandwidth,
-      round = false,
-      paddingInner = 0,
-      paddingOuter = 0,
-      align = 0.5;
+  const scale = ordinal().unknown(undefined);
+  const domain = scale.domain;
+  const ordinalRange = scale.range;
+  let range = [0, 1];
+  let step;
+  let bandwidth;
+  let round = false;
+  let paddingInner = 0;
+  let paddingOuter = 0;
+  let align = 0.5;
 
   delete scale.unknown;
 
   function rescale() {
-    var n = domain().length,
-        reverse = range[1] < range[0],
-        start = range[reverse - 0],
-        stop = range[1 - reverse],
-        space = bandSpace(n, paddingInner, paddingOuter);
+    const n = domain().length;
+    const reverse = range[1] < range[0];
+    let start = range[reverse - 0];
+    const stop = range[1 - reverse];
+    const space = bandSpace(n, paddingInner, paddingOuter);
 
     step = (stop - start) / (space || 1);
     if (round) {
@@ -33,11 +33,13 @@ export function band() {
       start = Math.round(start);
       bandwidth = Math.round(bandwidth);
     }
-    var values = sequence(n).map(function(i) { return start + step * i; });
+    const values = sequence(n).map(function (i) {
+      return start + step * i;
+    });
     return ordinalRange(reverse ? values.reverse() : values);
   }
 
-  scale.domain = function(_) {
+  scale.domain = function (_) {
     if (arguments.length) {
       domain(_);
       return rescale();
@@ -46,7 +48,7 @@ export function band() {
     }
   };
 
-  scale.range = function(_) {
+  scale.range = function (_) {
     if (arguments.length) {
       range = [+_[0], +_[1]];
       return rescale();
@@ -55,21 +57,21 @@ export function band() {
     }
   };
 
-  scale.rangeRound = function(_) {
+  scale.rangeRound = function (_) {
     range = [+_[0], +_[1]];
     round = true;
     return rescale();
   };
 
-  scale.bandwidth = function() {
+  scale.bandwidth = function () {
     return bandwidth;
   };
 
-  scale.step = function() {
+  scale.step = function () {
     return step;
   };
 
-  scale.round = function(_) {
+  scale.round = function (_) {
     if (arguments.length) {
       round = !!_;
       return rescale();
@@ -78,7 +80,7 @@ export function band() {
     }
   };
 
-  scale.padding = function(_) {
+  scale.padding = function (_) {
     if (arguments.length) {
       paddingOuter = Math.max(0, Math.min(1, _));
       paddingInner = paddingOuter;
@@ -88,7 +90,7 @@ export function band() {
     }
   };
 
-  scale.paddingInner = function(_) {
+  scale.paddingInner = function (_) {
     if (arguments.length) {
       paddingInner = Math.max(0, Math.min(1, _));
       return rescale();
@@ -97,7 +99,7 @@ export function band() {
     }
   };
 
-  scale.paddingOuter = function(_) {
+  scale.paddingOuter = function (_) {
     if (arguments.length) {
       paddingOuter = Math.max(0, Math.min(1, _));
       return rescale();
@@ -106,7 +108,7 @@ export function band() {
     }
   };
 
-  scale.align = function(_) {
+  scale.align = function (_) {
     if (arguments.length) {
       align = Math.max(0, Math.min(1, _));
       return rescale();
@@ -115,15 +117,18 @@ export function band() {
     }
   };
 
-  scale.invertRange = function(_) {
+  scale.invertRange = function (_) {
     // bail if range has null or undefined values
     if (_[0] == null || _[1] == null) return;
 
-    var lo = +_[0],
-        hi = +_[1],
-        reverse = range[1] < range[0],
-        values = reverse ? ordinalRange().reverse() : ordinalRange(),
-        n = values.length - 1, a, b, t;
+    let lo = +_[0];
+    let hi = +_[1];
+    const reverse = range[1] < range[0];
+    const values = reverse ? ordinalRange().reverse() : ordinalRange();
+    const n = values.length - 1;
+    let a;
+    let b;
+    let t;
 
     // bail if either range endpoint is invalid
     if (lo !== lo || hi !== hi) return;
@@ -134,11 +139,11 @@ export function band() {
       lo = hi;
       hi = t;
     }
-    if (hi < values[0] || lo > range[1-reverse]) return;
+    if (hi < values[0] || lo > range[1 - reverse]) return;
 
     // binary search to index into scale range
     a = Math.max(0, bisectRight(values, lo) - 1);
-    b = lo===hi ? a : bisectRight(values, hi) - 1;
+    b = lo === hi ? a : bisectRight(values, hi) - 1;
 
     // increment index a if lo is within padding gap
     if (lo - values[a] > bandwidth + 1e-10) ++a;
@@ -149,34 +154,34 @@ export function band() {
       a = n - b;
       b = n - t;
     }
-    return (a > b) ? undefined : domain().slice(a, b+1);
+    return a > b ? undefined : domain().slice(a, b + 1);
   };
 
-  scale.invert = function(_) {
-    var value = scale.invertRange([_, _]);
+  scale.invert = function (_) {
+    const value = scale.invertRange([_, _]);
     return value ? value[0] : value;
   };
 
-  scale.copy = function() {
+  scale.copy = function () {
     return band()
-        .domain(domain())
-        .range(range)
-        .round(round)
-        .paddingInner(paddingInner)
-        .paddingOuter(paddingOuter)
-        .align(align);
+      .domain(domain())
+      .range(range)
+      .round(round)
+      .paddingInner(paddingInner)
+      .paddingOuter(paddingOuter)
+      .align(align);
   };
 
   return rescale();
 }
 
 function pointish(scale) {
-  var copy = scale.copy;
+  const copy = scale.copy;
 
   scale.padding = scale.paddingOuter;
   delete scale.paddingInner;
 
-  scale.copy = function() {
+  scale.copy = function () {
     return pointish(copy());
   };
 

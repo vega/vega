@@ -16,103 +16,122 @@ import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Mark, Encode, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
-export default function(spec, scope) {
-  var role = getRole(spec),
-      group = spec.type === GroupMark,
-      facet = spec.from && spec.from.facet,
-      layout = spec.layout || role === ScopeRole || role === FrameRole,
-      nested = role === MarkRole || layout || facet,
-      overlap = spec.overlap,
-      ops, op, input, store, enc, bound, render, sieve, name,
-      joinRef, markRef, encodeRef, layoutRef, boundRef;
+export default function (spec, scope) {
+  const role = getRole(spec);
+  const group = spec.type === GroupMark;
+  const facet = spec.from && spec.from.facet;
+  let layout = spec.layout || role === ScopeRole || role === FrameRole;
+  const nested = role === MarkRole || layout || facet;
+  const overlap = spec.overlap;
+  let ops;
+  let op;
+  let store;
+  let enc;
+  let name;
+  let layoutRef;
+  let boundRef;
 
   // resolve input data
-  input = parseData(spec.from, group, scope);
+  const input = parseData(spec.from, group, scope);
 
   // data join to map tuples to visual items
-  op = scope.add(DataJoin({
-    key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
-    pulse: input.pulse,
-    clean: !group
-  }));
-  joinRef = ref(op);
+  op = scope.add(
+    DataJoin({
+      key: input.key || (spec.key ? fieldRef(spec.key) : undefined),
+      pulse: input.pulse,
+      clean: !group
+    })
+  );
+  const joinRef = ref(op);
 
   // collect visual items
   op = store = scope.add(Collect({pulse: joinRef}));
 
   // connect visual items to scenegraph
-  op = scope.add(Mark({
-    markdef:     definition(spec),
-    interactive: interactive(spec.interactive, scope),
-    clip:        clip(spec.clip, scope),
-    context:     {$context: true},
-    groups:      scope.lookup(),
-    parent:      scope.signals.parent ? scope.signalRef('parent') : null,
-    index:       scope.markpath(),
-    pulse:       ref(op)
-  }));
-  markRef = ref(op);
+  op = scope.add(
+    Mark({
+      markdef: definition(spec),
+      interactive: interactive(spec.interactive, scope),
+      clip: clip(spec.clip, scope),
+      context: {$context: true},
+      groups: scope.lookup(),
+      parent: scope.signals.parent ? scope.signalRef('parent') : null,
+      index: scope.markpath(),
+      pulse: ref(op)
+    })
+  );
+  const markRef = ref(op);
 
   // add visual encoders
-  op = enc = scope.add(Encode(encoders(
-    spec.encode, spec.type, role, spec.style, scope,
-    {mod: false, pulse: markRef}
-  )));
+  op = enc = scope.add(Encode(encoders(spec.encode, spec.type, role, spec.style, scope, {mod: false, pulse: markRef})));
 
   // monitor parent marks to propagate changes
   op.params.parent = scope.encode();
 
   // add post-encoding transforms, if defined
   if (spec.transform) {
-    spec.transform.forEach(function(_) {
-      const tx = parseTransform(_, scope),
-            md = tx.metadata;
+    spec.transform.forEach(function (_) {
+      const tx = parseTransform(_, scope);
+      const md = tx.metadata;
       if (md.generates || md.changes) {
         error('Mark transforms should not generate new data.');
       }
       if (!md.nomod) enc.params.mod = true; // update encode mod handling
       tx.params.pulse = ref(op);
-      scope.add(op = tx);
+      scope.add((op = tx));
     });
   }
 
   // if item sort specified, perform post-encoding
   if (spec.sort) {
-    op = scope.add(SortItems({
-      sort:  scope.compareRef(spec.sort),
-      pulse: ref(op)
-    }));
+    op = scope.add(
+      SortItems({
+        sort: scope.compareRef(spec.sort),
+        pulse: ref(op)
+      })
+    );
   }
 
-  encodeRef = ref(op);
+  const encodeRef = ref(op);
 
   // add view layout operator if needed
   if (facet || layout) {
-    layout = scope.add(ViewLayout({
-      layout:   scope.objectProperty(spec.layout),
-      legends:  scope.legends,
-      mark:     markRef,
-      pulse:    encodeRef
-    }));
+    layout = scope.add(
+      ViewLayout({
+        layout: scope.objectProperty(spec.layout),
+        legends: scope.legends,
+        mark: markRef,
+        pulse: encodeRef
+      })
+    );
     layoutRef = ref(layout);
   }
 
   // compute bounding boxes
-  bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
+  const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
   boundRef = ref(bound);
 
   // if group mark, recurse to parse nested content
   if (group) {
     // juggle layout & bounds to ensure they run *after* any faceting transforms
-    if (nested) { ops = scope.operators; ops.pop(); if (layout) ops.pop(); }
+    if (nested) {
+      ops = scope.operators;
+      ops.pop();
+      if (layout) ops.pop();
+    }
 
     scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
-    facet ? parseFacet(spec, scope, input)          // explicit facet
-        : nested ? parseSubflow(spec, scope, input) // standard mark group
-        : parseSpec(spec, scope); // guide group, we can avoid nested scopes
+    facet
+      ? parseFacet(spec, scope, input) // explicit facet
+      : nested
+      ? parseSubflow(spec, scope, input) // standard mark group
+      : parseSpec(spec, scope); // guide group, we can avoid nested scopes
     scope.popState();
 
-    if (nested) { if (layout) ops.push(layout); ops.push(bound); }
+    if (nested) {
+      if (layout) ops.push(layout);
+      ops.push(bound);
+    }
   }
 
   // if requested, add overlap removal transform
@@ -121,32 +140,34 @@ export default function(spec, scope) {
   }
 
   // render / sieve items
-  render = scope.add(Render({pulse: boundRef}));
-  sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
+  const render = scope.add(Render({pulse: boundRef}));
+  const sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
   if (spec.name != null) {
     name = spec.name;
     scope.addData(name, new DataScope(scope, store, render, sieve));
-    if (spec.on) spec.on.forEach(function(on) {
-      if (on.insert || on.remove || on.toggle) {
-        error('Marks only support modify triggers.');
-      }
-      parseTrigger(on, scope, name);
-    });
+    if (spec.on)
+      spec.on.forEach(function (on) {
+        if (on.insert || on.remove || on.toggle) {
+          error('Marks only support modify triggers.');
+        }
+        parseTrigger(on, scope, name);
+      });
   }
 }
 
 function parseOverlap(overlap, source, scope) {
-  var method = overlap.method,
-      bound = overlap.bound,
-      sep = overlap.separation, tol;
+  const method = overlap.method;
+  const bound = overlap.bound;
+  const sep = overlap.separation;
+  let tol;
 
-  var params = {
+  const params = {
     separation: isSignal(sep) ? scope.signalRef(sep.signal) : sep,
     method: isSignal(method) ? scope.signalRef(method.signal) : method,
-    pulse:  source
+    pulse: source
   };
 
   if (overlap.order) {

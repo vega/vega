@@ -13,7 +13,7 @@ export default function Transform(init, params) {
   Operator.call(this, init, null, params);
 }
 
-var prototype = inherits(Transform, Operator);
+const prototype = inherits(Transform, Operator);
 
 /**
  * Overrides {@link Operator.evaluate} for transform operators.
@@ -23,10 +23,10 @@ var prototype = inherits(Transform, Operator);
  * @param {Pulse} pulse - the current dataflow pulse.
  * @return the output pulse for this operator (or StopPropagation)
  */
-prototype.run = function(pulse) {
+prototype.run = function (pulse) {
   if (pulse.stamp < this.stamp) return pulse.StopPropagation;
 
-  var rv;
+  let rv;
   if (this.skip()) {
     this.skip(false);
   } else {
@@ -35,7 +35,7 @@ prototype.run = function(pulse) {
   rv = rv || pulse;
 
   if (rv.then) {
-    rv = rv.then(_ => this.pulse =_);
+    rv = rv.then(_ => (this.pulse = _));
   } else if (rv !== pulse.StopPropagation) {
     this.pulse = rv;
   }
@@ -50,9 +50,9 @@ prototype.run = function(pulse) {
  * @return {Pulse} The output pulse (or StopPropagation). A falsy return
      value (including undefined) will let the input pulse pass through.
  */
-prototype.evaluate = function(pulse) {
-  var params = this.marshall(pulse.stamp),
-      out = this.transform(params, pulse);
+prototype.evaluate = function (pulse) {
+  const params = this.marshall(pulse.stamp);
+  const out = this.transform(params, pulse);
   params.clear();
   return out;
 };
@@ -65,4 +65,4 @@ prototype.evaluate = function(pulse) {
  * @return {Pulse} The output pulse (or StopPropagation). A falsy return
  *   value (including undefined) will let the input pulse pass through.
  */
-prototype.transform = function() {};
+prototype.transform = function () {};

@@ -1,21 +1,27 @@
 import {textMetrics} from 'vega-scenegraph';
 
-export default function($, bitmaps, avoidBaseMark, markIndex) {
-  let width = $.width,
-      height = $.height;
-  
-  // try to place a label within an input area mark
-  return function(d) {
-    const items = d.datum.datum.items[markIndex].items, // area points
-          n = items.length, // number of points
-          textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum); // label height
+export default function ($, bitmaps, avoidBaseMark, markIndex) {
+  const width = $.width;
+  const height = $.height;
 
-    let maxAreaWidth = 0,
-        x1, x2, y1, y2, x, y, areaWidth;
+  // try to place a label within an input area mark
+  return function (d) {
+    const items = d.datum.datum.items[markIndex].items; // area points
+    const n = items.length; // number of points
+    const textHeight = d.datum.fontSize; // label width
+    const textWidth = textMetrics.width(d.datum); // label height
+
+    let maxAreaWidth = 0;
+    let x1;
+    let x2;
+    let y1;
+    let y2;
+    let x;
+    let y;
+    let areaWidth;
 
     // for each area sample point
-    for (let i=0; i<n; ++i) {
+    for (let i = 0; i < n; ++i) {
       x1 = items[i].x;
       y1 = items[i].y;
       x2 = items[i].x2 === undefined ? x1 : items[i].x2;

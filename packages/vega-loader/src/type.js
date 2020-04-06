@@ -1,39 +1,34 @@
 import {identity, toBoolean, toDate, toNumber, toString} from 'vega-util';
 
-export var typeParsers = {
+export const typeParsers = {
   boolean: toBoolean,
   integer: toNumber,
-  number:  toNumber,
-  date:    toDate,
-  string:  toString,
+  number: toNumber,
+  date: toDate,
+  string: toString,
   unknown: identity
 };
 
-var typeTests = [
-  isBoolean,
-  isInteger,
-  isNumber,
-  isDate
-];
+const typeTests = [isBoolean, isInteger, isNumber, isDate];
 
-var typeList = [
-  'boolean',
-  'integer',
-  'number',
-  'date'
-];
+const typeList = ['boolean', 'integer', 'number', 'date'];
 
 export function inferType(values, field) {
   if (!values || !values.length) return 'unknown';
 
-  var value, i, j, t = 0,
-      n = values.length,
-      m = typeTests.length,
-      a = typeTests.map(function(_, i) { return i + 1; });
+  let value;
+  let i;
+  let j;
+  let t = 0;
+  let n = values.length;
+  const m = typeTests.length;
+  const a = typeTests.map(function (_, i) {
+    return i + 1;
+  });
 
-  for (i=0, n=values.length; i<n; ++i) {
+  for (i = 0, n = values.length; i < n; ++i) {
     value = field ? values[i][field] : values[i];
-    for (j=0; j<m; ++j) {
+    for (j = 0; j < m; ++j) {
       if (a[j] && isValid(value) && !typeTests[j](value)) {
         a[j] = 0;
         ++t;
@@ -42,12 +37,15 @@ export function inferType(values, field) {
     }
   }
 
-  t = a.reduce(function(u, v) { return u === 0 ? v : u; }, 0) - 1;
+  t =
+    a.reduce(function (u, v) {
+      return u === 0 ? v : u;
+    }, 0) - 1;
   return typeList[t];
 }
 
 export function inferTypes(data, fields) {
-  return fields.reduce(function(types, field) {
+  return fields.reduce(function (types, field) {
     types[field] = inferType(data, field);
     return types;
   }, {});

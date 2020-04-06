@@ -5,11 +5,11 @@ import initializeRenderer from './initialize-renderer';
 import initializeHandler from './initialize-handler';
 import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
-export default function(el, elBind) {
-  const view = this,
-        type = view._renderType,
-        config = view._eventConfig.bind,
-        module = renderModule(type);
+export default function (el, elBind) {
+  const view = this;
+  const type = view._renderType;
+  const config = view._eventConfig.bind;
+  const module = renderModule(type);
 
   // containing dom element
   el = view._el = el ? lookup(view, el) : null;
@@ -19,27 +19,25 @@ export default function(el, elBind) {
 
   // select appropriate renderer & handler
   if (!module) view.error('Unrecognized renderer type: ' + type);
-  const Handler = module.handler || CanvasHandler,
-        Renderer = (el ? module.renderer : module.headless);
+  const Handler = module.handler || CanvasHandler;
+  const Renderer = el ? module.renderer : module.headless;
 
   // initialize renderer and input handler
-  view._renderer = !Renderer ? null
-    : initializeRenderer(view, view._renderer, el, Renderer);
+  view._renderer = !Renderer ? null : initializeRenderer(view, view._renderer, el, Renderer);
   view._handler = initializeHandler(view, view._handler, el, Handler);
   view._redraw = true;
 
   // initialize signal bindings
   if (el && config !== 'none') {
-    elBind = elBind ? (view._elBind = lookup(view, elBind))
-      : el.appendChild(element('div', {'class': 'vega-bindings'}));
+    elBind = elBind ? (view._elBind = lookup(view, elBind)) : el.appendChild(element('div', {class: 'vega-bindings'}));
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(function (_) {
       if (_.param.element && config !== 'container') {
         _.element = lookup(view, _.param.element);
       }
     });
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(function (_) {
       bind(view, _.element || elBind, _);
     });
   }

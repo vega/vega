@@ -1,13 +1,13 @@
 import color from './color';
 
-var Empty = [];
+const Empty = [];
 
-export default function(context, item, opacity) {
-  var lw = (lw = item.strokeWidth) != null ? lw : 1;
+export default function (context, item, opacity) {
+  let lw = (lw = item.strokeWidth) != null ? lw : 1;
 
   if (lw <= 0) return false;
 
-  opacity *= (item.strokeOpacity==null ? 1 : item.strokeOpacity);
+  opacity *= item.strokeOpacity == null ? 1 : item.strokeOpacity;
   if (opacity > 0) {
     context.globalAlpha = opacity;
     context.strokeStyle = color(context, item, item.stroke);

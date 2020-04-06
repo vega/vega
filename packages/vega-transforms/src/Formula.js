@@ -15,25 +15,28 @@ export default function Formula(params) {
 }
 
 Formula.Definition = {
-  "type": "Formula",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true },
-    { "name": "as", "type": "string", "required": true },
-    { "name": "initonly", "type": "boolean" }
+  type: 'Formula',
+  metadata: {modifies: true},
+  params: [
+    {name: 'expr', type: 'expr', required: true},
+    {name: 'as', type: 'string', required: true},
+    {name: 'initonly', type: 'boolean'}
   ]
 };
 
-var prototype = inherits(Formula, Transform);
+const prototype = inherits(Formula, Transform);
 
-prototype.transform = function(_, pulse) {
-  var func = _.expr,
-      as = _.as,
-      mod = _.modified(),
-      flag = _.initonly ? pulse.ADD
-        : mod ? pulse.SOURCE
-        : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
-        : pulse.ADD;
+prototype.transform = function (_, pulse) {
+  const func = _.expr;
+  const as = _.as;
+  const mod = _.modified();
+  const flag = _.initonly
+    ? pulse.ADD
+    : mod
+    ? pulse.SOURCE
+    : pulse.modified(func.fields) || pulse.modified(as)
+    ? pulse.ADD_MOD
+    : pulse.ADD;
 
   if (mod) {
     // parameters updated, need to reflow
@@ -44,5 +47,5 @@ prototype.transform = function(_, pulse) {
     pulse.modifies(as);
   }
 
-  return pulse.visit(flag, t => t[as] = func(t, _));
+  return pulse.visit(flag, t => (t[as] = func(t, _)));
 };

@@ -3,9 +3,7 @@ import {isArray, isFunction, isString} from 'vega-util';
 
 export function getScale(name, ctx) {
   let s;
-  return isFunction(name) ? name
-    : isString(name) ? (s = ctx.scales[name]) && s.value
-    : undefined;
+  return isFunction(name) ? name : isString(name) ? (s = ctx.scales[name]) && s.value : undefined;
 }
 
 export function range(name, group) {
@@ -39,7 +37,5 @@ export function scale(name, value, group) {
 
 export function invert(name, range, group) {
   const s = getScale(name, (group || this).context);
-  return !s ? undefined
-    : isArray(range) ? (s.invertRange || s.invert)(range)
-    : (s.invert || s.invertExtent)(range);
+  return !s ? undefined : isArray(range) ? (s.invertRange || s.invert)(range) : (s.invert || s.invertExtent)(range);
 }

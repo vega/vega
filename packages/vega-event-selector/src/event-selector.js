@@ -2,49 +2,49 @@
  * Parse an event selector string.
  * Returns an array of event stream definitions.
  */
-export default function(selector, source, marks) {
+export default function (selector, source, marks) {
   DEFAULT_SOURCE = source || VIEW;
   MARKS = marks || DEFAULT_MARKS;
   return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var VIEW    = 'view',
-    LBRACK  = '[',
-    RBRACK  = ']',
-    LBRACE  = '{',
-    RBRACE  = '}',
-    COLON   = ':',
-    COMMA   = ',',
-    NAME    = '@',
-    GT      = '>',
-    ILLEGAL = /[[\]{}]/,
-    DEFAULT_SOURCE,
-    MARKS,
-    DEFAULT_MARKS = {
-      '*': 1,
-      arc: 1,
-      area: 1,
-      group: 1,
-      image: 1,
-      line: 1,
-      path: 1,
-      rect: 1,
-      rule: 1,
-      shape: 1,
-      symbol: 1,
-      text: 1,
-      trail: 1
-    };
+const VIEW = 'view';
+const LBRACK = '[';
+const RBRACK = ']';
+const LBRACE = '{';
+const RBRACE = '}';
+const COLON = ':';
+const COMMA = ',';
+const NAME = '@';
+const GT = '>';
+const ILLEGAL = /[[\]{}]/;
+let DEFAULT_SOURCE;
+let MARKS;
+const DEFAULT_MARKS = {
+  '*': 1,
+  arc: 1,
+  area: 1,
+  group: 1,
+  image: 1,
+  line: 1,
+  path: 1,
+  rect: 1,
+  rule: 1,
+  shape: 1,
+  symbol: 1,
+  text: 1,
+  trail: 1
+};
 
 function isMarkType(type) {
   return MARKS[type];
 }
 
 function find(s, i, endChar, pushChar, popChar) {
-  var count = 0,
-      n = s.length,
-      c;
-  for (; i<n; ++i) {
+  let count = 0;
+  const n = s.length;
+  let c;
+  for (; i < n; ++i) {
     c = s[i];
     if (!count && c === endChar) return i;
     else if (popChar && popChar.indexOf(c) >= 0) --count;
@@ -54,10 +54,10 @@ function find(s, i, endChar, pushChar, popChar) {
 }
 
 function parseMerge(s) {
-  var output = [],
-      start = 0,
-      n = s.length,
-      i = 0;
+  const output = [];
+  let start = 0;
+  const n = s.length;
+  let i = 0;
 
   while (i < n) {
     i = find(s, i, COMMA, LBRACK + LBRACE, RBRACK + RBRACE);
@@ -72,15 +72,13 @@ function parseMerge(s) {
 }
 
 function parseSelector(s) {
-  return s[0] === '['
-    ? parseBetween(s)
-    : parseStream(s);
+  return s[0] === '[' ? parseBetween(s) : parseStream(s);
 }
 
 function parseBetween(s) {
-  var n = s.length,
-      i = 1,
-      b, stream;
+  const n = s.length;
+  let i = 1;
+  let b;
 
   i = find(s, i, RBRACK, LBRACK, RBRACK);
   if (i === n) {
@@ -94,12 +92,12 @@ function parseBetween(s) {
 
   s = s.slice(i + 1).trim();
   if (s[0] !== GT) {
-    throw 'Expected \'>\' after between selector: ' + s;
+    throw "Expected '>' after between selector: " + s;
   }
 
   b = b.map(parseSelector);
 
-  stream = parseSelector(s.slice(1).trim());
+  const stream = parseSelector(s.slice(1).trim());
   if (stream.between) {
     return {
       between: b,
@@ -113,21 +111,22 @@ function parseBetween(s) {
 }
 
 function parseStream(s) {
-  var stream = {source: DEFAULT_SOURCE},
-      source = [],
-      throttle = [0, 0],
-      markname = 0,
-      start = 0,
-      n = s.length,
-      i = 0, j,
-      filter;
+  const stream = {source: DEFAULT_SOURCE};
+  const source = [];
+  let throttle = [0, 0];
+  let markname = 0;
+  let start = 0;
+  let n = s.length;
+  let i = 0;
+  let j;
+  let filter;
 
   // extract throttle from end
-  if (s[n-1] === RBRACE) {
+  if (s[n - 1] === RBRACE) {
     i = s.lastIndexOf(LBRACE);
     if (i >= 0) {
       try {
-        throttle = parseThrottle(s.substring(i+1, n-1));
+        throttle = parseThrottle(s.substring(i + 1, n - 1));
       } catch (e) {
         throw 'Invalid throttle specification: ' + s;
       }
@@ -165,12 +164,12 @@ function parseStream(s) {
     i = find(s, i, RBRACK);
     if (i === n) throw 'Unmatched left bracket: ' + s;
     filter.push(s.substring(start, i).trim());
-    if (i < n-1 && s[++i] !== LBRACK) throw 'Expected left bracket: ' + s;
+    if (i < n - 1 && s[++i] !== LBRACK) throw 'Expected left bracket: ' + s;
     start = ++i;
   }
 
   // marshall event stream specification
-  if (!(n = source.length) || ILLEGAL.test(source[n-1])) {
+  if (!(n = source.length) || ILLEGAL.test(source[n - 1])) {
     throw 'Invalid event selector: ' + s;
   }
 
@@ -188,7 +187,7 @@ function parseStream(s) {
   }
   if (stream.type.slice(-1) === '!') {
     stream.consume = true;
-    stream.type = stream.type.slice(0, -1)
+    stream.type = stream.type.slice(0, -1);
   }
   if (filter != null) stream.filter = filter;
   if (throttle[0]) stream.throttle = throttle[0];
@@ -198,10 +197,10 @@ function parseStream(s) {
 }
 
 function parseThrottle(s) {
-  var a = s.split(COMMA);
+  const a = s.split(COMMA);
   if (!s.length || a.length > 2) throw s;
-  return a.map(function(_) {
-    var x = +_;
+  return a.map(function (_) {
+    const x = +_;
     if (x !== x) throw s;
     return x;
   });

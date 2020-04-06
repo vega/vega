@@ -14,9 +14,9 @@ export default function Load(params) {
   this._pending = null;
 }
 
-var prototype = inherits(Load, Transform);
+const prototype = inherits(Load, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   const df = pulse.dataflow;
 
   if (this._pending) {
@@ -38,15 +38,12 @@ prototype.transform = function(_, pulse) {
     return {async: p};
   } else {
     // return promise for synchronous loading
-    return df.request(_.url, _.format)
-      .then(res => output(this, pulse, array(res.data)));
+    return df.request(_.url, _.format).then(res => output(this, pulse, array(res.data)));
   }
 };
 
 function stop(_) {
-  return _.modified('async') && !(
-    _.modified('values') || _.modified('url') || _.modified('format')
-  );
+  return _.modified('async') && !(_.modified('values') || _.modified('url') || _.modified('format'));
 }
 
 function output(op, pulse, data) {

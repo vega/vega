@@ -13,7 +13,7 @@ export default function Renderer(loader) {
   this._loader = new ResourceLoader(loader);
 }
 
-var prototype = Renderer.prototype;
+const prototype = Renderer.prototype;
 
 /**
  * Initialize a new Renderer instance.
@@ -26,7 +26,7 @@ var prototype = Renderer.prototype;
  *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance.
  */
-prototype.initialize = function(el, width, height, origin, scaleFactor) {
+prototype.initialize = function (el, width, height, origin, scaleFactor) {
   this._el = el;
   return this.resize(width, height, origin, scaleFactor);
 };
@@ -35,7 +35,7 @@ prototype.initialize = function(el, width, height, origin, scaleFactor) {
  * Returns the parent container element for a visualization.
  * @return {DOMElement} - The containing DOM element.
  */
-prototype.element = function() {
+prototype.element = function () {
   return this._el;
 };
 
@@ -44,14 +44,14 @@ prototype.element = function() {
  * Subclasses must override if the first child is not the scene element.
  * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
  */
-prototype.canvas = function() {
+prototype.canvas = function () {
   return this._el && this._el.firstChild;
 };
 
 /**
  * Get / set the background color.
  */
-prototype.background = function(bgcolor) {
+prototype.background = function (bgcolor) {
   if (arguments.length === 0) return this._bgcolor;
   this._bgcolor = bgcolor;
   return this;
@@ -67,7 +67,7 @@ prototype.background = function(bgcolor) {
  *   the width and height to determine the final pixel size.
  * @return {Renderer} - This renderer instance;
  */
-prototype.resize = function(width, height, origin, scaleFactor) {
+prototype.resize = function (width, height, origin, scaleFactor) {
   this._width = width;
   this._height = height;
   this._origin = origin || [0, 0];
@@ -81,8 +81,7 @@ prototype.resize = function(width, height, origin, scaleFactor) {
  * incremental should implement this method.
  * @param {Item} item - The dirty item whose bounds should be redrawn.
  */
-prototype.dirty = function(/*item*/) {
-};
+prototype.dirty = function (/*item*/) {};
 
 /**
  * Render an input scenegraph, potentially with a set of dirty items.
@@ -94,12 +93,14 @@ prototype.dirty = function(/*item*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Renderer} - This renderer instance.
  */
-prototype.render = function(scene) {
-  var r = this;
+prototype.render = function (scene) {
+  const r = this;
 
   // bind arguments into a render call, and cache it
   // this function may be subsequently called for async redraw
-  r._call = function() { r._render(scene); };
+  r._call = function () {
+    r._render(scene);
+  };
 
   // invoke the renderer
   r._call();
@@ -116,7 +117,7 @@ prototype.render = function(scene) {
  * method to actually perform rendering.
  * @param {object} scene - The root mark of a scenegraph to render.
  */
-prototype._render = function(/*scene*/) {
+prototype._render = function (/*scene*/) {
   // subclasses to override
 };
 
@@ -128,10 +129,12 @@ prototype._render = function(/*scene*/) {
  * @param {object} scene - The root mark of a scenegraph to render.
  * @return {Promise} - A Promise that resolves when rendering is complete.
  */
-prototype.renderAsync = function(scene) {
-  var r = this.render(scene);
+prototype.renderAsync = function (scene) {
+  const r = this.render(scene);
   return this._ready
-    ? this._ready.then(function() { return r; })
+    ? this._ready.then(function () {
+        return r;
+      })
     : Promise.resolve(r);
 };
 
@@ -143,18 +146,17 @@ prototype.renderAsync = function(scene) {
  * @param {string} uri - The URI for the requested resource.
  * @return {Promise} - A Promise that resolves to the requested resource.
  */
-prototype._load = function(method, uri) {
-  var r = this,
-      p = r._loader[method](uri);
+prototype._load = function (method, uri) {
+  const r = this;
+  const p = r._loader[method](uri);
 
   if (!r._ready) {
     // re-render the scene when loading completes
-    var call = r._call;
-    r._ready = r._loader.ready()
-      .then(function(redraw) {
-        if (redraw) call();
-        r._ready = null;
-      });
+    const call = r._call;
+    r._ready = r._loader.ready().then(function (redraw) {
+      if (redraw) call();
+      r._ready = null;
+    });
   }
 
   return p;
@@ -167,7 +169,7 @@ prototype._load = function(method, uri) {
  * @param {string} uri - The URI string to sanitize.
  * @return {Promise} - A Promise that resolves to the sanitized URL.
  */
-prototype.sanitizeURL = function(uri) {
+prototype.sanitizeURL = function (uri) {
   return this._load('sanitizeURL', uri);
 };
 
@@ -178,6 +180,6 @@ prototype.sanitizeURL = function(uri) {
  * @param {string} uri - The URI string of the image.
  * @return {Promise} - A Promise that resolves to the loaded Image.
  */
-prototype.loadImage = function(uri) {
+prototype.loadImage = function (uri) {
   return this._load('loadImage', uri);
 };

@@ -1,16 +1,16 @@
-var tape = require('tape'),
-    context = require('d3-path').path,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    pathParse = vega.pathParse,
-    pathRender = vega.pathRender;
+const tape = require('tape');
+const context = require('d3-path').path;
+const vega = require('../');
+const Bounds = vega.Bounds;
+const pathParse = vega.pathParse;
+const pathRender = vega.pathRender;
 
 function bound(path, bounds) {
   pathRender(vega.boundContext(bounds), path, 0, 0);
   return bounds;
 }
 
-var paths = [
+const paths = [
   'M 10,10 m 10,20',
   'M 10,10 l 10,20',
   'M 10,10 L 10,20',
@@ -40,37 +40,37 @@ var paths = [
   'M 0,0 A 0.45,0.45,0,0,0,20,20 Z'
 ];
 
-var bounds = [
-  { x1: 10, y1: 10, x2: 20, y2: 30 },
-  { x1: 10, y1: 10, x2: 20, y2: 30 },
-  { x1: 10, y1: 10, x2: 10, y2: 20 },
-  { x1: 10, y1: 10, x2: 20, y2: 20 },
-  { x1: 10, y1: 10, x2: 20, y2: 20 },
-  { x1: 10, y1: 10, x2: 30, y2: 10 },
-  { x1: 10, y1: 10, x2: 20, y2: 10 },
-  { x1: 10, y1: 10, x2: 10, y2: 30 },
-  { x1: 10, y1: 10, x2: 10, y2: 20 },
-  { x1: 10, y1: 10, x2: 17.5, y2: 20 },
-  { x1: 0, y1: 5.555555555555556, x2: 10, y2: 10 },
-  { x1: 7.274575140626315, y1: 10, x2: 30, y2: 28.888888888888886 },
-  { x1: -2.7254248593736854, y1: 0, x2: 20, y2: 12.5 },
-  { x1: 10, y1: 10, x2: 15, y2: 20 },
-  { x1: 0, y1: 10, x2: 10, y2: 10 },
-  { x1: 10, y1: 10, x2: 30, y2: 10 },
-  { x1: 7.5, y1: 10, x2: 30, y2: 20 },
-  { x1: 0, y1: 10, x2: 20, y2: 10 },
-  { x1: 10, y1: 10, x2: 30, y2: 25 },
-  { x1: -2.5, y1: 0, x2: 20, y2: 10 },
-  { x1: 54.11165235168157, y1: 80, x2: 205, y2: 230.88834764831847 },
-  { x1: 80, y1: 80, x2: 125, y2: 125 },
-  { x1: 185.00000000000003, y1: 80, x2: 275, y2: 170 },
-  { x1: 80, y1: 230, x2: 125, y2: 275 },
-  { x1: 230, y1: 185.00000000000003, x2: 320, y2: 275 },
-  { x1: 0, y1: -4.142135623730948, x2: 24.14213562373095, y2: 20 },
-  { x1: -4.142135623730949, y1: 0, x2: 19.999999999999996, y2: 24.14213562373095 }
+const bounds = [
+  {x1: 10, y1: 10, x2: 20, y2: 30},
+  {x1: 10, y1: 10, x2: 20, y2: 30},
+  {x1: 10, y1: 10, x2: 10, y2: 20},
+  {x1: 10, y1: 10, x2: 20, y2: 20},
+  {x1: 10, y1: 10, x2: 20, y2: 20},
+  {x1: 10, y1: 10, x2: 30, y2: 10},
+  {x1: 10, y1: 10, x2: 20, y2: 10},
+  {x1: 10, y1: 10, x2: 10, y2: 30},
+  {x1: 10, y1: 10, x2: 10, y2: 20},
+  {x1: 10, y1: 10, x2: 17.5, y2: 20},
+  {x1: 0, y1: 5.555555555555556, x2: 10, y2: 10},
+  {x1: 7.274575140626315, y1: 10, x2: 30, y2: 28.888888888888886},
+  {x1: -2.7254248593736854, y1: 0, x2: 20, y2: 12.5},
+  {x1: 10, y1: 10, x2: 15, y2: 20},
+  {x1: 0, y1: 10, x2: 10, y2: 10},
+  {x1: 10, y1: 10, x2: 30, y2: 10},
+  {x1: 7.5, y1: 10, x2: 30, y2: 20},
+  {x1: 0, y1: 10, x2: 20, y2: 10},
+  {x1: 10, y1: 10, x2: 30, y2: 25},
+  {x1: -2.5, y1: 0, x2: 20, y2: 10},
+  {x1: 54.11165235168157, y1: 80, x2: 205, y2: 230.88834764831847},
+  {x1: 80, y1: 80, x2: 125, y2: 125},
+  {x1: 185.00000000000003, y1: 80, x2: 275, y2: 170},
+  {x1: 80, y1: 230, x2: 125, y2: 275},
+  {x1: 230, y1: 185.00000000000003, x2: 320, y2: 275},
+  {x1: 0, y1: -4.142135623730948, x2: 24.14213562373095, y2: 20},
+  {x1: -4.142135623730949, y1: 0, x2: 19.999999999999996, y2: 24.14213562373095}
 ];
 
-var output = [
+const output = [
   'M10,10M20,30',
   'M10,10L20,30',
   'M10,10L10,20',
@@ -100,35 +100,45 @@ var output = [
   'M0,0C-5.522847498307931,5.522847498307935,-5.522847498307933,14.477152501692064,0,20C5.522847498307933,25.522847498307936,14.47715250169206,25.522847498307936,19.999999999999996,20.000000000000004Z'
 ];
 
-tape('pathParse should parse svg path', function(t) {
-  var s1 = "M1,1L1,2";
-  var s2 = "M 1 1 L 1 2";
-  var s3 = "M 1,1 L 1 2";
-  var p = [['M',1,1], ['L',1,2]];
+tape('pathParse should parse svg path', function (t) {
+  const s1 = 'M1,1L1,2';
+  const s2 = 'M 1 1 L 1 2';
+  const s3 = 'M 1,1 L 1 2';
+  const p = [
+    ['M', 1, 1],
+    ['L', 1, 2]
+  ];
   t.deepEqual(pathParse(s1), p);
   t.deepEqual(pathParse(s2), p);
   t.deepEqual(pathParse(s3), p);
   t.end();
 });
 
-tape('pathParse should handle repeated arguments', function(t) {
-  var s = "M 1 1 L 1 2 3 4";
-  var p = [['M',1,1], ['L',1,2], ['L',3,4]];
+tape('pathParse should handle repeated arguments', function (t) {
+  const s = 'M 1 1 L 1 2 3 4';
+  const p = [
+    ['M', 1, 1],
+    ['L', 1, 2],
+    ['L', 3, 4]
+  ];
   t.deepEqual(pathParse(s), p);
   t.end();
 });
 
-tape('pathParse should skip NaN parameters', function(t) {
-  var s = "M 1 1 L 1 x";
-  var p = [['M',1,1], ['L',1]];
+tape('pathParse should skip NaN parameters', function (t) {
+  const s = 'M 1 1 L 1 x';
+  const p = [
+    ['M', 1, 1],
+    ['L', 1]
+  ];
   t.deepEqual(pathParse(s), p);
   t.end();
 });
 
-tape('boundContext should calculate paths bounds', function(t) {
-  for (var i=0; i<paths.length; ++i) {
-    var p = pathParse(paths[i]);
-    var b = bound(p, new Bounds());
+tape('boundContext should calculate paths bounds', function (t) {
+  for (let i = 0; i < paths.length; ++i) {
+    const p = pathParse(paths[i]);
+    const b = bound(p, new Bounds());
     t.equal(b.x1, bounds[i].x1);
     t.equal(b.x2, bounds[i].x2);
     t.equal(b.y1, bounds[i].y1);
@@ -137,26 +147,27 @@ tape('boundContext should calculate paths bounds', function(t) {
   t.end();
 });
 
-tape('pathRender should render paths', function(t) {
-  var ctx, p;
-  for (var i=0; i<paths.length; ++i) {
+tape('pathRender should render paths', function (t) {
+  let ctx;
+  let p;
+  for (let i = 0; i < paths.length; ++i) {
     p = pathParse(paths[i]);
-    pathRender(ctx = context(), p, 0, 0);
-    t.ok(vega.pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
+    pathRender((ctx = context()), p, 0, 0);
+    t.ok(vega.pathEqual(ctx + '', output[i]), 'path: ' + paths[i]);
   }
   t.end();
 });
 
-tape('pathRender should translate paths', function(t) {
-  var ctx = context();
+tape('pathRender should translate paths', function (t) {
+  const ctx = context();
   pathRender(ctx, pathParse(paths[1]), 10, 50);
-  t.equal(ctx+'', 'M20,60L30,80');
+  t.equal(ctx + '', 'M20,60L30,80');
   t.end();
 });
 
-tape('pathRender should scale paths', function(t) {
-  var ctx = context();
+tape('pathRender should scale paths', function (t) {
+  const ctx = context();
   pathRender(ctx, pathParse(paths[1]), 0, 0, 2, 0.5);
-  t.equal(ctx+'', 'M20,5L40,15');
+  t.equal(ctx + '', 'M20,5L40,15');
   t.end();
 });

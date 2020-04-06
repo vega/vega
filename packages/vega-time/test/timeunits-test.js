@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('timeUnits standardizes time units', function(t) {
+tape('timeUnits standardizes time units', function (t) {
   t.deepEqual(vega.timeUnits('year'), ['year']);
   t.deepEqual(vega.timeUnits(['year']), ['year']);
 

@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('mergeConfig merges configuration objects', function(t) {
+tape('mergeConfig merges configuration objects', function (t) {
   t.deepEqual(
     vega.mergeConfig(
       {mark: {fill: 'blue', stroke: {value: 'black'}, dashArray: [1, 2]}},
@@ -12,7 +12,7 @@ tape('mergeConfig merges configuration objects', function(t) {
   t.end();
 });
 
-tape('mergeConfig merges legend objects', function(t) {
+tape('mergeConfig merges legend objects', function (t) {
   t.deepEqual(
     vega.mergeConfig(
       {
@@ -51,11 +51,21 @@ tape('mergeConfig merges legend objects', function(t) {
   t.end();
 });
 
-tape('mergeConfig merges signal arrays', function(t) {
+tape('mergeConfig merges signal arrays', function (t) {
   t.deepEqual(
     vega.mergeConfig(
-      {signals: [{name: 'foo', value: 1}, {name: 'bar', value: 2}]},
-      {signals: [{name: 'foo', value: 3}, {name: 'baz', value: 4}]}
+      {
+        signals: [
+          {name: 'foo', value: 1},
+          {name: 'bar', value: 2}
+        ]
+      },
+      {
+        signals: [
+          {name: 'foo', value: 3},
+          {name: 'baz', value: 4}
+        ]
+      }
     ),
     {
       signals: [
@@ -68,8 +78,8 @@ tape('mergeConfig merges signal arrays', function(t) {
   t.end();
 });
 
-tape('mergeConfig handles empty arguments', function(t) {
-  const c = {autosize:'pad'};
+tape('mergeConfig handles empty arguments', function (t) {
+  const c = {autosize: 'pad'};
   t.deepEqual(vega.mergeConfig(), {});
   t.deepEqual(vega.mergeConfig(null), {});
   t.deepEqual(vega.mergeConfig(undefined), {});
@@ -79,10 +89,10 @@ tape('mergeConfig handles empty arguments', function(t) {
   t.end();
 });
 
-tape('mergeConfig must not allow prototype pollution', function(t) {
-  const config = {symbol: {shape: 'triangle-right'}},
-        payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}'),
-        merged = vega.mergeConfig(config, payload, {symbol: payload});
+tape('mergeConfig must not allow prototype pollution', function (t) {
+  const config = {symbol: {shape: 'triangle-right'}};
+  const payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}');
+  const merged = vega.mergeConfig(config, payload, {symbol: payload});
 
   t.equal(merged.__proto__.vulnerable, undefined);
   t.equal(merged.symbol.__proto__.vulnerable, undefined);

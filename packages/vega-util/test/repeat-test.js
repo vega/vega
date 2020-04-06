@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('repeat repeats strings', function(t) {
+tape('repeat repeats strings', function (t) {
   t.equal(vega.repeat('1', 0), '');
   t.equal(vega.repeat('1', 1), '1');
   t.equal(vega.repeat('1', 3), '111');

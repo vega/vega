@@ -2,7 +2,7 @@ export function canonicalType(type) {
   return (type + '').toLowerCase();
 }
 export function isOperator(type) {
-   return canonicalType(type) === 'operator';
+  return canonicalType(type) === 'operator';
 }
 
 export function isCollect(type) {

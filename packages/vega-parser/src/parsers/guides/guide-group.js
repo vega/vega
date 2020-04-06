@@ -1,6 +1,6 @@
 import {GroupMark} from '../marks/marktypes';
 
-export default function(role, style, name, dataRef, interactive, encode, marks, layout) {
+export default function (role, style, name, dataRef, interactive, encode, marks, layout) {
   return {
     type: GroupMark,
     name: name,

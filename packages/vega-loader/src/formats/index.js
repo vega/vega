@@ -22,5 +22,5 @@ export function formats(name, reader) {
 
 export function responseType(type) {
   const f = formats(type);
-  return f && f.responseType || 'text';
+  return (f && f.responseType) || 'text';
 }

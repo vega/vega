@@ -1,9 +1,13 @@
-export default function(scale) {
-  return function(_) {
-    var range = scale.range(),
-        lo = _[0],
-        hi = _[1],
-        min = -1, max, t, i, n;
+export default function (scale) {
+  return function (_) {
+    const range = scale.range();
+    let lo = _[0];
+    let hi = _[1];
+    let min = -1;
+    let max;
+    let t;
+    let i;
+    let n;
 
     if (hi < lo) {
       t = lo;
@@ -11,7 +15,7 @@ export default function(scale) {
       hi = t;
     }
 
-    for (i=0, n=range.length; i<n; ++i) {
+    for (i = 0, n = range.length; i < n; ++i) {
       if (range[i] >= lo && range[i] <= hi) {
         if (min < 0) min = i;
         max = i;
@@ -23,9 +27,6 @@ export default function(scale) {
     lo = scale.invertExtent(range[min]);
     hi = scale.invertExtent(range[max]);
 
-    return [
-      lo[0] === undefined ? lo[1] : lo[0],
-      hi[1] === undefined ? hi[0] : hi[1]
-    ];
-  }
+    return [lo[0] === undefined ? lo[1] : lo[0], hi[1] === undefined ? hi[0] : hi[1]];
+  };
 }

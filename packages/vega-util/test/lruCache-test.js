@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('lruCache should cache items', function(t) {
-  var cache = vega.lruCache();
+tape('lruCache should cache items', function (t) {
+  const cache = vega.lruCache();
 
   // test adding an entry
   cache.set('a', 'foo');
@@ -40,8 +40,8 @@ tape('lruCache should cache items', function(t) {
   t.end();
 });
 
-tape('lruCache should evict least recently used items', function(t) {
-  var cache = vega.lruCache(2);
+tape('lruCache should evict least recently used items', function (t) {
+  const cache = vega.lruCache(2);
 
   cache.set('a', 1); // a in curr cache
   cache.set('b', 2); // a,b in curr cache
@@ -53,7 +53,7 @@ tape('lruCache should evict least recently used items', function(t) {
   t.equal(cache.has('b'), true);
   t.equal(cache.has('c'), true);
 
-  cache.get('a');    // a,c in curr cache, b is LRU item
+  cache.get('a'); // a,c in curr cache, b is LRU item
   t.equal(cache.has('a'), true);
   t.equal(cache.has('b'), true);
   t.equal(cache.has('c'), true);
@@ -71,7 +71,7 @@ tape('lruCache should evict least recently used items', function(t) {
   t.equal(cache.has('d'), true);
   t.equal(cache.has('e'), true);
 
-  cache.get('a');    // d,e in prev cache, a in curr cache
+  cache.get('a'); // d,e in prev cache, a in curr cache
   t.equal(cache.has('a'), true);
   t.equal(cache.has('b'), false);
   t.equal(cache.has('c'), false);

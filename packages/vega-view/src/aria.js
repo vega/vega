@@ -9,7 +9,5 @@ export function initializeAria(view) {
 
 // update aria-label if we have a DOM container element
 export function ariaLabel(el, desc) {
-  if (el) desc == null
-    ? el.removeAttribute('aria-label')
-    : el.setAttribute('aria-label', desc);
+  if (el) desc == null ? el.removeAttribute('aria-label') : el.setAttribute('aria-label', desc);
 }

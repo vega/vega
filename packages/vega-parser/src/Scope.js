@@ -1,16 +1,8 @@
 import DataScope from './DataScope';
-import {
-  aggrField, Ascending, compareRef, Entry, isExpr, isSignal,
-  fieldRef, keyRef, operator, ref
-} from './util';
+import {aggrField, Ascending, compareRef, Entry, isExpr, isSignal, fieldRef, keyRef, operator, ref} from './util';
 import parseExpression from './parsers/expression';
-import {
-  Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve
-} from './transforms';
-import {
-  array, error, extend, hasOwnProperty,
-  isArray, isString, isObject, peek, stringValue
-} from 'vega-util';
+import {Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve} from './transforms';
+import {array, error, extend, hasOwnProperty, isArray, isString, isObject, peek, stringValue} from 'vega-util';
 
 export default function Scope(config) {
   this.config = config;
@@ -63,64 +55,67 @@ function Subscope(scope) {
   this._markpath = scope._markpath;
 }
 
-var prototype = Scope.prototype = Subscope.prototype;
+const prototype = (Scope.prototype = Subscope.prototype);
 
 // ----
 
-prototype.fork = function() {
+prototype.fork = function () {
   return new Subscope(this);
 };
 
-prototype.isSubscope = function() {
+prototype.isSubscope = function () {
   return this._subid > 0;
 };
 
-prototype.toRuntime = function() {
+prototype.toRuntime = function () {
   this.finish();
   return {
     description: this.description,
-    operators:   this.operators,
-    streams:     this.streams,
-    updates:     this.updates,
-    bindings:    this.bindings,
+    operators: this.operators,
+    streams: this.streams,
+    updates: this.updates,
+    bindings: this.bindings,
     eventConfig: this.eventConfig
   };
 };
 
-prototype.id = function() {
+prototype.id = function () {
   return (this._subid ? this._subid + ':' : 0) + this._id++;
 };
 
-prototype.add = function(op) {
+prototype.add = function (op) {
   this.operators.push(op);
   op.id = this.id();
   // if pre-registration references exist, resolve them now
   if (op.refs) {
-    op.refs.forEach(function(ref) { ref.$ref = op.id; });
+    op.refs.forEach(function (ref) {
+      ref.$ref = op.id;
+    });
     op.refs = null;
   }
   return op;
 };
 
-prototype.proxy = function(op) {
-  var vref = op instanceof Entry ? ref(op) : op;
+prototype.proxy = function (op) {
+  const vref = op instanceof Entry ? ref(op) : op;
   return this.add(Proxy({value: vref}));
 };
 
-prototype.addStream = function(stream) {
+prototype.addStream = function (stream) {
   this.streams.push(stream);
   stream.id = this.id();
   return stream;
 };
 
-prototype.addUpdate = function(update) {
+prototype.addUpdate = function (update) {
   this.updates.push(update);
   return update;
 };
 
 // Apply metadata
-prototype.finish = function() {
-  var name, ds;
+prototype.finish = function () {
+  let name;
+  let ds;
 
   // annotate root
   if (this.root) this.root.root = true;
@@ -137,7 +132,8 @@ prototype.finish = function() {
 
   // annotate data sets
   function annotate(op, name, type) {
-    var data, list;
+    let data;
+    let list;
     if (op) {
       data = op.data || (op.data = {});
       list = data[name] || (data[name] = []);
@@ -146,10 +142,10 @@ prototype.finish = function() {
   }
   for (name in this.data) {
     ds = this.data[name];
-    annotate(ds.input,  name, 'input');
+    annotate(ds.input, name, 'input');
     annotate(ds.output, name, 'output');
     annotate(ds.values, name, 'values');
-    for (var field in ds.index) {
+    for (const field in ds.index) {
       annotate(ds.index[field], name, 'index:' + field);
     }
   }
@@ -159,48 +155,48 @@ prototype.finish = function() {
 
 // ----
 
-prototype.pushState = function(encode, parent, lookup) {
+prototype.pushState = function (encode, parent, lookup) {
   this._encode.push(ref(this.add(Sieve({pulse: encode}))));
   this._parent.push(parent);
   this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
   this._markpath.push(-1);
 };
 
-prototype.popState = function() {
+prototype.popState = function () {
   this._encode.pop();
   this._parent.pop();
   this._lookup.pop();
   this._markpath.pop();
 };
 
-prototype.parent = function() {
+prototype.parent = function () {
   return peek(this._parent);
 };
 
-prototype.encode = function() {
+prototype.encode = function () {
   return peek(this._encode);
 };
 
-prototype.lookup = function() {
+prototype.lookup = function () {
   return peek(this._lookup);
 };
 
-prototype.markpath = function() {
-  var p = this._markpath;
-  return ++p[p.length-1];
+prototype.markpath = function () {
+  const p = this._markpath;
+  return ++p[p.length - 1];
 };
 
 // ----
 
-prototype.fieldRef = function(field, name) {
+prototype.fieldRef = function (field, name) {
   if (isString(field)) return fieldRef(field, name);
   if (!field.signal) {
     error('Unsupported field reference: ' + stringValue(field));
   }
 
-  var s = field.signal,
-      f = this.field[s],
-      params;
+  const s = field.signal;
+  let f = this.field[s];
+  let params;
 
   if (!f) {
     params = {name: this.signalRef(s)};
@@ -210,7 +206,7 @@ prototype.fieldRef = function(field, name) {
   return f;
 };
 
-prototype.compareRef = function(cmp) {
+prototype.compareRef = function (cmp) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -223,17 +219,15 @@ prototype.compareRef = function(cmp) {
     }
   }
 
-  var scope = this,
-      signal = false,
-      fields = array(cmp.field).map(check),
-      orders = array(cmp.order).map(check);
+  const scope = this;
+  let signal = false;
+  const fields = array(cmp.field).map(check);
+  const orders = array(cmp.order).map(check);
 
-  return signal
-    ? ref(this.add(Compare({fields: fields, orders: orders})))
-    : compareRef(fields, orders);
+  return signal ? ref(this.add(Compare({fields: fields, orders: orders}))) : compareRef(fields, orders);
 };
 
-prototype.keyRef = function(fields, flat) {
+prototype.keyRef = function (fields, flat) {
   function check(_) {
     if (isSignal(_)) {
       signal = true;
@@ -243,36 +237,38 @@ prototype.keyRef = function(fields, flat) {
     }
   }
 
-  var sig = this.signals,
-      signal = false;
+  const sig = this.signals;
+  let signal = false;
   fields = array(fields).map(check);
 
-  return signal
-    ? ref(this.add(Key({fields: fields, flat: flat})))
-    : keyRef(fields, flat);
+  return signal ? ref(this.add(Key({fields: fields, flat: flat}))) : keyRef(fields, flat);
 };
 
-prototype.sortRef = function(sort) {
+prototype.sortRef = function (sort) {
   if (!sort) return sort;
 
   // including id ensures stable sorting
-  var a = aggrField(sort.op, sort.field),
-      o = sort.order || Ascending;
+  const a = aggrField(sort.op, sort.field);
+  const o = sort.order || Ascending;
 
   return o.signal
-    ? ref(this.add(Compare({
-        fields: a,
-        orders: this.signalRef(o.signal)
-      })))
+    ? ref(
+        this.add(
+          Compare({
+            fields: a,
+            orders: this.signalRef(o.signal)
+          })
+        )
+      )
     : compareRef(a, o);
 };
 
 // ----
 
-prototype.event = function(source, type) {
-  var key = source + ':' + type;
+prototype.event = function (source, type) {
+  const key = source + ':' + type;
   if (!this.events[key]) {
-    var id = this.id();
+    const id = this.id();
     this.streams.push({
       id: id,
       source: source,
@@ -285,26 +281,26 @@ prototype.event = function(source, type) {
 
 // ----
 
-prototype.hasOwnSignal = function(name) {
+prototype.hasOwnSignal = function (name) {
   return hasOwnProperty(this.signals, name);
 };
 
-prototype.addSignal = function(name, value) {
+prototype.addSignal = function (name, value) {
   if (this.hasOwnSignal(name)) {
     error('Duplicate signal name: ' + stringValue(name));
   }
-  var op = value instanceof Entry ? value : this.add(operator(value));
-  return this.signals[name] = op;
+  const op = value instanceof Entry ? value : this.add(operator(value));
+  return (this.signals[name] = op);
 };
 
-prototype.getSignal = function(name) {
+prototype.getSignal = function (name) {
   if (!this.signals[name]) {
     error('Unrecognized signal name: ' + stringValue(name));
   }
   return this.signals[name];
 };
 
-prototype.signalRef = function(s) {
+prototype.signalRef = function (s) {
   if (this.signals[s]) {
     return ref(this.signals[s]);
   } else if (!hasOwnProperty(this.lambdas, s)) {
@@ -313,24 +309,23 @@ prototype.signalRef = function(s) {
   return ref(this.lambdas[s]);
 };
 
-prototype.parseLambdas = function() {
-  var code = Object.keys(this.lambdas);
-  for (var i=0, n=code.length; i<n; ++i) {
-    var s = code[i],
-        e = parseExpression(s, this),
-        op = this.lambdas[s];
+prototype.parseLambdas = function () {
+  const code = Object.keys(this.lambdas);
+  for (let i = 0, n = code.length; i < n; ++i) {
+    const s = code[i];
+    const e = parseExpression(s, this);
+    const op = this.lambdas[s];
     op.params = e.$params;
     op.update = e.$expr;
   }
 };
 
-prototype.property = function(spec) {
+prototype.property = function (spec) {
   return spec && spec.signal ? this.signalRef(spec.signal) : spec;
 };
 
-prototype.objectProperty = function(spec) {
-  return (!spec || !isObject(spec)) ? spec
-    : this.signalRef(spec.signal || propertyLambda(spec));
+prototype.objectProperty = function (spec) {
+  return !spec || !isObject(spec) ? spec : this.signalRef(spec.signal || propertyLambda(spec));
 };
 
 function propertyLambda(spec) {
@@ -338,44 +333,42 @@ function propertyLambda(spec) {
 }
 
 function arrayLambda(array) {
-  var code = '[',
-      i = 0,
-      n = array.length,
-      value;
+  let code = '[';
+  let i = 0;
+  const n = array.length;
+  let value;
 
-  for (; i<n; ++i) {
+  for (; i < n; ++i) {
     value = array[i];
-    code += (i > 0 ? ',' : '')
-      + (isObject(value)
-        ? (value.signal || propertyLambda(value))
-        : stringValue(value));
+    code += (i > 0 ? ',' : '') + (isObject(value) ? value.signal || propertyLambda(value) : stringValue(value));
   }
   return code + ']';
 }
 
 function objectLambda(obj) {
-  var code = '{',
-      i = 0,
-      key, value;
+  let code = '{';
+  let i = 0;
+  let key;
+  let value;
 
   for (key in obj) {
     value = obj[key];
-    code += (++i > 1 ? ',' : '')
-      + stringValue(key) + ':'
-      + (isObject(value)
-        ? (value.signal || propertyLambda(value))
-        : stringValue(value));
+    code +=
+      (++i > 1 ? ',' : '') +
+      stringValue(key) +
+      ':' +
+      (isObject(value) ? value.signal || propertyLambda(value) : stringValue(value));
   }
   return code + '}';
 }
 
-prototype.exprRef = function(code, name) {
-  var params = {expr: parseExpression(code, this)};
+prototype.exprRef = function (code, name) {
+  const params = {expr: parseExpression(code, this)};
   if (name) params.expr.$name = name;
   return ref(this.add(Expression(params)));
-}
+};
 
-prototype.addBinding = function(name, bind) {
+prototype.addBinding = function (name, bind) {
   if (!this.bindings) {
     error('Nested signals do not support binding: ' + stringValue(name));
   }
@@ -384,55 +377,53 @@ prototype.addBinding = function(name, bind) {
 
 // ----
 
-prototype.addScaleProj = function(name, transform) {
+prototype.addScaleProj = function (name, transform) {
   if (hasOwnProperty(this.scales, name)) {
     error('Duplicate scale or projection name: ' + stringValue(name));
   }
   this.scales[name] = this.add(transform);
 };
 
-prototype.addScale = function(name, params) {
+prototype.addScale = function (name, params) {
   this.addScaleProj(name, Scale(params));
 };
 
-prototype.addProjection = function(name, params) {
+prototype.addProjection = function (name, params) {
   this.addScaleProj(name, Projection(params));
 };
 
-prototype.getScale = function(name) {
+prototype.getScale = function (name) {
   if (!this.scales[name]) {
     error('Unrecognized scale name: ' + stringValue(name));
   }
   return this.scales[name];
 };
 
-prototype.projectionRef =
-prototype.scaleRef = function(name) {
+prototype.projectionRef = prototype.scaleRef = function (name) {
   return ref(this.getScale(name));
 };
 
-prototype.projectionType =
-prototype.scaleType = function(name) {
+prototype.projectionType = prototype.scaleType = function (name) {
   return this.getScale(name).params.type;
 };
 
 // ----
 
-prototype.addData = function(name, dataScope) {
+prototype.addData = function (name, dataScope) {
   if (hasOwnProperty(this.data, name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }
   return (this.data[name] = dataScope);
 };
 
-prototype.getData = function(name) {
+prototype.getData = function (name) {
   if (!this.data[name]) {
     error('Undefined data set name: ' + stringValue(name));
   }
   return this.data[name];
 };
 
-prototype.addDataPipeline = function(name, entries) {
+prototype.addDataPipeline = function (name, entries) {
   if (hasOwnProperty(this.data, name)) {
     error('Duplicate data set name: ' + stringValue(name));
   }

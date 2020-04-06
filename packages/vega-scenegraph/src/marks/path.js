@@ -9,8 +9,8 @@ import {transformItem} from '../util/svg/transform';
 import {DegToRad} from '../util/constants';
 
 function attr(emit, item) {
-  var sx = item.scaleX || 1,
-      sy = item.scaleY || 1;
+  const sx = item.scaleX || 1;
+  const sy = item.scaleY || 1;
   if (sx !== 1 || sy !== 1) {
     emit('vector-effect', 'non-scaling-stroke');
   }
@@ -19,15 +19,15 @@ function attr(emit, item) {
 }
 
 function path(context, item) {
-  var path = item.path;
+  const path = item.path;
   if (path == null) return true;
 
-  var x = item.x || 0,
-      y = item.y || 0,
-      sx = item.scaleX || 1,
-      sy = item.scaleY || 1,
-      a = (item.angle || 0) * DegToRad,
-      cache = item.pathCache;
+  const x = item.x || 0;
+  const y = item.y || 0;
+  const sx = item.scaleX || 1;
+  const sy = item.scaleY || 1;
+  const a = (item.angle || 0) * DegToRad;
+  let cache = item.pathCache;
 
   if (!cache || cache.path !== path) {
     (item.pathCache = cache = pathParse(path)).path = path;
@@ -45,9 +45,7 @@ function path(context, item) {
 }
 
 function bound(bounds, item) {
-  path(context(bounds), item)
-    ? bounds.set(0, 0, 0, 0)
-    : boundStroke(bounds, item, true);
+  path(context(bounds), item) ? bounds.set(0, 0, 0, 0) : boundStroke(bounds, item, true);
 
   if (item.angle) {
     bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
@@ -57,12 +55,12 @@ function bound(bounds, item) {
 }
 
 export default {
-  type:   'path',
-  tag:    'path',
+  type: 'path',
+  tag: 'path',
   nested: false,
-  attr:   attr,
-  bound:  bound,
-  draw:   drawAll(path),
-  pick:   pickPath(path),
-  isect:  intersectPath(path)
+  attr: attr,
+  bound: bound,
+  draw: drawAll(path),
+  pick: pickPath(path),
+  isect: intersectPath(path)
 };

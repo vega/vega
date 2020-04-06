@@ -1,20 +1,23 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+const tape = require('tape');
+const vega = require('../');
+const {local, utc} = require('./util');
 
 function test(t, sequence, offset, unit, start, steps) {
-  const seq1 = range(steps).map(s => +offset(unit, start, s)),
-        seq2 = sequence(unit, start, seq1[seq1.length - 1] + 1);
-  t.deepEqual(seq1, seq2.map(_ => +_));
+  const seq1 = range(steps).map(s => +offset(unit, start, s));
+  const seq2 = sequence(unit, start, seq1[seq1.length - 1] + 1);
+  t.deepEqual(
+    seq1,
+    seq2.map(_ => +_)
+  );
 }
 
 function range(n) {
   const a = Array(n);
-  for (let i = 0; i<n; ++i) a[i] = i;
+  for (let i = 0; i < n; ++i) a[i] = i;
   return a;
 }
 
-tape('timeSequence generates local date sequences', function(t) {
+tape('timeSequence generates local date sequences', function (t) {
   test(t, vega.timeSequence, vega.timeOffset, 'year', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'quarter', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'month', local(2012), 10);
@@ -28,7 +31,7 @@ tape('timeSequence generates local date sequences', function(t) {
   t.end();
 });
 
-tape('utcSequence generates utc date sequences', function(t) {
+tape('utcSequence generates utc date sequences', function (t) {
   test(t, vega.utcSequence, vega.utcOffset, 'year', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'quarter', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'month', utc(2012), 10);

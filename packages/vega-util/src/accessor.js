@@ -1,4 +1,4 @@
-export default function(fn, fields, name) {
+export default function (fn, fields, name) {
   fn.fields = fields || [];
   fn.fname = name;
   return fn;

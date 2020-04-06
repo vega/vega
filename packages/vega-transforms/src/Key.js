@@ -17,5 +17,5 @@ export default function Key(params) {
 inherits(Key, Operator);
 
 function update(_) {
-  return (this.value && !_.modified()) ? this.value : key(_.fields, _.flat);
+  return this.value && !_.modified() ? this.value : key(_.fields, _.flat);
 }

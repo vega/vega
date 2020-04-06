@@ -1,10 +1,10 @@
 export function multikey(f) {
-  return function(x) {
-    var n = f.length,
-        i = 1,
-        k = String(f[0](x));
+  return function (x) {
+    const n = f.length;
+    let i = 1;
+    let k = String(f[0](x));
 
-    for (; i<n; ++i) {
+    for (; i < n; ++i) {
       k += '|' + f[i](x);
     }
 
@@ -13,7 +13,11 @@ export function multikey(f) {
 }
 
 export function groupkey(fields) {
-  return !fields || !fields.length ? function() { return ''; }
-    : fields.length === 1 ? fields[0]
+  return !fields || !fields.length
+    ? function () {
+        return '';
+      }
+    : fields.length === 1
+    ? fields[0]
     : multikey(fields);
 }

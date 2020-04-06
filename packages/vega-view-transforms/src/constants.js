@@ -25,19 +25,19 @@ export const LegendRole = 'legend';
 
 export const RowHeader = 'row-header';
 export const RowFooter = 'row-footer';
-export const RowTitle  = 'row-title';
+export const RowTitle = 'row-title';
 export const ColHeader = 'column-header';
 export const ColFooter = 'column-footer';
-export const ColTitle  = 'column-title';
+export const ColTitle = 'column-title';
 
 export const Padding = 'padding';
 
 export const Symbols = 'symbol';
 
-export const Fit  = 'fit';
+export const Fit = 'fit';
 export const FitX = 'fit-x';
 export const FitY = 'fit-y';
-export const Pad  = 'pad';
+export const Pad = 'pad';
 export const None = 'none';
 
 export const All = 'all';

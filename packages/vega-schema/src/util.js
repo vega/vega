@@ -1,7 +1,27 @@
 const fontWeightEnum = [
-  null, 'normal', 'bold', 'lighter', 'bolder',
-  '100', '200', '300', '400', '500', '600', '700', '800', '900',
-  100, 200, 300, 400, 500, 600, 700, 800, 900
+  null,
+  'normal',
+  'bold',
+  'lighter',
+  'bolder',
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  100,
+  200,
+  300,
+  400,
+  500,
+  600,
+  700,
+  800,
+  900
 ];
 
 const alignEnum = ['left', 'right', 'center'];
@@ -39,32 +59,41 @@ export function ref(name) {
 }
 
 export function type(name, props) {
-  return Object.assign({
-    type: name
-  }, props);
+  return Object.assign(
+    {
+      type: name
+    },
+    props
+  );
 }
 
 export function enums(values, props) {
-  return Object.assign({
-    enum: values
-  }, props);
+  return Object.assign(
+    {
+      enum: values
+    },
+    props
+  );
 }
 
 export function array(items, props) {
-  return Object.assign({
-    type: 'array',
-    items: items || undefined
-  }, props);
+  return Object.assign(
+    {
+      type: 'array',
+      items: items || undefined
+    },
+    props
+  );
 }
 
 export function object(properties, addl) {
-  const p = {},
-        r = [];
+  const p = {};
+  const r = [];
 
-  for (let key in properties) {
+  for (const key in properties) {
     let k = key;
     if (key.startsWith('_') && key.endsWith('_')) {
-      r.push(k = key.slice(1, -1));
+      r.push((k = key.slice(1, -1)));
     }
     p[k] = properties[key];
   }
@@ -123,72 +152,34 @@ export const formatSpecifier = object({
 });
 
 export const formatTypeOrSignal = {
-  oneOf: [
-    stringType,
-    formatSpecifier,
-    signalRef
-  ]
+  oneOf: [stringType, formatSpecifier, signalRef]
 };
 
 export const textType = {
-  oneOf: [
-    stringType,
-    {type: 'array', items: stringType}
-  ]
+  oneOf: [stringType, {type: 'array', items: stringType}]
 };
 
-export const alignValue = oneOf(
-  enums(alignEnum),
-  ref('alignValue')
-);
+export const alignValue = oneOf(enums(alignEnum), ref('alignValue'));
 
-export const anchorValue = oneOf(
-  enums(anchorEnum),
-  ref('anchorValue')
-);
+export const anchorValue = oneOf(enums(anchorEnum), ref('anchorValue'));
 
-export const baselineValue = oneOf(
-  enums(baselineEnum),
-  ref('baselineValue')
-);
+export const baselineValue = oneOf(enums(baselineEnum), ref('baselineValue'));
 
-export const booleanValue = oneOf(
-  booleanType,
-  ref('booleanValue')
-);
+export const booleanValue = oneOf(booleanType, ref('booleanValue'));
 
-export const colorValue = oneOf(
-  nullType,
-  stringType,
-  ref('colorValue')
-);
+export const colorValue = oneOf(nullType, stringType, ref('colorValue'));
 
-export const dashArrayValue = oneOf(
-  array(numberType),
-  ref('arrayValue')
-);
+export const dashArrayValue = oneOf(array(numberType), ref('arrayValue'));
 
-export const fontWeightValue = oneOf(
-  enums(fontWeightEnum),
-  ref('fontWeightValue')
-);
+export const fontWeightValue = oneOf(enums(fontWeightEnum), ref('fontWeightValue'));
 
-export const numberValue = oneOf(
-  numberType,
-  ref('numberValue')
-);
+export const numberValue = oneOf(numberType, ref('numberValue'));
 
-export const orientValue = oneOf(
-  enums(orientEnum),
-  ref('orientValue')
-);
+export const orientValue = oneOf(enums(orientEnum), ref('orientValue'));
 
-export const stringValue = oneOf(
-  stringType,
-  ref('stringValue')
-);
+export const stringValue = oneOf(stringType, ref('stringValue'));
 
-export const booleanOrNumberOrSignal = oneOf(booleanType,numberType,signalRef);
+export const booleanOrNumberOrSignal = oneOf(booleanType, numberType, signalRef);
 export const booleanOrSignal = ref('booleanOrSignal');
 export const arrayOrSignal = ref('arrayOrSignal');
 export const numberOrSignal = ref('numberOrSignal');

@@ -14,12 +14,9 @@ import * as wordcloud from 'vega-wordcloud';
 import * as xf from 'vega-crossfilter';
 extend(transforms, tx, vtx, encode, geo, force, tree, reg, voronoi, wordcloud, xf);
 
-
 // -- Exports -----
 
-export {
-  version
-} from './package.json';
+export {version} from './package.json';
 
 export * from 'vega-statistics';
 
@@ -48,34 +45,14 @@ export {
   tupleid
 } from 'vega-dataflow';
 
-export {
-  scale,
-  scheme,
-  interpolate,
-  interpolateColors,
-  interpolateRange,
-  quantizeInterpolator
-} from 'vega-scale';
+export {scale, scheme, interpolate, interpolateColors, interpolateRange, quantizeInterpolator} from 'vega-scale';
 
-export {
-  projection
-} from 'vega-projection';
+export {projection} from 'vega-projection';
 
-export {
-  View
-} from 'vega-view';
+export {View} from 'vega-view';
 
-export {
-  expressionFunction,
-  formatLocale,
-  timeFormatLocale
-} from 'vega-functions';
+export {expressionFunction, formatLocale, timeFormatLocale} from 'vega-functions';
 
-export {
-  parse
-} from 'vega-parser';
+export {parse} from 'vega-parser';
 
-export {
-  parse as runtime,
-  context as runtimeContext
-} from 'vega-runtime';
+export {parse as runtime, context as runtimeContext} from 'vega-runtime';

@@ -1,3 +1,5 @@
+/* eslint-disable no-dupe-class-members */
+
 import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
 import { Renderers } from './renderer';
 import { Transform, Changeset } from './dataflow';

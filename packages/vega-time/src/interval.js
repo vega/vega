@@ -1,15 +1,4 @@
-import {
-  YEAR,
-  QUARTER,
-  MONTH,
-  WEEK,
-  DATE,
-  DAY,
-  HOURS,
-  MINUTES,
-  SECONDS,
-  MILLISECONDS
-} from './units';
+import {YEAR, QUARTER, MONTH, WEEK, DATE, DAY, HOURS, MINUTES, SECONDS, MILLISECONDS} from './units';
 
 import {
   timeMillisecond,
@@ -31,28 +20,28 @@ import {
 } from 'd3-time';
 
 const timeIntervals = {
-  [YEAR]:         timeYear,
-  [QUARTER]:      timeMonth.every(3),
-  [MONTH]:        timeMonth,
-  [WEEK]:         timeWeek,
-  [DATE]:         timeDay,
-  [DAY]:          timeDay,
-  [HOURS]:        timeHour,
-  [MINUTES]:      timeMinute,
-  [SECONDS]:      timeSecond,
+  [YEAR]: timeYear,
+  [QUARTER]: timeMonth.every(3),
+  [MONTH]: timeMonth,
+  [WEEK]: timeWeek,
+  [DATE]: timeDay,
+  [DAY]: timeDay,
+  [HOURS]: timeHour,
+  [MINUTES]: timeMinute,
+  [SECONDS]: timeSecond,
   [MILLISECONDS]: timeMillisecond
 };
 
 const utcIntervals = {
-  [YEAR]:         utcYear,
-  [QUARTER]:      utcMonth.every(3),
-  [MONTH]:        utcMonth,
-  [WEEK]:         utcWeek,
-  [DATE]:         utcDay,
-  [DAY]:          utcDay,
-  [HOURS]:        utcHour,
-  [MINUTES]:      utcMinute,
-  [SECONDS]:      utcSecond,
+  [YEAR]: utcYear,
+  [QUARTER]: utcMonth.every(3),
+  [MONTH]: utcMonth,
+  [WEEK]: utcWeek,
+  [DATE]: utcDay,
+  [DAY]: utcDay,
+  [HOURS]: utcHour,
+  [MINUTES]: utcMinute,
+  [SECONDS]: utcSecond,
   [MILLISECONDS]: utcMillisecond
 };
 

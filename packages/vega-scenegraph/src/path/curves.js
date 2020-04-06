@@ -21,8 +21,8 @@ import {
   curveStepBefore
 } from 'd3-shape';
 
-var lookup = {
-  'basis': {
+const lookup = {
+  basis: {
     curve: curveBasis
   },
   'basis-closed': {
@@ -31,12 +31,12 @@ var lookup = {
   'basis-open': {
     curve: curveBasisOpen
   },
-  'bundle': {
+  bundle: {
     curve: curveBundle,
     tension: 'beta',
     value: 0.85
   },
-  'cardinal': {
+  cardinal: {
     curve: curveCardinal,
     tension: 'tension',
     value: 0
@@ -66,20 +66,20 @@ var lookup = {
     tension: 'alpha',
     value: 0.5
   },
-  'linear': {
+  linear: {
     curve: curveLinear
   },
   'linear-closed': {
     curve: curveLinearClosed
   },
-  'monotone': {
+  monotone: {
     horizontal: curveMonotoneY,
-    vertical:   curveMonotoneX
+    vertical: curveMonotoneX
   },
-  'natural': {
+  natural: {
     curve: curveNatural
   },
-  'step': {
+  step: {
     curve: curveStep
   },
   'step-after': {
@@ -91,8 +91,8 @@ var lookup = {
 };
 
 export default function curves(type, orientation, tension) {
-  var entry = hasOwnProperty(lookup, type) && lookup[type],
-      curve = null;
+  const entry = hasOwnProperty(lookup, type) && lookup[type];
+  let curve = null;
 
   if (entry) {
     curve = entry.curve || entry[orientation || 'vertical'];

@@ -1,11 +1,14 @@
-export default function(str, length, align, ellipsis) {
-  var e = ellipsis != null ? ellipsis : '\u2026',
-      s = str + '',
-      n = s.length,
-      l = Math.max(0, length - e.length);
+export default function (str, length, align, ellipsis) {
+  const e = ellipsis != null ? ellipsis : '\u2026';
+  const s = str + '';
+  const n = s.length;
+  const l = Math.max(0, length - e.length);
 
-  return n <= length ? s
-    : align === 'left' ? e + s.slice(n - l)
-    : align === 'center' ? s.slice(0, Math.ceil(l/2)) + e + s.slice(n - ~~(l/2))
+  return n <= length
+    ? s
+    : align === 'left'
+    ? e + s.slice(n - l)
+    : align === 'center'
+    ? s.slice(0, Math.ceil(l / 2)) + e + s.slice(n - ~~(l / 2))
     : s.slice(0, l) + e;
 }

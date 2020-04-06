@@ -18,38 +18,38 @@ export default function GeoPath(params) {
 }
 
 GeoPath.Definition = {
-  "type": "GeoPath",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field" },
-    { "name": "pointRadius", "type": "number", "expr": true },
-    { "name": "as", "type": "string", "default": "path" }
+  type: 'GeoPath',
+  metadata: {modifies: true},
+  params: [
+    {name: 'projection', type: 'projection'},
+    {name: 'field', type: 'field'},
+    {name: 'pointRadius', type: 'number', expr: true},
+    {name: 'as', type: 'string', default: 'path'}
   ]
 };
 
-var prototype = inherits(GeoPath, Transform);
+const prototype = inherits(GeoPath, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      path = this.value,
-      field = _.field || identity,
-      as = _.as || 'path',
-      flag = out.SOURCE;
+prototype.transform = function (_, pulse) {
+  const out = pulse.fork(pulse.ALL);
+  let path = this.value;
+  const field = _.field || identity;
+  const as = _.as || 'path';
+  let flag = out.SOURCE;
 
-  function set(t) { t[as] = path(field(t)); }
+  function set(t) {
+    t[as] = path(field(t));
+  }
 
   if (!path || _.modified()) {
     // parameters updated, reset and reflow
     this.value = path = getProjectionPath(_.projection);
     out.materialize().reflow();
   } else {
-    flag = field === identity || pulse.modified(field.fields)
-      ? out.ADD_MOD
-      : out.ADD;
+    flag = field === identity || pulse.modified(field.fields) ? out.ADD_MOD : out.ADD;
   }
 
-  var prev = initPath(path, _.pointRadius);
+  const prev = initPath(path, _.pointRadius);
   out.visit(flag, set);
   path.pointRadius(prev);
 
@@ -57,7 +57,7 @@ prototype.transform = function(_, pulse) {
 };
 
 function initPath(path, pointRadius) {
-  var prev = path.pointRadius();
+  const prev = path.pointRadius();
   path.context(null);
   if (pointRadius != null) {
     path.pointRadius(pointRadius);

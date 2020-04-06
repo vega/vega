@@ -37,44 +37,42 @@ export default function Isocontour(params) {
 }
 
 Isocontour.Definition = {
-  "type": "Isocontour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "levels", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "zero", "type": "boolean", "default": true },
-    { "name": "smooth", "type": "boolean", "default": true },
-    { "name": "scale", "type": "number", "expr": true },
-    { "name": "translate", "type": "number", "array": true, "expr": true },
-    { "name": "as", "type": "string", "null": true, "default": "contour" }
+  type: 'Isocontour',
+  metadata: {generates: true},
+  params: [
+    {name: 'field', type: 'field'},
+    {name: 'thresholds', type: 'number', array: true},
+    {name: 'levels', type: 'number'},
+    {name: 'nice', type: 'boolean', default: false},
+    {name: 'resolve', type: 'enum', values: ['shared', 'independent'], default: 'independent'},
+    {name: 'zero', type: 'boolean', default: true},
+    {name: 'smooth', type: 'boolean', default: true},
+    {name: 'scale', type: 'number', expr: true},
+    {name: 'translate', type: 'number', array: true, expr: true},
+    {name: 'as', type: 'string', null: true, default: 'contour'}
   ]
 };
 
-var prototype = inherits(Isocontour, Transform);
+const prototype = inherits(Isocontour, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (this.value && !pulse.changed() && !_.modified()) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      source = pulse.materialize(pulse.SOURCE).source,
-      field = _.field || identity,
-      contour = contours().smooth(_.smooth !== false),
-      tz = _.thresholds || levels(source, field, _),
-      as = _.as === null ? null : _.as || 'contour',
-      values = [];
+  const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+  const source = pulse.materialize(pulse.SOURCE).source;
+  const field = _.field || identity;
+  const contour = contours().smooth(_.smooth !== false);
+  const tz = _.thresholds || levels(source, field, _);
+  const as = _.as === null ? null : _.as || 'contour';
+  const values = [];
 
   source.forEach(t => {
     const grid = field(t);
 
     // generate contour paths in GeoJSON format
-    const paths = contour.size([grid.width, grid.height])(
-      grid.values, isArray(tz) ? tz : tz(grid.values)
-    );
+    const paths = contour.size([grid.width, grid.height])(grid.values, isArray(tz) ? tz : tz(grid.values));
 
     // adjust contour path coordinates as needed
     transformPaths(paths, grid, t, _);
@@ -93,30 +91,28 @@ prototype.transform = function(_, pulse) {
 
 function levels(values, f, _) {
   const q = quantize(_.levels || 10, _.nice, _.zero !== false);
-  return _.resolve !== 'shared'
-    ? q
-    : q(values.map(t => max(f(t).values)));
+  return _.resolve !== 'shared' ? q : q(values.map(t => max(f(t).values)));
 }
 
 function transformPaths(paths, grid, datum, _) {
-  let s = _.scale || grid.scale,
-      t = _.translate || grid.translate;
+  let s = _.scale || grid.scale;
+  let t = _.translate || grid.translate;
   if (isFunction(s)) s = s(datum, _);
   if (isFunction(t)) t = t(datum, _);
   if ((s === 1 || s == null) && !t) return;
 
-  const sx = (isNumber(s) ? s : s[0]) || 1,
-        sy = (isNumber(s) ? s : s[1]) || 1,
-        tx = t && t[0] || 0,
-        ty = t && t[1] || 0;
+  const sx = (isNumber(s) ? s : s[0]) || 1;
+  const sy = (isNumber(s) ? s : s[1]) || 1;
+  const tx = (t && t[0]) || 0;
+  const ty = (t && t[1]) || 0;
 
   paths.forEach(transform(grid, sx, sy, tx, ty));
 }
 
 export function transform(grid, sx, sy, tx, ty) {
-  const x1 = grid.x1 || 0,
-        y1 = grid.y1 || 0,
-        flip = sx * sy < 0;
+  const x1 = grid.x1 || 0;
+  const y1 = grid.y1 || 0;
+  const flip = sx * sy < 0;
 
   function transformPolygon(coordinates) {
     coordinates.forEach(transformRing);
@@ -132,7 +128,7 @@ export function transform(grid, sx, sy, tx, ty) {
     coordinates[1] = (coordinates[1] - y1) * sy + ty;
   }
 
-  return function(geometry) {
+  return function (geometry) {
     geometry.coordinates.forEach(transformPolygon);
     return geometry;
   };

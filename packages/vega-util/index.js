@@ -1,47 +1,14 @@
-export {
-  default as accessor,
-  accessorName,
-  accessorFields
-} from './src/accessor';
+export {default as accessor, accessorName, accessorFields} from './src/accessor';
 
-export {
-  id,
-  identity,
-  zero,
-  one,
-  truthy,
-  falsy
-} from './src/accessors';
+export {id, identity, zero, one, truthy, falsy} from './src/accessors';
 
-export {
-  default as logger,
-  None,
-  Error,
-  Warn,
-  Info,
-  Debug
-} from './src/logger';
+export {default as logger, None, Error, Warn, Info, Debug} from './src/logger';
 
-export {
-  mergeConfig,
-  writeConfig
-} from './src/mergeConfig';
+export {mergeConfig, writeConfig} from './src/mergeConfig';
 
-export {
-  panLinear,
-  panLog,
-  panPow,
-  panSymlog,
-  zoomLinear,
-  zoomLog,
-  zoomPow,
-  zoomSymlog
-} from './src/transform';
+export {panLinear, panLog, panPow, panSymlog, zoomLinear, zoomLog, zoomPow, zoomSymlog} from './src/transform';
 
-export {
-  quarter,
-  utcquarter
-} from './src/quarter';
+export {quarter, utcquarter} from './src/quarter';
 
 export {default as array} from './src/array';
 export {default as clampRange} from './src/clampRange';

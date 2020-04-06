@@ -11,18 +11,16 @@ import {error} from 'vega-util';
  *   The 'canvas' and 'png' types are synonyms for a PNG image.
  * @return {Promise} - A promise that resolves to an image URL.
  */
-export default async function(type, scaleFactor) {
+export default async function (type, scaleFactor) {
   if (type !== Type.Canvas && type !== Type.SVG && type !== Type.PNG) {
     error('Unrecognized image type: ' + type);
   }
 
   const r = await renderHeadless(this, type, scaleFactor);
-  return type === Type.SVG
-    ? toBlobURL(r.svg(), 'image/svg+xml')
-    : r.canvas().toDataURL('image/png');
+  return type === Type.SVG ? toBlobURL(r.svg(), 'image/svg+xml') : r.canvas().toDataURL('image/png');
 }
 
 function toBlobURL(data, mime) {
-  var blob = new Blob([data], {type: mime});
+  const blob = new Blob([data], {type: mime});
   return window.URL.createObjectURL(blob);
 }

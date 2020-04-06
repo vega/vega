@@ -36,7 +36,7 @@ export default function Dataflow() {
   this._postrun = [];
 }
 
-var prototype = Dataflow.prototype;
+const prototype = Dataflow.prototype;
 
 /**
  * The current timestamp of this dataflow. This value reflects the
@@ -46,7 +46,7 @@ var prototype = Dataflow.prototype;
  * {@link Pulse.stamp} property.
  * @return {number} - The current timestamp value.
  */
-prototype.stamp = function() {
+prototype.stamp = function () {
   return this._clock;
 };
 
@@ -62,7 +62,7 @@ prototype.stamp = function() {
  * @return {object|Dataflow} - If no arguments are provided, returns
  *   the current loader instance. Otherwise returns this Dataflow instance.
  */
-prototype.loader = function(_) {
+prototype.loader = function (_) {
   if (arguments.length) {
     this._loader = _;
     return this;
@@ -91,7 +91,7 @@ prototype.changeset = changeset;
 
 // DATA LOADING
 prototype.ingest = ingest;
-prototype.parse  = parse;
+prototype.parse = parse;
 prototype.preload = preload;
 prototype.request = request;
 
@@ -110,7 +110,8 @@ prototype._getPulse = getPulse;
 // LOGGING AND ERROR HANDLING
 
 function logMethod(method) {
-  return function() {
+  return function () {
+    // eslint-disable-next-line prefer-rest-params
     return this._log[method].apply(this, arguments);
   };
 }
@@ -123,7 +124,7 @@ function logMethod(method) {
  * by default the log level of the new logger will be used; use the logLevel
  * method to adjust the log level as needed.
  */
-prototype.logger = function(logger) {
+prototype.logger = function (logger) {
   if (arguments.length) {
     this._log = logger;
     return this;

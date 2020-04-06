@@ -5,10 +5,10 @@
  * endpoint touches the boundary of the min/max range.
  * If the span exceeds (max - min), the range [min, max] is returned.
  */
-export default function(range, min, max) {
-  var lo = range[0],
-      hi = range[1],
-      span;
+export default function (range, min, max) {
+  let lo = range[0];
+  let hi = range[1];
+  let span;
 
   if (hi < lo) {
     span = hi;
@@ -17,10 +17,5 @@ export default function(range, min, max) {
   }
   span = hi - lo;
 
-  return span >= (max - min)
-    ? [min, max]
-    : [
-        (lo = Math.min(Math.max(lo, min), max - span)),
-        lo + span
-      ];
+  return span >= max - min ? [min, max] : [(lo = Math.min(Math.max(lo, min), max - span)), lo + span];
 }

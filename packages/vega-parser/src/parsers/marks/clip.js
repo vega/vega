@@ -1,7 +1,7 @@
 import {isObject, stringValue} from 'vega-util';
 
-export default function(clip, scope) {
-  var expr;
+export default function (clip, scope) {
+  let expr;
 
   if (isObject(clip)) {
     if (clip.signal) {
@@ -13,13 +13,9 @@ export default function(clip, scope) {
     }
   }
 
-  return expr
-    ? scope.signalRef(expr)
-    : !!clip;
+  return expr ? scope.signalRef(expr) : !!clip;
 }
 
 function param(value) {
-  return isObject(value) && value.signal
-    ? value.signal
-    : stringValue(value);
+  return isObject(value) && value.signal ? value.signal : stringValue(value);
 }

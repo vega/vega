@@ -16,13 +16,7 @@ export {
   quantileLogNormal
 } from './src/lognormal';
 export {default as randomMixture} from './src/mixture';
-export {
-  default as randomNormal,
-  sampleNormal,
-  densityNormal,
-  cumulativeNormal,
-  quantileNormal
-} from './src/normal';
+export {default as randomNormal, sampleNormal, densityNormal, cumulativeNormal, quantileNormal} from './src/normal';
 export {
   default as randomUniform,
   sampleUniform,

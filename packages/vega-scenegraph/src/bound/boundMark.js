@@ -2,14 +2,17 @@ import Bounds from '../Bounds';
 import boundItem from './boundItem';
 import marks from '../marks/index';
 
-var DUMMY = {mark: null};
+const DUMMY = {mark: null};
 
-export default function(mark, bounds, opt) {
-  var type  = marks[mark.marktype],
-      bound = type.bound,
-      items = mark.items,
-      hasItems = items && items.length,
-      i, n, item, b;
+export default function (mark, bounds, opt) {
+  const type = marks[mark.marktype];
+  const bound = type.bound;
+  const items = mark.items;
+  const hasItems = items && items.length;
+  let i;
+  let n;
+  let item;
+  let b;
 
   if (type.nested) {
     if (hasItems) {
@@ -20,19 +23,17 @@ export default function(mark, bounds, opt) {
       item = DUMMY;
     }
     b = boundItem(item, bound, opt);
-    bounds = bounds && bounds.union(b) || b;
+    bounds = (bounds && bounds.union(b)) || b;
     return bounds;
   }
 
-  bounds = bounds
-    || mark.bounds && mark.bounds.clear()
-    || new Bounds();
+  bounds = bounds || (mark.bounds && mark.bounds.clear()) || new Bounds();
 
   if (hasItems) {
-    for (i=0, n=items.length; i<n; ++i) {
+    for (i = 0, n = items.length; i < n; ++i) {
       bounds.union(boundItem(items[i], bound, opt));
     }
   }
 
-  return mark.bounds = bounds;
+  return (mark.bounds = bounds);
 }

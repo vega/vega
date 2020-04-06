@@ -1,9 +1,9 @@
 import {bezier, segments} from './arc';
 
-var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
+const temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 
 function scale(current, sX, sY) {
-  var c = (temp[0] = current[0]);
+  const c = (temp[0] = current[0]);
   if (c === 'a' || c === 'A') {
     temp[1] = sX * current[1];
     temp[2] = sY * current[2];
@@ -17,24 +17,24 @@ function scale(current, sX, sY) {
   } else if (c === 'v' || c === 'V') {
     temp[1] = sY * current[1];
   } else {
-    for (var i=1, n=current.length; i<n; ++i) {
+    for (let i = 1, n = current.length; i < n; ++i) {
       temp[i] = (i % 2 == 1 ? sX : sY) * current[i];
     }
   }
   return temp;
 }
 
-export default function(context, path, l, t, sX, sY) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY;
+export default function (context, path, l, t, sX, sY) {
+  let current; // current instruction
+  let previous = null;
+  let x = 0; // current x
+  let y = 0; // current y
+  let controlX = 0; // current control point x
+  let controlY = 0; // current control point y
+  let tempX;
+  let tempY;
+  let tempControlX;
+  let tempControlY;
 
   if (l == null) l = 0;
   if (t == null) t = 0;
@@ -43,14 +43,15 @@ export default function(context, path, l, t, sX, sY) {
 
   if (context.beginPath) context.beginPath();
 
-  for (var i=0, len=path.length; i<len; ++i) {
+  for (let i = 0, len = path.length; i < len; ++i) {
     current = path[i];
     if (sX !== 1 || sY !== 1) {
       current = scale(current, sX, sY);
     }
 
-    switch (current[0]) { // first letter
-
+    switch (
+      current[0] // first letter
+    ) {
       case 'l': // lineto, relative
         x += current[1];
         y += current[2];
@@ -117,14 +118,7 @@ export default function(context, path, l, t, sX, sY) {
         y = current[6];
         controlX = current[3];
         controlY = current[4];
-        context.bezierCurveTo(
-          current[1] + l,
-          current[2] + t,
-          controlX + l,
-          controlY + t,
-          x + l,
-          y + t
-        );
+        context.bezierCurveTo(current[1] + l, current[2] + t, controlX + l, controlY + t, x + l, y + t);
         break;
 
       case 's': // shorthand cubic bezierCurveTo, relative
@@ -134,14 +128,7 @@ export default function(context, path, l, t, sX, sY) {
         // calculate reflection of previous control points
         controlX = 2 * x - controlX;
         controlY = 2 * y - controlY;
-        context.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          x + current[1] + l,
-          y + current[2] + t,
-          tempX + l,
-          tempY + t
-        );
+        context.bezierCurveTo(controlX + l, controlY + t, x + current[1] + l, y + current[2] + t, tempX + l, tempY + t);
 
         // set control point to 2nd one of this command
         // the first control point is assumed to be the reflection of
@@ -158,16 +145,9 @@ export default function(context, path, l, t, sX, sY) {
         tempX = current[3];
         tempY = current[4];
         // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
-        context.bezierCurveTo(
-          controlX + l,
-          controlY + t,
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
+        controlX = 2 * x - controlX;
+        controlY = 2 * y - controlY;
+        context.bezierCurveTo(controlX + l, controlY + t, current[1] + l, current[2] + t, tempX + l, tempY + t);
         x = tempX;
         y = tempY;
         // set control point to 2nd one of this command
@@ -187,12 +167,7 @@ export default function(context, path, l, t, sX, sY) {
         controlX = x + current[1];
         controlY = y + current[2];
 
-        context.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
+        context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
         x = tempX;
         y = tempY;
         break;
@@ -201,12 +176,7 @@ export default function(context, path, l, t, sX, sY) {
         tempX = current[3];
         tempY = current[4];
 
-        context.quadraticCurveTo(
-          current[1] + l,
-          current[2] + t,
-          tempX + l,
-          tempY + t
-        );
+        context.quadraticCurveTo(current[1] + l, current[2] + t, tempX + l, tempY + t);
         x = tempX;
         y = tempY;
         controlX = current[1];
@@ -214,7 +184,6 @@ export default function(context, path, l, t, sX, sY) {
         break;
 
       case 't': // shorthand quadraticCurveTo, relative
-
         // transform to absolute x,y
         tempX = x + current[1];
         tempY = y + current[2];
@@ -224,13 +193,11 @@ export default function(context, path, l, t, sX, sY) {
           // assume the control point is coincident with the current point
           controlX = x;
           controlY = y;
-        }
-        else if (previous[0] === 't') {
+        } else if (previous[0] === 't') {
           // calculate reflection of previous control points for t
           controlX = 2 * x - tempControlX;
           controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
+        } else if (previous[0] === 'q') {
           // calculate reflection of previous control points for q
           controlX = 2 * x - controlX;
           controlY = 2 * y - controlY;
@@ -239,12 +206,7 @@ export default function(context, path, l, t, sX, sY) {
         tempControlX = controlX;
         tempControlY = controlY;
 
-        context.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
+        context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
         x = tempX;
         y = tempY;
         controlX = x + current[1];
@@ -258,12 +220,7 @@ export default function(context, path, l, t, sX, sY) {
         // calculate reflection of previous control points
         controlX = 2 * x - controlX;
         controlY = 2 * y - controlY;
-        context.quadraticCurveTo(
-          controlX + l,
-          controlY + t,
-          tempX + l,
-          tempY + t
-        );
+        context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
         x = tempX;
         y = tempY;
         break;
@@ -306,7 +263,7 @@ export default function(context, path, l, t, sX, sY) {
 }
 
 function drawArc(context, x, y, coords) {
-  var seg = segments(
+  const seg = segments(
     coords[5], // end x
     coords[6], // end y
     coords[0], // radius x
@@ -314,10 +271,11 @@ function drawArc(context, x, y, coords) {
     coords[3], // large flag
     coords[4], // sweep flag
     coords[2], // rotation
-    x, y
+    x,
+    y
   );
-  for (var i=0; i<seg.length; ++i) {
-    var bez = bezier(seg[i]);
+  for (let i = 0; i < seg.length; ++i) {
+    const bez = bezier(seg[i]);
     context.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5]);
   }
 }

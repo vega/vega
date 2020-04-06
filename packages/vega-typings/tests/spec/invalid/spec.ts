@@ -1,57 +1,57 @@
-import { Spec } from 'vega'
+import { Spec } from 'vega';
 
-let spec: Spec
-
-// $ExpectError
-spec = {"background": null}
+let spec: Spec;
 
 // $ExpectError
-spec = {"background": false}
+spec = { background: null };
 
 // $ExpectError
-spec = {"background": 100}
+spec = { background: false };
 
 // $ExpectError
-spec = {"width": null}
+spec = { background: 100 };
 
 // $ExpectError
-spec = {"width": true}
+spec = { width: null };
 
 // $ExpectError
-spec = {"width": "foo"}
+spec = { width: true };
 
 // $ExpectError
-spec = {"width": {}}
+spec = { width: 'foo' };
 
 // $ExpectError
-spec = {"height": null}
+spec = { width: {} };
 
 // $ExpectError
-spec = {"height": true}
+spec = { height: null };
 
 // $ExpectError
-spec = {"height": "foo"}
+spec = { height: true };
 
 // $ExpectError
-spec = {"height": {}}
+spec = { height: 'foo' };
 
 // $ExpectError
-spec = {"$schema": null}
+spec = { height: {} };
 
 // $ExpectError
-spec = {"$schema": false}
+spec = { $schema: null };
 
 // $ExpectError
-spec = {"$schema": 100}
+spec = { $schema: false };
 
 // $ExpectError
-spec = {"$schema": {}}
+spec = { $schema: 100 };
 
 // $ExpectError
-spec = {"description": null}
+spec = { $schema: {} };
 
 // $ExpectError
-spec = {"description": false}
+spec = { description: null };
 
 // $ExpectError
-spec = {"description": 100}
+spec = { description: false };
+
+// $ExpectError
+spec = { description: 100 };

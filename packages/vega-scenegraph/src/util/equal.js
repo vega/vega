@@ -1,15 +1,21 @@
 import pathParse from '../path/parse';
 import {isNumber, isObject} from 'vega-util';
 
-var TOLERANCE = 1e-9;
+const TOLERANCE = 1e-9;
 
 export function sceneEqual(a, b, key) {
-  return (a === b) ? true
-    : (key === 'path') ? pathEqual(a, b)
-    : (a instanceof Date && b instanceof Date) ? +a === +b
-    : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
-    : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
-    : (a == null || b == null) ? false
+  return a === b
+    ? true
+    : key === 'path'
+    ? pathEqual(a, b)
+    : a instanceof Date && b instanceof Date
+    ? +a === +b
+    : isNumber(a) && isNumber(b)
+    ? Math.abs(a - b) <= TOLERANCE
+    : !a || !b || (!isObject(a) && !isObject(b))
+    ? a == b
+    : a == null || b == null
+    ? false
     : objectEqual(a, b);
 }
 
@@ -18,9 +24,10 @@ export function pathEqual(a, b) {
 }
 
 function objectEqual(a, b) {
-  var ka = Object.keys(a),
-      kb = Object.keys(b),
-      key, i;
+  const ka = Object.keys(a);
+  const kb = Object.keys(b);
+  let key;
+  let i;
 
   if (ka.length !== kb.length) return false;
 

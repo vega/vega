@@ -1,18 +1,18 @@
 function log(method, level, input) {
-  var args = [level].concat([].slice.call(input));
-  console[method].apply(console, args); // eslint-disable-line no-console
+  const args = [level].concat([].slice.call(input));
+  console[method](...args); // eslint-disable-line no-console
 }
 
-export var None  = 0;
-export var Error = 1;
-export var Warn  = 2;
-export var Info  = 3;
-export var Debug = 4;
+export const None = 0;
+export const Error = 1;
+export const Warn = 2;
+export const Info = 3;
+export const Debug = 4;
 
-export default function(_, method) {
-  var level = _ || None;
+export default function (_, method) {
+  let level = _ || None;
   return {
-    level: function(_) {
+    level: function (_) {
       if (arguments.length) {
         level = +_;
         return this;
@@ -20,21 +20,21 @@ export default function(_, method) {
         return level;
       }
     },
-    error: function() {
-      if (level >= Error) log(method || 'error', 'ERROR', arguments);
+    error: function (...args) {
+      if (level >= Error) log(method || 'error', 'ERROR', args);
       return this;
     },
-    warn: function() {
-      if (level >= Warn) log(method || 'warn', 'WARN', arguments);
+    warn: function (...args) {
+      if (level >= Warn) log(method || 'warn', 'WARN', args);
       return this;
     },
-    info: function() {
-      if (level >= Info) log(method || 'log', 'INFO', arguments);
+    info: function (...args) {
+      if (level >= Info) log(method || 'log', 'INFO', args);
       return this;
     },
-    debug: function() {
-      if (level >= Debug) log(method || 'log', 'DEBUG', arguments);
+    debug: function (...args) {
+      if (level >= Debug) log(method || 'log', 'DEBUG', args);
       return this;
     }
-  }
+  };
 }

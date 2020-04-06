@@ -13,31 +13,32 @@ export default function Bound(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Bound, Transform);
+const prototype = inherits(Bound, Transform);
 
-prototype.transform = function(_, pulse) {
-  var view = pulse.dataflow,
-      mark = _.mark,
-      type = mark.marktype,
-      entry = Marks[type],
-      bound = entry.bound,
-      markBounds = mark.bounds, rebound;
+prototype.transform = function (_, pulse) {
+  const view = pulse.dataflow;
+  const mark = _.mark;
+  const type = mark.marktype;
+  const entry = Marks[type];
+  const bound = entry.bound;
+  let markBounds = mark.bounds;
+  let rebound;
 
   if (entry.nested) {
     // multi-item marks have a single bounds instance
     if (mark.items.length) view.dirty(mark.items[0]);
     markBounds = boundItem(mark, bound);
-    mark.items.forEach(function(item) {
+    mark.items.forEach(function (item) {
       item.bounds.clear().union(markBounds);
     });
-  }
-
-  else if (type === Group || _.modified()) {
+  } else if (type === Group || _.modified()) {
     // operator parameters modified -> re-bound all items
     // updates group bounds in response to modified group content
-    pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
+    pulse.visit(pulse.MOD, function (item) {
+      view.dirty(item);
+    });
     markBounds.clear();
-    mark.items.forEach(function(item) {
+    mark.items.forEach(function (item) {
       markBounds.union(boundItem(item, bound));
     });
 
@@ -48,17 +49,15 @@ prototype.transform = function(_, pulse) {
       case TitleRole:
         pulse.reflow();
     }
-  }
-
-  else {
+  } else {
     // incrementally update bounds, re-bound mark as needed
     rebound = pulse.changed(pulse.REM);
 
-    pulse.visit(pulse.ADD, function(item) {
+    pulse.visit(pulse.ADD, function (item) {
       markBounds.union(boundItem(item, bound));
     });
 
-    pulse.visit(pulse.MOD, function(item) {
+    pulse.visit(pulse.MOD, function (item) {
       rebound = rebound || markBounds.alignsWith(item.bounds);
       view.dirty(item);
       markBounds.union(boundItem(item, bound));
@@ -66,7 +65,9 @@ prototype.transform = function(_, pulse) {
 
     if (rebound) {
       markBounds.clear();
-      mark.items.forEach(function(item) { markBounds.union(item.bounds); });
+      mark.items.forEach(function (item) {
+        markBounds.union(item.bounds);
+      });
     }
   }
 

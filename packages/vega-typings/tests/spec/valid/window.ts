@@ -1,115 +1,131 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 500,
-  "height": 150,
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 500,
+  height: 150,
+  padding: 5,
 
-  "signals": [
+  signals: [
     {
-      "name": "curve", "value": "linear",
-      "bind": {
-        "input": "select",
-        "options": ["linear", "monotone", "step"]
-      }
+      name: 'curve',
+      value: 'linear',
+      bind: {
+        input: 'select',
+        options: ['linear', 'monotone', 'step'],
+      },
     },
     {
-      "name": "aggregate", "value": "sum",
-      "bind": {
-        "input": "select",
-        "options": ["sum", "count", "average", "median", "stdev"]
-      }
+      name: 'aggregate',
+      value: 'sum',
+      bind: {
+        input: 'select',
+        options: ['sum', 'count', 'average', 'median', 'stdev'],
+      },
     },
     {
-      "name": "frameStart", "value": null,
-      "bind": {"input": "select", "options": [null, -5, -2, 0]}
+      name: 'frameStart',
+      value: null,
+      bind: { input: 'select', options: [null, -5, -2, 0] },
     },
     {
-      "name": "frameEnd", "value": 0,
-      "bind": {"input": "select", "options": [0, 2, 5, null]}
+      name: 'frameEnd',
+      value: 0,
+      bind: { input: 'select', options: [0, 2, 5, null] },
     },
     {
-      "name": "startLabel",
-      "update": "if(frameStart == null, '-\u221e', frameStart)"
+      name: 'startLabel',
+      update: "if(frameStart == null, '-\u221e', frameStart)",
     },
     {
-      "name": "endLabel",
-      "update": "if(frameEnd == null, '+\u221e', frameEnd)"
-    }
+      name: 'endLabel',
+      update: "if(frameEnd == null, '+\u221e', frameEnd)",
+    },
   ],
 
-  "data": [
+  data: [
     {
-      "name": "table",
-      "values": [
-        {"u": 1,  "v": 28}, {"u": 2,  "v": 55},
-        {"u": 3,  "v": 43}, {"u": 4,  "v": 91},
-        {"u": 5,  "v": 81}, {"u": 6,  "v": 53},
-        {"u": 7,  "v": 19}, {"u": 8,  "v": 87},
-        {"u": 9,  "v": 52}, {"u": 10, "v": 48},
-        {"u": 11, "v": 24}, {"u": 12, "v": 49},
-        {"u": 13, "v": 87}, {"u": 14, "v": 66},
-        {"u": 15, "v": 17}, {"u": 16, "v": 27},
-        {"u": 17, "v": 68}, {"u": 18, "v": 16},
-        {"u": 19, "v": 49}, {"u": 20, "v": 15}
+      name: 'table',
+      values: [
+        { u: 1, v: 28 },
+        { u: 2, v: 55 },
+        { u: 3, v: 43 },
+        { u: 4, v: 91 },
+        { u: 5, v: 81 },
+        { u: 6, v: 53 },
+        { u: 7, v: 19 },
+        { u: 8, v: 87 },
+        { u: 9, v: 52 },
+        { u: 10, v: 48 },
+        { u: 11, v: 24 },
+        { u: 12, v: 49 },
+        { u: 13, v: 87 },
+        { u: 14, v: 66 },
+        { u: 15, v: 17 },
+        { u: 16, v: 27 },
+        { u: 17, v: 68 },
+        { u: 18, v: 16 },
+        { u: 19, v: 49 },
+        { u: 20, v: 15 },
       ],
-      "transform": [
+      transform: [
         {
-          "type": "window",
-          "sort": {"field": "u"},
-          "frame": [{"signal": "frameStart"}, {"signal": "frameEnd"}],
-          "ops": [{"signal": "aggregate"}, "rank"],
-          "fields": ["v", null],
-          "as": ["value", null]
-        }
-      ]
-    }
+          type: 'window',
+          sort: { field: 'u' },
+          frame: [{ signal: 'frameStart' }, { signal: 'frameEnd' }],
+          ops: [{ signal: 'aggregate' }, 'rank'],
+          fields: ['v', null],
+          as: ['value', null],
+        },
+      ],
+    },
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "xscale",
-      "type": "linear",
-      "range": "width",
-      "zero": false,
-      "domain": {"data": "table", "field": "u"}
+      name: 'xscale',
+      type: 'linear',
+      range: 'width',
+      zero: false,
+      domain: { data: 'table', field: 'u' },
     },
     {
-      "name": "yscale",
-      "type": "linear",
-      "range": "height",
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "table", "field": "value"}
-    }
+      name: 'yscale',
+      type: 'linear',
+      range: 'height',
+      nice: true,
+      zero: true,
+      domain: { data: 'table', field: 'value' },
+    },
   ],
 
-  "title": {
-    "text": {"signal": "aggregate + '(value) over sliding window: [' + startLabel + ',' + endLabel + ']'"},
-    "orient": "bottom"
+  title: {
+    text: {
+      signal: "aggregate + '(value) over sliding window: [' + startLabel + ',' + endLabel + ']'",
+    },
+    orient: 'bottom',
   },
 
-  "axes": [
-    { "orient": "bottom", "scale": "xscale", "tickCount": 20, "zindex": 1 },
-    { "orient": "left", "scale": "yscale", "tickCount": 5, "zindex": 1 }
+  axes: [
+    { orient: 'bottom', scale: 'xscale', tickCount: 20, zindex: 1 },
+    { orient: 'left', scale: 'yscale', tickCount: 5, zindex: 1 },
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "line",
-      "from": {"data": "table"},
-      "encode": {
-        "enter": {
-          "x": {"scale": "xscale", "field": "u"},
-          "stroke": {"value": "steelblue"},
-          "strokeWidth": {"value": 3}
+      type: 'line',
+      from: { data: 'table' },
+      encode: {
+        enter: {
+          x: { scale: 'xscale', field: 'u' },
+          stroke: { value: 'steelblue' },
+          strokeWidth: { value: 3 },
         },
-        "update": {
-          "y": {"scale": "yscale", "field": "value"},
-          "interpolate": {"signal": "curve"}
-        }
-      }
-    }
-  ]
+        update: {
+          y: { scale: 'yscale', field: 'value' },
+          interpolate: { signal: 'curve' },
+        },
+      },
+    },
+  ],
 };

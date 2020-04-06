@@ -1,3 +1,3 @@
-export var Symbols  = 'symbol';
-export var Discrete = 'discrete';
-export var Gradient = 'gradient';
+export const Symbols = 'symbol';
+export const Discrete = 'discrete';
+export const Gradient = 'gradient';

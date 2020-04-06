@@ -1,32 +1,27 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stratify = require('../').stratify;
+const tape = require('tape');
+const field = require('vega-util').field;
+const vega = require('vega-dataflow');
+const changeset = vega.changeset;
+const Collect = require('vega-transforms').collect;
+const Stratify = require('../').stratify;
 
-tape('Stratify tuples', function(t) {
-  var data = [
-    {id: 'a'},
-    {id: 'b', pid: 'a'},
-    {id: 'c', pid: 'a'},
-    {id: 'd', pid: 'c'},
-  ];
+tape('Stratify tuples', function (t) {
+  const data = [{id: 'a'}, {id: 'b', pid: 'a'}, {id: 'c', pid: 'a'}, {id: 'd', pid: 'c'}];
 
   // Setup tree stratification
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Stratify, {
-        key: field('id'),
-        parentKey: field('pid'),
-        pulse: collect
-      }),
-      out = df.add(Collect, {pulse: nest});
+  const df = new vega.Dataflow();
+  const collect = df.add(Collect);
+  const nest = df.add(Stratify, {
+    key: field('id'),
+    parentKey: field('pid'),
+    pulse: collect
+  });
+  const out = df.add(Collect, {pulse: nest});
 
   // build tree
   df.pulse(collect, changeset().insert(data)).run();
   t.deepEqual(out.value.slice(), data);
-  var root = out.value.root;
+  const root = out.value.root;
   t.equal(root.data, data[0]);
   t.equal(root.children[0].data, data[1]);
   t.equal(root.children[1].data, data[2]);
@@ -36,20 +31,20 @@ tape('Stratify tuples', function(t) {
   t.end();
 });
 
-tape('Stratify empty data', function(t) {
+tape('Stratify empty data', function (t) {
   // Setup tree stratification
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Stratify, {
-        key: field('id'),
-        parentKey: field('pid'),
-        pulse: collect
-      }),
-      out = df.add(Collect, {pulse: nest});
+  const df = new vega.Dataflow();
+  const collect = df.add(Collect);
+  const nest = df.add(Stratify, {
+    key: field('id'),
+    parentKey: field('pid'),
+    pulse: collect
+  });
+  const out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, changeset().insert([])).run();
   t.equal(out.value.length, 0);
-  var root = out.value.root;
+  const root = out.value.root;
   t.equal(root.children, undefined);
   t.deepEqual(root.lookup, {});
 

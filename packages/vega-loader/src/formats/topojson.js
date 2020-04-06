@@ -8,7 +8,10 @@ const filters = {
 };
 
 export default function topojson(data, format) {
-  let method, object, property, filter;
+  let method;
+  let object;
+  let property;
+  let filter;
   data = json(data, format);
 
   if (format && format.feature) {
@@ -26,7 +29,7 @@ export default function topojson(data, format) {
     ? method(data, object, filter)
     : error('Invalid TopoJSON object: ' + property);
 
-  return object && object.features || [object];
+  return (object && object.features) || [object];
 }
 
 topojson.responseType = 'json';

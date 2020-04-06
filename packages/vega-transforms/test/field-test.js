@@ -1,13 +1,13 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Field = require('../').field;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const Field = require('../').field;
 
-tape('Field generates field accessors', function(t) {
-  var df = new vega.Dataflow(),
-      n = df.add('foo'),
-      a = df.add(null),
-      f = df.add(Field, {name:n, as:a});
+tape('Field generates field accessors', function (t) {
+  const df = new vega.Dataflow();
+  const n = df.add('foo');
+  const a = df.add(null);
+  const f = df.add(Field, {name: n, as: a});
 
   df.run();
   t.equal(typeof f.value, 'function');
@@ -27,9 +27,7 @@ tape('Field generates field accessors', function(t) {
   df.update(n, ['foo', 'bar']).run();
   t.equal(Array.isArray(f.value), true);
   t.deepEqual(f.value.map(util.accessorName), ['foo', 'bar']);
-  t.deepEqual(
-    f.value.map(util.accessorFields),
-    [['foo'], ['bar']]);
+  t.deepEqual(f.value.map(util.accessorFields), [['foo'], ['bar']]);
 
   t.end();
 });

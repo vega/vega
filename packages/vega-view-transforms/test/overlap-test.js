@@ -1,24 +1,24 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Bounds = require('vega-scenegraph').Bounds,
-    Collect = require('vega-transforms').collect,
-    tx = require('../'),
-    Overlap = tx.overlap;
+const tape = require('tape');
+const vega = require('vega-dataflow');
+const Bounds = require('vega-scenegraph').Bounds;
+const Collect = require('vega-transforms').collect;
+const tx = require('../');
+const Overlap = tx.overlap;
 
 function items() {
-  var mark = {bounds: new Bounds(0, 0, 20, 10)};
+  const mark = {bounds: new Bounds(0, 0, 20, 10)};
   return [
-    {opacity: 1, mark: mark, bounds: new Bounds().set( 0, 0,  3, 10)},
-    {opacity: 1, mark: mark, bounds: new Bounds().set( 5, 0, 20, 10)},
+    {opacity: 1, mark: mark, bounds: new Bounds().set(0, 0, 3, 10)},
+    {opacity: 1, mark: mark, bounds: new Bounds().set(5, 0, 20, 10)},
     {opacity: 1, mark: mark, bounds: new Bounds().set(10, 0, 18, 10)}
   ];
 }
 
-tape('Overlap removes overlapping items (parity)', function(t) {
-  var data = items(),
-      df = new vega.Dataflow(),
-      co = df.add(Collect),
-      ov = df.add(Overlap, {method: 'parity', pulse: co});
+tape('Overlap removes overlapping items (parity)', function (t) {
+  const data = items();
+  const df = new vega.Dataflow();
+  const co = df.add(Collect);
+  const ov = df.add(Overlap, {method: 'parity', pulse: co});
 
   df.pulse(co, df.changeset().insert(data)).run();
 
@@ -34,11 +34,11 @@ tape('Overlap removes overlapping items (parity)', function(t) {
   t.end();
 });
 
-tape('Overlap removes overlapping items (greedy)', function(t) {
-  var data = items(),
-      df = new vega.Dataflow(),
-      co = df.add(Collect),
-      ov = df.add(Overlap, {method: 'greedy', pulse: co});
+tape('Overlap removes overlapping items (greedy)', function (t) {
+  const data = items();
+  const df = new vega.Dataflow();
+  const co = df.add(Collect);
+  const ov = df.add(Overlap, {method: 'greedy', pulse: co});
 
   // add extra item to test greedy strategy
   data.push({

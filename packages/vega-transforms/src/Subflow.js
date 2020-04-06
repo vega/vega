@@ -14,9 +14,9 @@ export default function Subflow(pulse, parent) {
   this.parent = parent;
 }
 
-var prototype = inherits(Subflow, Operator);
+const prototype = inherits(Subflow, Operator);
 
-prototype.connect = function(target) {
+prototype.connect = function (target) {
   this.targets().add(target);
   return (target.source = this);
 };
@@ -25,7 +25,7 @@ prototype.connect = function(target) {
  * Add an 'add' tuple to the subflow pulse.
  * @param {Tuple} t - The tuple being added.
  */
-prototype.add = function(t) {
+prototype.add = function (t) {
   this.value.add.push(t);
 };
 
@@ -33,7 +33,7 @@ prototype.add = function(t) {
  * Add a 'rem' tuple to the subflow pulse.
  * @param {Tuple} t - The tuple being removed.
  */
-prototype.rem = function(t) {
+prototype.rem = function (t) {
   this.value.rem.push(t);
 };
 
@@ -41,7 +41,7 @@ prototype.rem = function(t) {
  * Add a 'mod' tuple to the subflow pulse.
  * @param {Tuple} t - The tuple being modified.
  */
-prototype.mod = function(t) {
+prototype.mod = function (t) {
   this.value.mod.push(t);
 };
 
@@ -50,7 +50,7 @@ prototype.mod = function(t) {
  * @param {Pulse} pulse - The pulse to copy from.
  * @see Pulse.init
  */
-prototype.init = function(pulse) {
+prototype.init = function (pulse) {
   this.value.init(pulse, pulse.NO_SOURCE);
 };
 
@@ -59,7 +59,7 @@ prototype.init = function(pulse) {
  * default behavior to simply return the contained pulse value.
  * @return {Pulse}
  */
-prototype.evaluate = function() {
+prototype.evaluate = function () {
   // assert: this.value.stamp === pulse.stamp
   return this.value;
 };

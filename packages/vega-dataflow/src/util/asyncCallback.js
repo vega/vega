@@ -6,6 +6,10 @@
  *   and then await. The dataflow will be passed as the single
  *   argument to the function.
  */
-export default async function(df, callback) {
-  try { await callback(df); } catch (err) { df.error(err); }
+export default async function (df, callback) {
+  try {
+    await callback(df);
+  } catch (err) {
+    df.error(err);
+  }
 }

@@ -18,40 +18,42 @@ export default function CrossFilter(params) {
 }
 
 CrossFilter.Definition = {
-  "type": "CrossFilter",
-  "metadata": {},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "query", "type": "array", "array": true, "required": true,
-      "content": {"type": "number", "array": true, "length": 2} }
+  type: 'CrossFilter',
+  metadata: {},
+  params: [
+    {name: 'fields', type: 'field', array: true, required: true},
+    {name: 'query', type: 'array', array: true, required: true, content: {type: 'number', array: true, length: 2}}
   ]
 };
 
-var prototype = inherits(CrossFilter, Transform);
+const prototype = inherits(CrossFilter, Transform);
 
-prototype.transform = function(_, pulse) {
+prototype.transform = function (_, pulse) {
   if (!this._dims) {
     return this.init(_, pulse);
   } else {
-    var init = _.modified('fields')
-          || _.fields.some(function(f) { return pulse.modified(f.fields); });
+    const init =
+      _.modified('fields') ||
+      _.fields.some(function (f) {
+        return pulse.modified(f.fields);
+      });
 
-    return init
-      ? this.reinit(_, pulse)
-      : this.eval(_, pulse);
+    return init ? this.reinit(_, pulse) : this.eval(_, pulse);
   }
 };
 
-prototype.init = function(_, pulse) {
-  var fields = _.fields,
-      query = _.query,
-      indices = this._indices = {},
-      dims = this._dims = [],
-      m = query.length,
-      i = 0, key, index;
+prototype.init = function (_, pulse) {
+  const fields = _.fields;
+  const query = _.query;
+  const indices = (this._indices = {});
+  const dims = (this._dims = []);
+  const m = query.length;
+  let i = 0;
+  let key;
+  let index;
 
   // instantiate indices and dimensions
-  for (; i<m; ++i) {
+  for (; i < m; ++i) {
     key = fields[i].fname;
     index = indices[key] || (indices[key] = SortedIndex());
     dims.push(Dimension(index, i, query[i]));
@@ -60,21 +62,29 @@ prototype.init = function(_, pulse) {
   return this.eval(_, pulse);
 };
 
-prototype.reinit = function(_, pulse) {
-  var output = pulse.materialize().fork(),
-      fields = _.fields,
-      query = _.query,
-      indices = this._indices,
-      dims = this._dims,
-      bits = this.value,
-      curr = bits.curr(),
-      prev = bits.prev(),
-      all = bits.all(),
-      out = (output.rem = output.add),
-      mod = output.mod,
-      m = query.length,
-      adds = {}, add, index, key,
-      mods, remMap, modMap, i, n, f;
+prototype.reinit = function (_, pulse) {
+  const output = pulse.materialize().fork();
+  const fields = _.fields;
+  const query = _.query;
+  const indices = this._indices;
+  const dims = this._dims;
+  const bits = this.value;
+  const curr = bits.curr();
+  const prev = bits.prev();
+  const all = bits.all();
+  const out = (output.rem = output.add);
+  const mod = output.mod;
+  const m = query.length;
+  const adds = {};
+  let add;
+  let index;
+  let key;
+  let mods;
+  let remMap;
+  let modMap;
+  let i;
+  let n;
+  let f;
 
   // set prev to current state
   prev.set(curr);
@@ -92,13 +102,13 @@ prototype.reinit = function(_, pulse) {
   // if pulse has modified tuples, create an index map
   if (pulse.mod.length) {
     modMap = {};
-    for (mods=pulse.mod, i=0, n=mods.length; i<n; ++i) {
+    for (mods = pulse.mod, i = 0, n = mods.length; i < n; ++i) {
       modMap[mods[i]._index] = 1;
     }
   }
 
   // re-initialize indices as needed, update curr bitmap
-  for (i=0; i<m; ++i) {
+  for (i = 0; i < m; ++i) {
     f = fields[i];
     if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
       key = f.fname;
@@ -113,12 +123,15 @@ prototype.reinit = function(_, pulse) {
   // visit each tuple
   // if filter state changed, push index to add/rem
   // else if in mod and passes a filter, push index to mod
-  for (i=0, n=bits.data().length; i<n; ++i) {
-    if (remMap[i]) { // skip if removed tuple
+  for (i = 0, n = bits.data().length; i < n; ++i) {
+    if (remMap[i]) {
+      // skip if removed tuple
       continue;
-    } else if (prev[i] !== curr[i]) { // add if state changed
+    } else if (prev[i] !== curr[i]) {
+      // add if state changed
       out.push(i);
-    } else if (modMap[i] && curr[i] !== all) { // otherwise, pass mods through
+    } else if (modMap[i] && curr[i] !== all) {
+      // otherwise, pass mods through
       mod.push(i);
     }
   }
@@ -127,10 +140,10 @@ prototype.reinit = function(_, pulse) {
   return output;
 };
 
-prototype.eval = function(_, pulse) {
-  var output = pulse.materialize().fork(),
-      m = this._dims.length,
-      mask = 0;
+prototype.eval = function (_, pulse) {
+  const output = pulse.materialize().fork();
+  const m = this._dims.length;
+  let mask = 0;
 
   if (pulse.rem.length) {
     this.remove(_, pulse, output);
@@ -155,70 +168,78 @@ prototype.eval = function(_, pulse) {
   return output;
 };
 
-prototype.insert = function(_, pulse, output) {
-  var tuples = pulse.add,
-      bits = this.value,
-      dims = this._dims,
-      indices = this._indices,
-      fields = _.fields,
-      adds = {},
-      out = output.add,
-      k = bits.size(),
-      n = k + tuples.length,
-      m = dims.length, j, key, add;
+prototype.insert = function (_, pulse, output) {
+  const tuples = pulse.add;
+  const bits = this.value;
+  const dims = this._dims;
+  const indices = this._indices;
+  const fields = _.fields;
+  const adds = {};
+  const out = output.add;
+  let k = bits.size();
+  const n = k + tuples.length;
+  const m = dims.length;
+  let j;
+  let key;
+  let add;
 
   // resize bitmaps and add tuples as needed
   bits.resize(n, m);
   bits.add(tuples);
 
-  var curr = bits.curr(),
-      prev = bits.prev(),
-      all  = bits.all();
+  const curr = bits.curr();
+  const prev = bits.prev();
+  const all = bits.all();
 
   // add to dimensional indices
-  for (j=0; j<m; ++j) {
+  for (j = 0; j < m; ++j) {
     key = fields[j].fname;
     add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
     dims[j].onAdd(add, curr);
   }
 
   // set previous filters, output if passes at least one filter
-  for (; k<n; ++k) {
+  for (; k < n; ++k) {
     prev[k] = all;
     if (curr[k] !== all) out.push(k);
   }
 };
 
-prototype.modify = function(pulse, output) {
-  var out = output.mod,
-      bits = this.value,
-      curr = bits.curr(),
-      all  = bits.all(),
-      tuples = pulse.mod,
-      i, n, k;
+prototype.modify = function (pulse, output) {
+  const out = output.mod;
+  const bits = this.value;
+  const curr = bits.curr();
+  const all = bits.all();
+  const tuples = pulse.mod;
+  let i;
+  let n;
+  let k;
 
-  for (i=0, n=tuples.length; i<n; ++i) {
+  for (i = 0, n = tuples.length; i < n; ++i) {
     k = tuples[i]._index;
     if (curr[k] !== all) out.push(k);
   }
 };
 
-prototype.remove = function(_, pulse, output) {
-  var indices = this._indices,
-      bits = this.value,
-      curr = bits.curr(),
-      prev = bits.prev(),
-      all  = bits.all(),
-      map = {},
-      out = output.rem,
-      tuples = pulse.rem,
-      i, n, k, f;
+prototype.remove = function (_, pulse, output) {
+  const indices = this._indices;
+  const bits = this.value;
+  const curr = bits.curr();
+  const prev = bits.prev();
+  const all = bits.all();
+  const map = {};
+  const out = output.rem;
+  const tuples = pulse.rem;
+  let i;
+  let n;
+  let k;
+  let f;
 
   // process tuples, output if passes at least one filter
-  for (i=0, n=tuples.length; i<n; ++i) {
+  for (i = 0, n = tuples.length; i < n; ++i) {
     k = tuples[i]._index;
     map[k] = 1; // build index map
-    prev[k] = (f = curr[k]);
+    prev[k] = f = curr[k];
     curr[k] = all;
     if (f !== all) out.push(k);
   }
@@ -233,27 +254,32 @@ prototype.remove = function(_, pulse, output) {
 };
 
 // reindex filters and indices after propagation completes
-prototype.reindex = function(pulse, num, map) {
-  var indices = this._indices,
-      bits = this.value;
+prototype.reindex = function (pulse, num, map) {
+  const indices = this._indices;
+  const bits = this.value;
 
-  pulse.runAfter(function() {
-    var indexMap = bits.remove(num, map);
-    for (var key in indices) indices[key].reindex(indexMap);
+  pulse.runAfter(function () {
+    const indexMap = bits.remove(num, map);
+    for (const key in indices) indices[key].reindex(indexMap);
   });
 };
 
-prototype.update = function(_, pulse, output) {
-  var dims = this._dims,
-      query = _.query,
-      stamp = pulse.stamp,
-      m = dims.length,
-      mask = 0, i, q;
+prototype.update = function (_, pulse, output) {
+  const dims = this._dims;
+  const query = _.query;
+  const stamp = pulse.stamp;
+  const m = dims.length;
+  let mask = 0;
+  let i;
+  let q;
 
   // survey how many queries have changed
   output.filters = 0;
-  for (q=0; q<m; ++q) {
-    if (_.modified('query', q)) { i = q; ++mask; }
+  for (q = 0; q < m; ++q) {
+    if (_.modified('query', q)) {
+      i = q;
+      ++mask;
+    }
   }
 
   if (mask === 1) {
@@ -262,7 +288,7 @@ prototype.update = function(_, pulse, output) {
     this.incrementOne(dims[i], query[i], output.add, output.rem);
   } else {
     // multiple queries changed, perform full record keeping
-    for (q=0, mask=0; q<m; ++q) {
+    for (q = 0, mask = 0; q < m; ++q) {
       if (!_.modified('query', q)) continue;
       mask |= dims[q].one;
       this.incrementAll(dims[q], query[q], stamp, output.add);
@@ -273,20 +299,22 @@ prototype.update = function(_, pulse, output) {
   return mask;
 };
 
-prototype.incrementAll = function(dim, query, stamp, out) {
-  var bits = this.value,
-      seen = bits.seen(),
-      curr = bits.curr(),
-      prev = bits.prev(),
-      index = dim.index(),
-      old = dim.bisect(dim.range),
-      range = dim.bisect(query),
-      lo1 = range[0],
-      hi1 = range[1],
-      lo0 = old[0],
-      hi0 = old[1],
-      one = dim.one,
-      i, j, k;
+prototype.incrementAll = function (dim, query, stamp, out) {
+  const bits = this.value;
+  const seen = bits.seen();
+  const curr = bits.curr();
+  const prev = bits.prev();
+  const index = dim.index();
+  const old = dim.bisect(dim.range);
+  const range = dim.bisect(query);
+  const lo1 = range[0];
+  const hi1 = range[1];
+  const lo0 = old[0];
+  const hi0 = old[1];
+  const one = dim.one;
+  let i;
+  let j;
+  let k;
 
   // Fast incremental update based on previous lo index.
   if (lo1 < lo0) {
@@ -337,18 +365,20 @@ prototype.incrementAll = function(dim, query, stamp, out) {
   dim.range = query.slice();
 };
 
-prototype.incrementOne = function(dim, query, add, rem) {
-  var bits = this.value,
-      curr = bits.curr(),
-      index = dim.index(),
-      old = dim.bisect(dim.range),
-      range = dim.bisect(query),
-      lo1 = range[0],
-      hi1 = range[1],
-      lo0 = old[0],
-      hi0 = old[1],
-      one = dim.one,
-      i, j, k;
+prototype.incrementOne = function (dim, query, add, rem) {
+  const bits = this.value;
+  const curr = bits.curr();
+  const index = dim.index();
+  const old = dim.bisect(dim.range);
+  const range = dim.bisect(query);
+  const lo1 = range[0];
+  const hi1 = range[1];
+  const lo0 = old[0];
+  const hi0 = old[1];
+  const one = dim.one;
+  let i;
+  let j;
+  let k;
 
   // Fast incremental update based on previous lo index.
   if (lo1 < lo0) {

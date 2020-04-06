@@ -5,8 +5,8 @@ import parseUpdate from './update';
 /**
  * Parse a serialized dataflow specification.
  */
-export default function(spec, ctx) {
-  var operators = spec.operators || [];
+export default function (spec, ctx) {
+  const operators = spec.operators || [];
 
   // parse background
   if (spec.background) {
@@ -19,22 +19,22 @@ export default function(spec, ctx) {
   }
 
   // parse operators
-  operators.forEach(function(entry) {
+  operators.forEach(function (entry) {
     parseOperator(entry, ctx);
   });
 
   // parse operator parameters
-  operators.forEach(function(entry) {
+  operators.forEach(function (entry) {
     parseOperatorParameters(entry, ctx);
   });
 
   // parse streams
-  (spec.streams || []).forEach(function(entry) {
+  (spec.streams || []).forEach(function (entry) {
     parseStream(entry, ctx);
   });
 
   // parse updates
-  (spec.updates || []).forEach(function(entry) {
+  (spec.updates || []).forEach(function (entry) {
     parseUpdate(entry, ctx);
   });
 

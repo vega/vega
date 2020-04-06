@@ -1,64 +1,81 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
-tape('Parser parses stream definitions', function(t) {
-  var scope = new vega.Scope(),
-      dom, view, between, merge, nested, timer;
+tape('Parser parses stream definitions', function (t) {
+  const scope = new vega.Scope();
 
   scope.addSignal('zero', true); // id zero
 
-  dom = vega.stream({
-    source:   'window',
-    type:     'mousemove',
-    filter:   'event.metaKey',
-    throttle: 1,
-    debounce: 2
-  }, scope);
+  const dom = vega.stream(
+    {
+      source: 'window',
+      type: 'mousemove',
+      filter: 'event.metaKey',
+      throttle: 1,
+      debounce: 2
+    },
+    scope
+  );
 
-  view = vega.stream({
-    type:     'mousedown',
-    marktype: 'rect',
-    markname: 'foo',
-    filter:   'event.shiftKey',
-    throttle: 3,
-    debounce: 4
-  }, scope);
+  const view = vega.stream(
+    {
+      type: 'mousedown',
+      marktype: 'rect',
+      markname: 'foo',
+      filter: 'event.shiftKey',
+      throttle: 3,
+      debounce: 4
+    },
+    scope
+  );
 
-  between = vega.stream({
-    source:   'window',
-    type:     'mousemove',
-    between:  [
-      {source: 'view', type: 'mousedown'},
-      {source: 'view', type: 'mouseup'}
-    ]
-  }, scope);
-
-  merge = vega.stream({
-    merge: [
-      {source: 'view', type: 'mousedown'},
-      {source: 'view', type: 'mouseup'}
-    ]
-  }, scope);
-
-  nested = vega.stream({
-    stream: {
-      source:   'window',
-      type:     'mousemove',
-      between:  [
+  const between = vega.stream(
+    {
+      source: 'window',
+      type: 'mousemove',
+      between: [
         {source: 'view', type: 'mousedown'},
         {source: 'view', type: 'mouseup'}
       ]
     },
-    between:  [
-      {source: 'view', type: 'touchstart'},
-      {source: 'view', type: 'touchend'}
-    ]
-  }, scope);
+    scope
+  );
 
-  timer = vega.stream({
-    type:     'timer',
-    throttle: 500
-  }, scope);
+  const merge = vega.stream(
+    {
+      merge: [
+        {source: 'view', type: 'mousedown'},
+        {source: 'view', type: 'mouseup'}
+      ]
+    },
+    scope
+  );
+
+  const nested = vega.stream(
+    {
+      stream: {
+        source: 'window',
+        type: 'mousemove',
+        between: [
+          {source: 'view', type: 'mousedown'},
+          {source: 'view', type: 'mouseup'}
+        ]
+      },
+      between: [
+        {source: 'view', type: 'touchstart'},
+        {source: 'view', type: 'touchend'}
+      ]
+    },
+    scope
+  );
+
+  const timer = vega.stream(
+    {
+      type: 'timer',
+      throttle: 500
+    },
+    scope
+  );
 
   t.equal(scope.streams.length, 12);
 

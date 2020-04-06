@@ -1,26 +1,36 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Filter = tx.filter;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const tx = require('../');
+const changeset = vega.changeset;
+const Collect = tx.collect;
+const Filter = tx.filter;
 
-tape('Filter filters tuples', function(t) {
-  var lt3 = util.accessor(function(d) { return d.id < 3; }, ['id']);
-  var baz = util.accessor(function(d) { return d.value === 'baz'; }, ['value']);
+tape('Filter filters tuples', function (t) {
+  const lt3 = util.accessor(
+    function (d) {
+      return d.id < 3;
+    },
+    ['id']
+  );
+  const baz = util.accessor(
+    function (d) {
+      return d.value === 'baz';
+    },
+    ['value']
+  );
 
-  var data = [
-    {'id': 1, 'value': 'foo'},
-    {'id': 3, 'value': 'bar'},
-    {'id': 5, 'value': 'baz'}
+  const data = [
+    {id: 1, value: 'foo'},
+    {id: 3, value: 'bar'},
+    {id: 5, value: 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
-      e0 = df.add(null),
-      c0 = df.add(Collect),
-      f0 = df.add(Filter, {expr: e0, pulse: c0}),
-      c1 = df.add(Collect, {pulse: f0});
+  const df = new vega.Dataflow();
+  const e0 = df.add(null);
+  const c0 = df.add(Collect);
+  const f0 = df.add(Filter, {expr: e0, pulse: c0});
+  const c1 = df.add(Collect, {pulse: f0});
 
   df.pulse(c0, changeset().insert(data));
   df.update(e0, util.truthy).run();
@@ -47,14 +57,15 @@ tape('Filter filters tuples', function(t) {
   t.end();
 });
 
-tape('Filter does not leak memory', function(t) {
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      f0 = df.add(Filter, {expr: util.field('value'), pulse: c0}),
-      n = df.cleanThreshold + 1;
+tape('Filter does not leak memory', function (t) {
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const f0 = df.add(Filter, {expr: util.field('value'), pulse: c0});
+  const n = df.cleanThreshold + 1;
 
   function generate() {
-    for (var data = [], i=0; i<n; ++i) {
+    const data = [];
+    for (let i = 0; i < n; ++i) {
       data.push({index: i, value: 0});
     }
     return data;

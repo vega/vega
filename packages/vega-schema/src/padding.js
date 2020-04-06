@@ -1,4 +1,4 @@
-import { object, oneOf, numberType, signalRef } from './util';
+import {object, oneOf, numberType, signalRef} from './util';
 
 const padding = oneOf(
   numberType,

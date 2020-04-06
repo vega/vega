@@ -12,20 +12,19 @@ import {extend, isString} from 'vega-util';
 
 const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 
-export default function(spec, scope) {
+export default function (spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
 
-  var _ = lookup(spec, scope.config.title),
-      encode = spec.encode || {},
-      userEncode = encode.group || {},
-      name = userEncode.name || undefined,
-      interactive = userEncode.interactive,
-      style = userEncode.style,
-      children = [],
-      dataRef, group;
+  const _ = lookup(spec, scope.config.title);
+  const encode = spec.encode || {};
+  const userEncode = encode.group || {};
+  const name = userEncode.name || undefined;
+  const interactive = userEncode.interactive;
+  const style = userEncode.style;
+  const children = [];
 
   // single-element data source for group title
-  dataRef = ref(scope.add(Collect(null, [{}])));
+  const dataRef = ref(scope.add(Collect(null, [{}])));
 
   // include title text
   children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
@@ -36,8 +35,7 @@ export default function(spec, scope) {
   }
 
   // build title specification
-  group = guideGroup(TitleRole, style, name, dataRef, interactive,
-                     groupEncode(_, userEncode), children);
+  const group = guideGroup(TitleRole, style, name, dataRef, interactive, groupEncode(_, userEncode), children);
   if (spec.zindex) group.zindex = spec.zindex;
 
   // parse title specification
@@ -48,92 +46,106 @@ export default function(spec, scope) {
 // the top-level encode block has been *deprecated*.
 function titleEncode(spec) {
   const encode = spec.encode;
-  return (encode && encode.title) || extend({
-    name: spec.name,
-    interactive: spec.interactive,
-    style: spec.style
-  }, encode);
+  return (
+    (encode && encode.title) ||
+    extend(
+      {
+        name: spec.name,
+        interactive: spec.interactive,
+        style: spec.style
+      },
+      encode
+    )
+  );
 }
 
 function groupEncode(_, userEncode) {
-  var encode = {enter: {}, update: {}};
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    orient:     _('orient'),
-    anchor:     _('anchor'),
-    align:      {signal: alignExpr},
-    angle:      {signal: angleExpr},
-    limit:      _('limit'),
-    frame:      _('frame'),
-    offset:     _('offset') || 0,
-    padding:    _('subtitlePadding')
+    orient: _('orient'),
+    anchor: _('anchor'),
+    align: {signal: alignExpr},
+    angle: {signal: angleExpr},
+    limit: _('limit'),
+    frame: _('frame'),
+    offset: _('offset') || 0,
+    padding: _('subtitlePadding')
   });
 
   return extendEncode(encode, userEncode, Skip);
 }
 
 function buildTitle(spec, _, userEncode, dataRef) {
-  var zero = {value: 0},
-      text = spec.text,
-      encode = {
-        enter: {opacity: zero},
-        update: {opacity: {value: 1}},
-        exit: {opacity: zero}
-      };
+  const zero = {value: 0};
+  const text = spec.text;
+  const encode = {
+    enter: {opacity: zero},
+    update: {opacity: {value: 1}},
+    exit: {opacity: zero}
+  };
 
-  addEncoders(encode, {
-    text:       text,
-    align:      {signal: 'item.mark.group.align'},
-    angle:      {signal: 'item.mark.group.angle'},
-    limit:      {signal: 'item.mark.group.limit'},
-    baseline:   'top',
-    dx:         _('dx'),
-    dy:         _('dy'),
-    fill:       _('color'),
-    font:       _('font'),
-    fontSize:   _('fontSize'),
-    fontStyle:  _('fontStyle'),
-    fontWeight: _('fontWeight'),
-    lineHeight: _('lineHeight')
-  }, { // update
-    align:      _('align'),
-    angle:      _('angle'),
-    baseline:   _('baseline')
-  });
+  addEncoders(
+    encode,
+    {
+      text: text,
+      align: {signal: 'item.mark.group.align'},
+      angle: {signal: 'item.mark.group.angle'},
+      limit: {signal: 'item.mark.group.limit'},
+      baseline: 'top',
+      dx: _('dx'),
+      dy: _('dy'),
+      fill: _('color'),
+      font: _('font'),
+      fontSize: _('fontSize'),
+      fontStyle: _('fontStyle'),
+      fontWeight: _('fontWeight'),
+      lineHeight: _('lineHeight')
+    },
+    {
+      // update
+      align: _('align'),
+      angle: _('angle'),
+      baseline: _('baseline')
+    }
+  );
 
-  return guideMark(TextMark, TitleTextRole, GroupTitleStyle,
-                   null, dataRef, encode, userEncode);
+  return guideMark(TextMark, TitleTextRole, GroupTitleStyle, null, dataRef, encode, userEncode);
 }
 
 function buildSubTitle(spec, _, userEncode, dataRef) {
-  var zero = {value: 0},
-      text = spec.subtitle,
-      encode = {
-        enter: {opacity: zero},
-        update: {opacity: {value: 1}},
-        exit: {opacity: zero}
-      };
+  const zero = {value: 0};
+  const text = spec.subtitle;
+  const encode = {
+    enter: {opacity: zero},
+    update: {opacity: {value: 1}},
+    exit: {opacity: zero}
+  };
 
-  addEncoders(encode, {
-    text:       text,
-    align:      {signal: 'item.mark.group.align'},
-    angle:      {signal: 'item.mark.group.angle'},
-    limit:      {signal: 'item.mark.group.limit'},
-    baseline:   'top',
-    dx:         _('dx'),
-    dy:         _('dy'),
-    fill:       _('subtitleColor'),
-    font:       _('subtitleFont'),
-    fontSize:   _('subtitleFontSize'),
-    fontStyle:  _('subtitleFontStyle'),
-    fontWeight: _('subtitleFontWeight'),
-    lineHeight: _('subtitleLineHeight')
-  }, { // update
-    align:      _('align'),
-    angle:      _('angle'),
-    baseline:   _('baseline')
-  });
+  addEncoders(
+    encode,
+    {
+      text: text,
+      align: {signal: 'item.mark.group.align'},
+      angle: {signal: 'item.mark.group.angle'},
+      limit: {signal: 'item.mark.group.limit'},
+      baseline: 'top',
+      dx: _('dx'),
+      dy: _('dy'),
+      fill: _('subtitleColor'),
+      font: _('subtitleFont'),
+      fontSize: _('subtitleFontSize'),
+      fontStyle: _('subtitleFontStyle'),
+      fontWeight: _('subtitleFontWeight'),
+      lineHeight: _('subtitleLineHeight')
+    },
+    {
+      // update
+      align: _('align'),
+      angle: _('angle'),
+      baseline: _('baseline')
+    }
+  );
 
-  return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle,
-                   null, dataRef, encode, userEncode);
+  return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle, null, dataRef, encode, userEncode);
 }

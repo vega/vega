@@ -3,7 +3,9 @@
 // attr: hash of attribute name-value pairs to include
 // raw: additional raw string to include in tag markup
 export function openTag(tag, attr, raw) {
-  var s = '<' + tag, key, val;
+  let s = '<' + tag;
+  let key;
+  let val;
   if (attr) {
     for (key in attr) {
       val = attr[key];

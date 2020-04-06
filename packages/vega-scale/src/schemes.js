@@ -2,13 +2,15 @@ import {discrete, continuous} from './palettes';
 import {interpolateColors} from './interpolate';
 
 function colors(palette) {
-  var n = palette.length / 6 | 0, c = new Array(n), i = 0;
+  const n = (palette.length / 6) | 0;
+  const c = new Array(n);
+  let i = 0;
   while (i < n) c[i] = '#' + palette.slice(i * 6, ++i * 6);
   return c;
 }
 
 function apply(_, f) {
-  for (let k in _) scheme(k, f(_[k]));
+  for (const k in _) scheme(k, f(_[k]));
 }
 
 const schemes = {};

@@ -2,37 +2,41 @@ import ols from './ols';
 import {points} from './points';
 import {median} from 'd3-array';
 
-const maxiters = 2,
-      epsilon = 1e-12;
+const maxiters = 2;
+const epsilon = 1e-12;
 
 // Adapted from science.js by Jason Davies
 // Source: https://github.com/jasondavies/science.js/blob/master/src/stats/loess.js
 // License: https://github.com/jasondavies/science.js/blob/master/LICENSE
-export default function(data, x, y, bandwidth) {
-  const [xv, yv, ux, uy] = points(data, x, y, true),
-        n = xv.length,
-        bw = Math.max(2, ~~(bandwidth * n)), // # nearest neighbors
-        yhat = new Float64Array(n),
-        residuals = new Float64Array(n),
-        robustWeights = new Float64Array(n).fill(1);
+export default function (data, x, y, bandwidth) {
+  const [xv, yv, ux, uy] = points(data, x, y, true);
+  const n = xv.length;
+  const bw = Math.max(2, ~~(bandwidth * n)); // # nearest neighbors
+  const yhat = new Float64Array(n);
+  const residuals = new Float64Array(n);
+  const robustWeights = new Float64Array(n).fill(1);
 
   for (let iter = -1; ++iter <= maxiters; ) {
     const interval = [0, bw - 1];
 
     for (let i = 0; i < n; ++i) {
-      const dx = xv[i],
-            i0 = interval[0],
-            i1 = interval[1],
-            edge = (dx - xv[i0]) > (xv[i1] - dx) ? i0 : i1;
+      const dx = xv[i];
+      const i0 = interval[0];
+      const i1 = interval[1];
+      const edge = dx - xv[i0] > xv[i1] - dx ? i0 : i1;
 
-      let W = 0, X = 0, Y = 0, XY = 0, X2 = 0,
-          denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
+      let W = 0;
+      let X = 0;
+      let Y = 0;
+      let XY = 0;
+      let X2 = 0;
+      const denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
 
       for (let k = i0; k <= i1; ++k) {
-        const xk = xv[k],
-              yk = yv[k],
-              w = tricube(Math.abs(dx - xk) * denom) * robustWeights[k],
-              xkw = xk * w;
+        const xk = xv[k];
+        const yk = yv[k];
+        const w = tricube(Math.abs(dx - xk) * denom) * robustWeights[k];
+        const xkw = xk * w;
 
         W += w;
         X += xkw;
@@ -56,11 +60,11 @@ export default function(data, x, y, bandwidth) {
     const medianResidual = median(residuals);
     if (Math.abs(medianResidual) < epsilon) break;
 
-    for (let i = 0, arg, w; i < n; ++i){
+    for (let i = 0, arg, w; i < n; ++i) {
       arg = residuals[i] / (6 * medianResidual);
       // default to epsilon (rather than zero) for large deviations
       // keeping weights tiny but non-zero prevents singularites
-      robustWeights[i] = (arg >= 1) ? epsilon : ((w = 1 - arg * arg) * w);
+      robustWeights[i] = arg >= 1 ? epsilon : (w = 1 - arg * arg) * w;
     }
   }
 
@@ -74,15 +78,15 @@ function tricube(x) {
 
 // advance sliding window interval of nearest neighbors
 function updateInterval(xv, i, interval) {
-  let val = xv[i],
-      left = interval[0],
-      right = interval[1] + 1;
+  const val = xv[i];
+  let left = interval[0];
+  let right = interval[1] + 1;
 
   if (right >= xv.length) return;
 
   // step right if distance to new right edge is <= distance to old left edge
   // step when distance is equal to ensure movement over duplicate x values
-  while (i > left && (xv[right] - val) <= (val - xv[left])) {
+  while (i > left && xv[right] - val <= val - xv[left]) {
     interval[0] = ++left;
     interval[1] = right;
     ++right;
@@ -92,14 +96,18 @@ function updateInterval(xv, i, interval) {
 // generate smoothed output points
 // average points with repeated x values
 function output(xv, yhat, ux, uy) {
-  const n = xv.length, out = [];
-  let i = 0, cnt = 0, prev = [], v;
+  const n = xv.length;
+  const out = [];
+  let i = 0;
+  let cnt = 0;
+  let prev = [];
+  let v;
 
-  for (; i<n; ++i) {
+  for (; i < n; ++i) {
     v = xv[i] + ux;
     if (prev[0] === v) {
       // average output values via online update
-      prev[1] += (yhat[i] - prev[1]) / (++cnt);
+      prev[1] += (yhat[i] - prev[1]) / ++cnt;
     } else {
       // add new output point
       cnt = 0;

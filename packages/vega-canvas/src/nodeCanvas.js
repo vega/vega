@@ -1,4 +1,4 @@
-var NodeCanvas;
+let NodeCanvas;
 
 try {
   NodeCanvas = require('canvas');

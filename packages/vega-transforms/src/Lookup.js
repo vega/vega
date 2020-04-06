@@ -15,33 +15,39 @@ export default function Lookup(params) {
 }
 
 Lookup.Definition = {
-  "type": "Lookup",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "index", "type": "index", "params": [
-        {"name": "from", "type": "data", "required": true },
-        {"name": "key", "type": "field", "required": true }
-      ] },
-    { "name": "values", "type": "field", "array": true },
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "as", "type": "string", "array": true },
-    { "name": "default", "default": null }
+  type: 'Lookup',
+  metadata: {modifies: true},
+  params: [
+    {
+      name: 'index',
+      type: 'index',
+      params: [
+        {name: 'from', type: 'data', required: true},
+        {name: 'key', type: 'field', required: true}
+      ]
+    },
+    {name: 'values', type: 'field', array: true},
+    {name: 'fields', type: 'field', array: true, required: true},
+    {name: 'as', type: 'string', array: true},
+    {name: 'default', default: null}
   ]
 };
 
-var prototype = inherits(Lookup, Transform);
+const prototype = inherits(Lookup, Transform);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse,
-      as = _.as,
-      keys = _.fields,
-      index = _.index,
-      values = _.values,
-      defaultValue = _.default==null ? null : _.default,
-      reset = _.modified(),
-      flag = reset ? pulse.SOURCE : pulse.ADD,
-      n = keys.length,
-      set, m, mods;
+prototype.transform = function (_, pulse) {
+  let out = pulse;
+  let as = _.as;
+  const keys = _.fields;
+  const index = _.index;
+  const values = _.values;
+  const defaultValue = _.default == null ? null : _.default;
+  const reset = _.modified();
+  let flag = reset ? pulse.SOURCE : pulse.ADD;
+  const n = keys.length;
+  let set;
+  let m;
+  let mods;
 
   if (values) {
     m = values.length;
@@ -54,11 +60,11 @@ prototype.transform = function(_, pulse) {
     }
     as = as || values.map(accessorName);
 
-    set = function(t) {
-      for (var i=0, k=0, j, v; i<n; ++i) {
+    set = function (t) {
+      for (let i = 0, k = 0, j, v; i < n; ++i) {
         v = index.get(keys[i](t));
-        if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
-        else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+        if (v == null) for (j = 0; j < m; ++j, ++k) t[as[k]] = defaultValue;
+        else for (j = 0; j < m; ++j, ++k) t[as[k]] = values[j](v);
       }
     };
   } else {
@@ -66,10 +72,10 @@ prototype.transform = function(_, pulse) {
       error('Missing output field names.');
     }
 
-    set = function(t) {
-      for (var i=0, v; i<n; ++i) {
+    set = function (t) {
+      for (let i = 0, v; i < n; ++i) {
         v = index.get(keys[i](t));
-        t[as[i]] = v==null ? defaultValue : v;
+        t[as[i]] = v == null ? defaultValue : v;
       }
     };
   }
@@ -77,8 +83,10 @@ prototype.transform = function(_, pulse) {
   if (reset) {
     out = pulse.reflow(true);
   } else {
-    mods = keys.some(function(k) { return pulse.modified(k.fields); });
-    flag |= (mods ? pulse.MOD : 0);
+    mods = keys.some(function (k) {
+      return pulse.modified(k.fields);
+    });
+    flag |= mods ? pulse.MOD : 0;
   }
   pulse.visit(flag, set);
 

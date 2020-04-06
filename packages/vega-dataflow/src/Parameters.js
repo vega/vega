@@ -1,6 +1,6 @@
 import {isArray} from 'vega-util';
 
-var CACHE = '_:mod:_';
+const CACHE = '_:mod:_';
 
 /**
  * Hash that tracks modifications to assigned values.
@@ -10,7 +10,7 @@ export default function Parameters() {
   Object.defineProperty(this, CACHE, {writable: true, value: {}});
 }
 
-var prototype = Parameters.prototype;
+const prototype = Parameters.prototype;
 
 /**
  * Set a parameter value. If the parameter value changes, the parameter
@@ -23,10 +23,10 @@ var prototype = Parameters.prototype;
  *   even if the value is unchanged.
  * @return {Parameters} - This parameter object.
  */
-prototype.set = function(name, index, value, force) {
-  var o = this,
-      v = o[name],
-      mod = o[CACHE];
+prototype.set = function (name, index, value, force) {
+  const o = this;
+  const v = o[name];
+  const mod = o[CACHE];
 
   if (index != null && index >= 0) {
     if (v[index] !== value || force) {
@@ -52,27 +52,28 @@ prototype.set = function(name, index, value, force) {
  * @param {number} [index=undefined] - The parameter array index to test.
  * @return {boolean} - Returns true if a queried parameter was modified.
  */
-prototype.modified = function(name, index) {
-  var mod = this[CACHE], k;
+prototype.modified = function (name, index) {
+  const mod = this[CACHE];
+  let k;
   if (!arguments.length) {
-    for (k in mod) { if (mod[k]) return true; }
+    for (k in mod) {
+      if (mod[k]) return true;
+    }
     return false;
   } else if (isArray(name)) {
-    for (k=0; k<name.length; ++k) {
+    for (k = 0; k < name.length; ++k) {
       if (mod[name[k]]) return true;
     }
     return false;
   }
-  return (index != null && index >= 0)
-    ? (index + 1 < mod[name] || !!mod[index + ':' + name])
-    : !!mod[name];
+  return index != null && index >= 0 ? index + 1 < mod[name] || !!mod[index + ':' + name] : !!mod[name];
 };
 
 /**
  * Clears the modification records. After calling this method,
  * all parameters are considered unmodified.
  */
-prototype.clear = function() {
+prototype.clear = function () {
   this[CACHE] = {};
   return this;
 };

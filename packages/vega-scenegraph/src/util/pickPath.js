@@ -1,8 +1,10 @@
 export function pickArea(a, p) {
-  var v = a[0].orient === 'horizontal' ? p[1] : p[0],
-      z = a[0].orient === 'horizontal' ? 'y' : 'x',
-      i = a.length,
-      min = +Infinity, hit, d;
+  const v = a[0].orient === 'horizontal' ? p[1] : p[0];
+  const z = a[0].orient === 'horizontal' ? 'y' : 'x';
+  let i = a.length;
+  let min = +Infinity;
+  let hit;
+  let d;
 
   while (--i >= 0) {
     if (a[i].defined === false) continue;
@@ -17,8 +19,11 @@ export function pickArea(a, p) {
 }
 
 export function pickLine(a, p) {
-  var t = Math.pow(a[0].strokeWidth || 1, 2),
-      i = a.length, dx, dy, dd;
+  const t = Math.pow(a[0].strokeWidth || 1, 2);
+  let i = a.length;
+  let dx;
+  let dy;
+  let dd;
 
   while (--i >= 0) {
     if (a[i].defined === false) continue;
@@ -32,7 +37,10 @@ export function pickLine(a, p) {
 }
 
 export function pickTrail(a, p) {
-  var i = a.length, dx, dy, dd;
+  let i = a.length;
+  let dx;
+  let dy;
+  let dd;
 
   while (--i >= 0) {
     if (a[i].defined === false) continue;
@@ -40,7 +48,7 @@ export function pickTrail(a, p) {
     dy = a[i].y - p[1];
     dd = dx * dx + dy * dy;
     dx = a[i].size || 1;
-    if (dd < dx*dx) return a[i];
+    if (dd < dx * dx) return a[i];
   }
 
   return null;

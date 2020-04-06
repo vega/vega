@@ -3,8 +3,8 @@ import {Aggregate, Collect} from './transforms';
 import {isString} from 'vega-util';
 
 export default function DataScope(scope, input, output, values, aggr) {
-  this.scope = scope;   // parent scope object
-  this.input = input;   // first operator in pipeline (tuple input)
+  this.scope = scope; // parent scope object
+  this.input = input; // first operator in pipeline (tuple input)
   this.output = output; // last operator in pipeline (tuple output)
   this.values = values; // operator for accessing tuples (but not tuple flow)
 
@@ -15,13 +15,13 @@ export default function DataScope(scope, input, output, values, aggr) {
   this.index = {};
 }
 
-DataScope.fromEntries = function(scope, entries) {
-  var n = entries.length,
-      i = 1,
-      input  = entries[0],
-      values = entries[n-1],
-      output = entries[n-2],
-      aggr = null;
+DataScope.fromEntries = function (scope, entries) {
+  const n = entries.length;
+  let i = 1;
+  let input = entries[0];
+  const values = entries[n - 1];
+  const output = entries[n - 2];
+  let aggr = null;
 
   if (input && input.type === 'load') {
     input = entries[1];
@@ -29,8 +29,8 @@ DataScope.fromEntries = function(scope, entries) {
 
   // add operator entries to this scope, wire up pulse chain
   scope.add(entries[0]);
-  for (; i<n; ++i) {
-    entries[i].params.pulse = ref(entries[i-1]);
+  for (; i < n; ++i) {
+    entries[i].params.pulse = ref(entries[i - 1]);
     scope.add(entries[i]);
     if (entries[i].type === 'aggregate') aggr = entries[i];
   }
@@ -38,12 +38,15 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype = DataScope.prototype;
+const prototype = DataScope.prototype;
 
-prototype.countsRef = function(scope, field, sort) {
-  var ds = this,
-      cache = ds.counts || (ds.counts = {}),
-      k = fieldKey(field), v, a, p;
+prototype.countsRef = function (scope, field, sort) {
+  const ds = this;
+  const cache = ds.counts || (ds.counts = {});
+  const k = fieldKey(field);
+  let v;
+  let a;
+  let p;
 
   if (k != null) {
     scope = ds.scope;
@@ -72,10 +75,11 @@ function fieldKey(field) {
 }
 
 function addSortField(scope, p, sort) {
-  var as = aggrField(sort.op, sort.field), s;
+  const as = aggrField(sort.op, sort.field);
+  let s;
 
   if (p.ops) {
-    for (var i=0, n=p.as.length; i<n; ++i) {
+    for (let i = 0, n = p.as.length; i < n; ++i) {
       if (p.as[i] === as) return;
     }
   } else {
@@ -84,16 +88,18 @@ function addSortField(scope, p, sort) {
     p.as = ['count'];
   }
   if (sort.op) {
-    p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
+    p.ops.push((s = sort.op.signal) ? scope.signalRef(s) : sort.op);
     p.fields.push(scope.fieldRef(sort.field));
     p.as.push(as);
   }
 }
 
 function cache(scope, ds, name, optype, field, counts, index) {
-  var cache = ds[name] || (ds[name] = {}),
-      sort = sortKey(counts),
-      k = fieldKey(field), v, op;
+  const cache = ds[name] || (ds[name] = {});
+  const sort = sortKey(counts);
+  let k = fieldKey(field);
+  let v;
+  let op;
 
   if (k != null) {
     scope = ds.scope;
@@ -102,7 +108,7 @@ function cache(scope, ds, name, optype, field, counts, index) {
   }
 
   if (!v) {
-    var params = counts
+    const params = counts
       ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
       : {field: scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = scope.sortRef(counts);
@@ -114,26 +120,26 @@ function cache(scope, ds, name, optype, field, counts, index) {
   return v;
 }
 
-prototype.tuplesRef = function() {
+prototype.tuplesRef = function () {
   return ref(this.values);
 };
 
-prototype.extentRef = function(scope, field) {
+prototype.extentRef = function (scope, field) {
   return cache(scope, this, 'extent', 'extent', field, false);
 };
 
-prototype.domainRef = function(scope, field) {
+prototype.domainRef = function (scope, field) {
   return cache(scope, this, 'domain', 'values', field, false);
 };
 
-prototype.valuesRef = function(scope, field, sort) {
+prototype.valuesRef = function (scope, field, sort) {
   return cache(scope, this, 'vals', 'values', field, sort || true);
 };
 
-prototype.lookupRef = function(scope, field) {
+prototype.lookupRef = function (scope, field) {
   return cache(scope, this, 'lookup', 'tupleindex', field, false);
 };
 
-prototype.indataRef = function(scope, field) {
+prototype.indataRef = function (scope, field) {
   return cache(scope, this, 'indata', 'tupleindex', field, true, true);
 };
