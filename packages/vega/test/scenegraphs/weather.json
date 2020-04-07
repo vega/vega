@@ -143,8 +143,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from 15 to 70",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

@@ -44,7 +44,6 @@ const title = oneOf(
     ariaLabel: stringValue,
     ariaRole: stringValue,
     ariaRoleDescription: stringValue,
-    tabindex: numberValue,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
@@ -56,7 +55,6 @@ const title = oneOf(
     subtitleAriaLabel: stringValue,
     subtitleAriaRole: stringValue,
     subtitleAriaRoleDescription: stringValue,
-    subtitleTabindex: numberValue,
 
     // custom encoders
     encode: anyOf(

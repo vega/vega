@@ -75,7 +75,6 @@ const legendProps = object({
   ariaLabel: stringValue,
   ariaRole: stringValue,
   ariaRoleDescription: stringValue,
-  tabindex: numberValue,
 
   // LEGEND TITLE CONFIG
   title: textOrSignal,

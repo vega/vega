@@ -63,7 +63,6 @@ const axis = object({
   ariaLabel: stringValue,
   ariaRole: stringValue,
   ariaRoleDescription: stringValue,
-  tabindex: numberValue,
 
   // TITLE CONFIG
   title: textOrSignal,

@@ -401,8 +401,7 @@
               "y": 138.5,
               "ariaLabel": "x axis from 0 to 7",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -479,8 +478,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values a,b,c",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -578,8 +576,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values b",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -665,8 +662,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values b,c",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

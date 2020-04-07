@@ -512,8 +512,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing Empirical Data Quantiles from -0.6 to 0.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -951,8 +950,7 @@
                       "y": 250.5,
                       "ariaLabel": "x axis showing Theoretical Uniform Quantiles from 0 to 1",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -1930,8 +1928,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from -0.6 to 0.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -2433,8 +2430,7 @@
                       "y": 250.5,
                       "ariaLabel": "x axis showing Theoretical Normal Quantiles from -3 to 3",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

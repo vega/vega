@@ -516,8 +516,7 @@
               "y": 150.5,
               "ariaLabel": "x axis from 1 to 20",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -709,8 +708,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from 0 to 1000",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -927,8 +925,7 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 13,
-                      "fontWeight": "bold",
-                      "ariaRoleDescription": "title"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

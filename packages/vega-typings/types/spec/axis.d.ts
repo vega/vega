@@ -114,11 +114,6 @@ export interface Axis extends BaseAxis {
   zindex?: number;
 
   /**
-   * Indicates that the axis can be focused, and where it participates in sequential keyboard navigation.
-   */
-  tabindex?: number | SignalRef;
-
-  /**
    * Mark definitions for custom axis encoding.
    */
   encode?: AxisEncode;

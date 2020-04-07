@@ -230,8 +230,7 @@
               "y": 350.5,
               "ariaLabel": "x axis showing Horsepower from 0 to 240",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -651,8 +650,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Miles_per_Gallon from 0 to 50",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

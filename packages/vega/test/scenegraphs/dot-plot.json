@@ -202,8 +202,7 @@
                       "y": 68.75,
                       "ariaLabel": "x axis showing Density Dot Plot from 0 to 20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -803,8 +802,7 @@
                       "y": 68.75,
                       "ariaLabel": "x axis showing Histogram Dot Plot from 0 to 20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

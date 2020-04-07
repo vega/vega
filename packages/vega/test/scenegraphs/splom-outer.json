@@ -199,8 +199,7 @@
               "y": 405.5,
               "ariaLabel": "y axis showing Petal Width from 0 to 2.6",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -420,8 +419,7 @@
               "y": 270.5,
               "ariaLabel": "y axis showing Petal Length from 1 to 7",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -595,8 +593,7 @@
               "y": 135.5,
               "ariaLabel": "y axis showing Sepal Width from 2 to 4.4",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -770,8 +767,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Sepal Length from 4 to 8",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -968,8 +964,7 @@
               "y": 525.5,
               "ariaLabel": "x axis showing Petal Width from 0 to 2.6",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1189,8 +1184,7 @@
               "y": 525.5,
               "ariaLabel": "x axis showing Petal Length from 1 to 7",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1364,8 +1358,7 @@
               "y": 525.5,
               "ariaLabel": "x axis showing Sepal Width from 2 to 4.4",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1539,8 +1532,7 @@
               "y": 525.5,
               "ariaLabel": "x axis showing Sepal Length from 4 to 8",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

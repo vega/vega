@@ -171,8 +171,7 @@
               "y": 500.5,
               "ariaLabel": "x axis with values petalWidth,petalLength,sepalWidth,sepalLength",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -341,8 +340,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from 0 to 8",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

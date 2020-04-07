@@ -20,7 +20,6 @@ var keys = [
   'ellipsis', 'limit', 'lineBreak', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
   'ariaHidden', 'ariaLabel', 'ariaRole', 'ariaRoleDescription', // screen reader
-  'tabindex',                                                   // tab order
 ];
 
 export function sceneToJSON(scene, indent) {

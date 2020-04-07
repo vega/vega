@@ -547,8 +547,7 @@
                       "y": 100.5,
                       "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -878,8 +877,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing Y-Axis from 0 to 100",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -1117,8 +1115,7 @@
                               "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -1140,8 +1137,7 @@
                               "angle": 0,
                               "limit": 400,
                               "font": "sans-serif",
-                              "fontSize": 12,
-                              "ariaRoleDescription": "subtitle"
+                              "fontSize": 12
                             }
                           ],
                           "zindex": 0
@@ -1706,8 +1702,7 @@
                       "y": 100.5,
                       "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -2037,8 +2032,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing Y-Axis from 0 to 100",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -2276,8 +2270,7 @@
                               "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -2299,8 +2292,7 @@
                               "angle": -90,
                               "limit": 100,
                               "font": "sans-serif",
-                              "fontSize": 12,
-                              "ariaRoleDescription": "subtitle"
+                              "fontSize": 12
                             }
                           ],
                           "zindex": 0
@@ -2865,8 +2857,7 @@
                       "y": 100.5,
                       "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -3196,8 +3187,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing Y-Axis from 0 to 100",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -3436,8 +3426,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
-                              "fontStyle": "italic",
-                              "ariaRoleDescription": "title"
+                              "fontStyle": "italic"
                             }
                           ],
                           "zindex": 0
@@ -3459,8 +3448,7 @@
                               "angle": 90,
                               "limit": 100,
                               "font": "sans-serif",
-                              "fontSize": 12,
-                              "ariaRoleDescription": "subtitle"
+                              "fontSize": 12
                             }
                           ],
                           "zindex": 0
@@ -4025,8 +4013,7 @@
                       "y": 100.5,
                       "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -4356,8 +4343,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing Y-Axis from 0 to 100",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -4595,8 +4581,7 @@
                               "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -4619,8 +4604,7 @@
                               "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 12,
-                              "fontStyle": "italic",
-                              "ariaRoleDescription": "subtitle"
+                              "fontStyle": "italic"
                             }
                           ],
                           "zindex": 0

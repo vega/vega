@@ -224,8 +224,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -417,8 +416,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -1979,8 +1977,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -2195,8 +2192,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -3757,8 +3753,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -3927,8 +3922,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -5489,8 +5483,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -5659,8 +5652,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -7244,8 +7236,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -7437,8 +7428,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -9022,8 +9012,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -9238,8 +9227,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -10823,8 +10811,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -10993,8 +10980,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -12578,8 +12564,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -12748,8 +12733,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -14287,8 +14271,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -14480,8 +14463,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -16019,8 +16001,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -16235,8 +16216,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -17774,8 +17754,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -17944,8 +17923,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -19483,8 +19461,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -19653,8 +19630,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -21192,8 +21168,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -21385,8 +21360,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -22924,8 +22898,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23140,8 +23113,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24679,8 +24651,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24849,8 +24820,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -26388,8 +26358,7 @@
                       "y": 120.5,
                       "ariaLabel": "x axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -26558,8 +26527,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

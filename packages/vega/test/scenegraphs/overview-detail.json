@@ -318,8 +318,7 @@
                       "y": 390.5,
                       "ariaLabel": "x axis from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -580,8 +579,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis from 0 to 1600",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -2036,8 +2034,7 @@
                       "y": 70.5,
                       "ariaLabel": "x axis from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1

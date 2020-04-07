@@ -8,7 +8,7 @@ import legendGradientLabels from './guides/legend-gradient-labels';
 import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {addAriaAnnotations, getEncoding, getStyle, legendAriaLabel, lookup} from './guides/guide-util';
+import {getEncoding, getStyle, legendAriaLabel, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
@@ -138,7 +138,21 @@ function scaleCount(spec) {
 function buildLegendEncode(_, config, scope) {
   var encode = {enter: {}, update: {}};
 
-  addEncoders(encode, addAriaAnnotations({
+  const ariaHidden = _('ariaHidden');
+  const ariaLabel = _('ariaLabel');
+
+  const aria = ariaHidden === true ? {} : {
+    ariaHidden:   ariaHidden ? ariaHidden : undefined,
+    ariaLabel:    ariaLabel !== undefined ? ariaLabel : legendAriaLabel(_, scope),
+    ariaRole:     _('ariaRole'),
+    ariaRoleDescription: _('ariaRoleDescription'),
+  };
+
+  if (ariaHidden) {
+    aria['ariaHidden'] = ariaHidden;
+  }
+
+  addEncoders(encode, Object.assign({
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
@@ -150,14 +164,7 @@ function buildLegendEncode(_, config, scope) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-    tabindex:     _('tabindex')
-  }, _ , scope, p => p, {
-    hidden: 'ariaHidden',
-    label: 'ariaLabel',
-    defaultLabel: legendAriaLabel,
-    role: 'ariaRole',
-    roleDescription: 'ariaRoleDescription'
-  }));
+  }, aria));
 
   return encode;
 }

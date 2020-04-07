@@ -408,8 +408,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Population from 0 to 45000",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -808,8 +807,7 @@
               "y": 250.5,
               "ariaLabel": "x axis showing Year from 1875 to 2014",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1778,8 +1776,7 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 16,
-                      "fontWeight": "bold",
-                      "ariaRoleDescription": "title"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

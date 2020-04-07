@@ -37644,8 +37644,7 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 13,
-                      "fontWeight": "bold",
-                      "ariaRoleDescription": "title"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

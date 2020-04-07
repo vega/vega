@@ -481,8 +481,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from -100.000000% to 500.000000%",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

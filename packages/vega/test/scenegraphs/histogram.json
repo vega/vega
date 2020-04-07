@@ -309,8 +309,7 @@
               "y": 100.5,
               "ariaLabel": "x axis from -1 to 1",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -525,8 +524,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from 0 to 120",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

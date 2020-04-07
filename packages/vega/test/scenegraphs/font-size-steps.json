@@ -243,8 +243,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Font Size from 10 to 72",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -485,8 +484,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Font Size from 10 to 72",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -816,8 +814,7 @@
               "y": -4.5,
               "ariaLabel": "x axis with values 10,11,12,14,16,18,21,24,36,48,60,72",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1266,8 +1263,7 @@
                       "dy": 30,
                       "font": "sans-serif",
                       "fontSize": 16,
-                      "fontWeight": "bold",
-                      "ariaRoleDescription": "title"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

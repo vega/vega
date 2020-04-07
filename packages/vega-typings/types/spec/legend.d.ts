@@ -108,11 +108,6 @@ export interface Legend extends BaseLegend {
   zindex?: number;
 
   /**
-   * Indicates that the legend can be focused, and where it participates in sequential keyboard navigation.
-   */
-  tabindex?: number | SignalRef;
-
-  /**
    * Mark definitions for custom legend encoding.
    */
   encode?: LegendEncode;

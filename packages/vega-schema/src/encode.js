@@ -206,7 +206,6 @@ const encodeEntry = object({
   ariaLabel: stringValueRef,
   ariaRole: stringValueRef,
   ariaRoleDescription: stringValueRef,
-  tabindex: numberValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,

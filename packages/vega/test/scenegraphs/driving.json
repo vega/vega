@@ -278,8 +278,7 @@
               "y": 0.5,
               "ariaLabel": "x axis from 3500 to 10500",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -456,8 +455,7 @@
               "y": 0.5,
               "ariaLabel": "y axis from $1.20 to $3.40",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0

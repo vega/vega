@@ -270,7 +270,6 @@ export interface EncodeEntry {
    * A human-readable, author-localized description for the role of an element.
    */
   ariaRoleDescription?: ProductionRule<StringValueRef>;
-  tabindex?: ProductionRule<NumericValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 

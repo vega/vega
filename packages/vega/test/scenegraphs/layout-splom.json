@@ -22160,8 +22160,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing petalWidth from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -22408,8 +22407,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing petalLength from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -22610,8 +22608,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing sepalWidth from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -22812,8 +22809,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing sepalLength from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23046,8 +23042,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing petalWidth from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23294,8 +23289,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing petalLength from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23496,8 +23490,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing sepalWidth from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23698,8 +23691,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing sepalLength from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -23932,8 +23924,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing petalWidth from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24180,8 +24171,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing petalLength from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24382,8 +24372,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing sepalWidth from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24584,8 +24573,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing sepalLength from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -24818,8 +24806,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing petalWidth from 0 to 2.6",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -25066,8 +25053,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing petalLength from 1 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -25268,8 +25254,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing sepalWidth from 2 to 4.4",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -25470,8 +25455,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing sepalLength from 4 to 8",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

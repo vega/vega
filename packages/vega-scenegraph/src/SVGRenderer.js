@@ -421,8 +421,7 @@ var aria_extras = {
   'ariaHidden': 'aria-hidden',
   'ariaLabel': 'aria-label',
   'ariaRole': 'role',
-  'ariaRoleDescription': 'aria-roledescription',
-  'tabindex': 'tabindex'
+  'ariaRoleDescription': 'aria-roledescription'
 }
 
 // Extra configuration for certain mark types

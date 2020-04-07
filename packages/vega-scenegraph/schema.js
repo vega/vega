@@ -213,7 +213,6 @@ const ITEM_BASE = {
     "strokeDash": { "type": "array", "items": { "type": "number" } },
     "strokeDashOffset": { "type": "number", "default": 0 },
     "zindex": { "type": "number" },
-    "tabindex": { "type": "number" },
     "ariaLabel": { "type": "string" },
     "ariaRole": { "type": "string" },
     "ariaRoleDescription": { "type": "string" },

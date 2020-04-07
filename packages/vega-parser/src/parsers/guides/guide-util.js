@@ -88,24 +88,6 @@ export function extendOffset(value, offset) {
     : { ...value, offset: extendOffset(value.offset, offset) };
 }
 
-// FIXME: the encoder argument probably shouldn't be here
-export function addAriaAnnotations(spec, _, scope, encoder, props) {
-  const hidden = _(props.hidden);
-  const label = _(props.label);
-
-  const aria = hidden === true
-    ? {
-        ariaHidden: encoder(hidden)
-      }
-    : {
-        ariaLabel: encoder(label !== undefined ? label : props.defaultLabel(_, scope)),
-        ariaRole: encoder(_(props.role)),
-        ariaRoleDescription: encoder(_(props.roleDescription))
-      };
-
-  return Object.assign(spec, aria);
-}
-
 function wrapFormat(text, format, formatType) {
   if (format == null) {
     return text

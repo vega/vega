@@ -5,7 +5,7 @@ import {alignExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole, TitleTextRole, TitleSubtitleRole} from './marks/roles';
-import {addEncoders, extendEncode} from './encode/encode-util';
+import {addAriaAnnotations, addEncoders, extendEncode} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString} from 'vega-util';
@@ -81,9 +81,7 @@ function buildTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
-  const ariaHidden = _('ariaHidden');
-
-  addEncoders(encode, {
+  addEncoders(encode, addAriaAnnotations({
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
@@ -96,13 +94,13 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontSize:   _('fontSize'),
     fontStyle:  _('fontStyle'),
     fontWeight: _('fontWeight'),
-    lineHeight: _('lineHeight'),
-    ariaHidden:   ariaHidden,
-    ariaLabel:    ariaHidden == true ? undefined : _('ariaLabel'),
-    ariaRole:     ariaHidden == true ? undefined : _('ariaRole'),
-    ariaRoleDescription: ariaHidden == true ? undefined : _('ariaRoleDescription'),
-    tabindex:     _('tabindex')
-  }, { // update
+    lineHeight: _('lineHeight')
+  }, _, {
+    ariaHidden: 'ariaHidden',
+    ariaLabel: 'ariaLabel',
+    ariaRole: 'ariaRole',
+    ariaRoleDescription: 'ariaRoleDescription'
+  }), { // update
     align:      _('align'),
     angle:      _('angle'),
     baseline:   _('baseline')
@@ -121,9 +119,7 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
-  const ariaHidden = _('subtitleAriaHidden');
-
-  addEncoders(encode, {
+  addEncoders(encode, addAriaAnnotations({
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
@@ -136,13 +132,13 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontSize:   _('subtitleFontSize'),
     fontStyle:  _('subtitleFontStyle'),
     fontWeight: _('subtitleFontWeight'),
-    lineHeight: _('subtitleLineHeight'),
-    ariaHidden:   ariaHidden,
-    ariaLabel:    ariaHidden == true ? undefined : _('subtitleAriaLabel'),
-    ariaRole:     ariaHidden == true ? undefined : _('subtitleAriaRole'),
-    ariaRoleDescription: ariaHidden == true ? undefined : _('subtitleAriaRoleDescription'),
-    tabindex:     _('subtitleTabindex')
-  }, { // update
+    lineHeight: _('subtitleLineHeight')
+  }, _, {
+    ariaHidden: 'subtitleAriaHidden',
+    ariaLabel: 'subtitleAriaLabel',
+    ariaRole: 'subtitleAriaRole',
+    ariaRoleDescription: 'subtitleAriaRoleDescription'
+  }), { // update
     align:      _('align'),
     angle:      _('angle'),
     baseline:   _('baseline')

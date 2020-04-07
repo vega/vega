@@ -432,8 +432,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing Yield from 0 to 70",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -861,8 +860,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing Yield from 0 to 70",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -1290,8 +1288,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis showing Yield from 0 to 70",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -1712,8 +1709,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -1930,8 +1926,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -2355,8 +2350,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -2573,8 +2567,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -2998,8 +2991,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -3216,8 +3208,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -3641,8 +3632,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -3859,8 +3849,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -4284,8 +4273,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -4502,8 +4490,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -4927,8 +4914,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -5145,8 +5131,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0

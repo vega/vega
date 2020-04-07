@@ -241,8 +241,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing cell with values a,b,c",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -270,8 +269,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -352,8 +350,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing cell with values b",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -381,8 +378,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -477,8 +473,7 @@
                       "y": 0.5,
                       "ariaLabel": "y axis showing cell with values b,c",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -506,8 +501,7 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
@@ -1002,8 +996,7 @@
                       "y": 0.5,
                       "ariaLabel": "x axis from 0 to 7",
                       "ariaRole": "graphics-object",
-                      "ariaRoleDescription": "axis",
-                      "tabindex": null
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

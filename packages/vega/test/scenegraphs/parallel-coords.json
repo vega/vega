@@ -332,8 +332,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Cylinders from 3 to 8",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -640,8 +639,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Displacement from 50 to 500",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -925,8 +923,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Weight_in_lbs from 1500 to 5500",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1256,8 +1253,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Horsepower from 40 to 240",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1564,8 +1560,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Acceleration from 8 to 26",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -1872,8 +1867,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Miles_per_Gallon from 5 to 50",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -2249,8 +2243,7 @@
               "y": 0.5,
               "ariaLabel": "y axis showing Year from 1970 to 1982",
               "ariaRole": "graphics-object",
-              "ariaRoleDescription": "axis",
-              "tabindex": null
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1

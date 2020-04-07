@@ -74,11 +74,6 @@ export interface Title extends BaseTitle {
   ariaRoleDescription?: string | SignalRef;
 
   /**
-   * Indicates that the title can be focused, and where it participates in sequential keyboard navigation.
-   */
-  tabindex?: number | SignalRef;
-
-  /**
    * Mark definitions for custom title encoding.
    */
   encode?: TitleEncode | Encode<TextEncodeEntry>; // second entry is **deprecated**
@@ -244,9 +239,4 @@ export interface BaseTitle {
    * __Default value__: `"subtitle"`
    */
   ariaRoleDescription?: string | SignalRef;
-
-  /**
-   * Indicates that the subtitle can be focused, and where it participates in sequential keyboard navigation.
-   */
-  tabindex?: number | SignalRef;
 }
