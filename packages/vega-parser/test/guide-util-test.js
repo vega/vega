@@ -41,7 +41,7 @@ tape('Creates correct legend aria labels', function(t) {
 
   t.deepEqual(
     legendAriaLabel(lookupMock({fill: 'color', size: 'size', title: 'Foo'}), {scales: {color: {params: {type: 'linear'}}, size: {params: {type: 'linear'}}}}),
-    { signal: '"legend showing Foo from " + domain("color")[0] + " to " + domain("color")[1] + " as fill, from " + domain("size")[0] + " to " + domain("size")[1] + " as size"' }
+    { signal: '"legend showing Foo from " + domain("size")[0] + " to " + domain("size")[1] + " as size, from " + domain("color")[0] + " to " + domain("color")[1] + " as fill"' }
   );
 
   t.deepEqual(

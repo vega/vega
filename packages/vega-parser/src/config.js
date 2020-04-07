@@ -80,6 +80,7 @@ export default function() {
     },
     symbol: {
       fill: defaultColor,
+      size: 64,
       ariaRoleDescription: 'symbol'
     },
     text: {

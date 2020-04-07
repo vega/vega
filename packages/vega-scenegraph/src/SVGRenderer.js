@@ -417,7 +417,7 @@ function siblingCheck(node, sibling) {
 var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
-var general_extras = {
+var aria_extras = {
   'ariaHidden': 'aria-hidden',
   'ariaLabel': 'aria-label',
   'ariaRole': 'role',
@@ -540,17 +540,10 @@ prototype._update = function(mdef, el, item) {
   // apply svg attributes
   mdef.attr(emit, item, this);
 
-  // optimization: if ariaHidden is true, we can remove other aria properties
-  if (item.ariaHidden) {
-    delete item.ariaLabel;
-    delete item.ariaRole;
-    delete item.ariaRoleDescription;
-  }
-
   // apply general SVG properties
-  for (const prop in general_extras) {
+  for (const prop in aria_extras) {
     if (item[prop] != null) {
-      emit(general_extras[prop], item[prop]);
+      emit(aria_extras[prop], item[prop]);
     }
   }
 

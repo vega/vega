@@ -5,7 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
-import {lookup, tickBand, axisAriaLabel} from './guides/guide-util';
+import {lookup, tickBand, addAriaAnnotations, axisAriaLabel} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
@@ -36,23 +36,23 @@ export default function(spec, scope) {
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
-  const ariaHidden = _('ariaHidden');
-
   // encoding properties for axis group item
   axisEncode = extendEncode({
-    update: {
-      offset:       encoder(_('offset', 0)),
+    update: addAriaAnnotations({
+      offset:       encoder(_('offset') || 0),
       position:     encoder(value(spec.position, 0)),
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
       range:        {signal: `abs(span(range("${spec.scale}")))`},
-      ariaHidden:   encoder(ariaHidden),
-      ariaLabel:    encoder(ariaHidden == true ? undefined : _('ariaLabel', axisAriaLabel(_, scope))),
-      ariaRole:     encoder(ariaHidden == true ? undefined : _('ariaRole')),
-      ariaRoleDescription: encoder(ariaHidden == true ? undefined : _('ariaRoleDescription')),
       tabindex:     encoder(_('tabindex'))
-    }
+    }, _, scope, encoder, {
+      hidden: 'ariaHidden',
+      label: 'ariaLabel',
+      defaultLabel: axisAriaLabel,
+      role: 'ariaRole',
+      roleDescription: 'ariaRoleDescription'
+    })
   }, encode.axis, Skip);
 
   // data source for axis ticks

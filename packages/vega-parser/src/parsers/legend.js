@@ -5,10 +5,10 @@ import {
 import legendGradient from './guides/legend-gradient';
 import legendGradientDiscrete from './guides/legend-gradient-discrete';
 import legendGradientLabels from './guides/legend-gradient-labels';
-import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
+import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, lookup, legendAriaLabel} from './guides/guide-util';
+import {addAriaAnnotations, getEncoding, getStyle, legendAriaLabel, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendRole, LegendEntryRole} from './marks/roles';
@@ -47,7 +47,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(_, config, spec, scope), legendEncode, Skip
+    buildLegendEncode(_, config, scope), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -135,12 +135,10 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(_, config, spec, scope) {
+function buildLegendEncode(_, config, scope) {
   var encode = {enter: {}, update: {}};
 
-  const ariaHidden = _('ariaHidden');
-
-  addEncoders(encode, {
+  addEncoders(encode, addAriaAnnotations({
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
@@ -152,12 +150,14 @@ function buildLegendEncode(_, config, spec, scope) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-    ariaHidden:   ariaHidden,
-    ariaLabel:    ariaHidden == true ? undefined : _('ariaLabel', legendAriaLabel(_, scope)),
-    ariaRole:     ariaHidden == true ? undefined : _('ariaRole'),
-    ariaRoleDescription: ariaHidden == true ? undefined : _('ariaRoleDescription'),
     tabindex:     _('tabindex')
-  });
+  }, _ , scope, p => p, {
+    hidden: 'ariaHidden',
+    label: 'ariaLabel',
+    defaultLabel: legendAriaLabel,
+    role: 'ariaRole',
+    roleDescription: 'ariaRoleDescription'
+  }));
 
   return encode;
 }

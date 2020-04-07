@@ -253,7 +253,6 @@ export interface EncodeEntry {
   blend?: ProductionRule<ScaledValueRef<Blend>>;
   cursor?: ProductionRule<ScaledValueRef<Cursor>>;
   tooltip?: ProductionRule<StringValueRef>;
-
   zindex?: ProductionRule<NumericValueRef>;
   /**
    * If set to `true`, removes that element and all of its children from the accessibility tree.
