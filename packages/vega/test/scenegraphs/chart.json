@@ -215,7 +215,6 @@
               ],
               "x": -9.5,
               "y": 0.5,
-              "ariaHidden": null,
               "ariaLabel": "y axis showing Left Title from 0 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -495,7 +494,6 @@
               ],
               "x": 349.5,
               "y": 0.5,
-              "ariaHidden": null,
               "ariaLabel": "y axis showing Right Title from 0 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -781,7 +779,6 @@
               ],
               "x": 0.5,
               "y": -9.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis showing Top Title with values 0,1,2,3,4,5,6,7",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -1157,7 +1154,6 @@
               ],
               "x": 0.5,
               "y": 232.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis showing Bottom Title with values 0,1,2,3,4,5,6,7",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -1645,7 +1641,7 @@
               "width": 61,
               "height": 118,
               "orient": "right",
-              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as stroke, with values a,b,c,d,e,f as shape",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as shape, with values a,b,c,d,e,f as stroke",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -2012,7 +2008,7 @@
               "width": 61,
               "height": 105,
               "orient": "right",
-              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as fill, with values a,b,c,d,e,f as shape",
+              "ariaLabel": "legend showing Legend with values a,b,c,d,e,f as shape, with values a,b,c,d,e,f as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

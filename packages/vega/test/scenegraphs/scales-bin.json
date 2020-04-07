@@ -307,7 +307,6 @@
               ],
               "x": 0.5,
               "y": 300.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis from 0 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -478,7 +477,6 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaHidden": null,
               "ariaLabel": "y axis from 0 to 4",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
@@ -1148,7 +1146,7 @@
               "width": 80,
               "height": 137,
               "orient": "right",
-              "ariaLabel": "legend showing Bins from 0 to 10 as fill, from 0 to 100 as size",
+              "ariaLabel": "legend showing Bins from 0 to 100 as size, with values 0,10,20,30,40,50,60,70,80,90,100 as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

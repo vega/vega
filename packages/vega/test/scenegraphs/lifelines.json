@@ -284,7 +284,6 @@
               ],
               "x": 0.5,
               "y": 80.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis from 1732 to 1836",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",

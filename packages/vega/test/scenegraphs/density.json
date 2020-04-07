@@ -353,7 +353,6 @@
               ],
               "x": 0.5,
               "y": 100.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis from -0.6 to 0.6",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",

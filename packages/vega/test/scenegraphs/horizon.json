@@ -514,7 +514,6 @@
               ],
               "x": 0.5,
               "y": 50.5,
-              "ariaHidden": null,
               "ariaLabel": "x axis from 1 to 20",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",

@@ -563,7 +563,7 @@
               "width": 82,
               "height": 118,
               "orient": "right",
-              "ariaLabel": "legend showing quantize from 0 to 100 as fill, from 0 to 100 as size",
+              "ariaLabel": "legend showing quantize from 0 to 100 as size, from 0 to 100 as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -878,7 +878,7 @@
               "width": 114,
               "height": 106,
               "orient": "right",
-              "ariaLabel": "legend showing quantile from 19 to 28 as fill, from 19 to 28 as size",
+              "ariaLabel": "legend showing quantile from 19 to 28 as size, from 19 to 28 as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -1095,7 +1095,7 @@
               "width": 80,
               "height": 66,
               "orient": "right",
-              "ariaLabel": "legend showing threshold from 30 to 70 as fill, from 30 to 70 as size",
+              "ariaLabel": "legend showing threshold from 30 to 70 as size, from 30 to 70 as fill",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

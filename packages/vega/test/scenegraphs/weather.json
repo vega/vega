@@ -141,7 +141,6 @@
               ],
               "x": 250.5,
               "y": 0.5,
-              "ariaHidden": null,
               "ariaLabel": "y axis from 15 to 70",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis",
