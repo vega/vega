@@ -300,6 +300,16 @@ function dirtyParents(item, id) {
 
 // -- Construct & maintain scenegraph to SVG mapping ---
 
+const AriaHiddenRoles = {
+  'axis-tick': 1,
+  'axis-label': 1,
+  'axis-domain': 1,
+  'axis-title': 1,
+  'axis-grid': 1,
+  'legend-entry': 1,
+  'legend-title': 1
+}
+
 // Draw a mark container.
 prototype.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
@@ -315,7 +325,7 @@ prototype.draw = function(el, scene, prev) {
 
   parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
-  if (scene.ariaHidden) {
+  if (AriaHiddenRoles[scene.role]) {
     parent.setAttribute('aria-hidden', true);
   }
   if (!isGroup) {

@@ -51749,8 +51749,7 @@
                               "y": 0,
                               "width": 104,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -51799,8 +51798,7 @@
                               "y": 13,
                               "width": 104,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             }
                           ],
                           "zindex": 0
@@ -51831,8 +51829,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

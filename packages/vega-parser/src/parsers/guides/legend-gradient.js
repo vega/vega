@@ -31,8 +31,7 @@ export default function(spec, scale, config, userEncode) {
       x: zero,
       y: zero,
       width: encoder(width),
-      height: encoder(height),
-      ariaHidden: {value: true}
+      height: encoder(height)
     },
     update: extend({}, enter, {
       opacity: one,

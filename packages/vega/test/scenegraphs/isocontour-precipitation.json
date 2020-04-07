@@ -1325,8 +1325,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 50,
-                              "ariaHidden": true
+                              "x2": 50
                             },
                             {
                               "x": 50,
@@ -1337,8 +1336,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 100,
-                              "ariaHidden": true
+                              "x2": 100
                             },
                             {
                               "x": 100,
@@ -1349,8 +1347,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 150,
-                              "ariaHidden": true
+                              "x2": 150
                             },
                             {
                               "x": 150,
@@ -1361,8 +1358,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 200,
-                              "ariaHidden": true
+                              "x2": 200
                             },
                             {
                               "x": 200,
@@ -1373,8 +1369,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 250,
-                              "ariaHidden": true
+                              "x2": 250
                             },
                             {
                               "x": 250,
@@ -1385,8 +1380,7 @@
                               "opacity": 1,
                               "stroke": "#ddd",
                               "strokeWidth": 0,
-                              "x2": 300,
-                              "ariaHidden": true
+                              "x2": 300
                             }
                           ],
                           "zindex": 0
@@ -1406,8 +1400,7 @@
                               "opacity": 1,
                               "text": null,
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 50,
@@ -1418,8 +1411,7 @@
                               "opacity": 1,
                               "text": "500",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 100,
@@ -1430,8 +1422,7 @@
                               "opacity": 1,
                               "text": "1,000",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 150,
@@ -1442,8 +1433,7 @@
                               "opacity": 1,
                               "text": "1,500",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 200,
@@ -1454,8 +1444,7 @@
                               "opacity": 1,
                               "text": "2,000",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 250,
@@ -1466,8 +1455,7 @@
                               "opacity": 1,
                               "text": "2,500",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             }
                           ],
                           "zindex": 0
@@ -1498,8 +1486,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0

@@ -40,8 +40,7 @@
                               },
                               "opacity": 1,
                               "stroke": "#ddd",
-                              "strokeWidth": 0,
-                              "ariaHidden": true
+                              "strokeWidth": 0
                             }
                           ],
                           "zindex": 0
@@ -61,8 +60,7 @@
                               "opacity": 1,
                               "text": "0",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 50,
@@ -73,8 +71,7 @@
                               "opacity": 1,
                               "text": "50",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 100,
@@ -85,8 +82,7 @@
                               "opacity": 1,
                               "text": "100",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             }
                           ],
                           "zindex": 0
@@ -117,8 +113,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -169,8 +164,7 @@
                               },
                               "opacity": 1,
                               "stroke": "#ddd",
-                              "strokeWidth": 0,
-                              "ariaHidden": true
+                              "strokeWidth": 0
                             }
                           ],
                           "zindex": 0
@@ -190,8 +184,7 @@
                               "opacity": 1,
                               "text": "-100",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 50,
@@ -202,8 +195,7 @@
                               "opacity": 1,
                               "text": "0",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             },
                             {
                               "x": 100,
@@ -214,8 +206,7 @@
                               "opacity": 1,
                               "text": "100",
                               "font": "sans-serif",
-                              "fontSize": 10,
-                              "ariaHidden": true
+                              "fontSize": 10
                             }
                           ],
                           "zindex": 0
@@ -246,8 +237,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -335,8 +325,7 @@
                               "y": 0,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -386,8 +375,7 @@
                               "y": 16,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -437,8 +425,7 @@
                               "y": 32,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -488,8 +475,7 @@
                               "y": 48,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -539,8 +525,7 @@
                               "y": 64,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -590,8 +575,7 @@
                               "y": 80,
                               "width": 40,
                               "height": 12.5,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             }
                           ],
                           "zindex": 0
@@ -622,8 +606,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -709,8 +692,7 @@
                               "y": 0,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -758,8 +740,7 @@
                               "y": 13,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -807,8 +788,7 @@
                               "y": 26,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -856,8 +836,7 @@
                               "y": 39,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -905,8 +884,7 @@
                               "y": 52,
                               "width": 48,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             }
                           ],
                           "zindex": 0
@@ -937,8 +915,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -1024,8 +1001,7 @@
                               "y": 0,
                               "width": 40,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -1073,8 +1049,7 @@
                               "y": 0,
                               "width": 24,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             },
                             {
                               "items": [
@@ -1122,8 +1097,7 @@
                               "y": 0,
                               "width": 32,
                               "height": 11,
-                              "opacity": 1,
-                              "ariaHidden": true
+                              "opacity": 1
                             }
                           ],
                           "zindex": 0
@@ -1154,8 +1128,7 @@
                       "limit": 180,
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaHidden": true
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
