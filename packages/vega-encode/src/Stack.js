@@ -20,14 +20,14 @@ export default function Stack(params) {
 }
 
 Stack.Definition = {
-  "type": "Stack",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "sort", "type": "compare" },
-    { "name": "offset", "type": "enum", "default": Zero, "values": [Zero, Center, Normalize] },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": DefOutput }
+  'type': 'Stack',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'sort', 'type': 'compare' },
+    { 'name': 'offset', 'type': 'enum', 'default': Zero, 'values': [Zero, Center, Normalize] },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': DefOutput }
   ]
 };
 

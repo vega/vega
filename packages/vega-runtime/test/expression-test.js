@@ -6,10 +6,10 @@ var tape = require('tape'),
 
 tape('Parser parses expressions', function(t) {
   var values = [
-    {"x": 1,  "y": 28},
-    {"x": 2,  "y": 43},
-    {"x": 3,  "y": 81},
-    {"x": 4,  "y": 19}
+    {'x': 1,  'y': 28},
+    {'x': 2,  'y': 43},
+    {'x': 3,  'y': 81},
+    {'x': 4,  'y': 19}
   ];
 
   var spec = {operators: [

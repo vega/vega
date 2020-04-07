@@ -41,7 +41,7 @@ const bind = oneOf(
     debounce: numberType,
     name: stringType
   }, true)
-)
+);
 
 export default {
   refs: {

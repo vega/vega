@@ -100,7 +100,7 @@ function get(value, dflt) {
 function formatDiscrete(format) {
   return function(value, index) {
     return index ? format(value) : null;
-  }
+  };
 }
 
 function formatPoint(format) {

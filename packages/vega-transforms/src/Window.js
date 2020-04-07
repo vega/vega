@@ -30,17 +30,17 @@ export default function Window(params) {
 }
 
 Window.Definition = {
-  "type": "Window",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "sort", "type": "compare" },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidWindowOps.concat(ValidAggregateOps) },
-    { "name": "params", "type": "number", "null": true, "array": true },
-    { "name": "fields", "type": "field", "null": true, "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true },
-    { "name": "frame", "type": "number", "null": true, "array": true, "length": 2, "default": [null, 0] },
-    { "name": "ignorePeers", "type": "boolean", "default": false }
+  'type': 'Window',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'sort', 'type': 'compare' },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidWindowOps.concat(ValidAggregateOps) },
+    { 'name': 'params', 'type': 'number', 'null': true, 'array': true },
+    { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+    { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+    { 'name': 'frame', 'type': 'number', 'null': true, 'array': true, 'length': 2, 'default': [null, 0] },
+    { 'name': 'ignorePeers', 'type': 'boolean', 'default': false }
   ]
 };
 

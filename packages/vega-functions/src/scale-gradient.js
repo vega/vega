@@ -11,7 +11,7 @@ export default function(scale, p0, p1, count, group) {
   let stops = scale.domain(),
       min = stops[0],
       max = peek(stops),
-      fraction = identity
+      fraction = identity;
 
   if (!(max - min)) {
     // expand scale if domain has zero span, fix #1479

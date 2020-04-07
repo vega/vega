@@ -18,13 +18,13 @@ export default function GeoPath(params) {
 }
 
 GeoPath.Definition = {
-  "type": "GeoPath",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field" },
-    { "name": "pointRadius", "type": "number", "expr": true },
-    { "name": "as", "type": "string", "default": "path" }
+  'type': 'GeoPath',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'projection', 'type': 'projection' },
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'pointRadius', 'type': 'number', 'expr': true },
+    { 'name': 'as', 'type': 'string', 'default': 'path' }
   ]
 };
 

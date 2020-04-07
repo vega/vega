@@ -95,7 +95,7 @@ tape('Dataflow handles errors', function(t) {
       error = 0;
 
   df.error = function() { error = 1; };
-  df.add(function() { throw Error('!!!') });
+  df.add(function() { throw Error('!!!'); });
 
   df.run();
 

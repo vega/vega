@@ -23,7 +23,7 @@ function transformSchema(name, def) {
         };
         props[param.name] = param.array ? array(schema) : schema;
       } else if (param.params) {
-        parameters(param.params)
+        parameters(param.params);
       } else {
         const key = param.required ? req(param.name) : param.name;
         props[key] = parameterSchema(param);

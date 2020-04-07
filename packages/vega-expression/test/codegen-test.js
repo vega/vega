@@ -19,7 +19,7 @@ tape('Evaluate expressions without white or black list', function(t) {
   }
 
   evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+    return function() { return evaluate(str); };
   };
 
   // should access globals object
@@ -57,7 +57,7 @@ tape('Evaluate expressions with black list', function(t) {
   }
 
   evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+    return function() { return evaluate(str); };
   };
 
   // should not allow blacklisted ids
@@ -91,7 +91,7 @@ tape('Evaluate expressions with white list', function(t) {
   }
 
   evaluate.fn = function(str) {
-    return function() { return evaluate(str); }
+    return function() { return evaluate(str); };
   };
 
   // Simple evaluation

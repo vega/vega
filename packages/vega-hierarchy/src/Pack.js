@@ -15,15 +15,15 @@ export default function Pack(params) {
 }
 
 Pack.Definition = {
-  "type": "Pack",
-  "metadata": {"tree": true, "modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "sort", "type": "compare" },
-    { "name": "padding", "type": "number", "default": 0 },
-    { "name": "radius", "type": "field", "default": null },
-    { "name": "size", "type": "number", "array": true, "length": 2 },
-    { "name": "as", "type": "string", "array": true, "length": Output.length, "default": Output }
+  'type': 'Pack',
+  'metadata': {'tree': true, 'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'sort', 'type': 'compare' },
+    { 'name': 'padding', 'type': 'number', 'default': 0 },
+    { 'name': 'radius', 'type': 'field', 'default': null },
+    { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': Output.length, 'default': Output }
   ]
 };
 

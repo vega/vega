@@ -18,12 +18,12 @@ export default function CrossFilter(params) {
 }
 
 CrossFilter.Definition = {
-  "type": "CrossFilter",
-  "metadata": {},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "query", "type": "array", "array": true, "required": true,
-      "content": {"type": "number", "array": true, "length": 2} }
+  'type': 'CrossFilter',
+  'metadata': {},
+  'params': [
+    { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+    { 'name': 'query', 'type': 'array', 'array': true, 'required': true,
+      'content': {'type': 'number', 'array': true, 'length': 2} }
   ]
 };
 

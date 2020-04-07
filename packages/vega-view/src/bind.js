@@ -123,7 +123,7 @@ function checkbox(bind, el, param, value) {
   });
 
   bind.elements = [node];
-  bind.set = function(value) { node.checked = !!value || null; }
+  bind.set = function(value) { node.checked = !!value || null; };
 }
 
 /**

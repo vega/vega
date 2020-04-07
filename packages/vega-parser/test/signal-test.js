@@ -231,9 +231,9 @@ tape('Parser handles built-in signals', function (t) {
   testSignals(t, vega.parse({
     background: {signal: "'red'"},
     autosize: {signal: "{type:'fit'}"},
-    padding: {signal: "5"},
-    width: {signal: "200"},
-    height: {signal: "100"},
+    padding: {signal: '5'},
+    width: {signal: '200'},
+    height: {signal: '100'},
     signals: [
       {name: 'background', value: 'blue'},
       {name: 'autosize', value: {type: 'none'}},
@@ -254,9 +254,9 @@ tape('Parser handles built-in signals', function (t) {
     config: {
       background: {signal: "'red'"},
       autosize: {signal: "{type:'fit'}"},
-      padding: {signal: "5"},
-      width: {signal: "200"},
-      height: {signal: "100"}
+      padding: {signal: '5'},
+      width: {signal: '200'},
+      height: {signal: '100'}
     },
     signals: [
       {name: 'background', value: 'blue'},
@@ -277,9 +277,9 @@ tape('Parser handles built-in signals', function (t) {
   testSignals(t, vega.parse({
     background: {signal: "'red'"},
     autosize: {signal: "{type:'fit'}"},
-    padding: {signal: "5"},
-    width: {signal: "200"},
-    height: {signal: "100"},
+    padding: {signal: '5'},
+    width: {signal: '200'},
+    height: {signal: '100'},
     signals: [
       {name: 'background', update: '\'blue\''},
       {name: 'autosize', update: '{type:\'none\'}'},
@@ -300,9 +300,9 @@ tape('Parser handles built-in signals', function (t) {
     config: {
       background: {signal: "'red'"},
       autosize: {signal: "{type:'fit'}"},
-      padding: {signal: "5"},
-      width: {signal: "200"},
-      height: {signal: "100"}
+      padding: {signal: '5'},
+      width: {signal: '200'},
+      height: {signal: '100'}
     },
     signals: [
       {name: 'background', update: '\'blue\''},

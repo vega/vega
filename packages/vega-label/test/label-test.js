@@ -14,7 +14,7 @@ tape('Label performs label layout over input points', function(t) {
     return [
       {text: 'foo', x: 20, y: 15, fontSize: 10},
       {text: 'bar', x: 30, y: 15, fontSize: 10}
-    ]
+    ];
   }
 
   var df = new vega.Dataflow(),

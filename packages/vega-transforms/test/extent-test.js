@@ -8,8 +8,8 @@ var tape = require('tape'),
 
 tape('Extent computes extents', function(t) {
   var data = [
-    {"x": 0, "y": 28}, {"x": 1, "y": 43},
-    {"x": 0, "y": 55}, {"x": 1, "y": 72}
+    {'x': 0, 'y': 28}, {'x': 1, 'y': 43},
+    {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
   ];
 
   var x = util.field('x'),

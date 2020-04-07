@@ -246,11 +246,11 @@ function parseScaleRange(spec, scope, params) {
       spec = extend({}, spec, {range: config[range]});
       return parseScaleRange(spec, scope, params);
     } else if (range === 'width') {
-      range = [0, {signal: 'width'}]
+      range = [0, {signal: 'width'}];
     } else if (range === 'height') {
       range = isDiscrete(spec.type)
         ? [0, {signal: 'height'}]
-        : [{signal: 'height'}, 0]
+        : [{signal: 'height'}, 0];
     } else {
       error('Unrecognized scale range value: ' + stringValue(range));
     }

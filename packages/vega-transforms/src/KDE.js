@@ -40,20 +40,20 @@ export default function KDE(params) {
 }
 
 KDE.Definition = {
-  "type": "KDE",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "field", "type": "field", "required": true },
-    { "name": "cumulative", "type": "boolean", "default": false },
-    { "name": "counts", "type": "boolean", "default": false },
-    { "name": "bandwidth", "type": "number", "default": 0 },
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "steps", "type": "number" },
-    { "name": "minsteps", "type": "number", "default": 25 },
-    { "name": "maxsteps", "type": "number", "default": 200 },
-    { "name": "as", "type": "string", "array": true, "default": ["value", "density"] }
+  'type': 'KDE',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'cumulative', 'type': 'boolean', 'default': false },
+    { 'name': 'counts', 'type': 'boolean', 'default': false },
+    { 'name': 'bandwidth', 'type': 'number', 'default': 0 },
+    { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+    { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+    { 'name': 'steps', 'type': 'number' },
+    { 'name': 'minsteps', 'type': 'number', 'default': 25 },
+    { 'name': 'maxsteps', 'type': 'number', 'default': 200 },
+    { 'name': 'as', 'type': 'string', 'array': true, 'default': ['value', 'density'] }
   ]
 };
 

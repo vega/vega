@@ -30,7 +30,7 @@ const defaultSpecifiers = {
   [`${YEAR}-${MONTH}`]: '%Y-%m ',
   [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
   [`${HOURS}-${MINUTES}`]: '%H:%M'
-}
+};
 
 export function timeUnitSpecifier(units, specifiers) {
   const s = extend({}, defaultSpecifiers, specifiers),
