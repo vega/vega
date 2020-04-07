@@ -21,7 +21,7 @@
     "build": "yarn rollup && node rollup.js -e",
     "postbuild": "terser build/vega-projections.js -c -m -o build/vega-projections.min.js && terser build/vega-projections-core.js -c -m -o build/vega-projections-core.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "eslint index.js",
+    "test": "",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
