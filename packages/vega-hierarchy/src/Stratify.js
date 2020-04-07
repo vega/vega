@@ -16,11 +16,11 @@ export default function Stratify(params) {
 }
 
 Stratify.Definition = {
-  "type": "Stratify",
-  "metadata": {"treesource": true},
-  "params": [
-    { "name": "key", "type": "field", "required": true },
-    { "name": "parentKey", "type": "field", "required": true  }
+  'type': 'Stratify',
+  'metadata': {'treesource': true},
+  'params': [
+    { 'name': 'key', 'type': 'field', 'required': true },
+    { 'name': 'parentKey', 'type': 'field', 'required': true  }
   ]
 };
 

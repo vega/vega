@@ -18,13 +18,13 @@ export default function GeoShape(params) {
 }
 
 GeoShape.Definition = {
-  "type": "GeoShape",
-  "metadata": {"modifies": true, "nomod": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field", "default": "datum" },
-    { "name": "pointRadius", "type": "number", "expr": true },
-    { "name": "as", "type": "string", "default": "shape" }
+  'type': 'GeoShape',
+  'metadata': {'modifies': true, 'nomod': true},
+  'params': [
+    { 'name': 'projection', 'type': 'projection' },
+    { 'name': 'field', 'type': 'field', 'default': 'datum' },
+    { 'name': 'pointRadius', 'type': 'number', 'expr': true },
+    { 'name': 'as', 'type': 'string', 'default': 'shape' }
   ]
 };
 

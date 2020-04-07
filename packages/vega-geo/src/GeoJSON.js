@@ -19,11 +19,11 @@ export default function GeoJSON(params) {
 }
 
 GeoJSON.Definition = {
-  "type": "GeoJSON",
-  "metadata": {},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "length": 2 },
-    { "name": "geojson", "type": "field" },
+  'type': 'GeoJSON',
+  'metadata': {},
+  'params': [
+    { 'name': 'fields', 'type': 'field', 'array': true, 'length': 2 },
+    { 'name': 'geojson', 'type': 'field' },
   ]
 };
 

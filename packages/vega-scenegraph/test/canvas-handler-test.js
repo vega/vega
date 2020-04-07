@@ -186,10 +186,10 @@ tape('CanvasHandler should pick area mark', function(t) {
 
 tape('CanvasHandler should pick group mark', function(t) {
   var mark = {
-    "marktype": "group",
-    "name": "class-name",
-    "items": [
-      {"x":5, "y":5, "width":100, "height":56, "fill":"steelblue", "clip":true, "items":[]}
+    'marktype': 'group',
+    'name': 'class-name',
+    'items': [
+      {'x':5, 'y':5, 'width':100, 'height':56, 'fill':'steelblue', 'clip':true, 'items':[]}
     ]
   };
   var handler = new Handler().initialize(render(mark, 500, 500));

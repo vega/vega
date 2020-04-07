@@ -373,7 +373,7 @@ prototype.exprRef = function(code, name) {
   var params = {expr: parseExpression(code, this)};
   if (name) params.expr.$name = name;
   return ref(this.add(Expression(params)));
-}
+};
 
 prototype.addBinding = function(name, bind) {
   if (!this.bindings) {

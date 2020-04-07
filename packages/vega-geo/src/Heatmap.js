@@ -31,14 +31,14 @@ export default function Heatmap(params) {
 }
 
 Heatmap.Definition = {
-  "type": "heatmap",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "color", "type": "string", "expr": true},
-    { "name": "opacity", "type": "number", "expr": true},
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "as", "type": "string", "default": "image" }
+  'type': 'heatmap',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'color', 'type': 'string', 'expr': true},
+    { 'name': 'opacity', 'type': 'number', 'expr': true},
+    { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+    { 'name': 'as', 'type': 'string', 'default': 'image' }
   ]
 };
 

@@ -17,14 +17,14 @@ export default function Loess(params) {
 }
 
 Loess.Definition = {
-  "type": "Loess",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "bandwidth", "type": "number", "default": 0.3 },
-    { "name": "as", "type": "string", "array": true }
+  'type': 'Loess',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'x', 'type': 'field', 'required': true },
+    { 'name': 'y', 'type': 'field', 'required': true },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'bandwidth', 'type': 'number', 'default': 0.3 },
+    { 'name': 'as', 'type': 'string', 'array': true }
   ]
 };
 

@@ -74,7 +74,7 @@ export default function($, bitmaps, anchors, offsets) {
     }
 
     return false;
-  }
+  };
 }
 
 // Test if a label with the given dimensions can be added without overlap

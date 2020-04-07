@@ -5,7 +5,7 @@ export function geoShape(projection, geojson, group) {
   const p = getScale(projection, (group || this).context);
   return function(context) {
     return p ? p.path.context(context)(geojson) : '';
-  }
+  };
 }
 
 export function pathShape(path) {

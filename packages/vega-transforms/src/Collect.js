@@ -14,10 +14,10 @@ export default function Collect(params) {
 }
 
 Collect.Definition = {
-  "type": "Collect",
-  "metadata": {"source": true},
-  "params": [
-    { "name": "sort", "type": "compare" }
+  'type': 'Collect',
+  'metadata': {'source': true},
+  'params': [
+    { 'name': 'sort', 'type': 'compare' }
   ]
 };
 

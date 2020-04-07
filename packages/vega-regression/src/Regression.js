@@ -35,17 +35,17 @@ export default function Regression(params) {
 }
 
 Regression.Definition = {
-  "type": "Regression",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "string", "default": "linear", "values": Object.keys(Methods) },
-    { "name": "order", "type": "number", "default": 3 },
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "params", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "array": true }
+  'type': 'Regression',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'x', 'type': 'field', 'required': true },
+    { 'name': 'y', 'type': 'field', 'required': true },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'method', 'type': 'string', 'default': 'linear', 'values': Object.keys(Methods) },
+    { 'name': 'order', 'type': 'number', 'default': 3 },
+    { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+    { 'name': 'params', 'type': 'boolean', 'default': false },
+    { 'name': 'as', 'type': 'string', 'array': true }
   ]
 };
 

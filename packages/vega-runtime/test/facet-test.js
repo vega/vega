@@ -5,10 +5,10 @@ var tape = require('tape'),
 
 tape('Parser parses faceted dataflow specs', function(t) {
   var values = [
-    {"k": "a", "x": 1,  "y": 28},
-    {"k": "b", "x": 2,  "y": 43},
-    {"k": "a", "x": 3,  "y": 81},
-    {"k": "b", "x": 4,  "y": 19}
+    {'k': 'a', 'x': 1,  'y': 28},
+    {'k': 'b', 'x': 2,  'y': 43},
+    {'k': 'a', 'x': 3,  'y': 81},
+    {'k': 'b', 'x': 4,  'y': 19}
   ];
 
   var spec = {operators: [

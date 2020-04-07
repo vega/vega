@@ -38,20 +38,20 @@ export default function Contour(params) {
 }
 
 Contour.Definition = {
-  "type": "Contour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "values", "type": "number", "array": true },
-    { "name": "x", "type": "field" },
-    { "name": "y", "type": "field" },
-    { "name": "weight", "type": "field" },
-    { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number" },
-    { "name": "count", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "smooth", "type": "boolean", "default": true }
+  'type': 'Contour',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'size', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+    { 'name': 'values', 'type': 'number', 'array': true },
+    { 'name': 'x', 'type': 'field' },
+    { 'name': 'y', 'type': 'field' },
+    { 'name': 'weight', 'type': 'field' },
+    { 'name': 'cellSize', 'type': 'number' },
+    { 'name': 'bandwidth', 'type': 'number' },
+    { 'name': 'count', 'type': 'number' },
+    { 'name': 'nice', 'type': 'boolean', 'default': false },
+    { 'name': 'thresholds', 'type': 'number', 'array': true },
+    { 'name': 'smooth', 'type': 'boolean', 'default': true }
   ]
 };
 

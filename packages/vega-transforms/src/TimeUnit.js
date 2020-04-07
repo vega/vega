@@ -15,17 +15,17 @@ export default function TimeUnit(params) {
 const OUTPUT = ['unit0', 'unit1'];
 
 TimeUnit.Definition = {
-  "type": "TimeUnit",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "interval", "type": "boolean", "default": true },
-    { "name": "units", "type": "string", "array": true },
-    { "name": "step", "type": "number", "default": 1 },
-    { "name": "maxbins", "type": "number", "default": 40 },
-    { "name": "extent", "type": "date", "array": true},
-    { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
+  'type': 'TimeUnit',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'interval', 'type': 'boolean', 'default': true },
+    { 'name': 'units', 'type': 'string', 'array': true },
+    { 'name': 'step', 'type': 'number', 'default': 1 },
+    { 'name': 'maxbins', 'type': 'number', 'default': 40 },
+    { 'name': 'extent', 'type': 'date', 'array': true},
+    { 'name': 'timezone', 'type': 'enum', 'default': 'local', 'values': ['local', 'utc'] },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': OUTPUT }
   ]
 };
 

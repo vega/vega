@@ -60,4 +60,4 @@ module.exports = function(type, callback, opt) {
   read(arg._[0] || null)
     .then(text => render(JSON.parse(text)))
     .catch(err => console.error(err)); // eslint-disable-line no-console
-}
+};

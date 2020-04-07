@@ -18,11 +18,11 @@ export default function Nest(params) {
 }
 
 Nest.Definition = {
-  "type": "Nest",
-  "metadata": {"treesource": true, "changes": true},
-  "params": [
-    { "name": "keys", "type": "field", "array": true },
-    { "name": "generate", "type": "boolean" }
+  'type': 'Nest',
+  'metadata': {'treesource': true, 'changes': true},
+  'params': [
+    { 'name': 'keys', 'type': 'field', 'array': true },
+    { 'name': 'generate', 'type': 'boolean' }
   ]
 };
 

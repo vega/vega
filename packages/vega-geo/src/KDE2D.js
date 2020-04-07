@@ -34,18 +34,18 @@ export default function KDE2D(params) {
 }
 
 KDE2D.Definition = {
-  "type": "KDE2D",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "weight", "type": "field" },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number", "array": true, "length": 2 },
-    { "name": "counts", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "default": "grid"}
+  'type': 'KDE2D',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'size', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+    { 'name': 'x', 'type': 'field', 'required': true },
+    { 'name': 'y', 'type': 'field', 'required': true },
+    { 'name': 'weight', 'type': 'field' },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'cellSize', 'type': 'number' },
+    { 'name': 'bandwidth', 'type': 'number', 'array': true, 'length': 2 },
+    { 'name': 'counts', 'type': 'boolean', 'default': false },
+    { 'name': 'as', 'type': 'string', 'default': 'grid'}
   ]
 };
 

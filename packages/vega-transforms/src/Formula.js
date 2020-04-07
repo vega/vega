@@ -15,12 +15,12 @@ export default function Formula(params) {
 }
 
 Formula.Definition = {
-  "type": "Formula",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true },
-    { "name": "as", "type": "string", "required": true },
-    { "name": "initonly", "type": "boolean" }
+  'type': 'Formula',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'expr', 'type': 'expr', 'required': true },
+    { 'name': 'as', 'type': 'string', 'required': true },
+    { 'name': 'initonly', 'type': 'boolean' }
   ]
 };
 

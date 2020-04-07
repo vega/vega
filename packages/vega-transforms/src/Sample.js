@@ -15,10 +15,10 @@ export default function Sample(params) {
 }
 
 Sample.Definition = {
-  "type": "Sample",
-  "metadata": {},
-  "params": [
-    { "name": "size", "type": "number", "default": 1000 }
+  'type': 'Sample',
+  'metadata': {},
+  'params': [
+    { 'name': 'size', 'type': 'number', 'default': 1000 }
   ]
 };
 

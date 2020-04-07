@@ -27,5 +27,5 @@ export default function(scale) {
       lo[0] === undefined ? lo[1] : lo[0],
       hi[1] === undefined ? hi[0] : hi[1]
     ];
-  }
+  };
 }

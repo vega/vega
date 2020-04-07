@@ -99,7 +99,7 @@ export const WindowOps = {
   last_value: function(field) {
     return {
       next: w => field(w.data[w.i1 - 1])
-    }
+    };
   },
   nth_value: function(field, nth) {
     nth = +nth;
@@ -109,7 +109,7 @@ export const WindowOps = {
         let i = w.i0 + (nth - 1);
         return i < w.i1 ? field(w.data[i]) : null;
       }
-    }
+    };
   },
 
   prev_value: function(field) {
@@ -120,7 +120,7 @@ export const WindowOps = {
         let v = field(w.data[w.index]);
         return v != null ? (prev = v) : prev;
       }
-    }
+    };
   },
   next_value: function(field) {
     let v, i;
