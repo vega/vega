@@ -16,6 +16,10 @@ module.exports = {
     'no-cond-assign': 'off',
     'no-fallthrough': ['error', { 'commentPattern': 'break omitted' }],
     'semi': 'error',
-    'quotes': ['error', 'single', { 'avoidEscape': true }]
+    'quotes': ['error', 'single', { 'avoidEscape': true }],
+    "sort-imports": ["error", {
+      "ignoreCase": true,
+      "ignoreDeclarationSort": true
+    }]
   }
 };
