@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {timeBin, timeUnits, timeFloor, utcFloor, timeInterval, utcInterval} from 'vega-time';
+import {timeBin, timeFloor, timeInterval, timeUnits, utcFloor, utcInterval} from 'vega-time';
 import {accessorFields, extent, inherits, peek} from 'vega-util';
 
 /**

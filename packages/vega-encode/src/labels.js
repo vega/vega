@@ -1,12 +1,12 @@
-import {Symbols, Discrete} from './legend-types';
+import {Discrete, Symbols} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
 import {peek} from 'vega-util';
 import {
   Log,
   Quantile,
   Quantize,
-  Threshold,
   tickFormat as spanFormat,
+  Threshold,
   Time,
   UTC
 } from 'vega-scale';

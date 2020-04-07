@@ -1,6 +1,6 @@
 import Handler from './Handler';
 import {domFind} from './util/dom';
-import {HrefEvent, TooltipShowEvent, TooltipHideEvent} from './util/events';
+import {HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
 import {inherits} from 'vega-util';
 
 export default function SVGHandler(loader, tooltip) {

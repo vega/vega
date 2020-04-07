@@ -1,8 +1,8 @@
 import {
-  AxisRole, LegendRole, TitleRole, FrameRole, ScopeRole,
-  RowHeader, RowFooter, RowTitle, ColHeader, ColFooter, ColTitle,
-  Top, Bottom, Left, Right,
-  Fit, FitX, FitY, Pad, None, Padding
+  AxisRole, Bottom, ColFooter, ColHeader, ColTitle,
+  Fit, FitX, FitY, FrameRole, Left, LegendRole,
+  None, Pad, Padding, Right,
+  RowFooter, RowHeader, RowTitle, ScopeRole, TitleRole, Top
 } from './constants';
 
 import {axisLayout, isYAxis} from './layout/axis';

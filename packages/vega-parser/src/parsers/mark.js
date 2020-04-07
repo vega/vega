@@ -14,7 +14,7 @@ import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
-import {Bound, Collect, DataJoin, Mark, Encode, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
+import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
   var role = getRole(spec),

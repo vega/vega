@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {getProjectionPath} from 'vega-projection';
-import {inherits, identity} from 'vega-util';
+import {identity, inherits} from 'vega-util';
 
 /**
  * Map GeoJSON data to an SVG path string.

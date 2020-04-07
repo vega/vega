@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {bin} from 'vega-statistics';
-import {inherits, accessor, accessorFields, accessorName} from 'vega-util';
+import {accessor, accessorFields, accessorName, inherits} from 'vega-util';
 
 // epsilon bias to offset floating point error (#1737)
 const EPSILON = 1e-14;

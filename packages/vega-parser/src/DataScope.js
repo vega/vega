@@ -1,4 +1,4 @@
-import {entry, ref, keyFieldRef, aggrField, sortKey} from './util';
+import {aggrField, entry, keyFieldRef, ref, sortKey} from './util';
 import {Aggregate, Collect} from './transforms';
 import {isString} from 'vega-util';
 

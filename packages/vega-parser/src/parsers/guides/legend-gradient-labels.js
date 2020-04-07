@@ -1,6 +1,6 @@
 import {
-  Index, Label, Perc, Value, GuideLabelStyle, zero, one,
-  Top, Bottom, Left, Right, Center, Middle
+  Bottom, Center, GuideLabelStyle, Index, Label, Left, Middle,
+  one, Perc, Right, Top, Value, zero
 } from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';

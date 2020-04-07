@@ -1,4 +1,4 @@
-import {Left, Right, Center, Start, End, Vertical} from './constants';
+import {Center, End, Left, Right, Start, Vertical} from './constants';
 import {value} from '../../util';
 import {isObject, stringValue} from 'vega-util';
 

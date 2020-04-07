@@ -1,5 +1,5 @@
 import {derive, Transform} from 'vega-dataflow';
-import {inherits, accessorName} from 'vega-util';
+import {accessorName, inherits} from 'vega-util';
 
 /**
  * Folds one more tuple fields into multiple tuples in which the field

@@ -1,7 +1,7 @@
 import {
-  YEAR, QUARTER, MONTH, WEEK, DATE, DAY,
-  HOURS, MINUTES, SECONDS, MILLISECONDS,
-  timeUnits
+  DATE, DAY, HOURS, MILLISECONDS, MINUTES, MONTH,
+  QUARTER, SECONDS, timeUnits, WEEK,
+  YEAR
 } from './units';
 
 import {

@@ -1,6 +1,6 @@
 import numbers from './numbers';
 import {random} from './random';
-import {quantile, ascending} from 'd3-array';
+import {ascending, quantile} from 'd3-array';
 
 export default function(array, samples, alpha, f) {
   if (!array.length) return [undefined, undefined];

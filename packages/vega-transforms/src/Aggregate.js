@@ -1,5 +1,5 @@
 import {groupkey} from './util/AggregateKeys';
-import {createMeasure, compileMeasures, measureName, ValidAggregateOps} from './util/AggregateOps';
+import {compileMeasures, createMeasure, measureName, ValidAggregateOps} from './util/AggregateOps';
 import TupleStore from './util/TupleStore';
 import {ingest, replace, Transform} from 'vega-dataflow';
 import {accessorFields, accessorName, array, error, inherits} from 'vega-util';

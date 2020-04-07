@@ -1,7 +1,7 @@
 import {labelFormat, labelFraction, labelValues} from './labels';
-import {Symbols, Gradient} from './legend-types';
+import {Gradient, Symbols} from './legend-types';
 import {tickCount} from './ticks';
-import {Transform, ingest} from 'vega-dataflow';
+import {ingest, Transform} from 'vega-dataflow';
 import {scaleFraction} from 'vega-scale';
 import {constant, inherits, isFunction, peek} from 'vega-util';
 

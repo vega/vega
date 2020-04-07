@@ -1,4 +1,4 @@
-import {Group, AxisRole, LegendRole, TitleRole} from './constants';
+import {AxisRole, Group, LegendRole, TitleRole} from './constants';
 import {Transform} from 'vega-dataflow';
 import {boundClip, Marks} from 'vega-scenegraph';
 import {inherits} from 'vega-util';

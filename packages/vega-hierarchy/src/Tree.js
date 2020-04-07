@@ -1,6 +1,6 @@
 import HierarchyLayout from './HierarchyLayout';
 import {error, hasOwnProperty, inherits} from 'vega-util';
-import {tree, cluster} from 'd3-hierarchy';
+import {cluster, tree} from 'd3-hierarchy';
 
 var Layouts = {
   tidy: tree,

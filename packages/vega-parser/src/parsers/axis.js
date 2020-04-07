@@ -11,7 +11,7 @@ import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
 import {Skip} from './guides/constants';
 import {ref, value} from '../util';
-import {Collect, AxisTicks} from '../transforms';
+import {AxisTicks, Collect} from '../transforms';
 
 export default function(spec, scope) {
   var config = axisConfig(spec, scope),

@@ -1,8 +1,8 @@
 import {
-  numberValue, stringValue, textOrSignal, anchorValue,
-  alignValue, baselineValue, colorValue, fontWeightValue,
-  def, enums, object, anyOf, oneOf, pattern, ref,
-  booleanType, numberType, stringType, orSignal, numberOrSignal
+  alignValue, anchorValue, anyOf, baselineValue,
+  booleanType, colorValue, def, enums,
+  fontWeightValue, numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
+  pattern, ref, stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere

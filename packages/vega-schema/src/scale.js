@@ -1,13 +1,13 @@
 import {
-  array, enums, object, oneOf, orSignal, ref,
-  arrayType, nullType, booleanType, numberType, stringType, signalRef,
-  stringOrSignal, numberOrSignal, booleanOrSignal, booleanOrNumberOrSignal
+  array, arrayType, booleanOrNumberOrSignal, booleanOrSignal, booleanType, enums,
+  nullType, numberOrSignal, numberType, object, oneOf, orSignal,
+  ref, signalRef, stringOrSignal, stringType
 } from './util';
 
 import {
-  Linear, Log, Pow, Sqrt, Symlog, Time, UTC, Sequential,
-  Quantile, Quantize, Threshold, Identity,
-  Ordinal, Point, Band, BinOrdinal
+  Band, BinOrdinal, Identity, Linear, Log, Ordinal, Point, Pow,
+  Quantile, Quantize, Sequential, Sqrt,
+  Symlog, Threshold, Time, UTC
 } from 'vega-scale';
 
 export const timeIntervals = [

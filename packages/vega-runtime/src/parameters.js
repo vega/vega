@@ -1,9 +1,9 @@
 import parseDataflow from './dataflow';
-import {parameterExpression, encodeExpression} from './expression';
+import {encodeExpression, parameterExpression} from './expression';
 import {tupleid} from 'vega-dataflow';
 import {
   accessor, array, compare, error, field,
-  isArray, isObject, hasOwnProperty, key
+  hasOwnProperty, isArray, isObject, key
 } from 'vega-util';
 
 /**

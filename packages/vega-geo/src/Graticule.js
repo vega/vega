@@ -1,4 +1,4 @@
-import {Transform, ingest, replace} from 'vega-dataflow';
+import {ingest, replace, Transform} from 'vega-dataflow';
 import {inherits, isFunction} from 'vega-util';
 import {geoGraticule} from 'd3-geo';
 

@@ -1,4 +1,4 @@
-import {extend, error, isFunction, stringValue} from 'vega-util';
+import {error, extend, isFunction, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...

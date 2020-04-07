@@ -1,5 +1,5 @@
 import {tickCount, tickFormat, tickValues, validTicks} from './ticks';
-import {Transform, ingest} from 'vega-dataflow';
+import {ingest, Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**

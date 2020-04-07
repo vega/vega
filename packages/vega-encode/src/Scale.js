@@ -6,20 +6,20 @@ import {
 } from 'vega-util';
 
 import {
-  Ordinal, Band, Point, Sequential, Diverging,
-  Linear, Log, Pow, Sqrt, Symlog, Time, UTC,
-  Quantile, Quantize, Threshold, BinOrdinal,
-  isContinuous,
-  isInterpolating,
-  isLogarithmic,
-  bandSpace,
-  interpolateColors,
-  interpolateRange,
-  interpolate as getInterpolate,
-  scale as getScale,
-  scheme as getScheme,
+  Band, bandSpace, BinOrdinal, Diverging, interpolate as getInterpolate,
+  scale as getScale, scheme as getScheme, interpolateColors, interpolateRange, isContinuous, isInterpolating, isLogarithmic,
+  Linear, Log, Ordinal, Point,
+  Pow,
+  Quantile,
+  Quantize,
+  quantizeInterpolator,
   scaleImplicit,
-  quantizeInterpolator
+  Sequential,
+  Sqrt,
+  Symlog,
+  Threshold,
+  Time,
+  UTC
 } from 'vega-scale';
 
 import {range as sequence} from 'd3-array';
