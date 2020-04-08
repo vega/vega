@@ -7,6 +7,7 @@ import {
   TimeInterval,
 } from '.';
 import { Text } from './encode';
+import { TimeIntervalStep } from './scale';
 import {
   AlignValue,
   AnchorValue,
@@ -24,7 +25,7 @@ export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
 export type LabelOverlap = boolean | 'parity' | 'greedy';
 
-export type TickCount = number | TimeInterval | SignalRef;
+export type TickCount = number | TimeInterval | TimeIntervalStep | SignalRef;
 
 export type FormatType = 'number' | 'time' | 'utc';
 
