@@ -1,8 +1,8 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
-import {domChild, domClear, domCreate, cssClass} from './util/dom';
-import {openTag, closeTag} from './util/tags';
+import {cssClass, domChild, domClear, domCreate} from './util/dom';
+import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
@@ -308,7 +308,7 @@ const AriaHiddenRoles = {
   'axis-grid': 1,
   'legend-entry': 1,
   'legend-title': 1
-}
+};
 
 // Draw a mark container.
 prototype.draw = function(el, scene, prev) {
@@ -432,7 +432,7 @@ var aria_extras = {
   'ariaLabel': 'aria-label',
   'ariaRole': 'role',
   'ariaRoleDescription': 'aria-roledescription'
-}
+};
 
 // Extra configuration for certain mark types
 var mark_extras = {

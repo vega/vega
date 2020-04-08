@@ -19,10 +19,10 @@ export default function Identifier(params) {
 }
 
 Identifier.Definition = {
-  "type": "Identifier",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "as", "type": "string", "required": true }
+  'type': 'Identifier',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'as', 'type': 'string', 'required': true }
   ]
 };
 

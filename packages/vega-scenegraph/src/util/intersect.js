@@ -27,7 +27,7 @@ export function intersectPath(draw) {
 
     // false if no hits in intersection region
     return false;
-  }
+  };
 }
 
 export function intersectPoint(item, box) {

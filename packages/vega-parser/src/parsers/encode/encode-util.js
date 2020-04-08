@@ -108,7 +108,7 @@ function applyDefaults(encode, type, role, style, config) {
 function applyDefault(defaults, key, value) {
   defaults[key] = value && value.signal
     ? {signal: value.signal}
-    : {value: value}
+    : {value: value};
 }
 
 export function has(key, encode) {

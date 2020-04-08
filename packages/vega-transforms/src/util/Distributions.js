@@ -1,8 +1,8 @@
 import {
   randomKDE,
+  randomLogNormal,
   randomMixture,
   randomNormal,
-  randomLogNormal,
   randomUniform
 } from 'vega-statistics';
 

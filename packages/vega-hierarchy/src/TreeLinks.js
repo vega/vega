@@ -1,4 +1,4 @@
-import {ingest, tupleid, Transform} from 'vega-dataflow';
+import {Transform, ingest, tupleid} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
  /**
@@ -13,9 +13,9 @@ export default function TreeLinks(params) {
 }
 
 TreeLinks.Definition = {
-  "type": "TreeLinks",
-  "metadata": {"tree": true, "generates": true, "changes": true},
-  "params": []
+  'type': 'TreeLinks',
+  'metadata': {'tree': true, 'generates': true, 'changes': true},
+  'params': []
 };
 
 var prototype = inherits(TreeLinks, Transform);

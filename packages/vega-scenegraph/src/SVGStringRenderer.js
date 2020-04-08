@@ -2,7 +2,7 @@ import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
-import {openTag, closeTag} from './util/tags';
+import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';

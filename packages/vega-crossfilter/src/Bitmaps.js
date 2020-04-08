@@ -1,4 +1,4 @@
-import {array8, array16, array32} from './arrays';
+import {array16, array32, array8} from './arrays';
 
 /**
  * Maintains CrossFilter state.

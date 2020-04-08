@@ -188,7 +188,7 @@ function parseStream(s) {
   }
   if (stream.type.slice(-1) === '!') {
     stream.consume = true;
-    stream.type = stream.type.slice(0, -1)
+    stream.type = stream.type.slice(0, -1);
   }
   if (filter != null) stream.filter = filter;
   if (throttle[0]) stream.throttle = throttle[0];

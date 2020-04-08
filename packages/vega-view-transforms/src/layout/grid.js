@@ -1,8 +1,8 @@
 import {
-  All, Each, Flush, Column, X, Y, Row, Middle, End,
-  Group, AxisRole, LegendRole, TitleRole,
-  RowHeader, RowFooter, RowTitle,
-  ColHeader, ColFooter, ColTitle
+  All, AxisRole, ColFooter, ColHeader, ColTitle, Column, Each, End, Flush,
+  Group, LegendRole, Middle, Row,
+  RowFooter, RowHeader, RowTitle,
+  TitleRole, X, Y
 } from '../constants';
 import {tempBounds} from './util';
 import {Bounds} from 'vega-scenegraph';

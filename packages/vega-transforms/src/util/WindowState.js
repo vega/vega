@@ -1,4 +1,4 @@
-import {createMeasure, compileMeasures, measureName} from './AggregateOps';
+import {compileMeasures, createMeasure, measureName} from './AggregateOps';
 import TupleStore from './TupleStore';
 import {WindowOp, WindowOps} from './WindowOps';
 import {accessorFields, accessorName, array, error, hasOwnProperty} from 'vega-util';

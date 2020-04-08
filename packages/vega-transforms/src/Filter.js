@@ -13,10 +13,10 @@ export default function Filter(params) {
 }
 
 Filter.Definition = {
-  "type": "Filter",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true }
+  'type': 'Filter',
+  'metadata': {'changes': true},
+  'params': [
+    { 'name': 'expr', 'type': 'expr', 'required': true }
   ]
 };
 

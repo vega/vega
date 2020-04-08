@@ -9,9 +9,9 @@ var tape = require('tape'),
 
 tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   var data = [
-    {"id": "a", "tuples": [{x:1},{x:2}]},
-    {"id": "b", "tuples": [{x:3},{x:4}]},
-    {"id": "c", "tuples": [{x:5},{x:6}]}
+    {'id': 'a', 'tuples': [{x:1},{x:2}]},
+    {'id': 'b', 'tuples': [{x:3},{x:4}]},
+    {'id': 'c', 'tuples': [{x:5},{x:6}]}
   ];
 
   var subs = [];
@@ -66,7 +66,7 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
 
   // -- test add - new subflow
   df.pulse(source, changeset()
-    .insert({"key": "d", "tuples": [{x:7},{x:8}]}))
+    .insert({'key': 'd', 'tuples': [{x:7},{x:8}]}))
     .run();
   t.equal(facet.targets().active, 1); // 1 subflow updated
   t.equal(subs.length, 4); // 1 subflow added
@@ -82,9 +82,9 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
 
 tape('PreFacet raises error if tuple sets are modified', function(t) {
   var data = [
-    {"id": "a", "tuples": [{x:1},{x:2}]},
-    {"id": "b", "tuples": [{x:3},{x:4}]},
-    {"id": "c", "tuples": [{x:5},{x:6}]}
+    {'id': 'a', 'tuples': [{x:1},{x:2}]},
+    {'id': 'b', 'tuples': [{x:3},{x:4}]},
+    {'id': 'c', 'tuples': [{x:5},{x:6}]}
   ];
 
   function subflow(df) {

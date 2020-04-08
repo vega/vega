@@ -1,6 +1,6 @@
 import {
-  array, object, oneOf, orSignal,
-  arrayType, objectType, stringType, numberOrSignal, stringOrSignal
+  array, arrayType, numberOrSignal, object,
+  objectType, oneOf, orSignal, stringOrSignal, stringType
 } from './util';
 
 const array2 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 2}));

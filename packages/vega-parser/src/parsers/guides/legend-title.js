@@ -1,6 +1,6 @@
-import {GuideTitleStyle, zero, one} from './constants';
+import {GuideTitleStyle, one, zero} from './constants';
 import guideMark from './guide-mark';
-import {lookup, alignExpr, anchorExpr} from './guide-util';
+import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
 import {addEncoders} from '../encode/encode-util';

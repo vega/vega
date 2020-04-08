@@ -39,7 +39,7 @@ tape('Bin discretizes values', function(t) {
         .update(step, (e[1] - e[0]) / d)
         .run();
       testBin(t, bin.value, extent.value, step.value);
-    })
+    });
   });
 
   t.end();

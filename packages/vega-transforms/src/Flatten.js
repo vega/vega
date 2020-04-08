@@ -1,5 +1,5 @@
 import {fieldNames} from './util/util';
-import {derive, Transform} from 'vega-dataflow';
+import {Transform, derive} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -21,12 +21,12 @@ export default function Flatten(params) {
 }
 
 Flatten.Definition = {
-  "type": "Flatten",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true, "required": true },
-    { "name": "index", "type": "string" },
-    { "name": "as", "type": "string", "array": true }
+  'type': 'Flatten',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+    { 'name': 'index', 'type': 'string' },
+    { 'name': 'as', 'type': 'string', 'array': true }
   ]
 };
 

@@ -7,5 +7,5 @@ tape('monthAbbrevFormat returns empty string for non-integer values', function(t
   t.equal(monthAbbrevFormat(1.1), '');
   t.equal(monthAbbrevFormat('Missing'), '');
   t.equal(monthAbbrevFormat(1), 'Feb');
-  t.end()
+  t.end();
 });

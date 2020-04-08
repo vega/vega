@@ -139,7 +139,7 @@ tape('JSON reader should parse date with custom parse function', function(t) {
       types = {foo: 'date:custom'};
 
   function dateParse() {
-    return function() { return new Date(2000, 1, 1); }
+    return function() { return new Date(2000, 1, 1); };
   }
 
   t.deepEqual(read(input, {type:'json', parse: types}, dateParse), expected);

@@ -1,4 +1,4 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits, truthy} from 'vega-util';
 
 /**
@@ -14,11 +14,11 @@ export default function Cross(params) {
 }
 
 Cross.Definition = {
-  "type": "Cross",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "filter", "type": "expr" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
+  'type': 'Cross',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'filter', 'type': 'expr' },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['a', 'b'] }
   ]
 };
 

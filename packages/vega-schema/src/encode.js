@@ -1,7 +1,7 @@
 import {
-  allOf, anyOf, oneOf, ref, array, def, object, pattern, required,
-  type, booleanType, nullType, numberType, stringType, textType,
-  signalRef, numberValue, enums
+  allOf, anyOf, array, booleanType, def, enums, nullType, numberType, numberValue,
+  object, oneOf, pattern, ref, required, signalRef,
+  stringType, textType, type
 } from './util';
 
 export const blendEnum = [

@@ -1,7 +1,7 @@
-import {Left, Right, Center, Start, End, Vertical, LegendScales, Bottom, Top} from './constants';
-import {value, isSignal} from '../../util';
-import {isArray, isObject, stringValue} from 'vega-util';
+import {Bottom, Center, End, Left, LegendScales, Right, Start, Top, Vertical} from './constants';
+import {isSignal, value} from '../../util';
 import {isDiscrete} from 'vega-scale';
+import {isArray, isObject, stringValue} from 'vega-util';
 
 export function lookup(spec, config) {
   const _ = (name, dflt) => value(spec[name], value(config[name], dflt));
@@ -89,9 +89,7 @@ export function extendOffset(value, offset) {
 }
 
 function wrapFormat(text, format, formatType) {
-  if (format == null) {
-    return text
-  }
+  if (format == null) return text;
   const func = formatType === 'time' ? 'timeFormat' : formatType === 'utc' ? 'utcFormat' : 'format';
   return `${func}(${text}, "${format}")`;
 }

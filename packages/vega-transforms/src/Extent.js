@@ -12,10 +12,10 @@ export default function Extent(params) {
 }
 
 Extent.Definition = {
-  "type": "Extent",
-  "metadata": {},
-  "params": [
-    { "name": "field", "type": "field", "required": true }
+  'type': 'Extent',
+  'metadata': {},
+  'params': [
+    { 'name': 'field', 'type': 'field', 'required': true }
   ]
 };
 

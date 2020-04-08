@@ -1,5 +1,5 @@
 import SortedList from './util/SortedList';
-import {stableCompare, Transform, tupleid} from 'vega-dataflow';
+import {Transform, stableCompare, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -14,10 +14,10 @@ export default function Collect(params) {
 }
 
 Collect.Definition = {
-  "type": "Collect",
-  "metadata": {"source": true},
-  "params": [
-    { "name": "sort", "type": "compare" }
+  'type': 'Collect',
+  'metadata': {'source': true},
+  'params': [
+    { 'name': 'sort', 'type': 'compare' }
   ]
 };
 

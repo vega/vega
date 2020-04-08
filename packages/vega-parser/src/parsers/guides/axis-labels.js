@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
+import {Bottom, GuideLabelStyle, Label, Left, Right, Top, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {extendOffset, lookup} from './guide-util';
 import {TextMark} from '../marks/marktypes';

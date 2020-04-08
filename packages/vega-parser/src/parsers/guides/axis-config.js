@@ -1,4 +1,4 @@
-import {Top, Bottom} from './constants';
+import {Bottom, Top} from './constants';
 import {extend} from 'vega-util';
 
 export default function(spec, scope) {

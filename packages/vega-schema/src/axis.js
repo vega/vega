@@ -1,11 +1,11 @@
 import {timeIntervals} from './scale';
 import {
-  numberValue, stringValue, booleanValue, colorValue, alignValue,
-  anchorValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrSignal, arrayOrSignal, numberOrSignal,
-  textOrSignal, booleanOrNumberOrSignal, formatTypeOrSignal,
-  def, enums, object, oneOf, orSignal, ref,
-  booleanType, formatTypeType, numberType, stringType, signalRef
+  alignValue, anchorValue, arrayOrSignal, baselineValue, booleanOrNumberOrSignal,
+  booleanOrSignal, booleanType, booleanValue, colorValue,
+  dashArrayValue, def, enums,
+  fontWeightValue, formatTypeOrSignal, formatTypeType,
+  numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
+  ref, signalRef, stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere

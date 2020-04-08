@@ -1,5 +1,5 @@
 import {max} from 'd3-array';
-import {ingest, rederive, Transform} from 'vega-dataflow';
+import {Transform, ingest, rederive} from 'vega-dataflow';
 import {identity, inherits, isArray, isFunction, isNumber} from 'vega-util';
 import contours from './util/contours';
 import quantize from './util/quantize';
@@ -37,19 +37,19 @@ export default function Isocontour(params) {
 }
 
 Isocontour.Definition = {
-  "type": "Isocontour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "levels", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "zero", "type": "boolean", "default": true },
-    { "name": "smooth", "type": "boolean", "default": true },
-    { "name": "scale", "type": "number", "expr": true },
-    { "name": "translate", "type": "number", "array": true, "expr": true },
-    { "name": "as", "type": "string", "null": true, "default": "contour" }
+  'type': 'Isocontour',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'thresholds', 'type': 'number', 'array': true },
+    { 'name': 'levels', 'type': 'number' },
+    { 'name': 'nice', 'type': 'boolean', 'default': false },
+    { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+    { 'name': 'zero', 'type': 'boolean', 'default': true },
+    { 'name': 'smooth', 'type': 'boolean', 'default': true },
+    { 'name': 'scale', 'type': 'number', 'expr': true },
+    { 'name': 'translate', 'type': 'number', 'array': true, 'expr': true },
+    { 'name': 'as', 'type': 'string', 'null': true, 'default': 'contour' }
   ]
 };
 

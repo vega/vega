@@ -1,32 +1,32 @@
 import {
-  YEAR,
-  QUARTER,
-  MONTH,
-  WEEK,
   DATE,
   DAY,
   HOURS,
+  MILLISECONDS,
   MINUTES,
+  MONTH,
+  QUARTER,
   SECONDS,
-  MILLISECONDS
+  WEEK,
+  YEAR
 } from './units';
 
 import {
+  timeDay,
+  timeHour,
   timeMillisecond,
   timeMinute,
-  timeSecond,
-  timeHour,
-  timeDay,
-  timeWeek,
   timeMonth,
+  timeSecond,
+  timeWeek,
   timeYear,
-  utcMillisecond,
-  utcSecond,
-  utcMinute,
-  utcHour,
   utcDay,
-  utcWeek,
+  utcHour,
+  utcMillisecond,
+  utcMinute,
   utcMonth,
+  utcSecond,
+  utcWeek,
   utcYear
 } from 'd3-time';
 

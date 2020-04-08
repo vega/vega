@@ -1,4 +1,4 @@
-import {Value, Perc, Perc2, zero, one} from './constants';
+import {Perc, Perc2, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RectMark} from '../marks/marktypes';

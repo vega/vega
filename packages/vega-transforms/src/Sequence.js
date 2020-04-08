@@ -1,4 +1,4 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 import {range} from 'd3-array';
 
@@ -15,13 +15,13 @@ export default function Sequence(params) {
 }
 
 Sequence.Definition = {
-  "type": "Sequence",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "start", "type": "number", "required": true },
-    { "name": "stop", "type": "number", "required": true },
-    { "name": "step", "type": "number", "default": 1 },
-    { "name": "as", "type": "string", "default": "data" }
+  'type': 'Sequence',
+  'metadata': {'generates': true, 'changes': true},
+  'params': [
+    { 'name': 'start', 'type': 'number', 'required': true },
+    { 'name': 'stop', 'type': 'number', 'required': true },
+    { 'name': 'step', 'type': 'number', 'default': 1 },
+    { 'name': 'as', 'type': 'string', 'default': 'data' }
   ]
 };
 

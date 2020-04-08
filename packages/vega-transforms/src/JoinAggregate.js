@@ -12,14 +12,14 @@ export default function JoinAggregate(params) {
 }
 
 JoinAggregate.Definition = {
-  "type": "JoinAggregate",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "fields", "type": "field", "null": true, "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-    { "name": "as", "type": "string", "null": true, "array": true },
-    { "name": "key", "type": "field" }
+  'type': 'JoinAggregate',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+    { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
+    { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+    { 'name': 'key', 'type': 'field' }
   ]
 };
 

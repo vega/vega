@@ -1,4 +1,4 @@
-import {def, ref, type, numberOrSignal, objectType, stringType} from './util';
+import {def, numberOrSignal, objectType, ref, stringType, type} from './util';
 
 import autosize from './autosize';
 import axis from './axis';

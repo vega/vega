@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {bin} from 'vega-statistics';
-import {inherits, accessor, accessorFields, accessorName} from 'vega-util';
+import {accessor, accessorFields, accessorName, inherits} from 'vega-util';
 
 // epsilon bias to offset floating point error (#1737)
 const EPSILON = 1e-14;
@@ -17,23 +17,23 @@ export default function Bin(params) {
 }
 
 Bin.Definition = {
-  "type": "Bin",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "interval", "type": "boolean", "default": true },
-    { "name": "anchor", "type": "number" },
-    { "name": "maxbins", "type": "number", "default": 20 },
-    { "name": "base", "type": "number", "default": 10 },
-    { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
-    { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "span", "type": "number" },
-    { "name": "step", "type": "number" },
-    { "name": "steps", "type": "number", "array": true },
-    { "name": "minstep", "type": "number", "default": 0 },
-    { "name": "nice", "type": "boolean", "default": true },
-    { "name": "name", "type": "string" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
+  'type': 'Bin',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'interval', 'type': 'boolean', 'default': true },
+    { 'name': 'anchor', 'type': 'number' },
+    { 'name': 'maxbins', 'type': 'number', 'default': 20 },
+    { 'name': 'base', 'type': 'number', 'default': 10 },
+    { 'name': 'divide', 'type': 'number', 'array': true, 'default': [5, 2] },
+    { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+    { 'name': 'span', 'type': 'number' },
+    { 'name': 'step', 'type': 'number' },
+    { 'name': 'steps', 'type': 'number', 'array': true },
+    { 'name': 'minstep', 'type': 'number', 'default': 0 },
+    { 'name': 'nice', 'type': 'boolean', 'default': true },
+    { 'name': 'name', 'type': 'string' },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['bin0', 'bin1'] }
   ]
 };
 

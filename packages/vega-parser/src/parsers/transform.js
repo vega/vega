@@ -152,5 +152,5 @@ export function isField(_) {
 }
 
 export function isCompare(_) {
-  return _ === 'compare'
+  return _ === 'compare';
 }

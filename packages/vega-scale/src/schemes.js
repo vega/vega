@@ -1,4 +1,4 @@
-import {discrete, continuous} from './palettes';
+import {continuous, discrete} from './palettes';
 import {interpolateColors} from './interpolate';
 
 function colors(palette) {

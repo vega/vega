@@ -25,7 +25,7 @@ tape('Facet facets tuples', function(t) {
       var d = s.data.value;
       t.equal(d.length, len===undefined ? i+1 : len);
       t.equal(d.every(function(t) { return t.k === s.key; }), true);
-    }
+    };
   }
 
   var key = util.field('k'),
@@ -80,7 +80,7 @@ tape('Facet facets tuples', function(t) {
   t.end();
 });
 
-tape("Facet handles key parameter change", function(t) {
+tape('Facet handles key parameter change', function(t) {
   var data = [
     {k1:'a', k2:'a', v:5}, {k1:'b', k2:'c', v:7}, {k1:'c', k2:'c', v:9},
     {k1:'a', k2:'a', v:1}, {k1:'b', k2:'b', v:2}, {k1:'c', k2:'b', v:3}
@@ -99,7 +99,7 @@ tape("Facet handles key parameter change", function(t) {
       var d = s.data.value;
       t.equal(d.length, len===undefined ? i+1 : len);
       t.equal(d.every(function(t) { return t.k2 === s.key; }), true);
-    }
+    };
   }
 
   var key1 = util.field('k1'),

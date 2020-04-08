@@ -101,9 +101,9 @@ var output = [
 ];
 
 tape('pathParse should parse svg path', function(t) {
-  var s1 = "M1,1L1,2";
-  var s2 = "M 1 1 L 1 2";
-  var s3 = "M 1,1 L 1 2";
+  var s1 = 'M1,1L1,2';
+  var s2 = 'M 1 1 L 1 2';
+  var s3 = 'M 1,1 L 1 2';
   var p = [['M',1,1], ['L',1,2]];
   t.deepEqual(pathParse(s1), p);
   t.deepEqual(pathParse(s2), p);
@@ -112,14 +112,14 @@ tape('pathParse should parse svg path', function(t) {
 });
 
 tape('pathParse should handle repeated arguments', function(t) {
-  var s = "M 1 1 L 1 2 3 4";
+  var s = 'M 1 1 L 1 2 3 4';
   var p = [['M',1,1], ['L',1,2], ['L',3,4]];
   t.deepEqual(pathParse(s), p);
   t.end();
 });
 
 tape('pathParse should skip NaN parameters', function(t) {
-  var s = "M 1 1 L 1 x";
+  var s = 'M 1 1 L 1 x';
   var p = [['M',1,1], ['L',1]];
   t.deepEqual(pathParse(s), p);
   t.end();

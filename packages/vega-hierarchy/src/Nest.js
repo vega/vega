@@ -1,5 +1,5 @@
 import lookup from './lookup';
-import {ingest, isTuple, Transform, tupleid} from 'vega-dataflow';
+import {Transform, ingest, isTuple, tupleid} from 'vega-dataflow';
 import {array, error, inherits} from 'vega-util';
 import {hierarchy} from 'd3-hierarchy';
 
@@ -18,11 +18,11 @@ export default function Nest(params) {
 }
 
 Nest.Definition = {
-  "type": "Nest",
-  "metadata": {"treesource": true, "changes": true},
-  "params": [
-    { "name": "keys", "type": "field", "array": true },
-    { "name": "generate", "type": "boolean" }
+  'type': 'Nest',
+  'metadata': {'treesource': true, 'changes': true},
+  'params': [
+    { 'name': 'keys', 'type': 'field', 'array': true },
+    { 'name': 'generate', 'type': 'boolean' }
   ]
 };
 

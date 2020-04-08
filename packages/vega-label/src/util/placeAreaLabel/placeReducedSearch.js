@@ -1,4 +1,4 @@
-import {textMetrics} from "vega-scenegraph";
+import {textMetrics} from 'vega-scenegraph';
 import {collision, outOfBounds} from './common';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {

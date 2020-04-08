@@ -1,5 +1,5 @@
 import numbers from './numbers';
-import {quantileSorted, ascending} from 'd3-array';
+import {ascending, quantileSorted} from 'd3-array';
 
 export default function(array, p, f) {
   var values = Float64Array.from(numbers(array, f));
