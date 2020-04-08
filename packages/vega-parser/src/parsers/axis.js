@@ -5,7 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
-import {lookup, tickBand, axisAriaLabel} from './guides/guide-util';
+import {axisAriaLabel, lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
