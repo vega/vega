@@ -1,6 +1,6 @@
 import {Group} from './constants';
 import {Transform} from 'vega-dataflow';
-import {Item, GroupItem} from 'vega-scenegraph';
+import {GroupItem, Item} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
 /**

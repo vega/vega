@@ -1,6 +1,6 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, error, inherits} from 'vega-util';
-import {mean, min, max, median} from 'd3-array';
+import {max, mean, median, min} from 'd3-array';
 
 var Methods = {
   value: 'value',

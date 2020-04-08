@@ -1,14 +1,14 @@
 import {
-  YEAR,
-  QUARTER,
-  MONTH,
-  WEEK,
   DATE,
   DAY,
   HOURS,
+  MILLISECONDS,
   MINUTES,
+  MONTH,
+  QUARTER,
   SECONDS,
-  MILLISECONDS
+  WEEK,
+  YEAR
 } from './units';
 import {constant, one, peek, toSet, zero} from 'vega-util';
 import {timeWeek, utcWeek} from 'd3-time';

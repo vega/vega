@@ -1,6 +1,6 @@
 import {
-  GuideLabelStyle, Skip,
-  Symbols, Gradient, Discrete, LegendScales
+  Discrete, Gradient,
+  GuideLabelStyle, LegendScales, Skip, Symbols
 } from './guides/constants';
 import legendGradient from './guides/legend-gradient';
 import legendGradientDiscrete from './guides/legend-gradient-discrete';
@@ -11,9 +11,9 @@ import guideGroup from './guides/guide-group';
 import {getEncoding, getStyle, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
-import {LegendRole, LegendEntryRole} from './marks/roles';
+import {LegendEntryRole, LegendRole} from './marks/roles';
 import {addEncoders, extendEncode} from './encode/encode-util';
-import {ref, deref} from '../util';
+import {deref, ref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 
 import {isContinuous, isDiscretizing} from 'vega-scale';

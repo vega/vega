@@ -1,4 +1,4 @@
-import {Top, Bottom, zero, one} from './constants';
+import {Bottom, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {RuleMark} from '../marks/marktypes';

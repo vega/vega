@@ -13,9 +13,9 @@ import {
   geoMercator,
   geoNaturalEarth1,
   geoOrthographic,
+  geoPath,
   geoStereographic,
-  geoTransverseMercator,
-  geoPath
+  geoTransverseMercator
 } from 'd3-geo';
 
 import {

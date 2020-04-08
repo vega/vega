@@ -1,5 +1,5 @@
 import parseSpec from '../spec';
-import {Sieve, PreFacet} from '../../transforms';
+import {PreFacet, Sieve} from '../../transforms';
 
 export default function(spec, scope, input) {
   var op = scope.add(PreFacet({pulse: input.pulse})),

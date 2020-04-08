@@ -1,7 +1,7 @@
 import {
-  Symbols, Start, Middle, End, Top, Bottom, Left, Right,
-  TopLeft, TopRight, BottomLeft, BottomRight, None,
-  Each, Flush
+  Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
+  None, Right, Start, Symbols, Top,
+  TopLeft, TopRight
 } from '../constants';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 

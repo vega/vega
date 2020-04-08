@@ -1,5 +1,5 @@
 import {max} from 'd3-array';
-import {ingest, rederive, Transform} from 'vega-dataflow';
+import {Transform, ingest, rederive} from 'vega-dataflow';
 import {identity, inherits, isArray, isFunction, isNumber} from 'vega-util';
 import contours from './util/contours';
 import quantize from './util/quantize';

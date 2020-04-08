@@ -3,7 +3,7 @@ import {ValidAggregateOps} from './util/AggregateOps';
 import SortedList from './util/SortedList';
 import {ValidWindowOps} from './util/WindowOps';
 import WindowState from './util/WindowState';
-import {stableCompare, Transform, tupleid} from 'vega-dataflow';
+import {Transform, stableCompare, tupleid} from 'vega-dataflow';
 import {constant, inherits} from 'vega-util';
 import {bisector} from 'd3-array';
 

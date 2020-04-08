@@ -1,4 +1,4 @@
-import {stableCompare, Transform} from 'vega-dataflow';
+import {Transform, stableCompare} from 'vega-dataflow';
 import {error, inherits, one} from 'vega-util';
 
 /**

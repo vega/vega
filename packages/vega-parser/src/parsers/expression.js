@@ -1,5 +1,5 @@
 import {CallExpression, parse} from 'vega-expression';
-import {codeGenerator, codegenParams, SignalPrefix} from 'vega-functions';
+import {SignalPrefix, codeGenerator, codegenParams} from 'vega-functions';
 import {error, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope, preamble) {

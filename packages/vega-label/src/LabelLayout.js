@@ -1,4 +1,4 @@
-import {markBitmaps, baseBitmaps} from './util/markBitmaps';
+import {baseBitmaps, markBitmaps} from './util/markBitmaps';
 import scaler from './util/scaler';
 import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive';
 import placeAreaLabelReducedSearch from './util/placeAreaLabel/placeReducedSearch';

@@ -1,4 +1,4 @@
-import {Union, VlMulti, Or, And} from './constants';
+import {And, Or, Union, VlMulti} from './constants';
 import {array, toNumber} from 'vega-util';
 
 /**

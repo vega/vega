@@ -4,8 +4,8 @@ import {
   inherits, isFunction
 } from 'vega-util';
 import {
-  forceSimulation, forceCenter, forceCollide,
-  forceManyBody, forceLink, forceX, forceY
+  forceCenter, forceCollide, forceLink,
+  forceManyBody, forceSimulation, forceX, forceY
 } from 'd3-force';
 
 var ForceMap = {

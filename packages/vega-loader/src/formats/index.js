@@ -1,4 +1,4 @@
-import {default as dsv, delimitedFormat} from './dsv';
+import {delimitedFormat, default as dsv} from './dsv';
 import json from './json';
 import topojson from './topojson';
 import {hasOwnProperty} from 'vega-util';

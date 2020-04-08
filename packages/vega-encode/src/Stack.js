@@ -1,4 +1,4 @@
-import {stableCompare, Transform} from 'vega-dataflow';
+import {Transform, stableCompare} from 'vega-dataflow';
 import {inherits, one} from 'vega-util';
 
 var Zero = 'zero',

@@ -1,8 +1,8 @@
 import partition from './partition';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {
-  regressionLinear, regressionLog, regressionExp,
-  regressionPow, regressionQuad, regressionPoly, sampleCurve
+  regressionExp, regressionLinear, regressionLog,
+  regressionPoly, regressionPow, regressionQuad, sampleCurve
 } from 'vega-statistics';
 import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
 

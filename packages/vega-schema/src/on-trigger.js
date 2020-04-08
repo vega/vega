@@ -1,4 +1,4 @@
-import { array, object, oneOf, ref, booleanType } from './util';
+import { array, booleanType, object, oneOf, ref } from './util';
 
 // types defined elsewhere
 const exprStringRef = ref('exprString');

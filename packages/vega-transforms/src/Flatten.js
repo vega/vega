@@ -1,5 +1,5 @@
 import {fieldNames} from './util/util';
-import {derive, Transform} from 'vega-dataflow';
+import {Transform, derive} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**

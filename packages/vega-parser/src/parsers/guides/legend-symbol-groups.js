@@ -1,12 +1,12 @@
 import {
-  Index, Label, Offset, Size, Value, zero, one,
-  Skip, GuideLabelStyle, LegendScales
+  GuideLabelStyle, Index, Label, LegendScales, Offset, Size, Skip,
+  Value, one, zero
 } from './constants';
 import guideGroup from './guide-group';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {SymbolMark, TextMark} from '../marks/marktypes';
-import {ScopeRole, LegendSymbolRole, LegendLabelRole} from '../marks/roles';
+import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
 import {addEncoders, encoder, extendEncode} from '../encode/encode-util';
 
 // userEncode is top-level, includes entries, symbols, labels

@@ -1,5 +1,5 @@
 import density2D from './util/density2D';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, inherits} from 'vega-util';
 
 /**

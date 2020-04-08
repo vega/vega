@@ -1,6 +1,6 @@
 import partition from './partition';
 import {regressionLoess} from 'vega-statistics';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, inherits} from 'vega-util';
 
 /**

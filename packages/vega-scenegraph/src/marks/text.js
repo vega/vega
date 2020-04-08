@@ -7,7 +7,7 @@ import blend from '../util/canvas/blend';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
-import {translate, rotate} from '../util/svg/transform';
+import {rotate, translate} from '../util/svg/transform';
 import {isArray} from 'vega-util';
 
 var textAlign = {

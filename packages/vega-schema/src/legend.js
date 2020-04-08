@@ -1,11 +1,11 @@
 import {layoutAlign} from './layout';
 
 import {
-  anyOf, allOf, def, enums, object, pattern, required, ref, type,
-  alignValue, anchorValue, baselineValue, colorValue, dashArrayValue,
-  fontWeightValue, numberValue, orientValue, stringValue,
-  arrayOrSignal, numberOrSignal, textOrSignal, formatTypeOrSignal,
-  formatTypeType, numberType, stringType, orSignal
+  alignValue, allOf, anchorValue, anyOf, arrayOrSignal, baselineValue, colorValue, dashArrayValue, def,
+  enums, fontWeightValue, formatTypeOrSignal, formatTypeType, numberOrSignal,
+  numberType, numberValue, object, orSignal,
+  orientValue, pattern, ref, required,
+  stringType, stringValue, textOrSignal, type
 } from './util';
 
 // types defined elsewhere

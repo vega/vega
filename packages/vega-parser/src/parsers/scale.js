@@ -1,9 +1,9 @@
-import {ref, keyFieldRef, aggrField} from '../util';
+import {aggrField, keyFieldRef, ref} from '../util';
 import {
-  Collect, Aggregate, MultiExtent, MultiValues, Sieve, Values
+  Aggregate, Collect, MultiExtent, MultiValues, Sieve, Values
 } from '../transforms';
 
-import {isValidScaleType, isDiscrete, isQuantile} from 'vega-scale';
+import {isDiscrete, isQuantile, isValidScaleType} from 'vega-scale';
 import {
   error, extend, hasOwnProperty, isArray, isObject, isString, stringValue
 } from 'vega-util';
