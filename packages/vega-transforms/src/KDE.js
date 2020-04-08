@@ -1,6 +1,6 @@
 import {partition} from './util/util';
 import {randomKDE} from 'vega-statistics';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';
 import {accessorName, error, extent, inherits} from 'vega-util';
 

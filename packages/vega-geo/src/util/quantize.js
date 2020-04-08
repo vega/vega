@@ -1,4 +1,4 @@
-import {tickStep, range} from 'd3-array';
+import {range, tickStep} from 'd3-array';
 import {extent} from 'vega-util';
 
 export default function(k, nice, zero) {

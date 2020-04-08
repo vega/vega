@@ -1,5 +1,5 @@
 import expression from './expression';
-import {error, isString, isObject, splitAccessPath, stringValue} from 'vega-util';
+import {error, isObject, isString, splitAccessPath, stringValue} from 'vega-util';
 
 export default function(ref, scope, params, fields) {
   return resolve(isObject(ref) ? ref : {datum: ref}, scope, params, fields);

@@ -1,7 +1,7 @@
 import DataScope from './DataScope';
 import {
-  aggrField, Ascending, compareRef, Entry, isExpr, isSignal,
-  fieldRef, keyRef, operator, ref
+  Ascending, Entry, aggrField, compareRef, fieldRef, isExpr,
+  isSignal, keyRef, operator, ref
 } from './util';
 import parseExpression from './parsers/expression';
 import {
@@ -9,7 +9,7 @@ import {
 } from './transforms';
 import {
   array, error, extend, hasOwnProperty,
-  isArray, isString, isObject, peek, stringValue
+  isArray, isObject, isString, peek, stringValue
 } from 'vega-util';
 
 export default function Scope(config) {

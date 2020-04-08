@@ -1,8 +1,8 @@
 import {ariaLabel} from './aria';
 import background from './background';
 import cursor from './cursor';
-import {data, dataref, change, insert, remove} from './data';
-import {initializeEventConfig, events} from './events';
+import {change, data, dataref, insert, remove} from './data';
+import {events, initializeEventConfig} from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
@@ -13,17 +13,17 @@ import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {scale} from './scale';
-import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
+import {initializeResize, resizeView, viewHeight, viewWidth} from './size';
 import {getState, setState} from './state';
 import timer from './timer';
 import defaultTooltip from './tooltip';
 import trap from './trap';
 
-import {asyncCallback, Dataflow} from 'vega-dataflow';
-import {error, extend, inherits, hasOwnProperty, stringValue} from 'vega-util';
+import {Dataflow, asyncCallback} from 'vega-dataflow';
+import {error, extend, hasOwnProperty, inherits, stringValue} from 'vega-util';
 import {
-  CanvasHandler, Scenegraph,
-  renderModule, RenderType
+  CanvasHandler, RenderType,
+  Scenegraph, renderModule
 } from 'vega-scenegraph';
 
 /**

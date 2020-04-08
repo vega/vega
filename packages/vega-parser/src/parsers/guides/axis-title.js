@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, GuideTitleStyle, zero, one} from './constants';
+import {Bottom, GuideTitleStyle, Left, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {encoder, has} from '../encode/encode-util';

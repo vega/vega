@@ -1,5 +1,5 @@
 import {partition} from './util/util';
-import {stableCompare, Transform} from 'vega-dataflow';
+import {Transform, stableCompare} from 'vega-dataflow';
 import {dotbin} from 'vega-statistics';
 import {extent, identity, inherits, span} from 'vega-util';
 

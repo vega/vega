@@ -1,6 +1,6 @@
 import Handler from './Handler';
 import Marks from './marks/index';
-import {Events, HrefEvent, TooltipShowEvent, TooltipHideEvent} from './util/events';
+import {Events, HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
 import point from './util/point';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';

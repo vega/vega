@@ -1,6 +1,6 @@
 import {transforms} from 'vega-dataflow';
 import {functionContext} from 'vega-functions';
-import {parse, context} from 'vega-runtime';
+import {context, parse} from 'vega-runtime';
 
 export default function(view, spec, functions) {
   var fn = functions || functionContext;

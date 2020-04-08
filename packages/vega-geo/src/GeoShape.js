@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {getProjectionPath} from 'vega-projection';
-import {inherits, field} from 'vega-util';
+import {field, inherits} from 'vega-util';
 
 /**
  * Annotate items with a geopath shape generator.

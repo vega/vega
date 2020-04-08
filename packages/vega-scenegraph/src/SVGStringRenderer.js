@@ -2,12 +2,12 @@ import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {cssClass} from './util/dom';
-import {openTag, closeTag} from './util/tags';
+import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styles, styleProperties} from './util/svg/styles';
+import {styleProperties, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {

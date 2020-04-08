@@ -4,10 +4,10 @@ import {
   treemap,
   treemapBinary,
   treemapDice,
+  treemapResquarify,
   treemapSlice,
   treemapSliceDice,
-  treemapSquarify,
-  treemapResquarify
+  treemapSquarify
 } from 'd3-hierarchy';
 
 var Tiles = {

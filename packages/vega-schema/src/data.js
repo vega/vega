@@ -1,6 +1,6 @@
 import {
-  array, def, orSignal, anyOf, enums, oneOf, object, type,
-  anyType, stringType, stringOrSignal, booleanOrSignal, signalRef
+  anyOf, anyType, array, booleanOrSignal, def, enums, object, oneOf,
+  orSignal, signalRef, stringOrSignal, stringType, type
 } from './util';
 
 // types defined elsewhere

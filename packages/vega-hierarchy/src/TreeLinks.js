@@ -1,4 +1,4 @@
-import {ingest, tupleid, Transform} from 'vega-dataflow';
+import {Transform, ingest, tupleid} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
  /**

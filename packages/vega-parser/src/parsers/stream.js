@@ -1,5 +1,5 @@
 import parseExpression from './expression';
-import {View, Scope} from '../util';
+import {Scope, View} from '../util';
 import {error, stringValue} from 'vega-util';
 
 var Timer = 'timer';

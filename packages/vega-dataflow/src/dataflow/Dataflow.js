@@ -4,13 +4,13 @@ import events from './events';
 import {ingest, parse, preload, request} from './load';
 import on from './on';
 import {rank, rerank} from './rank';
-import {evaluate, run, runAsync, runAfter, enqueue, getPulse} from './run';
+import {enqueue, evaluate, getPulse, run, runAfter, runAsync} from './run';
 import {pulse, touch, update} from './update';
 import changeset from '../ChangeSet';
 import Heap from '../util/Heap';
 import UniqueList from '../util/UniqueList';
 import {loader} from 'vega-loader';
-import {id, logger, Error} from 'vega-util';
+import {Error, id, logger} from 'vega-util';
 
 /**
  * A dataflow graph for reactive processing of data streams.

@@ -1,4 +1,4 @@
-import {Top, Bottom} from './constants';
+import {Bottom, Top} from './constants';
 import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
 import {inherits, peek} from 'vega-util';

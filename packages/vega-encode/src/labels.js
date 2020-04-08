@@ -1,4 +1,4 @@
-import {Symbols, Discrete} from './legend-types';
+import {Discrete, Symbols} from './legend-types';
 import {tickFormat, tickValues} from './ticks';
 import {peek} from 'vega-util';
 import {
@@ -6,9 +6,9 @@ import {
   Quantile,
   Quantize,
   Threshold,
-  tickFormat as spanFormat,
   Time,
-  UTC
+  UTC,
+  tickFormat as spanFormat
 } from 'vega-scale';
 
 const symbols = {

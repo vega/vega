@@ -1,5 +1,5 @@
 import SortedList from './util/SortedList';
-import {stableCompare, Transform, tupleid} from 'vega-dataflow';
+import {Transform, stableCompare, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**

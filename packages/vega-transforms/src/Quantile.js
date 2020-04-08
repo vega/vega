@@ -1,5 +1,5 @@
 import {partition} from './util/util';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {quantiles} from 'vega-statistics';
 import {accessorName, inherits} from 'vega-util';
 import {range} from 'd3-array';

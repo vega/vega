@@ -1,5 +1,5 @@
 import {Operator} from 'vega-dataflow';
-import {inherits, compare} from 'vega-util';
+import {compare, inherits} from 'vega-util';
 
 /**
  * Generates a comparator function.

@@ -3,16 +3,16 @@ import invertRange from './scales/invertRange';
 import invertRangeExtent from './scales/invertRangeExtent';
 
 import {
-  Identity,
-  Linear, Log, Pow, Sqrt, Symlog,
-  Time, UTC, Sequential, Diverging,
-  Quantile, Quantize, Threshold,
-  BinOrdinal, Ordinal, Band, Point,
-  Continuous as C,
-  Discrete as D,
-  Discretizing as Z,
-  Interpolating as I,
-  Temporal as T
+  Band,
+  BinOrdinal, Continuous as C, Discrete as D, Diverging, Interpolating as I,
+  Identity, Linear, Log, Ordinal,
+  Point, Pow, Quantile,
+  Quantize, Sequential, Sqrt, Symlog,
+  Temporal as T,
+  Threshold,
+  Time,
+  UTC,
+  Discretizing as Z
 } from './scales/types';
 
 import {

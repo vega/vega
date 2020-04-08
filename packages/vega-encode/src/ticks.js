@@ -1,7 +1,7 @@
-import {isLogarithmic, Time, UTC} from 'vega-scale';
+import {Time, UTC, isLogarithmic} from 'vega-scale';
 import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
-import {format as numberFormat, formatSpecifier} from 'd3-format';
+import {formatSpecifier, format as numberFormat} from 'd3-format';
 
 const defaultFormatter = value => isArray(value)
   ? value.map(v => String(v))
