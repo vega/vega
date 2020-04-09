@@ -321,7 +321,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
-              "ariaLabel": "legend showing Vertical from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Vertical. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -642,7 +642,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
-              "ariaLabel": "legend showing Clipped from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Clipped. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -963,7 +963,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend showing Clipped - Columns from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Clipped - Columns. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -1284,7 +1284,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend showing Clipped - Columns + Padding from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Clipped - Columns + Padding. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -1605,7 +1605,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend showing Horizontal from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Horizontal. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -1926,7 +1926,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend showing Horizontal - Clipped from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Horizontal - Clipped. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -2247,7 +2247,7 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend showing Horizontal - Columns from -100 to 100 as size, from -100 to 100 as fill",
+              "ariaLabel": "legend for Horizontal - Columns. size represents values from -100 to 100 and fill color represents values from -100 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

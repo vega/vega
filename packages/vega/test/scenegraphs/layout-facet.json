@@ -235,7 +235,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing cell with values a,b,c",
+                      "ariaLabel": "y axis for cell represents values a,b,c",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -342,7 +342,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing cell with values b",
+                      "ariaLabel": "y axis for cell represents values b",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -462,7 +462,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing cell with values b,c",
+                      "ariaLabel": "y axis for cell represents values b,c",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -954,7 +954,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "x axis from 0 to 7",
+                      "ariaLabel": "x axis represents values from 0 to 7",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

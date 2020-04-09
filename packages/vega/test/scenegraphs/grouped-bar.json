@@ -83,7 +83,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis with values A,B,C",
+              "ariaLabel": "y axis represents values A,B,C",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -388,7 +388,7 @@
               ],
               "x": 0.5,
               "y": 240.5,
-              "ariaLabel": "x axis from 0 to 1.1",
+              "ariaLabel": "x axis represents values from 0 to 1.1",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

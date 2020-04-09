@@ -369,7 +369,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Life Expentancy (Years) from 20 to 85",
+              "ariaLabel": "y axis for Life Expentancy (Years) represents values from 20 to 85",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -654,7 +654,7 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis showing Fertility (# Children) from 0 to 9",
+              "ariaLabel": "x axis for Fertility (# Children) represents values from 0 to 9",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1650,7 +1650,7 @@
               "width": 168,
               "height": 92,
               "orient": "bottom-left",
-              "ariaLabel": "legend showing Region with values South Asia,America,East Asia & Pacific,Europe & Central Asia,Middle East & North Africa,Sub-Saharan Africa as fill",
+              "ariaLabel": "legend for Region. fill color represents values South Asia,America,East Asia & Pacific,Europe & Central Asia,Middle East & North Africa,Sub-Saharan Africa",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

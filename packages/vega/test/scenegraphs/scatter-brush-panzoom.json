@@ -180,7 +180,7 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis showing Horsepower from 0 to 240",
+              "ariaLabel": "x axis for Horsepower represents values from 0 to 240",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -247,7 +247,7 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis from 0 to 240",
+              "ariaLabel": "x axis represents values from 0 to 240",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -448,7 +448,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Miles_per_Gallon from 0 to 50",
+              "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -523,7 +523,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 0 to 50",
+              "ariaLabel": "y axis represents values from 0 to 50",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -5755,7 +5755,7 @@
               "width": 79,
               "height": 93,
               "orient": "right",
-              "ariaLabel": "legend showing Cylinders with values 3,4,5,6,8 as stroke",
+              "ariaLabel": "legend for Cylinders. stroke color represents values 3,4,5,6,8",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

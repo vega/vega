@@ -67,7 +67,7 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis from 0 to 9",
+              "ariaLabel": "x axis represents values from 0 to 9",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -150,7 +150,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 20 to 85",
+              "ariaLabel": "y axis represents values from 20 to 85",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -330,7 +330,7 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis showing Fertility from 0 to 9",
+              "ariaLabel": "x axis for Fertility represents values from 0 to 9",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -552,7 +552,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Life Expectancy from 20 to 85",
+              "ariaLabel": "y axis for Life Expectancy represents values from 20 to 85",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -2419,7 +2419,7 @@
               "width": 168,
               "height": 92,
               "orient": "right",
-              "ariaLabel": "legend showing Region with values 0,3,4,1,5,2 as fill",
+              "ariaLabel": "legend for Region. fill color represents values 0,3,4,1,5,2",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

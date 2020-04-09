@@ -208,7 +208,7 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis with values Sun Jan 01 2012 00:00:00 GMT-0800 (Pacific Standard Time),Mon Jan 02 2012 00:00:00 GMT-0800 (Pacific Standard Time),Tue Jan 03 2012 00:00:00 GMT-0800 (Pacific Standard Time),Wed Jan 04 2012 00:00:00 GMT-0800 (Pacific Standard Time),Thu Jan 05 2012 00:00:00 GMT-0800 (Pacific Standard Time),Fri Jan 06 2012 00:00:00 GMT-0800 (Pacific Standard Time),Sat Jan 07 2012 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaLabel": "x axis represents values Sun Jan 01 2012 00:00:00 GMT-0800 (Pacific Standard Time),Mon Jan 02 2012 00:00:00 GMT-0800 (Pacific Standard Time),Tue Jan 03 2012 00:00:00 GMT-0800 (Pacific Standard Time),Wed Jan 04 2012 00:00:00 GMT-0800 (Pacific Standard Time),Thu Jan 05 2012 00:00:00 GMT-0800 (Pacific Standard Time),Fri Jan 06 2012 00:00:00 GMT-0800 (Pacific Standard Time),Sat Jan 07 2012 00:00:00 GMT-0800 (Pacific Standard Time)",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -534,7 +534,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis from 0 to 6",
+                      "ariaLabel": "y axis represents values from 0 to 6",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -877,7 +877,7 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis from [object Object] to [object Object]",
+                      "ariaLabel": "x axis represents values from [object Object] to [object Object]",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1203,7 +1203,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis from 0 to 6",
+                      "ariaLabel": "y axis represents values from 0 to 6",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

@@ -132,7 +132,7 @@
               ],
               "x": 250.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 15 to 70",
+              "ariaLabel": "y axis represents values from 15 to 70",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

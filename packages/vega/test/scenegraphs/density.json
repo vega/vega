@@ -326,7 +326,7 @@
               ],
               "x": 0.5,
               "y": 100.5,
-              "ariaLabel": "x axis from -0.6 to 0.6",
+              "ariaLabel": "x axis represents values from -0.6 to 0.6",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -8107,7 +8107,7 @@
               "width": 168,
               "height": 24,
               "orient": "top-left",
-              "ariaLabel": "legend with values Normal Estimate,Kernel Density Estimate as fill",
+              "ariaLabel": "legend. fill color represents values Normal Estimate,Kernel Density Estimate",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

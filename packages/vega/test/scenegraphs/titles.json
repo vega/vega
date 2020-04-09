@@ -503,7 +503,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -809,7 +809,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing Y-Axis from 0 to 100",
+                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1592,7 +1592,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1898,7 +1898,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing Y-Axis from 0 to 100",
+                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -2681,7 +2681,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -2987,7 +2987,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing Y-Axis from 0 to 100",
+                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -3771,7 +3771,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis showing X-Axis with values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -4077,7 +4077,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis showing Y-Axis from 0 to 100",
+                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

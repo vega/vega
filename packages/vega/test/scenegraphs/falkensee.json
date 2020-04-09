@@ -374,7 +374,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Population from 0 to 45000",
+              "ariaLabel": "y axis for Population represents values from 0 to 45000",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -743,7 +743,7 @@
               ],
               "x": 0.5,
               "y": 250.5,
-              "ariaLabel": "x axis showing Year from 1875 to 2014",
+              "ariaLabel": "x axis for Year represents values from 1875 to 2014",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1681,7 +1681,7 @@
               "width": 158,
               "height": 38,
               "orient": "top-left",
-              "ariaLabel": "legend showing Period with values Nazi Rule,GDR (East Germany) as fill",
+              "ariaLabel": "legend for Period. fill color represents values Nazi Rule,GDR (East Germany)",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

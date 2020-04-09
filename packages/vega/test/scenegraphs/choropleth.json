@@ -18320,7 +18320,7 @@
               "width": 105,
               "height": 216,
               "orient": "bottom-right",
-              "ariaLabel": "legend showing Unemployment from 0.0% to 15.0% as fill",
+              "ariaLabel": "legend for Unemployment. fill color represents values from 0.0% to 15.0%",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

@@ -473,7 +473,7 @@
               ],
               "x": 0.5,
               "y": 50.5,
-              "ariaLabel": "x axis from 1 to 20",
+              "ariaLabel": "x axis represents values from 1 to 20",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

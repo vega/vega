@@ -184,7 +184,7 @@
               ],
               "x": 0.5,
               "y": 405.5,
-              "ariaLabel": "y axis showing Petal Width from 0 to 2.6",
+              "ariaLabel": "y axis for Petal Width represents values from 0 to 2.6",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -389,7 +389,7 @@
               ],
               "x": 0.5,
               "y": 270.5,
-              "ariaLabel": "y axis showing Petal Length from 1 to 7",
+              "ariaLabel": "y axis for Petal Length represents values from 1 to 7",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -552,7 +552,7 @@
               ],
               "x": 0.5,
               "y": 135.5,
-              "ariaLabel": "y axis showing Sepal Width from 2 to 4.4",
+              "ariaLabel": "y axis for Sepal Width represents values from 2 to 4.4",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -715,7 +715,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Sepal Length from 4 to 8",
+              "ariaLabel": "y axis for Sepal Length represents values from 4 to 8",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -899,7 +899,7 @@
               ],
               "x": 0.5,
               "y": 525.5,
-              "ariaLabel": "x axis showing Petal Width from 0 to 2.6",
+              "ariaLabel": "x axis for Petal Width represents values from 0 to 2.6",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1104,7 +1104,7 @@
               ],
               "x": 135.5,
               "y": 525.5,
-              "ariaLabel": "x axis showing Petal Length from 1 to 7",
+              "ariaLabel": "x axis for Petal Length represents values from 1 to 7",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1267,7 +1267,7 @@
               ],
               "x": 270.5,
               "y": 525.5,
-              "ariaLabel": "x axis showing Sepal Width from 2 to 4.4",
+              "ariaLabel": "x axis for Sepal Width represents values from 2 to 4.4",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1430,7 +1430,7 @@
               ],
               "x": 405.5,
               "y": 525.5,
-              "ariaLabel": "x axis showing Sepal Length from 4 to 8",
+              "ariaLabel": "x axis for Sepal Length represents values from 4 to 8",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -23605,7 +23605,7 @@
               "width": 96,
               "height": 61,
               "orient": "right",
-              "ariaLabel": "legend showing Species with values setosa,versicolor,virginica as fill",
+              "ariaLabel": "legend for Species. fill color represents values setosa,versicolor,virginica",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

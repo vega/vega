@@ -221,7 +221,7 @@
               ],
               "x": 0.5,
               "y": 690.5,
-              "ariaLabel": "x axis from 0 to 70",
+              "ariaLabel": "x axis represents values from 0 to 70",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -605,7 +605,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -851,7 +851,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1423,7 +1423,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1669,7 +1669,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -2241,7 +2241,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -2487,7 +2487,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -3059,7 +3059,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -3305,7 +3305,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -3877,7 +3877,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -4123,7 +4123,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -4695,7 +4695,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -4941,7 +4941,7 @@
                       ],
                       "x": 200.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis with values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -5393,7 +5393,7 @@
               "width": 54,
               "height": 49,
               "orient": "right",
-              "ariaLabel": "legend showing Year with values 1931,1932 as stroke",
+              "ariaLabel": "legend for Year. stroke color represents values 1931,1932",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

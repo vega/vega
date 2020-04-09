@@ -571,7 +571,7 @@
                       ],
                       "x": 0.5,
                       "y": 400.5,
-                      "ariaLabel": "x axis from 0.00000 to 12.0000M",
+                      "ariaLabel": "x axis represents values from 0.00000 to 12.0000M",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -1130,7 +1130,7 @@
                       ],
                       "x": 0.5,
                       "y": 400.5,
-                      "ariaLabel": "x axis from 0.00000 to 12.0000M",
+                      "ariaLabel": "x axis represents values from 0.00000 to 12.0000M",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

@@ -389,7 +389,7 @@
               ],
               "x": 0.5,
               "y": 500.5,
-              "ariaLabel": "x axis from 1850 to 2000",
+              "ariaLabel": "x axis represents values from 1850 to 2000",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -753,7 +753,7 @@
               ],
               "x": 800.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 0.000000% to 100.000000%",
+              "ariaLabel": "y axis represents values from 0.000000% to 100.000000%",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

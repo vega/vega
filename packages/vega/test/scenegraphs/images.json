@@ -158,7 +158,7 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis from 0 to 4",
+              "ariaLabel": "x axis represents values from 0 to 4",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -358,7 +358,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 0 to 3",
+              "ariaLabel": "y axis represents values from 0 to 3",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

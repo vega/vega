@@ -51840,7 +51840,7 @@
               "width": 105,
               "height": 40,
               "orient": "bottom-right",
-              "ariaLabel": "legend showing Dependencies with values depends on,imported by as stroke",
+              "ariaLabel": "legend for Dependencies. stroke color represents values depends on,imported by",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

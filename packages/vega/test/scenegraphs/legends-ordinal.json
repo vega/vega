@@ -1029,7 +1029,7 @@
               "width": 70,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Category with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Category. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -2058,7 +2058,7 @@
               "width": 61,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Ordinal with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Ordinal. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -3087,7 +3087,7 @@
               "width": 35,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Ramp with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Ramp. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -4116,7 +4116,7 @@
               "width": 79,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Diverging with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Diverging. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -5145,7 +5145,7 @@
               "width": 61,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Heatmap with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Heatmap. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }
@@ -6174,7 +6174,7 @@
               "width": 52,
               "height": 374,
               "orient": "none",
-              "ariaLabel": "legend showing Custom with values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t as fill",
+              "ariaLabel": "legend for Custom. fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

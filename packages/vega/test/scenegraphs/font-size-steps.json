@@ -225,7 +225,7 @@
               ],
               "x": -4.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Font Size from 10 to 72",
+              "ariaLabel": "y axis for Font Size represents values from 10 to 72",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -450,7 +450,7 @@
               ],
               "x": 855.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Font Size from 10 to 72",
+              "ariaLabel": "y axis for Font Size represents values from 10 to 72",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -755,7 +755,7 @@
               ],
               "x": 0.5,
               "y": -4.5,
-              "ariaLabel": "x axis with values 10,11,12,14,16,18,21,24,36,48,60,72",
+              "ariaLabel": "x axis represents values 10,11,12,14,16,18,21,24,36,48,60,72",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -1173,7 +1173,7 @@
               "width": 70,
               "height": 30,
               "orient": "bottom-right",
-              "ariaLabel": "legend with values log,linear as strokeDash",
+              "ariaLabel": "legend. strokeDash represents values log,linear",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

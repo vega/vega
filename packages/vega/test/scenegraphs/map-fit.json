@@ -18296,7 +18296,7 @@
               "width": 58,
               "height": 362,
               "orient": "left",
-              "ariaLabel": "legend from 0.0% to 15.0% as fill",
+              "ariaLabel": "legend. fill color represents values from 0.0% to 15.0%",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

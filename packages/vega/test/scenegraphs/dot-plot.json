@@ -188,7 +188,7 @@
                       ],
                       "x": 0.5,
                       "y": 68.75,
-                      "ariaLabel": "x axis showing Density Dot Plot from 0 to 20",
+                      "ariaLabel": "x axis for Density Dot Plot represents values from 0 to 20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }
@@ -776,7 +776,7 @@
                       ],
                       "x": 0.5,
                       "y": 68.75,
-                      "ariaLabel": "x axis showing Histogram Dot Plot from 0 to 20",
+                      "ariaLabel": "x axis for Histogram Dot Plot represents values from 0 to 20",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

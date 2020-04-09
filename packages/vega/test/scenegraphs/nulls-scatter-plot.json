@@ -306,7 +306,7 @@
               ],
               "x": 0.5,
               "y": 413.5,
-              "ariaLabel": "x axis showing Rotten_Tomatoes_Rating from 0.00000 to 100.000",
+              "ariaLabel": "x axis for Rotten_Tomatoes_Rating represents values from 0.00000 to 100.000",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -612,7 +612,7 @@
               ],
               "x": -4.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing IMDB_Rating from 0.00000 to 10.0000",
+              "ariaLabel": "y axis for IMDB_Rating represents values from 0.00000 to 10.0000",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }

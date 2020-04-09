@@ -163,7 +163,7 @@
               ],
               "x": 0.5,
               "y": 300.5,
-              "ariaLabel": "x axis showing Horsepower from 0 to 240",
+              "ariaLabel": "x axis for Horsepower represents values from 0 to 240",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -452,7 +452,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis showing Miles_per_Gallon from 0 to 50",
+              "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -628,7 +628,7 @@
               "width": 61,
               "height": 216,
               "orient": "right",
-              "ariaLabel": "legend showing Density from 0 to 1 as fill",
+              "ariaLabel": "legend for Density. fill color represents values from 0 to 1",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "legend"
             }

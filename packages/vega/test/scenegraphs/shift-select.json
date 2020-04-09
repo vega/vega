@@ -179,7 +179,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis from 0 to 100",
+              "ariaLabel": "y axis represents values from 0 to 100",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
@@ -400,7 +400,7 @@
               ],
               "x": 0.5,
               "y": 300.5,
-              "ariaLabel": "x axis with values 0,1,2,3,4,5,6,7",
+              "ariaLabel": "x axis represents values 0,1,2,3,4,5,6,7",
               "ariaRole": "graphics-object",
               "ariaRoleDescription": "axis"
             }
