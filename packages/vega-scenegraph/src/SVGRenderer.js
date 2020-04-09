@@ -8,6 +8,7 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles} from './util/svg/styles';
+import {AriaExtras, AriaHiddenRoles} from './util/constants';
 import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
@@ -300,16 +301,6 @@ function dirtyParents(item, id) {
 
 // -- Construct & maintain scenegraph to SVG mapping ---
 
-const AriaHiddenRoles = {
-  'axis-tick': 1,
-  'axis-label': 1,
-  'axis-domain': 1,
-  'axis-title': 1,
-  'axis-grid': 1,
-  'legend-entry': 1,
-  'legend-title': 1
-};
-
 // Draw a mark container.
 prototype.draw = function(el, scene, prev) {
   if (!this.isDirty(scene)) return scene._svg;
@@ -427,13 +418,6 @@ function siblingCheck(node, sibling) {
 var element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
-var aria_extras = {
-  'ariaHidden': 'aria-hidden',
-  'ariaLabel': 'aria-label',
-  'ariaRole': 'role',
-  'ariaRoleDescription': 'aria-roledescription'
-};
-
 // Extra configuration for certain mark types
 var mark_extras = {
   group: function(mdef, el, item) {
@@ -549,10 +533,10 @@ prototype._update = function(mdef, el, item) {
   // apply svg attributes
   mdef.attr(emit, item, this);
 
-  // apply general SVG properties
-  for (const prop in aria_extras) {
+  // apply general svg properties
+  for (const prop in AriaExtras) {
     if (item[prop] != null) {
-      emit(aria_extras[prop], item[prop]);
+      emit(AriaExtras[prop], item[prop]);
     }
   }
 

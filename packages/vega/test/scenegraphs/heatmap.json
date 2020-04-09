@@ -79943,7 +79943,8 @@
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 14,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRoleDescription": "title"
                     }
                   ],
                   "zindex": 0

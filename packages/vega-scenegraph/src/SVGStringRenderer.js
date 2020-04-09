@@ -8,6 +8,7 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles} from './util/svg/styles';
+import {AriaExtras, AriaHiddenRoles} from './util/constants';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -182,6 +183,7 @@ function emit(name, value, ns, prefixed) {
 prototype.attributes = function(attr, item) {
   object = {};
   attr(emit, item, this);
+
   return object;
 };
 
@@ -221,7 +223,8 @@ prototype.mark = function(scene) {
   // render opening group tag
   str += openTag('g', {
     'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null,
+    'aria-hidden': AriaHiddenRoles[scene.role] ? true : undefined
   }, style);
 
   // render contained elements
@@ -229,8 +232,15 @@ prototype.mark = function(scene) {
     var href = renderer.href(item);
     if (href) str += openTag('a', href);
 
+    const ariaAttr = {};
+    for (const prop in AriaExtras) {
+      if (item[prop] != null) {
+        ariaAttr[AriaExtras[prop]] = item[prop];
+      }
+    }
+
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
-    str += openTag(tag, renderer.attributes(mdef.attr, item), style);
+    str += openTag(tag, Object.assign(ariaAttr, renderer.attributes(mdef.attr, item)), style);
 
     if (tag === 'text') {
       const tl = textLines(item);

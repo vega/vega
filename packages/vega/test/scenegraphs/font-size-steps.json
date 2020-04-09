@@ -1204,7 +1204,8 @@
                       "dy": 30,
                       "font": "sans-serif",
                       "fontSize": 16,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRoleDescription": "title"
                     }
                   ],
                   "zindex": 0

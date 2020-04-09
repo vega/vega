@@ -96,10 +96,10 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontWeight: _('fontWeight'),
     lineHeight: _('lineHeight')
   }, _, {
-    ariaHidden: 'ariaHidden',
-    ariaLabel: 'ariaLabel',
-    ariaRole: 'ariaRole',
-    ariaRoleDescription: 'ariaRoleDescription'
+    hidden: 'ariaHidden',
+    label: 'ariaLabel',
+    role: 'ariaRole',
+    roleDescription: 'ariaRoleDescription'
   }), { // update
     align:      _('align'),
     angle:      _('angle'),
@@ -134,10 +134,10 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontWeight: _('subtitleFontWeight'),
     lineHeight: _('subtitleLineHeight')
   }, _, {
-    ariaHidden: 'subtitleAriaHidden',
-    ariaLabel: 'subtitleAriaLabel',
-    ariaRole: 'subtitleAriaRole',
-    ariaRoleDescription: 'subtitleAriaRoleDescription'
+    hidden: 'subtitleAriaHidden',
+    label: 'subtitleAriaLabel',
+    role: 'subtitleAriaRole',
+    roleDescription: 'subtitleAriaRoleDescription'
   }), { // update
     align:      _('align'),
     angle:      _('angle'),

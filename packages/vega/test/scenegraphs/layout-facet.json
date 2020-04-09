@@ -265,7 +265,8 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
@@ -372,7 +373,8 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
@@ -492,7 +494,8 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
