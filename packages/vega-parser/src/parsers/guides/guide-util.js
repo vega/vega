@@ -88,6 +88,27 @@ export function extendOffset(value, offset) {
     : { ...value, offset: extendOffset(value.offset, offset) };
 }
 
+function interpretableLegendType(legendType) {
+  switch (legendType) {
+    case 'fill':
+      return 'fill color';
+    case 'stroke':
+      return 'stroke color';
+    default:
+      return legendType;
+  }
+}
+
+export function formatList(list) {
+  if (list.length === 0) {
+    return '';
+  }
+  if (list.length === 1) {
+    return list[0];
+  }
+  return `${list.slice(0, list.length-1).join(',')}${list.length > 2 ? ',' : ''} and${list[list.length-1]}`;
+}
+
 function wrapFormat(text, format, formatType) {
   if (format == null) return text;
   const func = formatType === 'time' ? 'timeFormat' : formatType === 'utc' ? 'utcFormat' : 'format';
@@ -95,9 +116,9 @@ function wrapFormat(text, format, formatType) {
 }
 
 function domainText(scaleType, scaleName, format, formatType) {
-  return isDiscrete(scaleType)
-    ? ` with values " + domain('${scaleName}')`
-    : ` from " + ${wrapFormat(
+  return ' represents values ' + (isDiscrete(scaleType)
+    ? `" + domain('${scaleName}')`
+    : `from " + ${wrapFormat(
         `domain("${scaleName}")[0]`,
         format,
         formatType
@@ -105,7 +126,7 @@ function domainText(scaleType, scaleName, format, formatType) {
         `domain("${scaleName}")[1]`,
         format,
         formatType
-      )}`;
+      )}`);
 }
 
 function titleText(title) {
@@ -115,7 +136,7 @@ function titleText(title) {
   }
 
   if (title) {
-    return isObject(title) && isSignal(title) ? ` showing " + ${title.signal} + "` : ` showing ${title}`;
+    return isObject(title) && isSignal(title) ? ` for " + ${title.signal} + "` : ` for ${title}`;
   }
 
   return '';
@@ -128,10 +149,10 @@ export function legendAriaLabel(_, scope) {
     if (scaleName) {
       const scaleType = scope.scales[scaleName].params.type;
       const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
-      domains.push(`${domain} + " as ${legendType}`);
+      domains.push(` ${interpretableLegendType(legendType)}${domain} + "`);
     }
   }
-  const signal = `"legend${titleText(_('title'))}${domains.join(',')}"`;
+  const signal = `"legend${titleText(_('title'))}.${formatList(domains)}"`;
   return { signal };
 }
 

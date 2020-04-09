@@ -27,5 +27,6 @@ export {default as DataScope} from './src/DataScope';
 
 export {
   axisAriaLabel,
-  legendAriaLabel
+  legendAriaLabel,
+  formatList
 } from './src/parsers/guides/guide-util';
