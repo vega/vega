@@ -877,7 +877,7 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis represents values from [object Object] to [object Object]",
+                      "ariaLabel": "x axis represents values from Sun to Sun",
                       "ariaRole": "graphics-object",
                       "ariaRoleDescription": "axis"
                     }

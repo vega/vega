@@ -112,7 +112,7 @@ export function formatList(list) {
 function wrapFormat(text, format, formatType) {
   if (format == null) return text;
   const func = formatType === 'time' ? 'timeFormat' : formatType === 'utc' ? 'utcFormat' : 'format';
-  return `${func}(${text}, "${format}")`;
+  return `${func}(${text}, ${isObject(format) && isSignal(format) ? format.signal : `"${format}"`})`;
 }
 
 function domainText(scaleType, scaleName, format, formatType) {
