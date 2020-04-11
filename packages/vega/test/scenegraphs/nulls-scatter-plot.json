@@ -306,8 +306,8 @@
               ],
               "x": 0.5,
               "y": 413.5,
-              "ariaLabel": "x axis for Rotten_Tomatoes_Rating represents values from 0.00000 to 100.000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Rotten_Tomatoes_Rating, represents values from 0.00000 to 100.000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -612,8 +612,8 @@
               ],
               "x": -4.5,
               "y": 0.5,
-              "ariaLabel": "y axis for IMDB_Rating represents values from 0.00000 to 10.0000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for IMDB_Rating, represents values from 0.00000 to 10.0000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -31100,9 +31100,7 @@
       "x": 0,
       "y": 0,
       "width": 389,
-      "height": 408,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 408
     }
   ],
   "zindex": 0

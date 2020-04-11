@@ -225,8 +225,8 @@
               ],
               "x": -4.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Font Size represents values from 10 to 72",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Font Size, represents values from 10 to 72",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -450,8 +450,8 @@
               ],
               "x": 855.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Font Size represents values from 10 to 72",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Font Size, represents values from 10 to 72",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -755,8 +755,8 @@
               ],
               "x": 0.5,
               "y": -4.5,
-              "ariaLabel": "x axis represents values 10,11,12,14,16,18,21,24,36,48,60,72",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values 10,11,12,14,16,18,21,24,36,48,60,72",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1173,8 +1173,8 @@
               "width": 70,
               "height": 30,
               "orient": "bottom-right",
-              "ariaLabel": "legend. strokeDash represents values log,linear",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, strokeDash represents values log,linear",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1205,6 +1205,7 @@
                       "font": "sans-serif",
                       "fontSize": 16,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -1224,9 +1225,7 @@
       "x": 0,
       "y": 0,
       "width": 850,
-      "height": 200,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 200
     }
   ],
   "zindex": 0

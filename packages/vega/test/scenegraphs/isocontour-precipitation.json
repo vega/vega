@@ -1497,8 +1497,8 @@
               "width": 486,
               "height": 24,
               "orient": "bottom",
-              "ariaLabel": "legend for Annual Precipitation (mm). fill color represents values from 0 to 3000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Annual Precipitation (mm), fill color represents values from 0 to 3000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1508,9 +1508,7 @@
       "x": 0,
       "y": 0,
       "width": 600,
-      "height": 300,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 300
     }
   ],
   "zindex": 0

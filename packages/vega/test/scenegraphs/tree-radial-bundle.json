@@ -51840,8 +51840,8 @@
               "width": 105,
               "height": 40,
               "orient": "bottom-right",
-              "ariaLabel": "legend for Dependencies. stroke color represents values depends on,imported by",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Dependencies, stroke color represents values depends on,imported by",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -51851,9 +51851,7 @@
       "x": 0,
       "y": 0,
       "width": 720,
-      "height": 720,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 720
     }
   ],
   "zindex": 0

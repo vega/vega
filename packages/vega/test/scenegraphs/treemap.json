@@ -3446,9 +3446,7 @@
       "x": 0,
       "y": 0,
       "width": 960,
-      "height": 500,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 500
     }
   ],
   "zindex": 0

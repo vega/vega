@@ -321,8 +321,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
-              "ariaLabel": "legend for Vertical. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Vertical, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -642,8 +642,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "left",
-              "ariaLabel": "legend for Clipped. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -963,8 +963,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend for Clipped - Columns. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Clipped - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1284,8 +1284,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend for Clipped - Columns + Padding. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Clipped - Columns + Padding, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1605,8 +1605,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend for Horizontal. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Horizontal, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1926,8 +1926,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend for Horizontal - Clipped. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Horizontal - Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2247,8 +2247,8 @@
               "stroke": "#ccc",
               "cornerRadius": 4,
               "orient": "right",
-              "ariaLabel": "legend for Horizontal - Columns. size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Horizontal - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2258,9 +2258,7 @@
       "x": 0,
       "y": 0,
       "width": 0,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

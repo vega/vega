@@ -67,8 +67,8 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis represents values from 0 to 9",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 0 to 9",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -150,8 +150,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 20 to 85",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 20 to 85",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -330,8 +330,8 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis for Fertility represents values from 0 to 9",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Fertility, represents values from 0 to 9",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -552,8 +552,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Life Expectancy represents values from 20 to 85",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Life Expectancy, represents values from 20 to 85",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -2419,8 +2419,8 @@
               "width": 168,
               "height": 92,
               "orient": "right",
-              "ariaLabel": "legend for Region. fill color represents values 0,3,4,1,5,2",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Region, fill color represents values 0,3,4,1,5,2",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2430,9 +2430,7 @@
       "x": 0,
       "y": 0,
       "width": 800,
-      "height": 600,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 600
     }
   ],
   "zindex": 0

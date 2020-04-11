@@ -250,8 +250,8 @@
                       ],
                       "x": 0.5,
                       "y": 50.5,
-                      "ariaLabel": "x axis represents values from 1 to 5",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 1 to 5",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1948,8 +1948,8 @@
                       ],
                       "x": 0.5,
                       "y": 50.5,
-                      "ariaLabel": "x axis represents values from 1 to 5",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 1 to 5",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3286,8 +3286,8 @@
                       ],
                       "x": 0.5,
                       "y": 50.5,
-                      "ariaLabel": "x axis represents values from 1 to 5",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 1 to 5",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -4498,8 +4498,8 @@
                       ],
                       "x": 0.5,
                       "y": 50.5,
-                      "ariaLabel": "x axis represents values from 1 to 5",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 1 to 5",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -5066,9 +5066,7 @@
       "x": 0,
       "y": 0,
       "width": 500,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

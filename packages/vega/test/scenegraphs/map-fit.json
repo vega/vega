@@ -18296,8 +18296,8 @@
               "width": 58,
               "height": 362,
               "orient": "left",
-              "ariaLabel": "legend. fill color represents values from 0.0% to 15.0%",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, fill color represents values from 0.0% to 15.0%",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -18327,6 +18327,7 @@
                       "font": "sans-serif",
                       "fontSize": 13,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -18346,9 +18347,7 @@
       "x": 0,
       "y": 0,
       "width": 604,
-      "height": 362,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 362
     }
   ],
   "zindex": 0

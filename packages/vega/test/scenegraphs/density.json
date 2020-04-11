@@ -326,8 +326,8 @@
               ],
               "x": 0.5,
               "y": 100.5,
-              "ariaLabel": "x axis represents values from -0.6 to 0.6",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from -0.6 to 0.6",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -8107,8 +8107,8 @@
               "width": 168,
               "height": 24,
               "orient": "top-left",
-              "ariaLabel": "legend. fill color represents values Normal Estimate,Kernel Density Estimate",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, fill color represents values Normal Estimate,Kernel Density Estimate",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -8118,9 +8118,7 @@
       "x": 0,
       "y": 0,
       "width": 500,
-      "height": 100,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 100
     }
   ],
   "zindex": 0

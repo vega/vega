@@ -152,7 +152,7 @@ export function legendAriaLabel(_, scope) {
       domains.push(` ${interpretableLegendType(legendType)}${domain} + "`);
     }
   }
-  const signal = `"legend${titleText(_('title'))}.${formatList(domains)}"`;
+  const signal = `"legend${titleText(_('title'))},${formatList(domains)}"`;
   return { signal };
 }
 
@@ -162,6 +162,6 @@ export function axisAriaLabel(_, scope) {
   const orient = _('orient');
   const axisType = orient === Bottom || orient === Top ? 'x' : 'y';
   const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
-  const signal = `"${axisType} axis${titleText(_('title'))}${domain}`;
+  const signal = `"${axisType} axis${titleText(_('title'))},${domain}`;
   return { signal };
 }

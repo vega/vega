@@ -503,8 +503,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for X-Axis, represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -809,8 +809,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Y-Axis, represents values from 0 to 100",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1050,6 +1050,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -1073,6 +1074,7 @@
                               "limit": 400,
                               "font": "sans-serif",
                               "fontSize": 12,
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "subtitle"
                             }
                           ],
@@ -1594,8 +1596,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for X-Axis, represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1900,8 +1902,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Y-Axis, represents values from 0 to 100",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -2141,6 +2143,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -2164,6 +2167,7 @@
                               "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 12,
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "subtitle"
                             }
                           ],
@@ -2685,8 +2689,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for X-Axis, represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -2991,8 +2995,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Y-Axis, represents values from 0 to 100",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3233,6 +3237,7 @@
                               "fontSize": 13,
                               "fontWeight": "bold",
                               "fontStyle": "italic",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -3256,6 +3261,7 @@
                               "limit": 100,
                               "font": "sans-serif",
                               "fontSize": 12,
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "subtitle"
                             }
                           ],
@@ -3777,8 +3783,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis for X-Axis represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for X-Axis, represents values 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -4083,8 +4089,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Y-Axis represents values from 0 to 100",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Y-Axis, represents values from 0 to 100",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -4324,6 +4330,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -4348,6 +4355,7 @@
                               "font": "sans-serif",
                               "fontSize": 12,
                               "fontStyle": "italic",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "subtitle"
                             }
                           ],
@@ -4377,9 +4385,7 @@
       "x": 0,
       "y": 0,
       "width": 0,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

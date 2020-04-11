@@ -59916,9 +59916,7 @@
       "x": 0,
       "y": 0,
       "width": 770,
-      "height": 770,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 770
     }
   ],
   "zindex": 0

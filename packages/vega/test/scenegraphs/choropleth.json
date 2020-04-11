@@ -18320,8 +18320,8 @@
               "width": 105,
               "height": 216,
               "orient": "bottom-right",
-              "ariaLabel": "legend for Unemployment. fill color represents values from 0.0% to 15.0%",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Unemployment, fill color represents values from 0.0% to 15.0%",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -18331,9 +18331,7 @@
       "x": 0,
       "y": 0,
       "width": 960,
-      "height": 500,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 500
     }
   ],
   "zindex": 0

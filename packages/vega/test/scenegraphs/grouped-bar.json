@@ -83,8 +83,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values A,B,C",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values A,B,C",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -388,8 +388,8 @@
               ],
               "x": 0.5,
               "y": 240.5,
-              "ariaLabel": "x axis represents values from 0 to 1.1",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 0 to 1.1",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -744,9 +744,7 @@
       "x": 0,
       "y": 0,
       "width": 300,
-      "height": 240,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 240
     }
   ],
   "zindex": 0

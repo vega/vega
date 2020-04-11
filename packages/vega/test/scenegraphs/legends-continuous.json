@@ -157,8 +157,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Linear Ramp. fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Linear Ramp, fill color represents values from 0 to 1000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -314,8 +314,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Pow Ramp - Exponent 1.5. fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Pow Ramp - Exponent 1.5, fill color represents values from 0 to 1000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -471,8 +471,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Pow Ramp - Exponent 0.5. fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Pow Ramp - Exponent 0.5, fill color represents values from 0 to 1000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -870,8 +870,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Log Ramp - Base 10. fill color represents values from 1 to 1000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Log Ramp - Base 10, fill color represents values from 1 to 1000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1027,8 +1027,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Log Ramp - Base 2. fill color represents values from 1 to 1024",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Log Ramp - Base 2, fill color represents values from 1 to 1024",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1184,8 +1184,8 @@
               "width": 303,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Symlog Ramp. fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Symlog Ramp, fill color represents values from 0 to 1000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1330,8 +1330,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Scheme. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Scheme, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1476,8 +1476,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0, 1]. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Scheme Extent [0, 1], fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1622,8 +1622,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0.2, 1]. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Scheme Extent [0.2, 1], fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1768,8 +1768,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0.2, 1] Reverse. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Scheme Extent [0.2, 1] Reverse, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1914,8 +1914,8 @@
               "width": 300,
               "height": 44,
               "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [1, 0.2]. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Scheme Extent [1, 0.2], fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2060,8 +2060,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate Default. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate Default, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2206,8 +2206,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate RGB. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate RGB, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2352,8 +2352,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate RGB Gamma 2.2. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate RGB Gamma 2.2, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2498,8 +2498,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate LAB. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate LAB, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2644,8 +2644,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate HCL. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate HCL, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2790,8 +2790,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate HSL. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate HSL, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2936,8 +2936,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate HCL-Long. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate HCL-Long, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -3082,8 +3082,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Interpolate HSL-Long. fill color represents values from -10 to 10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Interpolate HSL-Long, fill color represents values from -10 to 10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -3228,8 +3228,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Diverging Mid 0. fill color represents values from -10 to 0",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Diverging Mid 0, fill color represents values from -10 to 0",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -3374,8 +3374,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Diverging Range Mid -5. fill color represents values from -10 to -5",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Diverging Range Mid -5, fill color represents values from -10 to -5",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -3520,8 +3520,8 @@
               "width": 300,
               "height": 44,
               "orient": "right",
-              "ariaLabel": "legend for Diverging Range Mid 5. fill color represents values from -10 to 5",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Diverging Range Mid 5, fill color represents values from -10 to 5",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -3531,9 +3531,7 @@
       "x": 0,
       "y": 0,
       "width": 0,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

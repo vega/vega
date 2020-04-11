@@ -398,8 +398,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "x axis for Yield represents values from 0 to 70",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Yield, represents values from 0 to 70",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -794,8 +794,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "x axis for Yield represents values from 0 to 70",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Yield, represents values from 0 to 70",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1190,8 +1190,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "x axis for Yield represents values from 0 to 70",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Yield, represents values from 0 to 70",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1581,8 +1581,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1801,6 +1801,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -2193,8 +2194,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -2413,6 +2414,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -2805,8 +2807,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3025,6 +3027,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -3417,8 +3420,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3637,6 +3640,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -4029,8 +4033,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -4249,6 +4253,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -4641,8 +4646,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values Trebi,Wisconsin No. 38,No. 457,Glabron,Peatland,Velvet,No. 475,Manchuria,No. 462,Svansota",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -4861,6 +4866,7 @@
                               "font": "sans-serif",
                               "fontSize": 13,
                               "fontWeight": "bold",
+                              "ariaRole": "caption",
                               "ariaRoleDescription": "title"
                             }
                           ],
@@ -5046,8 +5052,8 @@
               "width": 56,
               "height": 53,
               "orient": "right",
-              "ariaLabel": "legend for Year. stroke color represents values 1931,1932",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Year, stroke color represents values 1931,1932",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -5057,9 +5063,7 @@
       "x": 0,
       "y": 0,
       "width": 200,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

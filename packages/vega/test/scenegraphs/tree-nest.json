@@ -200,9 +200,7 @@
       "x": 0,
       "y": 0,
       "width": 200,
-      "height": 100,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 100
     }
   ],
   "zindex": 0

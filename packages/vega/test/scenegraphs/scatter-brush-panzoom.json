@@ -180,8 +180,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis for Horsepower represents values from 0 to 240",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Horsepower, represents values from 0 to 240",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -247,8 +247,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis represents values from 0 to 240",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 0 to 240",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -448,8 +448,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -523,8 +523,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 0 to 50",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 0 to 50",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -5755,8 +5755,8 @@
               "width": 79,
               "height": 93,
               "orient": "right",
-              "ariaLabel": "legend for Cylinders. stroke color represents values 3,4,5,6,8",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Cylinders, stroke color represents values 3,4,5,6,8",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -5768,9 +5768,7 @@
       "width": 200,
       "height": 200,
       "fill": "transparent",
-      "stroke": "#ddd",
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "stroke": "#ddd"
     }
   ],
   "zindex": 0

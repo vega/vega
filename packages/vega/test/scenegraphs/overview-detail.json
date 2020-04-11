@@ -293,8 +293,8 @@
                       ],
                       "x": 0.5,
                       "y": 390.5,
-                      "ariaLabel": "x axis represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -535,8 +535,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values from 0 to 1600",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values from 0 to 1600",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1967,8 +1967,8 @@
                       ],
                       "x": 0.5,
                       "y": 70.5,
-                      "ariaLabel": "x axis represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3157,9 +3157,7 @@
       "x": 0,
       "y": 0,
       "width": 720,
-      "height": 480,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 480
     }
   ],
   "zindex": 0

@@ -158,8 +158,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis represents values from 0 to 4",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 0 to 4",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -358,8 +358,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 0 to 3",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 0 to 3",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -380,8 +380,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 25,
@@ -392,8 +391,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 25,
@@ -404,8 +402,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -426,8 +423,7 @@
               "opacity": 1,
               "url": "data/ffox.png",
               "aspect": false,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 75,
@@ -439,8 +435,7 @@
               "opacity": 1,
               "url": "data/gimp.png",
               "aspect": false,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 75,
@@ -452,8 +447,7 @@
               "opacity": 1,
               "url": "data/7zip.png",
               "aspect": false,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -474,8 +468,7 @@
               "opacity": 1,
               "url": "data/ffox.png",
               "aspect": true,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 125,
@@ -487,8 +480,7 @@
               "opacity": 1,
               "url": "data/gimp.png",
               "aspect": true,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 125,
@@ -500,8 +492,7 @@
               "opacity": 1,
               "url": "data/7zip.png",
               "aspect": true,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -520,8 +511,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 175,
@@ -531,8 +521,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 175,
@@ -542,8 +531,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -552,9 +540,7 @@
       "x": 0,
       "y": 0,
       "width": 200,
-      "height": 200,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 200
     }
   ],
   "zindex": 0

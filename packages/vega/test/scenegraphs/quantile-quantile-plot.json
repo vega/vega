@@ -469,8 +469,8 @@
                       ],
                       "x": -9.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Empirical Data Quantiles represents values from -0.6 to 0.6",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Empirical Data Quantiles, represents values from -0.6 to 0.6",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -872,8 +872,8 @@
                       ],
                       "x": 0.5,
                       "y": 250.5,
-                      "ariaLabel": "x axis for Theoretical Uniform Quantiles represents values from 0 to 1",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Theoretical Uniform Quantiles, represents values from 0 to 1",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1837,8 +1837,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis represents values from -0.6 to 0.6",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis, represents values from -0.6 to 0.6",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -2298,8 +2298,8 @@
                       ],
                       "x": 0.5,
                       "y": 250.5,
-                      "ariaLabel": "x axis for Theoretical Normal Quantiles represents values from -3 to 3",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Theoretical Normal Quantiles, represents values from -3 to 3",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -3135,9 +3135,7 @@
       "x": 0,
       "y": 0,
       "width": 0,
-      "height": 250,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 250
     }
   ],
   "zindex": 0

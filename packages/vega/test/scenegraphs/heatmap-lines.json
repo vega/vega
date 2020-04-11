@@ -310,8 +310,8 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis for Month represents values from Jan to Dec",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Month, represents values from Jan to Dec",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -671,8 +671,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Hour represents values 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Hour, represents values 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -79950,6 +79950,7 @@
                       "font": "sans-serif",
                       "fontSize": 14,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -79969,9 +79970,7 @@
       "x": 0,
       "y": 0,
       "width": 800,
-      "height": 600,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 600
     }
   ],
   "zindex": 0

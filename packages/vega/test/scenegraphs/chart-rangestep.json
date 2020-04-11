@@ -201,8 +201,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Left Title represents values from 0 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Left Title, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -459,8 +459,8 @@
               ],
               "x": 320.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Right Title represents values from 0 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Right Title, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -702,8 +702,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "x axis for Top Title represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Top Title, represents values 0,1,2,3,4,5,6,7",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1018,8 +1018,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis for Bottom Title represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Bottom Title, represents values 0,1,2,3,4,5,6,7",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1502,8 +1502,8 @@
               "width": 123,
               "height": 105,
               "orient": "right",
-              "ariaLabel": "legend for Legend Right 1. shape represents values a,b,c,d,e,f and stroke color represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Legend Right 1, shape represents values a,b,c,d,e,f and stroke color represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1865,8 +1865,8 @@
               "width": 114,
               "height": 105,
               "orient": "left",
-              "ariaLabel": "legend for Legend Left 1. shape represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Legend Left 1, shape represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2012,8 +2012,8 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "top-left",
-              "ariaLabel": "legend. shape represents values alpha,beta",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2159,8 +2159,8 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "top-right",
-              "ariaLabel": "legend. shape represents values alpha,beta",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2306,8 +2306,8 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "bottom-left",
-              "ariaLabel": "legend. shape represents values alpha,beta",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2453,8 +2453,8 @@
               "stroke": "#888",
               "cornerRadius": 4,
               "orient": "bottom-right",
-              "ariaLabel": "legend. shape represents values alpha,beta",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -2464,9 +2464,7 @@
       "x": 0,
       "y": 0,
       "width": 320,
-      "height": 200,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 200
     }
   ],
   "zindex": 0

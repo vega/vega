@@ -184,8 +184,8 @@
               ],
               "x": 0.5,
               "y": 405.5,
-              "ariaLabel": "y axis for Petal Width represents values from 0 to 2.6",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Petal Width, represents values from 0 to 2.6",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -389,8 +389,8 @@
               ],
               "x": 0.5,
               "y": 270.5,
-              "ariaLabel": "y axis for Petal Length represents values from 1 to 7",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Petal Length, represents values from 1 to 7",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -552,8 +552,8 @@
               ],
               "x": 0.5,
               "y": 135.5,
-              "ariaLabel": "y axis for Sepal Width represents values from 2 to 4.4",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Sepal Width, represents values from 2 to 4.4",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -715,8 +715,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Sepal Length represents values from 4 to 8",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Sepal Length, represents values from 4 to 8",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -899,8 +899,8 @@
               ],
               "x": 0.5,
               "y": 525.5,
-              "ariaLabel": "x axis for Petal Width represents values from 0 to 2.6",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Petal Width, represents values from 0 to 2.6",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1104,8 +1104,8 @@
               ],
               "x": 135.5,
               "y": 525.5,
-              "ariaLabel": "x axis for Petal Length represents values from 1 to 7",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Petal Length, represents values from 1 to 7",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1267,8 +1267,8 @@
               ],
               "x": 270.5,
               "y": 525.5,
-              "ariaLabel": "x axis for Sepal Width represents values from 2 to 4.4",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Sepal Width, represents values from 2 to 4.4",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1430,8 +1430,8 @@
               ],
               "x": 405.5,
               "y": 525.5,
-              "ariaLabel": "x axis for Sepal Length represents values from 4 to 8",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Sepal Length, represents values from 4 to 8",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -23605,8 +23605,8 @@
               "width": 96,
               "height": 61,
               "orient": "right",
-              "ariaLabel": "legend for Species. fill color represents values setosa,versicolor,virginica",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Species, fill color represents values setosa,versicolor,virginica",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -23616,9 +23616,7 @@
       "x": 0,
       "y": 0,
       "width": 540,
-      "height": 540,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 540
     }
   ],
   "zindex": 0

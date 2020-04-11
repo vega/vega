@@ -255,8 +255,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "x axis represents values from 3500 to 10500",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 3500 to 10500",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -420,8 +420,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from $1.20 to $3.40",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from $1.20 to $3.40",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -2273,9 +2273,7 @@
       "x": 0,
       "y": 0,
       "width": 800,
-      "height": 500,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 500
     }
   ],
   "zindex": 0

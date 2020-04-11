@@ -132,8 +132,8 @@
               ],
               "x": 250.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 15 to 70",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 15 to 70",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -736,9 +736,7 @@
       "x": 0,
       "y": 0,
       "width": 250,
-      "height": 200,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 200
     }
   ],
   "zindex": 0

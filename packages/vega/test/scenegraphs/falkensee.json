@@ -374,8 +374,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Population represents values from 0 to 45000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Population, represents values from 0 to 45000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -743,8 +743,8 @@
               ],
               "x": 0.5,
               "y": 250.5,
-              "ariaLabel": "x axis for Year represents values from 1875 to 2014",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Year, represents values from 1875 to 2014",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1681,8 +1681,8 @@
               "width": 158,
               "height": 38,
               "orient": "top-left",
-              "ariaLabel": "legend for Period. fill color represents values Nazi Rule,GDR (East Germany)",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Period, fill color represents values Nazi Rule,GDR (East Germany)",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1712,6 +1712,7 @@
                       "font": "sans-serif",
                       "fontSize": 16,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -1731,9 +1732,7 @@
       "x": 0,
       "y": 0,
       "width": 500,
-      "height": 250,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 250
     }
   ],
   "zindex": 0

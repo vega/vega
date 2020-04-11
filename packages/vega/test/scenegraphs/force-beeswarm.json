@@ -284,8 +284,8 @@
               ],
               "x": 0.5,
               "y": 100.5,
-              "ariaLabel": "x axis represents values 0,1,2,3,4,5,6,7,8,9,10",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values 0,1,2,3,4,5,6,7,8,9,10",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1152,9 +1152,7 @@
       "x": 0,
       "y": 0,
       "width": 800,
-      "height": 100,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 100
     }
   ],
   "zindex": 0

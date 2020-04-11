@@ -220,8 +220,8 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis for Horsepower represents values from 0 to 240",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Horsepower, represents values from 0 to 240",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -606,8 +606,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -5634,8 +5634,8 @@
                       "width": 105,
                       "height": 105,
                       "orient": "right",
-                      "ariaLabel": "legend for Acceleration. size represents values from 0.00000 to 24.8000",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "legend for Acceleration, size represents values from 0.00000 to 24.8000",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "legend"
                     }
                   ],
@@ -5892,8 +5892,8 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis for Displacement represents values from 0 to 500",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Displacement, represents values from 0 to 500",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -6278,8 +6278,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -11306,8 +11306,8 @@
                       "width": 105,
                       "height": 105,
                       "orient": "right",
-                      "ariaLabel": "legend for Acceleration. size represents values from 0.00000 to 24.8000",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "legend for Acceleration, size represents values from 0.00000 to 24.8000",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "legend"
                     }
                   ],
@@ -11564,8 +11564,8 @@
                       ],
                       "x": 0.5,
                       "y": 200.5,
-                      "ariaLabel": "x axis for Acceleration represents values from 0 to 26",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis for Acceleration, represents values from 0 to 26",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -11950,8 +11950,8 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
-                      "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -16978,8 +16978,8 @@
                       "width": 105,
                       "height": 105,
                       "orient": "right",
-                      "ariaLabel": "legend for Acceleration. size represents values from 0.00000 to 24.8000",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "legend for Acceleration, size represents values from 0.00000 to 24.8000",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "legend"
                     }
                   ],
@@ -16998,9 +16998,7 @@
       "x": 0,
       "y": 0,
       "width": 0,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

@@ -369,8 +369,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Life Expentancy (Years) represents values from 20 to 85",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Life Expentancy (Years), represents values from 20 to 85",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -654,8 +654,8 @@
               ],
               "x": 0.5,
               "y": 600.5,
-              "ariaLabel": "x axis for Fertility (# Children) represents values from 0 to 9",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Fertility (# Children), represents values from 0 to 9",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1650,8 +1650,8 @@
               "width": 168,
               "height": 92,
               "orient": "bottom-left",
-              "ariaLabel": "legend for Region. fill color represents values South Asia,America,East Asia & Pacific,Europe & Central Asia,Middle East & North Africa,Sub-Saharan Africa",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Region, fill color represents values South Asia,America,East Asia & Pacific,Europe & Central Asia,Middle East & North Africa,Sub-Saharan Africa",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1681,6 +1681,7 @@
                       "font": "sans-serif",
                       "fontSize": 18,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -1700,9 +1701,7 @@
       "x": 0,
       "y": 0,
       "width": 800,
-      "height": 600,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 600
     }
   ],
   "zindex": 0

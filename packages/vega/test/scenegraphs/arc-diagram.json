@@ -4390,9 +4390,7 @@
       "x": 0,
       "y": 0,
       "width": 770,
-      "height": 0,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 0
     }
   ],
   "zindex": 0

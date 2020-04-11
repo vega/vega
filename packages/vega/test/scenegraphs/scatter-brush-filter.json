@@ -201,8 +201,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis for date (year-month) represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for date (year-month), represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -276,8 +276,8 @@
               ],
               "x": 0.5,
               "y": 200.5,
-              "ariaLabel": "x axis represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -435,8 +435,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Sum of count represents values from 0 to 16000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Sum of count, represents values from 0 to 16000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -494,8 +494,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 0 to 16000",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 0 to 16000",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -3255,9 +3255,7 @@
       "width": 200,
       "height": 200,
       "fill": "transparent",
-      "stroke": "#ddd",
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "stroke": "#ddd"
     }
   ],
   "zindex": 0

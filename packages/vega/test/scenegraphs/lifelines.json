@@ -263,8 +263,8 @@
               ],
               "x": 0.5,
               "y": 80.5,
-              "ariaLabel": "x axis represents values from 1732 to 1836",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 1732 to 1836",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -549,9 +549,7 @@
       "x": 0,
       "y": 0,
       "width": 500,
-      "height": 80,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 80
     }
   ],
   "zindex": 0

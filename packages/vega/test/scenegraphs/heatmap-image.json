@@ -310,8 +310,8 @@
               ],
               "x": 0.5,
               "y": 400.5,
-              "ariaLabel": "x axis for Month represents values from Jan to Dec",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Month, represents values from Jan to Dec",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -872,8 +872,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Hour represents values 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Hour, represents values 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -890,8 +890,7 @@
               "height": 400,
               "aspect": false,
               "smooth": true,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -1035,8 +1034,8 @@
               "width": 123,
               "height": 400,
               "orient": "right",
-              "ariaLabel": "legend for Avg. Temp (°F). fill color represents values from 35.0 to 80.0",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Avg. Temp (°F), fill color represents values from 35.0 to 80.0",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1066,6 +1065,7 @@
                       "font": "sans-serif",
                       "fontSize": 14,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -1085,9 +1085,7 @@
       "x": 0,
       "y": 0,
       "width": 600,
-      "height": 400,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 400
     }
   ],
   "zindex": 0

@@ -306,8 +306,8 @@
               ],
               "x": 2.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Cylinders represents values from 3 to 8",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Cylinders, represents values from 3 to 8",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -591,8 +591,8 @@
               ],
               "x": 118.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Displacement represents values from 50 to 500",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Displacement, represents values from 50 to 500",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -855,8 +855,8 @@
               ],
               "x": 234.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Weight_in_lbs represents values from 1500 to 5500",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Weight_in_lbs, represents values from 1500 to 5500",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1161,8 +1161,8 @@
               ],
               "x": 350.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Horsepower represents values from 40 to 240",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Horsepower, represents values from 40 to 240",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1446,8 +1446,8 @@
               ],
               "x": 466.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Acceleration represents values from 8 to 26",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Acceleration, represents values from 8 to 26",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1731,8 +1731,8 @@
               ],
               "x": 582.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Miles_per_Gallon represents values from 5 to 50",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Miles_per_Gallon, represents values from 5 to 50",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -2079,8 +2079,8 @@
               ],
               "x": 698.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Year represents values from 1970 to 1982",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Year, represents values from 1970 to 1982",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -31891,9 +31891,7 @@
       "x": 0,
       "y": 0,
       "width": 700,
-      "height": 400,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 400
     }
   ],
   "zindex": 0

@@ -163,8 +163,8 @@
               ],
               "x": 0.5,
               "y": 300.5,
-              "ariaLabel": "x axis for Horsepower represents values from 0 to 240",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis for Horsepower, represents values from 0 to 240",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -452,8 +452,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis for Miles_per_Gallon represents values from 0 to 50",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -472,8 +472,7 @@
               "height": 300,
               "aspect": false,
               "smooth": true,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "image"
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -628,8 +627,8 @@
               "width": 61,
               "height": 216,
               "orient": "right",
-              "ariaLabel": "legend for Density. fill color represents values from 0 to 1",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Density, fill color represents values from 0 to 1",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -639,9 +638,7 @@
       "x": 0,
       "y": 0,
       "width": 400,
-      "height": 300,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 300
     }
   ],
   "zindex": 0

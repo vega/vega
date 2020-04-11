@@ -439,8 +439,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from -100.000000% to 500.000000%",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from -100.000000% to 500.000000%",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -5160,9 +5160,7 @@
       "x": 0,
       "y": 0,
       "width": 556,
-      "height": 268,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 268
     }
   ],
   "zindex": 0

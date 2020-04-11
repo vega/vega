@@ -8094,9 +8094,7 @@
       "x": 0,
       "y": 0,
       "width": 810,
-      "height": 810,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 810
     }
   ],
   "zindex": 0

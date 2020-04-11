@@ -36,10 +36,7 @@ export default function() {
     // defaults for top-level group marks
     // accepts mark properties (fill, stroke, etc)
     // covers the data rectangle within group width/height
-    group: {
-      ariaRole: 'group',
-      ariaRoleDescription: 'group'
-    },
+    group: null,
 
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
@@ -54,9 +51,7 @@ export default function() {
       fill: defaultColor,
       ariaRoleDescription: 'area'
     },
-    image: {
-      ariaRoleDescription: 'image'
-    },
+    image: null,
     line: {
       stroke: defaultColor,
       strokeWidth: defaultStrokeWidth,
@@ -151,7 +146,9 @@ export default function() {
       anchor: 'middle',
       offset: 4,
       subtitlePadding: 3,
+      ariaRole: 'caption',
       ariaRoleDescription: 'title',
+      subtitleAriaRole: 'caption',
       subtitleAriaRoleDescription: 'subtitle'
     },
 
@@ -178,7 +175,7 @@ export default function() {
       tickSize: 5,
       tickWidth: 1,
       titlePadding: 4,
-      ariaRole: 'graphics-object',
+      ariaRole: 'graphics-symbol',
       ariaRoleDescription: 'axis'
     },
 
@@ -227,7 +224,7 @@ export default function() {
         left:   { direction: 'vertical' },
         right:  { direction: 'vertical' }
       },
-      ariaRole: 'graphics-object',
+      ariaRole: 'graphics-symbol',
       ariaRoleDescription: 'legend'
     },
 

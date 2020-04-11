@@ -556,8 +556,8 @@
               "width": 82,
               "height": 118,
               "orient": "right",
-              "ariaLabel": "legend for quantize. size represents values from 0 to 100 and fill color represents values from 0 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for quantize, size represents values from 0 to 100 and fill color represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -865,8 +865,8 @@
               "width": 114,
               "height": 106,
               "orient": "right",
-              "ariaLabel": "legend for quantile. size represents values from 19 to 28 and fill color represents values from 19 to 28",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for quantile, size represents values from 19 to 28 and fill color represents values from 19 to 28",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1078,8 +1078,8 @@
               "width": 80,
               "height": 66,
               "orient": "right",
-              "ariaLabel": "legend for threshold. size represents values from 30 to 70 and fill color represents values from 30 to 70",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for threshold, size represents values from 30 to 70 and fill color represents values from 30 to 70",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1089,9 +1089,7 @@
       "x": 0,
       "y": 0,
       "width": 20,
-      "height": 200,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 200
     }
   ],
   "zindex": 0

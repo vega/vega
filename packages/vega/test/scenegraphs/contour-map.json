@@ -37658,6 +37658,7 @@
                       "font": "sans-serif",
                       "fontSize": 13,
                       "fontWeight": "bold",
+                      "ariaRole": "caption",
                       "ariaRoleDescription": "title"
                     }
                   ],
@@ -37677,9 +37678,7 @@
       "x": 0,
       "y": 0,
       "width": 900,
-      "height": 560,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 560
     }
   ],
   "zindex": 0

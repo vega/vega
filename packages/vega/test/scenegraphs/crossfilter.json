@@ -335,8 +335,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis represents values from -60 to 180",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from -60 to 180",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1028,8 +1028,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis represents values from 0 to 24",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 0 to 24",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -1710,8 +1710,8 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
-                      "ariaLabel": "x axis represents values from 0 to 2400",
-                      "ariaRole": "graphics-object",
+                      "ariaLabel": "x axis, represents values from 0 to 2400",
+                      "ariaRole": "graphics-symbol",
                       "ariaRoleDescription": "axis"
                     }
                   ],
@@ -2057,9 +2057,7 @@
       "x": 0,
       "y": 0,
       "width": 500,
-      "height": 450,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 450
     }
   ],
   "zindex": 0

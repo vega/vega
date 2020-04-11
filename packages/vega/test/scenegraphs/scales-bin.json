@@ -284,8 +284,8 @@
               ],
               "x": 0.5,
               "y": 300.5,
-              "ariaLabel": "x axis represents values from 0 to 100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "x axis, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -442,8 +442,8 @@
               ],
               "x": 0.5,
               "y": 0.5,
-              "ariaLabel": "y axis represents values from 0 to 4",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "y axis, represents values from 0 to 4",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "axis"
             }
           ],
@@ -1099,8 +1099,8 @@
               "width": 80,
               "height": 137,
               "orient": "right",
-              "ariaLabel": "legend for Bins. size represents values from 0 to 100 and fill color represents values 0,10,20,30,40,50,60,70,80,90,100",
-              "ariaRole": "graphics-object",
+              "ariaLabel": "legend for Bins, size represents values from 0 to 100 and fill color represents values 0,10,20,30,40,50,60,70,80,90,100",
+              "ariaRole": "graphics-symbol",
               "ariaRoleDescription": "legend"
             }
           ],
@@ -1110,9 +1110,7 @@
       "x": 0,
       "y": 0,
       "width": 400,
-      "height": 300,
-      "ariaRole": "group",
-      "ariaRoleDescription": "group"
+      "height": 300
     }
   ],
   "zindex": 0
