@@ -9,6 +9,44 @@
       "items": [
         {
           "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Seattle Annual Temperatures",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": -86,
+              "y": -34,
+              "align": "left",
+              "orient": "top",
+              "angle": 0
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -869,6 +907,204 @@
               ],
               "x": 0.5,
               "y": 0.5
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "legend",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "group",
+                  "role": "legend-entry",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "rect",
+                          "role": "legend-gradient",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 0,
+                              "y": 0,
+                              "width": 16,
+                              "height": 500,
+                              "fill": {
+                                "x2": 0,
+                                "y2": 0
+                              },
+                              "opacity": 1,
+                              "stroke": "#ddd",
+                              "strokeWidth": 0
+                            }
+                          ],
+                          "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "legend-label",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 18,
+                              "y": 500,
+                              "align": "left",
+                              "baseline": "bottom",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "35.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 444.4444444444444,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "40.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 388.8888888888889,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "45.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 333.33333333333337,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "50.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 277.77777777777777,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "55.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 222.2222222222222,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "60.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 166.66666666666669,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "65.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 111.1111111111111,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "70.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 55.55555555555558,
+                              "align": "left",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "75.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 18,
+                              "y": 0,
+                              "align": "left",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "80.0",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 0,
+                      "y": 16
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "legend-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "orient": "top",
+                      "text": "Avg. Temp (°F)",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 11,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 820,
+              "y": -16,
+              "width": 123,
+              "height": 516,
+              "orient": "none"
             }
           ],
           "zindex": 0
@@ -62191,242 +62427,6 @@
               "width": 5,
               "height": 20.833333333333332,
               "fill": "rgb(72, 38, 118)"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "legend",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "group",
-                  "role": "legend-entry",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "rect",
-                          "role": "legend-gradient",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "x": 0,
-                              "y": 0,
-                              "width": 16,
-                              "height": 500,
-                              "fill": {
-                                "x2": 0,
-                                "y2": 0
-                              },
-                              "opacity": 1,
-                              "stroke": "#ddd",
-                              "strokeWidth": 0
-                            }
-                          ],
-                          "zindex": 0
-                        },
-                        {
-                          "marktype": "text",
-                          "role": "legend-label",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "x": 18,
-                              "y": 500,
-                              "align": "left",
-                              "baseline": "bottom",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "35.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 444.4444444444444,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "40.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 388.8888888888889,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "45.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 333.33333333333337,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "50.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 277.77777777777777,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "55.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 222.2222222222222,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "60.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 166.66666666666669,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "65.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 111.1111111111111,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "70.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 55.55555555555558,
-                              "align": "left",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "75.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 18,
-                              "y": 0,
-                              "align": "left",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "80.0",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 0,
-                      "y": 16
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "text",
-                  "role": "legend-title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "x": 0,
-                      "y": 0,
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "orient": "top",
-                      "text": "Avg. Temp (°F)",
-                      "angle": 0,
-                      "limit": 180,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 820,
-              "y": -16,
-              "width": 123,
-              "height": 516,
-              "orient": "none"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "Seattle Annual Temperatures",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 14,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": -86,
-              "y": -34,
-              "align": "left",
-              "orient": "top",
-              "angle": 0
             }
           ],
           "zindex": 0

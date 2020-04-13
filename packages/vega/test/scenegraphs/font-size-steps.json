@@ -9,6 +9,45 @@
       "items": [
         {
           "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Font Size Steps and Weber's Law?",
+                      "angle": 0,
+                      "dy": 30,
+                      "font": "sans-serif",
+                      "fontSize": 16,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0,
+              "y": -98,
+              "align": "left",
+              "orient": "top",
+              "angle": 0
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -754,6 +793,151 @@
           "zindex": 0
         },
         {
+          "marktype": "group",
+          "role": "legend",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "group",
+                  "role": "legend-entry",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "group",
+                          "role": "scope",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 9,
+                                      "y": 9,
+                                      "fill": "transparent",
+                                      "opacity": 1,
+                                      "stroke": "steelblue",
+                                      "strokeWidth": 1.5,
+                                      "strokeDash": [
+                                        3,
+                                        3
+                                      ],
+                                      "size": 250,
+                                      "shape": "stroke"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 22,
+                                      "y": 9,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "log",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 0,
+                              "width": 70,
+                              "height": 14,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 9,
+                                      "y": 9,
+                                      "fill": "transparent",
+                                      "opacity": 1,
+                                      "stroke": "steelblue",
+                                      "strokeWidth": 1.5,
+                                      "strokeDash": [],
+                                      "size": 250,
+                                      "shape": "stroke"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 22,
+                                      "y": 9,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "linear",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 16,
+                              "width": 70,
+                              "height": 14,
+                              "opacity": 1
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 0,
+                      "y": 0
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 775,
+              "y": 165,
+              "width": 70,
+              "height": 30,
+              "orient": "bottom-right"
+            }
+          ],
+          "zindex": 0
+        },
+        {
           "marktype": "line",
           "role": "mark",
           "interactive": true,
@@ -971,190 +1155,6 @@
                 3,
                 3
               ]
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "legend",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "group",
-                  "role": "legend-entry",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "group",
-                          "role": "scope",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 9,
-                                      "y": 9,
-                                      "fill": "transparent",
-                                      "opacity": 1,
-                                      "stroke": "steelblue",
-                                      "strokeWidth": 1.5,
-                                      "strokeDash": [
-                                        3,
-                                        3
-                                      ],
-                                      "size": 250,
-                                      "shape": "stroke"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 22,
-                                      "y": 9,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "log",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 0,
-                              "width": 70,
-                              "height": 14,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 9,
-                                      "y": 9,
-                                      "fill": "transparent",
-                                      "opacity": 1,
-                                      "stroke": "steelblue",
-                                      "strokeWidth": 1.5,
-                                      "strokeDash": [],
-                                      "size": 250,
-                                      "shape": "stroke"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 22,
-                                      "y": 9,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "linear",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 16,
-                              "width": 70,
-                              "height": 14,
-                              "opacity": 1
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 0,
-                      "y": 0
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 775,
-              "y": 165,
-              "width": 70,
-              "height": 30,
-              "orient": "bottom-right"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "Font Size Steps and Weber's Law?",
-                      "angle": 0,
-                      "dy": 30,
-                      "font": "sans-serif",
-                      "fontSize": 16,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 0,
-              "y": -98,
-              "align": "left",
-              "orient": "top",
-              "angle": 0
             }
           ],
           "zindex": 0

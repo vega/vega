@@ -9,6 +9,44 @@
       "items": [
         {
           "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "sum(value) over sliding window: [-∞,0]",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 13,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 230.5,
+              "y": 171,
+              "align": "center",
+              "orient": "bottom",
+              "angle": 0
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -798,44 +836,6 @@
               "stroke": "steelblue",
               "strokeWidth": 3,
               "interpolate": "linear"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "center",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "sum(value) over sliding window: [-∞,0]",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 230.5,
-              "y": 171,
-              "align": "center",
-              "orient": "bottom",
-              "angle": 0
             }
           ],
           "zindex": 0

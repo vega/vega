@@ -144,6 +144,44 @@
               "items": [
                 {
                   "marktype": "group",
+                  "role": "title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "align": "right",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": 0,
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": -45,
+                      "y": 19.799999999999997,
+                      "align": "center",
+                      "orient": "left",
+                      "angle": -90
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "group",
                   "role": "axis",
                   "interactive": false,
                   "clip": false,
@@ -226,7 +264,14 @@
                     }
                   ],
                   "zindex": 0
-                },
+                }
+              ],
+              "x": -5,
+              "y": 0,
+              "height": 39.599999999999994
+            },
+            {
+              "items": [
                 {
                   "marktype": "group",
                   "role": "title",
@@ -246,7 +291,7 @@
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": 0,
+                              "text": 1,
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
@@ -257,21 +302,14 @@
                         }
                       ],
                       "x": -45,
-                      "y": 19.799999999999997,
+                      "y": 7.800000000000001,
                       "align": "center",
                       "orient": "left",
                       "angle": -90
                     }
                   ],
                   "zindex": 0
-                }
-              ],
-              "x": -5,
-              "y": 0,
-              "height": 39.599999999999994
-            },
-            {
-              "items": [
+                },
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -330,7 +368,14 @@
                     }
                   ],
                   "zindex": 0
-                },
+                }
+              ],
+              "x": -5,
+              "y": 40,
+              "height": 15.600000000000001
+            },
+            {
+              "items": [
                 {
                   "marktype": "group",
                   "role": "title",
@@ -350,7 +395,7 @@
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": 1,
+                              "text": 2,
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
@@ -361,21 +406,14 @@
                         }
                       ],
                       "x": -45,
-                      "y": 7.800000000000001,
+                      "y": 13.799999999999997,
                       "align": "center",
                       "orient": "left",
                       "angle": -90
                     }
                   ],
                   "zindex": 0
-                }
-              ],
-              "x": -5,
-              "y": 40,
-              "height": 15.600000000000001
-            },
-            {
-              "items": [
+                },
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -444,44 +482,6 @@
                       ],
                       "x": 0.5,
                       "y": 0.5
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "group",
-                  "role": "title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "text",
-                          "role": "title-text",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "align": "right",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": 2,
-                              "angle": 0,
-                              "font": "sans-serif",
-                              "fontSize": 11,
-                              "fontWeight": "bold"
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": -45,
-                      "y": 13.799999999999997,
-                      "align": "center",
-                      "orient": "left",
-                      "angle": -90
                     }
                   ],
                   "zindex": 0

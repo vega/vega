@@ -454,23 +454,6 @@
           "zindex": 0
         },
         {
-          "marktype": "image",
-          "role": "mark",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 400,
-              "height": 300,
-              "aspect": false,
-              "smooth": true
-            }
-          ],
-          "zindex": 0
-        },
-        {
           "marktype": "group",
           "role": "legend",
           "interactive": false,
@@ -620,6 +603,23 @@
               "width": 61,
               "height": 216,
               "orient": "right"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "image",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 300,
+              "aspect": false,
+              "smooth": true
             }
           ],
           "zindex": 0

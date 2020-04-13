@@ -9,6 +9,44 @@
       "items": [
         {
           "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Seattle Annual Temperatures",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": -86,
+              "y": -18,
+              "align": "left",
+              "orient": "top",
+              "angle": 0
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -874,21 +912,6 @@
           "zindex": 0
         },
         {
-          "marktype": "image",
-          "role": "mark",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "width": 600,
-              "height": 400,
-              "aspect": false,
-              "smooth": true
-            }
-          ],
-          "zindex": 0
-        },
-        {
           "marktype": "group",
           "role": "legend",
           "interactive": false,
@@ -1032,39 +1055,16 @@
           "zindex": 0
         },
         {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
+          "marktype": "image",
+          "role": "mark",
+          "interactive": true,
           "clip": false,
           "items": [
             {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "Seattle Annual Temperatures",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 14,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": -86,
-              "y": -18,
-              "align": "left",
-              "orient": "top",
-              "angle": 0
+              "width": 600,
+              "height": 400,
+              "aspect": false,
+              "smooth": true
             }
           ],
           "zindex": 0
