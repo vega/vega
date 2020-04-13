@@ -600,6 +600,225 @@
           "zindex": 0
         },
         {
+          "marktype": "group",
+          "role": "legend",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "group",
+                  "role": "legend-entry",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "group",
+                          "role": "scope",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "name": "legendSymbol",
+                                  "role": "legend-symbol",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 5,
+                                      "y": 5,
+                                      "fill": "transparent",
+                                      "opacity": 0.7,
+                                      "stroke": "#1f77b4",
+                                      "strokeWidth": 2,
+                                      "size": 64,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "name": "legendLabel",
+                                  "role": "legend-label",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 14,
+                                      "y": 5,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "USA",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 0,
+                              "width": 62,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "name": "legendSymbol",
+                                  "role": "legend-symbol",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 5,
+                                      "y": 5,
+                                      "fill": "transparent",
+                                      "opacity": 0.7,
+                                      "stroke": "#ff7f0e",
+                                      "strokeWidth": 2,
+                                      "size": 64,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "name": "legendLabel",
+                                  "role": "legend-label",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 14,
+                                      "y": 5,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "Japan",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 14,
+                              "width": 62,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "name": "legendSymbol",
+                                  "role": "legend-symbol",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 5,
+                                      "y": 5,
+                                      "fill": "transparent",
+                                      "opacity": 0.7,
+                                      "stroke": "#2ca02c",
+                                      "strokeWidth": 2,
+                                      "size": 64,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "name": "legendLabel",
+                                  "role": "legend-label",
+                                  "interactive": true,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 14,
+                                      "y": 5,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "Europe",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 28,
+                              "width": 62,
+                              "height": 11,
+                              "opacity": 1
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 0,
+                      "y": 16
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "legend-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "orient": "top",
+                      "text": "Origin",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 11,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 418,
+              "y": 0,
+              "width": 62,
+              "height": 55,
+              "orient": "right"
+            }
+          ],
+          "zindex": 0
+        },
+        {
           "marktype": "rect",
           "name": "xaxis",
           "role": "mark",
@@ -4606,225 +4825,6 @@
               "height": 300,
               "fill": "firebrick",
               "fillOpacity": 0
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "legend",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "group",
-                  "role": "legend-entry",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "group",
-                          "role": "scope",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "name": "legendSymbol",
-                                  "role": "legend-symbol",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 5,
-                                      "y": 5,
-                                      "fill": "transparent",
-                                      "opacity": 0.7,
-                                      "stroke": "#1f77b4",
-                                      "strokeWidth": 2,
-                                      "size": 64,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "name": "legendLabel",
-                                  "role": "legend-label",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 14,
-                                      "y": 5,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "USA",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 0,
-                              "width": 62,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "name": "legendSymbol",
-                                  "role": "legend-symbol",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 5,
-                                      "y": 5,
-                                      "fill": "transparent",
-                                      "opacity": 0.7,
-                                      "stroke": "#ff7f0e",
-                                      "strokeWidth": 2,
-                                      "size": 64,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "name": "legendLabel",
-                                  "role": "legend-label",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 14,
-                                      "y": 5,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "Japan",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 14,
-                              "width": 62,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "name": "legendSymbol",
-                                  "role": "legend-symbol",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 5,
-                                      "y": 5,
-                                      "fill": "transparent",
-                                      "opacity": 0.7,
-                                      "stroke": "#2ca02c",
-                                      "strokeWidth": 2,
-                                      "size": 64,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "name": "legendLabel",
-                                  "role": "legend-label",
-                                  "interactive": true,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 14,
-                                      "y": 5,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "Europe",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 28,
-                              "width": 62,
-                              "height": 11,
-                              "opacity": 1
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 0,
-                      "y": 16
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "text",
-                  "role": "legend-title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "x": 0,
-                      "y": 0,
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "orient": "top",
-                      "text": "Origin",
-                      "angle": 0,
-                      "limit": 180,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 418,
-              "y": 0,
-              "width": 62,
-              "height": 55,
-              "orient": "right"
             }
           ],
           "zindex": 0
