@@ -1,6 +1,6 @@
 import {
-  DATE, DAY, HOURS, MILLISECONDS, MINUTES, MONTH,
-  QUARTER, SECONDS, WEEK, YEAR,
+  DATE, DAY, DAYOFYEAR, HOURS, MILLISECONDS, MINUTES,
+  MONTH, QUARTER, SECONDS, WEEK, YEAR,
   timeUnits
 } from './units';
 
@@ -23,6 +23,7 @@ const defaultSpecifiers = {
   [DATE]: '%d ',
   [WEEK]: 'W%U ',
   [DAY]: '%a ',
+  [DAYOFYEAR]: '%j ',
   [HOURS]: '%H:00',
   [MINUTES]: '00:%M',
   [SECONDS]: ':%S',

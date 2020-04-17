@@ -1,6 +1,7 @@
 import {
   DATE,
   DAY,
+  DAYOFYEAR,
   HOURS,
   MILLISECONDS,
   MINUTES,
@@ -37,6 +38,7 @@ const timeIntervals = {
   [WEEK]:         timeWeek,
   [DATE]:         timeDay,
   [DAY]:          timeDay,
+  [DAYOFYEAR]:    timeDay,
   [HOURS]:        timeHour,
   [MINUTES]:      timeMinute,
   [SECONDS]:      timeSecond,
@@ -50,6 +52,7 @@ const utcIntervals = {
   [WEEK]:         utcWeek,
   [DATE]:         utcDay,
   [DAY]:          utcDay,
+  [DAYOFYEAR]:    utcDay,
   [HOURS]:        utcHour,
   [MINUTES]:      utcMinute,
   [SECONDS]:      utcSecond,
