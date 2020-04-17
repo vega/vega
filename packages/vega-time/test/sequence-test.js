@@ -21,6 +21,7 @@ tape('timeSequence generates local date sequences', function(t) {
   test(t, vega.timeSequence, vega.timeOffset, 'week', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'date', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'day', local(2012), 10);
+  test(t, vega.timeSequence, vega.timeOffset, 'dayofyear', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'hours', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'minutes', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'seconds', local(2012), 10);
@@ -35,6 +36,7 @@ tape('utcSequence generates utc date sequences', function(t) {
   test(t, vega.utcSequence, vega.utcOffset, 'week', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'date', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'day', utc(2012), 10);
+  test(t, vega.utcSequence, vega.utcOffset, 'dayofyear', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'hours', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'minutes', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'seconds', utc(2012), 10);

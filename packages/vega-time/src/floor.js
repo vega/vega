@@ -1,6 +1,7 @@
 import {
   DATE,
   DAY,
+  DAYOFYEAR,
   HOURS,
   MILLISECONDS,
   MINUTES,
@@ -11,7 +12,7 @@ import {
   YEAR
 } from './units';
 import {constant, one, peek, toSet, zero} from 'vega-util';
-import {timeWeek, utcWeek} from 'd3-time';
+import {timeDay, timeWeek, utcDay, utcWeek} from 'd3-time';
 
 const t0 = new Date;
 
@@ -33,6 +34,7 @@ function floor(units, step, get, inv, newDate) {
           : u[WEEK] ? _(WEEK, 1)
           : u[DAY] ? _(DAY, 1)
           : u[DATE] ? _(DATE, 1)
+          : u[DAYOFYEAR] ? _(DAYOFYEAR, 1)
           : one,
         H = u[HOURS] ? _(HOURS) : zero,
         M = u[MINUTES] ? _(MINUTES) : zero,
@@ -70,6 +72,7 @@ const localGet = {
   [MINUTES]:      d => d.getMinutes(),
   [SECONDS]:      d => d.getSeconds(),
   [MILLISECONDS]: d => d.getMilliseconds(),
+  [DAYOFYEAR]:    d => localDayOfYear(d),
   [WEEK]:         d => localWeekNum(d),
   [WEEK + DAY]:   (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
   [DAY]:          (d, y) => weekday(1, d.getDay(), localFirst(y))
@@ -86,6 +89,10 @@ function localYear(y) {
   t0.setDate(1);
   t0.setHours(0, 0, 0, 0);
   return t0;
+}
+
+function localDayOfYear(d) {
+  return timeDay.count(localYear(d.getFullYear()) - 1, d);
 }
 
 function localWeekNum(d) {
@@ -120,6 +127,7 @@ const utcGet = {
   [MINUTES]:      d => d.getUTCMinutes(),
   [SECONDS]:      d => d.getUTCSeconds(),
   [MILLISECONDS]: d => d.getUTCMilliseconds(),
+  [DAYOFYEAR]:    d => utcDayOfYear(d),
   [WEEK]:         d => utcWeekNum(d),
   [DAY]:          (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
   [WEEK + DAY]:   (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
@@ -129,6 +137,11 @@ const utcInv = {
   [QUARTER]: q => 3 * q,
   [WEEK]:    (w, y) => weekday(w, 0, utcFirst(y))
 };
+
+function utcDayOfYear(d) {
+  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
+  return utcDay.count(y - 1, d);
+}
 
 function utcWeekNum(d) {
   const y = Date.UTC(d.getUTCFullYear(), 0, 1);

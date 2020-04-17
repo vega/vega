@@ -9,6 +9,7 @@ var UNITS = [
   'week',
   'date',
   'day',
+  'dayofyear',
   'year-quarter',
   'year-month',
   'year-month-date',
@@ -26,6 +27,7 @@ function floor(unit, date) {
     case 'week':            return d => date(2012, 0, 7 * (d.w - 1) + 1);
     case 'date':            return d => date(2012, 0, d.d);
     case 'day':             return d => date(2012, 0, d.u + 1);
+    case 'dayofyear':       return d => date(2012, 0, d.doy);
     case 'year-quarter':    return d => date(d.y, 3 * d.q, 1);
     case 'year-month':      return d => date(d.y, d.m, 1);
     case 'year-month-date': return d => date(d.y, d.m, d.d);
@@ -42,10 +44,10 @@ function testFloor(t, data, f, g) {
 
 tape('timeFloor generates local floor function', function(t) {
   var data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, doy: 1},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, doy: 93},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, doy: 185},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, doy: 278}
   ];
   data.forEach(o => o.date = local(o.y, o.m, o.d));
 
@@ -59,10 +61,10 @@ tape('timeFloor generates local floor function', function(t) {
 
 tape('utcFloor generates utc floor function', function(t) {
   var data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, doy: 1},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, doy: 93},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, doy: 185},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, doy: 278}
   ];
   data.forEach(o => o.date = utc(o.y, o.m, o.d));
 

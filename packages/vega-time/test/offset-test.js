@@ -15,6 +15,8 @@ tape('timeOffset computes local date offsets', function(t) {
   t.equal(+vega.timeOffset('date', local(2012), 2), +local(2012, 0, 3));
   t.equal(+vega.timeOffset('day', local(2012)), +local(2012, 0, 2));
   t.equal(+vega.timeOffset('day', local(2012), 2), +local(2012, 0, 3));
+  t.equal(+vega.timeOffset('dayofyear', local(2012)), +local(2012, 0, 2));
+  t.equal(+vega.timeOffset('dayofyear', local(2012), 2), +local(2012, 0, 3));
   t.equal(+vega.timeOffset('hours', local(2012)), +local(2012, 0, 1, 1));
   t.equal(+vega.timeOffset('hours', local(2012), 2), +local(2012, 0, 1, 2));
   t.equal(+vega.timeOffset('minutes', local(2012)), +local(2012, 0, 1, 0, 1));
@@ -39,6 +41,8 @@ tape('utcOffset computes utc date offsets', function(t) {
   t.equal(+vega.utcOffset('date', utc(2012), 2), +utc(2012, 0, 3));
   t.equal(+vega.utcOffset('day', utc(2012)), +utc(2012, 0, 2));
   t.equal(+vega.utcOffset('day', utc(2012), 2), +utc(2012, 0, 3));
+  t.equal(+vega.utcOffset('dayofyear', utc(2012)), +utc(2012, 0, 2));
+  t.equal(+vega.utcOffset('dayofyear', utc(2012), 2), +utc(2012, 0, 3));
   t.equal(+vega.utcOffset('hours', utc(2012)), +utc(2012, 0, 1, 1));
   t.equal(+vega.utcOffset('hours', utc(2012), 2), +utc(2012, 0, 1, 2));
   t.equal(+vega.utcOffset('minutes', utc(2012)), +utc(2012, 0, 1, 0, 1));

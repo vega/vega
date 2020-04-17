@@ -9,6 +9,7 @@ tape('timeUnitSpecifier produces specifier for single time units', function(t) {
   t.equal(vega.timeUnitSpecifier('week'), 'W%U');
   t.equal(vega.timeUnitSpecifier('day'), '%a');
   t.equal(vega.timeUnitSpecifier('date'), '%d');
+  t.equal(vega.timeUnitSpecifier('dayofyear'), '%j');
   t.equal(vega.timeUnitSpecifier('hours'), '%H:00');
   t.equal(vega.timeUnitSpecifier('minutes'), '00:%M');
   t.equal(vega.timeUnitSpecifier('seconds'), ':%S');
@@ -22,6 +23,7 @@ tape('timeUnitSpecifier produces specifier for multiple time units', function(t)
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date']), '%Y-%m-%d');
   t.equal(vega.timeUnitSpecifier(['year', 'week']), '%Y W%U');
   t.equal(vega.timeUnitSpecifier(['year', 'week', 'day']), '%Y W%U %a');
+  t.equal(vega.timeUnitSpecifier(['year', 'dayofyear']), '%Y %j');
   t.equal(vega.timeUnitSpecifier(['day', 'hours', 'minutes']), '%a %H:%M');
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date', 'hours']), '%Y-%m-%d %H:00');
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date', 'minutes']), '%Y-%m-%d 00:%M');
@@ -36,6 +38,7 @@ tape('timeUnitSpecifier supports configurable specifiers', function(t) {
     'month': 'M%m',
     'year-month': '%y-%b',
     'year-month-date': '%y-%b-%d',
+    'dayofyear': 'D%j',
     'hours': '%H ',
     'minutes': '%Mmin ',
     'hours-minutes': null
@@ -44,6 +47,7 @@ tape('timeUnitSpecifier supports configurable specifiers', function(t) {
   t.equal(vega.timeUnitSpecifier(['month'], specs), 'M%m');
   t.equal(vega.timeUnitSpecifier(['year', 'month'], specs), '%y-%b');
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date'], specs), '%y-%b-%d');
+  t.equal(vega.timeUnitSpecifier(['dayofyear'], specs), 'D%j');
   t.equal(vega.timeUnitSpecifier(['hours', 'minutes'], specs), '%H %Mmin');
   t.end();
 });
