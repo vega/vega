@@ -31,11 +31,15 @@ import {
 } from 'vega-statistics';
 
 import {
+  dayofyear,
   timeOffset,
   timeSequence,
   timeUnitSpecifier,
   utcOffset,
-  utcSequence
+  utcSequence,
+  utcdayofyear,
+  utcweek,
+  week
 } from 'vega-time';
 
 import {
@@ -241,6 +245,10 @@ export const functionContext = {
   dayAbbrevFormat,
   quarter,
   utcquarter,
+  week,
+  utcweek,
+  dayofyear,
+  utcdayofyear,
   warn,
   info,
   debug,
