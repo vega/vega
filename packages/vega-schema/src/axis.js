@@ -80,6 +80,7 @@ const axis = object({
 
   // DOMAIN CONFIG
   domain: booleanType,
+  domainCap: stringValue,
   domainColor: colorValue,
   domainDash: dashArrayValue,
   domainDashOffset: numberValue,
@@ -89,6 +90,7 @@ const axis = object({
   // TICK CONFIG
   ticks: booleanType,
   tickBand: tickBandRef,
+  tickCap: stringValue,
   tickColor: colorValue,
   tickDash: dashArrayValue,
   tickDashOffset: numberValue,
@@ -104,6 +106,7 @@ const axis = object({
   // GRID CONFIG
   grid: booleanType,
   gridScale: stringType,
+  gridCap: stringValue,
   gridColor: colorValue,
   gridDash: dashArrayValue,
   gridDashOffset: numberValue,

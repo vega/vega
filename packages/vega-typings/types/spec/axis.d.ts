@@ -18,6 +18,7 @@ import {
   FontWeightValue,
   NumberValue,
   StringValue,
+  StrokeCapValue,
   TextBaselineValue,
 } from './values';
 
@@ -258,6 +259,13 @@ export interface BaseAxis {
   domain?: boolean;
 
   /**
+   * The stroke cap for the domain line's ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+  domainCap?: StrokeCapValue;
+
+  /**
    * An array of alternating [stroke, space] lengths for dashed domain lines.
    */
   domainDash?: DashArrayValue;
@@ -298,6 +306,14 @@ export interface BaseAxis {
    * For band scales, indicates if ticks and grid lines should be placed at the `"center"` of a band (default) or at the band `"extent"`s to indicate intervals
    */
   tickBand?: 'center' | 'extent' | SignalRef;
+
+  /**
+   * The stroke cap for the tick lines' ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+
+  tickCap?: StrokeCapValue;
 
   /**
    * The color of the axis's tick.
@@ -359,6 +375,13 @@ export interface BaseAxis {
    * A boolean flag indicating if grid lines should be included as part of the axis.
    */
   grid?: boolean;
+
+  /**
+   * The stroke cap for grid lines' ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+  gridCap?: StrokeCapValue;
 
   /**
    * Color of gridlines.

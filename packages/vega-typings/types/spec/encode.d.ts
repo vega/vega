@@ -1,6 +1,6 @@
-import { StrokeCap, StrokeJoin, Cursor } from './config.d';
 import { SignalRef } from '.';
 import { Color } from './color';
+import { Cursor, StrokeCap, StrokeJoin } from './config.d';
 import { TitleAnchor } from './title';
 
 export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
@@ -60,6 +60,8 @@ export type SymbolShapeValueRef = ScaledValueRef<SymbolShape>;
 export type FontWeightValueRef = ScaledValueRef<FontWeight>;
 export type FontStyleValueRef = ScaledValueRef<FontStyle>;
 export type AlignValueRef = ScaledValueRef<Align>;
+
+export type StrokeCapValueRef = ScaledValueRef<StrokeCap>;
 export type AnchorValueRef = ScaledValueRef<TitleAnchor>;
 export type OrientValueRef = ScaledValueRef<Orient>;
 export type TextBaselineValueRef = ScaledValueRef<TextBaseline>;
