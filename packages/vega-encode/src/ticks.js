@@ -50,9 +50,9 @@ export function tickCount(scale, count, minStep) {
  * @return {Array<*>} - The filtered tick values.
  */
 export function validTicks(scale, ticks, count) {
-  var range = scale.range(),
-      lo = Math.floor(range[0]),
-      hi = Math.ceil(peek(range));
+  let range = scale.range(),
+      lo = range[0],
+      hi = peek(range);
 
   if (lo > hi) {
     range = hi;
@@ -60,15 +60,18 @@ export function validTicks(scale, ticks, count) {
     lo = range;
   }
 
-  ticks = ticks.filter(function(v) {
+  lo = Math.floor(lo);
+  hi = Math.ceil(hi);
+
+  ticks = ticks.filter(v => {
     v = scale(v);
     return lo <= v && v <= hi;
   });
 
   if (count > 0 && ticks.length > 1) {
-    var endpoints = [ticks[0], peek(ticks)];
+    const endpoints = [ticks[0], peek(ticks)];
     while (ticks.length > count && ticks.length >= 3) {
-      ticks = ticks.filter(function(_, i) { return !(i % 2); });
+      ticks = ticks.filter((_, i) => !(i % 2));
     }
     if (ticks.length < 3) {
       ticks = endpoints;
