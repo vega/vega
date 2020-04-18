@@ -4,6 +4,13 @@ export {
 } from './src/units';
 
 export {
+  dayofyear,
+  week,
+  utcdayofyear,
+  utcweek
+} from './src/util';
+
+export {
   timeFloor,
   utcFloor
 } from './src/floor';

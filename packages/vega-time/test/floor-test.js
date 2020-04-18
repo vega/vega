@@ -15,6 +15,7 @@ var UNITS = [
   'year-month-date',
   'year-week',
   'year-week-day',
+  'year-dayofyear',
   'month-date',
   'week-day'
 ];
@@ -33,6 +34,7 @@ function floor(unit, date) {
     case 'year-month-date': return d => date(d.y, d.m, d.d);
     case 'year-week':       return d => date(d.y, 0, 7 * (d.w - 1) + 1);
     case 'year-week-day':   return d => date(d.y, d.m, d.d);
+    case 'year-dayofyear':  return d => date(d.y, 0, d.doy);
     case 'month-date':      return d => date(2012, d.m, d.d);
     case 'week-day':        return d => date(2012, 0, 7 * (d.w - 1) + d.u + 1);
   }
