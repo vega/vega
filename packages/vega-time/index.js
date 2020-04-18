@@ -1,5 +1,6 @@
 export {
-  timeUnits
+  timeUnits,
+  TIME_UNITS
 } from './src/units';
 
 export {

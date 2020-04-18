@@ -12,7 +12,7 @@ export const MINUTES = 'minutes';
 export const SECONDS = 'seconds';
 export const MILLISECONDS = 'milliseconds';
 
-const UNITS = [
+export const TIME_UNITS = [
   YEAR,
   QUARTER,
   MONTH,
@@ -24,7 +24,9 @@ const UNITS = [
   MINUTES,
   SECONDS,
   MILLISECONDS
-].reduce((o, u, i) => (o[u] = 1 + i, o), {});
+];
+
+const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
 
 export function timeUnits(units) {
   const u = array(units).slice(),

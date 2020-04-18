@@ -645,6 +645,7 @@ export type TimeUnit =
   | 'week'
   | 'day'
   | 'date'
+  | 'dayofyear'
   | 'hours'
   | 'minutes'
   | 'seconds'
