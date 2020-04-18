@@ -11,10 +11,11 @@ import {
   WEEK,
   YEAR
 } from './units';
+import {
+  localDate, localDayOfYear, localFirst, localWeekNum,
+  utcDate, utcDayOfYear, utcFirst, utcWeekNum,
+} from './util';
 import {constant, one, peek, toSet, zero} from 'vega-util';
-import {timeDay, timeWeek, utcDay, utcWeek} from 'd3-time';
-
-const t0 = new Date;
 
 function floor(units, step, get, inv, newDate) {
   const s = step || 1,
@@ -83,35 +84,6 @@ const localInv = {
   [WEEK]:    (w, y) => weekday(w, 0, localFirst(y))
 };
 
-function localYear(y) {
-  t0.setFullYear(y);
-  t0.setMonth(0);
-  t0.setDate(1);
-  t0.setHours(0, 0, 0, 0);
-  return t0;
-}
-
-function localDayOfYear(d) {
-  return timeDay.count(localYear(d.getFullYear()) - 1, d);
-}
-
-function localWeekNum(d) {
-  return timeWeek.count(localYear(d.getFullYear()) - 1, d);
-}
-
-function localFirst(y) {
-  return localYear(y).getDay();
-}
-
-function localDate(y, m, d, H, M, S, L) {
-  if (0 <= y && y < 100) {
-    var date = new Date(-1, m, d, H, M, S, L);
-    date.setFullYear(y);
-    return date;
-  }
-  return new Date(y, m, d, H, M, S, L);
-}
-
 export function timeFloor(units, step) {
   return floor(units, step || 1, localGet, localInv, localDate);
 }
@@ -137,30 +109,6 @@ const utcInv = {
   [QUARTER]: q => 3 * q,
   [WEEK]:    (w, y) => weekday(w, 0, utcFirst(y))
 };
-
-function utcDayOfYear(d) {
-  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
-  return utcDay.count(y - 1, d);
-}
-
-function utcWeekNum(d) {
-  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
-  return utcWeek.count(y - 1, d);
-}
-
-function utcFirst(y) {
-  t0.setTime(Date.UTC(y, 0, 1));
-  return t0.getUTCDay();
-}
-
-function utcDate(y, m, d, H, M, S, L) {
-  if (0 <= y && y < 100) {
-    var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
-    date.setUTCFullYear(d.y);
-    return date;
-  }
-  return new Date(Date.UTC(y, m, d, H, M, S, L));
-}
 
 export function utcFloor(units, step) {
   return floor(units, step || 1, utcGet, utcInv, utcDate);
