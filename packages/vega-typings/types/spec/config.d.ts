@@ -400,39 +400,39 @@ export interface MarkConfig {
   // ---------- Corner Radius: Bar, Tick, Rect ----------
 
   /**
-   * The radius in pixels of rounded rectangle or arc corners.
+   * The radius in pixels of rounded rectangles or arcs' corners.
    *
    * __Default value:__ `0`
    */
-  cornerRadius?: number;
+  cornerRadius?: number | SignalRef;
 
   /**
-   * The radius in pixels of rounded rectangle top right corner.
+   * The radius in pixels of rounded rectangles' top right corner.
    *
    * __Default value:__ `0`
    */
-  cornerRadiusTopLeft?: number;
+  cornerRadiusTopLeft?: number | SignalRef;
 
   /**
-   * The radius in pixels of rounded rectangle top left corner.
+   * The radius in pixels of rounded rectangles' top left corner.
    *
    * __Default value:__ `0`
    */
-  cornerRadiusTopRight?: number;
+  cornerRadiusTopRight?: number | SignalRef;
 
   /**
-   * The radius in pixels of rounded rectangle bottom right corner.
+   * The radius in pixels of rounded rectangles' bottom right corner.
    *
    * __Default value:__ `0`
    */
-  cornerRadiusBottomRight?: number;
+  cornerRadiusBottomRight?: number | SignalRef;
 
   /**
-   * The radius in pixels of rounded rectangle bottom left corner.
+   * The radius in pixels of rounded rectangles' bottom left corner.
    *
    * __Default value:__ `0`
    */
-  cornerRadiusBottomLeft?: number;
+  cornerRadiusBottomLeft?: number | SignalRef;
 }
 
 export type Cursor =
