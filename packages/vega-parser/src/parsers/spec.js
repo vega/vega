@@ -40,8 +40,8 @@ export default function(spec, scope, preprocessed) {
   // parse legend definitions
   array(spec.legends).forEach(_ => parseLegend(_, scope));
 
-   // parse mark definitions
-   array(spec.marks).forEach(_ => parseMark(_, scope));
+  // parse mark definitions
+  array(spec.marks).forEach(_ => parseMark(_, scope));
 
   // parse collected lambda (anonymous) expressions
   scope.parseLambdas();

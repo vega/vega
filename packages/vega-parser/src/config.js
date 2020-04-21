@@ -40,54 +40,42 @@ export default function() {
 
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
-    mark: {
-      ariaRole: 'graphics-symbol'
-    },
+    mark: null,
     arc: {
       fill: defaultColor,
-      ariaRoleDescription: 'arc'
     },
     area: {
       fill: defaultColor,
-      ariaRoleDescription: 'area'
     },
     image: null,
     line: {
       stroke: defaultColor,
       strokeWidth: defaultStrokeWidth,
-      ariaRoleDescription: 'line'
     },
     path: {
       stroke: defaultColor,
-      ariaRoleDescription: 'path'
     },
     rect: {
       fill: defaultColor,
-      ariaRoleDescription: 'rect'
     },
     rule: {
       stroke: black,
-      ariaRoleDescription: 'rule'
     },
     shape: {
       stroke: defaultColor,
-      ariaRoleDescription: 'shape'
     },
     symbol: {
       fill: defaultColor,
       size: 64,
-      ariaRoleDescription: 'symbol'
     },
     text: {
       fill: black,
       font: defaultFont,
       fontSize: 11,
-      ariaRoleDescription: 'text'
     },
     trail: {
       fill: defaultColor,
       size: defaultStrokeWidth,
-      ariaRoleDescription: 'trail'
     },
 
     // style definitions
@@ -146,10 +134,6 @@ export default function() {
       anchor: 'middle',
       offset: 4,
       subtitlePadding: 3,
-      ariaRole: 'caption',
-      ariaRoleDescription: 'title',
-      subtitleAriaRole: 'caption',
-      subtitleAriaRoleDescription: 'subtitle',
       zindex: 1
     },
 
@@ -176,8 +160,6 @@ export default function() {
       tickSize: 5,
       tickWidth: 1,
       titlePadding: 4,
-      ariaRole: 'graphics-symbol',
-      ariaRoleDescription: 'axis',
       zindex: 0
     },
 
@@ -226,9 +208,7 @@ export default function() {
         direction: 'horizontal',
         left:   { direction: 'vertical' },
         right:  { direction: 'vertical' }
-      },
-      ariaRole: 'graphics-symbol',
-      ariaRoleDescription: 'legend'
+      }
     },
 
     // defaults for scale ranges

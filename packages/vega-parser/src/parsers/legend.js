@@ -8,7 +8,7 @@ import legendGradientLabels from './guides/legend-gradient-labels';
 import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, legendAriaLabel, lookup} from './guides/guide-util';
+import {getEncoding, getStyle, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendEntryRole, LegendRole} from './marks/roles';
@@ -27,11 +27,14 @@ export default function(spec, scope) {
       interactive = legendEncode.interactive,
       style = legendEncode.style,
       _ = lookup(spec, config),
+      scales = {}, scale = 0,
       entryEncode, entryLayout, params, children,
       type, datum, dataRef, entryRef, group;
 
-  // resolve 'canonical' scale name
-  var scale = LegendScales.reduce(function(a, b) { return a || spec[b]; }, 0);
+  // resolve scales and 'canonical' scale name
+  LegendScales.forEach(s => spec[s]
+    ? (scales[s] = spec[s], scale = scale || spec[s]) : 0
+  );
   if (!scale) error('Missing valid scale for legend.');
 
   // resolve legend type (symbol, gradient, or discrete gradient)
@@ -40,6 +43,7 @@ export default function(spec, scope) {
   // single-element data source for legend group
   datum = {
     title:  spec.title != null,
+    scales: scales,
     type:   type,
     vgrad:  type !== 'symbol' &&  _.isVertical()
   };
@@ -47,7 +51,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(_, config, scope), legendEncode, Skip
+    buildLegendEncode(_, config), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -135,24 +139,10 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(_, config, scope) {
+function buildLegendEncode(_, config) {
   var encode = {enter: {}, update: {}};
 
-  const ariaHidden = _('ariaHidden');
-  const ariaLabel = _('ariaLabel');
-
-  const aria = ariaHidden === true ? {} : {
-    ariaHidden:   ariaHidden ? ariaHidden : undefined,
-    ariaLabel:    ariaLabel !== undefined ? ariaLabel : legendAriaLabel(_, scope),
-    ariaRole:     _('ariaRole'),
-    ariaRoleDescription: _('ariaRoleDescription'),
-  };
-
-  if (ariaHidden) {
-    aria['ariaHidden'] = ariaHidden;
-  }
-
-  addEncoders(encode, Object.assign({
+  addEncoders(encode, {
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
@@ -164,7 +154,7 @@ function buildLegendEncode(_, config, scope) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-  }, aria));
+  });
 
   return encode;
 }

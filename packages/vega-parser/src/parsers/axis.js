@@ -5,7 +5,7 @@ import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
 import guideGroup from './guides/guide-group';
-import {axisAriaLabel, lookup, tickBand} from './guides/guide-util';
+import {lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
 import {encoder, extendEncode} from './encode/encode-util';
@@ -27,6 +27,7 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
+    scale:  spec.scale,
     ticks:  !!_('ticks'),
     labels: !!_('labels'),
     grid:   !!_('grid'),
@@ -36,29 +37,16 @@ export default function(spec, scope) {
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
-  const ariaHidden = _('ariaHidden');
-  const ariaLabel = _('ariaLabel');
-
-  const aria = ariaHidden === true ? {} : {
-    ariaLabel:    encoder(ariaLabel !== undefined ? ariaLabel : axisAriaLabel(_, scope)),
-    ariaRole:     encoder(_('ariaRole')),
-    ariaRoleDescription: encoder(_('ariaRoleDescription')),
-  };
-
-  if (ariaHidden) {
-    aria['ariaHidden'] = ariaHidden;
-  }
-
   // encoding properties for axis group item
   axisEncode = extendEncode({
-    update: Object.assign({
+    update: {
       offset:       encoder(_('offset') || 0),
       position:     encoder(value(spec.position, 0)),
       titlePadding: encoder(_('titlePadding')),
       minExtent:    encoder(_('minExtent')),
       maxExtent:    encoder(_('maxExtent')),
       range:        {signal: `abs(span(range("${spec.scale}")))`}
-    }, aria)
+    }
   }, encode.axis, Skip);
 
   // data source for axis ticks

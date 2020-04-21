@@ -1,6 +1,7 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
+import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
 import {cssClass, domChild, domClear, domCreate} from './util/dom';
 import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
@@ -8,7 +9,6 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles} from './util/svg/styles';
-import {AriaExtras, AriaHiddenRoles} from './util/constants';
 import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
@@ -316,17 +316,16 @@ prototype.draw = function(el, scene, prev) {
 
   parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
-  if (AriaHiddenRoles[scene.role]) {
-    parent.setAttribute('aria-hidden', true);
-  }
+
+  // apply aria attributes to parent container element
+  const aria = ariaMarkAttributes(scene);
+  for (const key in aria) setAttribute(parent, key, aria[key]);
+
   if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
   }
-  if (scene.clip) {
-    parent.setAttribute('clip-path', clip(renderer, scene, scene.group));
-  } else {
-    parent.removeAttribute('clip-path');
-  }
+  setAttribute(parent, 'clip-path', scene.clip
+    ? clip(renderer, scene, scene.group) : null);
 
   function process(item) {
     var dirty = renderer.isDirty(item),
@@ -533,12 +532,8 @@ prototype._update = function(mdef, el, item) {
   // apply svg attributes
   mdef.attr(emit, item, this);
 
-  // apply general svg properties
-  for (const prop in AriaExtras) {
-    if (item[prop] != null) {
-      emit(AriaExtras[prop], item[prop]);
-    }
-  }
+  // apply aria-specific properties
+  ariaItemAttributes(emit, item, this);
 
   // some marks need special treatment
   var extra = mark_extras[mdef.type];
@@ -553,24 +548,35 @@ function emit(name, value, ns) {
   // early exit if value is unchanged
   if (value === values[name]) return;
 
-  if (value != null) {
-    // if value is provided, update DOM attribute
-    if (ns) {
-      element.setAttributeNS(ns, name, value);
-    } else {
-      element.setAttribute(name, value);
-    }
+  // use appropriate method given namespace (ns)
+  if (ns) {
+    setAttributeNS(element, name, value, ns);
   } else {
-    // else remove DOM attribute
-    if (ns) {
-      element.removeAttributeNS(ns, name);
-    } else {
-      element.removeAttribute(name);
-    }
+    setAttribute(element, name, value);
   }
 
   // note current value for future comparison
   values[name] = value;
+}
+
+function setAttribute(el, name, value) {
+  if (value != null) {
+    // if value is provided, update DOM attribute
+    el.setAttribute(name, value);
+  } else {
+    // else remove DOM attribute
+    el.removeAttribute(name);
+  }
+}
+
+function setAttributeNS(el, name, value, ns) {
+  if (value != null) {
+    // if value is provided, update DOM attribute
+    el.setAttributeNS(ns, name, value);
+  } else {
+    // else remove DOM attribute
+    el.removeAttributeNS(ns, name);
+  }
 }
 
 prototype.style = function(el, o) {

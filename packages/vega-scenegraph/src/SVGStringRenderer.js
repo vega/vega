@@ -1,6 +1,7 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
+import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
 import {cssClass} from './util/dom';
 import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
@@ -8,7 +9,6 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {styles} from './util/svg/styles';
-import {AriaExtras, AriaHiddenRoles} from './util/constants';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -182,8 +182,11 @@ function emit(name, value, ns, prefixed) {
 
 prototype.attributes = function(attr, item) {
   object = {};
-  attr(emit, item, this);
-
+  if (Array.isArray(attr)) {
+    attr.forEach(fn => fn(emit, item, this));
+  } else {
+    attr(emit, item, this);
+  }
   return object;
 };
 
@@ -196,7 +199,7 @@ prototype.href = function(item) {
     if (attr = that._hrefs && that._hrefs[href]) {
       return attr;
     } else {
-      that.sanitizeURL(href).then(function(attr) {
+      that.sanitizeURL(href).then(attr => {
         // rewrite to use xlink namespace
         // note that this will be deprecated in SVG 2.0
         attr['xlink:href'] = attr.href;
@@ -221,26 +224,22 @@ prototype.mark = function(scene) {
   }
 
   // render opening group tag
-  str += openTag('g', {
+  str += openTag('g', Object.assign({
     'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null,
-    'aria-hidden': AriaHiddenRoles[scene.role] ? true : undefined
-  }, style);
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
+  }, ariaMarkAttributes(scene)), style);
 
   // render contained elements
   function process(item) {
     var href = renderer.href(item);
     if (href) str += openTag('a', href);
 
-    const ariaAttr = {};
-    for (const prop in AriaExtras) {
-      if (item[prop] != null) {
-        ariaAttr[AriaExtras[prop]] = item[prop];
-      }
-    }
-
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
-    str += openTag(tag, Object.assign(ariaAttr, renderer.attributes(mdef.attr, item)), style);
+    str += openTag(
+      tag,
+      renderer.attributes([ariaItemAttributes, mdef.attr], item),
+      style
+    );
 
     if (tag === 'text') {
       const tl = textLines(item);
