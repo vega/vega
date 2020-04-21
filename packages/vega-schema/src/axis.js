@@ -59,10 +59,6 @@ const axis = object({
   translate: numberType,
   values: arrayOrSignal,
   zindex: numberType,
-  ariaHidden: booleanValue,
-  ariaLabel: stringValue,
-  ariaRole: stringValue,
-  ariaRoleDescription: stringValue,
 
   // TITLE CONFIG
   title: textOrSignal,
