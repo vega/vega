@@ -11,6 +11,7 @@
     "docsbuild": "cd packages/vega/build && cp vega.js vega.min.js vega-core.js vega-core.min.js vega-schema.json ../../../docs/",
     "license": "lerna exec -- cp ../../LICENSE .",
     "release": "yarn license && lerna publish from-package",
+    "release-next": "yarn license && lerna publish from-package --canary --preid next --dist-tag next",
     "serve": "http-server packages/vega/ -c-1 -p8080 -o",
     "test": "lerna run test && yarn lint",
     "lint": "yarn eslint . --ext .js",
