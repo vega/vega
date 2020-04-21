@@ -22,6 +22,7 @@ export default function(spec, config, userEncode, dataRef, band) {
 
   addEncoders(encode, {
     stroke:           _('gridColor'),
+    strokeCap:        _('gridCap'),
     strokeDash:       _('gridDash'),
     strokeDashOffset: _('gridDashOffset'),
     strokeOpacity:    _('gridOpacity'),

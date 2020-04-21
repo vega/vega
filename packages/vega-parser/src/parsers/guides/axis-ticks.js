@@ -19,6 +19,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
 
   addEncoders(encode, {
     stroke:           _('tickColor'),
+    strokeCap:        _('tickCap'),
     strokeDash:       _('tickDash'),
     strokeDashOffset: _('tickDashOffset'),
     strokeOpacity:    _('tickOpacity'),

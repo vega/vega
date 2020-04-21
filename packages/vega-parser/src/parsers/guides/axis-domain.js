@@ -18,6 +18,7 @@ export default function(spec, config, userEncode, dataRef) {
 
   addEncoders(encode, {
     stroke:           _('domainColor'),
+    strokeCap:        _('domainCap'),
     strokeDash:       _('domainDash'),
     strokeDashOffset: _('domainDashOffset'),
     strokeWidth:      _('domainWidth'),
