@@ -1627,7 +1627,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "rect",

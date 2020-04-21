@@ -75,7 +75,7 @@
                       "limit": 400
                     }
                   ],
-                  "zindex": 0
+                  "zindex": 1
                 },
                 {
                   "marktype": "group",
@@ -1118,7 +1118,7 @@
                       "limit": 100
                     }
                   ],
-                  "zindex": 0
+                  "zindex": 1
                 },
                 {
                   "marktype": "group",
@@ -2162,7 +2162,7 @@
                       "limit": 100
                     }
                   ],
-                  "zindex": 0
+                  "zindex": 1
                 },
                 {
                   "marktype": "group",
@@ -3206,7 +3206,7 @@
                       "limit": 400
                     }
                   ],
-                  "zindex": 0
+                  "zindex": 1
                 },
                 {
                   "marktype": "group",

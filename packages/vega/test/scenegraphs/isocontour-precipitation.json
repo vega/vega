@@ -212,7 +212,7 @@
               "orient": "bottom"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "shape",
