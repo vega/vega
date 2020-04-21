@@ -256,6 +256,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
 | translate       | {% include type t="Number" %}   | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates, in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
+| zindex          | {% include type t="Number" %}   | The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups. With a value of `0` axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) cause axes and grid lines to be drawn on top of marks. {% include tag ver="5.11" %} |
 
 ### Usage
 
@@ -346,6 +347,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
+| zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
 
 ### <a name="legends-layout"></a>Legend Layout Properties {% include tag ver="5.0" %}
 
@@ -426,7 +428,8 @@ Properties defining default settings for titles. These properties are defined un
 | subtitleFontStyle     | {% include type t="String" %}   | Font style of the subtitle text (e.g., `normal` or `italic`). {% include tag ver="5.7" %} |
 | subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
 | subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
-| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
+| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %} |
+| zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
 
 ### Usage
 
