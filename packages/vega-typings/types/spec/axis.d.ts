@@ -107,14 +107,6 @@ export interface Axis extends BaseAxis {
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups.
-   *
-   * @TJS-type integer
-   * @minimum 0
-   */
-  zindex?: number;
-
-  /**
    * Mark definitions for custom axis encoding.
    */
   encode?: AxisEncode;
@@ -516,6 +508,13 @@ export interface BaseAxis {
    *
    * __Default value:__ `2`
    */
-
   labelPadding?: NumberValue;
+
+  /**
+   * The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
 }
