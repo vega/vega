@@ -121,7 +121,8 @@ export default function() {
       orient: 'top',
       anchor: 'middle',
       offset: 4,
-      subtitlePadding: 3
+      subtitlePadding: 3,
+      zindex: 1
     },
 
     // defaults for axes
@@ -146,7 +147,8 @@ export default function() {
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      titlePadding: 4
+      titlePadding: 4,
+      zindex: 0
     },
 
     // correction for centering bias
@@ -188,6 +190,7 @@ export default function() {
       titleLimit: 180,
       titleOrient: 'top',
       titlePadding: 5,
+      zindex: 1,
       layout: {
         offset: 18,
         direction: 'horizontal',
