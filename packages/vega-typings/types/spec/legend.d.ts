@@ -100,14 +100,6 @@ export interface Legend extends BaseLegend {
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
-   *
-   * @TJS-type integer
-   * @minimum 0
-   */
-  zindex?: number;
-
-  /**
    * Mark definitions for custom legend encoding.
    */
   encode?: LegendEncode;
@@ -463,4 +455,12 @@ export interface BaseLegend {
    * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
    */
   labelSeparation?: number | SignalRef;
+
+  /**
+   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
 }

@@ -42,16 +42,6 @@ export interface Title extends BaseTitle {
   style?: string | string[];
 
   /**
-   * 	The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups.
-   *
-   * __Default value:__ `0`.
-   *
-   * @TJS-type integer
-   * @minimum 0
-   */
-  zindex?: number;
-
-  /**
    * Mark definitions for custom title encoding.
    */
   encode?: TitleEncode | Encode<TextEncodeEntry>; // second entry is **deprecated**
@@ -195,4 +185,14 @@ export interface BaseTitle {
    * The padding in pixels between title and subtitle text.
    */
   subtitlePadding?: NumberValue;
+
+  /**
+   * 	The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups.
+   *
+   * __Default value:__ `0`.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
 }
