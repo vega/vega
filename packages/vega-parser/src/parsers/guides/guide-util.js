@@ -1,4 +1,4 @@
-import {Bottom, Center, End, Left, LegendScales, Right, Start, Top, Vertical} from './constants';
+import {Bottom, Center, End, Fill, Left, LegendScales, Right, Start, Stroke, Top, Vertical} from './constants';
 import {isSignal, value} from '../../util';
 import {isDiscrete} from 'vega-scale';
 import {isArray, isObject, stringValue} from 'vega-util';
@@ -88,45 +88,29 @@ export function extendOffset(value, offset) {
     : { ...value, offset: extendOffset(value.offset, offset) };
 }
 
-function interpretableLegendType(legendType) {
-  switch (legendType) {
-    case 'fill':
-      return 'fill color';
-    case 'stroke':
-      return 'stroke color';
-    default:
-      return legendType;
-  }
-}
-
 export function formatList(list) {
-  if (list.length === 0) {
-    return '';
-  }
-  if (list.length === 1) {
-    return list[0];
-  }
-  return `${list.slice(0, list.length-1).join(',')}${list.length > 2 ? ',' : ''} and${list[list.length-1]}`;
+  const n = list.length;
+  return n === 0 ? ''
+    : n === 1 ? list[0]
+    : `${list.slice(0, -1).join(', ')}${n > 2 ? ',' : ''} and ${list[n-1]}`;
 }
 
 function wrapFormat(text, format, formatType) {
   if (format == null) return text;
-  const func = formatType === 'time' ? 'timeFormat' : formatType === 'utc' ? 'utcFormat' : 'format';
-  return `${func}(${text}, ${isObject(format) && isSignal(format) ? format.signal : `"${format}"`})`;
+  const func = formatType === 'time' ? 'timeFormat'
+    : formatType === 'utc' ? 'utcFormat'
+    : 'format';
+  return `${func}(${text}, ${isObject(format) && isSignal(format) ? format.signal : `'${format}'`})`;
 }
 
 function domainText(scaleType, scaleName, format, formatType) {
-  return ' represents values ' + (isDiscrete(scaleType)
-    ? `" + domain('${scaleName}')`
-    : `from " + ${wrapFormat(
-        `domain("${scaleName}")[0]`,
-        format,
-        formatType
-      )} + " to " + ${wrapFormat(
-        `domain("${scaleName}")[1]`,
-        format,
-        formatType
-      )}`);
+  if (isDiscrete(scaleType)) {
+    return `represents values " + domain('${scaleName}') + "`;
+  } else {
+    const lo = wrapFormat(`domain('${scaleName}')[0]`, format, formatType);
+    const hi = wrapFormat(`domain('${scaleName}')[1]`, format, formatType);
+    return `represents values from " + ${lo} + " to " + ${hi} + "`;
+  }
 }
 
 function titleText(title) {
@@ -134,12 +118,15 @@ function titleText(title) {
     // only use the first row of multiline titles
     title = title[0];
   }
+  return title
+    ? isObject(title) && isSignal(title)
+      ? ` for " + ${title.signal} + "`
+      : ` for ${title}`
+    : '';
+}
 
-  if (title) {
-    return isObject(title) && isSignal(title) ? ` for " + ${title.signal} + "` : ` for ${title}`;
-  }
-
-  return '';
+function legendTypeText(type) {
+  return type + (type === Fill || type === Stroke ? ' color' : '');
 }
 
 export function legendAriaLabel(_, scope) {
@@ -149,19 +136,23 @@ export function legendAriaLabel(_, scope) {
     if (scaleName) {
       const scaleType = scope.scales[scaleName].params.type;
       const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
-      domains.push(` ${interpretableLegendType(legendType)}${domain} + "`);
+      domains.push(`${legendTypeText(legendType)} ${domain}`);
     }
   }
-  const signal = `"legend${titleText(_('title'))},${formatList(domains)}"`;
-  return { signal };
+
+  return {
+    signal: `"legend${titleText(_('title'))}, ${formatList(domains)}"`
+  };
 }
 
 export function axisAriaLabel(_, scope) {
-  const scaleName = _('scale');
-  const scaleType = scope.scales[scaleName].params.type;
   const orient = _('orient');
   const axisType = orient === Bottom || orient === Top ? 'x' : 'y';
+  const scaleName = _('scale');
+  const scaleType = scope.scales[scaleName].params.type;
   const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
-  const signal = `"${axisType} axis${titleText(_('title'))},${domain}`;
-  return { signal };
+
+  return {
+    signal: `"${axisType} axis${titleText(_('title'))}, ${domain}"`
+  };
 }
