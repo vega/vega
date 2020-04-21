@@ -283,7 +283,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 100.5
+              "y": 100.5,
+              "ariaLabel": "x axis, represents values 0,1,2,3,4,5,6,7,8,9,10",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -302,7 +305,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -311,7 +316,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -320,7 +327,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -329,7 +338,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -338,7 +349,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -347,7 +360,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -356,7 +371,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -365,7 +382,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -374,7 +393,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -383,7 +404,9 @@
               "fill": "#3182bd",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -392,7 +415,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -401,7 +426,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -410,7 +437,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -419,7 +448,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -428,7 +459,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -437,7 +470,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -446,7 +481,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -455,7 +492,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -464,7 +503,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -473,7 +514,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -482,7 +525,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -491,7 +536,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -500,7 +547,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -509,7 +558,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -518,7 +569,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -527,7 +580,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -536,7 +591,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -545,7 +602,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -554,7 +613,9 @@
               "fill": "#fd8d3c",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -563,7 +624,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -572,7 +635,9 @@
               "fill": "#9ecae1",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -581,7 +646,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -590,7 +657,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -599,7 +668,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -608,7 +679,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -617,7 +690,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -626,7 +701,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -635,7 +712,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -644,7 +723,9 @@
               "fill": "#6baed6",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -653,7 +734,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -662,7 +745,9 @@
               "fill": "#fdae6b",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -671,7 +756,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -680,7 +767,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -689,7 +778,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -698,7 +789,9 @@
               "fill": "#fd8d3c",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -707,7 +800,9 @@
               "fill": "#fd8d3c",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -716,7 +811,9 @@
               "fill": "#fdd0a2",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -725,7 +822,9 @@
               "fill": "#fdd0a2",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -734,7 +833,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -743,7 +844,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -752,7 +855,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -761,7 +866,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -770,7 +877,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -779,7 +888,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -788,7 +899,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -797,7 +910,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -806,7 +921,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -815,7 +932,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -824,7 +943,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -833,7 +954,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -842,7 +965,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -851,7 +976,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -860,7 +987,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -869,7 +998,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -878,7 +1009,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -887,7 +1020,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -896,7 +1031,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -905,7 +1042,9 @@
               "fill": "#74c476",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -914,7 +1053,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -923,7 +1064,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -932,7 +1075,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -941,7 +1086,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -950,7 +1097,9 @@
               "fill": "#e6550d",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -959,7 +1108,9 @@
               "fill": "#a1d99b",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -968,7 +1119,9 @@
               "fill": "#a1d99b",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -977,7 +1130,9 @@
               "fill": "#c6dbef",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -986,7 +1141,9 @@
               "fill": "#31a354",
               "stroke": "white",
               "strokeWidth": 1,
-              "size": 256
+              "size": 256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0

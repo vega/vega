@@ -117,3 +117,21 @@ export function has(key, encode) {
     (encode.update && encode.update[key])
   );
 }
+
+export function addAriaAnnotations(spec, _, props) {
+  const hidden = _(props.hidden);
+
+  const aria = hidden === true
+    ? {}
+    : {
+        ariaLabel: _(props.label),
+        ariaRole: _(props.role),
+        ariaRoleDescription: _(props.roleDescription)
+      };
+
+  if (hidden) {
+    aria['ariaHidden'] = hidden;
+  }
+
+  return Object.assign(spec, aria);
+}

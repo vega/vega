@@ -15,1007 +15,1509 @@
           "items": [
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V51.81818181818181H250"
+              "path": "M0,621.5846598542523V51.81818181818181H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V192.87878787878788H250"
+              "path": "M0,621.5846598542523V192.87878787878788H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V321.3961038961039H250"
+              "path": "M0,621.5846598542523V321.3961038961039H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V371.3636363636364H375"
+              "path": "M0,621.5846598542523V371.3636363636364H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V392.95454545454544H375"
+              "path": "M0,621.5846598542523V392.95454545454544H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V431.8181818181818H375"
+              "path": "M0,621.5846598542523V431.8181818181818H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V688.5266457680251H250"
+              "path": "M0,621.5846598542523V688.5266457680251H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V1027.7272727272727H375"
+              "path": "M0,621.5846598542523V1027.7272727272727H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V1173.8636363636365H250"
+              "path": "M0,621.5846598542523V1173.8636363636365H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M0,621.5846598542523V1563.499606454152H125"
+              "path": "M0,621.5846598542523V1563.499606454152H125",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,51.81818181818181V17.272727272727273H375"
+              "path": "M250,51.81818181818181V17.272727272727273H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,51.81818181818181V56.13636363636363H375"
+              "path": "M250,51.81818181818181V56.13636363636363H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,51.81818181818181V82.04545454545455H375"
+              "path": "M250,51.81818181818181V82.04545454545455H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V90.68181818181819H500"
+              "path": "M250,192.87878787878788V90.68181818181819H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V99.31818181818181H500"
+              "path": "M250,192.87878787878788V99.31818181818181H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V142.5H375"
+              "path": "M250,192.87878787878788V142.5H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V185.6818181818182H500"
+              "path": "M250,192.87878787878788V185.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V194.31818181818184H500"
+              "path": "M250,192.87878787878788V194.31818181818184H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V202.95454545454544H500"
+              "path": "M250,192.87878787878788V202.95454545454544H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V211.5909090909091H500"
+              "path": "M250,192.87878787878788V211.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V220.22727272727272H500"
+              "path": "M250,192.87878787878788V220.22727272727272H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V228.86363636363637H500"
+              "path": "M250,192.87878787878788V228.86363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V237.5H500"
+              "path": "M250,192.87878787878788V237.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V246.13636363636363H500"
+              "path": "M250,192.87878787878788V246.13636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,192.87878787878788V254.77272727272728H500"
+              "path": "M250,192.87878787878788V254.77272727272728H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V280.6818181818182H375"
+              "path": "M250,321.3961038961039V280.6818181818182H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V306.5909090909091H500"
+              "path": "M250,321.3961038961039V306.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V315.22727272727275H500"
+              "path": "M250,321.3961038961039V315.22727272727275H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V323.8636363636363H500"
+              "path": "M250,321.3961038961039V323.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V332.5H500"
+              "path": "M250,321.3961038961039V332.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V341.1363636363636H500"
+              "path": "M250,321.3961038961039V341.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,321.3961038961039V349.77272727272725H500"
+              "path": "M250,321.3961038961039V349.77272727272725H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,371.3636363636364V358.4090909090909H500"
+              "path": "M375,371.3636363636364V358.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,371.3636363636364V367.04545454545456H500"
+              "path": "M375,371.3636363636364V367.04545454545456H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,371.3636363636364V375.6818181818182H500"
+              "path": "M375,371.3636363636364V375.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,371.3636363636364V384.3181818181818H500"
+              "path": "M375,371.3636363636364V384.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,392.95454545454544V392.95454545454544H500"
+              "path": "M375,392.95454545454544V392.95454545454544H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V401.59090909090907H500"
+              "path": "M375,431.8181818181818V401.59090909090907H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V410.22727272727275H500"
+              "path": "M375,431.8181818181818V410.22727272727275H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V418.8636363636364H500"
+              "path": "M375,431.8181818181818V418.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V427.5H500"
+              "path": "M375,431.8181818181818V427.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V436.1363636363636H500"
+              "path": "M375,431.8181818181818V436.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V444.7727272727273H500"
+              "path": "M375,431.8181818181818V444.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V453.40909090909093H500"
+              "path": "M375,431.8181818181818V453.40909090909093H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,431.8181818181818V462.04545454545456H500"
+              "path": "M375,431.8181818181818V462.04545454545456H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V470.6818181818182H500"
+              "path": "M250,688.5266457680251V470.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V479.3181818181818H500"
+              "path": "M250,688.5266457680251V479.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V487.9545454545455H500"
+              "path": "M250,688.5266457680251V487.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V496.59090909090907H500"
+              "path": "M250,688.5266457680251V496.59090909090907H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V505.22727272727275H500"
+              "path": "M250,688.5266457680251V505.22727272727275H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V513.8636363636364H500"
+              "path": "M250,688.5266457680251V513.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V522.5H500"
+              "path": "M250,688.5266457680251V522.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V531.1363636363636H500"
+              "path": "M250,688.5266457680251V531.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V539.7727272727274H500"
+              "path": "M250,688.5266457680251V539.7727272727274H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V548.4090909090909H500"
+              "path": "M250,688.5266457680251V548.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V557.0454545454545H500"
+              "path": "M250,688.5266457680251V557.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V565.6818181818181H500"
+              "path": "M250,688.5266457680251V565.6818181818181H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V574.3181818181818H500"
+              "path": "M250,688.5266457680251V574.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V582.9545454545455H500"
+              "path": "M250,688.5266457680251V582.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V591.590909090909H500"
+              "path": "M250,688.5266457680251V591.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V600.2272727272727H500"
+              "path": "M250,688.5266457680251V600.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V608.8636363636364H500"
+              "path": "M250,688.5266457680251V608.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V617.5H500"
+              "path": "M250,688.5266457680251V617.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V760H375"
+              "path": "M250,688.5266457680251V760H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V902.5H500"
+              "path": "M250,688.5266457680251V902.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V911.1363636363636H500"
+              "path": "M250,688.5266457680251V911.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V919.7727272727273H500"
+              "path": "M250,688.5266457680251V919.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V928.4090909090909H500"
+              "path": "M250,688.5266457680251V928.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V937.0454545454545H500"
+              "path": "M250,688.5266457680251V937.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V945.6818181818182H500"
+              "path": "M250,688.5266457680251V945.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V954.3181818181819H500"
+              "path": "M250,688.5266457680251V954.3181818181819H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V962.9545454545455H500"
+              "path": "M250,688.5266457680251V962.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V971.5909090909091H500"
+              "path": "M250,688.5266457680251V971.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,688.5266457680251V980.2272727272726H500"
+              "path": "M250,688.5266457680251V980.2272727272726H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V988.8636363636365H500"
+              "path": "M375,1027.7272727272727V988.8636363636365H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V997.5H500"
+              "path": "M375,1027.7272727272727V997.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1006.1363636363636H500"
+              "path": "M375,1027.7272727272727V1006.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1014.7727272727273H500"
+              "path": "M375,1027.7272727272727V1014.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1023.409090909091H500"
+              "path": "M375,1027.7272727272727V1023.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1032.0454545454545H500"
+              "path": "M375,1027.7272727272727V1032.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1040.6818181818182H500"
+              "path": "M375,1027.7272727272727V1040.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1049.3181818181818H500"
+              "path": "M375,1027.7272727272727V1049.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1057.9545454545453H500"
+              "path": "M375,1027.7272727272727V1057.9545454545453H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1027.7272727272727V1066.5909090909092H500"
+              "path": "M375,1027.7272727272727V1066.5909090909092H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1075.2272727272727H500"
+              "path": "M250,1173.8636363636365V1075.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1083.8636363636363H500"
+              "path": "M250,1173.8636363636365V1083.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1092.5H500"
+              "path": "M250,1173.8636363636365V1092.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1101.1363636363637H500"
+              "path": "M250,1173.8636363636365V1101.1363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1109.7727272727273H500"
+              "path": "M250,1173.8636363636365V1109.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1118.409090909091H500"
+              "path": "M250,1173.8636363636365V1118.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1131.3636363636363H375"
+              "path": "M250,1173.8636363636365V1131.3636363636363H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1144.3181818181818H500"
+              "path": "M250,1173.8636363636365V1144.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1152.9545454545455H500"
+              "path": "M250,1173.8636363636365V1152.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1161.590909090909H500"
+              "path": "M250,1173.8636363636365V1161.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1178.8636363636365H375"
+              "path": "M250,1173.8636363636365V1178.8636363636365H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1196.1363636363635H500"
+              "path": "M250,1173.8636363636365V1196.1363636363635H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1204.7727272727273H500"
+              "path": "M250,1173.8636363636365V1204.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1226.3636363636365H375"
+              "path": "M250,1173.8636363636365V1226.3636363636365H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1247.9545454545455H500"
+              "path": "M250,1173.8636363636365V1247.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1256.590909090909H500"
+              "path": "M250,1173.8636363636365V1256.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1265.2272727272727H500"
+              "path": "M250,1173.8636363636365V1265.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1273.8636363636363H500"
+              "path": "M250,1173.8636363636365V1273.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1173.8636363636365V1282.5H500"
+              "path": "M250,1173.8636363636365V1282.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1308.4090909090908H375"
+              "path": "M125,1563.499606454152V1308.4090909090908H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1377.5H375"
+              "path": "M125,1563.499606454152V1377.5H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1473.939393939394H250"
+              "path": "M125,1563.499606454152V1473.939393939394H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1545.9090909090908H375"
+              "path": "M125,1563.499606454152V1545.9090909090908H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1576.1363636363637H375"
+              "path": "M125,1563.499606454152V1576.1363636363637H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1766.9214876033059H250"
+              "path": "M125,1563.499606454152V1766.9214876033059H250",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M125,1563.499606454152V1895.681818181818H500"
+              "path": "M125,1563.499606454152V1895.681818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,17.272727272727273V4.318181818181818H500"
+              "path": "M375,17.272727272727273V4.318181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,17.272727272727273V12.954545454545453H500"
+              "path": "M375,17.272727272727273V12.954545454545453H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,17.272727272727273V21.59090909090909H500"
+              "path": "M375,17.272727272727273V21.59090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,17.272727272727273V30.227272727272723H500"
+              "path": "M375,17.272727272727273V30.227272727272723H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,56.13636363636363V38.86363636363637H500"
+              "path": "M375,56.13636363636363V38.86363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,56.13636363636363V47.5H500"
+              "path": "M375,56.13636363636363V47.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,56.13636363636363V56.13636363636363H500"
+              "path": "M375,56.13636363636363V56.13636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,56.13636363636363V64.77272727272727H500"
+              "path": "M375,56.13636363636363V64.77272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,56.13636363636363V73.4090909090909H500"
+              "path": "M375,56.13636363636363V73.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,82.04545454545455V82.04545454545455H500"
+              "path": "M375,82.04545454545455V82.04545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V107.95454545454545H500"
+              "path": "M375,142.5V107.95454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V116.5909090909091H500"
+              "path": "M375,142.5V116.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V125.22727272727272H500"
+              "path": "M375,142.5V125.22727272727272H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V133.86363636363635H500"
+              "path": "M375,142.5V133.86363636363635H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V142.5H500"
+              "path": "M375,142.5V142.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V151.13636363636363H500"
+              "path": "M375,142.5V151.13636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V159.77272727272728H500"
+              "path": "M375,142.5V159.77272727272728H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V168.4090909090909H500"
+              "path": "M375,142.5V168.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,142.5V177.04545454545456H500"
+              "path": "M375,142.5V177.04545454545456H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,280.6818181818182V263.40909090909093H500"
+              "path": "M375,280.6818181818182V263.40909090909093H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,280.6818181818182V272.04545454545456H500"
+              "path": "M375,280.6818181818182V272.04545454545456H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,280.6818181818182V280.6818181818182H500"
+              "path": "M375,280.6818181818182V280.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,280.6818181818182V289.3181818181818H500"
+              "path": "M375,280.6818181818182V289.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,280.6818181818182V297.9545454545455H500"
+              "path": "M375,280.6818181818182V297.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V626.1363636363636H500"
+              "path": "M375,760V626.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V634.7727272727273H500"
+              "path": "M375,760V634.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V643.4090909090909H500"
+              "path": "M375,760V643.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V652.0454545454546H500"
+              "path": "M375,760V652.0454545454546H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V660.6818181818181H500"
+              "path": "M375,760V660.6818181818181H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V669.3181818181819H500"
+              "path": "M375,760V669.3181818181819H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V677.9545454545455H500"
+              "path": "M375,760V677.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V686.5909090909091H500"
+              "path": "M375,760V686.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V695.2272727272727H500"
+              "path": "M375,760V695.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V703.8636363636364H500"
+              "path": "M375,760V703.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V712.5H500"
+              "path": "M375,760V712.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V721.1363636363636H500"
+              "path": "M375,760V721.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V729.7727272727273H500"
+              "path": "M375,760V729.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V738.4090909090909H500"
+              "path": "M375,760V738.4090909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V747.0454545454545H500"
+              "path": "M375,760V747.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V755.6818181818181H500"
+              "path": "M375,760V755.6818181818181H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V764.3181818181819H500"
+              "path": "M375,760V764.3181818181819H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V772.9545454545454H500"
+              "path": "M375,760V772.9545454545454H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V781.5909090909091H500"
+              "path": "M375,760V781.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V790.2272727272727H500"
+              "path": "M375,760V790.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V798.8636363636364H500"
+              "path": "M375,760V798.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V807.5H500"
+              "path": "M375,760V807.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V816.1363636363636H500"
+              "path": "M375,760V816.1363636363636H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V824.7727272727273H500"
+              "path": "M375,760V824.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V833.409090909091H500"
+              "path": "M375,760V833.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V842.0454545454545H500"
+              "path": "M375,760V842.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V850.6818181818182H500"
+              "path": "M375,760V850.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V859.3181818181819H500"
+              "path": "M375,760V859.3181818181819H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V867.9545454545455H500"
+              "path": "M375,760V867.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V876.5909090909091H500"
+              "path": "M375,760V876.5909090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V885.2272727272726H500"
+              "path": "M375,760V885.2272727272726H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,760V893.8636363636364H500"
+              "path": "M375,760V893.8636363636364H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1131.3636363636363V1127.0454545454545H500"
+              "path": "M375,1131.3636363636363V1127.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1131.3636363636363V1135.6818181818182H500"
+              "path": "M375,1131.3636363636363V1135.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1178.8636363636365V1170.2272727272727H500"
+              "path": "M375,1178.8636363636365V1170.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1178.8636363636365V1178.8636363636365H500"
+              "path": "M375,1178.8636363636365V1178.8636363636365H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1178.8636363636365V1187.5H500"
+              "path": "M375,1178.8636363636365V1187.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1226.3636363636365V1213.409090909091H500"
+              "path": "M375,1226.3636363636365V1213.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1226.3636363636365V1222.0454545454545H500"
+              "path": "M375,1226.3636363636365V1222.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1226.3636363636365V1230.6818181818182H500"
+              "path": "M375,1226.3636363636365V1230.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1226.3636363636365V1239.3181818181818H500"
+              "path": "M375,1226.3636363636365V1239.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1308.4090909090908V1291.1363636363637H500"
+              "path": "M375,1308.4090909090908V1291.1363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1308.4090909090908V1299.7727272727273H500"
+              "path": "M375,1308.4090909090908V1299.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1308.4090909090908V1308.4090909090908H500"
+              "path": "M375,1308.4090909090908V1308.4090909090908H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1308.4090909090908V1317.0454545454547H500"
+              "path": "M375,1308.4090909090908V1317.0454545454547H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1308.4090909090908V1325.6818181818182H500"
+              "path": "M375,1308.4090909090908V1325.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1334.3181818181818H500"
+              "path": "M375,1377.5V1334.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1342.9545454545455H500"
+              "path": "M375,1377.5V1342.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1351.590909090909H500"
+              "path": "M375,1377.5V1351.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1360.2272727272727H500"
+              "path": "M375,1377.5V1360.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1368.8636363636363H500"
+              "path": "M375,1377.5V1368.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1377.5H500"
+              "path": "M375,1377.5V1377.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1386.1363636363635H500"
+              "path": "M375,1377.5V1386.1363636363635H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1394.7727272727273H500"
+              "path": "M375,1377.5V1394.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1403.409090909091H500"
+              "path": "M375,1377.5V1403.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1412.0454545454545H500"
+              "path": "M375,1377.5V1412.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1377.5V1420.681818181818H500"
+              "path": "M375,1377.5V1420.681818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1429.318181818182H500"
+              "path": "M250,1473.939393939394V1429.318181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1437.9545454545455H500"
+              "path": "M250,1473.939393939394V1437.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1446.590909090909H500"
+              "path": "M250,1473.939393939394V1446.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1455.2272727272727H500"
+              "path": "M250,1473.939393939394V1455.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1463.8636363636365H500"
+              "path": "M250,1473.939393939394V1463.8636363636365H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1485.4545454545455H375"
+              "path": "M250,1473.939393939394V1485.4545454545455H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1507.0454545454545H500"
+              "path": "M250,1473.939393939394V1507.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1515.6818181818182H500"
+              "path": "M250,1473.939393939394V1515.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1473.939393939394V1524.3181818181818H500"
+              "path": "M250,1473.939393939394V1524.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1545.9090909090908V1532.9545454545453H500"
+              "path": "M375,1545.9090909090908V1532.9545454545453H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1545.9090909090908V1541.5909090909092H500"
+              "path": "M375,1545.9090909090908V1541.5909090909092H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1545.9090909090908V1550.2272727272727H500"
+              "path": "M375,1545.9090909090908V1550.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1545.9090909090908V1558.8636363636363H500"
+              "path": "M375,1545.9090909090908V1558.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1576.1363636363637V1567.5H500"
+              "path": "M375,1576.1363636363637V1567.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1576.1363636363637V1576.1363636363637H500"
+              "path": "M375,1576.1363636363637V1576.1363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1576.1363636363637V1584.7727272727273H500"
+              "path": "M375,1576.1363636363637V1584.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1602.0454545454545H375"
+              "path": "M250,1766.9214876033059V1602.0454545454545H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1636.590909090909H375"
+              "path": "M250,1766.9214876033059V1636.590909090909H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1671.1363636363635H375"
+              "path": "M250,1766.9214876033059V1671.1363636363635H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1688.409090909091H500"
+              "path": "M250,1766.9214876033059V1688.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1705.6818181818182H375"
+              "path": "M250,1766.9214876033059V1705.6818181818182H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1783.4090909090908H375"
+              "path": "M250,1766.9214876033059V1783.4090909090908H375",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1852.5H500"
+              "path": "M250,1766.9214876033059V1852.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1861.1363636363635H500"
+              "path": "M250,1766.9214876033059V1861.1363636363635H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1869.7727272727273H500"
+              "path": "M250,1766.9214876033059V1869.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1878.409090909091H500"
+              "path": "M250,1766.9214876033059V1878.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M250,1766.9214876033059V1887.0454545454545H500"
+              "path": "M250,1766.9214876033059V1887.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1485.4545454545455V1472.5H500"
+              "path": "M375,1485.4545454545455V1472.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1485.4545454545455V1481.1363636363637H500"
+              "path": "M375,1485.4545454545455V1481.1363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1485.4545454545455V1489.7727272727273H500"
+              "path": "M375,1485.4545454545455V1489.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1485.4545454545455V1498.409090909091H500"
+              "path": "M375,1485.4545454545455V1498.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1602.0454545454545V1593.409090909091H500"
+              "path": "M375,1602.0454545454545V1593.409090909091H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1602.0454545454545V1602.0454545454545H500"
+              "path": "M375,1602.0454545454545V1602.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1602.0454545454545V1610.6818181818182H500"
+              "path": "M375,1602.0454545454545V1610.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1636.590909090909V1619.3181818181818H500"
+              "path": "M375,1636.590909090909V1619.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1636.590909090909V1627.9545454545455H500"
+              "path": "M375,1636.590909090909V1627.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1636.590909090909V1636.590909090909H500"
+              "path": "M375,1636.590909090909V1636.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1636.590909090909V1645.2272727272727H500"
+              "path": "M375,1636.590909090909V1645.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1636.590909090909V1653.8636363636365H500"
+              "path": "M375,1636.590909090909V1653.8636363636365H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1671.1363636363635V1662.5H500"
+              "path": "M375,1671.1363636363635V1662.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1671.1363636363635V1671.1363636363635H500"
+              "path": "M375,1671.1363636363635V1671.1363636363635H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1671.1363636363635V1679.7727272727273H500"
+              "path": "M375,1671.1363636363635V1679.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1705.6818181818182V1697.0454545454545H500"
+              "path": "M375,1705.6818181818182V1697.0454545454545H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1705.6818181818182V1705.6818181818182H500"
+              "path": "M375,1705.6818181818182V1705.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1705.6818181818182V1714.3181818181818H500"
+              "path": "M375,1705.6818181818182V1714.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1722.9545454545455H500"
+              "path": "M375,1783.4090909090908V1722.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1731.590909090909H500"
+              "path": "M375,1783.4090909090908V1731.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1740.2272727272727H500"
+              "path": "M375,1783.4090909090908V1740.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1748.8636363636363H500"
+              "path": "M375,1783.4090909090908V1748.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1757.5H500"
+              "path": "M375,1783.4090909090908V1757.5H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1766.1363636363637H500"
+              "path": "M375,1783.4090909090908V1766.1363636363637H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1774.7727272727273H500"
+              "path": "M375,1783.4090909090908V1774.7727272727273H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1783.4090909090908H500"
+              "path": "M375,1783.4090909090908V1783.4090909090908H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1792.0454545454547H500"
+              "path": "M375,1783.4090909090908V1792.0454545454547H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1800.6818181818182H500"
+              "path": "M375,1783.4090909090908V1800.6818181818182H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1809.3181818181818H500"
+              "path": "M375,1783.4090909090908V1809.3181818181818H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1817.9545454545455H500"
+              "path": "M375,1783.4090909090908V1817.9545454545455H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1826.590909090909H500"
+              "path": "M375,1783.4090909090908V1826.590909090909H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1835.2272727272727H500"
+              "path": "M375,1783.4090909090908V1835.2272727272727H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#ccc",
-              "path": "M375,1783.4090909090908V1843.8636363636363H500"
+              "path": "M375,1783.4090909090908V1843.8636363636363H500",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             }
           ],
           "zindex": 0
@@ -1036,7 +1538,9 @@
               "text": "flare",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -1048,7 +1552,9 @@
               "text": "analytics",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1060,7 +1566,9 @@
               "text": "cluster",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1072,7 +1580,9 @@
               "text": "AgglomerativeCluster",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1084,7 +1594,9 @@
               "text": "CommunityStructure",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1096,7 +1608,9 @@
               "text": "HierarchicalCluster",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1108,7 +1622,9 @@
               "text": "MergeEdge",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1120,7 +1636,9 @@
               "text": "graph",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1132,7 +1650,9 @@
               "text": "BetweennessCentrality",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1144,7 +1664,9 @@
               "text": "LinkDistance",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1156,7 +1678,9 @@
               "text": "MaxFlowMinCut",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1168,7 +1692,9 @@
               "text": "ShortestPaths",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1180,7 +1706,9 @@
               "text": "SpanningTree",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1192,7 +1720,9 @@
               "text": "optimization",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1204,7 +1734,9 @@
               "text": "AspectRatioBanker",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -1216,7 +1748,9 @@
               "text": "animate",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1228,7 +1762,9 @@
               "text": "Easing",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1240,7 +1776,9 @@
               "text": "FunctionSequence",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1252,7 +1790,9 @@
               "text": "interpolate",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1264,7 +1804,9 @@
               "text": "ArrayInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1276,7 +1818,9 @@
               "text": "ColorInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1288,7 +1832,9 @@
               "text": "DateInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1300,7 +1846,9 @@
               "text": "Interpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1312,7 +1860,9 @@
               "text": "MatrixInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1324,7 +1874,9 @@
               "text": "NumberInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1336,7 +1888,9 @@
               "text": "ObjectInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1348,7 +1902,9 @@
               "text": "PointInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1360,7 +1916,9 @@
               "text": "RectangleInterpolator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1372,7 +1930,9 @@
               "text": "ISchedulable",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1384,7 +1944,9 @@
               "text": "Parallel",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1396,7 +1958,9 @@
               "text": "Pause",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1408,7 +1972,9 @@
               "text": "Scheduler",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1420,7 +1986,9 @@
               "text": "Sequence",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1432,7 +2000,9 @@
               "text": "Transition",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1444,7 +2014,9 @@
               "text": "Transitioner",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1456,7 +2028,9 @@
               "text": "TransitionEvent",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1468,7 +2042,9 @@
               "text": "Tween",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -1480,7 +2056,9 @@
               "text": "data",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1492,7 +2070,9 @@
               "text": "converters",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1504,7 +2084,9 @@
               "text": "Converters",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1516,7 +2098,9 @@
               "text": "DelimitedTextConverter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1528,7 +2112,9 @@
               "text": "GraphMLConverter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1540,7 +2126,9 @@
               "text": "IDataConverter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1552,7 +2140,9 @@
               "text": "JSONConverter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1564,7 +2154,9 @@
               "text": "DataField",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1576,7 +2168,9 @@
               "text": "DataSchema",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1588,7 +2182,9 @@
               "text": "DataSet",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1600,7 +2196,9 @@
               "text": "DataSource",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1612,7 +2210,9 @@
               "text": "DataTable",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1624,7 +2224,9 @@
               "text": "DataUtil",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1636,7 +2238,9 @@
               "text": "display",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1648,7 +2252,9 @@
               "text": "DirtySprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1660,7 +2266,9 @@
               "text": "LineSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1672,7 +2280,9 @@
               "text": "RectSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1684,7 +2294,9 @@
               "text": "TextSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1696,7 +2308,9 @@
               "text": "flex",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1708,7 +2322,9 @@
               "text": "FlareVis",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -1720,7 +2336,9 @@
               "text": "physics",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1732,7 +2350,9 @@
               "text": "DragForce",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1744,7 +2364,9 @@
               "text": "GravityForce",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1756,7 +2378,9 @@
               "text": "IForce",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1768,7 +2392,9 @@
               "text": "NBodyForce",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1780,7 +2406,9 @@
               "text": "Particle",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1792,7 +2420,9 @@
               "text": "Simulation",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1804,7 +2434,9 @@
               "text": "Spring",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1816,7 +2448,9 @@
               "text": "SpringForce",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -1828,7 +2462,9 @@
               "text": "query",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1840,7 +2476,9 @@
               "text": "AggregateExpression",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1852,7 +2490,9 @@
               "text": "And",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1864,7 +2504,9 @@
               "text": "Arithmetic",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1876,7 +2518,9 @@
               "text": "Average",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1888,7 +2532,9 @@
               "text": "BinaryExpression",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1900,7 +2546,9 @@
               "text": "Comparison",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1912,7 +2560,9 @@
               "text": "CompositeExpression",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1924,7 +2574,9 @@
               "text": "Count",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1936,7 +2588,9 @@
               "text": "DateUtil",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1948,7 +2602,9 @@
               "text": "Distinct",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1960,7 +2616,9 @@
               "text": "Expression",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1972,7 +2630,9 @@
               "text": "ExpressionIterator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1984,7 +2644,9 @@
               "text": "Fn",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -1996,7 +2658,9 @@
               "text": "If",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2008,7 +2672,9 @@
               "text": "IsA",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2020,7 +2686,9 @@
               "text": "Literal",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2032,7 +2700,9 @@
               "text": "Match",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2044,7 +2714,9 @@
               "text": "Maximum",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -2056,7 +2728,9 @@
               "text": "methods",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2068,7 +2742,9 @@
               "text": "add",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2080,7 +2756,9 @@
               "text": "and",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2092,7 +2770,9 @@
               "text": "average",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2104,7 +2784,9 @@
               "text": "count",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2116,7 +2798,9 @@
               "text": "distinct",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2128,7 +2812,9 @@
               "text": "div",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2140,7 +2826,9 @@
               "text": "eq",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2152,7 +2840,9 @@
               "text": "fn",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2164,7 +2854,9 @@
               "text": "gt",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2176,7 +2868,9 @@
               "text": "gte",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2188,7 +2882,9 @@
               "text": "iff",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2200,7 +2896,9 @@
               "text": "isa",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2212,7 +2910,9 @@
               "text": "lt",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2224,7 +2924,9 @@
               "text": "lte",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2236,7 +2938,9 @@
               "text": "max",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2248,7 +2952,9 @@
               "text": "min",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2260,7 +2966,9 @@
               "text": "mod",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2272,7 +2980,9 @@
               "text": "mul",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2284,7 +2994,9 @@
               "text": "neq",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2296,7 +3008,9 @@
               "text": "not",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2308,7 +3022,9 @@
               "text": "or",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2320,7 +3036,9 @@
               "text": "orderby",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2332,7 +3050,9 @@
               "text": "range",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2344,7 +3064,9 @@
               "text": "select",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2356,7 +3078,9 @@
               "text": "stddev",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2368,7 +3092,9 @@
               "text": "sub",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2380,7 +3106,9 @@
               "text": "sum",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2392,7 +3120,9 @@
               "text": "update",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2404,7 +3134,9 @@
               "text": "variance",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2416,7 +3148,9 @@
               "text": "where",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2428,7 +3162,9 @@
               "text": "xor",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2440,7 +3176,9 @@
               "text": "_",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2452,7 +3190,9 @@
               "text": "Minimum",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2464,7 +3204,9 @@
               "text": "Not",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2476,7 +3218,9 @@
               "text": "Or",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2488,7 +3232,9 @@
               "text": "Query",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2500,7 +3246,9 @@
               "text": "Range",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2512,7 +3260,9 @@
               "text": "StringUtil",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2524,7 +3274,9 @@
               "text": "Sum",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2536,7 +3288,9 @@
               "text": "Variable",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2548,7 +3302,9 @@
               "text": "Variance",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2560,7 +3316,9 @@
               "text": "Xor",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -2572,7 +3330,9 @@
               "text": "scale",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2584,7 +3344,9 @@
               "text": "IScaleMap",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2596,7 +3358,9 @@
               "text": "LinearScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2608,7 +3372,9 @@
               "text": "LogScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2620,7 +3386,9 @@
               "text": "OrdinalScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2632,7 +3400,9 @@
               "text": "QuantileScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2644,7 +3414,9 @@
               "text": "QuantitativeScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2656,7 +3428,9 @@
               "text": "RootScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2668,7 +3442,9 @@
               "text": "Scale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2680,7 +3456,9 @@
               "text": "ScaleType",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2692,7 +3470,9 @@
               "text": "TimeScale",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -2704,7 +3484,9 @@
               "text": "util",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2716,7 +3498,9 @@
               "text": "Arrays",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2728,7 +3512,9 @@
               "text": "Colors",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2740,7 +3526,9 @@
               "text": "Dates",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2752,7 +3540,9 @@
               "text": "Displays",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2764,7 +3554,9 @@
               "text": "Filter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2776,7 +3568,9 @@
               "text": "Geometry",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -2788,7 +3582,9 @@
               "text": "heap",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2800,7 +3596,9 @@
               "text": "FibonacciHeap",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2812,7 +3610,9 @@
               "text": "HeapNode",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2824,7 +3624,9 @@
               "text": "IEvaluable",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2836,7 +3638,9 @@
               "text": "IPredicate",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2848,7 +3652,9 @@
               "text": "IValueProxy",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -2860,7 +3666,9 @@
               "text": "math",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2872,7 +3680,9 @@
               "text": "DenseMatrix",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2884,7 +3694,9 @@
               "text": "IMatrix",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2896,7 +3708,9 @@
               "text": "SparseMatrix",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2908,7 +3722,9 @@
               "text": "Maths",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2920,7 +3736,9 @@
               "text": "Orientation",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -2932,7 +3750,9 @@
               "text": "palette",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2944,7 +3764,9 @@
               "text": "ColorPalette",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2956,7 +3778,9 @@
               "text": "Palette",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2968,7 +3792,9 @@
               "text": "ShapePalette",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2980,7 +3806,9 @@
               "text": "SizePalette",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -2992,7 +3820,9 @@
               "text": "Property",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3004,7 +3834,9 @@
               "text": "Shapes",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3016,7 +3848,9 @@
               "text": "Sort",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3028,7 +3862,9 @@
               "text": "Stats",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3040,7 +3876,9 @@
               "text": "Strings",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 125,
@@ -3052,7 +3890,9 @@
               "text": "vis",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3064,7 +3904,9 @@
               "text": "axis",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3076,7 +3918,9 @@
               "text": "Axes",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3088,7 +3932,9 @@
               "text": "Axis",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3100,7 +3946,9 @@
               "text": "AxisGridLine",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3112,7 +3960,9 @@
               "text": "AxisLabel",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3124,7 +3974,9 @@
               "text": "CartesianAxes",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3136,7 +3988,9 @@
               "text": "controls",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3148,7 +4002,9 @@
               "text": "AnchorControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3160,7 +4016,9 @@
               "text": "ClickControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3172,7 +4030,9 @@
               "text": "Control",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3184,7 +4044,9 @@
               "text": "ControlList",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3196,7 +4058,9 @@
               "text": "DragControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3208,7 +4072,9 @@
               "text": "ExpandControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3220,7 +4086,9 @@
               "text": "HoverControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3232,7 +4100,9 @@
               "text": "IControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3244,7 +4114,9 @@
               "text": "PanZoomControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3256,7 +4128,9 @@
               "text": "SelectionControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3268,7 +4142,9 @@
               "text": "TooltipControl",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -3280,7 +4156,9 @@
               "text": "data",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3292,7 +4170,9 @@
               "text": "Data",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3304,7 +4184,9 @@
               "text": "DataList",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3316,7 +4198,9 @@
               "text": "DataSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3328,7 +4212,9 @@
               "text": "EdgeSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3340,7 +4226,9 @@
               "text": "NodeSprite",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3352,7 +4240,9 @@
               "text": "render",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3364,7 +4254,9 @@
               "text": "ArrowType",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3376,7 +4268,9 @@
               "text": "EdgeRenderer",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3388,7 +4282,9 @@
               "text": "IRenderer",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3400,7 +4296,9 @@
               "text": "ShapeRenderer",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3412,7 +4310,9 @@
               "text": "ScaleBinding",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3424,7 +4324,9 @@
               "text": "Tree",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3436,7 +4338,9 @@
               "text": "TreeBuilder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3448,7 +4352,9 @@
               "text": "events",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3460,7 +4366,9 @@
               "text": "DataEvent",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3472,7 +4380,9 @@
               "text": "SelectionEvent",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3484,7 +4394,9 @@
               "text": "TooltipEvent",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3496,7 +4408,9 @@
               "text": "VisualizationEvent",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3508,7 +4422,9 @@
               "text": "legend",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3520,7 +4436,9 @@
               "text": "Legend",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3532,7 +4450,9 @@
               "text": "LegendItem",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3544,7 +4464,9 @@
               "text": "LegendRange",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -3556,7 +4478,9 @@
               "text": "operator",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3568,7 +4492,9 @@
               "text": "distortion",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3580,7 +4506,9 @@
               "text": "BifocalDistortion",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3592,7 +4520,9 @@
               "text": "Distortion",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3604,7 +4534,9 @@
               "text": "FisheyeDistortion",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3616,7 +4548,9 @@
               "text": "encoder",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3628,7 +4562,9 @@
               "text": "ColorEncoder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3640,7 +4576,9 @@
               "text": "Encoder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3652,7 +4590,9 @@
               "text": "PropertyEncoder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3664,7 +4604,9 @@
               "text": "ShapeEncoder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3676,7 +4618,9 @@
               "text": "SizeEncoder",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3688,7 +4632,9 @@
               "text": "filter",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3700,7 +4646,9 @@
               "text": "FisheyeTreeFilter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3712,7 +4660,9 @@
               "text": "GraphDistanceFilter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3724,7 +4674,9 @@
               "text": "VisibilityFilter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3736,7 +4688,9 @@
               "text": "IOperator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3748,7 +4702,9 @@
               "text": "label",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3760,7 +4716,9 @@
               "text": "Labeler",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3772,7 +4730,9 @@
               "text": "RadialLabeler",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3784,7 +4744,9 @@
               "text": "StackedAreaLabeler",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 375,
@@ -3796,7 +4758,9 @@
               "text": "layout",
               "dx": -3,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3808,7 +4772,9 @@
               "text": "AxisLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3820,7 +4786,9 @@
               "text": "BundledEdgeRouter",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3832,7 +4800,9 @@
               "text": "CircleLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3844,7 +4814,9 @@
               "text": "CirclePackingLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3856,7 +4828,9 @@
               "text": "DendrogramLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3868,7 +4842,9 @@
               "text": "ForceDirectedLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3880,7 +4856,9 @@
               "text": "IcicleTreeLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3892,7 +4870,9 @@
               "text": "IndentedTreeLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3904,7 +4884,9 @@
               "text": "Layout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3916,7 +4898,9 @@
               "text": "NodeLinkTreeLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3928,7 +4912,9 @@
               "text": "PieLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3940,7 +4926,9 @@
               "text": "RadialTreeLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3952,7 +4940,9 @@
               "text": "RandomLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3964,7 +4954,9 @@
               "text": "StackedAreaLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3976,7 +4968,9 @@
               "text": "TreeMapLayout",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3988,7 +4982,9 @@
               "text": "Operator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -4000,7 +4996,9 @@
               "text": "OperatorList",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -4012,7 +5010,9 @@
               "text": "OperatorSequence",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -4024,7 +5024,9 @@
               "text": "OperatorSwitch",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -4036,7 +5038,9 @@
               "text": "SortOperator",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -4048,7 +5052,9 @@
               "text": "Visualization",
               "dx": 2,
               "font": "sans-serif",
-              "fontSize": 8
+              "fontSize": 8,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0

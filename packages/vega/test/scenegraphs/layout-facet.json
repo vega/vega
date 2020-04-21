@@ -31,7 +31,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 225
+                      "x2": 225,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -42,7 +44,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 291
+                      "x2": 291,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -53,7 +57,9 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 219
+                      "x2": 219,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -81,7 +87,9 @@
                       "fill": "#f58518",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 189
+                      "x2": 189,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -109,7 +117,9 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 150
+                      "x2": 150,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     },
                     {
                       "zindex": 0,
@@ -120,7 +130,9 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 266
+                      "x2": 266,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -222,7 +234,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5
+                      "y": 0.5,
+                      "ariaLabel": "y axis for cell, represents values a,b,c",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -250,7 +265,9 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRole": "caption",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
@@ -326,7 +343,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5
+                      "y": 0.5,
+                      "ariaLabel": "y axis for cell, represents values b",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -354,7 +374,9 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRole": "caption",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
@@ -443,7 +465,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5
+                      "y": 0.5,
+                      "ariaLabel": "y axis for cell, represents values b,c",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -471,7 +496,9 @@
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold"
+                              "fontWeight": "bold",
+                              "ariaRole": "caption",
+                              "ariaRoleDescription": "title"
                             }
                           ],
                           "zindex": 0
@@ -515,7 +542,9 @@
                       "text": "Row Title",
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -548,7 +577,9 @@
                       "text": "Column Title",
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold"
+                      "fontWeight": "bold",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -928,7 +959,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5
+                      "y": 0.5,
+                      "ariaLabel": "x axis, represents values from 0 to 7",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0

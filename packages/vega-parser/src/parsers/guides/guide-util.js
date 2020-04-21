@@ -1,6 +1,7 @@
-import {Center, End, Left, Right, Start, Vertical} from './constants';
-import {value} from '../../util';
-import {isObject, stringValue} from 'vega-util';
+import {Bottom, Center, End, Left, LegendScales, Right, Start, Top, Vertical} from './constants';
+import {isSignal, value} from '../../util';
+import {isDiscrete} from 'vega-scale';
+import {isArray, isObject, stringValue} from 'vega-util';
 
 export function lookup(spec, config) {
   const _ = (name, dflt) => value(spec[name], value(config[name], dflt));
@@ -85,4 +86,82 @@ export function extendOffset(value, offset) {
     : !value ? offset
     : !isObject(value) ? { value, offset }
     : { ...value, offset: extendOffset(value.offset, offset) };
+}
+
+function interpretableLegendType(legendType) {
+  switch (legendType) {
+    case 'fill':
+      return 'fill color';
+    case 'stroke':
+      return 'stroke color';
+    default:
+      return legendType;
+  }
+}
+
+export function formatList(list) {
+  if (list.length === 0) {
+    return '';
+  }
+  if (list.length === 1) {
+    return list[0];
+  }
+  return `${list.slice(0, list.length-1).join(',')}${list.length > 2 ? ',' : ''} and${list[list.length-1]}`;
+}
+
+function wrapFormat(text, format, formatType) {
+  if (format == null) return text;
+  const func = formatType === 'time' ? 'timeFormat' : formatType === 'utc' ? 'utcFormat' : 'format';
+  return `${func}(${text}, ${isObject(format) && isSignal(format) ? format.signal : `"${format}"`})`;
+}
+
+function domainText(scaleType, scaleName, format, formatType) {
+  return ' represents values ' + (isDiscrete(scaleType)
+    ? `" + domain('${scaleName}')`
+    : `from " + ${wrapFormat(
+        `domain("${scaleName}")[0]`,
+        format,
+        formatType
+      )} + " to " + ${wrapFormat(
+        `domain("${scaleName}")[1]`,
+        format,
+        formatType
+      )}`);
+}
+
+function titleText(title) {
+  if (isArray(title)) {
+    // only use the first row of multiline titles
+    title = title[0];
+  }
+
+  if (title) {
+    return isObject(title) && isSignal(title) ? ` for " + ${title.signal} + "` : ` for ${title}`;
+  }
+
+  return '';
+}
+
+export function legendAriaLabel(_, scope) {
+  const domains = [];
+  for (const legendType of LegendScales) {
+    const scaleName = _(legendType);
+    if (scaleName) {
+      const scaleType = scope.scales[scaleName].params.type;
+      const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
+      domains.push(` ${interpretableLegendType(legendType)}${domain} + "`);
+    }
+  }
+  const signal = `"legend${titleText(_('title'))},${formatList(domains)}"`;
+  return { signal };
+}
+
+export function axisAriaLabel(_, scope) {
+  const scaleName = _('scale');
+  const scaleType = scope.scales[scaleName].params.type;
+  const orient = _('orient');
+  const axisType = orient === Bottom || orient === Top ? 'x' : 'y';
+  const domain = domainText(scaleType, scaleName, _('format'), _('formatType') || scaleType);
+  const signal = `"${axisType} axis${titleText(_('title'))},${domain}`;
+  return { signal };
 }

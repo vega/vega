@@ -292,7 +292,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 390.5
+                      "y": 390.5,
+                      "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -531,7 +534,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5
+                      "y": 0.5,
+                      "ariaLabel": "y axis, represents values from 0 to 1600",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -556,861 +562,1107 @@
                               "y": 50.10037499999997,
                               "height": 339.899625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 6.012931034482758,
                               "y": 56.93512499999998,
                               "height": 333.06487500000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 11.63793103448276,
                               "y": 24.721125000000015,
                               "height": 365.27887499999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 17.650862068965516,
                               "y": 35.970187499999994,
                               "height": 354.0298125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 23.461745689655174,
                               "y": 43.72875000000001,
                               "height": 346.27125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 29.474676724137932,
                               "y": 35.44125000000002,
                               "height": 354.55875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 35.29364224137931,
                               "y": 41.23518750000002,
                               "height": 348.76481249999995,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 41.306573275862064,
                               "y": 20.0655,
                               "height": 369.9345,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 47.319504310344826,
                               "y": 39.8506875,
                               "height": 350.1493125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 53.1384698275862,
                               "y": 41.58374999999999,
                               "height": 348.41625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 59.15948275862069,
                               "y": 69.48093750000001,
                               "height": 320.5190625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 64.97844827586206,
                               "y": 68.18175000000001,
                               "height": 321.81825,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 70.99137931034483,
                               "y": 57.0350625,
                               "height": 332.9649375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 77.00431034482759,
                               "y": 87.764625,
                               "height": 302.235375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 82.4353448275862,
                               "y": 107.16956250000003,
                               "height": 282.83043749999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 88.44827586206897,
                               "y": 85.444125,
                               "height": 304.555875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 94.25915948275862,
                               "y": 83.89387500000001,
                               "height": 306.106125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 100.27209051724137,
                               "y": 91.557375,
                               "height": 298.442625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 106.09105603448275,
                               "y": 94.76268750000001,
                               "height": 295.2373125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 112.10398706896552,
                               "y": 113.68987500000003,
                               "height": 276.31012499999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 118.11691810344827,
                               "y": 136.27087500000002,
                               "height": 253.72912499999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 123.93588362068965,
                               "y": 131.678625,
                               "height": 258.321375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 129.95689655172413,
                               "y": 112.25906249999998,
                               "height": 277.74093750000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 135.77586206896552,
                               "y": 110.15550000000003,
                               "height": 279.8445,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 141.78879310344828,
                               "y": 114.51375000000002,
                               "height": 275.48625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 147.80172413793102,
                               "y": 120.23456250000001,
                               "height": 269.76543749999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 153.23275862068965,
                               "y": 110.32368749999999,
                               "height": 279.6763125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 159.2456896551724,
                               "y": 127.50074999999997,
                               "height": 262.49925,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 165.05657327586206,
                               "y": 129.884625,
                               "height": 260.115375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 171.06950431034483,
                               "y": 148.73137499999999,
                               "height": 241.26862500000001,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 176.88846982758622,
                               "y": 167.79262500000002,
                               "height": 222.20737499999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 182.90140086206895,
                               "y": 166.70793749999999,
                               "height": 223.29206250000001,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 188.91433189655172,
                               "y": 191.27550000000002,
                               "height": 198.72449999999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 194.7332974137931,
                               "y": 174.096,
                               "height": 215.904,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 200.7543103448276,
                               "y": 161.7744375,
                               "height": 228.2255625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 206.57327586206898,
                               "y": 175.54387499999996,
                               "height": 214.45612500000004,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 212.58620689655174,
                               "y": 181.423125,
                               "height": 208.576875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 218.59913793103448,
                               "y": 184.9696875,
                               "height": 205.0303125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 224.0301724137931,
                               "y": 183.256125,
                               "height": 206.743875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 230.04310344827584,
                               "y": 166.50075,
                               "height": 223.49925,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 235.85398706896552,
                               "y": 155.12493750000002,
                               "height": 234.87506249999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 241.86691810344828,
                               "y": 152.46562500000002,
                               "height": 237.53437499999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 247.68588362068968,
                               "y": 148.61193749999998,
                               "height": 241.38806250000002,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 253.69881465517238,
                               "y": 144.2975625,
                               "height": 245.7024375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 259.7117456896552,
                               "y": 147.2323125,
                               "height": 242.7676875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 265.53071120689657,
                               "y": 133.88943749999996,
                               "height": 256.1105625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 271.55172413793105,
                               "y": 132.06374999999997,
                               "height": 257.93625000000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 277.3706896551724,
                               "y": 118.96949999999997,
                               "height": 271.0305,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 283.3836206896552,
                               "y": 114.28706249999998,
                               "height": 275.7129375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 289.39655172413796,
                               "y": 110.92087499999998,
                               "height": 279.07912500000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 295.02155172413796,
                               "y": 115.4863125,
                               "height": 274.5136875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 301.0344827586207,
                               "y": 120.09562499999998,
                               "height": 269.904375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 306.84536637931035,
                               "y": 116.83424999999997,
                               "height": 273.16575,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 312.8582974137931,
                               "y": 111.92025000000004,
                               "height": 278.07975,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 318.6772629310345,
                               "y": 121.45574999999998,
                               "height": 268.54425000000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 324.69019396551727,
                               "y": 120.84149999999998,
                               "height": 269.1585,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 330.703125,
                               "y": 118.32112500000001,
                               "height": 271.678875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 336.5220905172414,
                               "y": 114.51375000000002,
                               "height": 275.48625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 342.5431034482759,
                               "y": 103.88137500000002,
                               "height": 286.11862499999995,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 348.3620689655172,
                               "y": 94.59449999999997,
                               "height": 295.4055,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 354.375,
                               "y": 102.06543750000002,
                               "height": 287.93456249999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 360.3879310344828,
                               "y": 96.62250000000002,
                               "height": 293.3775,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 365.81896551724134,
                               "y": 102.23118750000002,
                               "height": 287.76881249999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 371.8318965517241,
                               "y": 108.01781250000003,
                               "height": 281.98218749999995,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 377.6427801724138,
                               "y": 99.57187500000002,
                               "height": 290.42812499999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 383.65571120689657,
                               "y": 99.6133125,
                               "height": 290.3866875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 389.4746767241379,
                               "y": 89.16862499999998,
                               "height": 300.83137500000004,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 395.48760775862064,
                               "y": 92.54456250000003,
                               "height": 297.45543749999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 401.50053879310343,
                               "y": 90.4775625,
                               "height": 299.5224375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 407.3195043103448,
                               "y": 95.7913125,
                               "height": 294.2086875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 413.3405172413793,
                               "y": 85.43925,
                               "height": 304.56075,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 419.1594827586207,
                               "y": 85.72931250000002,
                               "height": 304.2706875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 425.1724137931035,
                               "y": 77.98050000000003,
                               "height": 312.0195,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 431.1853448275862,
                               "y": 77.83912499999997,
                               "height": 312.16087500000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 436.6163793103448,
                               "y": 74.37543750000003,
                               "height": 315.62456249999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 442.6293103448276,
                               "y": 70.5388125,
                               "height": 319.4611875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 448.44019396551727,
                               "y": 80.41556250000002,
                               "height": 309.5844375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 454.453125,
                               "y": 80.38875,
                               "height": 309.61125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 460.2720905172414,
                               "y": 78.81412499999999,
                               "height": 311.185875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 466.2850215517241,
                               "y": 72.193875,
                               "height": 317.806125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 472.2979525862069,
                               "y": 64.38656250000001,
                               "height": 325.6134375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 478.11691810344826,
                               "y": 54.12712499999998,
                               "height": 335.872875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 484.1379310344828,
                               "y": 48.596437499999965,
                               "height": 341.4035625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 489.9568965517241,
                               "y": 44.28937500000001,
                               "height": 345.710625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 495.96982758620686,
                               "y": 39.42899999999999,
                               "height": 350.571,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 501.98275862068965,
                               "y": 47.087625000000024,
                               "height": 342.912375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 507.4137931034483,
                               "y": 43.66537500000003,
                               "height": 346.33462499999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 513.4186422413793,
                               "y": 28.67231250000003,
                               "height": 361.32768749999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 519.2376077586207,
                               "y": 16.91137500000003,
                               "height": 373.088625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 525.2505387931034,
                               "y": 23.558437500000043,
                               "height": 366.4415625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 531.0695043103449,
                               "y": 35.27793750000001,
                               "height": 354.7220625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 537.0824353448277,
                               "y": 30.71493749999999,
                               "height": 359.2850625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 543.0953663793103,
                               "y": 17.854687499999997,
                               "height": 372.1453125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 548.9143318965517,
                               "y": 12.338624999999993,
                               "height": 377.661375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 554.9272629310345,
                               "y": 28.97212499999998,
                               "height": 361.027875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 560.7543103448276,
                               "y": 32.08725000000004,
                               "height": 357.91274999999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 566.7672413793103,
                               "y": 53.97843750000003,
                               "height": 336.02156249999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 572.7801724137931,
                               "y": 65.6589375,
                               "height": 324.3410625,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 578.4051724137931,
                               "y": 67.59187499999999,
                               "height": 322.40812500000004,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 584.4100215517242,
                               "y": 52.26243750000004,
                               "height": 337.73756249999997,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 590.2289870689655,
                               "y": 48.65737499999996,
                               "height": 341.34262500000006,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 596.2419181034483,
                               "y": 77.99999999999999,
                               "height": 312,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 602.0608836206897,
                               "y": 81.07612499999996,
                               "height": 308.92387500000007,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 608.0738146551724,
                               "y": 77.31018750000003,
                               "height": 312.68981249999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 614.0867456896552,
                               "y": 105.69975000000002,
                               "height": 284.30025,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 619.9057112068965,
                               "y": 153.8671875,
                               "height": 236.1328125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 625.9186422413793,
                               "y": 171.54149999999998,
                               "height": 218.45850000000002,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 631.7456896551724,
                               "y": 169.8328125,
                               "height": 220.1671875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 637.7586206896552,
                               "y": 188.69174999999998,
                               "height": 201.30825000000002,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 643.7715517241379,
                               "y": 210.82181250000002,
                               "height": 179.17818749999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 649.2025862068965,
                               "y": 195.51918750000002,
                               "height": 194.48081249999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 655.2074353448277,
                               "y": 177.2525625,
                               "height": 212.7474375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 661.026400862069,
                               "y": 165.95962500000002,
                               "height": 224.04037499999998,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 667.0393318965517,
                               "y": 165.91574999999997,
                               "height": 224.08425000000003,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 672.858297413793,
                               "y": 149.30175,
                               "height": 240.69825,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 678.8712284482758,
                               "y": 141.223875,
                               "height": 248.776125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 684.8841594827586,
                               "y": 132.33675000000005,
                               "height": 257.66324999999995,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 690.703125,
                               "y": 137.4286875,
                               "height": 252.5713125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 696.7160560344828,
                               "y": 122.94018749999998,
                               "height": 267.0598125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 702.5431034482759,
                               "y": 118.19437500000001,
                               "height": 271.80562499999996,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 708.5560344827586,
                               "y": 128.2441875,
                               "height": 261.7558125,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 714.5689655172414,
                               "y": 120.7805625,
                               "height": 269.2194375,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             },
                             {
                               "x": 720,
                               "y": 112.0153125,
                               "height": 277.9846875,
                               "fill": "steelblue",
-                              "y2": 390
+                              "y2": 390,
+                              "ariaRole": "graphics-symbol",
+                              "ariaRoleDescription": "area"
                             }
                           ],
                           "zindex": 0
@@ -1714,7 +1966,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 70.5
+                      "y": 70.5,
+                      "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Mar 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 1
@@ -1730,861 +1985,1107 @@
                       "y": 8.992374999999996,
                       "height": 61.007625000000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 6.012931034482758,
                       "y": 10.219124999999995,
                       "height": 59.78087500000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 11.63793103448276,
                       "y": 4.437125000000003,
                       "height": 65.56287499999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 17.650862068965516,
                       "y": 6.456187499999999,
                       "height": 63.5438125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 23.461745689655174,
                       "y": 7.848750000000003,
                       "height": 62.15125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 29.474676724137932,
                       "y": 6.361250000000003,
                       "height": 63.638749999999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 35.29364224137931,
                       "y": 7.401187500000004,
                       "height": 62.598812499999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 41.306573275862064,
                       "y": 3.6014999999999997,
                       "height": 66.3985,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 47.319504310344826,
                       "y": 7.1526875,
                       "height": 62.8473125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 53.1384698275862,
                       "y": 7.463749999999997,
                       "height": 62.53625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 59.15948275862069,
                       "y": 12.470937500000002,
                       "height": 57.529062499999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 64.97844827586206,
                       "y": 12.23775,
                       "height": 57.76225,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 70.99137931034483,
                       "y": 10.2370625,
                       "height": 59.7629375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 77.00431034482759,
                       "y": 15.752625,
                       "height": 54.247375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 82.4353448275862,
                       "y": 19.235562500000004,
                       "height": 50.7644375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 88.44827586206897,
                       "y": 15.336125,
                       "height": 54.663875000000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 94.25915948275862,
                       "y": 15.057875000000003,
                       "height": 54.942125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 100.27209051724137,
                       "y": 16.433374999999998,
                       "height": 53.566625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 106.09105603448275,
                       "y": 17.008687500000004,
                       "height": 52.99131249999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 112.10398706896552,
                       "y": 20.405875000000005,
                       "height": 49.59412499999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 118.11691810344827,
                       "y": 24.458875000000003,
                       "height": 45.541124999999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 123.93588362068965,
                       "y": 23.634625000000003,
                       "height": 46.365375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 129.95689655172413,
                       "y": 20.149062499999996,
                       "height": 49.8509375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 135.77586206896552,
                       "y": 19.771500000000007,
                       "height": 50.2285,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 141.78879310344828,
                       "y": 20.55375,
                       "height": 49.44625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 147.80172413793102,
                       "y": 21.580562500000003,
                       "height": 48.4194375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 153.23275862068965,
                       "y": 19.8016875,
                       "height": 50.1983125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 159.2456896551724,
                       "y": 22.884749999999993,
                       "height": 47.11525,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 165.05657327586206,
                       "y": 23.312625,
                       "height": 46.687375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 171.06950431034483,
                       "y": 26.695374999999995,
                       "height": 43.304625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 176.88846982758622,
                       "y": 30.116625000000003,
                       "height": 39.883375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 182.90140086206895,
                       "y": 29.9219375,
                       "height": 40.0780625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 188.91433189655172,
                       "y": 34.331500000000005,
                       "height": 35.668499999999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 194.7332974137931,
                       "y": 31.248,
                       "height": 38.751999999999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 200.7543103448276,
                       "y": 29.0364375,
                       "height": 40.963562499999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 206.57327586206898,
                       "y": 31.507874999999995,
                       "height": 38.492125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 212.58620689655174,
                       "y": 32.563125,
                       "height": 37.436875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 218.59913793103448,
                       "y": 33.199687499999996,
                       "height": 36.800312500000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 224.0301724137931,
                       "y": 32.892125,
                       "height": 37.107875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 230.04310344827584,
                       "y": 29.88475,
                       "height": 40.11525,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 235.85398706896552,
                       "y": 27.8429375,
                       "height": 42.157062499999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 241.86691810344828,
                       "y": 27.365625000000005,
                       "height": 42.63437499999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 247.68588362068968,
                       "y": 26.673937499999997,
                       "height": 43.326062500000006,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 253.69881465517238,
                       "y": 25.899562500000002,
                       "height": 44.1004375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 259.7117456896552,
                       "y": 26.4263125,
                       "height": 43.5736875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 265.53071120689657,
                       "y": 24.031437499999996,
                       "height": 45.968562500000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 271.55172413793105,
                       "y": 23.703749999999996,
                       "height": 46.29625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 277.3706896551724,
                       "y": 21.353499999999997,
                       "height": 48.6465,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 283.3836206896552,
                       "y": 20.513062499999997,
                       "height": 49.4869375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 289.39655172413796,
                       "y": 19.908875,
                       "height": 50.091125000000005,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 295.02155172413796,
                       "y": 20.728312499999998,
                       "height": 49.2716875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 301.0344827586207,
                       "y": 21.555625,
                       "height": 48.444375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 306.84536637931035,
                       "y": 20.970249999999993,
                       "height": 49.02975000000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 312.8582974137931,
                       "y": 20.088250000000006,
                       "height": 49.91175,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 318.6772629310345,
                       "y": 21.799749999999996,
                       "height": 48.200250000000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 324.69019396551727,
                       "y": 21.689499999999995,
                       "height": 48.310500000000005,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 330.703125,
                       "y": 21.237125000000002,
                       "height": 48.762874999999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 336.5220905172414,
                       "y": 20.55375,
                       "height": 49.44625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 342.5431034482759,
                       "y": 18.645375000000005,
                       "height": 51.354625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 348.3620689655172,
                       "y": 16.978499999999997,
                       "height": 53.0215,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 354.375,
                       "y": 18.319437500000003,
                       "height": 51.68056249999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 360.3879310344828,
                       "y": 17.3425,
                       "height": 52.6575,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 365.81896551724134,
                       "y": 18.349187500000003,
                       "height": 51.6508125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 371.8318965517241,
                       "y": 19.387812500000006,
                       "height": 50.61218749999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 377.6427801724138,
                       "y": 17.871875000000003,
                       "height": 52.128125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 383.65571120689657,
                       "y": 17.8793125,
                       "height": 52.1206875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 389.4746767241379,
                       "y": 16.004624999999997,
                       "height": 53.995375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 395.48760775862064,
                       "y": 16.610562500000007,
                       "height": 53.38943749999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 401.50053879310343,
                       "y": 16.239562499999998,
                       "height": 53.7604375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 407.3195043103448,
                       "y": 17.1933125,
                       "height": 52.806687499999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 413.3405172413793,
                       "y": 15.335250000000002,
                       "height": 54.66475,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 419.1594827586207,
                       "y": 15.387312500000004,
                       "height": 54.61268749999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 425.1724137931035,
                       "y": 13.996500000000005,
                       "height": 56.003499999999995,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 431.1853448275862,
                       "y": 13.971124999999994,
                       "height": 56.028875000000006,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 436.6163793103448,
                       "y": 13.349437500000006,
                       "height": 56.65056249999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 442.6293103448276,
                       "y": 12.660812500000002,
                       "height": 57.339187499999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 448.44019396551727,
                       "y": 14.433562500000004,
                       "height": 55.56643749999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 454.453125,
                       "y": 14.42875,
                       "height": 55.57125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 460.2720905172414,
                       "y": 14.146124999999998,
                       "height": 55.853875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 466.2850215517241,
                       "y": 12.957875000000001,
                       "height": 57.042125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 472.2979525862069,
                       "y": 11.556562500000002,
                       "height": 58.4434375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 478.11691810344826,
                       "y": 9.715124999999997,
                       "height": 60.284875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 484.1379310344828,
                       "y": 8.722437499999995,
                       "height": 61.2775625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 489.9568965517241,
                       "y": 7.949375000000001,
                       "height": 62.050625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 495.96982758620686,
                       "y": 7.076999999999998,
                       "height": 62.923,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 501.98275862068965,
                       "y": 8.451625000000003,
                       "height": 61.54837499999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 507.4137931034483,
                       "y": 7.837375000000005,
                       "height": 62.16262499999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 513.4186422413793,
                       "y": 5.146312500000006,
                       "height": 64.85368749999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 519.2376077586207,
                       "y": 3.0353750000000055,
                       "height": 66.964625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 525.2505387931034,
                       "y": 4.228437500000007,
                       "height": 65.77156249999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 531.0695043103449,
                       "y": 6.331937500000001,
                       "height": 63.6680625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 537.0824353448277,
                       "y": 5.512937499999998,
                       "height": 64.48706250000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 543.0953663793103,
                       "y": 3.2046874999999995,
                       "height": 66.7953125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 548.9143318965517,
                       "y": 2.214624999999999,
                       "height": 67.785375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 554.9272629310345,
                       "y": 5.200124999999996,
                       "height": 64.799875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 560.7543103448276,
                       "y": 5.759250000000007,
                       "height": 64.24074999999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 566.7672413793103,
                       "y": 9.688437500000004,
                       "height": 60.311562499999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 572.7801724137931,
                       "y": 11.784937499999998,
                       "height": 58.2150625,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 578.4051724137931,
                       "y": 12.131874999999999,
                       "height": 57.868125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 584.4100215517242,
                       "y": 9.380437500000006,
                       "height": 60.619562499999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 590.2289870689655,
                       "y": 8.733374999999992,
                       "height": 61.266625000000005,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 596.2419181034483,
                       "y": 13.999999999999996,
                       "height": 56,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 602.0608836206897,
                       "y": 14.552124999999993,
                       "height": 55.44787500000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 608.0738146551724,
                       "y": 13.876187500000006,
                       "height": 56.12381249999999,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 614.0867456896552,
                       "y": 18.971750000000004,
                       "height": 51.02825,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 619.9057112068965,
                       "y": 27.6171875,
                       "height": 42.3828125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 625.9186422413793,
                       "y": 30.789499999999997,
                       "height": 39.2105,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 631.7456896551724,
                       "y": 30.482812499999998,
                       "height": 39.517187500000006,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 637.7586206896552,
                       "y": 33.867749999999994,
                       "height": 36.132250000000006,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 643.7715517241379,
                       "y": 37.8398125,
                       "height": 32.1601875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 649.2025862068965,
                       "y": 35.0931875,
                       "height": 34.9068125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 655.2074353448277,
                       "y": 31.8145625,
                       "height": 38.1854375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 661.026400862069,
                       "y": 29.787625000000002,
                       "height": 40.212374999999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 667.0393318965517,
                       "y": 29.779749999999996,
                       "height": 40.22025000000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 672.858297413793,
                       "y": 26.797749999999997,
                       "height": 43.20225000000001,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 678.8712284482758,
                       "y": 25.347874999999995,
                       "height": 44.652125000000005,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 684.8841594827586,
                       "y": 23.752750000000006,
                       "height": 46.247249999999994,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 690.703125,
                       "y": 24.6666875,
                       "height": 45.333312500000005,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 696.7160560344828,
                       "y": 22.066187499999998,
                       "height": 47.9338125,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 702.5431034482759,
                       "y": 21.214375,
                       "height": 48.785624999999996,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 708.5560344827586,
                       "y": 23.0181875,
                       "height": 46.981812500000004,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 714.5689655172414,
                       "y": 21.678562499999998,
                       "height": 48.3214375,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 720,
                       "y": 20.105312499999997,
                       "height": 49.8946875,
                       "fill": "steelblue",
-                      "y2": 70
+                      "y2": 70,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     }
                   ],
                   "zindex": 0
@@ -2601,7 +3102,9 @@
                       "width": null,
                       "height": 70,
                       "fill": "#333",
-                      "fillOpacity": 0.2
+                      "fillOpacity": 0.2,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -2616,7 +3119,9 @@
                       "y": 0,
                       "width": 1,
                       "height": 70,
-                      "fill": "firebrick"
+                      "fill": "firebrick",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0
@@ -2631,7 +3136,9 @@
                       "y": 0,
                       "width": 1,
                       "height": 70,
-                      "fill": "firebrick"
+                      "fill": "firebrick",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rect"
                     }
                   ],
                   "zindex": 0

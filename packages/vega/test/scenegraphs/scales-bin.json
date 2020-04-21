@@ -283,7 +283,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 300.5
+              "y": 300.5,
+              "ariaLabel": "x axis, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -438,7 +441,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 4",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -456,7 +462,9 @@
               "height": 225,
               "fill": "rgb(174, 167, 206)",
               "x2": 120,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 201,
@@ -465,7 +473,9 @@
               "height": 225,
               "fill": "rgb(247, 232, 212)",
               "x2": 240,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 161,
@@ -474,7 +484,9 @@
               "height": 300,
               "fill": "rgb(232, 229, 234)",
               "x2": 200,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 361,
@@ -483,7 +495,9 @@
               "height": 75,
               "fill": "rgb(193, 102, 12)",
               "x2": 400,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 121,
@@ -492,7 +506,9 @@
               "height": 150,
               "fill": "rgb(206, 205, 227)",
               "x2": 160,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 321,
@@ -501,7 +517,9 @@
               "height": 225,
               "fill": "rgb(226, 139, 41)",
               "x2": 360,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 41,
@@ -510,7 +528,9 @@
               "height": 225,
               "fill": "rgb(136, 120, 177)",
               "x2": 80,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 241,
@@ -519,7 +539,9 @@
               "height": 150,
               "fill": "rgb(252, 212, 161)",
               "x2": 280,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 1,
@@ -528,7 +550,9 @@
               "height": 75,
               "fill": "rgb(99, 66, 146)",
               "x2": 40,
-              "y2": 300
+              "y2": 300,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -1074,7 +1098,10 @@
               "y": 0,
               "width": 80,
               "height": 137,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Bins, size represents values from 0 to 100 and fill color represents values 0,10,20,30,40,50,60,70,80,90,100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

@@ -187,7 +187,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 68.75
+                      "y": 68.75,
+                      "ariaLabel": "x axis for Density Dot Plot, represents values from 0 to 20",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -202,289 +205,385 @@
                       "x": 90,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 31.500000000000004,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 140.99999999999997,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 232.5,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 74.25,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 154.5,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 163.5,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 48.75,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 113.25000000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 98.25,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 98.25,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 140.99999999999997,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 74.25,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 179.24999999999997,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 48.75,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 163.5,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 74.25,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 154.5,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 113.25000000000001,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 31.500000000000004,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 113.25000000000001,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 268.5,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 90,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 179.24999999999997,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 163.5,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 210.75,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 210.75,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 232.5,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 154.5,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 179.24999999999997,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 98.25,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 113.25000000000001,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 154.5,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 113.25000000000001,
                       "y": 24.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 24.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 90,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 74.25,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 48.75,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 125.25,
                       "y": 14.625000000000004,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 163.5,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 74.25,
                       "y": 24.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 195,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 140.99999999999997,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 195,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     }
                   ],
                   "zindex": 0
@@ -676,7 +775,10 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 68.75
+                      "y": 68.75,
+                      "ariaLabel": "x axis for Histogram Dot Plot, represents values from 0 to 20",
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "axis"
                     }
                   ],
                   "zindex": 0
@@ -691,289 +793,385 @@
                       "x": 92.62500000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 34.12500000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 141.37500000000003,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 238.87500000000003,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 82.875,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 121.875,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 43.875,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 112.12500000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 92.62500000000001,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 131.62499999999997,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 102.37499999999999,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 141.37500000000003,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 73.12500000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 180.37500000000003,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 53.62500000000001,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 73.12500000000001,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 112.12500000000001,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 34.12500000000001,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 112.12500000000001,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 268.125,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 92.62500000000001,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 121.875,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 121.875,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 180.37500000000003,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 24.374999999999996,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 209.62500000000006,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 219.375,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 229.125,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 151.125,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 180.37500000000003,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 102.37499999999999,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 112.12500000000001,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 14.625000000000002,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 112.12500000000001,
                       "y": 24.374999999999996,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 121.875,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 82.875,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 73.12500000000001,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 43.875,
                       "y": 53.625,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 121.875,
                       "y": 24.374999999999996,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 160.87500000000003,
                       "y": 4.874999999999998,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 73.12500000000001,
                       "y": 34.125,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 199.875,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 141.37500000000003,
                       "y": 43.87499999999999,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     },
                     {
                       "x": 190.12500000000006,
                       "y": 63.375,
                       "fill": "steelblue",
-                      "size": 95.0625
+                      "size": 95.0625,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "symbol"
                     }
                   ],
                   "zindex": 0

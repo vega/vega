@@ -262,7 +262,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaLabel": "x axis, represents values 0,1,2,3,4,5,6,7,8,9",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -501,7 +504,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 160",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -527,7 +533,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 165
+                      "y2": 165,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 55.55555555555556,
@@ -536,7 +544,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 146.25
+                      "y2": 146.25,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 111.11111111111111,
@@ -545,7 +555,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 98.75
+                      "y2": 98.75,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 166.66666666666669,
@@ -554,7 +566,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 176.25
+                      "y2": 176.25,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 222.22222222222223,
@@ -563,7 +577,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 135
+                      "y2": 135,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 277.77777777777777,
@@ -572,7 +588,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 170
+                      "y2": 170,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 333.33333333333337,
@@ -581,7 +599,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 91.25000000000001
+                      "y2": 91.25000000000001,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 388.8888888888889,
@@ -590,7 +610,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 178.75
+                      "y2": 178.75,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 444.44444444444446,
@@ -599,7 +621,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 114.99999999999999
+                      "y2": 114.99999999999999,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 500,
@@ -608,7 +632,9 @@
                       "fill": "#4c78a8",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 138.75
+                      "y2": 138.75,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     }
                   ],
                   "zindex": 0
@@ -630,7 +656,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 96.24999999999999
+                      "y2": 96.24999999999999,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 55.55555555555556,
@@ -639,7 +667,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 32.49999999999999
+                      "y2": 32.49999999999999,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 111.11111111111111,
@@ -648,7 +678,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 32.49999999999999
+                      "y2": 32.49999999999999,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 166.66666666666669,
@@ -657,7 +689,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 67.5
+                      "y2": 67.5,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 222.22222222222223,
@@ -666,7 +700,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 75
+                      "y2": 75,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 277.77777777777777,
@@ -675,7 +711,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 108.74999999999999
+                      "y2": 108.74999999999999,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 333.33333333333337,
@@ -684,7 +722,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 8.749999999999991
+                      "y2": 8.749999999999991,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 388.8888888888889,
@@ -693,7 +733,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 145
+                      "y2": 145,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 444.44444444444446,
@@ -702,7 +744,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 95
+                      "y2": 95,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     },
                     {
                       "x": 500,
@@ -711,7 +755,9 @@
                       "fill": "#f58518",
                       "fillOpacity": 1,
                       "interpolate": "monotone",
-                      "y2": 120
+                      "y2": 120,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "area"
                     }
                   ],
                   "zindex": 0

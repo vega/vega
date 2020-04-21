@@ -21,7 +21,9 @@ export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config), encode;
 
   encode = {
-    enter: {opacity: zero},
+    enter: {
+      opacity: zero
+    },
     update: {
       opacity: one,
       x: {field: {group: 'padding'}},

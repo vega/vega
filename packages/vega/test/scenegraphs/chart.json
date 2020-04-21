@@ -200,7 +200,10 @@
                 }
               ],
               "x": -9.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis for Left Title, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -455,7 +458,10 @@
                 }
               ],
               "x": 349.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis for Right Title, represents values from 0 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -716,7 +722,10 @@
                 }
               ],
               "x": 0.5,
-              "y": -9.5
+              "y": -9.5,
+              "ariaLabel": "x axis for Top Title, represents values 0,1,2,3,4,5,6,7",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1058,7 +1067,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 232.5
+              "y": 232.5,
+              "ariaLabel": "x axis for Bottom Title, represents values 0,1,2,3,4,5,6,7",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -1078,7 +1090,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 44,
@@ -1089,7 +1103,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 86,
@@ -1100,7 +1116,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 128,
@@ -1111,7 +1129,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 170,
@@ -1122,7 +1142,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 212,
@@ -1133,7 +1155,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 254,
@@ -1144,7 +1168,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 296,
@@ -1155,7 +1181,9 @@
               "fillOpacity": 0.5,
               "stroke": "rgb(250, 0, 157)",
               "strokeWidth": 0,
-              "y2": 222
+              "y2": 222,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -1518,7 +1546,10 @@
               "y": 0,
               "width": 61,
               "height": 118,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f and stroke color represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1875,7 +1906,10 @@
               "y": 126,
               "width": 61,
               "height": 105,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f and fill color represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2238,7 +2272,10 @@
               "y": 0,
               "width": 52,
               "height": 118,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2601,7 +2638,10 @@
               "y": 126,
               "width": 52,
               "height": 122,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Legend, stroke color represents values a,b,c,d,e,f",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2745,7 +2785,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-left"
+              "orient": "top-left",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2889,7 +2932,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-right"
+              "orient": "top-right",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3033,7 +3079,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-left"
+              "orient": "bottom-left",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3177,7 +3226,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-right"
+              "orient": "bottom-right",
+              "ariaLabel": "legend, shape represents values alpha,beta",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

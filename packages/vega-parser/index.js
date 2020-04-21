@@ -24,3 +24,9 @@ export {
 
 export {default as Scope} from './src/Scope';
 export {default as DataScope} from './src/DataScope';
+
+export {
+  axisAriaLabel,
+  legendAriaLabel,
+  formatList
+} from './src/parsers/guides/guide-util';

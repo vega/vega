@@ -262,7 +262,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 80.5
+              "y": 80.5,
+              "ariaLabel": "x axis, represents values from 1732 to 1836",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -280,7 +283,9 @@
               "text": "Decl. of Independence",
               "angle": -25,
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 273,
@@ -289,7 +294,9 @@
               "text": "U.S. Constitution",
               "angle": -25,
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 341,
@@ -298,7 +305,9 @@
               "text": "Louisiana Purchase",
               "angle": -25,
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 440,
@@ -307,7 +316,9 @@
               "text": "Monroe Doctrine",
               "angle": -25,
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0
@@ -323,28 +334,36 @@
               "y": -8,
               "width": 1,
               "height": 88,
-              "fill": "#888"
+              "fill": "#888",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 273,
               "y": -8,
               "width": 1,
               "height": 88,
-              "fill": "#888"
+              "fill": "#888",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 341,
               "y": -8,
               "width": 1,
               "height": 88,
-              "fill": "#888"
+              "fill": "#888",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 440,
               "y": -8,
               "width": 1,
               "height": 88,
-              "fill": "#888"
+              "fill": "#888",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -361,7 +380,9 @@
               "fill": "#000",
               "text": "Washington",
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 18,
@@ -369,7 +390,9 @@
               "fill": "#000",
               "text": "Adams",
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 53,
@@ -377,7 +400,9 @@
               "fill": "#000",
               "text": "Jefferson",
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 91,
@@ -385,7 +410,9 @@
               "fill": "#000",
               "text": "Madison",
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 125,
@@ -393,7 +420,9 @@
               "fill": "#000",
               "text": "Monroe",
               "font": "Helvetica Neue",
-              "fontSize": 10
+              "fontSize": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0
@@ -410,7 +439,9 @@
               "width": 325,
               "height": 2,
               "fill": "#557",
-              "x2": 325
+              "x2": 325,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 18,
@@ -418,7 +449,9 @@
               "width": 434,
               "height": 2,
               "fill": "#557",
-              "x2": 452
+              "x2": 452,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 53,
@@ -426,7 +459,9 @@
               "width": 399,
               "height": 2,
               "fill": "#557",
-              "x2": 452
+              "x2": 452,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 91,
@@ -434,7 +469,9 @@
               "width": 409,
               "height": 2,
               "fill": "#557",
-              "x2": 500
+              "x2": 500,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 125,
@@ -442,7 +479,9 @@
               "width": 351,
               "height": 2,
               "fill": "#557",
-              "x2": 476
+              "x2": 476,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -459,7 +498,9 @@
               "width": 38,
               "height": 4,
               "fill": "#e44",
-              "x2": 312
+              "x2": 312,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 312,
@@ -467,7 +508,9 @@
               "width": 19,
               "height": 4,
               "fill": "#e44",
-              "x2": 331
+              "x2": 331,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 331,
@@ -475,7 +518,9 @@
               "width": 38,
               "height": 4,
               "fill": "#e44",
-              "x2": 369
+              "x2": 369,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 369,
@@ -483,7 +528,9 @@
               "width": 38,
               "height": 4,
               "fill": "#e44",
-              "x2": 407
+              "x2": 407,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 407,
@@ -491,7 +538,9 @@
               "width": 39,
               "height": 4,
               "fill": "#e44",
-              "x2": 446
+              "x2": 446,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0

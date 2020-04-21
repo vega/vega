@@ -199,7 +199,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 100.5
+              "y": 100.5,
+              "ariaLabel": "x axis, represents values from 0 to 6",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -217,7 +220,9 @@
               "fill": "#000",
               "text": "Category A",
               "font": "Helvetica Neue",
-              "fontSize": 13
+              "fontSize": 13,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 0,
@@ -226,7 +231,9 @@
               "fill": "#000",
               "text": "Category B",
               "font": "Helvetica Neue",
-              "fontSize": 13
+              "fontSize": 13,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 0,
@@ -235,7 +242,9 @@
               "fill": "#000",
               "text": "Category C",
               "font": "Helvetica Neue",
-              "fontSize": 13
+              "fontSize": 13,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 0,
@@ -244,7 +253,9 @@
               "fill": "#000",
               "text": "Category D",
               "font": "Helvetica Neue",
-              "fontSize": 13
+              "fontSize": 13,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 0,
@@ -253,7 +264,9 @@
               "fill": "#000",
               "text": "Category E",
               "font": "Helvetica Neue",
-              "fontSize": 13
+              "fontSize": 13,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0
@@ -270,7 +283,9 @@
               "width": 100,
               "height": 1,
               "fill": "#888",
-              "x2": 200
+              "x2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 175,
@@ -278,7 +293,9 @@
               "width": 50,
               "height": 1,
               "fill": "#888",
-              "x2": 225
+              "x2": 225,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 185,
@@ -286,7 +303,9 @@
               "width": 130,
               "height": 1,
               "fill": "#888",
-              "x2": 315
+              "x2": 315,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 250,
@@ -294,7 +313,9 @@
               "width": 100.00000000000006,
               "height": 1,
               "fill": "#888",
-              "x2": 350.00000000000006
+              "x2": 350.00000000000006,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 305,
@@ -302,7 +323,9 @@
               "width": 90.00000000000006,
               "height": 1,
               "fill": "#888",
-              "x2": 395.00000000000006
+              "x2": 395.00000000000006,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -317,31 +340,41 @@
               "x": 150,
               "y": 0,
               "fill": "#000",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
               "y": 20,
               "fill": "#000",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
               "y": 40,
               "fill": "#000",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 299.99999999999994,
               "y": 60,
               "fill": "#000",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 350.00000000000006,
               "y": 80,
               "fill": "#000",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0

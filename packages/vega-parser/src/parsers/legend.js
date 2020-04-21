@@ -5,10 +5,10 @@ import {
 import legendGradient from './guides/legend-gradient';
 import legendGradientDiscrete from './guides/legend-gradient-discrete';
 import legendGradientLabels from './guides/legend-gradient-labels';
-import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
+import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
 import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, lookup} from './guides/guide-util';
+import {getEncoding, getStyle, legendAriaLabel, lookup} from './guides/guide-util';
 import parseExpression from './expression';
 import parseMark from './mark';
 import {LegendEntryRole, LegendRole} from './marks/roles';
@@ -47,7 +47,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(_, config), legendEncode, Skip
+    buildLegendEncode(_, config, scope), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -135,10 +135,24 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(_, config) {
+function buildLegendEncode(_, config, scope) {
   var encode = {enter: {}, update: {}};
 
-  addEncoders(encode, {
+  const ariaHidden = _('ariaHidden');
+  const ariaLabel = _('ariaLabel');
+
+  const aria = ariaHidden === true ? {} : {
+    ariaHidden:   ariaHidden ? ariaHidden : undefined,
+    ariaLabel:    ariaLabel !== undefined ? ariaLabel : legendAriaLabel(_, scope),
+    ariaRole:     _('ariaRole'),
+    ariaRoleDescription: _('ariaRoleDescription'),
+  };
+
+  if (ariaHidden) {
+    aria['ariaHidden'] = ariaHidden;
+  }
+
+  addEncoders(encode, Object.assign({
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
@@ -150,7 +164,7 @@ function buildLegendEncode(_, config) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
-  });
+  }, aria));
 
   return encode;
 }

@@ -150,6 +150,30 @@ export interface AxisEncode {
 
 export interface BaseAxis {
   /**
+   * If set to `true`, removes the axis from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the axis group for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the axis group for accessibility.
+   *
+   * __Default value__: `"graphics-object"`
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the axis group.
+   *
+   * __Default value__: `"axis"`
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
    * Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case translate can be changed (for example, to zero).
    *
    * __Default value:__ `0.5`

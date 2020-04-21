@@ -211,7 +211,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 350.5
+              "y": 350.5,
+              "ariaLabel": "x axis for Horsepower, represents values from 0 to 240",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -594,7 +597,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -612,7 +618,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -620,7 +628,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -628,7 +638,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -636,7 +648,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -644,7 +658,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 155,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
@@ -652,7 +668,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 367,
@@ -660,7 +678,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 134,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -668,7 +688,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 126,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -676,7 +698,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -684,7 +708,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 126,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -692,7 +718,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 267,
@@ -700,7 +728,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 119,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -708,7 +738,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 141,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -716,7 +748,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -724,7 +758,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -732,7 +768,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -740,7 +778,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -748,7 +788,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -756,7 +798,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -764,7 +808,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 299,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145,
@@ -772,7 +818,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -780,7 +828,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -788,7 +838,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 188,
@@ -796,7 +848,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -804,7 +858,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -812,7 +868,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 333,
@@ -820,7 +878,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 350,
@@ -828,7 +888,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 322,
@@ -836,7 +898,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -844,7 +908,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -852,7 +918,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -860,7 +928,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -868,7 +938,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -876,7 +948,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -884,7 +958,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -892,7 +968,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -900,7 +978,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -908,7 +988,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -916,7 +998,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 255,
@@ -924,7 +1008,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -932,7 +1018,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -940,7 +1028,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -948,7 +1038,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -956,7 +1048,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -964,7 +1058,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -972,7 +1068,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -980,7 +1078,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -988,7 +1088,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -996,7 +1098,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1004,7 +1108,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -1012,7 +1118,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -1020,7 +1128,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -1028,7 +1138,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -1036,7 +1148,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -1044,7 +1158,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -1052,7 +1168,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 299,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1060,7 +1178,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1068,7 +1188,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 90,
@@ -1076,7 +1198,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 342,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1084,7 +1208,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -1092,7 +1218,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -1100,7 +1228,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1108,7 +1238,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1116,7 +1248,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 255,
@@ -1124,7 +1258,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1132,7 +1268,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 347,
@@ -1140,7 +1278,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 258,
@@ -1148,7 +1288,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 267,
@@ -1156,7 +1298,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -1164,7 +1308,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1172,7 +1318,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1180,7 +1328,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -1188,7 +1338,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -1196,7 +1348,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1204,7 +1358,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -1212,7 +1368,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -1220,7 +1378,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 145,
@@ -1228,7 +1388,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -1236,7 +1398,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -1244,7 +1408,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -1252,7 +1418,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1260,7 +1428,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1268,7 +1438,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1276,7 +1448,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1284,7 +1458,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1292,7 +1468,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -1300,7 +1478,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 228,
@@ -1308,7 +1488,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1316,7 +1498,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
@@ -1324,7 +1508,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1332,7 +1518,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 263,
@@ -1340,7 +1528,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1348,7 +1538,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 358,
@@ -1356,7 +1548,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 375,
@@ -1364,7 +1558,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 292,
@@ -1372,7 +1568,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1380,7 +1578,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1388,7 +1588,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1396,7 +1598,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1404,7 +1608,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1412,7 +1618,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -1420,7 +1628,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1428,7 +1638,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 278,
@@ -1436,7 +1648,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -1444,7 +1658,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -1452,7 +1668,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1460,7 +1678,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -1468,7 +1688,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1476,7 +1698,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 157,
@@ -1484,7 +1708,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1492,7 +1718,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -1500,7 +1728,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 178,
@@ -1508,7 +1738,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -1516,7 +1748,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -1524,7 +1758,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 383,
@@ -1532,7 +1768,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 141,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 82,
@@ -1540,7 +1778,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1548,7 +1788,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 152,
@@ -1556,7 +1798,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -1564,7 +1808,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1572,7 +1818,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1580,7 +1828,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 203,
@@ -1588,7 +1838,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -1596,7 +1848,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1604,7 +1858,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1612,7 +1868,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1620,7 +1878,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -1628,7 +1888,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -1636,7 +1898,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -1644,7 +1908,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1652,7 +1918,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1660,7 +1928,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1668,7 +1938,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1676,7 +1948,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -1684,7 +1958,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1692,7 +1968,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1700,7 +1978,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -1708,7 +1988,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1716,7 +1998,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -1724,7 +2008,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -1732,7 +2018,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -1740,7 +2028,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -1748,7 +2038,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 102,
@@ -1756,7 +2048,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1764,7 +2058,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1772,7 +2068,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1780,7 +2078,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1788,7 +2088,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 155,
@@ -1796,7 +2098,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -1804,7 +2108,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1812,7 +2118,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1820,7 +2128,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1828,7 +2138,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1836,7 +2148,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -1844,7 +2158,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -1852,7 +2168,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -1860,7 +2178,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 247,
@@ -1868,7 +2188,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1876,7 +2198,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -1884,7 +2208,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1892,7 +2218,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -1900,7 +2228,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1908,7 +2238,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -1916,7 +2248,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 215,
@@ -1924,7 +2258,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -1932,7 +2268,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -1940,7 +2278,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -1948,7 +2288,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -1956,7 +2298,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -1964,7 +2308,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -1972,7 +2318,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1980,7 +2328,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -1988,7 +2338,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -1996,7 +2348,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2004,7 +2358,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2012,7 +2368,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2020,7 +2378,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 163,
@@ -2028,7 +2388,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -2036,7 +2398,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -2044,7 +2408,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -2052,7 +2418,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 135,
@@ -2060,7 +2428,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -2068,7 +2438,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 132,
@@ -2076,7 +2448,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -2084,7 +2458,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2092,7 +2468,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2100,7 +2478,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -2108,7 +2488,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 204,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 253,
@@ -2116,7 +2498,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2124,7 +2508,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2132,7 +2518,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 135,
@@ -2140,7 +2528,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2148,7 +2538,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -2156,7 +2548,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 324,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -2164,7 +2558,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 322,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2172,7 +2568,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -2180,7 +2578,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 254,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2188,7 +2588,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2196,7 +2598,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2204,7 +2608,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2212,7 +2618,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 260,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2220,7 +2628,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 180,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2228,7 +2638,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2236,7 +2648,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -2244,7 +2658,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 200,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 170,
@@ -2252,7 +2668,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2260,7 +2678,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2268,7 +2688,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 319,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 180,
@@ -2276,7 +2698,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -2284,7 +2708,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -2292,7 +2718,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 178,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2300,7 +2728,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -2308,7 +2738,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2316,7 +2748,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -2324,7 +2758,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -2332,7 +2768,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 97,
@@ -2340,7 +2778,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -2348,7 +2788,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2356,7 +2798,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 246,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2364,7 +2808,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2372,7 +2818,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2380,7 +2828,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 201,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -2388,7 +2838,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2396,7 +2848,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2404,7 +2858,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2412,7 +2868,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 163,
@@ -2420,7 +2878,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
@@ -2428,7 +2888,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 164,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 283,
@@ -2436,7 +2898,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 168,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 317,
@@ -2444,7 +2908,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 180,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 248,
@@ -2452,7 +2918,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2460,7 +2928,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2468,7 +2938,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2476,7 +2948,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 148,
@@ -2484,7 +2958,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -2492,7 +2968,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 138,
@@ -2500,7 +2978,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 233,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -2508,7 +2988,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -2516,7 +2998,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 207,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2524,7 +3008,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2532,7 +3018,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2540,7 +3028,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2548,7 +3038,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 313,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110,
@@ -2556,7 +3048,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -2564,7 +3058,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -2572,7 +3068,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -2580,7 +3078,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2588,7 +3088,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2596,7 +3098,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 232,
@@ -2604,7 +3108,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2612,7 +3118,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2620,7 +3128,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -2628,7 +3138,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2636,7 +3148,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -2644,7 +3158,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 252,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2652,7 +3168,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 252,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2660,7 +3178,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -2668,7 +3188,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2676,7 +3198,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 273,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -2684,7 +3208,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 221,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 242,
@@ -2692,7 +3218,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 275,
@@ -2700,7 +3228,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 197,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 232,
@@ -2708,7 +3238,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 165,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 233,
@@ -2716,7 +3248,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 201,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -2724,7 +3258,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2732,7 +3268,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2740,7 +3278,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -2748,7 +3288,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 158,
@@ -2756,7 +3298,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -2764,7 +3308,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -2772,7 +3318,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 162,
@@ -2780,7 +3328,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 172,
@@ -2788,7 +3338,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 233,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -2796,7 +3348,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 200,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -2804,7 +3358,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 222,
@@ -2812,7 +3368,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2820,7 +3378,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -2828,7 +3388,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -2836,7 +3398,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -2844,7 +3408,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -2852,7 +3418,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2860,7 +3428,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -2868,7 +3438,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 217,
@@ -2876,7 +3448,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 215,
@@ -2884,7 +3458,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 197,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 230,
@@ -2892,7 +3468,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 225,
@@ -2900,7 +3478,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 258,
@@ -2908,7 +3488,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 237,
@@ -2916,7 +3498,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 210,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -2924,7 +3508,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
@@ -2932,7 +3518,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2940,7 +3528,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -2948,7 +3538,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -2956,7 +3548,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -2964,7 +3558,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 128,
@@ -2972,7 +3568,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 293,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 208,
@@ -2980,7 +3578,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 254,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 118,
@@ -2988,7 +3588,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 361,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -2996,7 +3598,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 324,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3004,7 +3608,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3012,7 +3618,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3020,7 +3628,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -3028,7 +3638,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3036,7 +3648,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3044,7 +3658,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 167,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 192,
@@ -3052,7 +3668,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 190,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3060,7 +3678,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -3068,7 +3688,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -3076,7 +3698,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 275,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3084,7 +3708,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3092,7 +3718,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3100,7 +3728,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3108,7 +3738,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 265,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3116,7 +3748,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 293,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3124,7 +3758,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 273,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
@@ -3132,7 +3768,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3140,7 +3778,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3148,7 +3788,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -3156,7 +3798,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3164,7 +3808,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3172,7 +3818,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 262,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3180,7 +3828,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3188,7 +3838,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3196,7 +3848,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 316,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3204,7 +3858,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 345,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3212,7 +3868,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 290,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3220,7 +3878,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 318,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3228,7 +3888,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 203,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3236,7 +3898,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 103,
@@ -3244,7 +3908,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 220,
@@ -3252,7 +3918,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 168,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -3260,7 +3928,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3268,7 +3938,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 221,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -3276,7 +3948,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3284,7 +3958,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3292,7 +3968,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -3300,7 +3978,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3308,7 +3988,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 185,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3316,7 +3998,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 190,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 97,
@@ -3324,7 +4008,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 107,
@@ -3332,7 +4018,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
@@ -3340,7 +4028,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 236,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3348,7 +4038,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 260,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3356,7 +4048,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 103,
@@ -3364,7 +4058,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -3372,7 +4068,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -3380,7 +4078,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3388,7 +4088,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 108,
@@ -3396,7 +4098,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 302,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -3404,7 +4108,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3412,7 +4118,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3420,7 +4128,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 246,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 167,
@@ -3428,7 +4138,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -3436,7 +4148,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 267,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 133,
@@ -3444,7 +4158,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 298,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 127,
@@ -3452,7 +4168,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 286,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 193,
@@ -3460,7 +4178,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 185,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
@@ -3468,7 +4188,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 203,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3476,7 +4198,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 175,
@@ -3484,7 +4208,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3492,7 +4218,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 250,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3500,7 +4228,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3508,7 +4238,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 286,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3516,7 +4248,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3524,7 +4258,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3532,7 +4268,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3540,7 +4278,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3548,7 +4288,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -3556,7 +4298,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -3564,7 +4308,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -3572,7 +4318,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 113,
@@ -3580,7 +4328,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 105,
@@ -3588,7 +4338,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3596,7 +4348,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 147,
@@ -3604,7 +4358,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 125,
@@ -3612,7 +4368,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -3620,7 +4378,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3628,7 +4388,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3636,7 +4398,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -3644,7 +4408,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 183,
@@ -3652,7 +4418,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 142,
@@ -3660,7 +4428,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 153,
@@ -3668,7 +4438,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 187,
@@ -3676,7 +4448,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
@@ -3684,7 +4458,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 204,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3692,7 +4468,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
@@ -3700,7 +4478,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 143,
@@ -3708,7 +4488,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 229,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 87,
@@ -3716,7 +4498,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 358,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
@@ -3724,7 +4508,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 171,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 132,
@@ -3732,7 +4518,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 137,
@@ -3740,7 +4528,9 @@
               "fill": "#4682b4",
               "opacity": 0.25,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -4002,7 +4792,10 @@
               "y": 139,
               "width": 105,
               "height": 73,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Acceleration, size represents values from 0 to 24.8",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -4460,7 +5253,10 @@
               "y": 371,
               "width": 388,
               "height": 18,
-              "orient": "bottom"
+              "orient": "bottom",
+              "ariaLabel": "legend for Legend 1, size represents values from 0 to 24.8",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -4820,7 +5616,10 @@
               "y": 391,
               "width": 297,
               "height": 18,
-              "orient": "bottom"
+              "orient": "bottom",
+              "ariaLabel": "legend for Legend 2, size represents values from 0 to 24.8",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

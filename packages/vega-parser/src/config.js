@@ -40,30 +40,54 @@ export default function() {
 
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
-    mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
+    mark: {
+      ariaRole: 'graphics-symbol'
+    },
+    arc: {
+      fill: defaultColor,
+      ariaRoleDescription: 'arc'
+    },
+    area: {
+      fill: defaultColor,
+      ariaRoleDescription: 'area'
+    },
     image: null,
     line: {
       stroke: defaultColor,
-      strokeWidth: defaultStrokeWidth
+      strokeWidth: defaultStrokeWidth,
+      ariaRoleDescription: 'line'
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: {
+      stroke: defaultColor,
+      ariaRoleDescription: 'path'
+    },
+    rect: {
+      fill: defaultColor,
+      ariaRoleDescription: 'rect'
+    },
+    rule: {
+      stroke: black,
+      ariaRoleDescription: 'rule'
+    },
+    shape: {
+      stroke: defaultColor,
+      ariaRoleDescription: 'shape'
+    },
     symbol: {
       fill: defaultColor,
-      size: 64
+      size: 64,
+      ariaRoleDescription: 'symbol'
     },
     text: {
       fill: black,
       font: defaultFont,
-      fontSize: 11
+      fontSize: 11,
+      ariaRoleDescription: 'text'
     },
     trail: {
       fill: defaultColor,
-      size: defaultStrokeWidth
+      size: defaultStrokeWidth,
+      ariaRoleDescription: 'trail'
     },
 
     // style definitions
@@ -121,7 +145,11 @@ export default function() {
       orient: 'top',
       anchor: 'middle',
       offset: 4,
-      subtitlePadding: 3
+      subtitlePadding: 3,
+      ariaRole: 'caption',
+      ariaRoleDescription: 'title',
+      subtitleAriaRole: 'caption',
+      subtitleAriaRoleDescription: 'subtitle'
     },
 
     // defaults for axes
@@ -146,7 +174,9 @@ export default function() {
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      titlePadding: 4
+      titlePadding: 4,
+      ariaRole: 'graphics-symbol',
+      ariaRoleDescription: 'axis'
     },
 
     // correction for centering bias
@@ -193,7 +223,9 @@ export default function() {
         direction: 'horizontal',
         left:   { direction: 'vertical' },
         right:  { direction: 'vertical' }
-      }
+      },
+      ariaRole: 'graphics-symbol',
+      ariaRoleDescription: 'legend'
     },
 
     // defaults for scale ranges

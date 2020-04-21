@@ -157,7 +157,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 465.5
+              "y": 465.5,
+              "ariaLabel": "x axis, represents values from 1565 to 1825",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -354,7 +357,10 @@
                 }
               ],
               "x": 905.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 99",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -373,7 +379,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 17.30769230769231,
@@ -383,7 +391,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 34.61538461538462,
@@ -393,7 +403,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 51.92307692307693,
@@ -403,7 +415,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 69.23076923076924,
@@ -413,7 +427,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 86.53846153846155,
@@ -423,7 +439,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 103.84615384615385,
@@ -433,7 +451,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 121.15384615384615,
@@ -443,7 +463,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 138.46153846153848,
@@ -453,7 +475,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 155.76923076923077,
@@ -463,7 +487,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 173.0769230769231,
@@ -473,7 +499,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 190.3846153846154,
@@ -483,7 +511,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 207.6923076923077,
@@ -493,7 +523,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 225,
@@ -503,7 +535,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 242.3076923076923,
@@ -513,7 +547,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 259.6153846153846,
@@ -523,7 +559,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 276.92307692307696,
@@ -533,7 +571,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 294.2307692307692,
@@ -543,7 +583,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 311.53846153846155,
@@ -553,7 +595,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 328.8461538461538,
@@ -563,7 +607,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 346.1538461538462,
@@ -573,7 +619,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 363.46153846153845,
@@ -583,7 +631,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 380.7692307692308,
@@ -593,7 +643,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 398.07692307692304,
@@ -603,7 +655,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 415.3846153846154,
@@ -613,7 +667,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 432.6923076923077,
@@ -623,7 +679,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 450,
@@ -633,7 +691,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 467.3076923076923,
@@ -643,7 +703,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 484.6153846153846,
@@ -653,7 +715,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 501.92307692307696,
@@ -663,7 +727,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 519.2307692307692,
@@ -673,7 +739,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 536.5384615384615,
@@ -683,7 +751,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 553.8461538461539,
@@ -693,7 +763,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 571.1538461538461,
@@ -703,7 +775,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 588.4615384615385,
@@ -713,7 +787,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 605.7692307692308,
@@ -723,7 +799,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 623.0769230769231,
@@ -733,7 +811,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 640.3846153846154,
@@ -743,7 +823,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 657.6923076923076,
@@ -753,7 +835,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 675,
@@ -763,7 +847,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 692.3076923076924,
@@ -773,7 +859,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 709.6153846153846,
@@ -783,7 +871,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 726.9230769230769,
@@ -793,7 +883,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 744.2307692307692,
@@ -803,7 +895,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 761.5384615384615,
@@ -813,7 +907,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 778.8461538461539,
@@ -823,7 +919,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 796.1538461538461,
@@ -833,7 +931,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 813.4615384615385,
@@ -843,7 +943,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 830.7692307692308,
@@ -853,7 +955,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 848.0769230769231,
@@ -863,7 +967,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 865.3846153846154,
@@ -873,7 +979,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 882.6923076923076,
@@ -883,7 +991,9 @@
               "fill": "#aaa",
               "stroke": "#5d5d5d",
               "strokeWidth": 0.25,
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -901,7 +1011,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 17.30769230769231,
@@ -910,7 +1022,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 34.61538461538462,
@@ -919,7 +1033,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 51.92307692307693,
@@ -928,7 +1044,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 69.23076923076924,
@@ -937,7 +1055,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 86.53846153846155,
@@ -946,7 +1066,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 103.84615384615385,
@@ -955,7 +1077,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 121.15384615384615,
@@ -964,7 +1088,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 138.46153846153848,
@@ -973,7 +1099,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 155.76923076923077,
@@ -982,7 +1110,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 173.0769230769231,
@@ -991,7 +1121,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 190.3846153846154,
@@ -1000,7 +1132,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 207.6923076923077,
@@ -1009,7 +1143,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 225,
@@ -1018,7 +1154,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 242.3076923076923,
@@ -1027,7 +1165,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 259.6153846153846,
@@ -1036,7 +1176,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 276.92307692307696,
@@ -1045,7 +1187,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 294.2307692307692,
@@ -1054,7 +1198,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 311.53846153846155,
@@ -1063,7 +1209,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 328.8461538461538,
@@ -1072,7 +1220,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 346.1538461538462,
@@ -1081,7 +1231,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 363.46153846153845,
@@ -1090,7 +1242,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 380.7692307692308,
@@ -1099,7 +1253,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 398.07692307692304,
@@ -1108,7 +1264,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 415.3846153846154,
@@ -1117,7 +1275,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 432.6923076923077,
@@ -1126,7 +1286,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 450,
@@ -1135,7 +1297,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 467.3076923076923,
@@ -1144,7 +1308,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 484.6153846153846,
@@ -1153,7 +1319,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 501.92307692307696,
@@ -1162,7 +1330,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 519.2307692307692,
@@ -1171,7 +1341,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 536.5384615384615,
@@ -1180,7 +1352,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 553.8461538461539,
@@ -1189,7 +1363,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 571.1538461538461,
@@ -1198,7 +1374,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 588.4615384615385,
@@ -1207,7 +1385,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 605.7692307692308,
@@ -1216,7 +1396,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 623.0769230769231,
@@ -1225,7 +1407,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 640.3846153846154,
@@ -1234,7 +1418,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 657.6923076923076,
@@ -1243,7 +1429,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 675,
@@ -1252,7 +1440,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 692.3076923076924,
@@ -1261,7 +1451,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 709.6153846153846,
@@ -1270,7 +1462,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 726.9230769230769,
@@ -1279,7 +1473,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 744.2307692307692,
@@ -1288,7 +1484,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 761.5384615384615,
@@ -1297,7 +1495,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 778.8461538461539,
@@ -1306,7 +1506,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 796.1538461538461,
@@ -1315,7 +1517,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 813.4615384615385,
@@ -1324,7 +1528,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 830.7692307692308,
@@ -1333,7 +1539,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 848.0769230769231,
@@ -1342,7 +1550,9 @@
               "fill": "#B3D9E6",
               "fillOpacity": 0.8,
               "interpolate": "linear",
-              "y2": 465
+              "y2": 465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             }
           ],
           "zindex": 0
@@ -1358,350 +1568,450 @@
               "y": 441.5151515151515,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 17.30769230769231,
               "y": 441.28030303030306,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 34.61538461538462,
               "y": 441.1393939393939,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 51.92307692307693,
               "y": 440.95151515151514,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 69.23076923076924,
               "y": 440.810606060606,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 86.53846153846155,
               "y": 440.3409090909091,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 103.84615384615385,
               "y": 438.97878787878784,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 121.15384615384615,
               "y": 438.65000000000003,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 138.46153846153848,
               "y": 438.27424242424246,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 155.76923076923077,
               "y": 437.8515151515151,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 173.0769230769231,
               "y": 437.09999999999997,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 190.3846153846154,
               "y": 436.7712121212121,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 207.6923076923077,
               "y": 436.25454545454545,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 225,
               "y": 435.7848484848485,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 242.3076923076923,
               "y": 435.40909090909093,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 259.6153846153846,
               "y": 435.080303030303,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 276.92307692307696,
               "y": 434.70454545454544,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 294.2307692307692,
               "y": 434.469696969697,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 311.53846153846155,
               "y": 434,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 328.8461538461538,
               "y": 433.29545454545456,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 346.1538461538462,
               "y": 433.06060606060606,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 363.46153846153845,
               "y": 432.59090909090907,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 380.7692307692308,
               "y": 432.1212121212121,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 398.07692307692304,
               "y": 430.7121212121212,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 415.3846153846154,
               "y": 429.30303030303025,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 432.6923076923077,
               "y": 427.42424242424244,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 450,
               "y": 425.07575757575756,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 467.3076923076923,
               "y": 422.7272727272727,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 484.6153846153846,
               "y": 418.03030303030306,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 501.92307692307696,
               "y": 413.3333333333333,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 519.2307692307692,
               "y": 409.81060606060606,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 536.5384615384615,
               "y": 406.28787878787875,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 553.8461538461539,
               "y": 403.93939393939394,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 571.1538461538461,
               "y": 402.53030303030306,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 588.4615384615385,
               "y": 401.1212121212121,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 605.7692307692308,
               "y": 399.24242424242425,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 623.0769230769231,
               "y": 396.89393939393943,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 640.3846153846154,
               "y": 394.54545454545456,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 657.6923076923076,
               "y": 391.25757575757575,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 675,
               "y": 387.5,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 692.3076923076924,
               "y": 382.3333333333333,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 709.6153846153846,
               "y": 378.1060606060606,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 726.9230769230769,
               "y": 373.4090909090909,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 744.2307692307692,
               "y": 366.3636363636364,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 761.5384615384615,
               "y": 356.969696969697,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 778.8461538461539,
               "y": 345.22727272727275,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 796.1538461538461,
               "y": 335.8333333333333,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 813.4615384615385,
               "y": 331.1363636363636,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 830.7692307692308,
               "y": 326.43939393939394,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 848.0769230769231,
               "y": 324.0909090909091,
               "stroke": "#ff7e79",
               "strokeWidth": 3,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             }
           ],
           "zindex": 0
@@ -1717,350 +2027,450 @@
               "y": 441.5151515151515,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 17.30769230769231,
               "y": 441.28030303030306,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 34.61538461538462,
               "y": 441.1393939393939,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 51.92307692307693,
               "y": 440.95151515151514,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 69.23076923076924,
               "y": 440.810606060606,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 86.53846153846155,
               "y": 440.3409090909091,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 103.84615384615385,
               "y": 438.97878787878784,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 121.15384615384615,
               "y": 438.65000000000003,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 138.46153846153848,
               "y": 438.27424242424246,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 155.76923076923077,
               "y": 437.8515151515151,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 173.0769230769231,
               "y": 437.09999999999997,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 190.3846153846154,
               "y": 436.7712121212121,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 207.6923076923077,
               "y": 436.25454545454545,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 225,
               "y": 435.7848484848485,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 242.3076923076923,
               "y": 435.40909090909093,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 259.6153846153846,
               "y": 435.080303030303,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 276.92307692307696,
               "y": 434.70454545454544,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 294.2307692307692,
               "y": 434.469696969697,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 311.53846153846155,
               "y": 434,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 328.8461538461538,
               "y": 433.29545454545456,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 346.1538461538462,
               "y": 433.06060606060606,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 363.46153846153845,
               "y": 432.59090909090907,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 380.7692307692308,
               "y": 432.1212121212121,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 398.07692307692304,
               "y": 430.7121212121212,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 415.3846153846154,
               "y": 429.30303030303025,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 432.6923076923077,
               "y": 427.42424242424244,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 450,
               "y": 425.07575757575756,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 467.3076923076923,
               "y": 422.7272727272727,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 484.6153846153846,
               "y": 418.03030303030306,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 501.92307692307696,
               "y": 413.3333333333333,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 519.2307692307692,
               "y": 409.81060606060606,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 536.5384615384615,
               "y": 406.28787878787875,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 553.8461538461539,
               "y": 403.93939393939394,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 571.1538461538461,
               "y": 402.53030303030306,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 588.4615384615385,
               "y": 401.1212121212121,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 605.7692307692308,
               "y": 399.24242424242425,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 623.0769230769231,
               "y": 396.89393939393943,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 640.3846153846154,
               "y": 394.54545454545456,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 657.6923076923076,
               "y": 391.25757575757575,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 675,
               "y": 387.5,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 692.3076923076924,
               "y": 382.3333333333333,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 709.6153846153846,
               "y": 378.1060606060606,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 726.9230769230769,
               "y": 373.4090909090909,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 744.2307692307692,
               "y": 366.3636363636364,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 761.5384615384615,
               "y": 356.969696969697,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 778.8461538461539,
               "y": 345.22727272727275,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 796.1538461538461,
               "y": 335.8333333333333,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 813.4615384615385,
               "y": 331.1363636363636,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 830.7692307692308,
               "y": 326.43939393939394,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 848.0769230769231,
               "y": 324.0909090909091,
               "stroke": "#000",
               "strokeWidth": 1,
-              "interpolate": "linear"
+              "interpolate": "linear",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             }
           ],
           "zindex": 0
@@ -2081,7 +2491,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 131.53846153846155,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 131.53846153846155,
@@ -2092,7 +2504,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 207.6923076923077,
-              "y2": 28.18181818181816
+              "y2": 28.18181818181816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 207.6923076923077,
@@ -2103,7 +2517,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 290.7692307692308,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 290.7692307692308,
@@ -2114,7 +2530,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 328.8461538461538,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 328.8461538461538,
@@ -2125,7 +2543,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 415.3846153846154,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 415.3846153846154,
@@ -2136,7 +2556,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 429.2307692307692,
-              "y2": 28.18181818181816
+              "y2": 28.18181818181816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 429.2307692307692,
@@ -2147,7 +2569,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 474.2307692307692,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 474.2307692307692,
@@ -2158,7 +2582,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 515.7692307692307,
-              "y2": 28.18181818181816
+              "y2": 28.18181818181816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 515.7692307692307,
@@ -2169,7 +2595,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 560.7692307692308,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 560.7692307692308,
@@ -2180,7 +2608,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 675,
-              "y2": 28.18181818181816
+              "y2": 28.18181818181816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 675,
@@ -2191,7 +2621,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 882.6923076923076,
-              "y2": 18.787878787878807
+              "y2": 18.787878787878807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 882.6923076923076,
@@ -2202,7 +2634,9 @@
               "stroke": "#000",
               "strokeWidth": 2,
               "x2": 882.6923076923076,
-              "y2": 28.18181818181816
+              "y2": 28.18181818181816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -2222,7 +2656,9 @@
               "dx": 65.76923076923077,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 131.53846153846155,
@@ -2233,7 +2669,9 @@
               "dx": 38.07692307692308,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 207.6923076923077,
@@ -2244,7 +2682,9 @@
               "dx": 41.53846153846153,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 290.7692307692308,
@@ -2255,7 +2695,9 @@
               "dx": 19.03846153846152,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 328.8461538461538,
@@ -2266,7 +2708,9 @@
               "dx": 43.2692307692308,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 415.3846153846154,
@@ -2277,7 +2721,9 @@
               "dx": 6.923076923076906,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 429.2307692307692,
@@ -2288,7 +2734,9 @@
               "dx": 22.5,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 474.2307692307692,
@@ -2299,7 +2747,9 @@
               "dx": 20.769230769230745,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 515.7692307692307,
@@ -2310,7 +2760,9 @@
               "dx": 22.500000000000057,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 560.7692307692308,
@@ -2321,7 +2773,9 @@
               "dx": 57.115384615384585,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 675,
@@ -2332,7 +2786,9 @@
               "dx": 103.84615384615381,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 882.6923076923076,
@@ -2343,7 +2799,9 @@
               "dx": 0,
               "font": "Helvetica Neue",
               "fontSize": 10,
-              "fontStyle": "italic"
+              "fontStyle": "italic",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0

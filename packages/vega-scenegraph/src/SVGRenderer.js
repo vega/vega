@@ -7,7 +7,8 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styleProperties, styles} from './util/svg/styles';
+import {styles} from './util/svg/styles';
+import {AriaExtras, AriaHiddenRoles} from './util/constants';
 import {inherits, isArray} from 'vega-util';
 
 var ns = metadata.xmlns;
@@ -315,6 +316,9 @@ prototype.draw = function(el, scene, prev) {
 
   parent = bind(scene, el, prev, 'g', svg);
   parent.setAttribute('class', cssClass(scene));
+  if (AriaHiddenRoles[scene.role]) {
+    parent.setAttribute('aria-hidden', true);
+  }
   if (!isGroup) {
     parent.style.setProperty('pointer-events', events);
   }
@@ -529,6 +533,13 @@ prototype._update = function(mdef, el, item) {
   // apply svg attributes
   mdef.attr(emit, item, this);
 
+  // apply general svg properties
+  for (const prop in AriaExtras) {
+    if (item[prop] != null) {
+      emit(AriaExtras[prop], item[prop]);
+    }
+  }
+
   // some marks need special treatment
   var extra = mark_extras[mdef.type];
   if (extra) extra.call(this, mdef, el, item);
@@ -564,11 +575,9 @@ function emit(name, value, ns) {
 
 prototype.style = function(el, o) {
   if (o == null) return;
-  var i, n, prop, name, value;
 
-  for (i=0, n=styleProperties.length; i<n; ++i) {
-    prop = styleProperties[i];
-    value = o[prop];
+  for (const prop in styles) {
+    let value = o[prop];
 
     if (prop === 'font') {
       value = fontFamily(o);
@@ -576,7 +585,7 @@ prototype.style = function(el, o) {
 
     if (value === values[prop]) continue;
 
-    name = styles[prop];
+    const name = styles[prop];
     if (value == null) {
       if (name === 'fill') {
         el.style.setProperty(name, 'none');

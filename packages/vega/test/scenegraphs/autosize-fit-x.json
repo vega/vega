@@ -211,7 +211,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaLabel": "x axis for Horsepower, represents values from 0 to 240",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -594,7 +597,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis for Miles_per_Gallon, represents values from 0 to 50",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -614,7 +620,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -624,7 +632,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -634,7 +644,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -644,7 +656,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -654,7 +668,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 155,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 106,
@@ -664,7 +680,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 117,
@@ -674,7 +692,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 134,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -684,7 +704,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 126,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -694,7 +716,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 101,
@@ -704,7 +728,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 126,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91,
@@ -714,7 +740,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 85,
@@ -724,7 +752,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 119,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -734,7 +764,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 141,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -744,7 +776,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 148,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -754,7 +788,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -764,7 +800,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -774,7 +812,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -784,7 +824,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -794,7 +836,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 25,
@@ -804,7 +848,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 299,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -814,7 +860,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -824,7 +872,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -834,7 +884,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -844,7 +896,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -854,7 +908,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -864,7 +920,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 107,
@@ -874,7 +932,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 112,
@@ -884,7 +944,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 103,
@@ -894,7 +956,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -904,7 +968,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -914,7 +980,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -924,7 +992,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -934,7 +1004,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -944,7 +1016,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -954,7 +1028,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -964,7 +1040,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -974,7 +1052,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -984,7 +1064,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93,
@@ -994,7 +1076,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 82,
@@ -1004,7 +1088,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1014,7 +1100,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96,
@@ -1024,7 +1112,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91,
@@ -1034,7 +1124,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93,
@@ -1044,7 +1136,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -1054,7 +1148,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -1064,7 +1160,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1074,7 +1172,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -1084,7 +1184,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -1094,7 +1196,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -1104,7 +1208,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -1114,7 +1220,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 41,
@@ -1124,7 +1232,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -1134,7 +1244,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -1144,7 +1256,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 32,
@@ -1154,7 +1268,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -1164,7 +1280,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 299,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -1174,7 +1292,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -1184,7 +1304,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 29,
@@ -1194,7 +1316,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 342,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -1204,7 +1328,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -1214,7 +1340,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -1224,7 +1352,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93,
@@ -1234,7 +1364,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1244,7 +1376,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 82,
@@ -1254,7 +1388,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1264,7 +1400,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 111,
@@ -1274,7 +1412,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83,
@@ -1284,7 +1424,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 85,
@@ -1294,7 +1436,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 101,
@@ -1304,7 +1448,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -1314,7 +1460,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1324,7 +1472,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -1334,7 +1484,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1344,7 +1496,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1354,7 +1508,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -1364,7 +1520,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 41,
@@ -1374,7 +1532,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -1384,7 +1544,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -1394,7 +1556,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -1404,7 +1568,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -1414,7 +1580,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -1424,7 +1592,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -1434,7 +1604,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -1444,7 +1616,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93,
@@ -1454,7 +1628,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1464,7 +1640,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -1474,7 +1652,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 73,
@@ -1484,7 +1664,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1494,7 +1676,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 106,
@@ -1504,7 +1688,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1514,7 +1700,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 84,
@@ -1524,7 +1712,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1534,7 +1724,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 115,
@@ -1544,7 +1736,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
@@ -1554,7 +1748,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 93,
@@ -1564,7 +1760,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -1574,7 +1772,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1584,7 +1784,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1594,7 +1796,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -1604,7 +1808,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -1614,7 +1820,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 25,
@@ -1624,7 +1832,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1634,7 +1844,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 89,
@@ -1644,7 +1856,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91,
@@ -1654,7 +1868,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96,
@@ -1664,7 +1880,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1674,7 +1892,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -1684,7 +1904,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -1694,7 +1916,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -1704,7 +1928,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -1714,7 +1940,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -1724,7 +1952,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 57,
@@ -1734,7 +1964,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -1744,7 +1976,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -1754,7 +1988,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 123,
@@ -1764,7 +2000,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 141,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 26,
@@ -1774,7 +2012,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -1784,7 +2024,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -1794,7 +2036,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -1804,7 +2048,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1814,7 +2060,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -1824,7 +2072,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 65,
@@ -1834,7 +2084,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96,
@@ -1844,7 +2096,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 162,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -1854,7 +2108,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1864,7 +2120,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1874,7 +2132,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -1884,7 +2144,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -1894,7 +2156,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -1904,7 +2168,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -1914,7 +2180,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -1924,7 +2192,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -1934,7 +2204,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -1944,7 +2216,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1954,7 +2228,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1964,7 +2240,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1974,7 +2252,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -1984,7 +2264,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -1994,7 +2276,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44,
@@ -2004,7 +2288,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -2014,7 +2300,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2024,7 +2312,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -2034,7 +2324,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 33,
@@ -2044,7 +2336,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2054,7 +2348,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2064,7 +2360,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2074,7 +2372,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -2084,7 +2384,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
@@ -2094,7 +2396,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -2104,7 +2408,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2114,7 +2420,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -2124,7 +2432,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -2134,7 +2444,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -2144,7 +2456,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 285,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91,
@@ -2154,7 +2468,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 170,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -2164,7 +2480,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2174,7 +2492,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79,
@@ -2184,7 +2504,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2194,7 +2516,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -2204,7 +2528,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2214,7 +2540,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2224,7 +2552,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2234,7 +2564,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2244,7 +2576,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -2254,7 +2588,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2264,7 +2600,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44,
@@ -2274,7 +2612,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -2284,7 +2624,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2294,7 +2636,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2304,7 +2648,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -2314,7 +2660,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -2324,7 +2672,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -2334,7 +2684,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -2344,7 +2696,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -2354,7 +2708,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2364,7 +2720,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -2374,7 +2732,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -2384,7 +2744,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61,
@@ -2394,7 +2756,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -2404,7 +2768,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -2414,7 +2780,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -2424,7 +2792,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -2434,7 +2804,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2444,7 +2816,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44,
@@ -2454,7 +2828,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -2464,7 +2840,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2474,7 +2852,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 64,
@@ -2484,7 +2864,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 204,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 81,
@@ -2494,7 +2876,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -2504,7 +2888,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -2514,7 +2900,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -2524,7 +2912,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -2534,7 +2924,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -2544,7 +2936,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 324,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 32,
@@ -2554,7 +2948,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 322,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -2564,7 +2960,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -2574,7 +2972,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 254,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -2584,7 +2984,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2594,7 +2996,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 306,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2604,7 +3008,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2614,7 +3020,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 260,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -2624,7 +3032,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 180,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -2634,7 +3044,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2644,7 +3056,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -2654,7 +3068,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 200,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 54,
@@ -2664,7 +3080,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2674,7 +3092,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -2684,7 +3104,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 319,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 58,
@@ -2694,7 +3116,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 64,
@@ -2704,7 +3128,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96,
@@ -2714,7 +3140,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 178,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -2724,7 +3152,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 177,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -2734,7 +3164,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -2744,7 +3176,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -2754,7 +3188,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 270,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -2764,7 +3200,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 31,
@@ -2774,7 +3212,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -2784,7 +3224,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -2794,7 +3236,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 246,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -2804,7 +3248,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2814,7 +3260,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -2824,7 +3272,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 201,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -2834,7 +3284,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -2844,7 +3296,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -2854,7 +3308,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -2864,7 +3320,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 259,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -2874,7 +3332,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 96,
@@ -2884,7 +3344,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 164,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 91,
@@ -2894,7 +3356,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 168,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 101,
@@ -2904,7 +3368,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 180,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 79,
@@ -2914,7 +3380,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2924,7 +3392,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -2934,7 +3404,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -2944,7 +3416,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -2954,7 +3428,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 34,
@@ -2964,7 +3440,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44,
@@ -2974,7 +3452,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 233,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -2984,7 +3464,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -2994,7 +3476,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 207,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -3004,7 +3488,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3014,7 +3500,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3024,7 +3512,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 198,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 26,
@@ -3034,7 +3524,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 313,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3044,7 +3536,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -3054,7 +3548,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -3064,7 +3560,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 32,
@@ -3074,7 +3572,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3084,7 +3584,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3094,7 +3596,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 74,
@@ -3104,7 +3608,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 188,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -3114,7 +3620,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -3124,7 +3632,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3134,7 +3644,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -3144,7 +3656,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -3154,7 +3668,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 252,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3164,7 +3680,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 252,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -3174,7 +3692,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3184,7 +3704,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3194,7 +3716,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 273,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 64,
@@ -3204,7 +3728,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 221,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 77,
@@ -3214,7 +3740,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 88,
@@ -3224,7 +3752,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 197,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 74,
@@ -3234,7 +3764,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 165,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 75,
@@ -3244,7 +3776,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 201,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3254,7 +3788,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -3264,7 +3800,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -3274,7 +3812,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3284,7 +3824,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -3294,7 +3836,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -3304,7 +3848,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 244,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3314,7 +3860,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 52,
@@ -3324,7 +3872,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 55,
@@ -3334,7 +3884,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 233,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 67,
@@ -3344,7 +3896,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 200,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61,
@@ -3354,7 +3908,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 71,
@@ -3364,7 +3920,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -3374,7 +3932,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3384,7 +3944,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61,
@@ -3394,7 +3956,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3404,7 +3968,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -3414,7 +3980,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3424,7 +3992,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3434,7 +4004,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -3444,7 +4016,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 226,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 69,
@@ -3454,7 +4028,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 197,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 74,
@@ -3464,7 +4040,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 72,
@@ -3474,7 +4052,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 83,
@@ -3484,7 +4064,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 76,
@@ -3494,7 +4076,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 210,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 67,
@@ -3504,7 +4088,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
@@ -3514,7 +4100,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -3524,7 +4112,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 206,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3534,7 +4124,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -3544,7 +4136,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -3554,7 +4148,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 41,
@@ -3564,7 +4160,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 293,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 67,
@@ -3574,7 +4172,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 254,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -3584,7 +4184,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 361,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3594,7 +4196,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 324,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -3604,7 +4208,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -3614,7 +4220,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3624,7 +4232,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -3634,7 +4244,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3644,7 +4256,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61,
@@ -3654,7 +4268,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 167,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 61,
@@ -3664,7 +4280,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 190,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3674,7 +4292,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 194,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 41,
@@ -3684,7 +4304,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 32,
@@ -3694,7 +4316,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 275,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -3704,7 +4328,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3714,7 +4340,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3724,7 +4352,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 242,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -3734,7 +4364,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 265,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3744,7 +4376,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 293,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3754,7 +4388,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 273,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -3764,7 +4400,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -3774,7 +4412,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 227,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3784,7 +4424,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 256,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -3794,7 +4436,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -3804,7 +4448,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 223,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3814,7 +4460,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 262,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -3824,7 +4472,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -3834,7 +4484,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 280,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 26,
@@ -3844,7 +4496,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 316,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 26,
@@ -3854,7 +4508,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 345,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3864,7 +4520,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 290,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3874,7 +4532,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 318,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3884,7 +4544,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 203,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -3894,7 +4556,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 33,
@@ -3904,7 +4568,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
@@ -3914,7 +4580,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 168,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -3924,7 +4592,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 184,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -3934,7 +4604,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 221,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 38,
@@ -3944,7 +4616,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3954,7 +4628,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3964,7 +4640,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -3974,7 +4652,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -3984,7 +4664,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 185,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -3994,7 +4676,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 190,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 31,
@@ -4004,7 +4688,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 34,
@@ -4014,7 +4700,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 32,
@@ -4024,7 +4712,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 236,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4034,7 +4724,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 260,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -4044,7 +4736,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 33,
@@ -4054,7 +4748,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4064,7 +4760,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 34,
@@ -4074,7 +4772,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 218,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -4084,7 +4784,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 35,
@@ -4094,7 +4796,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 302,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 39,
@@ -4104,7 +4808,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 208,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -4114,7 +4820,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 211,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -4124,7 +4832,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 246,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 53,
@@ -4134,7 +4844,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 217,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 39,
@@ -4144,7 +4856,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 267,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 43,
@@ -4154,7 +4868,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 298,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 41,
@@ -4164,7 +4880,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 286,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 62,
@@ -4174,7 +4892,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 185,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 64,
@@ -4184,7 +4904,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 203,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -4194,7 +4916,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 231,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 56,
@@ -4204,7 +4928,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 278,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -4214,7 +4940,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 250,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4224,7 +4952,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 243,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -4234,7 +4964,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 286,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -4244,7 +4976,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -4254,7 +4988,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4264,7 +5000,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4274,7 +5012,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 234,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -4284,7 +5024,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 263,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -4294,7 +5036,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 39,
@@ -4304,7 +5048,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 224,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4314,7 +5060,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 266,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4324,7 +5072,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 257,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 34,
@@ -4334,7 +5084,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -4344,7 +5096,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 47,
@@ -4354,7 +5108,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
@@ -4364,7 +5120,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 37,
@@ -4374,7 +5132,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 247,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4384,7 +5144,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 220,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4394,7 +5156,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 230,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 36,
@@ -4404,7 +5168,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 237,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 59,
@@ -4414,7 +5180,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 240,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4424,7 +5192,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 249,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 49,
@@ -4434,7 +5204,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 213,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
@@ -4444,7 +5216,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 216,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 51,
@@ -4454,7 +5228,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 204,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4464,7 +5240,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 191,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 48,
@@ -4474,7 +5252,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 253,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 46,
@@ -4484,7 +5264,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 229,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 28,
@@ -4494,7 +5276,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 358,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 45,
@@ -4504,7 +5288,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 171,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 42,
@@ -4514,7 +5300,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 272,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 44,
@@ -4524,7 +5312,9 @@
               "stroke": "#4682b4",
               "strokeWidth": 2,
               "size": 283,
-              "shape": "circle"
+              "shape": "circle",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -4835,7 +5625,10 @@
               "y": 0,
               "width": 105,
               "height": 105,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Acceleration, size represents values from 0.00000 to 24.8000",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

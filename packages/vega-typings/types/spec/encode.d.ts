@@ -256,6 +256,22 @@ export interface EncodeEntry {
   cursor?: ProductionRule<ScaledValueRef<Cursor>>;
   tooltip?: ProductionRule<StringValueRef>;
   zindex?: ProductionRule<NumericValueRef>;
+  /**
+   * If set to `true`, removes that element and all of its children from the accessibility tree.
+   */
+  ariaHidden?: ProductionRule<BooleanValueRef>;
+  /**
+   * A string that labels the current element for accessibility. Use it in cases where a text label is not visible on the screen.
+   */
+  ariaLabel?: ProductionRule<StringValueRef>;
+  /**
+   * The type of user interface element for accessibility.
+   */
+  ariaRole?: ProductionRule<StringValueRef>;
+  /**
+   * A human-readable, author-localized description for the role of an element.
+   */
+  ariaRoleDescription?: ProductionRule<StringValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 

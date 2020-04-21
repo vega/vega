@@ -344,7 +344,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 400.5
+              "y": 400.5,
+              "ariaLabel": "x axis, represents values 1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -506,7 +509,10 @@
                 }
               ],
               "x": 700.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from -1.781 to 0.519",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -530,28 +536,36 @@
                       "y": 108.17391304347824,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 17.073170731707318,
                       "y": 96.69565217391303,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 34.146341463414636,
                       "y": 88.52173913043475,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 51.21951219512195,
                       "y": 81.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -571,35 +585,45 @@
                       "y": 123.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 17.073170731707318,
                       "y": 112.69565217391305,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 34.146341463414636,
                       "y": 100.69565217391303,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 51.21951219512195,
                       "y": 93.21739130434779,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 68.29268292682927,
                       "y": 79.30434782608695,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -619,35 +643,45 @@
                       "y": 122.43478260869564,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 34.146341463414636,
                       "y": 127.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 51.21951219512195,
                       "y": 123.30434782608694,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 68.29268292682927,
                       "y": 118.78260869565213,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 85.3658536585366,
                       "y": 114.08695652173915,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -667,35 +701,45 @@
                       "y": 138.95652173913044,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 51.21951219512195,
                       "y": 165.39130434782606,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 68.29268292682927,
                       "y": 155.13043478260872,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 85.3658536585366,
                       "y": 154.78260869565216,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 102.4390243902439,
                       "y": 138.08695652173918,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -715,49 +759,63 @@
                       "y": 165.39130434782606,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 68.29268292682927,
                       "y": 153.39130434782606,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 85.3658536585366,
                       "y": 150.2608695652174,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 102.4390243902439,
                       "y": 147.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 119.51219512195122,
                       "y": 146.95652173913044,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 136.58536585365854,
                       "y": 136.69565217391306,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 126.60869565217392,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -777,49 +835,63 @@
                       "y": 154.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 85.3658536585366,
                       "y": 164.17391304347828,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 102.4390243902439,
                       "y": 148.69565217391306,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 119.51219512195122,
                       "y": 142.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 136.58536585365854,
                       "y": 134.26086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 121.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 170.7317073170732,
                       "y": 113.73913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -839,35 +911,45 @@
                       "y": 160.86956521739125,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 102.4390243902439,
                       "y": 155.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 119.51219512195122,
                       "y": 135.47826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 136.58536585365854,
                       "y": 118.78260869565213,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 110.08695652173914,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -887,49 +969,63 @@
                       "y": 161.91304347826082,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 119.51219512195122,
                       "y": 144.69565217391303,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 136.58536585365854,
                       "y": 123.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 117.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 170.7317073170732,
                       "y": 107.30434782608698,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 187.8048780487805,
                       "y": 96,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 86.95652173913042,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -949,49 +1045,63 @@
                       "y": 137.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 136.58536585365854,
                       "y": 134.9565217391304,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 128.34782608695653,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 170.7317073170732,
                       "y": 119.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 187.8048780487805,
                       "y": 111.82608695652169,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 103.65217391304347,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 96.17391304347827,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1011,49 +1121,63 @@
                       "y": 137.56521739130437,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 153.65853658536585,
                       "y": 137.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 170.7317073170732,
                       "y": 116.695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 187.8048780487805,
                       "y": 108.52173913043477,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 98.78260869565216,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 90.95652173913042,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 81.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1073,49 +1197,63 @@
                       "y": 135.1304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 170.7317073170732,
                       "y": 125.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 187.8048780487805,
                       "y": 107.4782608695652,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 96.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 88.86956521739128,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 87.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 87.99999999999999,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1135,49 +1273,63 @@
                       "y": 153.39130434782606,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 187.8048780487805,
                       "y": 177.04347826086953,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 163.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 141.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 105.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 89.56521739130432,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 85.56521739130436,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1197,49 +1349,63 @@
                       "y": 163.65217391304347,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 204.8780487804878,
                       "y": 195.1304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 179.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 143.47826086956525,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 137.56521739130437,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 133.56521739130432,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 134.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1259,42 +1425,54 @@
                       "y": 166.43478260869563,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 221.95121951219514,
                       "y": 171.13043478260872,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 154.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 146.43478260869563,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 135.1304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 132.52173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1314,49 +1492,63 @@
                       "y": 155.4782608695652,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 239.02439024390245,
                       "y": 149.21739130434784,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 130.60869565217394,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 130.7826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 133.7391304347826,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 307.3170731707317,
                       "y": 134.26086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 131.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1376,49 +1568,63 @@
                       "y": 141.2173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 256.0975609756098,
                       "y": 137.2173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 137.2173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 140,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 307.3170731707317,
                       "y": 135.65217391304344,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 135.30434782608697,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 133.56521739130432,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1438,56 +1644,72 @@
                       "y": 130.26086956521738,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 273.1707317073171,
                       "y": 125.04347826086955,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 122.95652173913041,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 307.3170731707317,
                       "y": 112.86956521739131,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 104.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 96.34782608695649,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 88.52173913043475,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 80.86956521739128,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1507,49 +1729,63 @@
                       "y": 115.82608695652175,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 290.2439024390244,
                       "y": 119.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 307.3170731707317,
                       "y": 118.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 117.04347826086953,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 109.73913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 98.08695652173908,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 86.60869565217394,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1569,77 +1805,99 @@
                       "y": 95.30434782608693,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 307.3170731707317,
                       "y": 92.52173913043475,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 88.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 88.34782608695653,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 84.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 71.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 73.21739130434781,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 68.17391304347824,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 63.65217391304348,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 59.30434782608693,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 50.60869565217389,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1659,49 +1917,63 @@
                       "y": 74.26086956521738,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 324.39024390243907,
                       "y": 72.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 64.17391304347828,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 61.2173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 50.43478260869567,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 52.347826086956495,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 48.173913043478265,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1721,84 +1993,108 @@
                       "y": 61.56521739130434,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 341.4634146341464,
                       "y": 53.04347826086957,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 50.26086956521736,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 50.43478260869567,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 51.826086956521735,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 50.782608695652165,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 48.34782608695654,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 42.086956521739125,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 36.69565217391302,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 34.60869565217388,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 32.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 27.13043478260864,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1818,84 +2114,108 @@
                       "y": 37.73913043478263,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 358.5365853658537,
                       "y": 29.217391304347863,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 40.86956521739129,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 39.82608695652176,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 37.21739130434783,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 37.73913043478263,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 32.69565217391302,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 27.826086956521756,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 24.173913043478244,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 16.000000000000014,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 9.391304347826068,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 0,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1915,49 +2235,63 @@
                       "y": 62.43478260869564,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 375.609756097561,
                       "y": 112.86956521739131,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 106.95652173913044,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 93.04347826086956,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 78.43478260869566,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 74.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 71.13043478260867,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -1977,49 +2311,63 @@
                       "y": 123.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 392.6829268292683,
                       "y": 153.56521739130437,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 152.3478260869565,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 130.7826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 128.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 122.95652173913041,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 123.82608695652175,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2039,49 +2387,63 @@
                       "y": 168.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 409.7560975609756,
                       "y": 195.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 161.39130434782606,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 140.69565217391306,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 134.43478260869566,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 132.52173913043478,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 132.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2101,49 +2463,63 @@
                       "y": 173.73913043478262,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 426.82926829268297,
                       "y": 173.56521739130432,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 163.82608695652175,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 147.4782608695652,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 134.60869565217394,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 131.4782608695652,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 126.26086956521738,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2163,49 +2539,63 @@
                       "y": 152.3478260869565,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 443.9024390243903,
                       "y": 169.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 155.13043478260872,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 129.73913043478262,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 126.95652173913045,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 122.08695652173915,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 125.39130434782608,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2225,49 +2615,63 @@
                       "y": 137.04347826086956,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 460.9756097560976,
                       "y": 134.9565217391304,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 131.99999999999997,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 123.30434782608694,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 106.6086956521739,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 99.47826086956519,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 546.3414634146342,
                       "y": 79.99999999999999,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2287,49 +2691,63 @@
                       "y": 119.8260869565217,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 478.0487804878049,
                       "y": 162.7826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 162.26086956521738,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 118.08695652173911,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 106.6086956521739,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 546.3414634146342,
                       "y": 82.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 563.4146341463415,
                       "y": 85.3913043478261,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2349,84 +2767,108 @@
                       "y": 171.47826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 495.1219512195122,
                       "y": 400,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 293.9130434782609,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 246.60869565217388,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 546.3414634146342,
                       "y": 188.17391304347825,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 563.4146341463415,
                       "y": 178.43478260869566,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 580.4878048780488,
                       "y": 182.7826086956522,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 597.5609756097562,
                       "y": 183.1304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 614.6341463414634,
                       "y": 189.91304347826085,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 631.7073170731708,
                       "y": 188,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 648.7804878048781,
                       "y": 186.08695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 665.8536585365854,
                       "y": 195.82608695652172,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2446,84 +2888,108 @@
                       "y": 340,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 512.1951219512196,
                       "y": 360.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 529.2682926829268,
                       "y": 307.6521739130435,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 546.3414634146342,
                       "y": 229.9130434782609,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 563.4146341463415,
                       "y": 210.6086956521739,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 580.4878048780488,
                       "y": 204.8695652173913,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 597.5609756097562,
                       "y": 210.0869565217391,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 614.6341463414634,
                       "y": 212,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 631.7073170731708,
                       "y": 209.91304347826087,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 648.7804878048781,
                       "y": 208.86956521739134,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 665.8536585365854,
                       "y": 225.0434782608696,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     },
                     {
                       "x": 682.9268292682927,
                       "y": 236.52173913043475,
                       "stroke": "steelblue",
                       "strokeOpacity": 0.25,
-                      "strokeWidth": 1
+                      "strokeWidth": 1,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "line"
                     }
                   ],
                   "zindex": 0
@@ -2543,181 +3009,241 @@
               "x": 0,
               "y": 123.65217391304348,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 17.073170731707318,
               "y": 122.43478260869564,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 34.146341463414636,
               "y": 138.95652173913044,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 51.21951219512195,
               "y": 165.39130434782606,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 68.29268292682927,
               "y": 154.08695652173913,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 85.3658536585366,
               "y": 160.86956521739125,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 102.4390243902439,
               "y": 161.91304347826082,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 119.51219512195122,
               "y": 137.3913043478261,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 136.58536585365854,
               "y": 137.56521739130437,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 153.65853658536585,
               "y": 135.1304347826087,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 170.7317073170732,
               "y": 153.39130434782606,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 187.8048780487805,
               "y": 163.65217391304347,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 204.8780487804878,
               "y": 166.43478260869563,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 221.95121951219514,
               "y": 155.4782608695652,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 239.02439024390245,
               "y": 141.2173913043478,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 256.0975609756098,
               "y": 130.26086956521738,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 273.1707317073171,
               "y": 115.82608695652175,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 290.2439024390244,
               "y": 95.30434782608693,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 307.3170731707317,
               "y": 74.26086956521738,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 324.39024390243907,
               "y": 61.56521739130434,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 341.4634146341464,
               "y": 37.73913043478263,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 358.5365853658537,
               "y": 62.43478260869564,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 375.609756097561,
               "y": 123.99999999999997,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 392.6829268292683,
               "y": 168.8695652173913,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 409.7560975609756,
               "y": 173.73913043478262,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 426.82926829268297,
               "y": 152.3478260869565,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 443.9024390243903,
               "y": 137.04347826086956,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 460.9756097560976,
               "y": 119.8260869565217,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 478.0487804878049,
               "y": 171.47826086956522,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             },
             {
               "x": 495.1219512195122,
               "y": 340,
               "stroke": "steelblue",
-              "strokeWidth": 3
+              "strokeWidth": 3,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "line"
             }
           ],
           "zindex": 0
@@ -2749,7 +3275,9 @@
               "y": 90.26086956521739,
               "stroke": "#000",
               "strokeWidth": 1,
-              "x2": 512.1951219512196
+              "x2": 512.1951219512196,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rule"
             }
           ],
           "zindex": 0
@@ -2768,7 +3296,9 @@
               "stroke": "#000",
               "strokeWidth": 0.5,
               "size": 400,
-              "shape": "triangle-down"
+              "shape": "triangle-down",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -2786,7 +3316,9 @@
               "text": 2010,
               "font": "sans-serif",
               "fontSize": 32,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0

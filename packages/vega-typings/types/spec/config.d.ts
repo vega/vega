@@ -84,6 +84,26 @@ export type StrokeJoin = 'miter' | 'round' | 'bevel';
 
 export interface MarkConfig {
   /**
+   * If set to `true`, removes marks from the accessibility tree.
+   */
+  ariaHidden?: boolean | SignalRef;
+
+  /**
+   * A string that labels the mark for accessibility.
+   */
+  ariaLabel?: string | SignalRef;
+
+  /**
+   * Sets the type of user interface element of the mark for accessibility.
+   */
+  ariaRole?: string | SignalRef;
+
+  /**
+   * A human-readable, author-localized description for the role of the mark.
+   */
+  ariaRoleDescription?: string | SignalRef;
+
+  /**
    * Width of the marks.
    */
   width?: number | SignalRef;

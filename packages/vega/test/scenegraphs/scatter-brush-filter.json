@@ -200,7 +200,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaLabel": "x axis for date (year-month), represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -272,7 +275,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaLabel": "x axis, represents values from Sat Jan 01 2000 00:00:00 GMT-0800 (Pacific Standard Time) to Mon Feb 01 2010 00:00:00 GMT-0800 (Pacific Standard Time)",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -428,7 +434,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis for Sum of count, represents values from 0 to 16000",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -484,7 +493,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 16000",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -504,7 +516,9 @@
               "fill": "#333",
               "fillOpacity": 0.125,
               "x2": 0,
-              "y2": 0
+              "y2": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -523,7 +537,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 198.3170466883822,
@@ -532,7 +548,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 196.63409337676438,
@@ -541,7 +559,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 195.0031668476294,
@@ -550,7 +570,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 193.32021353601158,
@@ -559,7 +581,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 191.69154904089757,
@@ -568,7 +592,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 190.00859572927976,
@@ -577,7 +603,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 188.32564241766195,
@@ -586,7 +614,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 186.69697792254794,
@@ -595,7 +625,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 185.01402461093016,
@@ -604,7 +636,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 183.38536011581616,
@@ -613,7 +647,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 181.7046688382193,
@@ -622,7 +658,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 180.18458197611292,
@@ -631,7 +669,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 178.50162866449512,
@@ -640,7 +680,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 176.8186753528773,
@@ -649,7 +691,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 175.1877488237423,
@@ -658,7 +702,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 173.5047955121245,
@@ -667,7 +713,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 171.8761310170105,
@@ -676,7 +724,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 170.19317770539269,
@@ -685,7 +735,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 168.51022439377488,
@@ -694,7 +746,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 166.88155989866087,
@@ -703,7 +757,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 165.19860658704306,
@@ -712,7 +768,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 163.56994209192905,
@@ -721,7 +779,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 161.88925081433226,
@@ -730,7 +790,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 160.31487513572205,
@@ -739,7 +801,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 158.63192182410424,
@@ -748,7 +812,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 156.94896851248643,
@@ -757,7 +823,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 155.31804198335143,
@@ -766,7 +834,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 153.63508867173363,
@@ -775,7 +845,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 152.00642417661962,
@@ -784,7 +856,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 150.3234708650018,
@@ -793,7 +867,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 148.640517553384,
@@ -802,7 +878,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 147.01185305827,
@@ -811,7 +889,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 145.32889974665218,
@@ -820,7 +900,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 143.70023525153817,
@@ -829,7 +911,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 142.01954397394135,
@@ -838,7 +922,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 140.49945711183497,
@@ -847,7 +933,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 138.81650380021716,
@@ -856,7 +944,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 137.13355048859935,
@@ -865,7 +955,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 135.50488599348535,
@@ -874,7 +966,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 133.81967064784655,
@@ -883,7 +977,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 132.19100615273254,
@@ -892,7 +988,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 130.50805284111473,
@@ -901,7 +999,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 128.82509952949692,
@@ -910,7 +1010,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 127.19643503438292,
@@ -919,7 +1021,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 125.5134817227651,
@@ -928,7 +1032,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 123.88707926167211,
@@ -937,7 +1043,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 122.2041259500543,
@@ -946,7 +1054,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 120.6840390879479,
@@ -955,7 +1065,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 119.00108577633009,
@@ -964,7 +1076,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 117.31813246471228,
@@ -973,7 +1087,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 115.68946796959827,
@@ -982,7 +1098,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 114.00425262395946,
@@ -991,7 +1109,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 112.37558812884545,
@@ -1000,7 +1120,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 110.69263481722764,
@@ -1009,7 +1131,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 109.00968150560983,
@@ -1018,7 +1142,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 107.38101701049582,
@@ -1027,7 +1153,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 105.69806369887804,
@@ -1036,7 +1164,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 104.07166123778502,
@@ -1045,7 +1175,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 102.38870792616721,
@@ -1054,7 +1186,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 100.8686210640608,
@@ -1063,7 +1197,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 99.185667752443,
@@ -1072,7 +1208,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 97.50271444082519,
@@ -1081,7 +1219,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 95.87404994571118,
@@ -1090,7 +1230,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 94.18883460007238,
@@ -1099,7 +1241,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 92.56017010495839,
@@ -1108,7 +1252,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 90.87721679334058,
@@ -1117,7 +1263,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 89.19426348172277,
@@ -1126,7 +1274,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 87.56559898660876,
@@ -1135,7 +1285,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 85.88264567499095,
@@ -1144,7 +1296,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 84.25624321389795,
@@ -1153,7 +1307,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 82.57328990228014,
@@ -1162,7 +1318,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 80.99891422366993,
@@ -1171,7 +1329,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 79.31596091205212,
@@ -1180,7 +1340,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 77.63300760043431,
@@ -1189,7 +1351,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 76.0043431053203,
@@ -1198,7 +1362,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 74.3191277596815,
@@ -1207,7 +1373,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 72.6904632645675,
@@ -1216,7 +1384,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 71.00750995294969,
@@ -1225,7 +1395,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 69.32455664133188,
@@ -1234,7 +1406,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 67.69589214621789,
@@ -1243,7 +1417,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 66.01293883460008,
@@ -1252,7 +1428,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 64.38653637350706,
@@ -1261,7 +1439,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 62.70358306188925,
@@ -1270,7 +1450,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 61.18349619978285,
@@ -1279,7 +1461,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 59.50054288816504,
@@ -1288,7 +1472,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 57.817589576547235,
@@ -1297,7 +1483,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 56.188925081433226,
@@ -1306,7 +1494,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 54.50370973579442,
@@ -1315,7 +1505,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 52.87504524068042,
@@ -1324,7 +1516,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 51.19209192906261,
@@ -1333,7 +1527,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 49.50913861744481,
@@ -1342,7 +1538,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 47.8804741223308,
@@ -1351,7 +1549,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 46.197520810712994,
@@ -1360,7 +1560,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 44.57111834961998,
@@ -1369,7 +1571,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 42.88816503800217,
@@ -1378,7 +1582,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 41.36807817589577,
@@ -1387,7 +1593,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 39.68512486427796,
@@ -1396,7 +1604,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 38.00217155266015,
@@ -1405,7 +1615,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 36.37350705754614,
@@ -1414,7 +1626,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 34.68829171190735,
@@ -1423,7 +1637,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 33.059627216793345,
@@ -1432,7 +1648,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 31.376673905175533,
@@ -1441,7 +1659,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 29.693720593557728,
@@ -1450,7 +1670,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 28.06505609844372,
@@ -1459,7 +1681,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 26.38210278682591,
@@ -1468,7 +1692,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 24.7557003257329,
@@ -1477,7 +1703,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 23.07274701411509,
@@ -1486,7 +1714,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 21.552660152008688,
@@ -1495,7 +1725,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 19.86970684039088,
@@ -1504,7 +1736,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 18.18675352877307,
@@ -1513,7 +1747,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 16.558089033659066,
@@ -1522,7 +1758,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 14.872873688020269,
@@ -1531,7 +1769,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 13.244209192906261,
@@ -1540,7 +1780,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 11.561255881288455,
@@ -1549,7 +1791,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 9.878302569670648,
@@ -1558,7 +1802,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 8.24963807455664,
@@ -1567,7 +1813,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 6.566684762938834,
@@ -1576,7 +1824,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 4.94028230184582,
@@ -1585,7 +1835,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 3.257328990228013,
@@ -1594,7 +1846,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 1.6829533116178068,
@@ -1603,7 +1857,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 0,
@@ -1612,7 +1868,9 @@
               "fill": "#4c78a8",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             }
           ],
           "zindex": 0
@@ -1631,7 +1889,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 198.3170466883822,
@@ -1640,7 +1900,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 196.63409337676438,
@@ -1649,7 +1911,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 195.0031668476294,
@@ -1658,7 +1922,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 193.32021353601158,
@@ -1667,7 +1933,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 191.69154904089757,
@@ -1676,7 +1944,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 190.00859572927976,
@@ -1685,7 +1955,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 188.32564241766195,
@@ -1694,7 +1966,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 186.69697792254794,
@@ -1703,7 +1977,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 185.01402461093016,
@@ -1712,7 +1988,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 183.38536011581616,
@@ -1721,7 +1999,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 181.7046688382193,
@@ -1730,7 +2010,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 180.18458197611292,
@@ -1739,7 +2021,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 178.50162866449512,
@@ -1748,7 +2032,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 176.8186753528773,
@@ -1757,7 +2043,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 175.1877488237423,
@@ -1766,7 +2054,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 173.5047955121245,
@@ -1775,7 +2065,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 171.8761310170105,
@@ -1784,7 +2076,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 170.19317770539269,
@@ -1793,7 +2087,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 168.51022439377488,
@@ -1802,7 +2098,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 166.88155989866087,
@@ -1811,7 +2109,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 165.19860658704306,
@@ -1820,7 +2120,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 163.56994209192905,
@@ -1829,7 +2131,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 161.88925081433226,
@@ -1838,7 +2142,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 160.31487513572205,
@@ -1847,7 +2153,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 158.63192182410424,
@@ -1856,7 +2164,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 156.94896851248643,
@@ -1865,7 +2175,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 155.31804198335143,
@@ -1874,7 +2186,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 153.63508867173363,
@@ -1883,7 +2197,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 152.00642417661962,
@@ -1892,7 +2208,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 150.3234708650018,
@@ -1901,7 +2219,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 148.640517553384,
@@ -1910,7 +2230,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 147.01185305827,
@@ -1919,7 +2241,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 145.32889974665218,
@@ -1928,7 +2252,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 143.70023525153817,
@@ -1937,7 +2263,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 142.01954397394135,
@@ -1946,7 +2274,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 140.49945711183497,
@@ -1955,7 +2285,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 138.81650380021716,
@@ -1964,7 +2296,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 137.13355048859935,
@@ -1973,7 +2307,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 135.50488599348535,
@@ -1982,7 +2318,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 133.81967064784655,
@@ -1991,7 +2329,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 132.19100615273254,
@@ -2000,7 +2340,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 130.50805284111473,
@@ -2009,7 +2351,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 128.82509952949692,
@@ -2018,7 +2362,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 127.19643503438292,
@@ -2027,7 +2373,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 125.5134817227651,
@@ -2036,7 +2384,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 123.88707926167211,
@@ -2045,7 +2395,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 122.2041259500543,
@@ -2054,7 +2406,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 120.6840390879479,
@@ -2063,7 +2417,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 119.00108577633009,
@@ -2072,7 +2428,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 117.31813246471228,
@@ -2081,7 +2439,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 115.68946796959827,
@@ -2090,7 +2450,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 114.00425262395946,
@@ -2099,7 +2461,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 112.37558812884545,
@@ -2108,7 +2472,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 110.69263481722764,
@@ -2117,7 +2483,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 109.00968150560983,
@@ -2126,7 +2494,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 107.38101701049582,
@@ -2135,7 +2505,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 105.69806369887804,
@@ -2144,7 +2516,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 104.07166123778502,
@@ -2153,7 +2527,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 102.38870792616721,
@@ -2162,7 +2538,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 100.8686210640608,
@@ -2171,7 +2549,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 99.185667752443,
@@ -2180,7 +2560,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 97.50271444082519,
@@ -2189,7 +2571,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 95.87404994571118,
@@ -2198,7 +2582,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 94.18883460007238,
@@ -2207,7 +2593,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 92.56017010495839,
@@ -2216,7 +2604,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 90.87721679334058,
@@ -2225,7 +2615,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 89.19426348172277,
@@ -2234,7 +2626,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 87.56559898660876,
@@ -2243,7 +2637,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 85.88264567499095,
@@ -2252,7 +2648,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 84.25624321389795,
@@ -2261,7 +2659,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 82.57328990228014,
@@ -2270,7 +2670,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 80.99891422366993,
@@ -2279,7 +2681,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 79.31596091205212,
@@ -2288,7 +2692,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 77.63300760043431,
@@ -2297,7 +2703,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 76.0043431053203,
@@ -2306,7 +2714,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 74.3191277596815,
@@ -2315,7 +2725,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 72.6904632645675,
@@ -2324,7 +2736,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 71.00750995294969,
@@ -2333,7 +2747,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 69.32455664133188,
@@ -2342,7 +2758,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 67.69589214621789,
@@ -2351,7 +2769,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 66.01293883460008,
@@ -2360,7 +2780,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 64.38653637350706,
@@ -2369,7 +2791,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 62.70358306188925,
@@ -2378,7 +2802,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 61.18349619978285,
@@ -2387,7 +2813,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 59.50054288816504,
@@ -2396,7 +2824,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 57.817589576547235,
@@ -2405,7 +2835,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 56.188925081433226,
@@ -2414,7 +2846,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 54.50370973579442,
@@ -2423,7 +2857,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 52.87504524068042,
@@ -2432,7 +2868,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 51.19209192906261,
@@ -2441,7 +2879,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 49.50913861744481,
@@ -2450,7 +2890,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 47.8804741223308,
@@ -2459,7 +2901,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 46.197520810712994,
@@ -2468,7 +2912,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 44.57111834961998,
@@ -2477,7 +2923,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 42.88816503800217,
@@ -2486,7 +2934,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 41.36807817589577,
@@ -2495,7 +2945,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 39.68512486427796,
@@ -2504,7 +2956,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 38.00217155266015,
@@ -2513,7 +2967,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 36.37350705754614,
@@ -2522,7 +2978,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 34.68829171190735,
@@ -2531,7 +2989,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 33.059627216793345,
@@ -2540,7 +3000,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 31.376673905175533,
@@ -2549,7 +3011,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 29.693720593557728,
@@ -2558,7 +3022,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 28.06505609844372,
@@ -2567,7 +3033,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 26.38210278682591,
@@ -2576,7 +3044,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 24.7557003257329,
@@ -2585,7 +3055,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 23.07274701411509,
@@ -2594,7 +3066,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 21.552660152008688,
@@ -2603,7 +3077,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 19.86970684039088,
@@ -2612,7 +3088,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 18.18675352877307,
@@ -2621,7 +3099,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 16.558089033659066,
@@ -2630,7 +3110,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 14.872873688020269,
@@ -2639,7 +3121,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 13.244209192906261,
@@ -2648,7 +3132,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 11.561255881288455,
@@ -2657,7 +3143,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 9.878302569670648,
@@ -2666,7 +3154,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 8.24963807455664,
@@ -2675,7 +3165,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 6.566684762938834,
@@ -2684,7 +3176,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 4.94028230184582,
@@ -2693,7 +3187,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 3.257328990228013,
@@ -2702,7 +3198,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 1.6829533116178068,
@@ -2711,7 +3209,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             },
             {
               "x": 0,
@@ -2720,7 +3220,9 @@
               "fill": "goldenrod",
               "orient": "vertical",
               "defined": true,
-              "y2": 200
+              "y2": 200,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "area"
             }
           ],
           "zindex": 0
@@ -2740,7 +3242,9 @@
               "fill": "transparent",
               "stroke": null,
               "x2": 0,
-              "y2": 0
+              "y2": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0

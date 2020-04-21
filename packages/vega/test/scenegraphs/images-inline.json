@@ -18,7 +18,8 @@
               "y": 0,
               "width": 100,
               "height": 100,
-              "url": "data:image/png;base64,iVBORw0KGgoAAA%20ANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4%20//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU%205ErkJggg=="
+              "url": "data:image/png;base64,iVBORw0KGgoAAA%20ANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4%20//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU%205ErkJggg==",
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0

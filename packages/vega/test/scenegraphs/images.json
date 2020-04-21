@@ -157,7 +157,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5
+              "y": 200.5,
+              "ariaLabel": "x axis, represents values from 0 to 4",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -354,7 +357,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 3",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 0
@@ -373,7 +379,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 25,
@@ -383,7 +390,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 25,
@@ -393,7 +401,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -413,7 +422,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 75,
@@ -424,7 +434,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 75,
@@ -435,7 +446,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": false
+              "aspect": false,
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -455,7 +467,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 125,
@@ -466,7 +479,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 125,
@@ -477,7 +491,8 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": true
+              "aspect": true,
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0
@@ -495,7 +510,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png"
+              "url": "data/ffox.png",
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 175,
@@ -504,7 +520,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png"
+              "url": "data/gimp.png",
+              "ariaRole": "graphics-symbol"
             },
             {
               "x": 175,
@@ -513,7 +530,8 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png"
+              "url": "data/7zip.png",
+              "ariaRole": "graphics-symbol"
             }
           ],
           "zindex": 0

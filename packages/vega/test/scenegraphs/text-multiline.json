@@ -26,7 +26,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -48,7 +50,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -70,7 +74,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -92,7 +98,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -114,7 +122,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -136,7 +146,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -158,7 +170,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -180,7 +194,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -202,7 +218,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -224,7 +242,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -246,7 +266,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -268,7 +290,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -290,7 +314,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -312,7 +338,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -334,7 +362,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -356,7 +386,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -378,7 +410,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -400,7 +434,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -422,7 +458,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -444,7 +482,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -466,7 +506,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -488,7 +530,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0
@@ -510,7 +554,9 @@
                       "y": 0.5,
                       "stroke": "steelblue",
                       "strokeWidth": 1,
-                      "x2": 10
+                      "x2": 10,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "rule"
                     }
                   ],
                   "zindex": 0
@@ -532,7 +578,9 @@
                       "limit": 100,
                       "lineBreak": "|",
                       "font": "sans-serif",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "ariaRole": "graphics-symbol",
+                      "ariaRoleDescription": "text"
                     }
                   ],
                   "zindex": 0

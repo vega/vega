@@ -5,7 +5,7 @@ import {alignExpr, lookup} from './guides/guide-util';
 import parseMark from './mark';
 import {TextMark} from './marks/marktypes';
 import {TitleRole, TitleSubtitleRole, TitleTextRole} from './marks/roles';
-import {addEncoders, extendEncode} from './encode/encode-util';
+import {addAriaAnnotations, addEncoders, extendEncode} from './encode/encode-util';
 import {ref} from '../util';
 import {Collect} from '../transforms';
 import {extend, isString} from 'vega-util';
@@ -81,7 +81,7 @@ function buildTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
-  addEncoders(encode, {
+  addEncoders(encode, addAriaAnnotations({
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
@@ -95,7 +95,12 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('fontStyle'),
     fontWeight: _('fontWeight'),
     lineHeight: _('lineHeight')
-  }, { // update
+  }, _, {
+    hidden: 'ariaHidden',
+    label: 'ariaLabel',
+    role: 'ariaRole',
+    roleDescription: 'ariaRoleDescription'
+  }), { // update
     align:      _('align'),
     angle:      _('angle'),
     baseline:   _('baseline')
@@ -114,7 +119,7 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
         exit: {opacity: zero}
       };
 
-  addEncoders(encode, {
+  addEncoders(encode, addAriaAnnotations({
     text:       text,
     align:      {signal: 'item.mark.group.align'},
     angle:      {signal: 'item.mark.group.angle'},
@@ -128,7 +133,12 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontStyle:  _('subtitleFontStyle'),
     fontWeight: _('subtitleFontWeight'),
     lineHeight: _('subtitleLineHeight')
-  }, { // update
+  }, _, {
+    hidden: 'subtitleAriaHidden',
+    label: 'subtitleAriaLabel',
+    role: 'subtitleAriaRole',
+    roleDescription: 'subtitleAriaRoleDescription'
+  }), { // update
     align:      _('align'),
     angle:      _('angle'),
     baseline:   _('baseline')

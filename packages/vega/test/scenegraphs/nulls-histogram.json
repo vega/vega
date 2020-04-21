@@ -262,7 +262,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 178.5
+              "y": 178.5,
+              "ariaLabel": "x axis, represents values from 1 to 10",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -333,7 +336,10 @@
                 }
               ],
               "x": 0.5,
-              "y": 178.5
+              "y": 178.5,
+              "ariaLabel": "x axis, represents values ",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -509,7 +515,10 @@
                 }
               ],
               "x": -4.5,
-              "y": 0.5
+              "y": 0.5,
+              "ariaLabel": "y axis, represents values from 0 to 1000",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "axis"
             }
           ],
           "zindex": 1
@@ -527,7 +536,9 @@
               "height": 175,
               "fill": "steelblue",
               "x2": 241,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 110,
@@ -536,7 +547,9 @@
               "height": 18,
               "fill": "steelblue",
               "x2": 142,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 242,
@@ -545,7 +558,9 @@
               "height": 132,
               "fill": "steelblue",
               "x2": 274,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 176,
@@ -554,7 +569,9 @@
               "height": 113,
               "fill": "steelblue",
               "x2": 208,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 275,
@@ -563,7 +580,9 @@
               "height": 36,
               "fill": "steelblue",
               "x2": 307,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 77,
@@ -572,7 +591,9 @@
               "height": 8,
               "fill": "steelblue",
               "x2": 109,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 143,
@@ -581,7 +602,9 @@
               "height": 49,
               "fill": "steelblue",
               "x2": 175,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 308,
@@ -590,7 +613,9 @@
               "height": 1,
               "fill": "steelblue",
               "x2": 340,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             },
             {
               "x": 44,
@@ -599,7 +624,9 @@
               "height": 1,
               "fill": "steelblue",
               "x2": 76,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -617,7 +644,9 @@
               "height": 38,
               "fill": "#aaa",
               "x2": 33,
-              "y2": 178
+              "y2": 178,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0

@@ -215,7 +215,11 @@ const ITEM_BASE = {
     'zindex': { 'type': 'number' },
     'cursor': { 'type': 'string' },
     'href': { 'type': 'string', 'format': 'uri-reference' },
-    'tooltip': {}
+    'tooltip': {},
+    'ariaLabel': { 'type': 'string' },
+    'ariaRole': { 'type': 'string' },
+    'ariaRoleDescription': { 'type': 'string' },
+    'ariaHidden': { 'type': 'boolean' },
   }
 };
 

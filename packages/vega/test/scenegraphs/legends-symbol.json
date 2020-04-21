@@ -320,7 +320,10 @@
               "height": 238,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Vertical, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -638,7 +641,10 @@
               "height": 94,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -956,7 +962,10 @@
               "height": 62,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Clipped - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1274,7 +1283,10 @@
               "height": 66,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Clipped - Columns + Padding, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1592,7 +1604,10 @@
               "height": 79,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Horizontal, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1910,7 +1925,10 @@
               "height": 38,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Horizontal - Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2228,7 +2246,10 @@
               "height": 56,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Horizontal - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0

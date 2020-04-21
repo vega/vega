@@ -19,7 +19,9 @@
               "width": 50,
               "height": 200,
               "fill": "#1f77b4",
-              "cornerRadius": 10
+              "cornerRadius": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -37,7 +39,9 @@
               "height": 200,
               "fill": "#1f77b4",
               "cornerRadiusTopLeft": 10,
-              "cornerRadiusTopRight": 10
+              "cornerRadiusTopRight": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -56,7 +60,9 @@
               "fill": "#1f77b4",
               "cornerRadius": 500,
               "cornerRadiusBottomLeft": 10,
-              "cornerRadiusBottomRight": 10
+              "cornerRadiusBottomRight": 10,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -76,7 +82,9 @@
               "cornerRadiusTopLeft": 10,
               "cornerRadiusTopRight": 20,
               "cornerRadiusBottomLeft": 40,
-              "cornerRadiusBottomRight": 30
+              "cornerRadiusBottomRight": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0
@@ -95,7 +103,9 @@
               "fill": "#1f77b4",
               "cornerRadius": 20,
               "cornerRadiusBottomLeft": -10,
-              "cornerRadiusBottomRight": 0
+              "cornerRadiusBottomRight": 0,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "rect"
             }
           ],
           "zindex": 0

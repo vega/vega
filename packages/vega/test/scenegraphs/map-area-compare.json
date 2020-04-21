@@ -16,7 +16,9 @@
             {
               "fill": null,
               "stroke": "#ddd",
-              "strokeWidth": 1
+              "strokeWidth": 1,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "shape"
             }
           ],
           "zindex": 0
@@ -35,7 +37,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 525.5599501941688
+              "size": 525.5599501941688,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -45,7 +49,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 727.7981720472744
+              "size": 727.7981720472744,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -55,7 +61,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 29.001187600544654
+              "size": 29.001187600544654,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -65,7 +73,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 53.163558463762456
+              "size": 53.163558463762456,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -75,7 +85,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 2393.5877288503398
+              "size": 2393.5877288503398,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -85,7 +97,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 27.203914631078078
+              "size": 27.203914631078078,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -95,7 +109,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 159749.11343386504
+              "size": 159749.11343386504,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -105,7 +121,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.066267993286601
+              "size": 15.066267993286601,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -115,7 +133,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5338.224438107922
+              "size": 5338.224438107922,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -125,7 +145,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 103.54385790259767
+              "size": 103.54385790259767,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -135,7 +157,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 86.56893521021266
+              "size": 86.56893521021266,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -145,7 +169,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 14.654112037329469
+              "size": 14.654112037329469,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -155,7 +181,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 41.39770696412961
+              "size": 41.39770696412961,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -165,7 +193,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 67.05941632935719
+              "size": 67.05941632935719,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -175,7 +205,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 158.395426221221
+              "size": 158.395426221221,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -185,7 +217,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 88.87759357937466
+              "size": 88.87759357937466,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -195,7 +229,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 113.15670769996723
+              "size": 113.15670769996723,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -205,7 +241,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 10.635200144162809
+              "size": 10.635200144162809,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -215,7 +253,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 54.484432607925555
+              "size": 54.484432607925555,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -225,7 +265,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 326.5061735157906
+              "size": 326.5061735157906,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -235,7 +277,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 13.423545026089414
+              "size": 13.423545026089414,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -245,7 +289,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 660.044552276966
+              "size": 660.044552276966,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -255,7 +301,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5010.623013495417
+              "size": 5010.623013495417,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -265,7 +313,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.981021184270503
+              "size": 5.981021184270503,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -275,7 +325,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 27.768953919861815
+              "size": 27.768953919861815,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -285,7 +337,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 383.7904286323319
+              "size": 383.7904286323319,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -295,7 +349,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 351.00705742701393
+              "size": 351.00705742701393,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -305,7 +361,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 28852.67973086765
+              "size": 28852.67973086765,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -315,7 +373,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 54.449598892824724
+              "size": 54.449598892824724,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -325,7 +385,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 798.6497916730368
+              "size": 798.6497916730368,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -335,7 +397,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8283.668013657112
+              "size": 8283.668013657112,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -345,7 +409,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 186.98047335414594
+              "size": 186.98047335414594,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -355,7 +421,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 259.262839638468
+              "size": 259.262839638468,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -365,7 +433,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1304.3191226746567
+              "size": 1304.3191226746567,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -375,7 +445,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 189.4990717233668
+              "size": 189.4990717233668,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -385,7 +457,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 646.5494292164512
+              "size": 646.5494292164512,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -395,7 +469,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 30.89540093353571
+              "size": 30.89540093353571,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -405,7 +481,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 73.93328830119208
+              "size": 73.93328830119208,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -415,7 +493,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3.144370864443772
+              "size": 3.144370864443772,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -425,7 +505,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.132320928722038
+              "size": 5.132320928722038,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -435,7 +517,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 107.63918192661004
+              "size": 107.63918192661004,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -445,7 +529,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 502.662219652746
+              "size": 502.662219652746,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -455,7 +541,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.703141467463865
+              "size": 12.703141467463865,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -465,7 +553,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 75.71693186101584
+              "size": 75.71693186101584,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -475,7 +565,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 29.883212061471568
+              "size": 29.883212061471568,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -485,7 +577,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1668.0575501028943
+              "size": 1668.0575501028943,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -495,7 +589,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 139.7859792304589
+              "size": 139.7859792304589,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -505,7 +601,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 693.4954310422108
+              "size": 693.4954310422108,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -515,7 +613,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 71.42868564918172
+              "size": 71.42868564918172,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -525,7 +625,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 479.7190835014262
+              "size": 479.7190835014262,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -535,7 +637,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 90.99810938012888
+              "size": 90.99810938012888,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -545,7 +649,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 646.3601683224115
+              "size": 646.3601683224115,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -555,7 +661,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1027.0334888411967
+              "size": 1027.0334888411967,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -565,7 +673,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 11.767922621349499
+              "size": 11.767922621349499,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -575,7 +685,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 23.531723323307233
+              "size": 23.531723323307233,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -585,7 +697,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 703.6327395659355
+              "size": 703.6327395659355,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -595,7 +709,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 150.15582181065838
+              "size": 150.15582181065838,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -605,7 +721,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 399.564003825908
+              "size": 399.564003825908,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -615,7 +733,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 69.55775428756169
+              "size": 69.55775428756169,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -625,7 +745,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 138.26810262590152
+              "size": 138.26810262590152,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -635,7 +757,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 137.92388185959862
+              "size": 137.92388185959862,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -645,7 +769,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8.26451910079777
+              "size": 8.26451910079777,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -655,7 +781,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 21.03613987503195
+              "size": 21.03613987503195,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -665,7 +793,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.113781346139149
+              "size": 15.113781346139149,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -675,7 +805,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 121.47133460082841
+              "size": 121.47133460082841,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -685,7 +817,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 20068.965742163782
+              "size": 20068.965742163782,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -695,7 +829,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 65.72060256142504
+              "size": 65.72060256142504,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -705,7 +841,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 117.77099589024147
+              "size": 117.77099589024147,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -715,7 +853,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 67.74160343085896
+              "size": 67.74160343085896,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -725,7 +865,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 63.67010065927752
+              "size": 63.67010065927752,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -735,7 +877,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 17.727512278357608
+              "size": 17.727512278357608,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -745,7 +889,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 110.79027074748956
+              "size": 110.79027074748956,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -755,7 +901,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1017.888508589007
+              "size": 1017.888508589007,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -765,7 +913,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 2081.1049597249003
+              "size": 2081.1049597249003,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -775,7 +925,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 89.99884922803358
+              "size": 89.99884922803358,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -785,7 +937,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1268.185468869473
+              "size": 1268.185468869473,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -795,7 +949,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 345.6290622764791
+              "size": 345.6290622764791,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -805,7 +961,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 334.75915147333626
+              "size": 334.75915147333626,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -815,7 +973,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 17.562698751935386
+              "size": 17.562698751935386,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -825,7 +985,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 324.636386553324
+              "size": 324.636386553324,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -835,7 +997,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 7.66315081436187
+              "size": 7.66315081436187,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -845,7 +1009,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 67.72834466938366
+              "size": 67.72834466938366,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -855,7 +1021,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 360.28139569235645
+              "size": 360.28139569235645,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -865,7 +1033,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3416.4029737309065
+              "size": 3416.4029737309065,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -875,7 +1045,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 329.5336903327916
+              "size": 329.5336903327916,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -885,7 +1057,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 193.5129963431973
+              "size": 193.5129963431973,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -895,7 +1069,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 106.591928536669
+              "size": 106.591928536669,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -905,7 +1081,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 84.85311732244736
+              "size": 84.85311732244736,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -915,7 +1093,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 11.473116688215669
+              "size": 11.473116688215669,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -925,7 +1105,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.155273205862613
+              "size": 12.155273205862613,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -935,7 +1117,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 141.75033426527807
+              "size": 141.75033426527807,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -945,7 +1129,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8.11362608877971
+              "size": 8.11362608877971,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -955,7 +1141,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 55.39085355657153
+              "size": 55.39085355657153,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -965,7 +1153,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1147.4548911507736
+              "size": 1147.4548911507736,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -975,7 +1165,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 37.06182502403681
+              "size": 37.06182502403681,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -985,7 +1177,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 20.201177618655493
+              "size": 20.201177618655493,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -995,7 +1189,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 108.61968148050073
+              "size": 108.61968148050073,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1005,7 +1201,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3.1970459752192255
+              "size": 3.1970459752192255,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1015,7 +1213,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 117.71220226282458
+              "size": 117.71220226282458,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1025,7 +1225,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 439.3801459121023
+              "size": 439.3801459121023,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1035,7 +1237,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 38.71855898816648
+              "size": 38.71855898816648,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1045,7 +1249,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 369.3448982754344
+              "size": 369.3448982754344,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1055,7 +1261,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1319.6708187142085
+              "size": 1319.6708187142085,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1065,7 +1273,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 24.805291662778473
+              "size": 24.805291662778473,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1075,7 +1285,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 756.0066909143425
+              "size": 756.0066909143425,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1085,7 +1297,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 435.36048639733053
+              "size": 435.36048639733053,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1095,7 +1309,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 13.819554193592921
+              "size": 13.819554193592921,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1105,7 +1321,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1829.4891251571935
+              "size": 1829.4891251571935,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1115,7 +1333,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 497.15864989653346
+              "size": 497.15864989653346,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1125,7 +1345,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 666.989351734439
+              "size": 666.989351734439,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1135,7 +1357,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 65.32403068935673
+              "size": 65.32403068935673,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1145,7 +1369,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 189.2609074646607
+              "size": 189.2609074646607,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1155,7 +1381,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 536.3538789103623
+              "size": 536.3538789103623,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1165,7 +1393,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 14.862662700470537
+              "size": 14.862662700470537,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1175,7 +1405,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 723.1396669375172
+              "size": 723.1396669375172,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1185,7 +1417,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 518.85892212607
+              "size": 518.85892212607,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1195,7 +1429,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 75.84861826290216
+              "size": 75.84861826290216,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1205,7 +1441,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 59.048011723774835
+              "size": 59.048011723774835,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1215,7 +1453,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 2054.0729311583273
+              "size": 2054.0729311583273,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1225,7 +1465,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 107.8456476516003
+              "size": 107.8456476516003,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1235,7 +1477,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 276.8094582046906
+              "size": 276.8094582046906,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1245,7 +1489,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 196.47111326755112
+              "size": 196.47111326755112,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1255,7 +1501,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 649.5278874868309
+              "size": 649.5278874868309,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1265,7 +1513,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 42.849801722852135
+              "size": 42.849801722852135,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1275,7 +1525,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 752.6744566828129
+              "size": 752.6744566828129,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1285,7 +1537,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 170.35773019696353
+              "size": 170.35773019696353,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1295,7 +1549,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 262.16608542742324
+              "size": 262.16608542742324,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1305,7 +1561,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 455.8031585375429
+              "size": 455.8031585375429,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1315,7 +1573,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.6951339884108165
+              "size": 5.6951339884108165,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1325,7 +1585,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 119.12620482487546
+              "size": 119.12620482487546,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1335,7 +1597,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 87.30471038952237
+              "size": 87.30471038952237,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1345,7 +1609,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 264.55121637744014
+              "size": 264.55121637744014,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1355,7 +1621,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3.8783068030606955
+              "size": 3.8783068030606955,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1365,7 +1633,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 7.713136153637606
+              "size": 7.713136153637606,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1375,7 +1645,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 271.98174889560687
+              "size": 271.98174889560687,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1385,7 +1657,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 45898.61541084979
+              "size": 45898.61541084979,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1395,7 +1669,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 13.011064639489632
+              "size": 13.011064639489632,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1405,7 +1681,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 64.74464248898585
+              "size": 64.74464248898585,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1415,7 +1693,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1286.8562536726458
+              "size": 1286.8562536726458,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1425,7 +1705,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1117.7543370371714
+              "size": 1117.7543370371714,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1435,7 +1717,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 353.9212251534773
+              "size": 353.9212251534773,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1445,7 +1729,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 115.27053158692433
+              "size": 115.27053158692433,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1455,7 +1741,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 14.105055189866107
+              "size": 14.105055189866107,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1465,7 +1753,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 43.26420570105256
+              "size": 43.26420570105256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1475,7 +1765,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.318965898222814
+              "size": 12.318965898222814,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1485,7 +1777,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 95.9583870741626
+              "size": 95.9583870741626,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1495,7 +1789,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 272.4095409397705
+              "size": 272.4095409397705,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1505,7 +1801,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 82.34630692481005
+              "size": 82.34630692481005,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1515,7 +1813,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 80.78687986609293
+              "size": 80.78687986609293,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1525,7 +1825,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 59.78499196530538
+              "size": 59.78499196530538,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1535,7 +1837,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 22.033791034151363
+              "size": 22.033791034151363,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1545,7 +1849,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1211.286410589747
+              "size": 1211.286410589747,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1555,7 +1861,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.547354733134853
+              "size": 12.547354733134853,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1565,7 +1873,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 153.09090583313082
+              "size": 153.09090583313082,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1575,7 +1885,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 763.6587391699068
+              "size": 763.6587391699068,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1585,7 +1897,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 34.68836918384477
+              "size": 34.68836918384477,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1595,7 +1909,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 305.3000301721477
+              "size": 305.3000301721477,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1605,7 +1921,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 125.18719365337893
+              "size": 125.18719365337893,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1615,7 +1933,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 442.5681780141458
+              "size": 442.5681780141458,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1625,7 +1945,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8.390760943686473
+              "size": 8.390760943686473,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1635,7 +1957,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 4.450201504580036
+              "size": 4.450201504580036,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1645,7 +1969,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 126.73811072063836
+              "size": 126.73811072063836,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1655,7 +1981,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 734.6108823646355
+              "size": 734.6108823646355,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1665,7 +1993,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 22.789588385872776
+              "size": 22.789588385872776,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1675,7 +2005,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 526.7180647906353
+              "size": 526.7180647906353,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1685,7 +2017,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 136.98806655926455
+              "size": 136.98806655926455,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1695,7 +2029,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 773.4457041907335
+              "size": 773.4457041907335,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1705,7 +2041,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 138.8754113071409
+              "size": 138.8754113071409,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1715,7 +2053,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12091.688610416697
+              "size": 12091.688610416697,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1725,7 +2065,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 459.54163526833145
+              "size": 459.54163526833145,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1735,7 +2077,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 514.6982862446421
+              "size": 514.6982862446421,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1745,7 +2089,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 205.0529974226083
+              "size": 205.0529974226083,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1755,7 +2101,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 4.491949991584988
+              "size": 4.491949991584988,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1765,7 +2113,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 274.2964009364805
+              "size": 274.2964009364805,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1775,7 +2125,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 884.7344831739756
+              "size": 884.7344831739756,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1785,7 +2137,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 442.8292164955783
+              "size": 442.8292164955783,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1795,7 +2149,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 233.9797863523563
+              "size": 233.9797863523563,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -1814,7 +2170,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 361.7176018181708
+              "size": 361.7176018181708,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1824,7 +2182,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 692.764869092156
+              "size": 692.764869092156,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1834,7 +2194,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 16.443553226381482
+              "size": 16.443553226381482,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1844,7 +2206,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 44.456006747161155
+              "size": 44.456006747161155,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1854,7 +2218,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1543.325579635777
+              "size": 1543.325579635777,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1864,7 +2230,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.864215675588639
+              "size": 15.864215675588639,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1874,7 +2242,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 6782.802782045852
+              "size": 6782.802782045852,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1884,7 +2254,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 6.409411826491123
+              "size": 6.409411826491123,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1894,7 +2266,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 4268.166546669629
+              "size": 4268.166546669629,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1904,7 +2278,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 47.03905563884837
+              "size": 47.03905563884837,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1914,7 +2290,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 50.44057639494713
+              "size": 50.44057639494713,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1924,7 +2302,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 14.608489639824256
+              "size": 14.608489639824256,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1934,7 +2314,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 16.638892317121645
+              "size": 16.638892317121645,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1944,7 +2326,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 65.12620872333355
+              "size": 65.12620872333355,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1954,7 +2338,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 151.12296675820835
+              "size": 151.12296675820835,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1964,7 +2350,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 74.24136459035799
+              "size": 74.24136459035799,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1974,7 +2362,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 60.99297823251982
+              "size": 60.99297823251982,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1984,7 +2374,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8.668541274670133
+              "size": 8.668541274670133,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -1994,7 +2386,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 28.01472925860071
+              "size": 28.01472925860071,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2004,7 +2398,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 115.35947616930207
+              "size": 115.35947616930207,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2014,7 +2410,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.212983497291134
+              "size": 12.212983497291134,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2024,7 +2422,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 603.5389410927164
+              "size": 603.5389410927164,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2034,7 +2434,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 4734.186058737723
+              "size": 4734.186058737723,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2044,7 +2446,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.952162986111944
+              "size": 5.952162986111944,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2054,7 +2458,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 21.88207230527769
+              "size": 21.88207230527769,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2064,7 +2470,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 329.119119296156
+              "size": 329.119119296156,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2074,7 +2482,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 346.1689412359483
+              "size": 346.1689412359483,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2084,7 +2494,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5529.602073658148
+              "size": 5529.602073658148,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2094,7 +2506,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 25.5219259061123
+              "size": 25.5219259061123,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2104,7 +2518,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 450.93026803790417
+              "size": 450.93026803790417,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2114,7 +2530,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5214.449115091378
+              "size": 5214.449115091378,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2124,7 +2542,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 183.62369265594316
+              "size": 183.62369265594316,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2134,7 +2554,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 256.2819731180425
+              "size": 256.2819731180425,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2144,7 +2566,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1293.5520066665413
+              "size": 1293.5520066665413,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2154,7 +2578,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 189.14308868792432
+              "size": 189.14308868792432,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2164,7 +2590,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 641.5455801786084
+              "size": 641.5455801786084,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2174,7 +2602,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 29.972262652012432
+              "size": 29.972262652012432,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2184,7 +2614,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 63.86783296423164
+              "size": 63.86783296423164,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2194,7 +2626,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 2.0967252859918517
+              "size": 2.0967252859918517,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2204,7 +2638,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3.448438244013232
+              "size": 3.448438244013232,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2214,7 +2650,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 44.879969103643816
+              "size": 44.879969103643816,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2224,7 +2662,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 197.39672085486745
+              "size": 197.39672085486745,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2234,7 +2674,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.172746417840244
+              "size": 12.172746417840244,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2244,7 +2686,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 23.5864053325422
+              "size": 23.5864053325422,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2254,7 +2698,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 26.756847196455055
+              "size": 26.756847196455055,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2264,7 +2710,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1286.186717968565
+              "size": 1286.186717968565,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2274,7 +2722,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 139.6569894190252
+              "size": 139.6569894190252,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2284,7 +2734,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 553.8509452246217
+              "size": 553.8509452246217,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2294,7 +2746,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 66.33984299742588
+              "size": 66.33984299742588,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2304,7 +2758,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 278.082590723272
+              "size": 278.082590723272,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2314,7 +2770,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 24.633423435105215
+              "size": 24.633423435105215,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2324,7 +2782,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 629.8849193537171
+              "size": 629.8849193537171,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2334,7 +2794,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 187.94489336124389
+              "size": 187.94489336124389,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2344,7 +2806,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 11.096034140136908
+              "size": 11.096034140136908,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2354,7 +2818,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 9.031722432278912
+              "size": 9.031722432278912,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2364,7 +2830,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 356.95660350305116
+              "size": 356.95660350305116,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2374,7 +2842,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 150.0537581716926
+              "size": 150.0537581716926,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2384,7 +2854,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 137.98581931282388
+              "size": 137.98581931282388,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2394,7 +2866,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 38.210767778015
+              "size": 38.210767778015,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2404,7 +2878,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 135.51319729100942
+              "size": 135.51319729100942,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2414,7 +2890,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 133.3327734578197
+              "size": 133.3327734578197,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2424,7 +2902,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 7.81581040997844
+              "size": 7.81581040997844,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2434,7 +2914,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 20.12602011537092
+              "size": 20.12602011537092,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2444,7 +2926,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.100361776458158
+              "size": 15.100361776458158,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2454,7 +2938,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 73.1173168993846
+              "size": 73.1173168993846,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2464,7 +2950,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1213.8430007893348
+              "size": 1213.8430007893348,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2474,7 +2962,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 60.91073765334295
+              "size": 60.91073765334295,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2484,7 +2974,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 116.83495490194036
+              "size": 116.83495490194036,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2494,7 +2986,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 63.30003131442936
+              "size": 63.30003131442936,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2504,7 +2998,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 31.80045944120502
+              "size": 31.80045944120502,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2514,7 +3010,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.867984715092462
+              "size": 15.867984715092462,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2524,7 +3022,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 51.127179441293265
+              "size": 51.127179441293265,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2534,7 +3034,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1003.3349072180281
+              "size": 1003.3349072180281,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2544,7 +3046,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1746.4650148169676
+              "size": 1746.4650148169676,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2554,7 +3058,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 32.298009798170824
+              "size": 32.298009798170824,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2564,7 +3070,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 897.225140638875
+              "size": 897.225140638875,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2574,7 +3082,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 242.57396948819223
+              "size": 242.57396948819223,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2584,7 +3094,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 59.36418520787629
+              "size": 59.36418520787629,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2594,7 +3106,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.768451896110491
+              "size": 12.768451896110491,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2604,7 +3118,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 174.34795372834196
+              "size": 174.34795372834196,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2614,7 +3130,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 6.919080904004659
+              "size": 6.919080904004659,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2624,7 +3142,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 49.50663148324384
+              "size": 49.50663148324384,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2634,7 +3154,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 224.02968166504434
+              "size": 224.02968166504434,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2644,7 +3166,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1507.734937217825
+              "size": 1507.734937217825,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2654,7 +3178,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 328.8993732820236
+              "size": 328.8993732820236,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2664,7 +3190,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 108.45972319567954
+              "size": 108.45972319567954,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2674,7 +3202,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 101.38844764147507
+              "size": 101.38844764147507,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2684,7 +3214,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 54.83601176158845
+              "size": 54.83601176158845,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2694,7 +3226,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 6.220250902813859
+              "size": 6.220250902813859,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2704,7 +3238,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 9.248901734936226
+              "size": 9.248901734936226,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2714,7 +3250,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 127.35600413000793
+              "size": 127.35600413000793,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2724,7 +3262,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.592055164423073
+              "size": 5.592055164423073,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2734,7 +3274,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 54.67691673665104
+              "size": 54.67691673665104,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2744,7 +3286,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 907.4058771447089
+              "size": 907.4058771447089,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2754,7 +3298,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 36.45882100700692
+              "size": 36.45882100700692,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2764,7 +3310,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 15.267904912107042
+              "size": 15.267904912107042,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2774,7 +3322,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 35.22047985388053
+              "size": 35.22047985388053,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2784,7 +3334,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1.3339661936770426
+              "size": 1.3339661936770426,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2794,7 +3346,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 35.26699308245588
+              "size": 35.26699308245588,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2804,7 +3358,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 328.4180749644074
+              "size": 328.4180749644074,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2814,7 +3370,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 17.86725104181096
+              "size": 17.86725104181096,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2824,7 +3382,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 327.5232722105138
+              "size": 327.5232722105138,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2834,7 +3394,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1094.179498918862
+              "size": 1094.179498918862,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2844,7 +3406,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 13.866935397891211
+              "size": 13.866935397891211,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2854,7 +3418,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 686.6513162927076
+              "size": 686.6513162927076,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2864,7 +3430,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 377.6918097627495
+              "size": 377.6918097627495,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2874,7 +3442,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 7.441931614477653
+              "size": 7.441931614477653,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2884,7 +3454,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 853.8463918661
+              "size": 853.8463918661,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2894,7 +3466,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 451.1046040686051
+              "size": 451.1046040686051,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2904,7 +3478,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 585.8645039791954
+              "size": 585.8645039791954,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2914,7 +3490,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 61.83852098994248
+              "size": 61.83852098994248,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2924,7 +3502,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 188.28902410792944
+              "size": 188.28902410792944,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2934,7 +3514,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 458.3169496941555
+              "size": 458.3169496941555,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2944,7 +3526,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 13.012692162184976
+              "size": 13.012692162184976,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2954,7 +3538,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 657.3299138566363
+              "size": 657.3299138566363,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2964,7 +3550,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 503.7365362219425
+              "size": 503.7365362219425,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2974,7 +3562,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 72.06827062456796
+              "size": 72.06827062456796,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2984,7 +3574,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 22.086302372135833
+              "size": 22.086302372135833,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -2994,7 +3586,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 219.12298518733223
+              "size": 219.12298518733223,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3004,7 +3598,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 83.68226098377636
+              "size": 83.68226098377636,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3014,7 +3610,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 153.67905216368672
+              "size": 153.67905216368672,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3024,7 +3622,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 172.0827150336554
+              "size": 172.0827150336554,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3034,7 +3634,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 485.0419926817922
+              "size": 485.0419926817922,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3044,7 +3646,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 41.904934972881165
+              "size": 41.904934972881165,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3054,7 +3658,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 728.6922076014089
+              "size": 728.6922076014089,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3064,7 +3670,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 162.7061213245761
+              "size": 162.7061213245761,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3074,7 +3682,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 267.90570190419385
+              "size": 267.90570190419385,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3084,7 +3694,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 171.37309208291117
+              "size": 171.37309208291117,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3094,7 +3706,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5.137197666972497
+              "size": 5.137197666972497,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3104,7 +3718,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 69.70399260517479
+              "size": 69.70399260517479,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3114,7 +3730,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 51.72761021952465
+              "size": 51.72761021952465,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3124,7 +3742,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 222.86624389919598
+              "size": 222.86624389919598,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3134,7 +3754,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 2.7930585245703696
+              "size": 2.7930585245703696,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3144,7 +3766,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 6.302612040402892
+              "size": 6.302612040402892,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3154,7 +3778,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 131.80399762464367
+              "size": 131.80399762464367,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3164,7 +3790,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 9362.120176324153
+              "size": 9362.120176324153,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3174,7 +3802,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 12.993798162831808
+              "size": 12.993798162831808,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3184,7 +3814,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 53.665534975007176
+              "size": 53.665534975007176,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3194,7 +3826,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1066.4717589867068
+              "size": 1066.4717589867068,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3204,7 +3838,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 1029.3312977912865
+              "size": 1029.3312977912865,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3214,7 +3850,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 347.84739833610365
+              "size": 347.84739833610365,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3224,7 +3862,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 108.1393791544906
+              "size": 108.1393791544906,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3234,7 +3874,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 14.453645701680216
+              "size": 14.453645701680216,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3244,7 +3886,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 42.30320911209856
+              "size": 42.30320911209856,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3254,7 +3898,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 11.623975194612285
+              "size": 11.623975194612285,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3264,7 +3910,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 93.24309604049631
+              "size": 93.24309604049631,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3274,7 +3922,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 270.2052873647481
+              "size": 270.2052873647481,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3284,7 +3934,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 42.25465156089922
+              "size": 42.25465156089922,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3294,7 +3946,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 80.34037590966909
+              "size": 80.34037590966909,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3304,7 +3958,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 26.010982267882355
+              "size": 26.010982267882355,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3314,7 +3970,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 10.583739072171738
+              "size": 10.583739072171738,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3324,7 +3982,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 248.24490374839297
+              "size": 248.24490374839297,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3334,7 +3994,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 10.051210119287134
+              "size": 10.051210119287134,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3344,7 +4006,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 102.54174198702822
+              "size": 102.54174198702822,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3354,7 +4018,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 706.6145525533066
+              "size": 706.6145525533066,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3364,7 +4030,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 33.91866524119541
+              "size": 33.91866524119541,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3374,7 +4042,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 283.63963580036943
+              "size": 283.63963580036943,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3384,7 +4054,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 76.51076045678201
+              "size": 76.51076045678201,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3394,7 +4066,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 266.2665719289362
+              "size": 266.2665719289362,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3404,7 +4078,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 8.183110939440667
+              "size": 8.183110939440667,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3414,7 +4090,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 4.307330574829393
+              "size": 4.307330574829393,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3424,7 +4102,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 86.65108789657097
+              "size": 86.65108789657097,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3434,7 +4114,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 442.3811373945573
+              "size": 442.3811373945573,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3444,7 +4126,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 18.949697932315757
+              "size": 18.949697932315757,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3454,7 +4138,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 519.1351099676976
+              "size": 519.1351099676976,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3464,7 +4150,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 136.82977991239022
+              "size": 136.82977991239022,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3474,7 +4162,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 332.6099238181887
+              "size": 332.6099238181887,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3484,7 +4174,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 98.10908238386037
+              "size": 98.10908238386037,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3494,7 +4186,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 5266.83781830262
+              "size": 5266.83781830262,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3504,7 +4198,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 255.8157754232452
+              "size": 255.8157754232452,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3514,7 +4210,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 505.727775408719
+              "size": 505.727775408719,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3524,7 +4222,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 186.47658135343954
+              "size": 186.47658135343954,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3534,7 +4234,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 3.5186330753494985
+              "size": 3.5186330753494985,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3544,7 +4246,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 253.51222926270566
+              "size": 253.51222926270566,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3554,7 +4258,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 675.2936994717311
+              "size": 675.2936994717311,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3564,7 +4270,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 418.4324982009857
+              "size": 418.4324982009857,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "zindex": 0,
@@ -3574,7 +4282,9 @@
               "fillOpacity": 0.15,
               "stroke": "#bbb",
               "strokeWidth": 1,
-              "size": 209.22975418515853
+              "size": 209.22975418515853,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0

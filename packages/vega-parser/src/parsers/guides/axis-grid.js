@@ -15,7 +15,9 @@ export default function(spec, config, userEncode, dataRef, band) {
       encode, enter, exit, update, tickPos, u, v, v2, s;
 
   encode = {
-    enter: enter = {opacity: zero},
+    enter: enter = {
+      opacity: zero
+    },
     update: update = {opacity: one},
     exit: exit = {opacity: zero}
   };

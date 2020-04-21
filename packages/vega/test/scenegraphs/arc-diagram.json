@@ -19,539 +19,693 @@
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 10,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 20,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 30,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 90,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 190
+              "size": 190,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 170,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 180,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 190,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 210,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 220,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 230,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 85
+              "size": 85,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 240,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 90
+              "size": 90,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 260,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 270,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 95
+              "size": 95,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 280,
               "y": 0,
               "fill": "#eeca3b",
               "opacity": 0,
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 290,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 50
+              "size": 50,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
               "y": 0,
               "fill": "#e45756",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 310,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 320,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 340,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 350,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 360,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 370,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 380,
               "y": 0,
               "fill": "#f58518",
               "opacity": 0,
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 390,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 400,
               "y": 0,
               "fill": "#b279a2",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 410,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 420,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 430,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 440,
               "y": 0,
               "fill": "#eeca3b",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 450,
               "y": 0,
               "fill": "#eeca3b",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 460,
               "y": 0,
               "fill": "#ff9da6",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 470,
               "y": 0,
               "fill": "#ff9da6",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 480,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 120
+              "size": 120,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 490,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 500,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 510,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 520,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 530,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 540,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 550,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 105
+              "size": 105,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 560,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 570,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 580,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 85
+              "size": 85,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 590,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 600,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 610,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 620,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 75
+              "size": 75,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 630,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 70
+              "size": 70,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 640,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 75
+              "size": 75,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 650,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 70
+              "size": 70,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 660,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 670,
               "y": 0,
               "fill": "#bab0ac",
               "opacity": 0,
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 680,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 690,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 700,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 710,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 720,
               "y": 0,
               "fill": "#54a24b",
               "opacity": 0,
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 730,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 740,
               "y": 0,
               "fill": "#4c78a8",
               "opacity": 0,
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 750,
               "y": 0,
               "fill": "#72b7b2",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 760,
               "y": 0,
               "fill": "#9d755d",
               "opacity": 0,
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -566,1525 +720,2033 @@
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A5,5 0 0 1 10,0"
+              "path": "M0,0A5,5 0 0 1 10,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 8,
-              "path": "M0,0A10,10 0 0 1 20,0"
+              "path": "M0,0A10,10 0 0 1 20,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 10,
-              "path": "M0,0A15,15 0 0 1 30,0"
+              "path": "M0,0A15,15 0 0 1 30,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M20,0A5,5 0 0 1 30,0"
+              "path": "M20,0A5,5 0 0 1 30,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A20,20 0 0 1 40,0"
+              "path": "M0,0A20,20 0 0 1 40,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A25,25 0 0 1 50,0"
+              "path": "M0,0A25,25 0 0 1 50,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A30,30 0 0 1 60,0"
+              "path": "M0,0A30,30 0 0 1 60,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A35,35 0 0 1 70,0"
+              "path": "M0,0A35,35 0 0 1 70,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M0,0A40,40 0 0 1 80,0"
+              "path": "M0,0A40,40 0 0 1 80,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M0,0A45,45 0 0 1 90,0"
+              "path": "M0,0A45,45 0 0 1 90,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M100,0A5,5 0 0 1 110,0"
+              "path": "M100,0A5,5 0 0 1 110,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M30,0A40,40 0 0 1 110,0"
+              "path": "M30,0A40,40 0 0 1 110,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M20,0A45,45 0 0 1 110,0"
+              "path": "M20,0A45,45 0 0 1 110,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M0,0A55,55 0 0 1 110,0"
+              "path": "M0,0A55,55 0 0 1 110,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A5,5 0 0 1 120,0"
+              "path": "M110,0A5,5 0 0 1 120,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A10,10 0 0 1 130,0"
+              "path": "M110,0A10,10 0 0 1 130,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A15,15 0 0 1 140,0"
+              "path": "M110,0A15,15 0 0 1 140,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A20,20 0 0 1 150,0"
+              "path": "M110,0A20,20 0 0 1 150,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M160,0A5,5 0 0 1 170,0"
+              "path": "M160,0A5,5 0 0 1 170,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M160,0A10,10 0 0 1 180,0"
+              "path": "M160,0A10,10 0 0 1 180,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M170,0A5,5 0 0 1 180,0"
+              "path": "M170,0A5,5 0 0 1 180,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M160,0A15,15 0 0 1 190,0"
+              "path": "M160,0A15,15 0 0 1 190,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M170,0A10,10 0 0 1 190,0"
+              "path": "M170,0A10,10 0 0 1 190,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M180,0A5,5 0 0 1 190,0"
+              "path": "M180,0A5,5 0 0 1 190,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M160,0A20,20 0 0 1 200,0"
+              "path": "M160,0A20,20 0 0 1 200,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M170,0A15,15 0 0 1 200,0"
+              "path": "M170,0A15,15 0 0 1 200,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M180,0A10,10 0 0 1 200,0"
+              "path": "M180,0A10,10 0 0 1 200,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M190,0A5,5 0 0 1 200,0"
+              "path": "M190,0A5,5 0 0 1 200,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M160,0A25,25 0 0 1 210,0"
+              "path": "M160,0A25,25 0 0 1 210,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M170,0A20,20 0 0 1 210,0"
+              "path": "M170,0A20,20 0 0 1 210,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M180,0A15,15 0 0 1 210,0"
+              "path": "M180,0A15,15 0 0 1 210,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M190,0A10,10 0 0 1 210,0"
+              "path": "M190,0A10,10 0 0 1 210,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M200,0A5,5 0 0 1 210,0"
+              "path": "M200,0A5,5 0 0 1 210,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M160,0A30,30 0 0 1 220,0"
+              "path": "M160,0A30,30 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M170,0A25,25 0 0 1 220,0"
+              "path": "M170,0A25,25 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M180,0A20,20 0 0 1 220,0"
+              "path": "M180,0A20,20 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M190,0A15,15 0 0 1 220,0"
+              "path": "M190,0A15,15 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M200,0A10,10 0 0 1 220,0"
+              "path": "M200,0A10,10 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M210,0A5,5 0 0 1 220,0"
+              "path": "M210,0A5,5 0 0 1 220,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M160,0A35,35 0 0 1 230,0"
+              "path": "M160,0A35,35 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M170,0A30,30 0 0 1 230,0"
+              "path": "M170,0A30,30 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M180,0A25,25 0 0 1 230,0"
+              "path": "M180,0A25,25 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M190,0A20,20 0 0 1 230,0"
+              "path": "M190,0A20,20 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M200,0A15,15 0 0 1 230,0"
+              "path": "M200,0A15,15 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M210,0A10,10 0 0 1 230,0"
+              "path": "M210,0A10,10 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M220,0A5,5 0 0 1 230,0"
+              "path": "M220,0A5,5 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M120,0A55,55 0 0 1 230,0"
+              "path": "M120,0A55,55 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 9,
-              "path": "M110,0A60,60 0 0 1 230,0"
+              "path": "M110,0A60,60 0 0 1 230,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M230,0A5,5 0 0 1 240,0"
+              "path": "M230,0A5,5 0 0 1 240,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 7,
-              "path": "M110,0A65,65 0 0 1 240,0"
+              "path": "M110,0A65,65 0 0 1 240,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 13,
-              "path": "M240,0A5,5 0 0 1 250,0"
+              "path": "M240,0A5,5 0 0 1 250,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M230,0A10,10 0 0 1 250,0"
+              "path": "M230,0A10,10 0 0 1 250,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 12,
-              "path": "M110,0A70,70 0 0 1 250,0"
+              "path": "M110,0A70,70 0 0 1 250,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M240,0A10,10 0 0 1 260,0"
+              "path": "M240,0A10,10 0 0 1 260,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 31,
-              "path": "M110,0A75,75 0 0 1 260,0"
+              "path": "M110,0A75,75 0 0 1 260,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M160,0A50,50 0 0 1 260,0"
+              "path": "M160,0A50,50 0 0 1 260,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M250,0A5,5 0 0 1 260,0"
+              "path": "M250,0A5,5 0 0 1 260,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 17,
-              "path": "M110,0A80,80 0 0 1 270,0"
+              "path": "M110,0A80,80 0 0 1 270,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M230,0A20,20 0 0 1 270,0"
+              "path": "M230,0A20,20 0 0 1 270,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M250,0A10,10 0 0 1 270,0"
+              "path": "M250,0A10,10 0 0 1 270,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A15,15 0 0 1 270,0"
+              "path": "M240,0A15,15 0 0 1 270,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M260,0A5,5 0 0 1 270,0"
+              "path": "M260,0A5,5 0 0 1 270,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 8,
-              "path": "M110,0A85,85 0 0 1 280,0"
+              "path": "M110,0A85,85 0 0 1 280,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A5,5 0 0 1 280,0"
+              "path": "M270,0A5,5 0 0 1 280,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M230,0A30,30 0 0 1 290,0"
+              "path": "M230,0A30,30 0 0 1 290,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A10,10 0 0 1 290,0"
+              "path": "M270,0A10,10 0 0 1 290,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A90,90 0 0 1 290,0"
+              "path": "M110,0A90,90 0 0 1 290,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M230,0A35,35 0 0 1 300,0"
+              "path": "M230,0A35,35 0 0 1 300,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M300,0A5,5 0 0 1 310,0"
+              "path": "M300,0A5,5 0 0 1 310,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M110,0A100,100 0 0 1 310,0"
+              "path": "M110,0A100,100 0 0 1 310,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M230,0A40,40 0 0 1 310,0"
+              "path": "M230,0A40,40 0 0 1 310,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A20,20 0 0 1 310,0"
+              "path": "M270,0A20,20 0 0 1 310,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A105,105 0 0 1 320,0"
+              "path": "M110,0A105,105 0 0 1 320,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A110,110 0 0 1 330,0"
+              "path": "M110,0A110,110 0 0 1 330,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A30,30 0 0 1 330,0"
+              "path": "M270,0A30,30 0 0 1 330,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M110,0A115,115 0 0 1 340,0"
+              "path": "M110,0A115,115 0 0 1 340,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M290,0A25,25 0 0 1 340,0"
+              "path": "M290,0A25,25 0 0 1 340,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M110,0A120,120 0 0 1 350,0"
+              "path": "M110,0A120,120 0 0 1 350,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M340,0A5,5 0 0 1 350,0"
+              "path": "M340,0A5,5 0 0 1 350,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M290,0A30,30 0 0 1 350,0"
+              "path": "M290,0A30,30 0 0 1 350,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M340,0A10,10 0 0 1 360,0"
+              "path": "M340,0A10,10 0 0 1 360,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M350,0A5,5 0 0 1 360,0"
+              "path": "M350,0A5,5 0 0 1 360,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A125,125 0 0 1 360,0"
+              "path": "M110,0A125,125 0 0 1 360,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M290,0A35,35 0 0 1 360,0"
+              "path": "M290,0A35,35 0 0 1 360,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M340,0A15,15 0 0 1 370,0"
+              "path": "M340,0A15,15 0 0 1 370,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M350,0A10,10 0 0 1 370,0"
+              "path": "M350,0A10,10 0 0 1 370,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M360,0A5,5 0 0 1 370,0"
+              "path": "M360,0A5,5 0 0 1 370,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A130,130 0 0 1 370,0"
+              "path": "M110,0A130,130 0 0 1 370,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M290,0A40,40 0 0 1 370,0"
+              "path": "M290,0A40,40 0 0 1 370,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M340,0A20,20 0 0 1 380,0"
+              "path": "M340,0A20,20 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M350,0A15,15 0 0 1 380,0"
+              "path": "M350,0A15,15 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M360,0A10,10 0 0 1 380,0"
+              "path": "M360,0A10,10 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M370,0A5,5 0 0 1 380,0"
+              "path": "M370,0A5,5 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A135,135 0 0 1 380,0"
+              "path": "M110,0A135,135 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M290,0A45,45 0 0 1 380,0"
+              "path": "M290,0A45,45 0 0 1 380,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M250,0A70,70 0 0 1 390,0"
+              "path": "M250,0A70,70 0 0 1 390,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M250,0A75,75 0 0 1 400,0"
+              "path": "M250,0A75,75 0 0 1 400,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M240,0A85,85 0 0 1 410,0"
+              "path": "M240,0A85,85 0 0 1 410,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M250,0A80,80 0 0 1 410,0"
+              "path": "M250,0A80,80 0 0 1 410,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M410,0A5,5 0 0 1 420,0"
+              "path": "M410,0A5,5 0 0 1 420,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M250,0A85,85 0 0 1 420,0"
+              "path": "M250,0A85,85 0 0 1 420,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A90,90 0 0 1 420,0"
+              "path": "M240,0A90,90 0 0 1 420,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M110,0A160,160 0 0 1 430,0"
+              "path": "M110,0A160,160 0 0 1 430,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M260,0A85,85 0 0 1 430,0"
+              "path": "M260,0A85,85 0 0 1 430,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A80,80 0 0 1 430,0"
+              "path": "M270,0A80,80 0 0 1 430,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M280,0A80,80 0 0 1 440,0"
+              "path": "M280,0A80,80 0 0 1 440,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A165,165 0 0 1 440,0"
+              "path": "M110,0A165,165 0 0 1 440,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M280,0A85,85 0 0 1 450,0"
+              "path": "M280,0A85,85 0 0 1 450,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M460,0A5,5 0 0 1 470,0"
+              "path": "M460,0A5,5 0 0 1 470,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M470,0A5,5 0 0 1 480,0"
+              "path": "M470,0A5,5 0 0 1 480,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M250,0A115,115 0 0 1 480,0"
+              "path": "M250,0A115,115 0 0 1 480,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A105,105 0 0 1 480,0"
+              "path": "M270,0A105,105 0 0 1 480,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A185,185 0 0 1 480,0"
+              "path": "M110,0A185,185 0 0 1 480,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M260,0A115,115 0 0 1 490,0"
+              "path": "M260,0A115,115 0 0 1 490,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A190,190 0 0 1 490,0"
+              "path": "M110,0A190,190 0 0 1 490,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M490,0A5,5 0 0 1 500,0"
+              "path": "M490,0A5,5 0 0 1 500,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A130,130 0 0 1 500,0"
+              "path": "M240,0A130,130 0 0 1 500,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 9,
-              "path": "M490,0A10,10 0 0 1 510,0"
+              "path": "M490,0A10,10 0 0 1 510,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M260,0A125,125 0 0 1 510,0"
+              "path": "M260,0A125,125 0 0 1 510,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M110,0A200,200 0 0 1 510,0"
+              "path": "M110,0A200,200 0 0 1 510,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M510,0A5,5 0 0 1 520,0"
+              "path": "M510,0A5,5 0 0 1 520,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M390,0A65,65 0 0 1 520,0"
+              "path": "M390,0A65,65 0 0 1 520,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M510,0A10,10 0 0 1 530,0"
+              "path": "M510,0A10,10 0 0 1 530,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M510,0A15,15 0 0 1 540,0"
+              "path": "M510,0A15,15 0 0 1 540,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M490,0A25,25 0 0 1 540,0"
+              "path": "M490,0A25,25 0 0 1 540,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M260,0A140,140 0 0 1 540,0"
+              "path": "M260,0A140,140 0 0 1 540,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M510,0A20,20 0 0 1 550,0"
+              "path": "M510,0A20,20 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 12,
-              "path": "M490,0A30,30 0 0 1 550,0"
+              "path": "M490,0A30,30 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M390,0A80,80 0 0 1 550,0"
+              "path": "M390,0A80,80 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M540,0A5,5 0 0 1 550,0"
+              "path": "M540,0A5,5 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 21,
-              "path": "M260,0A145,145 0 0 1 550,0"
+              "path": "M260,0A145,145 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 19,
-              "path": "M110,0A220,220 0 0 1 550,0"
+              "path": "M110,0A220,220 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M160,0A195,195 0 0 1 550,0"
+              "path": "M160,0A195,195 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M250,0A150,150 0 0 1 550,0"
+              "path": "M250,0A150,150 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M410,0A70,70 0 0 1 550,0"
+              "path": "M410,0A70,70 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M480,0A35,35 0 0 1 550,0"
+              "path": "M480,0A35,35 0 0 1 550,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M490,0A35,35 0 0 1 560,0"
+              "path": "M490,0A35,35 0 0 1 560,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M550,0A5,5 0 0 1 560,0"
+              "path": "M550,0A5,5 0 0 1 560,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M550,0A10,10 0 0 1 570,0"
+              "path": "M550,0A10,10 0 0 1 570,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A80,80 0 0 1 570,0"
+              "path": "M410,0A80,80 0 0 1 570,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A45,45 0 0 1 570,0"
+              "path": "M480,0A45,45 0 0 1 570,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 7,
-              "path": "M550,0A15,15 0 0 1 580,0"
+              "path": "M550,0A15,15 0 0 1 580,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 7,
-              "path": "M480,0A50,50 0 0 1 580,0"
+              "path": "M480,0A50,50 0 0 1 580,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M270,0A155,155 0 0 1 580,0"
+              "path": "M270,0A155,155 0 0 1 580,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M570,0A5,5 0 0 1 580,0"
+              "path": "M570,0A5,5 0 0 1 580,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M110,0A235,235 0 0 1 580,0"
+              "path": "M110,0A235,235 0 0 1 580,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 15,
-              "path": "M580,0A5,5 0 0 1 590,0"
+              "path": "M580,0A5,5 0 0 1 590,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M550,0A20,20 0 0 1 590,0"
+              "path": "M550,0A20,20 0 0 1 590,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M480,0A55,55 0 0 1 590,0"
+              "path": "M480,0A55,55 0 0 1 590,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M570,0A10,10 0 0 1 590,0"
+              "path": "M570,0A10,10 0 0 1 590,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A60,60 0 0 1 600,0"
+              "path": "M480,0A60,60 0 0 1 600,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M580,0A10,10 0 0 1 600,0"
+              "path": "M580,0A10,10 0 0 1 600,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M590,0A5,5 0 0 1 600,0"
+              "path": "M590,0A5,5 0 0 1 600,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M480,0A65,65 0 0 1 610,0"
+              "path": "M480,0A65,65 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M580,0A15,15 0 0 1 610,0"
+              "path": "M580,0A15,15 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M600,0A5,5 0 0 1 610,0"
+              "path": "M600,0A5,5 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M590,0A10,10 0 0 1 610,0"
+              "path": "M590,0A10,10 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M570,0A20,20 0 0 1 610,0"
+              "path": "M570,0A20,20 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M550,0A30,30 0 0 1 610,0"
+              "path": "M550,0A30,30 0 0 1 610,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 9,
-              "path": "M550,0A35,35 0 0 1 620,0"
+              "path": "M550,0A35,35 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 17,
-              "path": "M580,0A20,20 0 0 1 620,0"
+              "path": "M580,0A20,20 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 13,
-              "path": "M590,0A15,15 0 0 1 620,0"
+              "path": "M590,0A15,15 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 7,
-              "path": "M480,0A70,70 0 0 1 620,0"
+              "path": "M480,0A70,70 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M570,0A25,25 0 0 1 620,0"
+              "path": "M570,0A25,25 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A105,105 0 0 1 620,0"
+              "path": "M410,0A105,105 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M610,0A5,5 0 0 1 620,0"
+              "path": "M610,0A5,5 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M600,0A10,10 0 0 1 620,0"
+              "path": "M600,0A10,10 0 0 1 620,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M590,0A20,20 0 0 1 630,0"
+              "path": "M590,0A20,20 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M480,0A75,75 0 0 1 630,0"
+              "path": "M480,0A75,75 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M620,0A5,5 0 0 1 630,0"
+              "path": "M620,0A5,5 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M570,0A30,30 0 0 1 630,0"
+              "path": "M570,0A30,30 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M580,0A25,25 0 0 1 630,0"
+              "path": "M580,0A25,25 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M610,0A10,10 0 0 1 630,0"
+              "path": "M610,0A10,10 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M600,0A15,15 0 0 1 630,0"
+              "path": "M600,0A15,15 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M550,0A40,40 0 0 1 630,0"
+              "path": "M550,0A40,40 0 0 1 630,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M550,0A45,45 0 0 1 640,0"
+              "path": "M550,0A45,45 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 12,
-              "path": "M620,0A10,10 0 0 1 640,0"
+              "path": "M620,0A10,10 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M480,0A80,80 0 0 1 640,0"
+              "path": "M480,0A80,80 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M630,0A5,5 0 0 1 640,0"
+              "path": "M630,0A5,5 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 10,
-              "path": "M580,0A30,30 0 0 1 640,0"
+              "path": "M580,0A30,30 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M610,0A15,15 0 0 1 640,0"
+              "path": "M610,0A15,15 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M600,0A20,20 0 0 1 640,0"
+              "path": "M600,0A20,20 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 9,
-              "path": "M590,0A25,25 0 0 1 640,0"
+              "path": "M590,0A25,25 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M570,0A35,35 0 0 1 640,0"
+              "path": "M570,0A35,35 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A265,265 0 0 1 640,0"
+              "path": "M110,0A265,265 0 0 1 640,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M630,0A10,10 0 0 1 650,0"
+              "path": "M630,0A10,10 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 7,
-              "path": "M640,0A5,5 0 0 1 650,0"
+              "path": "M640,0A5,5 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M480,0A85,85 0 0 1 650,0"
+              "path": "M480,0A85,85 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M620,0A15,15 0 0 1 650,0"
+              "path": "M620,0A15,15 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M580,0A35,35 0 0 1 650,0"
+              "path": "M580,0A35,35 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M610,0A20,20 0 0 1 650,0"
+              "path": "M610,0A20,20 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M600,0A25,25 0 0 1 650,0"
+              "path": "M600,0A25,25 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M590,0A30,30 0 0 1 650,0"
+              "path": "M590,0A30,30 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M570,0A40,40 0 0 1 650,0"
+              "path": "M570,0A40,40 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M550,0A50,50 0 0 1 650,0"
+              "path": "M550,0A50,50 0 0 1 650,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M640,0A10,10 0 0 1 660,0"
+              "path": "M640,0A10,10 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M580,0A40,40 0 0 1 660,0"
+              "path": "M580,0A40,40 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M590,0A35,35 0 0 1 660,0"
+              "path": "M590,0A35,35 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M620,0A20,20 0 0 1 660,0"
+              "path": "M620,0A20,20 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M650,0A5,5 0 0 1 660,0"
+              "path": "M650,0A5,5 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A90,90 0 0 1 660,0"
+              "path": "M480,0A90,90 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M630,0A15,15 0 0 1 660,0"
+              "path": "M630,0A15,15 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M610,0A25,25 0 0 1 660,0"
+              "path": "M610,0A25,25 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M600,0A30,30 0 0 1 660,0"
+              "path": "M600,0A30,30 0 0 1 660,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M570,0A50,50 0 0 1 670,0"
+              "path": "M570,0A50,50 0 0 1 670,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 5,
-              "path": "M250,0A215,215 0 0 1 680,0"
+              "path": "M250,0A215,215 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A285,285 0 0 1 680,0"
+              "path": "M110,0A285,285 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A220,220 0 0 1 680,0"
+              "path": "M240,0A220,220 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A205,205 0 0 1 680,0"
+              "path": "M270,0A205,205 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A100,100 0 0 1 680,0"
+              "path": "M480,0A100,100 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A135,135 0 0 1 680,0"
+              "path": "M410,0A135,135 0 0 1 680,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M250,0A220,220 0 0 1 690,0"
+              "path": "M250,0A220,220 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 6,
-              "path": "M680,0A5,5 0 0 1 690,0"
+              "path": "M680,0A5,5 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A290,290 0 0 1 690,0"
+              "path": "M110,0A290,290 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A225,225 0 0 1 690,0"
+              "path": "M240,0A225,225 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M270,0A210,210 0 0 1 690,0"
+              "path": "M270,0A210,210 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A105,105 0 0 1 690,0"
+              "path": "M480,0A105,105 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A140,140 0 0 1 690,0"
+              "path": "M410,0A140,140 0 0 1 690,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M250,0A225,225 0 0 1 700,0"
+              "path": "M250,0A225,225 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M690,0A5,5 0 0 1 700,0"
+              "path": "M690,0A5,5 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 4,
-              "path": "M680,0A10,10 0 0 1 700,0"
+              "path": "M680,0A10,10 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A295,295 0 0 1 700,0"
+              "path": "M110,0A295,295 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M240,0A230,230 0 0 1 700,0"
+              "path": "M240,0A230,230 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A215,215 0 0 1 700,0"
+              "path": "M270,0A215,215 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A145,145 0 0 1 700,0"
+              "path": "M410,0A145,145 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M580,0A60,60 0 0 1 700,0"
+              "path": "M580,0A60,60 0 0 1 700,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A220,220 0 0 1 710,0"
+              "path": "M270,0A220,220 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M690,0A10,10 0 0 1 710,0"
+              "path": "M690,0A10,10 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M680,0A15,15 0 0 1 710,0"
+              "path": "M680,0A15,15 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M700,0A5,5 0 0 1 710,0"
+              "path": "M700,0A5,5 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A300,300 0 0 1 710,0"
+              "path": "M110,0A300,300 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A115,115 0 0 1 710,0"
+              "path": "M480,0A115,115 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A150,150 0 0 1 710,0"
+              "path": "M410,0A150,150 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M250,0A230,230 0 0 1 710,0"
+              "path": "M250,0A230,230 0 0 1 710,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M260,0A230,230 0 0 1 720,0"
+              "path": "M260,0A230,230 0 0 1 720,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M270,0A225,225 0 0 1 720,0"
+              "path": "M270,0A225,225 0 0 1 720,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M110,0A305,305 0 0 1 720,0"
+              "path": "M110,0A305,305 0 0 1 720,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M480,0A125,125 0 0 1 730,0"
+              "path": "M480,0A125,125 0 0 1 730,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 2,
-              "path": "M480,0A130,130 0 0 1 740,0"
+              "path": "M480,0A130,130 0 0 1 740,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M730,0A5,5 0 0 1 740,0"
+              "path": "M730,0A5,5 0 0 1 740,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M690,0A30,30 0 0 1 750,0"
+              "path": "M690,0A30,30 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M680,0A35,35 0 0 1 750,0"
+              "path": "M680,0A35,35 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 3,
-              "path": "M250,0A250,250 0 0 1 750,0"
+              "path": "M250,0A250,250 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A135,135 0 0 1 750,0"
+              "path": "M480,0A135,135 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M410,0A170,170 0 0 1 750,0"
+              "path": "M410,0A170,170 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M700,0A25,25 0 0 1 750,0"
+              "path": "M700,0A25,25 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M710,0A20,20 0 0 1 750,0"
+              "path": "M710,0A20,20 0 0 1 750,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M640,0A60,60 0 0 1 760,0"
+              "path": "M640,0A60,60 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M650,0A55,55 0 0 1 760,0"
+              "path": "M650,0A55,55 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M660,0A50,50 0 0 1 760,0"
+              "path": "M660,0A50,50 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M630,0A65,65 0 0 1 760,0"
+              "path": "M630,0A65,65 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M620,0A70,70 0 0 1 760,0"
+              "path": "M620,0A70,70 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M480,0A140,140 0 0 1 760,0"
+              "path": "M480,0A140,140 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             },
             {
               "stroke": "#000",
               "strokeOpacity": 0.2,
               "strokeWidth": 1,
-              "path": "M580,0A90,90 0 0 1 760,0"
+              "path": "M580,0A90,90 0 0 1 760,0",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "path"
             }
           ],
           "zindex": 0
@@ -2099,463 +2761,617 @@
               "x": 0,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 10,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 20,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 30,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 40,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 50,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 60,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 70,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 80,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 90,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 100,
               "y": 0,
               "fill": "#f58518",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 110,
               "y": 0,
               "fill": "#f58518",
-              "size": 190
+              "size": 190,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 120,
               "y": 0,
               "fill": "#e45756",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 130,
               "y": 0,
               "fill": "#f58518",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 140,
               "y": 0,
               "fill": "#f58518",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 150,
               "y": 0,
               "fill": "#f58518",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 160,
               "y": 0,
               "fill": "#e45756",
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 170,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 180,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 190,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 200,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 210,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 220,
               "y": 0,
               "fill": "#e45756",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 230,
               "y": 0,
               "fill": "#e45756",
-              "size": 85
+              "size": 85,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 240,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 250,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 90
+              "size": 90,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 260,
               "y": 0,
               "fill": "#54a24b",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 270,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 95
+              "size": 95,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 280,
               "y": 0,
               "fill": "#eeca3b",
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 290,
               "y": 0,
               "fill": "#f58518",
-              "size": 50
+              "size": 50,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 300,
               "y": 0,
               "fill": "#e45756",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 310,
               "y": 0,
               "fill": "#f58518",
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 320,
               "y": 0,
               "fill": "#f58518",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 330,
               "y": 0,
               "fill": "#f58518",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 340,
               "y": 0,
               "fill": "#f58518",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 350,
               "y": 0,
               "fill": "#f58518",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 360,
               "y": 0,
               "fill": "#f58518",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 370,
               "y": 0,
               "fill": "#f58518",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 380,
               "y": 0,
               "fill": "#f58518",
-              "size": 40
+              "size": 40,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 390,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 400,
               "y": 0,
               "fill": "#b279a2",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 410,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 420,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 430,
               "y": 0,
               "fill": "#54a24b",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 440,
               "y": 0,
               "fill": "#eeca3b",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 450,
               "y": 0,
               "fill": "#eeca3b",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 460,
               "y": 0,
               "fill": "#ff9da6",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 470,
               "y": 0,
               "fill": "#ff9da6",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 480,
               "y": 0,
               "fill": "#9d755d",
-              "size": 120
+              "size": 120,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 490,
               "y": 0,
               "fill": "#54a24b",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 500,
               "y": 0,
               "fill": "#54a24b",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 510,
               "y": 0,
               "fill": "#54a24b",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 520,
               "y": 0,
               "fill": "#54a24b",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 530,
               "y": 0,
               "fill": "#54a24b",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 540,
               "y": 0,
               "fill": "#54a24b",
-              "size": 30
+              "size": 30,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 550,
               "y": 0,
               "fill": "#9d755d",
-              "size": 105
+              "size": 105,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 560,
               "y": 0,
               "fill": "#54a24b",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 570,
               "y": 0,
               "fill": "#9d755d",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 580,
               "y": 0,
               "fill": "#9d755d",
-              "size": 85
+              "size": 85,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 590,
               "y": 0,
               "fill": "#9d755d",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 600,
               "y": 0,
               "fill": "#9d755d",
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 610,
               "y": 0,
               "fill": "#9d755d",
-              "size": 65
+              "size": 65,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 620,
               "y": 0,
               "fill": "#9d755d",
-              "size": 75
+              "size": 75,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 630,
               "y": 0,
               "fill": "#9d755d",
-              "size": 70
+              "size": 70,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 640,
               "y": 0,
               "fill": "#9d755d",
-              "size": 75
+              "size": 75,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 650,
               "y": 0,
               "fill": "#9d755d",
-              "size": 70
+              "size": 70,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 660,
               "y": 0,
               "fill": "#9d755d",
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 670,
               "y": 0,
               "fill": "#bab0ac",
-              "size": 15
+              "size": 15,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 680,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 690,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 700,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 60
+              "size": 60,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 710,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 55
+              "size": 55,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 720,
               "y": 0,
               "fill": "#54a24b",
-              "size": 25
+              "size": 25,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 730,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 740,
               "y": 0,
               "fill": "#4c78a8",
-              "size": 20
+              "size": 20,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 750,
               "y": 0,
               "fill": "#72b7b2",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             },
             {
               "x": 760,
               "y": 0,
               "fill": "#9d755d",
-              "size": 45
+              "size": 45,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "symbol"
             }
           ],
           "zindex": 0
@@ -2575,7 +3391,9 @@
               "text": "Myriel",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 10,
@@ -2586,7 +3404,9 @@
               "text": "Napoleon",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 20,
@@ -2597,7 +3417,9 @@
               "text": "Mlle.Baptistine",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 30,
@@ -2608,7 +3430,9 @@
               "text": "Mme.Magloire",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 40,
@@ -2619,7 +3443,9 @@
               "text": "CountessdeLo",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 50,
@@ -2630,7 +3456,9 @@
               "text": "Geborand",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 60,
@@ -2641,7 +3469,9 @@
               "text": "Champtercier",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 70,
@@ -2652,7 +3482,9 @@
               "text": "Cravatte",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 80,
@@ -2663,7 +3495,9 @@
               "text": "Count",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 90,
@@ -2674,7 +3508,9 @@
               "text": "OldMan",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 100,
@@ -2685,7 +3521,9 @@
               "text": "Labarre",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 110,
@@ -2696,7 +3534,9 @@
               "text": "Valjean",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 120,
@@ -2707,7 +3547,9 @@
               "text": "Marguerite",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 130,
@@ -2718,7 +3560,9 @@
               "text": "Mme.deR",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 140,
@@ -2729,7 +3573,9 @@
               "text": "Isabeau",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 150,
@@ -2740,7 +3586,9 @@
               "text": "Gervais",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 160,
@@ -2751,7 +3599,9 @@
               "text": "Tholomyes",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 170,
@@ -2762,7 +3612,9 @@
               "text": "Listolier",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 180,
@@ -2773,7 +3625,9 @@
               "text": "Fameuil",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 190,
@@ -2784,7 +3638,9 @@
               "text": "Blacheville",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 200,
@@ -2795,7 +3651,9 @@
               "text": "Favourite",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 210,
@@ -2806,7 +3664,9 @@
               "text": "Dahlia",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 220,
@@ -2817,7 +3677,9 @@
               "text": "Zephine",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 230,
@@ -2828,7 +3690,9 @@
               "text": "Fantine",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 240,
@@ -2839,7 +3703,9 @@
               "text": "Mme.Thenardier",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 250,
@@ -2850,7 +3716,9 @@
               "text": "Thenardier",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 260,
@@ -2861,7 +3729,9 @@
               "text": "Cosette",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 270,
@@ -2872,7 +3742,9 @@
               "text": "Javert",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 280,
@@ -2883,7 +3755,9 @@
               "text": "Fauchelevent",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 290,
@@ -2894,7 +3768,9 @@
               "text": "Bamatabois",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 300,
@@ -2905,7 +3781,9 @@
               "text": "Perpetue",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 310,
@@ -2916,7 +3794,9 @@
               "text": "Simplice",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 320,
@@ -2927,7 +3807,9 @@
               "text": "Scaufflaire",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 330,
@@ -2938,7 +3820,9 @@
               "text": "Woman1",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 340,
@@ -2949,7 +3833,9 @@
               "text": "Judge",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 350,
@@ -2960,7 +3846,9 @@
               "text": "Champmathieu",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 360,
@@ -2971,7 +3859,9 @@
               "text": "Brevet",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 370,
@@ -2982,7 +3872,9 @@
               "text": "Chenildieu",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 380,
@@ -2993,7 +3885,9 @@
               "text": "Cochepaille",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 390,
@@ -3004,7 +3898,9 @@
               "text": "Pontmercy",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 400,
@@ -3015,7 +3911,9 @@
               "text": "Boulatruelle",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 410,
@@ -3026,7 +3924,9 @@
               "text": "Eponine",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 420,
@@ -3037,7 +3937,9 @@
               "text": "Anzelma",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 430,
@@ -3048,7 +3950,9 @@
               "text": "Woman2",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 440,
@@ -3059,7 +3963,9 @@
               "text": "MotherInnocent",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 450,
@@ -3070,7 +3976,9 @@
               "text": "Gribier",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 460,
@@ -3081,7 +3989,9 @@
               "text": "Jondrette",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 470,
@@ -3092,7 +4002,9 @@
               "text": "Mme.Burgon",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 480,
@@ -3103,7 +4015,9 @@
               "text": "Gavroche",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 490,
@@ -3114,7 +4028,9 @@
               "text": "Gillenormand",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 500,
@@ -3125,7 +4041,9 @@
               "text": "Magnon",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 510,
@@ -3136,7 +4054,9 @@
               "text": "Mlle.Gillenormand",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 520,
@@ -3147,7 +4067,9 @@
               "text": "Mme.Pontmercy",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 530,
@@ -3158,7 +4080,9 @@
               "text": "Mlle.Vaubois",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 540,
@@ -3169,7 +4093,9 @@
               "text": "Lt.Gillenormand",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 550,
@@ -3180,7 +4106,9 @@
               "text": "Marius",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 560,
@@ -3191,7 +4119,9 @@
               "text": "BaronessT",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 570,
@@ -3202,7 +4132,9 @@
               "text": "Mabeuf",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 580,
@@ -3213,7 +4145,9 @@
               "text": "Enjolras",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 590,
@@ -3224,7 +4158,9 @@
               "text": "Combeferre",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 600,
@@ -3235,7 +4171,9 @@
               "text": "Prouvaire",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 610,
@@ -3246,7 +4184,9 @@
               "text": "Feuilly",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 620,
@@ -3257,7 +4197,9 @@
               "text": "Courfeyrac",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 630,
@@ -3268,7 +4210,9 @@
               "text": "Bahorel",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 640,
@@ -3279,7 +4223,9 @@
               "text": "Bossuet",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 650,
@@ -3290,7 +4236,9 @@
               "text": "Joly",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 660,
@@ -3301,7 +4249,9 @@
               "text": "Grantaire",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 670,
@@ -3312,7 +4262,9 @@
               "text": "MotherPlutarch",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 680,
@@ -3323,7 +4275,9 @@
               "text": "Gueulemer",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 690,
@@ -3334,7 +4288,9 @@
               "text": "Babet",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 700,
@@ -3345,7 +4301,9 @@
               "text": "Claquesous",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 710,
@@ -3356,7 +4314,9 @@
               "text": "Montparnasse",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 720,
@@ -3367,7 +4327,9 @@
               "text": "Toussaint",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 730,
@@ -3378,7 +4340,9 @@
               "text": "Child1",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 740,
@@ -3389,7 +4353,9 @@
               "text": "Child2",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 750,
@@ -3400,7 +4366,9 @@
               "text": "Brujon",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             },
             {
               "x": 760,
@@ -3411,7 +4379,9 @@
               "text": "Mme.Hucheloup",
               "angle": -90,
               "font": "sans-serif",
-              "fontSize": 9
+              "fontSize": 9,
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "text"
             }
           ],
           "zindex": 0

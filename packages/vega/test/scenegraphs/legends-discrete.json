@@ -121,7 +121,10 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 2, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -262,7 +265,10 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 3, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -425,7 +431,10 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 4, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -610,7 +619,10 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 5, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -817,7 +829,10 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 6, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1046,7 +1061,10 @@
               "y": 260,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 7, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1297,7 +1315,10 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 8, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1570,7 +1591,10 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "left"
+              "orient": "left",
+              "ariaLabel": "legend for Quantize 9, fill color represents values from 0 to 0.15",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1711,7 +1735,10 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Quantile 3, fill color represents values from 19 to 28",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -1896,7 +1923,10 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Quantile 5, fill color represents values from 19 to 28",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2125,7 +2155,10 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Quantile 7, fill color represents values from 19 to 28",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2244,7 +2277,10 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Threshold 1, fill color represents values from 50 to undefined",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2385,7 +2421,10 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Threshold 2, fill color represents values from 30 to 70",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2548,7 +2587,10 @@
               "y": 260,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Threshold 3, fill color represents values from 30 to 70",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -2733,7 +2775,10 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Bin-Ordinal 5, fill color represents values 0,20,40,60,80,100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
@@ -3028,7 +3073,10 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "right"
+              "orient": "right",
+              "ariaLabel": "legend for Bin-Ordinal 10, fill color represents values 0,10,20,30,40,50,60,70,80,90,100",
+              "ariaRole": "graphics-symbol",
+              "ariaRoleDescription": "legend"
             }
           ],
           "zindex": 0
