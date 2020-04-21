@@ -15,7 +15,7 @@ export interface BindCheckbox extends BaseBinding {
 }
 export interface BindRadioSelect extends BaseBinding {
   input: 'radio' | 'select';
-  options: any[];
+  options: any[] | object;
   labels?: string[];
 }
 export interface BindRange extends BaseBinding {
