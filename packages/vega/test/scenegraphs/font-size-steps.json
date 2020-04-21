@@ -44,7 +44,7 @@
               "angle": 0
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -935,7 +935,7 @@
               "orient": "bottom-right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "line",

@@ -1031,7 +1031,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2057,7 +2057,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3083,7 +3083,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -4109,7 +4109,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -5135,7 +5135,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -6161,7 +6161,7 @@
               "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         }
       ],
       "x": 0,
